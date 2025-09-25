@@ -13,7 +13,7 @@ import docs from 'docs:@react-spectrum/s2';
   docs={docs.exports.ColorField}
   links={docs.links}
   props={['label', 'placeholder', 'colorSpace', 'channel', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
-  initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Select a color'}}
+  initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
   importSource="@react-spectrum/s2"
   type="s2" />
 
@@ -34,7 +34,7 @@ function Example() {
     <div>
       <ColorField
         label="Primary color"
-        placeholder="Select a color"
+        placeholder="Enter a color"
         value={value}
         onChange={setValue} />
       <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
@@ -100,7 +100,7 @@ function Example(props) {
       <ColorField
         {...props}
         label="Brand color"
-        placeholder="Select a color"
+        placeholder="Enter a color"
         ///- begin highlight -///
         name="brandColor"
         /* PROPS */

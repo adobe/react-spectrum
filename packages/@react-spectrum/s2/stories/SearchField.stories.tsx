@@ -41,7 +41,7 @@ const meta: Meta<typeof SearchField> = {
   },
   args: {
     ...getActionArgs(events),
-    placeholder: 'Enter your search here'
+    placeholder: 'Search documents'
   },
   title: 'SearchField'
 };

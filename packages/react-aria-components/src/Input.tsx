@@ -48,7 +48,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
    * Temporary text that occupies the text input when it is empty.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/placeholder).
    */
-  placeholder?: string | undefined
+  placeholder?: string
 }
 
 export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});

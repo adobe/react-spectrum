@@ -60,7 +60,7 @@ export function IllustrationCards() {
             <SegmentedControlItem id="linear"><Polygon4 /><Text>Linear</Text></SegmentedControlItem>
           </SegmentedControl>
         </div>
-        <SearchField size="L" aria-label="Search illustrations" />
+        <SearchField size="L" aria-label="Search illustrations" placeholder="Search illustrations" />
         {variant === 'gradient' && (
           <RadioGroup
             labelPosition="side"

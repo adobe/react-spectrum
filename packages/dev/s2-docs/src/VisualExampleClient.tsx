@@ -251,7 +251,7 @@ function renderChildren(children, indent = '') {
     }
 
     return result;
-  } else if (children?.text) {
+  } else if (children?.text != null) {
     return children.text;
   } else if (Array.isArray(children)) {
     return children.map((c, i) => <React.Fragment key={i}>{i > 0 ? '\n  ' + indent : null}{c}</React.Fragment>);
@@ -415,9 +415,6 @@ export function Control({name}: {name: string}) {
       if (name === 'placement' && control.value.elements.length === 22) {
         return <PlacementControl control={control} value={value} onChange={onChange} />;
       }
-      if (control.value.elements[0].type === 'string') {
-        return <StringControl control={control} value={value} onChange={onChange} />;
-      }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':
       return <NumberControl control={control} value={value} onChange={onChange} />;
@@ -570,6 +567,7 @@ function NumberControl({control, value, onChange}: ControlProps) {
   return (
     <NumberField
       label={control.name}
+      placeholder="–"
       contextualHelp={<PropContextualHelp control={control} />}
       value={value}
       onChange={onChange}
@@ -691,6 +689,7 @@ function StringControl({control, value, onChange}: ControlProps) {
   return (
     <TextField
       label={control.name}
+      placeholder="–"
       contextualHelp={<PropContextualHelp control={control} />}
       value={value || ''}
       onChange={onChange}
@@ -707,6 +706,7 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
           <div className={style({display: 'flex', gap: 4})}>
             <TextField
               aria-label={control.name}
+              placeholder="–"
               value={objectValue?.text || ''}
               onChange={text => onChange({...objectValue, text})}
               styles={style({width: 80, flexGrow: 1})} />
@@ -933,6 +933,7 @@ function DurationControl({control, value, onChange}: ControlProps) {
   return (
     <NumberField
       label={control.name}
+      placeholder="–"
       contextualHelp={<PropContextualHelp control={control} />}
       value={value.months}
       minValue={1}
@@ -1148,12 +1149,14 @@ function SizeControl({control, value, onChange}: ControlProps) {
       <div className={style({display: 'flex', gap: 4, width: 130})}>
         <NumberField
           aria-label="Width"
+          placeholder="–"
           value={value?.width}
           onChange={width => onChange(new Size(width, value?.height ?? 0))}
           styles={style({flexShrink: 1, flexGrow: 1})}
           hideStepper />
         <NumberField
           aria-label="Height"
+          placeholder="–"
           value={value?.height}
           onChange={height => onChange(new Size(value?.width ?? 0, height))}
           styles={style({flexShrink: 1, flexGrow: 1})}

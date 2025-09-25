@@ -15,7 +15,7 @@ import docs from 'docs:@react-spectrum/s2';
   props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
     label: 'Name',
-    placeholder: 'e.g. John Doe'
+    placeholder: 'Enter your full name'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -36,7 +36,7 @@ function Example() {
     <>
       <TextField
         label="Name"
-        placeholder="e.g. John Doe"
+        placeholder="Enter your full name"
         ///- begin highlight -///
         value={name}
         onChange={setName} />
@@ -61,7 +61,7 @@ function Example(props) {
       <TextField
         {...props}
         label="Email"
-        placeholder="abc@123.com"
+        placeholder="Enter your email"
         ///- begin highlight -///
         name="email"
         /* PROPS */

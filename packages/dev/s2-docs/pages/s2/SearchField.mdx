@@ -15,7 +15,7 @@ import docs from 'docs:@react-spectrum/s2';
   props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
     label: 'Search',
-    placeholder: 'Enter your search term'
+    placeholder: 'Search documents'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -37,7 +37,7 @@ function Example() {
     <div>
       <SearchField
         label="Search"
-        placeholder="Enter your search term"
+        placeholder="Search documents"
         ///- begin highlight -///
         value={search}
         onChange={setSearch}
@@ -66,7 +66,7 @@ function Example(props) {
       <SearchField
         {...props}
         label="Search"
-        placeholder="Enter your search term"
+        placeholder="Search documents"
         ///- begin highlight -///
         name="search"
         /* PROPS */

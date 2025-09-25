@@ -104,8 +104,8 @@ export const HelpCenter: Story = {
           <TabPanel id="feedback" styles={style({margin: 12})}>
             <p className={style({font: 'body', marginTop: 0})}>How are we doing? Share your feedback here.</p>
             <Form>
-              <TextField label="Subject" placeholder="Subject" />
-              <TextField label="Description" isRequired placeholder="Enter your description here" />
+              <TextField label="Subject" placeholder="Enter a summary" />
+              <TextField label="Description" isRequired placeholder="Enter your feedback" />
               <Switch>Adobe can contact me for further questions concerning this feedback</Switch>
               <Button styles={style({marginStart: 'auto'})}>Submit</Button>
             </Form>

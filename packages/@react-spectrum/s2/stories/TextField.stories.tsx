@@ -87,14 +87,16 @@ export const ContextualHelpExample: StoryTextField = {
       } />
   ),
   args: {
-    label: 'Segment'
+    label: 'Segment',
+    placeholder: 'Enter a segment name'
   }
 };
 
 export const TextAreaExample: StoryTextArea = {
   render: (args) => <TextArea {...args} />,
   args: {
-    label: 'Comment'
+    label: 'Comment',
+    placeholder: 'Enter a comment'
   }
 };
 
