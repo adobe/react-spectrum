@@ -88,12 +88,14 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
   let value = useMemo(() => {
     return props.value ?? (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
   }, [props.value, props.selectedKey, selectionMode]);
-  let [controlledValue, setControlledValue] = useControlledState<ValueType<M>>(value as any, defaultValue as any, props.onChange);
+  let [controlledValue, setControlledValue] = useControlledState<Key | Key[] | null>(value, defaultValue, props.onChange as any);
+  // Only display the first selected item if in single selection mode but the value is an array.
+  let displayValue = selectionMode === 'single' && Array.isArray(controlledValue) ? controlledValue[0] : controlledValue;
   let setValue = (value: Key | Key[] | null) => {
     if (selectionMode === 'single') {
       let key = Array.isArray(value) ? value[0] ?? null : value;
-      setControlledValue(key as ValueType<M>);
-      if (key !== controlledValue) {
+      setControlledValue(key);
+      if (key !== displayValue) {
         props.onSelectionChange?.(key);
       }
     } else {
@@ -104,7 +106,7 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
         keys = [value];
       }
 
-      setControlledValue(keys as ValueType<M>);
+      setControlledValue(keys);
     }
   };
 
@@ -113,7 +115,7 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
     selectionMode,
     disallowEmptySelection: selectionMode === 'single',
     allowDuplicateSelectionEvents: true,
-    selectedKeys: useMemo(() => convertValue(controlledValue), [controlledValue]),
+    selectedKeys: useMemo(() => convertValue(displayValue), [displayValue]),
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
@@ -139,18 +141,18 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
 
   let validationState = useFormValidationState({
     ...props,
-    value: Array.isArray(controlledValue) && controlledValue.length === 0 ? null : controlledValue as any
+    value: Array.isArray(displayValue) && displayValue.length === 0 ? null : displayValue as any
   });
 
   let [isFocused, setFocused] = useState(false);
-  let [initialValue] = useState(controlledValue);
+  let [initialValue] = useState(displayValue);
 
   return {
     ...validationState,
     ...listState,
     ...triggerState,
-    value: controlledValue,
-    defaultValue: defaultValue ?? initialValue,
+    value: displayValue as ValueType<M>,
+    defaultValue: defaultValue ?? initialValue as ValueType<M>,
     setValue,
     selectedKey,
     setSelectedKey: setValue,

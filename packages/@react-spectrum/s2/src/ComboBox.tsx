@@ -401,7 +401,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   }
                 }]
               ]}>
-              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {!isLink && !props.onAction && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>
