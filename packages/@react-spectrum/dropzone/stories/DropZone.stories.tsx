@@ -15,14 +15,14 @@ import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
-import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
+import {Draggable} from '../../../@react-aria/dnd/stories/dnd.stories';
 import {DropEvent, FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {DropZone} from '../';
 import File from '@spectrum-icons/illustrations/File';
 import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Meta} from '@storybook/react';
+import {Meta, StoryObj} from '@storybook/react';
 import NotFound from '@spectrum-icons/illustrations/NotFound';
 import React, {useState} from 'react';
 import {SpectrumDropZoneProps} from '../src/DropZone';
@@ -41,17 +41,19 @@ type StoryArgs = SpectrumDropZoneProps;
 const meta: Meta<StoryArgs> = {
   title: 'DropZone',
   component: DropZone
-};
+} as Meta<typeof DropZone>;
 
 export default meta;
 
-export const withDraggable = {
+export type DropZoneStory = StoryObj<typeof DropZone>;
+
+export const withDraggable: DropZoneStory = {
   render: (args) => (
     <DropZoneWithDraggable {...args} />
   )
 };
 
-export const customAriaLabel = {
+export const customAriaLabel: DropZoneStory = {
   render: (args) => (
     <DropZoneWithDraggable
       {...args}
@@ -59,13 +61,13 @@ export const customAriaLabel = {
   )
 };
 
-export const withButton = {
+export const withButton: DropZoneStory = {
   render: (args) => (
     <DropZoneWithButton {...args} />
   )
 };
 
-export const customBannerMessage = {
+export const customBannerMessage: DropZoneStory = {
   render: (args) => (
     <Example
       {...args}
@@ -73,13 +75,13 @@ export const customBannerMessage = {
   )
 };
 
-export const acceptsMultiple = {
+export const acceptsMultiple: DropZoneStory = {
   render: (args) => (
     <Example {...args} />
   )
 };
 
-export const filledDropzone = {
+export const filledDropzone: DropZoneStory = {
   render: (args) => (
     <DropZoneFilled {...args} />
   )

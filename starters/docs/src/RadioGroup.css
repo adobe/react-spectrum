@@ -1,0 +1,86 @@
+@import "./theme.css";
+
+.react-aria-RadioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-color);
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+
+.react-aria-Radio {
+  display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
+  align-items: center;
+  gap: 0.499625rem;
+  font-size: 1.000125rem;
+  color: var(--text-color);
+  forced-color-adjust: none;
+
+  &:before {
+    content: '';
+    display: block;
+    width: 1.12525rem;
+    height: 1.12525rem;
+    box-sizing: border-box;
+    border: 0.125125rem solid var(--border-color);
+    background: var(--field-background);
+    border-radius: 1.12525rem;
+    transition: all 200ms;
+  }
+
+  &[data-pressed]:before {
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-selected] {
+    &:before {
+      border-color: var(--highlight-background);
+      border-width: 0.375375rem;
+    }
+
+    &[data-pressed]:before {
+      border-color: var(--highlight-background-pressed);
+    }
+  }
+
+  &[data-focus-visible]:before {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  &[data-invalid] {
+    &:before {
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed]:before {
+      border-color: var(--invalid-color-pressed);
+    }
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+
+    &:before {
+      border-color: var(--border-color-disabled);
+    }
+  }
+}
+
+.react-aria-RadioGroup .radio-items {
+  display: flex;
+  gap: 8px;
+}
+
+.react-aria-RadioGroup[data-orientation=vertical] .radio-items {
+  flex-direction: column;
+}
+
+.react-aria-RadioGroup[data-orientation=horizontal] .radio-items {
+  flex-direction: row;
+}

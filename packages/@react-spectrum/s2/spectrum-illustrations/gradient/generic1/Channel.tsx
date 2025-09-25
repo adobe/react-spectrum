@@ -13,10 +13,11 @@
 import Channel_L from 'illustration:./S2_fill_channel_generic1_160.svg';
 import Channel_M from 'illustration:./S2_fill_channel_generic1_96.svg';
 import Channel_S from 'illustration:./S2_fill_channel_generic1_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Channel(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Channel(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

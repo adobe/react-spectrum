@@ -21,7 +21,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef, useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 describe('DialogContainer', function () {
@@ -254,13 +254,13 @@ describe('DialogContainer', function () {
       return (
         <Provider theme={theme}>
           <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <DialogContainer onDismiss={() => setOpen(false)} {...props}>
               {isOpen &&
                 <ExampleDialog {...props} />
               }
             </DialogContainer>
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
         </Provider>
       );

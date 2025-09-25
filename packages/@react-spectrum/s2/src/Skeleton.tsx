@@ -11,11 +11,10 @@
  */
 
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
-import {colorToken} from '../style/tokens' with {type: 'macro'};
+import {color, style} from '../style' with {type: 'macro'};
 import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {useMediaQuery} from '@react-spectrum/utils';
 
@@ -75,7 +74,7 @@ export function Skeleton({children, isLoading}: SkeletonProps): ReactNode {
 }
 
 export const loadingStyle = raw(`
-  background-image: linear-gradient(to right, ${colorToken('gray-100')} 33%, light-dark(${colorToken('gray-25')}, ${colorToken('gray-300')}), ${colorToken('gray-100')} 66%);
+  background-image: linear-gradient(to right, ${color('gray-100')} 33%, light-dark(${color('gray-25')}, ${color('gray-300')}), ${color('gray-100')} 66%);
   background-size: 300%;
   * {
     visibility: hidden;
@@ -121,13 +120,14 @@ export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactN
     return children;
   }
 
-  let childRef = 'ref' in children ? children.ref as any : children.props.ref;
+  let childRef = 'ref' in children && !Object.getOwnPropertyDescriptor(children, 'ref')?.get ? children.ref as any : children.props.ref;
   return (
     <SkeletonContext.Provider value={null}>
       {isLoading ? cloneElement(children, {
         ref: mergeRefs(childRef, animation),
         className: (children.props.className || '') + ' ' + loadingStyle,
-        inert: 'true'
+        // @ts-ignore - compatibility with React < 19
+        inert: inertValue(true)
       }) : children}
     </SkeletonContext.Provider>
   );

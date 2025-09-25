@@ -64,7 +64,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -138,6 +139,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -151,7 +156,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       // Touch devices fire events in a different sequence than mouse.
@@ -230,6 +236,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -243,7 +253,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -317,6 +328,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -330,7 +345,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent}>
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})}>
           {/* eslint-disable-next-line */}
           <div data-testid="inner" onClick={e => e.stopPropagation()} />
         </Example>
@@ -372,17 +388,6 @@ describe('usePress', function () {
           pressed: true
         },
         {
-          type: 'pressup',
-          target: el.parentElement,
-          pointerType: 'mouse',
-          ctrlKey: false,
-          metaKey: false,
-          shiftKey: false,
-          altKey: false,
-          x: 0,
-          y: 0
-        },
-        {
           type: 'pressend',
           target: el.parentElement,
           pointerType: 'mouse',
@@ -409,7 +414,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -546,6 +552,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -559,7 +569,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -609,7 +620,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -660,7 +672,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -713,7 +726,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey, altKey: e.altKey})} />
       );
 
       let el = res.getByText('test');
@@ -775,6 +789,14 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el,
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -788,14 +810,15 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', button: 1}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', button: 1, clientX: 0, clientY: 0}));
       fireEvent.click(el, {button: 1});
-      expect(events).toEqual([]);
+      expect(events).toEqual([]); // TODO
     });
 
     it('should not focus the target on click if preventFocusOnPress is true', function () {
@@ -817,7 +840,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -871,6 +895,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -885,7 +913,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -937,6 +966,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
 
@@ -951,7 +984,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1007,11 +1041,15 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
 
-    it('should not fire press events for disabled elements', function () {
+    it('should not fire press/click events for disabled elements', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
@@ -1021,12 +1059,14 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.click(el);
 
       expect(events).toEqual([]);
     });
@@ -1068,7 +1108,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1131,6 +1172,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -1144,7 +1189,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1275,6 +1321,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -1289,7 +1339,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1340,7 +1391,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey, altKey: e.altKey})} />
       );
 
       let el = res.getByText('test');
@@ -1400,6 +1452,14 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el,
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: true,
+          altKey: false
         }
       ]);
     });
@@ -1413,7 +1473,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1421,7 +1482,7 @@ describe('usePress', function () {
       fireEvent.mouseUp(el, {detail: 1, button: 1});
       fireEvent.click(el, {detail: 1, button: 1});
 
-      expect(events).toEqual([]);
+      expect(events).toEqual([]); // todo
     });
 
     it('should not focus the element on click if preventFocusOnPress is true', function () {
@@ -1462,7 +1523,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1514,7 +1576,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1573,6 +1636,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -1586,7 +1653,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1715,6 +1783,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -1729,7 +1801,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1780,7 +1853,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1876,6 +1950,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -1889,7 +1967,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1940,7 +2019,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -1992,7 +2072,8 @@ describe('usePress', function () {
             onPressEnd={addEvent}
             onPressChange={pressed => addEvent({type: 'presschange', pressed})}
             onPress={addEvent}
-            onPressUp={addEvent} />
+            onPressUp={addEvent}
+            onClick={e => addEvent({type: e.type, target: e.target})} />
           <div data-testid="scrollable" />
         </>
       );
@@ -2057,6 +2138,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -2070,7 +2155,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -2161,7 +2247,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = getByText('test');
@@ -2219,6 +2306,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -2270,9 +2361,6 @@ describe('usePress', function () {
           pressed: true
         },
         {
-          type: 'click'
-        },
-        {
           type: 'pressup',
           target: el,
           pointerType: 'keyboard',
@@ -2308,6 +2396,9 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click'
         }
       ]);
     });
@@ -2389,6 +2480,9 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click'
         }
       ]);
     });
@@ -2483,7 +2577,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey, altKey: e.altKey})} />
       );
 
       let el = res.getByText('test');
@@ -2542,6 +2637,14 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el,
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -2555,7 +2658,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target, ctrlKey: e.ctrlKey, metaKey: e.metaKey, shiftKey: e.shiftKey, altKey: e.altKey})} />
       );
 
       let spy = jest.spyOn(window.navigator, 'platform', 'get').mockImplementation(() => 'Mac');
@@ -2620,6 +2724,14 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el,
+          ctrlKey: false,
+          metaKey: true,
+          shiftKey: false,
+          altKey: false
         }
       ]);
     });
@@ -2633,7 +2745,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = getByText('test');
@@ -2728,6 +2841,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -2741,7 +2858,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = getByText('test');
@@ -2762,7 +2880,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = getByRole('checkbox');
@@ -2846,6 +2965,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -2861,7 +2984,8 @@ describe('usePress', function () {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = getByText('test');
@@ -2919,6 +3043,10 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });
@@ -2935,7 +3063,8 @@ describe('usePress', function () {
           onPressUp={e => {
             addEvent(e);
             e.target.click();
-          }} />
+          }}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = getByText('test');
@@ -4425,12 +4554,13 @@ describe('usePress', function () {
       ]);
     });
 
-    it('should not fire press events for disabled elements', function () {
-      const shadowRoot = setupShadowDOMTest({isDisabled: true});
+    it('should not fire press/click events for disabled elements', function () {
+      const shadowRoot = setupShadowDOMTest({isDisabled: true, onClick: e => addEvent({type: e.type, target: e.target})});
 
       const el = shadowRoot.getElementById('testElement');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.click(el);
 
       expect(events).toEqual([]);
     });
@@ -4585,7 +4715,8 @@ describe('coordinates', () => {
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
           onPress={addEvent}
-          onPressUp={addEvent} />
+          onPressUp={addEvent}
+          onClick={e => addEvent({type: e.type, target: e.target})} />
       );
 
       let el = res.getByText('test');
@@ -4645,6 +4776,10 @@ describe('coordinates', () => {
           altKey: false,
           x: 75,
           y: 75
+        },
+        {
+          type: 'click',
+          target: el
         }
       ]);
     });

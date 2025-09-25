@@ -1,3 +1,4 @@
+'use client';
 import React, { ReactNode } from 'react';
 import { Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
@@ -26,7 +27,7 @@ export function RadioGroup(props: RadioGroupProps) {
 
 const styles = tv({
   extend: focusRing,
-  base: 'w-5 h-5 rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
+  base: 'w-5 h-5 box-border rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
   variants: {
     isSelected: {
       false: 'border-gray-400 dark:border-zinc-400 group-pressed:border-gray-500 dark:group-pressed:border-zinc-300',
@@ -43,7 +44,7 @@ const styles = tv({
 
 export function Radio(props: RadioProps) {
   return (
-    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
+    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
       {renderProps => <>
         <div className={styles(renderProps)} />
         {props.children}

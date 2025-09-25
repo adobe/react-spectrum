@@ -25,7 +25,7 @@ interface HookData {
   selectedDateDescription: string
 }
 
-export const hookData = new WeakMap<CalendarState | RangeCalendarState, HookData>();
+export const hookData: WeakMap<CalendarState | RangeCalendarState, HookData> = new WeakMap<CalendarState | RangeCalendarState, HookData>();
 
 export function getEraFormat(date: CalendarDate | undefined): 'short' | undefined {
   return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;
@@ -93,12 +93,21 @@ export function useVisibleRangeDescription(startDate: CalendarDate, endDate: Cal
     // Special case for month granularity. Format as a single month if only a
     // single month is visible, otherwise format as a range of months.
     if (isSameDay(startDate, startOfMonth(startDate))) {
+      let startMonth = startDate;
+      let endMonth = endDate;
+      if (startDate.calendar.getFormattableMonth) {
+        startMonth = startDate.calendar.getFormattableMonth(startDate);
+      }
+      if (endDate.calendar.getFormattableMonth) {
+        endMonth = endDate.calendar.getFormattableMonth(endDate);
+      }
+
       if (isSameDay(endDate, endOfMonth(startDate))) {
-        return monthFormatter.format(startDate.toDate(timeZone));
+        return monthFormatter.format(startMonth.toDate(timeZone));
       } else if (isSameDay(endDate, endOfMonth(endDate))) {
         return isAria
-          ? formatRange(monthFormatter, stringFormatter, startDate, endDate, timeZone)
-          : monthFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
+          ? formatRange(monthFormatter, stringFormatter, startMonth, endMonth, timeZone)
+          : monthFormatter.formatRange(startMonth.toDate(timeZone), endMonth.toDate(timeZone));
       }
     }
 

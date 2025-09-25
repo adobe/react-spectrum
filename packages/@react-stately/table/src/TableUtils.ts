@@ -25,8 +25,10 @@ export function parseFractionalUnit(width?: ColumnSize | null): number {
   let match = width.match(/^(.+)(?=fr$)/);
   // if width is the incorrect format, just default it to a 1fr
   if (!match) {
-    console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`,
-      'defaulting to \'1fr\'');
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`width: ${width} is not a supported format, width should be a number (ex. 150), percentage (ex. '50%') or fr unit (ex. '2fr')`,
+        'defaulting to \'1fr\'');
+    }
     return 1;
   }
   return parseFloat(match[0]);
@@ -102,7 +104,7 @@ interface FlexItem {
  * @param getDefaultWidth - A function that returns the default width of a column by its index.
  * @param getDefaultMinWidth - A function that returns the default min width of a column by its index.
  */
-export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth?: (number) => ColumnSize | null | undefined, getDefaultMinWidth?: (number) => ColumnSize | null | undefined): number[] {
+export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth?: (index: number) => ColumnSize | null | undefined, getDefaultMinWidth?: (index: number) => ColumnSize | null | undefined): number[] {
   let hasNonFrozenItems = false;
   let flexItems: FlexItem[] = columns.map((column, index) => {
     let width: ColumnSize = (changedColumns.get(column.key) != null ? changedColumns.get(column.key) ?? '1fr' : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr') as ColumnSize;

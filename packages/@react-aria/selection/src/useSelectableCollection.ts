@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getInteractionModality} from '@react-aria/interactions';
-import {getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -54,6 +54,11 @@ export interface AriaSelectableCollectionOptions {
    * @default false
    */
   disallowSelectAll?: boolean,
+  /**
+   * Whether pressing the Escape should clear selection in the collection or not.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
   /**
    * Whether selection should occur automatically on focus.
    * @default false
@@ -108,6 +113,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
+    escapeKeyBehavior = 'clearSelection',
     selectOnFocus = manager.selectionBehavior === 'replace',
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
@@ -279,7 +285,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Escape':
-        if (!disallowEmptySelection && manager.selectedKeys.size !== 0) {
+        if (escapeKeyBehavior === 'clearSelection' && !disallowEmptySelection && manager.selectedKeys.size !== 0) {
           e.stopPropagation();
           e.preventDefault();
           manager.clearSelection();
@@ -401,7 +407,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     let {detail} = e;
     e.stopPropagation();
     manager.setFocused(true);
-
     // If the user is typing forwards, autofocus the first option in the list.
     if (detail?.focusStrategy === 'first') {
       shouldVirtualFocusFirst.current = true;
@@ -411,9 +416,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let updateActiveDescendant = useEffectEvent(() => {
     let keyToFocus = delegate.getFirstKey?.() ?? null;
 
-    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
+    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
+    // the original active element (e.g. the autocomplete input)
     if (keyToFocus == null) {
+      let previousActiveElement = getActiveElement();
       moveVirtualFocus(ref.current);
+      dispatchVirtualFocus(previousActiveElement!, null);
 
       // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
       // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
@@ -499,6 +507,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
+  let raf = useRef<number | null>(null);
   useEffect(() => {
     if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || didAutoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
@@ -510,12 +519,20 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
 
       if (modality === 'keyboard' || didAutoFocusRef.current) {
-        scrollIntoView(scrollRef.current, element);
 
-        // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
-        if (modality !== 'virtual') {
-          scrollIntoViewport(element, {containingElement: ref.current});
+        if (raf.current) {
+          cancelAnimationFrame(raf.current);
         }
+
+        raf.current = requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollIntoView(scrollRef.current, element);
+            // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
+            if (modality !== 'virtual') {
+              scrollIntoViewport(element, {containingElement: ref.current});
+            }
+          }
+        });
       }
     }
 
@@ -527,6 +544,14 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     lastFocusedKey.current = manager.focusedKey;
     didAutoFocusRef.current = false;
   });
+
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   // Intercept FocusScope restoration since virtualized collections can reuse DOM nodes.
   useEvent(ref, 'react-aria-focus-scope-restore', e => {

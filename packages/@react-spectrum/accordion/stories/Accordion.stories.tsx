@@ -88,3 +88,26 @@ export const WithDisabledDisclosure: AccordionStory = {
     </Accordion>
   )
 };
+
+export const WithWrappingTitle: AccordionStory = {
+  render: (args) => (
+    <Accordion maxWidth="size-3000" {...args}>
+      <Disclosure id="files">
+        <DisclosureTitle>
+          Long long long long long long long long long long long long long  long long long wrapping title 
+        </DisclosureTitle>
+        <DisclosurePanel>
+          Files content
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="people">
+        <DisclosureTitle>
+          People
+        </DisclosureTitle>
+        <DisclosurePanel>
+          People content
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>
+  )
+};

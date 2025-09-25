@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   Switch as AriaSwitch,
@@ -12,7 +13,7 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {
 
 const track = tv({
   extend: focusRing,
-  base: 'flex h-4 w-7 px-px items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent',
+  base: 'flex h-4 w-7 box-border px-px items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent',
   variants: {
     isSelected: {
       false: 'bg-gray-400 dark:bg-zinc-400 group-pressed:bg-gray-500 dark:group-pressed:bg-zinc-300',
@@ -39,7 +40,7 @@ const handle = tv({
 
 export function Switch({ children, ...props }: SwitchProps) {
   return (
-    <AriaSwitch {...props} className={composeTailwindRenderProps(props.className, 'group flex gap-2 items-center text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
+    <AriaSwitch {...props} className={composeTailwindRenderProps(props.className, 'group relative flex gap-2 items-center text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
       {(renderProps) => (
         <>
           <div className={track(renderProps)}>

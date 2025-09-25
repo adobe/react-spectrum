@@ -15,6 +15,7 @@ export type {
   AnyTime,
   AnyDateTime,
   Calendar,
+  CalendarIdentifier,
   DateDuration,
   TimeDuration,
   DateTimeDuration,
@@ -62,6 +63,8 @@ export {
   today,
   getHoursInDay,
   getLocalTimeZone,
+  setLocalTimeZone,
+  resetLocalTimeZone,
   startOfMonth,
   startOfWeek,
   startOfYear,
@@ -74,7 +77,8 @@ export {
   minDate,
   maxDate,
   isWeekend,
-  isWeekday
+  isWeekday,
+  isEqualCalendar
 } from './queries';
 export {
   parseDate,

@@ -11,8 +11,10 @@
  */
 import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {forwardRefType} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {SharedElementTransition} from './SharedElementTransition';
 import {ToggleGroupState, useToggleGroupState} from 'react-stately';
 
 export interface ToggleButtonGroupRenderProps {
@@ -27,7 +29,7 @@ export interface ToggleButtonGroupRenderProps {
   state: ToggleGroupState
 }
 
-export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps {}
+export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
 
 export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>({});
 export const ToggleGroupStateContext = createContext<ToggleGroupState | null>(null);
@@ -49,16 +51,19 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(fu
     defaultClassName: 'react-aria-ToggleButtonGroup'
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...groupProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'horizontal'}
       data-disabled={props.isDisabled || undefined}>
       <ToggleGroupStateContext.Provider value={state}>
-        {renderProps.children}
+        <SharedElementTransition>
+          {renderProps.children}
+        </SharedElementTransition>
       </ToggleGroupStateContext.Provider>
     </div>
   );

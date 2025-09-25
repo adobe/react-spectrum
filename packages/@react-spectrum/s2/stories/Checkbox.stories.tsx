@@ -11,7 +11,7 @@
  */
 
 import {Checkbox} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Checkbox> = {
@@ -22,13 +22,20 @@ const meta: Meta<typeof Checkbox> = {
   tags: ['autodocs'],
   argTypes: {
     inputRef: {control: {disable: true}},
-    onChange: {table: {category: 'Events'}}
+    onChange: {table: {category: 'Events'}},
+    children: {table: {disable: true}}
   },
   title: 'Checkbox'
 };
 
 export default meta;
 
-export const Example = (args: any) => (<Checkbox {...args}>Unsubscribe</Checkbox>);
+type Story = StoryObj<typeof Checkbox>;
 
-export const LongLabel = (args: any) => (<Checkbox {...args} styles={style({maxWidth: 128})}>Checkbox with very long label so we can see wrapping</Checkbox>);
+export const Example: Story = {
+  render: (args) => (<Checkbox {...args}>Unsubscribe</Checkbox>)
+};
+
+export const LongLabel: Story = {
+  render: (args) => (<Checkbox {...args} styles={style({maxWidth: 128})}>Checkbox with very long label so we can see wrapping</Checkbox>)
+};

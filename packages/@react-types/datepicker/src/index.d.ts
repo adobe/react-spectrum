@@ -25,7 +25,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, CalendarIdentifier, Calendar as ICalendar, Time, ZonedDateTime} from '@internationalized/date';
 import {OverlayTriggerProps} from '@react-types/overlays';
 import {PageBehavior} from '@react-types/calendar';
 
@@ -64,7 +64,12 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation<Mappe
 
 interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
 export interface DateFieldProps<T extends DateValue> extends DateFieldBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
-export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T>, InputDOMProps {}
+export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaDateFieldBaseProps<T>, InputDOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string
+}
 
 interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayTriggerProps {
   /**
@@ -77,10 +82,15 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
    */
   firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
-export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
+export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, InputDOMProps, DOMProps {}
 
 export interface DatePickerProps<T extends DateValue> extends DatePickerBase<T>, ValueBase<T | null, MappedDateValue<T> | null> {}
-export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T>, InputDOMProps {}
+export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaDatePickerBaseProps<T>, InputDOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string
+}
 
 export type DateRange = RangeValue<DateValue>;
 export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePickerBase<T>, 'validate'>, Validation<RangeValue<MappedDateValue<T>>>, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>> | null> {
@@ -99,7 +109,7 @@ export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePick
   endName?: string
 }
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate'>, DateRangePickerProps<T> {}
+export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate' | 'name'>, DateRangePickerProps<T> {}
 
 interface SpectrumDateFieldBase<T extends DateValue> extends SpectrumLabelableProps, HelpTextProps, SpectrumFieldValidation<MappedDateValue<T>>, StyleProps {
   /**
@@ -124,12 +134,18 @@ interface SpectrumDatePickerBase<T extends DateValue> extends SpectrumDateFieldB
    * Whether the calendar popover should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the
+   * `createCalendar` function from `@internationalized/date` will be used.
+   */
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
-export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase<T> {}
+export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState' | 'autoComplete'>, SpectrumDatePickerBase<T> {}
 export interface SpectrumDateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'isInvalid' | 'validationState'>, Omit<SpectrumDatePickerBase<T>, 'validate'> {}
-export interface SpectrumDateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'isInvalid' | 'validationState'>, SpectrumDateFieldBase<T> {}
+export interface SpectrumDateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'isInvalid' | 'validationState' | 'autoComplete'>, SpectrumDateFieldBase<T> {}
 
 export type TimeValue = Time | CalendarDateTime | ZonedDateTime;
 type MappedTimeValue<T> =

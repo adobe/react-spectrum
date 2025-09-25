@@ -40,17 +40,16 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem} from 'react-aria-components';
 import type {ListBoxItemProps} from 'react-aria-components';
-import ChevronUpDownIcon from '@spectrum-icons/workflow/ChevronUpDown';
-import CheckIcon from '@spectrum-icons/workflow/Checkmark';
+import {ChevronsUpDown, Check} from 'lucide-react';
 
 function SelectExample() {
   return (
     <div className="bg-linear-to-tl from-amber-500 to-rose-700 p-8 sm:h-[250px] rounded-lg flex justify-center">
-      <Select className="flex flex-col gap-1 w-[200px]">
+      <Select className="flex flex-col gap-1 w-[200px] relative">
         <Label className="text-white cursor-default">Status</Label>
         <Button className="flex items-center cursor-default rounded-lg border-0 bg-white/90 pressed:bg-white transition py-2 pl-5 pr-2 text-base text-left leading-normal shadow-md text-gray-700 focus:outline-hidden focus-visible:ring-2 ring-white ring-offset-2 ring-offset-rose-700">
           <SelectValue className="flex-1 truncate placeholder-shown:italic" />
-          <ChevronUpDownIcon size="XS" />
+          <ChevronsUpDown className="w-4 h-4" />
         </Button>
         <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
           <ListBox className="outline-hidden p-1">
@@ -90,7 +89,7 @@ function StatusItem(props: ListBoxItemProps & {children: React.ReactNode}) {
         <>
           <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-medium">{props.children}</span>
           <span className="w-5 flex items-center text-rose-600 group-focus:text-white">
-            {isSelected && <CheckIcon size="S" />}
+            {isSelected && <Check className="w-4 h-4" />}
           </span>
         </>
       )}

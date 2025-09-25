@@ -1,12 +1,16 @@
 {
   "name": "@react-spectrum/tabs",
-  "version": "3.8.18",
+  "version": "3.8.26",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -36,20 +40,20 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.20.1",
-    "@react-aria/i18n": "^3.12.7",
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/tabs": "^3.10.1",
-    "@react-aria/utils": "^3.28.1",
-    "@react-spectrum/picker": "^3.15.7",
-    "@react-spectrum/text": "^3.5.13",
-    "@react-spectrum/utils": "^3.12.3",
-    "@react-stately/collections": "^3.12.2",
-    "@react-stately/list": "^3.12.0",
-    "@react-stately/tabs": "^3.8.0",
-    "@react-types/select": "^3.9.10",
-    "@react-types/shared": "^3.28.0",
-    "@react-types/tabs": "^3.3.13",
+    "@react-aria/focus": "^3.21.1",
+    "@react-aria/i18n": "^3.12.12",
+    "@react-aria/interactions": "^3.25.5",
+    "@react-aria/tabs": "^3.10.7",
+    "@react-aria/utils": "^3.30.1",
+    "@react-spectrum/picker": "^3.16.3",
+    "@react-spectrum/text": "^3.5.21",
+    "@react-spectrum/utils": "^3.12.8",
+    "@react-stately/collections": "^3.12.7",
+    "@react-stately/list": "^3.13.0",
+    "@react-stately/tabs": "^3.8.5",
+    "@react-types/select": "^3.10.1",
+    "@react-types/shared": "^3.32.0",
+    "@react-types/tabs": "^3.3.18",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

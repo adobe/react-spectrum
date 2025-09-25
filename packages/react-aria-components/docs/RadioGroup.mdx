@@ -76,6 +76,8 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
 
 .react-aria-Radio {
   display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
   align-items: center;
   gap: 0.571rem;
   font-size: 1.143rem;
@@ -146,11 +148,13 @@ to provide more context about the field, and any validation messages. These are 
 inputs via the `aria-describedby` attribute.
 
 ```tsx
-import {RadioGroup, Radio, Label, Text, FieldError} from 'react-aria-components';
+import {RadioGroup, Radio, Label, Text, FieldError, SelectionIndicator} from 'react-aria-components';
 
 <RadioGroup>
   <Label />
-  <Radio />
+  <Radio>
+    <SelectionIndicator />
+  </Radio>
   <Text slot="description" />
   <FieldError />
 </RadioGroup>

@@ -110,7 +110,7 @@ export interface TableContextValue<T> {
   state: TableState<T> | TreeGridState<T>,
   dragState: DraggableCollectionState | null,
   dropState: DroppableCollectionState | null,
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
+  dragAndDropHooks?: DragAndDropHooks<T>['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
   layout: TableViewLayout<T>,
@@ -161,6 +161,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let dragHooksProvided = useRef(isTableDraggable);
   let dropHooksProvided = useRef(isTableDroppable);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
     if (dragHooksProvided.current !== isTableDraggable) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
@@ -751,7 +754,7 @@ function TableColumnHeader(props) {
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let columnProps = column.props as SpectrumColumnProps<unknown>;
   useEffect(() => {
-    if (column.hasChildNodes && columnProps.allowsResizing) {
+    if (column.hasChildNodes && columnProps.allowsResizing && process.env.NODE_ENV !== 'production') {
       console.warn(`Column key: ${column.key}. Columns with child columns don't allow resizing.`);
     }
   }, [column.hasChildNodes, column.key, columnProps.allowsResizing]);
@@ -1047,6 +1050,7 @@ function TableSelectAllCell({column}) {
         }
         <Checkbox
           {...checkboxProps}
+          data-testid="selectAll"
           isEmphasized
           UNSAFE_style={isSingleSelectionMode ? {visibility: 'hidden'} : undefined}
           UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />

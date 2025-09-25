@@ -11,18 +11,28 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Collection, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField, Virtualizer} from 'react-aria-components';
-import {MyListBoxItem, MyMenuItem} from './utils';
-import React from 'react';
+import {Autocomplete, Button, Cell, Collection, Column, DialogTrigger, GridList, GridListHeader, GridListSection, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, OverlayArrow, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Table, TableBody, TableHeader, TableLayout, TagGroup, TagList, Text, TextArea, TextField, Tooltip, TooltipTrigger, Virtualizer} from 'react-aria-components';
+import {LoadingSpinner, MyListBoxItem, MyMenuItem} from './utils';
+import {Meta, StoryObj} from '@storybook/react';
+import {MyCheckbox} from './Table.stories';
+import {MyGridListItem} from './GridList.stories';
+import {MyListBoxLoaderIndicator} from './ListBox.stories';
+import {MyTag} from './TagGroup.stories';
+import {Node} from '@react-types/shared';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components',
+  title: 'React Aria Components/Autocomplete',
+  component: Autocomplete,
   args: {
     onAction: action('onAction'),
-    selectionMode: 'multiple'
+    selectionMode: 'multiple',
+    escapeKeyBehavior: 'clearSelection',
+    disableVirtualFocus: false
   },
   argTypes: {
     onAction: {
@@ -38,9 +48,17 @@ export default {
     selectionMode: {
       control: 'radio',
       options: ['none', 'single', 'multiple']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
-};
+} as Meta<typeof Autocomplete>;
+
+export type AutocompleteStory = StoryObj<typeof Autocomplete>;
+export type MenuStory = StoryObj<typeof Menu>;
+export type ListBoxStory = StoryObj<typeof ListBox>;
 
 let StaticMenu = (props) => {
   return (
@@ -107,19 +125,17 @@ function AutocompleteWrapper(props) {
   );
 }
 
-export const AutocompleteExample = {
+export const AutocompleteExample: AutocompleteStory = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-
     return (
-      <AutocompleteWrapper>
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </TextField>
-          <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
+          <StaticMenu {...args} />
         </div>
       </AutocompleteWrapper>
     );
@@ -127,18 +143,17 @@ export const AutocompleteExample = {
   name: 'Autocomplete complex static with textfield'
 };
 
-export const AutocompleteSearchfield = {
+export const AutocompleteSearchfield: AutocompleteStory = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper defaultInputValue="Ba">
+      <AutocompleteWrapper defaultValue="Ba" disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <SearchField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
+          <StaticMenu {...args} />
         </div>
       </AutocompleteWrapper>
     );
@@ -153,7 +168,7 @@ export const AutocompleteSearchfield = {
 
 // Note that the trigger items in this array MUST have an id, even if the underlying MenuItem might apply its own
 // id. If it is omitted, we can't build the collection node for the trigger node and an error will throw
-let dynamicAutocompleteSubdialog = [
+let dynamicAutocompleteSubdialog: MenuNode[] = [
   {name: 'Section 1', isSection: true, children: [
     {name: 'Command Palette'},
     {name: 'Open View'}
@@ -286,21 +301,19 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export const AutocompleteMenuDynamic = {
+export const AutocompleteMenuDynamic: AutocompleteStory = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-
     return (
       <>
         <input />
-        <AutocompleteWrapper>
+        <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
           <div>
             <SearchField autoFocus>
               <Label style={{display: 'block'}}>Test</Label>
               <Input />
               <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
             </SearchField>
-            <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+            <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
               {item => dynamicRenderFuncSections(item)}
             </Menu>
           </div>
@@ -312,18 +325,17 @@ export const AutocompleteMenuDynamic = {
   name: 'Autocomplete, dynamic menu'
 };
 
-export const AutocompleteOnActionOnMenuItems = {
+export const AutocompleteOnActionOnMenuItems: AutocompleteStory = {
   render: (args) => {
-    let {onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper>
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <Menu className={styles.menu} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+          <Menu className={styles.menu} {...args}>
             <MyMenuItem onAction={action('Foo action')}>Foo</MyMenuItem>
             <MyMenuItem onAction={action('Bar action')}>Bar</MyMenuItem>
             <MyMenuItem onAction={action('Baz action')}>Baz</MyMenuItem>
@@ -342,19 +354,18 @@ interface AutocompleteItem {
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 
-export const AutocompleteDisabledKeys = {
+export const AutocompleteDisabledKeys: AutocompleteStory = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper>
+      <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <Menu className={styles.menu} items={items} onAction={onAction} disabledKeys={['2']} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-            {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+          <Menu className={styles.menu} items={items} disabledKeys={['2']} {...args}>
+            {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
           </Menu>
         </div>
       </AutocompleteWrapper>
@@ -363,7 +374,7 @@ export const AutocompleteDisabledKeys = {
   name: 'Autocomplete, disabled key'
 };
 
-const AsyncExample = (args) => {
+const AsyncExample = (args: any): React.ReactElement => {
   let list = useAsyncList<AutocompleteItem>({
     async load({filterText}) {
       let json = await new Promise(resolve => {
@@ -386,14 +397,14 @@ const AsyncExample = (args) => {
       };
     }
   });
-  let {onSelectionChange, selectionMode, includeLoadState} = args;
+  let {onSelectionChange, selectionMode, includeLoadState, escapeKeyBehavior, disableVirtualFocus} = args;
   let renderEmptyState;
   if (includeLoadState) {
     renderEmptyState = list.isLoading ? () => 'Loading' : () => 'No results found.';
   }
 
   return (
-    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} disableVirtualFocus={disableVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
@@ -401,6 +412,7 @@ const AsyncExample = (args) => {
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
         <ListBox<AutocompleteItem>
+          escapeKeyBehavior={escapeKeyBehavior}
           renderEmptyState={renderEmptyState}
           items={includeLoadState && list.isLoading ? [] : list.items}
           className={styles.menu}
@@ -413,7 +425,7 @@ const AsyncExample = (args) => {
   );
 };
 
-export const AutocompleteAsyncLoadingExample = {
+export const AutocompleteAsyncLoadingExample: StoryObj<typeof AsyncExample> = {
   render: (args) => {
     return <AsyncExample {...args} />;
   },
@@ -428,61 +440,77 @@ const CaseSensitiveFilter = (args) => {
     sensitivity: 'case'
   });
   let defaultFilter = (itemText, input) => contains(itemText, input);
-  let {onAction, onSelectionChange, selectionMode} = args;
+
   return (
-    <Autocomplete filter={defaultFilter}>
+    <Autocomplete<AutocompleteItem> filter={defaultFilter} disableVirtualFocus={args.disableVirtualFocus}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
-        <Menu className={styles.menu} items={items} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-          {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+        <Menu className={styles.menu} items={items} {...args}>
+          {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
         </Menu>
       </div>
     </Autocomplete>
   );
 };
 
-export const AutocompleteCaseSensitive = {
+export const AutocompleteCaseSensitive: AutocompleteStory = {
   render: (args) => {
     return <CaseSensitiveFilter {...args} />;
   },
   name: 'Autocomplete, case sensitive filter'
 };
 
-export const AutocompleteWithListbox = {
+export const AutocompleteWithListbox: AutocompleteStory = {
   render: (args) => {
-    let {onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper defaultInputValue="Ba">
-        <div>
-          <SearchField autoFocus>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </SearchField>
-          <ListBox className={styles.menu} onSelectionChange={onSelectionChange} selectionMode={selectionMode} aria-label="test listbox with section">
-            <ListBoxSection className={styles.group}>
-              <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-              <MyListBoxItem>Foo</MyListBoxItem>
-              <MyListBoxItem>Bar</MyListBoxItem>
-              <MyListBoxItem>Baz</MyListBoxItem>
-              <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-            </ListBoxSection>
-            <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-            <ListBoxSection className={styles.group} aria-label="Section 2">
-              <MyListBoxItem>Copy</MyListBoxItem>
-              <MyListBoxItem>Paste</MyListBoxItem>
-              <MyListBoxItem>Cut</MyListBoxItem>
-            </ListBoxSection>
-          </ListBox>
-        </div>
-      </AutocompleteWrapper>
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          {() => (
+            <AutocompleteWrapper defaultInputValue="Ba" disableVirtualFocus={args.disableVirtualFocus}>
+              <div>
+                <SearchField autoFocus>
+                  <Label style={{display: 'block'}}>Test</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </SearchField>
+                <ListBox className={styles.menu} {...args} aria-label="test listbox with section">
+                  <ListBoxSection className={styles.group}>
+                    <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+                    <MyListBoxItem>Foo</MyListBoxItem>
+                    <MyListBoxItem>Bar</MyListBoxItem>
+                    <MyListBoxItem>Baz</MyListBoxItem>
+                    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                  </ListBoxSection>
+                  <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+                  <ListBoxSection className={styles.group} aria-label="Section 2">
+                    <MyListBoxItem>Copy</MyListBoxItem>
+                    <MyListBoxItem>Paste</MyListBoxItem>
+                    <MyListBoxItem>Cut</MyListBoxItem>
+                  </ListBoxSection>
+                </ListBox>
+              </div>
+            </AutocompleteWrapper>
+          )}
+        </Popover>
+      </DialogTrigger>
     );
   },
-  name: 'Autocomplete with ListBox'
+  name: 'Autocomplete with ListBox + Popover'
 };
 
 function VirtualizedListBox(props) {
@@ -495,15 +523,16 @@ function VirtualizedListBox(props) {
     initialItems: items
   });
 
-  let {onSelectionChange, selectionMode} = props;
+  let {onSelectionChange, selectionMode, escapeKeyBehavior} = props;
 
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
       <ListBox
+        escapeKeyBehavior={escapeKeyBehavior}
         onSelectionChange={onSelectionChange}
         selectionMode={selectionMode}
         className={styles.menu}
-        style={{height: 400}}
+        style={{height: 200}}
         aria-label="virtualized listbox"
         items={list.items}>
         {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
@@ -512,23 +541,39 @@ function VirtualizedListBox(props) {
   );
 }
 
-export const AutocompleteWithVirtualizedListbox = {
+export const AutocompleteWithVirtualizedListbox: AutocompleteStory = {
   render: (args) => {
-    let {onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper>
-        <div>
-          <SearchField autoFocus>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </SearchField>
-          <VirtualizedListBox onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
-        </div>
-      </AutocompleteWrapper>
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          {() => (
+            <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+              <div>
+                <SearchField autoFocus>
+                  <Label style={{display: 'block'}}>Test</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </SearchField>
+                <VirtualizedListBox {...args} />
+              </div>
+            </AutocompleteWrapper>
+          )}
+        </Popover>
+      </DialogTrigger>
     );
   },
-  name: 'Autocomplete with ListBox, virtualized'
+  name: 'Autocomplete with ListBox + Popover, virtualized'
 };
 
 let lotsOfSections: any[] = [];
@@ -582,7 +627,7 @@ function ShellExample() {
   );
 }
 
-export const AutocompleteInPopover = {
+export const AutocompleteInPopover: MenuStory = {
   render: () => {
     return (
       <MenuTrigger>
@@ -627,7 +672,7 @@ export const AutocompleteInPopover = {
   }
 };
 
-export const AutocompleteInPopoverDialogTrigger = {
+export const AutocompleteInPopoverDialogTrigger: MenuStory = {
   render: () => {
     return (
       <DialogTrigger>
@@ -738,7 +783,7 @@ const MyMenu2 = () => {
   );
 };
 
-export function AutocompleteWithExtraButtons() {
+export function AutocompleteWithExtraButtons(): React.ReactElement {
   return (
     <div>
       <input />
@@ -751,9 +796,11 @@ export function AutocompleteWithExtraButtons() {
   );
 }
 
-export const AutocompleteMenuInPopoverDialogTrigger = {
+// TODO: note that Space is used to select an item in a multiselect menu but that is also reserved for the
+// autocomplete input field. Should we add logic to allow Space to select menu items when focus is in the Menu
+// or is that a rare/unlikely use case for menus in general?
+export const AutocompleteMenuInPopoverDialogTrigger: MenuStory = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
     return (
       <DialogTrigger>
         <Button>
@@ -775,7 +822,7 @@ export const AutocompleteMenuInPopoverDialogTrigger = {
                 <Input />
                 <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
               </SearchField>
-              <Menu className={styles.menu} items={dynamicAutocompleteSubdialog}  onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+              <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
                 {item => dynamicRenderFuncSections(item)}
               </Menu>
             </div>
@@ -796,7 +843,7 @@ export const AutocompleteMenuInPopoverDialogTrigger = {
 
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
-export const AutocompleteSelect = () => (
+export const AutocompleteSelect = (): React.ReactElement => (
   <Select style={{marginBottom: 40}}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
@@ -815,3 +862,349 @@ export const AutocompleteSelect = () => (
     </Popover>
   </Select>
 );
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+let renderEmptyState = (list, cursor) => {
+  let emptyStateContent;
+  if (list.loadingState === 'loading') {
+    emptyStateContent = <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />;
+  } else if (list.loadingState === 'idle' && !cursor) {
+    emptyStateContent = 'No results';
+  }
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {emptyStateContent}
+    </div>
+  );
+};
+
+
+export const AutocompleteWithAsyncListBox = (args) => {
+  let [cursor, setCursor] = useState(null);
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      setCursor(json.next);
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <AutocompleteWrapper disableVirtualFocus={args.disableVirtualFocus}>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            rowHeight: 50,
+            padding: 4,
+            loaderHeight: 30
+          }}>
+          <ListBox
+            {...args}
+            style={{
+              height: 400,
+              width: 100,
+              border: '1px solid gray',
+              background: 'lightgray',
+              overflow: 'auto',
+              padding: 'unset',
+              display: 'flex'
+            }}
+            aria-label="async virtualized listbox"
+            renderEmptyState={() => renderEmptyState(list, cursor)}>
+            <Collection items={list.items}>
+              {(item: Character) => (
+                <MyListBoxItem
+                  style={{
+                    backgroundColor: 'lightgrey',
+                    border: '1px solid black',
+                    boxSizing: 'border-box',
+                    height: '100%',
+                    width: '100%'
+                  }}
+                  id={item.name}>
+                  {item.name}
+                </MyListBoxItem>
+              )}
+            </Collection>
+            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
+          </ListBox>
+        </Virtualizer>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+AutocompleteWithAsyncListBox.story = {
+  args: {
+    delay: 50
+  }
+};
+
+export const AutocompleteWithGridList = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <GridList
+          className={styles.menu}
+          style={{height: 200, width: 200}}
+          aria-label="test gridlist">
+          <GridListSection>
+            <GridListHeader>Section 1</GridListHeader>
+            <MyGridListItem textValue="Foo">Foo <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Bar">Bar <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Baz">Baz <Button>Actions</Button></MyGridListItem>
+          </GridListSection>
+          <GridListSection>
+            <GridListHeader>Section 2</GridListHeader>
+            <MyGridListItem textValue="Charizard">Charizard<Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Blastoise">Blastoise <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Pikachu">Pikachu <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Venusaur">Venusaur<Button>Actions</Button></MyGridListItem>
+          </GridListSection>
+          <GridListSection>
+            <GridListHeader>Section 3</GridListHeader>
+            <MyGridListItem textValue="text value check">textValue is "text value check" <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem textValue="Blah">Blah <Button>Actions</Button></MyGridListItem>
+          </GridListSection>
+        </GridList>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTable = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <Virtualizer
+          layout={TableLayout}
+          layoutOptions={{
+            rowHeight: 25,
+            headingHeight: 25,
+            padding: 10
+          }}>
+          <Table aria-label="Files" selectionMode="multiple" style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
+            <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
+              <Column>
+                <MyCheckbox slot="selection" />
+              </Column>
+              <Column isRowHeader>Name</Column>
+              <Column>Type</Column>
+              <Column>Date Modified</Column>
+            </TableHeader>
+            <TableBody>
+              <Row id="1" style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+                <Cell>6/7/2020</Cell>
+              </Row>
+              <Row id="2" style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>Program Files</Cell>
+                <Cell>File folder</Cell>
+                <Cell>4/7/2021</Cell>
+              </Row>
+              <Row id="3" style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>bootmgr</Cell>
+                <Cell>System file</Cell>
+                <Cell>11/20/2010</Cell>
+              </Row>
+              <Row id="4" style={{width: 'inherit', height: 'inherit'}}>
+                <Cell>
+                  <MyCheckbox slot="selection" />
+                </Cell>
+                <Cell>log.txt</Cell>
+                <Cell>Text Document</Cell>
+                <Cell>1/18/2016</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        </Virtualizer>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+export const AutocompleteWithTagGroup = () => {
+  return (
+    <AutocompleteWrapper>
+      <div>
+        <TextField autoFocus data-testid="autocomplete-example">
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+        </TextField>
+        <TagGroup>
+          <Label>Categories</Label>
+          <TagList style={{display: 'flex', gap: 4}}>
+            <MyTag href="https://nytimes.com">News</MyTag>
+            <MyTag>Travel</MyTag>
+            <MyTag>Gaming</MyTag>
+            <TooltipTrigger>
+              <MyTag>Shopping</MyTag>
+              <Tooltip
+                offset={5}
+                style={{
+                  background: 'Canvas',
+                  color: 'CanvasText',
+                  border: '1px solid gray',
+                  padding: 5,
+                  borderRadius: 4
+                }}>
+                <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+                  <svg width="8" height="8" style={{display: 'block'}}>
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                  </svg>
+                </OverlayArrow>
+                I am a tooltip
+              </Tooltip>
+            </TooltipTrigger>
+          </TagList>
+        </TagGroup>
+      </div>
+    </AutocompleteWrapper>
+  );
+};
+
+type MenuNode = {
+  name: string,
+  id?: string,
+  isSection?: boolean,
+  isMenu?: boolean,
+  children?: MenuNode[]
+}
+
+function AutocompleteNodeFiltering(args) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue: string, inputValue: string, node: Node<MenuNode>) => {
+    if ((node.parentKey === 'Section 1' && textValue === 'Open View') || (node.parentKey === 'Section 2' && textValue === 'Appearance')) {
+      return true;
+    }
+
+    return contains(textValue, inputValue);
+  };
+
+  return (
+    <Autocomplete<MenuNode> filter={filter} disableVirtualFocus={args.disableVirtualFocus}>
+      <div>
+        <SearchField autoFocus>
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </SearchField>
+        <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
+          {item => dynamicRenderFuncSections(item)}
+        </Menu>
+      </div>
+    </Autocomplete>
+  );
+}
+
+export const AutocompletePreserveFirstSectionStory: AutocompleteStory = {
+  render: (args) => <AutocompleteNodeFiltering {...args} />,
+  name: 'Autocomplete, per node filtering',
+  parameters: {
+    description: {
+      data: 'It should never filter out Open View or Appearance'
+    }
+  }
+};
+
+
+let names = [
+  {id: 1, name: 'David'},
+  {id: 2, name: 'Sam'},
+  {id: 3, name: 'Julia'}
+];
+
+const UserCustomFiltering = (args): React.ReactElement => {
+  let [value, setValue] = useState('');
+
+  let {contains} = useFilter({sensitivity: 'base'});
+
+
+  let filter = (textValue, inputValue) => {
+    let index = inputValue.lastIndexOf('@');
+    let filterText = '';
+    if (index > -1) {
+      filterText = value.slice(index + 1);
+    }
+
+    return contains(textValue, filterText);
+  };
+
+  let onAction = (key) => {
+    let index = value.lastIndexOf('@');
+    if (index === -1) {
+      index = value.length;
+    }
+    let name = names.find(person => person.id === key)!.name;
+    setValue(value.slice(0, index).concat(name));
+  };
+
+  return (
+    <Autocomplete inputValue={value} onInputChange={setValue} filter={filter} disableVirtualFocus={args.disableVirtualFocus}>
+      <div>
+        <TextField autoFocus>
+          <Label style={{display: 'block'}}>Test</Label>
+          <TextArea />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </TextField>
+        <ListBox {...args} className={styles.menu} items={names} aria-label="test listbox with sections" onAction={onAction} >
+          {(item: any) => (
+            <MyListBoxItem id={item.id}>
+              {item.name}
+            </MyListBoxItem>
+          )}
+
+        </ListBox>
+      </div>
+    </Autocomplete>
+  );
+};
+
+export const AutocompleteUserCustomFiltering: AutocompleteStory = {
+  render: (args) => <UserCustomFiltering {...args} />,
+  name: 'Autocomplete, user custom filterText (mentions)',
+  parameters: {
+    description: {
+      data: 'It should only filter if you type @, using the remainder of the string after the @ symbol as the filter text'
+    }
+  }
+};

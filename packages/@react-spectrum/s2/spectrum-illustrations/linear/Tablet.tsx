@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import Tablet_L from 'illustration:./S2_lin_tablet_160.svg';
 import Tablet_M from 'illustration:./S2_lin_tablet_96.svg';
 import Tablet_S from 'illustration:./S2_lin_tablet_48.svg';
 import {useContextProps} from 'react-aria-components';
 
-export default function Tablet(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Tablet(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

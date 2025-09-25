@@ -35,7 +35,9 @@ import {useDragAndDrop} from '@react-spectrum/dnd';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
-let isReact18 = parseInt(React.version, 10) >= 18;
+// getComputedStyle is very slow in our version of jsdom.
+// These tests only care about direct inline styles. We can avoid parsing other stylesheets.
+window.getComputedStyle = (el) => el.style;
 
 describe('TableView', function () {
   let offsetWidth, offsetHeight, scrollHeight;
@@ -64,8 +66,8 @@ describe('TableView', function () {
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 300);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
     jest.useFakeTimers();
   });
@@ -2143,7 +2145,6 @@ describe('TableView', function () {
           });
           act(() => jest.runAllTimers());
           await user.tab({shift: true});
-          await user.tab({shift: true});
           await user.keyboard('{ArrowLeft}');
 
           // Drop on folder in same table
@@ -2299,10 +2300,6 @@ describe('TableView', function () {
           await user.keyboard('{Escape}');
 
           tree.rerender(<DragBetweenTablesComplex secondTableDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
-          await user.tab({shift: true});
-          await user.tab({shift: true});
-          await user.keyboard('{ArrowLeft}');
-          await user.keyboard('{ArrowRight}');
 
           let grids = tree.getAllByRole('grid');
           let rowgroup = within(grids[0]).getAllByRole('rowgroup')[1];

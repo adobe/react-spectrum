@@ -22,13 +22,15 @@ import {
   Tab as RACTab,
   TabList as RACTabList,
   Tabs as RACTabs,
-  TabListStateContext
+  SelectionIndicator,
+  TabListStateContext,
+  TabRenderProps
 } from 'react-aria-components';
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
+import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
@@ -40,7 +42,7 @@ import {useHasTabbableChild} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
+export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
@@ -58,17 +60,17 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   labelBehavior?: 'show' | 'hide'
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tab. */
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby' | keyof GlobalDOMAttributes>, StyleProps {
   /** The content to display in the tablist. */
   children: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
@@ -76,11 +78,27 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabsContext = createContext<Partial<TabsProps>>({});
-const CollapseContext = createContext({
+const InternalTabsContext = createContext<Partial<TabsProps> & {
+  tablistRef?: RefObject<HTMLDivElement | null>,
+  selectedKey?: Key | null
+}>({});
+
+interface CollapseContextType {
+  showTabs: boolean,
+  menuId: string,
+  valueId: string,
+  ariaLabel?: string | undefined,
+  ariaDescribedBy?: string | undefined,
+  tabs: Array<Node<any>>,
+  listRef?: RefObject<HTMLDivElement | null>,
+  onSelectionChange?: (key: Key) => void
+}
+
+const CollapseContext = createContext<CollapseContextType>({
   showTabs: true,
   menuId: '',
-  valueId: ''
+  valueId: '',
+  tabs: []
 });
 
 const tabs = style({
@@ -114,6 +132,8 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
     throw new Error('An aria-label or aria-labelledby prop is required on Tabs for accessibility.');
   }
 
+  let tablistRef = useRef<HTMLDivElement | null>(null);
+
   return (
     <Provider
       values={[
@@ -123,6 +143,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           orientation,
           disabledKeys,
           selectedKey: value,
+          tablistRef,
           onSelectionChange: setValue,
           labelBehavior,
           'aria-label': props['aria-label'],
@@ -168,72 +189,81 @@ const tablist = style({
       vertical: 'column'
     }
   },
-  paddingEnd: {
+  marginEnd: {
     orientation: {
       vertical: 20
     }
   },
-  paddingStart: {
+  marginStart: {
     orientation: {
       vertical: 12
     }
   },
-  flexShrink: 0,
-  flexBasis: '[0%]'
+  minWidth: 'min'
 });
 
+const tablistWrapper = style({
+  position: 'relative',
+  minWidth: 0,
+  flexShrink: 0,
+  flexGrow: 0
+}, getAllowedOverrides());
+
 export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
-  let {showTabs} = useContext(CollapseContext) ?? {};
+  let {showTabs, menuId, valueId, tabs, listRef, onSelectionChange, ariaLabel, ariaDescribedBy} = useContext(CollapseContext) ?? {};
+  let {density, orientation, labelBehavior} = useContext(InternalTabsContext);
 
   if (showTabs) {
     return <TabListInner {...props} />;
   }
-  return null;
+  
+  return (
+    <div className={tablistWrapper(null, props.styles)}>
+      {listRef && <div className={tablist({orientation, labelBehavior, density})}>
+        <HiddenTabs items={tabs} density={density} listRef={listRef} />
+      </div>}
+      <TabsMenu
+        id={menuId}
+        valueId={valueId}
+        items={tabs}
+        onSelectionChange={onSelectionChange}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy} />
+    </div>
+  );
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation, labelBehavior, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy} = useContext(InternalTabsContext) ?? {};
-  let state = useContext(TabListStateContext);
-  let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
-  let tablistRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (tablistRef?.current) {
-      let tab: HTMLElement | null = tablistRef.current.querySelector('[role=tab][data-selected=true]');
-
-      if (tab != null) {
-        setSelectedTab(tab);
-      }
-    }
-  }, [tablistRef, state?.selectedItem?.key]);
+  let {
+    tablistRef,
+    orientation,
+    density,
+    labelBehavior,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy
+  } = useContext(InternalTabsContext) ?? {};
+  let {tabs, listRef} = useContext(CollapseContext) ?? {};
 
   return (
     <div
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({position: 'relative'}, getAllowedOverrides())(null, props.styles)}>
-      {orientation === 'vertical' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+      className={
+        (props.UNSAFE_className || '') +
+        tablistWrapper(null, props.styles)}>
+      {listRef && <div className={tablist({orientation, labelBehavior, density})}>
+        <HiddenTabs items={tabs} density={density} listRef={listRef} />
+      </div>}
       <RACTabList
         {...props}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, labelBehavior, density})} />
-      {orientation === 'horizontal' &&
-        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
     </div>
   );
 }
 
-interface TabLineProps {
-  disabledKeys: Iterable<Key> | undefined,
-  isDisabled: boolean | undefined,
-  selectedTab: HTMLElement | undefined,
-  orientation?: Orientation,
-  density?: 'compact' | 'regular'
-}
-
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}>({
   position: 'absolute',
   backgroundColor: {
     default: 'neutral',
@@ -244,89 +274,52 @@ const selectedIndicator = style({
     }
   },
   height: {
+    default: 'full',
     orientation: {
       horizontal: '[2px]'
     }
   },
   width: {
+    default: 'full',
     orientation: {
       vertical: '[2px]'
     }
   },
+  contain: 'strict',
+  transition: {
+    default: '[translate,width,height]',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  },
+  transitionDuration: 200,
+  transitionTimingFunction: 'out',
   bottom: {
+    default: 0
+  },
+  top: {
+    orientation: {
+      vertical: 0
+    }
+  },
+  left: {
     orientation: {
       horizontal: 0
     }
   },
+  insetStart: {
+    orientation: {
+      vertical: -12
+    }
+  },
   borderStyle: 'none',
-  borderRadius: 'full',
-  transitionDuration: 130,
-  transitionTimingFunction: 'in-out'
+  borderRadius: 'full'
 });
 
-function TabLine(props: TabLineProps) {
-  let {
-    disabledKeys,
-    isDisabled: isTabsDisabled,
-    selectedTab,
-    orientation,
-    density
-  } = props;
-  let {direction} = useLocale();
-  let state = useContext(TabListStateContext);
-
-  // We want to add disabled styling to the selection indicator only if all the Tabs are disabled
-  let [isDisabled, setIsDisabled] = useState<boolean>(false);
-  useEffect(() => {
-    let isDisabled = isTabsDisabled || isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set(null));
-    setIsDisabled(isDisabled);
-  }, [state?.collection, disabledKeys, isTabsDisabled, setIsDisabled]);
-
-  let [style, setStyle] = useState<{transform: string | undefined, width: string | undefined, height: string | undefined}>({
-    transform: undefined,
-    width: undefined,
-    height: undefined
-  });
-
-  let onResize = useCallback(() => {
-    if (selectedTab) {
-      let styleObj: { transform: string | undefined, width: string | undefined, height: string | undefined } = {
-        transform: undefined,
-        width: undefined,
-        height: undefined
-      };
-
-      // In RTL, calculate the transform from the right edge of the tablist so that resizing the window doesn't break the Tabline position due to offsetLeft changes
-      let offset = direction === 'rtl' ? -1 * ((selectedTab.offsetParent as HTMLElement)?.offsetWidth - selectedTab.offsetWidth - selectedTab.offsetLeft) : selectedTab.offsetLeft;
-      styleObj.transform = orientation === 'vertical'
-        ? `translateY(${selectedTab.offsetTop}px)`
-        : `translateX(${offset}px)`;
-
-      if (orientation === 'horizontal') {
-        styleObj.width = `${selectedTab.offsetWidth}px`;
-      } else {
-        styleObj.height = `${selectedTab.offsetHeight}px`;
-      }
-      setStyle(styleObj);
-    }
-  }, [direction, setStyle, selectedTab, orientation]);
-
-  useLayoutEffect(() => {
-    onResize();
-  }, [onResize, state?.selectedItem?.key, density, direction, orientation]);
-
-  return (
-    <div style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
-  );
-}
-
-const tab = style({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide', orientation?: Orientation}>({
   ...focusRing(),
   display: 'flex',
   color: {
-    default: 'neutral-subdued',
-    isSelected: 'neutral',
-    isHovered: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
       isSelected: 'Highlight',
@@ -336,14 +329,29 @@ const tab = style({
   borderRadius: 'sm',
   gap: 'text-to-visual',
   height: {
-    density: {
-      compact: 32,
-      regular: 48
+    orientation: {
+      horizontal: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
+    }
+  },
+  minHeight: {
+    orientation: {
+      vertical: {
+        density: {
+          compact: 32,
+          regular: 48
+        }
+      }
     }
   },
   alignItems: 'center',
   position: 'relative',
   cursor: 'default',
+  textDecoration: 'none',
   flexShrink: 0,
   transition: 'default',
   paddingX: {
@@ -364,10 +372,11 @@ const icon = style({
 });
 
 export function Tab(props: TabProps): ReactNode {
-  let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
+  let {density, orientation, labelBehavior} = useContext(InternalTabsContext) ?? {};
 
   let contentId = useId();
   let ariaLabelledBy = props['aria-labelledby'] || '';
+
   return (
     <RACTab
       {...props}
@@ -375,10 +384,11 @@ export function Tab(props: TabProps): ReactNode {
       originalProps={props}
       aria-labelledby={`${labelBehavior === 'hide' ? contentId : ''} ${ariaLabelledBy}`}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior, orientation}, props.styles)}>
       {({
           // @ts-ignore
-          isMenu
+          isMenu,
+          isDisabled
         }) => {
         if (isMenu) {
           return props.children;
@@ -403,7 +413,11 @@ export function Tab(props: TabProps): ReactNode {
                   styles: icon
                 }]
               ]}>
-              {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+              <TabInner
+                orientation={orientation!}
+                isDisabled={isDisabled}>
+                {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+              </TabInner>
             </Provider>
           );
         }
@@ -412,14 +426,29 @@ export function Tab(props: TabProps): ReactNode {
   );
 }
 
+function TabInner({isDisabled, orientation, children}: {
+  isDisabled: boolean,
+  orientation: Orientation,
+  children: ReactNode
+}) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  let isHidden = useContext(HiddenTabsContext);
+
+  return (
+    <>
+      {!isHidden && <SelectionIndicator ref={ref} className={selectedIndicator({isDisabled, orientation})} />}
+      {children}
+    </>
+  );
+}
+
+
 const tabPanel = style({
   ...focusRing(),
   marginTop: 4,
   color: 'gray-800',
   flexGrow: 1,
-  flexBasis: '[0%]',
-  minHeight: 0,
-  minWidth: 0
+  minHeight: 0
 }, getAllowedOverrides({height: true}));
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {
@@ -442,7 +471,8 @@ export function TabPanel(props: TabPanelProps): ReactNode | null {
 }
 
 function CollapsedTabPanel(props: TabPanelProps) {
-  let {UNSAFE_style, UNSAFE_className = '', ...otherProps} = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {UNSAFE_style, UNSAFE_className = '', id, ...otherProps} = props;
   let {menuId, valueId} = useContext(CollapseContext);
   let ref = useRef(null);
   let tabIndex = useHasTabbableChild(ref) ? undefined : 0;
@@ -458,7 +488,7 @@ function CollapsedTabPanel(props: TabPanelProps) {
   );
 }
 
-function isAllTabsDisabled<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
+function isEveryTabDisabled<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
   let testKey: Key | null = null;
   if (collection && collection.size > 0) {
     testKey = collection.getFirstKey();
@@ -478,13 +508,15 @@ function isAllTabsDisabled<T>(collection: Collection<Node<T>> | undefined, disab
   return false;
 }
 
+const HiddenTabsContext = createContext(false);
+
 let HiddenTabs = function (props: {
   listRef: RefObject<HTMLDivElement | null>,
   items: Array<Node<any>>,
   size?: string,
   density?: 'compact' | 'regular'
 }) {
-  let {listRef, items, size, density} = props;
+  let {listRef, items = [], size, density} = props;
 
   return (
     <div
@@ -492,38 +524,45 @@ let HiddenTabs = function (props: {
       inert={inertValue(true)}
       ref={listRef}
       className={style({
-        display: '[inherit]',
-        flexDirection: '[inherit]',
-        gap: '[inherit]',
-        flexWrap: '[inherit]',
+        display: 'inherit',
+        flexDirection: 'inherit',
+        gap: 'inherit',
+        flexWrap: 'inherit',
         position: 'absolute',
         inset: 0,
         visibility: 'hidden',
         overflow: 'hidden',
         opacity: 0
       })}>
-      {items.map((item) => {
-        // pull off individual props as an allow list, don't want refs or other props getting through
-        return (
-          <div
-            data-hidden-tab
-            style={item.props.UNSAFE_style}
-            key={item.key}
-            className={item.props.className({size, density})}>
-            {item.props.children({size, density})}
-          </div>
-        );
-      })}
+      <HiddenTabsContext.Provider value>
+        {items.map((item) => {
+          // pull off individual props as an allow list, don't want refs or other props getting through
+          return (
+            <div
+              data-hidden-tab
+              style={item.props.UNSAFE_style}
+              key={item.key}
+              className={item.props.className({size, density})}>
+              {item.props.children({size, density})}
+            </div>
+          );
+        })}
+      </HiddenTabsContext.Provider>
     </div>
   );
 };
 
 let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & Omit<TabsProps, 'children'>) => {
   let {id, items, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, valueId} = props;
-  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
+  let {density, onSelectionChange: _onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
+  let onSelectionChange = useCallback((key: Key | null) => {
+    if (key != null) {
+      _onSelectionChange?.(key);
+    }
+  }, [_onSelectionChange]);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
-    return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
+    return isEveryTabDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
   }, [state?.collection, disabledKeys]);
   let labelProps = useLabels({
     id,
@@ -572,7 +611,7 @@ let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionCha
 };
 
 let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collection<Node<unknown>>, containerRef: any} & TabsProps) => {
-  let {density = 'regular', orientation = 'horizontal', labelBehavior = 'show', onSelectionChange} = props;
+  let {orientation = 'horizontal', onSelectionChange} = props;
   let [showItems, _setShowItems] = useState(true);
   showItems = orientation === 'vertical' ? true : showItems;
   let setShowItems = useCallback((value: boolean) => {
@@ -643,14 +682,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   } else {
     contents = (
       <>
-        <TabsMenu
-          id={menuId}
-          valueId={valueId}
-          items={children}
-          onSelectionChange={onSelectionChange}
-          aria-label={props['aria-label']}
-          aria-describedby={props['aria-labelledby']} />
-        <CollapseContext.Provider value={{showTabs: false, menuId, valueId}}>
+        <CollapseContext.Provider value={{showTabs: false, tabs: children, menuId, valueId, listRef: listRef, onSelectionChange, ariaLabel: props['aria-label'], ariaDescribedBy: props['aria-labelledby']}}>
           {props.children}
         </CollapseContext.Provider>
       </>
@@ -659,10 +691,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
 
   return (
     <div style={props.UNSAFE_style} className={(props.UNSAFE_className || '') + tabs({orientation}, props.styles)} ref={containerRef}>
-      <div className={tablist({orientation, labelBehavior, density})}>
-        <HiddenTabs items={children} density={density} listRef={listRef} />
-      </div>
-      <CollapseContext.Provider value={{showTabs: true, menuId, valueId}}>
+      <CollapseContext.Provider value={{showTabs: true, menuId, valueId, tabs: children, listRef: listRef}}>
         {contents}
       </CollapseContext.Provider>
     </div>

@@ -11,6 +11,7 @@
  */
 
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
+import {CollectionNodeClass} from './CollectionBuilder';
 import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
 import {Node} from '@react-types/shared';
 
@@ -103,8 +104,9 @@ export class BaseNode<T> {
   }
 
   private invalidateChildIndices(child: ElementNode<T>): void {
-    if (this._minInvalidChildIndex == null || child.index < this._minInvalidChildIndex.index) {
+    if (this._minInvalidChildIndex == null || !this._minInvalidChildIndex.isConnected || child.index < this._minInvalidChildIndex.index) {
       this._minInvalidChildIndex = child;
+      this.ownerDocument.markDirty(this);
     }
   }
 
@@ -140,7 +142,9 @@ export class BaseNode<T> {
     this.lastChild = child;
 
     this.ownerDocument.markDirty(this);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>): void {
@@ -154,8 +158,11 @@ export class BaseNode<T> {
 
     newNode.nextSibling = referenceNode;
     newNode.previousSibling = referenceNode.previousSibling;
-    newNode.index = referenceNode.index;
-
+    // Ensure that the newNode's index is less than that of the reference node so that
+    // invalidateChildIndices will properly use the newNode as the _minInvalidChildIndex, thus making sure
+    // we will properly update the indexes of all sibiling nodes after the newNode. The value here doesn't matter
+    // since updateChildIndices should calculate the proper indexes.
+    newNode.index = referenceNode.index - 1;
     if (this.firstChild === referenceNode) {
       this.firstChild = newNode;
     } else if (referenceNode.previousSibling) {
@@ -165,15 +172,21 @@ export class BaseNode<T> {
     referenceNode.previousSibling = newNode;
     newNode.parentNode = referenceNode.parentNode;
 
-    this.invalidateChildIndices(referenceNode);
-    this.ownerDocument.queueUpdate();
+    this.invalidateChildIndices(newNode);
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   removeChild(child: ElementNode<T>): void {
-    if (child.parentNode !== this || !this.ownerDocument.isMounted) {
+    if (child.parentNode !== this) {
       return;
     }
-    
+
+    if (this._minInvalidChildIndex === child) {
+      this._minInvalidChildIndex = null;
+    }
+
     if (child.nextSibling) {
       this.invalidateChildIndices(child.nextSibling);
       child.nextSibling.previousSibling = child.previousSibling;
@@ -197,7 +210,9 @@ export class BaseNode<T> {
     child.index = 0;
 
     this.ownerDocument.markDirty(child);
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   addEventListener(): void {}
@@ -242,15 +257,14 @@ export class BaseNode<T> {
  */
 export class ElementNode<T> extends BaseNode<T> {
   nodeType = 8; // COMMENT_NODE (we'd use ELEMENT_NODE but React DevTools will fail to get its dimensions)
-  node: CollectionNode<T>;
+  node: CollectionNode<T> | null;
   isMutated = true;
   private _index: number = 0;
-  hasSetProps = false;
   isHidden = false;
 
   constructor(type: string, ownerDocument: Document<T, any>) {
     super(ownerDocument);
-    this.node = new CollectionNode(type, `react-aria-${++ownerDocument.nodeId}`);
+    this.node = null;
   }
 
   get index(): number {
@@ -264,7 +278,7 @@ export class ElementNode<T> extends BaseNode<T> {
 
   get level(): number {
     if (this.parentNode instanceof ElementNode) {
-      return this.parentNode.level + (this.node.type === 'item' ? 1 : 0);
+      return this.parentNode.level + (this.node?.type === 'item' ? 1 : 0);
     }
 
     return 0;
@@ -274,12 +288,16 @@ export class ElementNode<T> extends BaseNode<T> {
    * Lazily gets a mutable instance of a Node. If the node has already
    * been cloned during this update cycle, it just returns the existing one.
    */
-  private getMutableNode(): Mutable<CollectionNode<T>> {
+  private getMutableNode(): Mutable<CollectionNode<T>> | null {
+    if (this.node == null) {
+      return null;
+    }
+
     if (!this.isMutated) {
       this.node = this.node.clone();
       this.isMutated = true;
     }
-    
+
     this.ownerDocument.markDirty(this);
     return this.node;
   }
@@ -287,29 +305,40 @@ export class ElementNode<T> extends BaseNode<T> {
   updateNode(): void {
     let nextSibling = this.nextVisibleSibling;
     let node = this.getMutableNode();
+    if (node == null) {
+      return;
+    }
+
     node.index = this.index;
     node.level = this.level;
-    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
-    node.prevKey = this.previousVisibleSibling?.node.key ?? null;
-    node.nextKey = nextSibling?.node.key ?? null;
+    node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node?.key ?? null : null;
+    node.prevKey = this.previousVisibleSibling?.node?.key ?? null;
+    node.nextKey = nextSibling?.node?.key ?? null;
     node.hasChildNodes = !!this.firstChild;
-    node.firstChildKey = this.firstVisibleChild?.node.key ?? null;
-    node.lastChildKey = this.lastVisibleChild?.node.key ?? null;
+    node.firstChildKey = this.firstVisibleChild?.node?.key ?? null;
+    node.lastChildKey = this.lastVisibleChild?.node?.key ?? null;
 
     // Update the colIndex of sibling nodes if this node has a colSpan.
     if ((node.colSpan != null || node.colIndex != null) && nextSibling) {
       // This queues the next sibling for update, which means this happens recursively.
       let nextColIndex = (node.colIndex ?? node.index) + (node.colSpan ?? 1);
-      if (nextColIndex !== nextSibling.node.colIndex) {
+      if (nextSibling.node != null && nextColIndex !== nextSibling.node.colIndex) {
         let siblingNode = nextSibling.getMutableNode();
-        siblingNode.colIndex = nextColIndex;
+        siblingNode!.colIndex = nextColIndex;
       }
     }
   }
 
-  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
-    let node = this.getMutableNode();
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, CollectionNodeClass: CollectionNodeClass<any>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
+    let node;
     let {value, textValue, id, ...props} = obj;
+    if (this.node == null) {
+      node = new CollectionNodeClass(id ?? `react-aria-${++this.ownerDocument.nodeId}`);
+      this.node = node;
+    } else {
+      node = this.getMutableNode();
+    }
+
     props.ref = ref;
     node.props = props;
     node.rendered = rendered;
@@ -317,18 +346,16 @@ export class ElementNode<T> extends BaseNode<T> {
     node.value = value;
     node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
-      if (this.hasSetProps) {
-        throw new Error('Cannot change the id of an item');
-      }
-      node.key = id;
+      throw new Error('Cannot change the id of an item');
     }
 
     if (props.colSpan != null) {
       node.colSpan = props.colSpan;
     }
 
-    this.hasSetProps = true;
-    this.ownerDocument.queueUpdate();
+    if (this.isConnected) {
+      this.ownerDocument.queueUpdate();
+    }
   }
 
   get style(): CSSProperties {
@@ -379,12 +406,11 @@ export class ElementNode<T> extends BaseNode<T> {
  */
 export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extends BaseNode<T> {
   nodeType = 11; // DOCUMENT_FRAGMENT_NODE
-  ownerDocument = this;
+  ownerDocument: Document<T, C> = this;
   dirtyNodes: Set<BaseNode<T>> = new Set();
   isSSR = false;
   nodeId = 0;
-  nodesByProps = new WeakMap<object, ElementNode<T>>();
-  isMounted = true;
+  nodesByProps: WeakMap<object, ElementNode<T>> = new WeakMap<object, ElementNode<T>>();
   private collection: C;
   private nextCollection: C | null = null;
   private subscriptions: Set<() => void> = new Set();
@@ -399,7 +425,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   get isConnected(): boolean {
-    return this.isMounted;
+    return true;
   }
 
   createElement(type: string): ElementNode<T> {
@@ -419,7 +445,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private addNode(element: ElementNode<T>): void {
-    if (element.isHidden) {
+    if (element.isHidden || element.node == null) {
       return;
     }
 
@@ -438,8 +464,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       this.removeNode(child);
     }
 
-    let collection = this.getMutableCollection();
-    collection.removeNode(node.node.key);
+    if (node.node) {
+      let collection = this.getMutableCollection();
+      collection.removeNode(node.node.key);
+    }
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -460,9 +488,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection(): void {
-    // First, update the indices of dirty element children.
+    // First, remove disconnected nodes and update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
-      element.updateChildIndices();
+      if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
+        this.removeNode(element);
+      } else {
+        element.updateChildIndices();
+      }
     }
 
     // Next, update dirty collection nodes.
@@ -471,19 +503,21 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         if (element.isConnected && !element.isHidden) {
           element.updateNode();
           this.addNode(element);
-        } else {
-          this.removeNode(element);
+        }
+
+        if (element.node) {
+          this.dirtyNodes.delete(element);
         }
 
         element.isMutated = false;
+      } else {
+        this.dirtyNodes.delete(element);
       }
     }
 
-    this.dirtyNodes.clear();
-
     // Finally, update the collection.
     if (this.nextCollection) {
-      this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
+      this.nextCollection.commit(this.firstVisibleChild?.node?.key ?? null, this.lastVisibleChild?.node?.key ?? null, this.isSSR);
       if (!this.isSSR) {
         this.collection = this.nextCollection;
         this.nextCollection = null;
@@ -495,7 +529,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     if (this.dirtyNodes.size === 0 || this.queuedRender) {
       return;
     }
-    
+
     // Only trigger subscriptions once during an update, when the first item changes.
     // React's useSyncExternalStore will call getCollection immediately, to check whether the snapshot changed.
     // If so, React will queue a render to happen after the current commit to our fake DOM finishes.

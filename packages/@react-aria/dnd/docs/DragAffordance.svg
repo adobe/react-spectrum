@@ -1,4 +1,4 @@
-<svg style="max-height: 165px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 4px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 208 165.002">
+<svg style="max-height: 165px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 4px; width: calc(100% - 64px); border-radius: var(--anatomy-radius);" viewBox="0 0 208 165.002">
   <g id="Group_156764" data-name="Group 156764" transform="translate(-228 -823)">
     <g id="Group_156666" data-name="Group 156666" transform="translate(-17 681)">
       <g id="Path_35562" data-name="Path 35562" transform="translate(245 142)" fill="var(--anatomy-gray-50)">
@@ -13,7 +13,7 @@
               <rect id="Rectangle_139996" data-name="Rectangle 139996" width="10" height="32" fill="red" opacity="0"/>
             </g>
             <g id="Group_156660" data-name="Group 156660" transform="translate(12 10)">
-              <text id="Panda" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Panda</tspan></text>
+              <text id="Panda" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Panda</tspan></text>
             </g>
           </g>
         </g>
@@ -25,7 +25,7 @@
               <rect id="Rectangle_139996-2" data-name="Rectangle 139996" width="10" height="32" fill="red" opacity="0"/>
             </g>
             <g id="Group_156660-2" data-name="Group 156660" transform="translate(20 10)">
-              <text id="Kangaroo" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Kangaroo</tspan></text>
+              <text id="Kangaroo" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Kangaroo</tspan></text>
             </g>
           </g>
         </g>
@@ -36,7 +36,7 @@
               <rect id="Rectangle_139996-3" data-name="Rectangle 139996" width="10" height="32" fill="red" opacity="0"/>
             </g>
             <g id="Group_156660-3" data-name="Group 156660" transform="translate(12 10)">
-              <text id="Dog" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Dog</tspan></text>
+              <text id="Dog" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Dog</tspan></text>
             </g>
           </g>
           <rect id="Rectangle_142240-2" data-name="Rectangle 142240" width="206" height="1" transform="translate(0 40)" fill="var(--anatomy-gray-400)"/>
@@ -45,7 +45,7 @@
           <g id="Group_1-4" data-name="Group 1" transform="translate(8)">
             <rect id="Rectangle_142237-3" data-name="Rectangle 142237" width="50" height="25" transform="translate(-8 6)" fill="var(--anatomy-gray-50)" fill-opacity="0"/>
             <g id="Group_156660-4" data-name="Group 156660" transform="translate(12 10)">
-              <text id="Cat" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0">Cat</tspan></text>
+              <text id="Cat" transform="translate(0 14)" fill="var(--anatomy-gray-800)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0">Cat</tspan></text>
             </g>
           </g>
           <rect id="Rectangle_142240-3" data-name="Rectangle 142240" width="206" height="1" transform="translate(0 40)" fill="var(--anatomy-gray-400)"/>

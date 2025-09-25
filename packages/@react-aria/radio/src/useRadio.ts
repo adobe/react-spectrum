@@ -12,7 +12,7 @@
 
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, useMemo} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RefObject} from '@react-types/shared';
@@ -44,14 +44,20 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     value,
     children,
     'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby
+    'aria-labelledby': ariaLabelledby,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick
   } = props;
 
   const isDisabled = props.isDisabled || state.isDisabled;
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
+  if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
 
@@ -64,13 +70,25 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   // Handle press state for keyboard interactions and cases where labelProps is not used.
   let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPress,
+    onPressUp,
+    onClick,
     isDisabled
   });
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    onClick,
     isDisabled,
-    onPress() {
+    onPress(e) {
+      onPress?.(e);
       state.setSelectedValue(value);
       ref.current?.focus();
     }
@@ -93,16 +111,25 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
-  let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
-  useFormReset(ref, state.selectedValue, state.setSelectedValue);
+  let {name, form, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
+  useFormReset(ref, state.defaultSelectedValue, state.setSelectedValue);
   useFormValidation({validationBehavior}, state, ref);
 
   return {
-    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
+    labelProps: mergeProps(
+      labelProps,
+      useMemo(() => ({
+        onClick: e => e.preventDefault(),
+
+        // Prevent label from being focused when mouse down on it.
+        // Note, this does not prevent the input from being focused in the `click` event.
+        onMouseDown: e => e.preventDefault()
+      }), [])),
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
       name,
+      form,
       tabIndex,
       disabled: isDisabled,
       required: state.isRequired && validationBehavior === 'native',

@@ -13,14 +13,14 @@
 import {fireEvent} from '@testing-library/react';
 
 // Triggers a "touch" event on an element.
-export function triggerTouch(element, opts = {}) {
+export function triggerTouch(element: HTMLElement, opts: PointerEventInit = {}): void {
   fireEvent.pointerDown(element, {pointerType: 'touch', pointerId: 1, ...opts});
   fireEvent.pointerUp(element, {pointerType: 'touch', pointerId: 1, ...opts});
   fireEvent.click(element, opts);
 }
 
 // Mocks and prevents the next click's default operation
-export function mockClickDefault(opts = {}) {
+export function mockClickDefault(opts: AddEventListenerOptions = {}): jest.Mock {
   let onClick = jest.fn().mockImplementation(e => e.preventDefault());
   window.addEventListener('click', onClick, opts);
 

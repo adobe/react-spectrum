@@ -21,7 +21,7 @@ import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
-import React, {ReactNode, useMemo, useRef} from 'react';
+import React, {JSX, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
@@ -36,7 +36,7 @@ interface MenuItemProps<T> {
 }
 
 /** @private */
-export function MenuItem<T>(props: MenuItemProps<T>): ReactNode {
+export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   let {
     item,
     state,
@@ -64,7 +64,11 @@ export function MenuItem<T>(props: MenuItemProps<T>): ReactNode {
   }
 
   let isDisabled = state.disabledKeys.has(key);
-  let isSelectable = !isSubmenuTrigger && state.selectionManager.selectionMode !== 'none';
+  let isContextualHelpTrigger = isSubmenuTrigger && isUnavailable !== undefined;
+  let isSelectable = (
+    (isContextualHelpTrigger ? !isUnavailable : !isSubmenuTrigger) &&
+    state.selectionManager.selectionMode !== 'none'
+  );
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));

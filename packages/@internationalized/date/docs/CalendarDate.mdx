@@ -50,6 +50,8 @@ let date = parseDate('2022-02-03');
 
 Today's date can be retrieved using the <TypeLink links={docs.links} type={docs.exports.today} /> function. This requires a time zone identifier to be provided, which is used to determine the local date. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
 
+**Note:** the local time zone is cached after the first call. You can reset it by calling <TypeLink links={docs.links} type={docs.exports.resetLocalTimeZone} />, or mock it in unit tests by calling <TypeLink links={docs.links} type={docs.exports.setLocalTimeZone} />.
+
 ```tsx
 import {today, getLocalTimeZone} from '@internationalized/date';
 
@@ -72,7 +74,7 @@ date.toString(); // '2022-02-03'
 
 By default, `CalendarDate` uses the Gregorian calendar system, but many other calendar systems that are used around the world are supported, such as Hebrew, Indian, Islamic, Buddhist, Ethiopic, and more. A <TypeLink links={docs.links} type={docs.exports.Calendar} /> instance can be passed to the `CalendarDate` constructor to represent dates in that calendar system.
 
-This example creates a date in the Buddhist calendar system, which is equivalent to April 4th, 2020 in the Gregorian calendar.
+This example creates a date in the Buddhist calendar system, which is equivalent to April 30th, 2020 in the Gregorian calendar.
 
 ```tsx
 import {BuddhistCalendar} from '@internationalized/date';
@@ -86,7 +88,7 @@ See the [Calendar](Calendar.html#implementations) docs for details about the sup
 
 Many calendar systems have only one era, or a modern era and a pre-modern era (e.g. AD and BC in the Gregorian calendar). However, other calendar systems may have many eras. For example, the Japanese calendar has eras for the reign of each Emperor. `CalendarDate` represents eras using string identifiers, which can be passed as an additional parameter to the constructor before the year. When eras are present, years are numbered starting from 1 within the era.
 
-This example creates a date in the Japanese calendar system, which is equivalent to April 4th, 2020 in the Gregorian calendar.
+This example creates a date in the Japanese calendar system, which is equivalent to April 30th, 2019 in the Gregorian calendar.
 
 ```tsx
 import {JapaneseCalendar} from '@internationalized/date';
@@ -205,6 +207,8 @@ date.toString(); // '2022-02-03'
 A `CalendarDate` can be converted to a native JavaScript `Date` object using the `toDate` method. In general, the `Date` object should be avoided because it has many internationalization issues and other flaws. However, it is necessary to use some functionality like date formatting.
 
 Because a `Date` represents an exact time, a time zone identifier is required to be passed to the `toDate` method. The time of the returned date will be set to midnight in that time zone. The <TypeLink links={docs.links} type={docs.exports.getLocalTimeZone} /> function can be used to retrieve the user's current time zone.
+
+**Note:** the local time zone is cached after the first call. You can reset it by calling <TypeLink links={docs.links} type={docs.exports.resetLocalTimeZone} />, or mock it in unit tests by calling <TypeLink links={docs.links} type={docs.exports.setLocalTimeZone} />.
 
 ```tsx
 import {getLocalTimeZone} from '@internationalized/date';

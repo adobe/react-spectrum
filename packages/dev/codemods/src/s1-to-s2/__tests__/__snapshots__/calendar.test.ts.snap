@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Does nothing 1`] = `
-"import {Calendar} from '@adobe/react-spectrum';
+"import { Calendar } from "@react-spectrum/s2";
 
 <div>
   <Calendar aria-label="Event date" />

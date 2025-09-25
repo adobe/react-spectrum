@@ -23,7 +23,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng', 'fullwide'];
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -108,6 +108,19 @@ class NumberParserImpl {
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;
+    // see https://tc39.es/ecma402/#sec-setnfdigitoptions, when using roundingIncrement, the maximumFractionDigits and minimumFractionDigits must be equal
+    // by default, they are 0 and 3 respectively, so we set them to 0 if neither are set
+    if (options.roundingIncrement !== 1 && options.roundingIncrement != null) {
+      if (options.maximumFractionDigits == null && options.minimumFractionDigits == null) {
+        options.maximumFractionDigits = 0;
+        options.minimumFractionDigits = 0;
+      } else if (options.maximumFractionDigits == null) {
+        options.maximumFractionDigits = options.minimumFractionDigits;
+      } else if (options.minimumFractionDigits == null) {
+        options.minimumFractionDigits = options.maximumFractionDigits;
+      }
+      // if both are specified, let the normal Range Error be thrown
+    }
     this.formatter = new Intl.NumberFormat(locale, options);
     this.options = this.formatter.resolvedOptions();
     this.symbols = getSymbols(locale, this.formatter, this.options, options);
@@ -136,6 +149,7 @@ class NumberParserImpl {
       // javascript is bad at dividing by 100 and maintaining the same significant figures, so perform it on the string before parsing
       let isNegative = fullySanitizedValue.indexOf('-');
       fullySanitizedValue = fullySanitizedValue.replace('-', '');
+      fullySanitizedValue = fullySanitizedValue.replace('+', '');
       let index = fullySanitizedValue.indexOf('.');
       if (index === -1) {
         index = fullySanitizedValue.length;
@@ -201,10 +215,17 @@ class NumberParserImpl {
       }
     }
 
-    // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
-    // so allow 'period' as a group char and replace it with a space
-    if (this.options.locale === 'fr-FR') {
-      value = replaceAll(value, '.', String.fromCharCode(8239));
+    // In some locale styles, such as swiss currency, the group character can be a special single quote
+    // that keyboards don't typically have. This expands the character to include the easier to type single quote.
+    if (this.symbols.group === '’' && value.includes("'")) {
+      value = replaceAll(value, "'", this.symbols.group);
+    }
+
+    // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
+    // so allow space and non-breaking space as a group char as well
+    if (this.options.locale === 'fr-FR' && this.symbols.group) {
+      value = replaceAll(value, ' ', this.symbols.group);
+      value = replaceAll(value, /\u00A0/g, this.symbols.group);
     }
 
     return value;
@@ -303,7 +324,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   return {minusSign, plusSign, decimal, group, literals, numeral, index};
 }
 
-function replaceAll(str: string, find: string, replace: string) {
+function replaceAll(str: string, find: string | RegExp, replace: string) {
   if (str.replaceAll) {
     return str.replaceAll(find, replace);
   }

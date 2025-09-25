@@ -12,18 +12,25 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
-import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
+import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
+import {ImageContext} from './Image';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {usePendingState} from './Button';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionButtonStyleProps {
@@ -52,20 +59,22 @@ interface ActionGroupItemStyleProps {
   isJustified?: boolean
 }
 
-export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending'>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
   children: ReactNode
 }
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
+const avatarOnly = ':has([slot=avatar]):not(:has([slot=icon], [data-rsp-slot=text]))';
+const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
+const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
-  display: 'flex',
-  alignItems: 'center',
+  ...controlStyle,
+  position: 'relative',
   justifyContent: 'center',
-  columnGap: 'text-to-visual',
   flexShrink: {
     default: 1,
     isInGroup: 0
@@ -76,11 +85,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   flexBasis: {
     isJustified: 0
   },
-  font: 'control',
   fontWeight: 'medium',
   userSelect: 'none',
-  height: 'control',
-  minWidth: 'control',
   transition: 'default',
   forcedColorAdjust: 'none',
   backgroundColor: {
@@ -92,8 +98,13 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       }
     },
     isSelected: {
-      default: 'neutral',
-      isEmphasized: 'accent',
+      default: baseColor('neutral'),
+      isEmphasized: {
+        default: lightDark('accent-900', 'accent-700'),
+        isHovered: lightDark('accent-1000', 'accent-600'),
+        isPressed: lightDark('accent-1000', 'accent-600'),
+        isFocusVisible: lightDark('accent-1000', 'accent-600')
+      },
       isDisabled: {
         default: 'gray-100',
         isQuiet: 'transparent'
@@ -122,7 +133,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isSelected: {
       default: 'gray-25',
       isEmphasized: 'white'
@@ -151,72 +162,92 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     forcedColors: 'Highlight'
   },
   borderStyle: 'none',
-  paddingX: {
-    default: 'edge-to-text',
-    [iconOnly]: 0
-  },
-  paddingY: 0,
   borderTopStartRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
-        ':first-child': 'control'
+        ':first-child': controlStyle.borderRadius
       }
     }
   },
   borderTopEndRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
         orientation: {
           horizontal: {
-            ':last-child': 'control'
+            ':last-child': controlStyle.borderRadius
           },
           vertical: {
-            ':first-child': 'control'
+            ':first-child': controlStyle.borderRadius
           }
         }
       }
     }
   },
   borderBottomStartRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
         orientation: {
           horizontal: {
-            ':first-child': 'control'
+            ':first-child': controlStyle.borderRadius
           },
           vertical: {
-            ':last-child': 'control'
+            ':last-child': controlStyle.borderRadius
           }
         }
       }
     }
   },
   borderBottomEndRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
-        ':last-child': 'control'
+        ':last-child': controlStyle.borderRadius
       }
-    }
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2),
-      [iconOnly]: 0
     }
   },
   zIndex: {
     isFocusVisible: 2
   },
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  '--badgeTop': {
+    type: 'top',
+    value: {
+      default: 'calc(self(height)/2 - var(--iconWidth)/2)',
+      [textOnly]: 0
+    }
+  },
+  '--iconWidth': {
+    type: 'width',
+    value: fontRelative(20)
+  },
+  '--badgePosition': {
+    type: 'width',
+    value: {
+      default: 'calc(self(paddingStart) + var(--iconWidth))',
+      [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
+      [textOnly]: 'full'
+    }
+  },
+  paddingX: {
+    default: controlStyle.paddingX,
+    [avatarOnly]: 0
+  },
+  // `control` sets this, but we need to override it for avatar only buttons.
+  '--iconMargin': {
+    type: 'marginStart',
+    value: {
+      default: fontRelative(-2),
+      [iconOnly]: 0,
+      [avatarOnly]: 0
+    }
+  }
 }, getAllowedOverrides());
 
 // Matching icon sizes. TBD.
@@ -232,11 +263,13 @@ export const ActionButtonContext = createContext<ContextValue<Partial<ActionButt
 
 /**
  * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
  */
 export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let {isPending = false} = props;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let ctx = useSlottedContext(ActionButtonGroupContext);
@@ -247,20 +280,21 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     orientation = 'horizontal',
     staticColor = props.staticColor,
     isQuiet = props.isQuiet,
-    size = props.size || 'M',
-    isDisabled = props.isDisabled
+    size = props.size || 'M'
   } = ctx || {};
+
+  let {isProgressVisible} = usePendingState(isPending);
 
   return (
     <RACButton
       {...props}
-      isDisabled={isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+        isDisabled: renderProps.isDisabled || isProgressVisible,
         staticColor,
         isStaticColor: !!staticColor,
         size,
@@ -270,21 +304,100 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
         orientation,
         isInGroup
       }, props.styles)}>
-      <Provider
-        values={[
-          [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-          }],
-          [AvatarContext, {
-            size: avatarSize[size],
-            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-      </Provider>
+      {({isDisabled}) => (
+        <>
+          <Provider
+            values={[
+              [SkeletonContext, null],
+              [TextContext, {styles:
+                style({
+                  order: 1,
+                  truncate: true,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
+              }],
+              [IconContext, {
+                render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+                styles: style({
+                  size: fontRelative(20),
+                  marginStart: '--iconMargin',
+                  flexShrink: 0,
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
+              }],
+              [AvatarContext, {
+                size: avatarSize[size],
+                styles: style({
+                  marginStart: '--iconMargin',
+                  flexShrink: 0,
+                  order: 0
+                })
+              }],
+              [ImageContext, {
+                styles: style({
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
+              }],
+              [NotificationBadgeContext, {
+                staticColor: staticColor,
+                size: props.size === 'XS' ? undefined : props.size,
+                isDisabled: isDisabled,
+                styles: style({
+                  position: 'absolute',
+                  top: '--badgeTop',
+                  insetStart: '--badgePosition',
+                  marginTop: 'calc((self(height) * -1)/2)',
+                  marginStart: 'calc((self(height) * -1)/2)',
+                  opacity: {
+                    default: 1,
+                    isProgressVisible: 0
+                  }
+                })({isProgressVisible})
+              }]
+            ]}>
+            {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+            {isPending &&
+              <div
+                className={style({
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  opacity: {
+                    default: 0,
+                    isProgressVisible: 1
+                  }
+                })({isProgressVisible, isPending})}>
+                <ProgressCircle
+                  isIndeterminate
+                  aria-label={stringFormatter.format('button.pending')}
+                  size="S"
+                  staticColor={staticColor}
+                  styles={style({
+                    size: {
+                      size: {
+                        XS: 12,
+                        S: 14,
+                        M: 18,
+                        L: 20,
+                        XL: 24
+                      }
+                    }
+                  })({size})} />
+              </div>
+              }
+          </Provider>
+        </>
+      )}
     </RACButton>
   );
 });

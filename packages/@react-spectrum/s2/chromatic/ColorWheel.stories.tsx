@@ -11,7 +11,7 @@
  */
 
 import {ColorWheel} from '../src/ColorWheel';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorWheel> = {
   component: ColorWheel,
@@ -23,8 +23,8 @@ const meta: Meta<typeof ColorWheel> = {
 
 export default meta;
 
-export const Example = {
-  render: (args: any) => <ColorWheel {...args} onChange={undefined} />,
+export const Example: StoryObj<typeof ColorWheel> = {
+  render: (args) => <ColorWheel {...args} onChange={undefined} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }

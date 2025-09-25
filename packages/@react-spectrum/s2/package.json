@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2",
-  "version": "0.7.1",
+  "version": "0.11.2",
   "description": "Spectrum 2 UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -17,26 +17,45 @@
   "source": "src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
+      "source": "./src/index.ts",
+      "types": [
+        "./dist/types.d.ts",
+        "./src/index.ts"
+      ],
       "module": "./dist/module.mjs",
       "import": "./dist/module.mjs",
       "require": "./dist/main.cjs"
     },
-    "./page.css": "./page.css",
+    "./page.css": {
+      "source": "./src/page.ts",
+      "default": "./page.css"
+    },
     "./style": {
-      "types": "./style/dist/types.d.ts",
+      "source": "./style/index.ts",
+      "types": [
+        "./style/dist/types.d.ts",
+        "./style/index.ts"
+      ],
       "module": "./style/dist/module.mjs",
       "import": "./style/dist/module.mjs",
       "require": "./style/dist/main.cjs"
     },
     "./icons/*": {
-      "types": "./icons/*.d.ts",
+      "source": "./s2wf-icons/S2_Icon_*_20_N.svg",
+      "types": [
+        "./icons/*.d.ts",
+        "./icon.d.ts"
+      ],
       "module": "./icons/*.mjs",
       "import": "./icons/*.mjs",
       "require": "./icons/*.cjs"
     },
     "./illustrations/*": {
-      "types": "./illustrations/*.d.ts",
+      "source": "./spectrum-illustrations/*.tsx",
+      "types": [
+        "./illustrations/*.d.ts",
+        "./icon.d.ts"
+      ],
       "module": "./illustrations/*.mjs",
       "import": "./illustrations/*.mjs",
       "require": "./illustrations/*.cjs"
@@ -110,6 +129,7 @@
     "dist",
     "style",
     "page.css",
+    "page.css.map",
     "icons",
     "illustrations",
     "src"
@@ -120,33 +140,38 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "0.0.0-s2-composite-drop-shadow-20250319174850",
-    "@parcel/macros": "^2.14.0",
-    "@react-aria/test-utils": "1.0.0-alpha.3",
+    "@adobe/spectrum-tokens": "^13.10.0",
+    "@parcel/macros": "^2.16.0",
+    "@react-aria/test-utils": "^1.0.0-alpha.8",
+    "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
-    "@testing-library/react": "^15.0.7",
+    "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
     "jest": "^29.5.0"
   },
   "dependencies": {
-    "@react-aria/collections": "3.0.0-beta.1",
-    "@react-aria/focus": "^3.20.1",
-    "@react-aria/i18n": "^3.12.7",
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/live-announcer": "^3.4.1",
-    "@react-aria/utils": "^3.28.1",
-    "@react-spectrum/utils": "^3.12.3",
-    "@react-stately/layout": "^4.2.1",
-    "@react-stately/utils": "^3.10.5",
-    "@react-types/dialog": "^3.5.16",
-    "@react-types/grid": "^3.3.0",
-    "@react-types/provider": "^3.8.7",
-    "@react-types/shared": "^3.28.0",
-    "@react-types/table": "^3.11.0",
-    "@react-types/textfield": "^3.12.0",
+    "@internationalized/date": "^3.9.0",
+    "@internationalized/number": "^3.6.5",
+    "@react-aria/calendar": "^3.9.1",
+    "@react-aria/collections": "3.0.0-rc.7",
+    "@react-aria/focus": "^3.21.1",
+    "@react-aria/i18n": "^3.12.12",
+    "@react-aria/interactions": "^3.25.5",
+    "@react-aria/live-announcer": "^3.4.4",
+    "@react-aria/utils": "^3.30.1",
+    "@react-spectrum/utils": "^3.12.8",
+    "@react-stately/layout": "^4.5.0",
+    "@react-stately/utils": "^3.10.8",
+    "@react-types/dialog": "^3.5.21",
+    "@react-types/grid": "^3.3.5",
+    "@react-types/provider": "^3.8.12",
+    "@react-types/shared": "^3.32.0",
+    "@react-types/table": "^3.13.3",
+    "@react-types/textfield": "^3.12.5",
     "csstype": "^3.0.2",
-    "react-aria": "^3.38.1",
-    "react-aria-components": "^1.7.1"
+    "react-aria": "^3.43.2",
+    "react-aria-components": "^1.12.2",
+    "react-stately": "^3.41.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0-rc.1",

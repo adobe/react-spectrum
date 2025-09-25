@@ -5,6 +5,7 @@ port=4000
 original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
+touch $output
 ci=false
 commit_to_revert="HEAD"
 
@@ -131,14 +132,6 @@ then
   mv next-build-stats.txt ../../$verdaccio_path/publish-stats
   mv out ../../$verdaccio_path/next
 
-  echo 'build RAC Tailwind app'
-  # Install/build RAC Tailwind app
-  cd ../../examples/rac-tailwind
-  yarn config set npmRegistryServer $registry
-  yarn install --no-immutable
-  yarn build --public-url ./
-  mv dist ../../$verdaccio_path/rac-tailwind
-
   echo 'build RAC Spectrum Tailwind app'
   # Install/build RAC + Spectrum + Tailwind app
   cd ../../examples/rac-spectrum-tailwind
@@ -160,6 +153,13 @@ then
   yarn install --no-immutable
   yarn build
   mv dist ../../$verdaccio_path/s2-webpack-5-example
+
+  echo 'build Spectrum 2 + Next.js test app'
+  cd ../../examples/s2-next-macros
+  yarn config set npmRegistryServer $registry
+  yarn install --no-immutable
+  VERDACCIO=true yarn build
+  mv out ../../$verdaccio_path/s2-next-macros
 
   echo 'test icon builder'
   cd ../../examples/s2-webpack-5-example

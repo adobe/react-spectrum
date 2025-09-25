@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactElement, ReactNode} from 'react';
+import React, {JSX, JSXElementConstructor, ReactElement} from 'react';
 import {Transition} from 'react-transition-group';
-// TODO install @types/react-transition-group
 
 const OPEN_STATES = {
   entering: false,
@@ -33,17 +32,16 @@ const OPEN_STATES = {
  */
 
 export function OpenTransition(
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  props
-): ReactNode {
+  props: any
+): JSX.Element | ReactElement<any, string | JSXElementConstructor<any>>[] {
   // Do not apply any transition if in chromatic.
-  if (process.env.CHROMATIC) {
-    return React.Children.map(props.children as ReactElement<any>, child => child && React.cloneElement(child, {isOpen: props.in}));
+  if (typeof process !== 'undefined' && process.env.CHROMATIC) {
+    return React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: props.in}));
   }
 
   return (
     <Transition timeout={{enter: 0, exit: 350}} {...props}>
-      {(state) => React.Children.map(props.children, child => child && React.cloneElement(child as ReactElement<any>, {isOpen: !!OPEN_STATES[state]}))}
+      {(state) => React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: !!OPEN_STATES[state]}))}
     </Transition>
   );
 }

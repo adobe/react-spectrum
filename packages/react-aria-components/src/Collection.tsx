@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, DropTargetDelegate, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
+import {CollectionBase, DropTargetDelegate, GlobalDOMAttributes, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
 import {createBranchComponent, useCachedChildren} from '@react-aria/collections';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
-import React, {createContext, ForwardedRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, HTMLAttributes, isValidElement, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
 import {StyleProps} from './utils';
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
@@ -81,7 +81,7 @@ export interface ItemRenderProps {
   isDropTarget?: boolean
 }
 
-export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps {
+export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps, GlobalDOMAttributes<HTMLElement> {
   /** The unique id of the section. */
   id?: Key,
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
@@ -102,7 +102,9 @@ export const SectionContext = createContext<SectionContextValue | null>(null);
 /** @deprecated */
 export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
   let {name, render} = useContext(SectionContext)!;
-  console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  }
   return render(props, ref, section, 'react-aria-Section');
 });
 
@@ -162,17 +164,51 @@ function useCollectionRender(
         return rendered;
       }
 
-      let key = node.key;
-      let keyAfter = collection.getKeyAfter(key);
       return (
         <>
-          {renderDropIndicator({type: 'item', key, dropPosition: 'before'})}
+          {renderDropIndicator({type: 'item', key: node.key, dropPosition: 'before'})}
           {rendered}
-          {((keyAfter == null || collection.getItem(keyAfter)?.type !== 'item')) && renderDropIndicator({type: 'item', key, dropPosition: 'after'})}
+          {renderAfterDropIndicators(collection, node, renderDropIndicator)}
         </>
       );
     }
   });
+}
+
+export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>, node: Node<unknown>, renderDropIndicator: (target: ItemDropTarget) => ReactNode): ReactNode {
+  let key = node.key;
+  let keyAfter = collection.getKeyAfter(key);
+  let nextItemInFlattenedCollection = keyAfter != null ? collection.getItem(keyAfter) : null;
+  while (nextItemInFlattenedCollection != null && nextItemInFlattenedCollection.type !== 'item') {
+    keyAfter = collection.getKeyAfter(nextItemInFlattenedCollection.key);
+    nextItemInFlattenedCollection = keyAfter != null ? collection.getItem(keyAfter) : null;
+  }
+
+  let nextItemInSameLevel = node.nextKey != null ? collection.getItem(node.nextKey) : null;
+  while (nextItemInSameLevel != null && nextItemInSameLevel.type !== 'item') {
+    nextItemInSameLevel = nextItemInSameLevel.nextKey != null ? collection.getItem(nextItemInSameLevel.nextKey) : null;
+  }
+
+  // Render one or more "after" drop indicators when the next item in the flattened collection
+  // has a smaller level, is not an item, or there are no more items in the collection.
+  // Otherwise, the "after" position is equivalent to the next item's "before" position.
+  let afterIndicators: ReactNode[] = [];
+  if (nextItemInSameLevel == null) {
+    let current: Node<unknown> | null = node;
+    while (current && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
+      let indicator = renderDropIndicator({
+        type: 'item',
+        key: current.key,
+        dropPosition: 'after'
+      });
+      if (isValidElement(indicator)) {
+        afterIndicators.push(cloneElement(indicator, {key: `${current.key}-after`}));
+      }
+      current = current.parentKey != null ? collection.getItem(current.parentKey) : null;
+    }
+  }
+
+  return afterIndicators;
 }
 
 export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);

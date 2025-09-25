@@ -29,6 +29,11 @@ export interface TabListState<T> extends SingleSelectListState<T> {
 export function useTabListState<T extends object>(props: TabListStateOptions<T>): TabListState<T> {
   let state = useSingleSelectListState<T>({
     ...props,
+    onSelectionChange: props.onSelectionChange ? (key => {
+      if (key != null) {
+        props.onSelectionChange?.(key);
+      }
+    }) : undefined,
     suppressTextValueWarning: true,
     defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set()) ?? undefined
   });

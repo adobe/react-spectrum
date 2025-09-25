@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate} from '../types';
+import {AnyCalendarDate, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {fromExtendedYear, getExtendedYear, GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
@@ -41,7 +41,7 @@ function gregorianToTaiwan(year: number): [string, number] {
  * 'before_minguo' and 'minguo'.
  */
 export class TaiwanCalendar extends GregorianCalendar {
-  identifier = 'roc'; // Republic of China
+  identifier: CalendarIdentifier = 'roc'; // Republic of China
 
   fromJulianDay(jd: number): CalendarDate {
     let date = super.fromJulianDay(jd);

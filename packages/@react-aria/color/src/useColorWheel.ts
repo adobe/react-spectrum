@@ -45,7 +45,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     innerRadius,
     outerRadius,
     'aria-label': ariaLabel,
-    name
+    name,
+    form
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -58,7 +59,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   }, [inputRef]);
 
-  useFormReset(inputRef, state.hue, state.setHue);
+  useFormReset(inputRef, state.defaultValue, state.setValue);
 
   let currentPosition = useRef<{x: number, y: number} | null>(null);
 
@@ -307,8 +308,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       ...thumbInteractions,
       style: {
         position: 'absolute',
-        left: outerRadius + x,
-        top: outerRadius + y,
+        left: (outerRadius + x).toFixed(3) + 'px',
+        top: (outerRadius + y).toFixed(3) + 'px',
         transform: 'translate(-50%, -50%)',
         touchAction: 'none',
         ...forcedColorAdjustNoneStyle
@@ -325,6 +326,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
         name,
+        form,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
         },

@@ -81,15 +81,6 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 storybook:
 	NODE_ENV=production yarn build:storybook
 
-storybook-16:
-	yarn build:storybook-16
-
-storybook-17:
-	yarn build:storybook-17
-
-storybook-19:
-	yarn build:storybook-19
-
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
 	$(MAKE) publish
@@ -109,6 +100,7 @@ build:
 	done
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
+	node scripts/fixUseClient.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -119,14 +111,13 @@ website-production:
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
-	$(MAKE) s2-docs
+	$(MAKE) s2-storybook-docs
 
 check-examples:
 	node scripts/extractExamples.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	node scripts/extractStarter.mjs
 	cd starters/docs && yarn --no-immutable && yarn tsc
 
 starter-zip: starter
@@ -144,9 +135,20 @@ tailwind-starter:
 	cd starters/tailwind && yarn build-storybook
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
 
-s2-docs:
-	yarn build:s2-docs -o dist/production/docs/s2
+s2-storybook-docs:
+	yarn build:s2-storybook-docs -o dist/production/docs/s2
 
 s2-api-diff:
 	node scripts/buildBranchAPI.js
 	node scripts/api-diff.js --skip-same --skip-style-props
+
+s2-docs:
+	yarn workspace @react-spectrum/s2-docs generate:md
+	yarn workspace @react-spectrum/s2-docs generate:og
+	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
+	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs/
+	mkdir -p dist/$$(git rev-parse HEAD)
+	mv packages/dev/s2-docs/dist dist/$$(git rev-parse HEAD)/s2-docs
+	mkdir -p dist/$$(git rev-parse HEAD)/s2-docs/registry
+	mv starters/docs/registry dist/$$(git rev-parse HEAD)/s2-docs/registry/vanilla
+	mv starters/tailwind/registry dist/$$(git rev-parse HEAD)/s2-docs/registry/tailwind

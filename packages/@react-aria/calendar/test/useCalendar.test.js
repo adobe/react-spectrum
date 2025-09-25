@@ -12,6 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
+import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
 import {Example, ExampleCustomFirstDay} from '../stories/Example';
 import {I18nProvider} from '@react-aria/i18n';
 import React from 'react';
@@ -261,6 +262,45 @@ describe('useCalendar', () => {
     ${'Saturday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'sat'} | ${'samedi 30 décembre 2023'} | ${'fr-FR'}
     `('should use firstDayOfWeek $Name', async ({defaultValue, firstDayOfWeek, expectedFirstDay, locale}) => {
       await testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay, locale);
+    });
+  });
+
+  describe('custom calendar visible range description', () => {
+    const calendar = new Custom454Calendar();
+
+    it.each([
+      {name: '1st month', date: new CalendarDate(calendar, 2023, 1, 14), expected: 'February 2023'},
+      {name: '2nd month', date: new CalendarDate(calendar, 2023, 2, 14), expected: 'March 2023'},
+      {name: '3rd month', date: new CalendarDate(calendar, 2023, 3, 14), expected: 'April 2023'},
+      {name: '4th month', date: new CalendarDate(calendar, 2023, 4, 14), expected: 'May 2023'},
+      {name: '5th month', date: new CalendarDate(calendar, 2023, 5, 14), expected: 'June 2023'},
+      {name: '6th month', date: new CalendarDate(calendar, 2023, 6, 14), expected: 'July 2023'},
+      {name: '7th month', date: new CalendarDate(calendar, 2023, 7, 14), expected: 'August 2023'},
+      {name: '8th month', date: new CalendarDate(calendar, 2023, 8, 14), expected: 'September 2023'},
+      {name: '9th month', date: new CalendarDate(calendar, 2023, 9, 14), expected: 'October 2023'},
+      {name: '10th month', date: new CalendarDate(calendar, 2023, 10, 14), expected: 'November 2023'},
+      {name: '11th month', date: new CalendarDate(calendar, 2023, 11, 14), expected: 'December 2023'},
+      {name: '12th month', date: new CalendarDate(calendar, 2023, 12, 14), expected: 'January 2024'}
+    ])('the $name should be formatted as $expected when there is only one month visible', async ({date, expected}) => {
+      const {getByTestId} = render(
+        <I18nProvider locale="en-US">
+          <Example createCalendar={() => calendar} focusedValue={date} visibleDuration={{months: 1}} />
+        </I18nProvider>
+      );
+      expect(getByTestId('range')).toHaveTextContent(expected);
+    });
+
+    // Selection alignment is "start", so we can start on the provided date and add x months to it
+    it.each([
+      {name: 'multiple months in same year', visibleDuration: {months: 3}, date: new CalendarDate(calendar, 2023, 7, 14), expected: 'August to October 2023'},
+      {name: 'multiple months across years', visibleDuration: {months: 3}, date: new CalendarDate(calendar, 2023, 10, 14), expected: 'November 2023 to January 2024'}
+    ])('should format the visible range for $name', async ({visibleDuration, date, expected}) => {
+      const {getByTestId} = render(
+        <I18nProvider locale="en-US">
+          <Example createCalendar={() => calendar} focusedValue={date} visibleDuration={visibleDuration} selectionAlignment="start" />
+        </I18nProvider>
+      );
+      expect(getByTestId('range')).toHaveTextContent(expected);
     });
   });
 });

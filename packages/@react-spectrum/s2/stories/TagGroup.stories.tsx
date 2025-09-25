@@ -23,7 +23,7 @@ import {
   TagGroup,
   Text
 } from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with {type: 'macro'};
 
@@ -40,7 +40,11 @@ const meta: Meta<typeof TagGroup<any>> = {
     onRemove: {
       control: {type: 'boolean'}
     },
-    onSelectionChange: {table: {category: 'Events'}}
+    onSelectionChange: {table: {category: 'Events'}},
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    children: {table: {disable: true}}
   },
   tags: ['autodocs'],
   title: 'TagGroup'
@@ -48,14 +52,17 @@ const meta: Meta<typeof TagGroup<any>> = {
 
 export default meta;
 
-export let Example = {
-  render: (args: any) => {
+type Story = StoryObj<typeof TagGroup>;
+
+export const Example: Story = {
+  render: (args) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
-        <TagGroup {...args}>
+        <TagGroup {...props}>
           <Tag id="chocolate">Chocolate</Tag>
           <Tag>Mint</Tag>
           <Tag>Strawberry</Tag>
@@ -100,14 +107,15 @@ let items: Array<ITagItem> = [
   {name: 'Vanilla', id: 'vanilla'},
   {name: 'Coffee', id: 'coffee'}
 ];
-export let Dynamic = {
-  render: (args: any) => {
+export const Dynamic: Story = {
+  render: (args) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
     return (
       <div style={{width: 320, resize: 'horizontal', overflow: 'hidden', padding: 4}}>
-        <TagGroup {...args} items={items}>
+        <TagGroup {...props} items={items}>
           {(item: ITagItem) => <Tag>{item.name}</Tag>}
         </TagGroup>
       </div>
@@ -123,14 +131,15 @@ export let Dynamic = {
 const SRC_URL_1 =
   'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 
-export let Disabled = {
-  render: (args: any) => {
+export const Disabled: Story = {
+  render: (args) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
 
     return (
-      <TagGroup {...args} disabledKeys={new Set(['mint', 'vanilla'])} styles={style({width: 320})}>
+      <TagGroup {...props} disabledKeys={new Set(['mint', 'vanilla'])} styles={style({width: 320})}>
         <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
         <Tag id="mint">Mint</Tag>
         <Tag id="strawberry">
@@ -163,28 +172,30 @@ function renderEmptyState() {
     </span>
   );
 }
-export let Empty = {
-  render: (args: any) => {
+export const Empty: Story = {
+  render: (args) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
 
     return (
-      <TagGroup {...args} renderEmptyState={renderEmptyState} />
+      <TagGroup {...props} renderEmptyState={renderEmptyState} />
     );
   },
   args: {
     label: 'Ice cream flavor'
   }
 };
-export let DefaultEmpty = {
-  render: (args: any) => {
+export const DefaultEmpty: Story = {
+  render: (args) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
 
     return (
-      <TagGroup {...args} />
+      <TagGroup {...props} />
     );
   },
   args: {
@@ -192,10 +203,14 @@ export let DefaultEmpty = {
   }
 };
 
-export let Links = {
-  render: (args: any) => {
+export const Links: Story = {
+  render: (args) => {
+    let props = {...args};
+    if (args.onRemove) {
+      props.onRemove = action('remove');
+    }
     return (
-      <TagGroup {...args} disabledKeys={new Set(['google'])}>
+      <TagGroup {...props} disabledKeys={new Set(['google'])}>
         <Tag id="adobe" href="https://adobe.com">Adobe</Tag>
         <Tag id="google">Google</Tag>
         <Tag id="apple" href="https://apple.com">Apple</Tag>
@@ -208,14 +223,15 @@ export let Links = {
   }
 };
 
-export const ContextualHelpExample = {
-  render: (args: any) => {
+export const ContextualHelpExample: Story = {
+  render: (args) => {
+    let props = {...args};
     if (args.onRemove) {
-      args.onRemove = action('remove');
+      props.onRemove = action('remove');
     }
     return (
       <TagGroup
-        {...args}
+        {...props}
         contextualHelp={
           <ContextualHelp>
             <Heading>What is a ice cream?</Heading>

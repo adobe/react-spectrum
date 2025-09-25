@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
@@ -18,10 +18,10 @@ import {focusSafely} from '@react-aria/interactions';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useEffect, useRef, useState} from 'react';
+import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The name of the component that triggered the popover. This is reflected on the element
    * as the `data-trigger` attribute, and can be used to provide specific
@@ -46,6 +46,7 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   UNSTABLE_portalContainer?: Element,
   /**
@@ -79,7 +80,12 @@ export interface PopoverRenderProps {
   isExiting: boolean
 }
 
-export const PopoverContext = createContext<ContextValue<PopoverProps, HTMLElement>>(null);
+interface PopoverContextValue extends PopoverProps {
+  /** Contexts to clear. */
+  clearContexts?: Context<any>[]
+}
+
+export const PopoverContext = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
 
 // Stores a ref for the portal container for a group of popovers (e.g. submenus).
 const PopoverGroupContext = createContext<RefObject<Element | null> | null>(null);
@@ -133,28 +139,23 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean,
   UNSTABLE_portalContainer?: Element,
   trigger?: string,
-  dir?: 'ltr' | 'rtl'
+  dir?: 'ltr' | 'rtl',
+  clearContexts?: Context<any>[]
 }
 
-function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts, ...props}: PopoverInnerProps) {
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
   // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
-  let [arrowWidth, setArrowWidth] = useState(0);
   let containerRef = useRef<HTMLDivElement | null>(null);
   let groupCtx = useContext(PopoverGroupContext);
   let isSubPopover = groupCtx && props.trigger === 'SubmenuTrigger';
-  useLayoutEffect(() => {
-    if (arrowRef.current && state.isOpen) {
-      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
-    }
-  }, [state.isOpen, arrowRef]);
 
-  let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
+  let {popoverProps, underlayProps, arrowProps, placement, triggerAnchorPoint} = usePopover({
     ...props,
     offset: props.offset ?? 8,
-    arrowSize: arrowWidth,
-    // If this is a submenu/subdialog, use the root popover's container 
+    arrowRef,
+    // If this is a submenu/subdialog, use the root popover's container
     // to detect outside interaction and add aria-hidden.
     groupRef: isSubPopover ? groupCtx! : containerRef
   }, state);
@@ -183,16 +184,32 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
   }, [ref, shouldBeDialog]);
 
   // Focus the popover itself on mount, unless a child element is already focused.
+  // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
   useEffect(() => {
-    if (isDialog && ref.current && !ref.current.contains(document.activeElement)) {
+    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !ref.current.contains(document.activeElement)) {
       focusSafely(ref.current);
     }
-  }, [isDialog, ref]);
+  }, [isDialog, ref, props.trigger]);
 
-  let style = {...popoverProps.style, ...renderProps.style};
+  let children = useMemo(() => {
+    let children = renderProps.children;
+    if (clearContexts) {
+      for (let Context of clearContexts) {
+        children = <Context.Provider value={null}>{children}</Context.Provider>;
+      }
+    }
+    return children;
+  }, [renderProps.children, clearContexts]);
+
+  let style = {
+    ...popoverProps.style,
+    '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
+    ...renderProps.style
+  };
+
   let overlay = (
     <div
-      {...mergeProps(filterDOMProps(props as any), popoverProps)}
+      {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
       role={isDialog ? 'dialog' : undefined}
       tabIndex={isDialog ? -1 : undefined}
@@ -208,7 +225,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
       data-exiting={isExiting || undefined}>
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
-        {renderProps.children}
+        {children}
       </OverlayArrowContext.Provider>
       <DismissButton onDismiss={state.close} />
     </div>

@@ -11,38 +11,36 @@
  */
 
 import {CalendarCell} from './CalendarCell';
-import {CalendarDate, endOfMonth, getWeeksInMonth} from '@internationalized/date';
+import {CalendarDate, endOfMonth} from '@internationalized/date';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React, {ReactNode} from 'react';
+import React, {JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarGrid} from '@react-aria/calendar';
-import {useLocale} from '@react-aria/i18n';
 
 interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
   state: CalendarState | RangeCalendarState,
   startDate: CalendarDate
 }
 
-export function CalendarMonth(props: CalendarMonthProps): ReactNode {
+export function CalendarMonth(props: CalendarMonthProps): JSX.Element {
   let {
     state,
     startDate,
     firstDayOfWeek
   } = props;
+
   let {
     gridProps,
     headerProps,
-    weekDays
+    weekDays,
+    weeksInMonth
   } = useCalendarGrid({
     ...props,
     endDate: endOfMonth(startDate)
   }, state);
-
-  let {locale} = useLocale();
-  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
 
   return (
     <table

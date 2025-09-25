@@ -13,7 +13,7 @@
 import {AlertDialog} from '../src';
 import {Example as Base} from '../stories/AlertDialog.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog,
@@ -26,11 +26,12 @@ const meta: Meta<typeof AlertDialog> = {
 
 export default meta;
 
-export const Example = {...Base} as StoryObj;
-
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[Enter]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('alertdialog');
+export const Example: StoryObj<typeof AlertDialog> = {
+  ...Base,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('alertdialog');
+  }
 };
