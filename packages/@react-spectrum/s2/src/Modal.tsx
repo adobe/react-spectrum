@@ -24,7 +24,7 @@ interface ModalProps extends ModalOverlayProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  size?: 'S' | 'M' | 'L' | 'XL' | 'fullscreen' | 'fullscreenTakeover'
 }
 
 const modalOverlayStyles = style({
@@ -103,6 +103,7 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
                 S: 400,
                 M: 480,
                 L: 640,
+                XL: 960,
                 fullscreen: 'calc(100% - 40px)',
                 fullscreenTakeover: 'full'
               }

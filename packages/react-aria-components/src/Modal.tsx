@@ -174,7 +174,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let style = {
     ...renderProps.style,
     '--visual-viewport-height': viewport.height + 'px',
-    '--page-height': typeof document !== 'undefined' ? document.body.clientHeight + 'px' : undefined
+    '--page-height': typeof document !== 'undefined' ? document.body.getBoundingClientRect().height + 'px' : undefined
   };
 
   return (

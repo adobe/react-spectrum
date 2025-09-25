@@ -110,6 +110,7 @@ const slider = style<{isDisabled: boolean}>({
       isDisabled: 'GrayText'
     }
   },
+  top: 0,
   left: 0,
   width: 'full',
   height: 'full',
