@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, RefObject, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, DISALLOW_VIRTUAL_FOCUS, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -140,10 +140,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     delayNextActiveDescendant.current = false;
   });
 
-  let turnOffVirtualFocus = useCallback((e) => {
-    e.stopPropagation();
-    setShouldUseVirtualFocus(false);
-  }, []);
+  // let turnOffVirtualFocus = useCallback((e) => {
+  //   e.stopPropagation();
+  //   setShouldUseVirtualFocus(false);
+  // }, []);
 
   let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
@@ -157,14 +157,15 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
       // If useSelectableCollection isn't passed shouldUseVirtualFocus even when useAutocomplete provides it
       // that means the collection doesn't support it (e.g. Table). If that is the case, we need to disable it here regardless
       // of what the user's provided so that the input doesn't recieve the onKeyDown and autocomplete props.
-      collectionNode.addEventListener(DISALLOW_VIRTUAL_FOCUS, turnOffVirtualFocus);
+      if (collectionNode.getAttribute('tabindex') != null) {
+        setShouldUseVirtualFocus(false);
+      }
       setHasCollection(true);
     } else {
       lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
-      lastCollectionNode.current?.removeEventListener(DISALLOW_VIRTUAL_FOCUS, turnOffVirtualFocus);
       setHasCollection(false);
     }
-  }, [updateActiveDescendant, turnOffVirtualFocus]);
+  }, [updateActiveDescendant]);
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));
