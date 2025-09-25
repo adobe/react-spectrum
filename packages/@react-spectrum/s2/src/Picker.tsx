@@ -74,7 +74,7 @@ import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, CSSProperties, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -401,8 +401,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
-                  '--adjusted-trigger-width': `calc(${menuWidth && !isQuiet ? `${menuWidth}px` : 'var(--trigger-width)'} - 2 * var(--s2-container-border-width))`
-                } as CSSProperties}
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                }}
                 // TODO: not sure how best to type styles so it also can accept arbitrary css vars
                 // @ts-ignore
                 styles={style({
@@ -411,12 +411,12 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     value: -12
                   },
                   minWidth: {
-                    default: '--adjusted-trigger-width',
-                    isQuiet: 'calc(192px - 2 * var(--s2-container-border-width))'
+                    default: '--trigger-width',
+                    isQuiet: 192
                   },
                   width: {
-                    default: '--adjusted-trigger-width',
-                    isQuiet: '[calc(var(--adjusted-trigger-width) - 2 * var(--cross-offset))]'
+                    default: '--trigger-width',
+                    isQuiet: '[calc(var(--trigger-width) - 2 * var(--cross-offset))]'
                   },
                   padding: 0,
                   overflow: 'unset',

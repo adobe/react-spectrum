@@ -478,7 +478,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   }
 
   let triggerRef = useRef<HTMLDivElement>(null);
-    // Make menu width match input + button
+  // Make menu width match input + button
   let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (triggerRef.current) {
@@ -650,9 +650,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           placement={`${direction} ${align}` as Placement}
           shouldFlip={shouldFlip}
           UNSAFE_style={{
-            // Subtract by 2 since these widths are set on the inner div rather than on the outermost div element that has
-            // a border
-            '--trigger-width': `calc(${menuWidth ?  `${menuWidth}px` : triggerWidth} - 2 * var(--s2-container-border-width))`
+            '--trigger-width': (menuWidth ? menuWidth + 'px' : triggerWidth)
           } as CSSProperties}
           styles={style({
             minWidth: '--trigger-width',

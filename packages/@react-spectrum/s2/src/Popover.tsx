@@ -65,11 +65,7 @@ let popover = style({
     isArrowShown: 'none'
   },
   borderStyle: 'solid',
-  '--s2-container-border-width': {
-    type: 'borderStartWidth',
-    value: 1
-  },
-  borderWidth: '--s2-container-border-width',
+  borderWidth: 1,
   borderColor: {
     default: 'gray-200',
     forcedColors: 'ButtonBorder'
