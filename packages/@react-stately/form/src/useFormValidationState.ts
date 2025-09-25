@@ -55,11 +55,11 @@ export interface FormValidationState {
   /** Currently displayed validation results, updated when the user commits their changes. */
   displayValidation: ValidationResult,
   /** Updates the current validation result. Not displayed to the user until `commitValidation` is called. */
-  updateValidation(result: ValidationResult): void,
+  updateValidation: (result: ValidationResult) => void,
   /** Resets the displayed validation state to valid when the user resets the form. */
-  resetValidation(): void,
+  resetValidation: () => void,
   /** Commits the realtime validation so it is displayed to the user. */
-  commitValidation(): void
+  commitValidation: () => void
 }
 
 export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState {

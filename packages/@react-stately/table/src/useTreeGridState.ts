@@ -23,7 +23,7 @@ export interface TreeGridState<T> extends TableState<T> {
   /** A set of keys for items that are expanded. */
   expandedKeys: 'all' | Set<Key>,
   /** Toggles the expanded state for a row by its key. */
-  toggleKey(key: Key): void,
+  toggleKey: (key: Key) => void,
   /** The key map containing nodes representing the collection's tree grid structure. */
   keyMap: Map<Key, GridNode<T>>,
   /** The number of leaf columns provided by the user. */

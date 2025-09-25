@@ -26,7 +26,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor | null,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
-  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
+  sort: (columnKey: Key, direction?: 'ascending' | 'descending') => void,
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
   isKeyboardNavigationDisabled: boolean,
   /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */

@@ -20,10 +20,10 @@ export interface MenuTriggerState extends OverlayTriggerState {
   readonly focusStrategy: FocusStrategy | null,
 
   /** Opens the menu. */
-  open(focusStrategy?: FocusStrategy | null): void,
+  open: (focusStrategy?: FocusStrategy | null) => void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void
+  toggle: (focusStrategy?: FocusStrategy | null) => void
 }
 
 export interface RootMenuTriggerState extends MenuTriggerState {
