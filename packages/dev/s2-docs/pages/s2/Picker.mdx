@@ -88,14 +88,15 @@ import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
 
 const users = Array.from({length: 10}, (_, i) => ({
+  id: `user${i + 1}`,
   name: `User ${i + 1}`,
   email: `user${i + 1}@example.com`,
-  avatar: `https://i.imgur.com/kJOwAdv.png`
+  avatar: 'https://i.imgur.com/kJOwAdv.png'
 }));
 
 <Picker label="Share" items={users}>
   {(item) => (
-    <PickerItem textValue={item.name}>
+    <PickerItem id={item.id} textValue={item.name}>
       {/*- begin highlight -*/}
       <Avatar slot="avatar" src={item.avatar} />
       {/*- end highlight -*/}
