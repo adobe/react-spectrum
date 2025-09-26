@@ -1,11 +1,14 @@
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+// @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
 import {illustrationAliases} from './illustrationAliases.js';
+// eslint-disable-next-line monorepo/no-internal-import
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
-import {pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
 import React, {Suspense, use, useCallback, useRef, useState} from 'react';
 
 type IllustrationItemType = {
@@ -90,6 +93,17 @@ function Loading() {
   );
 }
 
+let handleCopyImport = (id: string, variant: string, gradientStyle: string) => {
+  let importText = variant === 'gradient' ? 
+    `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
+    `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+  navigator.clipboard.writeText(importText).then(() => {
+    // noop
+  }).catch(() => {
+    // noop
+  });
+};
+
 function IllustrationList({variant, gradientStyle}) {
   let items = use(loadIllustrations(variant, gradientStyle));
   return (
@@ -105,7 +119,19 @@ function IllustrationList({variant, gradientStyle}) {
         aria-label="Illustrations"
         items={items}
         layout="grid"
-        className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
+        onAction={(item) => handleCopyImport(item.toString(), variant, gradientStyle)}
+        className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+        renderEmptyState={() => (
+          <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+            <NoSearchResults />
+            <Heading>
+              No results
+            </Heading>
+            <Content>
+              Try a different search term.
+            </Content>
+          </IllustratedMessage>
+          )}>
         {(item: IllustrationItemType) => <IllustrationItem item={item} />}
       </ListBox>
     </Virtualizer>
@@ -117,27 +143,15 @@ function IllustrationItem({item}: {item: IllustrationItemType}) {
   let ref = useRef(null);
   return (
     <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      {({isFocused}) => (
-        <>
-          <Illustration />
-          {isFocused && (
-            <div
-              className={style({
-                position: 'absolute',
-                bottom: 0,
-                left: '50%',
-                translateX: '-50%',
-                translateY: '20%',
-                padding: 4,
-                backgroundColor: 'elevated',
-                borderRadius: 'default',
-                boxShadow: 'elevated'
-              })}>
-              {item.id}
-            </div>
-          )}
-        </>
-      )}
+      <Illustration />
+      <div
+        className={style({
+          display: 'flex',
+          alignItems: 'center',
+          padding: 4
+        })}>
+        {item.id}
+      </div>
     </ListBoxItem>
   );
 }

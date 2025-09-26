@@ -3,8 +3,9 @@
 import {CloseButton, Content, Heading, IllustratedMessage, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
 import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {getLibraryFromPage} from './library';
 import {type Library, TAB_DEFS} from './constants';
-// eslint-disable-next-line
+// eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import type {PageProps} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -73,32 +74,11 @@ function MobileNav({pages, currentPage}: PageProps) {
   let scrollContainerRef = useRef<HTMLDivElement>(null);
   let tabListRef = useRef<HTMLDivElement>(null);
   let [tabListHeight, setTabListHeight] = useState(0);
-
-  let getCurrentLibrary = (page: any): Library => {
-    if (page.url.includes('react-aria')) {
-      return 'react-aria';
-    } else if (page.url.includes('react-internationalized')) {
-      return 'internationalized';
-    }
-    return 'react-spectrum';
-  };
-
-  let [selectedLibrary, setSelectedLibrary] = useState<Library>(getCurrentLibrary(currentPage));
+  let [selectedLibrary, setSelectedLibrary] = useState<Library>(getLibraryFromPage(currentPage));
 
   let getSectionsForLibrary = useCallback((libraryId: string) => {
     let sectionsMap = new Map();
-    
-    let filteredPages = pages.filter(page => {
-      let pageLibrary: 'react-spectrum' | 'react-aria' | 'internationalized' = 'react-spectrum';
-      if (page.url.includes('react-aria')) {
-        pageLibrary = 'react-aria';
-      } else if (page.url.includes('react-internationalized')) {
-        pageLibrary = 'internationalized';
-      }
-      
-      return pageLibrary === libraryId;
-    });
-
+    let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId);
     for (let page of filteredPages) {
       let section = page.exports?.section ?? 'Components';
       let sectionPages = sectionsMap.get(section) ?? [];
@@ -153,8 +133,7 @@ function MobileNav({pages, currentPage}: PageProps) {
 
   let getOrderedLibraries = () => {
     let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label}));
-
-    let currentLibId = getCurrentLibrary(currentPage);
+    let currentLibId = getLibraryFromPage(currentPage);
 
     // Move current library to first position
     let currentLibraryIndex = allLibraries.findIndex(lib => lib.id === currentLibId);
@@ -302,7 +281,7 @@ function MobileNav({pages, currentPage}: PageProps) {
           }
         }}
         styles={style({marginX: 12, marginTop: 12})}>
-        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white'})}>
+        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'layer-2'})}>
           <TabList>
             {libraries.map(library => (
               <Tab key={library.id} id={library.id}>{library.label}</Tab>
@@ -313,7 +292,7 @@ function MobileNav({pages, currentPage}: PageProps) {
           <TabPanel key={library.id} id={library.id}>
             <div
               ref={headerRef}
-              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'white'})}
+              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'layer-2'})}
               style={{top: tabListHeight}}>
               <SearchField 
                 aria-label="Search" 
