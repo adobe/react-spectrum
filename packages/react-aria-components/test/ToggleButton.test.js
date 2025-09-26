@@ -96,7 +96,8 @@ describe('ToggleButton', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<ToggleButton className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</ToggleButton>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<ToggleButton className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</ToggleButton>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -112,6 +113,7 @@ describe('ToggleButton', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {

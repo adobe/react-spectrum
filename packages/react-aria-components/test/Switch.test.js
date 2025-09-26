@@ -141,7 +141,8 @@ describe('Switch', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Switch>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-pressed');
@@ -157,6 +158,7 @@ describe('Switch', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state with keyboard', async () => {

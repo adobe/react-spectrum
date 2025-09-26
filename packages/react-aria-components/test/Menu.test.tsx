@@ -1449,11 +1449,12 @@ describe('Menu', () => {
     let onPressEnd = jest.fn();
     let onPress = jest.fn();
     let onClick = jest.fn();
+    let onClickCapture = jest.fn();
     let tree = render(
       <MenuTrigger>
         <Button>Menu Button</Button>
         <Popover>
-          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}} />
         </Popover>
       </MenuTrigger>
     );
@@ -1467,6 +1468,7 @@ describe('Menu', () => {
     expect(onPressEnd).toHaveBeenCalledTimes(1);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press events on menu items with closeOnSelect: false', async function () {

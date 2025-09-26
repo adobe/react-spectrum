@@ -125,7 +125,8 @@ describe('Checkbox', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Checkbox>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -141,6 +142,7 @@ describe('Checkbox', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state with keyboard', async () => {

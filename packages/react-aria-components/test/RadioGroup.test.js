@@ -169,7 +169,8 @@ describe('RadioGroup', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
+    let onClickCapture = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress, onClickCapture});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
@@ -185,6 +186,7 @@ describe('RadioGroup', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state with keyboard', async () => {
