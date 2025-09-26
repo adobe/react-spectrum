@@ -15,6 +15,7 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   Button,
   ButtonContext,
+  ContextValue,
   ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
@@ -32,9 +33,10 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
@@ -44,6 +46,7 @@ import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -53,7 +56,10 @@ interface S2TreeProps {
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   /** Whether the tree should be displayed with a [emphasized style](https://spectrum.adobe.com/page/tree-view/#Emphasis). */
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  selectionStyle?: 'highlight' | 'checkbox',
+  selectionCornerStyle?: 'square' | 'round',
+  highlightMode?: 'normal' | 'inverse'
 }
 
 export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TreeProps {
@@ -76,8 +82,10 @@ interface TreeRendererContextValue {
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
+export const TreeViewContext = createContext<ContextValue<Partial<TreeViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: boolean}>({});
+
+let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: boolean, selectionStyle: 'highlight' | 'checkbox', selectionCornerStyle: 'square' | 'round', highlightMode?: 'normal' | 'inverse'}>({selectionStyle: 'checkbox', selectionCornerStyle: 'round'});
 
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
@@ -108,7 +116,8 @@ const tree = style({
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
 export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
+  [props, ref] = useSpectrumContextProps(props, ref, TreeViewContext);
+  let {children, isDetached, isEmphasized, selectionStyle = 'checkbox', selectionCornerStyle = 'round', UNSAFE_className, UNSAFE_style, highlightMode = 'normal'} = props;
   let scale = useScale();
 
   let renderer;
@@ -126,12 +135,12 @@ export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tr
         gap: isDetached ? 2 : 0
       }}>
       <TreeRendererContext.Provider value={{renderer}}>
-        <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
+        <InternalTreeContext.Provider value={{isDetached, isEmphasized, selectionStyle, selectionCornerStyle, highlightMode}}>
           <Tree
             {...props}
             style={UNSAFE_style}
             className={renderProps => (UNSAFE_className ?? '') + tree({isDetached, ...renderProps}, props.styles)}
-            selectionBehavior="toggle"
+            selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
             ref={domRef}>
             {props.children}
           </Tree>
@@ -145,28 +154,50 @@ const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10),
 const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
 
 const rowBackgroundColor = {
-  default: '--s2-container-bg',
-  isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7),
-  isHovered: colorMix('gray-25', 'gray-900', 7),
-  isPressed: colorMix('gray-25', 'gray-900', 10),
-  isSelected: {
-    default: colorMix('gray-25', 'gray-900', 7),
-    isEmphasized: selectedBackground,
-    isFocusVisibleWithin: {
-      default: colorMix('gray-25', 'gray-900', 10),
-      isEmphasized: selectedActiveBackground
+  selectionStyle: {
+    checkbox: {
+      default: '--s2-container-bg',
+      isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7),
+      isHovered: colorMix('gray-25', 'gray-900', 7),
+      isPressed: colorMix('gray-25', 'gray-900', 10),
+      isSelected: {
+        default: colorMix('gray-25', 'gray-900', 7),
+        isEmphasized: selectedBackground,
+        isFocusVisibleWithin: {
+          default: colorMix('gray-25', 'gray-900', 10),
+          isEmphasized: selectedActiveBackground
+        },
+        isHovered: {
+          default: colorMix('gray-25', 'gray-900', 10),
+          isEmphasized: selectedActiveBackground
+        },
+        isPressed: {
+          default: colorMix('gray-25', 'gray-900', 10),
+          isEmphasized: selectedActiveBackground
+        }
+      },
+      forcedColors: {
+        default: 'Background'
+      }
     },
-    isHovered: {
-      default: colorMix('gray-25', 'gray-900', 10),
-      isEmphasized: selectedActiveBackground
-    },
-    isPressed: {
-      default: colorMix('gray-25', 'gray-900', 10),
-      isEmphasized: selectedActiveBackground
+    highlight: {
+      default: '--s2-container-bg',
+      isFocusVisibleWithin: 'gray-100',
+      isHovered: 'gray-100',
+      isPressed: 'gray-100',
+      isSelected: {
+        default: 'gray-100',
+        isEmphasized: {
+          highlightMode: {
+            normal: 'blue-200',
+            inverse: 'blue-800/85'
+          }
+        }
+      },
+      forcedColors: {
+        default: 'Background'
+      }
     }
-  },
-  forcedColors: {
-    default: 'Background'
   }
 } as const;
 
@@ -208,13 +239,39 @@ const treeCellGrid = style({
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ],
-  backgroundColor: '--rowBackgroundColor',
   paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
+    default: 'gray-700',
+    isHovered: 'gray-800',
+    isSelected: {
+      highlightMode: {
+        normal: 'gray-900',
+        inverse: 'gray-25'
+      }
+    },
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
     }
+  },
+  '--thumbnailBorderColor': {
+    type: 'color',
+    value: {
+      default: 'gray-500',
+      isHovered: 'gray-800',
+      isSelected: 'gray-900',
+      isEmphasized: {
+        isSelected: 'blue-900'
+      },
+      isDisabled: {
+        default: 'gray-400',
+        forcedColors: 'GrayText'
+      }
+    }
+  },
+  fontWeight: {
+    default: 'normal',
+    isSelected: 'medium'
   },
   '--rowSelectedBorderColor': {
     type: 'outlineColor',
@@ -248,6 +305,27 @@ const treeCellGrid = style({
   }
 });
 
+const treeRowBackground = style({
+  position: 'absolute',
+  zIndex: -1,
+  inset: 0,
+  backgroundColor: '--rowBackgroundColor',
+  borderTopStartRadius: {
+    isRoundTop: 'default'
+  },
+  borderTopEndRadius: {
+    isRoundTop: 'default'
+  },
+  borderBottomStartRadius: {
+    isRoundBottom: 'default'
+  },
+  borderBottomEndRadius: {
+    isRoundBottom: 'default'
+  },
+  borderWidth: 0,
+  borderStyle: 'solid'
+});
+
 const treeCheckbox = style({
   gridArea: 'checkbox',
   marginStart: 12,
@@ -262,6 +340,21 @@ const treeIcon = style({
     type: 'fill',
     value: 'currentColor'
   }
+});
+
+const treeThumbnail = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual',
+  width: 32,
+  aspectRatio: 'square',
+  objectFit: 'contain',
+  borderRadius: 'sm',
+  borderWidth: 1,
+  borderColor: '--thumbnailBorderColor',
+  borderStyle: 'solid',
+  padding: 2,
+  backgroundColor: 'white',
+  boxSizing: 'border-box'
 });
 
 const treeContent = style({
@@ -312,15 +405,18 @@ export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
-  let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let {isDetached, isEmphasized, selectionStyle, highlightMode} = useContext(InternalTreeContext);
 
   return (
     <TreeItem
       {...props}
       className={(renderProps) => treeRow({
         ...renderProps,
-        isLink: !!href, isEmphasized
-      }) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')} />
+        isLink: !!href,
+        isEmphasized,
+        selectionStyle,
+        highlightMode
+      }) + (renderProps.isFocusVisible && !isDetached && selectionStyle !== 'highlight' ? ' ' + treeRowFocusIndicator : '')} />
   );
 };
 
@@ -333,21 +429,34 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let {
     children
   } = props;
-  let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let {isDetached, isEmphasized, selectionStyle, selectionCornerStyle, highlightMode} = useContext(InternalTreeContext);
   let scale = useScale();
 
   return (
     <TreeItemContent>
-      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
+      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state, isHovered}) => {
         let isNextSelected = false;
         let isNextFocused = false;
+        let isPreviousSelected = false;
+        let keyBefore = state.collection.getKeyBefore(id);
         let keyAfter = state.collection.getKeyAfter(id);
+        if (keyBefore != null) {
+          isPreviousSelected = state.selectionManager.isSelected(keyBefore);
+        }
         if (keyAfter != null) {
           isNextSelected = state.selectionManager.isSelected(keyAfter);
         }
         let isFirst = state.collection.getFirstKey() === id;
+        let isRoundTop = false;
+        let isRoundBottom = false;
+        if (selectionStyle === 'highlight' && selectionCornerStyle === 'round') {
+          isRoundTop = (isHovered && !isSelected) || (isSelected && !isPreviousSelected);
+          isRoundBottom = (isHovered && !isSelected) || (isSelected && !isNextSelected);
+        }
+
         return (
-          <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused, isDetached})}>
+          <div className={treeCellGrid({isDisabled, isPreviousSelected, isNextSelected, isSelected, isFirst, isNextFocused, isHovered, isDetached, isEmphasized, highlightMode})}>
+            <div className={treeRowBackground({isPreviousSelected, isNextSelected, isSelected, selectionStyle, isEmphasized, isHovered, selectionCornerStyle, isRoundTop, isRoundBottom})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
               <div className={treeCheckbox}>
@@ -365,12 +474,13 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
             <Provider
               values={[
                 [TextContext, {styles: treeContent}],
+                [ImageContext, {styles: treeThumbnail}],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', styles: treeIcon}),
                   styles: style({size: fontRelative(20), flexShrink: 0})
                 }],
-                [ActionButtonGroupContext, {styles: treeActions}],
-                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
+                [ActionButtonGroupContext, {styles: treeActions, size: 'S', staticColor: highlightMode === 'inverse' && isSelected ? 'white' : undefined}],
+                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, size: 'S'}]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
