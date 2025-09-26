@@ -52,7 +52,7 @@ export function IconCards() {
   return (
     <Autocomplete filter={filter}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <SearchField size="L" />
+        <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
         <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(8, 8), preserveAspectRatio: true}}>
           <ListBox items={iconList} layout="grid" className={style({height: 360, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
             {item => <IconItem item={item} />}

@@ -21,6 +21,7 @@ import {
   ComboBoxStateContext,
   ContextValue,
   InputContext,
+  InputProps,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
@@ -83,7 +84,8 @@ export interface ComboBoxProps<T extends object> extends
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
-  Pick<AsyncLoadable, 'onLoadMore'>  {
+  Pick<AsyncLoadable, 'onLoadMore'>,
+  Pick<InputProps, 'placeholder'>  {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
