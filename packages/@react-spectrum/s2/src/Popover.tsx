@@ -25,8 +25,8 @@ import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './styl
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
+import {lightDark, style} from '../style' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -64,10 +64,10 @@ let popover = style({
     default: 'elevated',
     isArrowShown: 'none'
   },
-  borderStyle: 'solid',
-  borderWidth: 1,
-  borderColor: {
-    default: 'gray-200',
+  outlineStyle: 'solid',
+  outlineWidth: 1,
+  outlineColor: {
+    default: lightDark('transparent-white-25', 'gray-200'),
     forcedColors: 'ButtonBorder'
   },
   width: {
@@ -120,8 +120,7 @@ let popover = style({
   isolation: 'isolate',
   pointerEvents: {
     isExiting: 'none'
-  },
-  outlineStyle: 'none'
+  }
 }, getAllowedOverrides());
 // TODO: animations and real Popover Arrow
 
@@ -147,7 +146,7 @@ let arrow = style({
   },
   strokeWidth: 1,
   stroke: {
-    default: 'gray-200',
+    default: lightDark('transparent-white-25', 'gray-200'),
     forcedColors: 'ButtonBorder'
   }
 });
