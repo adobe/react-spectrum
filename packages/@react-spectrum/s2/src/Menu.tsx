@@ -41,7 +41,7 @@ import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
 import {ImageContext} from './Image';
-import {InPopoverContext, PopoverBase, PopoverContext} from './Popover';
+import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
@@ -320,6 +320,11 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
+let wrappingDiv = style({
+  display: 'flex',
+  size: 'full'
+});
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -366,14 +371,16 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 
   if (isPopover) {
     return (
-      <PopoverBase
+      <Popover
         ref={ref}
-        hideArrow
-        UNSAFE_style={UNSAFE_style}
-        UNSAFE_className={UNSAFE_className}
-        styles={styles}>
-        {content}
-      </PopoverBase>
+        padding="none"
+        hideArrow>
+        <div
+          style={UNSAFE_style}
+          className={(UNSAFE_className || '') + wrappingDiv}>
+          {content}
+        </div>
+      </Popover>
     );
   }
 

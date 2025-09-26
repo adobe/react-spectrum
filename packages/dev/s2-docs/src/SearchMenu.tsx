@@ -9,7 +9,7 @@ import {type Library, TAB_DEFS} from './constants';
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
-import {SelectableCollectionContext} from '../../../react-aria-components/src/context';
+import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';

@@ -69,7 +69,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
@@ -77,7 +77,7 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -339,6 +339,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     );
   }
   let scale = useScale();
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
 
   return (
     <AriaSelect
@@ -394,49 +396,54 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 estimatedHeadingHeight: 50,
                 padding: 8,
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
-              <PopoverBase
+              <Popover
                 hideArrow
+                padding="none"
                 offset={menuOffset}
+                crossOffset={isQuiet ? RTLFlipOffset * -12 : undefined}
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
                   width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
                 }}
                 styles={style({
-                  marginStart: {
-                    isQuiet: -12
-                  },
                   minWidth: {
-                    default: '[var(--trigger-width)]',
+                    default: '--trigger-width',
                     isQuiet: 192
                   },
                   width: {
-                    default: '[var(--trigger-width)]',
-                    isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                    default: '--trigger-width',
+                    isQuiet: '[calc(var(--trigger-width) - 24)]'
                   }
                 })(props)}>
-                <Provider
-                  values={[
-                    [HeaderContext, {styles: listboxHeader({size})}],
-                    [HeadingContext, {
-                      // @ts-ignore
-                      role: 'presentation',
-                      styles: sectionHeading
-                    }],
-                    [TextContext, {
-                      slots: {
-                        description: {styles: description({size})}
-                      }
-                    }]
-                  ]}>
-                  <ListBox
-                    dependencies={props.dependencies}
-                    items={items}
-                    className={listbox({size})}>
-                    {renderer}
-                  </ListBox>
-                </Provider>
-              </PopoverBase>
+                <div
+                  className={style({
+                    display: 'flex',
+                    size: 'full'
+                  })}>
+                  <Provider
+                    values={[
+                      [HeaderContext, {styles: listboxHeader({size})}],
+                      [HeadingContext, {
+                        // @ts-ignore
+                        role: 'presentation',
+                        styles: sectionHeading
+                      }],
+                      [TextContext, {
+                        slots: {
+                          description: {styles: description({size})}
+                        }
+                      }]
+                    ]}>
+                    <ListBox
+                      dependencies={props.dependencies}
+                      items={items}
+                      className={listbox({size})}>
+                      {renderer}
+                    </ListBox>
+                  </Provider>
+                </div>
+              </Popover>
             </Virtualizer>
           </InternalPickerContext.Provider>
         </>
@@ -542,7 +549,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1 
+                    {selectedItems.length <= 1
                       ? defaultChildren
                       : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
                     }

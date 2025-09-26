@@ -307,13 +307,13 @@ const allowedOverrides = [
   'visibility'
 ] as const;
 
-const widthProperties = [
+export const widthProperties = [
   'width',
   'minWidth',
   'maxWidth'
 ] as const;
 
-const heightProperties = [
+export const heightProperties = [
   'size',
   'height',
   'minHeight',

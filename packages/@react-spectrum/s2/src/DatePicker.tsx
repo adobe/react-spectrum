@@ -33,7 +33,7 @@ import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -237,25 +237,30 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 
 export function CalendarPopover(props: PropsWithChildren): ReactElement {
   return (
-    <PopoverBase
+    <Popover
       hideArrow
-      styles={style({
-        paddingX: 16,
-        paddingY: 32,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16
-      })}>
-      <Dialog>
-        <Provider
-          values={[
-            [OverlayTriggerStateContext, null]
-          ]}>
-          {props.children}
-        </Provider>
-      </Dialog>
-    </PopoverBase>
+      padding="none">
+      <div
+        className={style({
+          paddingX: 16,
+          paddingY: 32,
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          boxSizing: 'border-box',
+          size: 'full'
+        })}>
+        <Dialog>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null]
+            ]}>
+            {props.children}
+          </Provider>
+        </Dialog>
+      </div>
+    </Popover>
   );
 }
 
