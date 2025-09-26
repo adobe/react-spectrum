@@ -589,7 +589,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
   return (
     <AriaSubmenuTrigger {...props}>
       {props.children[0]}
-      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -9, placement: 'end top'}}>
+      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
         {props.children[1]}
       </PopoverContext.Provider>
     </AriaSubmenuTrigger>
