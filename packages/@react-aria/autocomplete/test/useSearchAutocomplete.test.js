@@ -75,11 +75,12 @@ describe('useSearchAutocomplete', function () {
 
     let {result} = renderHook((props) => useSearchAutocomplete(props, state.current), {initialProps: props});
     let {inputProps} = result.current;
-    inputProps.onKeyDown(event({key: 'ArrowDown'}));
+    let input = document.createElement('input');
+    inputProps.onKeyDown(event({key: 'ArrowDown', target: input}));
     expect(openSpy).toHaveBeenCalledTimes(1);
     expect(openSpy).toHaveBeenLastCalledWith('first', 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);
-    inputProps.onKeyDown(event({key: 'ArrowUp'}));
+    inputProps.onKeyDown(event({key: 'ArrowUp', target: input}));
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(openSpy).toHaveBeenLastCalledWith('last', 'manual');
     expect(toggleSpy).toHaveBeenCalledTimes(0);

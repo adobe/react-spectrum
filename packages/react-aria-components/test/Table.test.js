@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Input, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, TextField, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
@@ -2646,12 +2646,255 @@ describe('Table', () => {
       let {getByRole} = renderTable({rowProps: {onAction, onPressStart, onPressEnd, onPress, onClick}});
       let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
       await tableTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Editable fields in cells', () => {
+    describe.each(['none', 'single', 'multiple'])('selectionMode: %s', (selectionMode) => {
+      it('should support editing a textfield in a cell in a table with keyboard interactions', async () => {
+        let {getByRole, getAllByRole} = render(
+          <>
+            <Table aria-label="Files" selectionMode={selectionMode}>
+              <MyTableHeader>
+                <Column>
+                  <MyCheckbox slot="selection" />
+                </Column>
+                <MyColumn id="name" isRowHeader>Name</MyColumn>
+                <MyColumn>Type</MyColumn>
+                <MyColumn>Description</MyColumn>
+              </MyTableHeader>
+              <TableBody>
+                <MyRow id="1" textValue="Edit">
+                  <Cell>
+                    <MyCheckbox slot="selection" />
+                  </Cell>
+                  <Cell>Games</Cell>
+                  <Cell>File folder</Cell>
+                  <Cell>
+                    <TextField aria-label="Change description 1">
+                      <Input />
+                    </TextField>
+                    <TextField aria-label="Change description 2">
+                      <Input />
+                    </TextField>
+                  </Cell>
+                </MyRow>
+                <MyRow id="2" textValue="Bold">
+                  <Cell>
+                    <MyCheckbox slot="selection" />
+                  </Cell>
+                  <Cell>Fonts</Cell>
+                  <Cell>Font folder</Cell>
+                  <Cell>
+                    <TextField aria-label="Change description 3">
+                      <Input />
+                    </TextField>
+                    <TextField aria-label="Change description 4">
+                      <Input />
+                    </TextField>
+                  </Cell>
+                </MyRow>
+              </TableBody>
+            </Table>
+            <button>After</button>
+          </>
+        );
+
+        // Keyboard navigate to first textfield in first row
+        let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid'), interactionType: 'keyboard'});
+        let inputs = getAllByRole('textbox');
+        let button = getByRole('button', {name: 'After'});
+        await user.tab();
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowRight}');
+        if (selectionMode === 'none') {
+          expect(inputs[0]).toHaveFocus();
+        } else {
+          // in selection modes, account for extra checkbox column
+          await user.keyboard('{ArrowRight}');
+          expect(inputs[0]).toHaveFocus();
+        }
+        await user.keyboard('{ArrowRight}');
+        expect(inputs[1]).toHaveFocus();
+        await user.keyboard('{ArrowLeft}');
+        expect(inputs[0]).toHaveFocus();
+        // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+        await user.keyboard('B ');
+        expect(tableTester.selectedRows).toHaveLength(0);
+        expect(inputs[0]).toHaveFocus();
+
+        // Navigate to second textfield in first row
+        await user.keyboard('{ArrowRight}');
+        expect(inputs[1]).toHaveFocus();
+        await user.keyboard('{ArrowRight}');
+        expect(tableTester.rows[0]).toHaveFocus();
+        await user.keyboard('{ArrowLeft}');
+        expect(inputs[1]).toHaveFocus();
+        // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+        await user.keyboard('E ');
+        expect(tableTester.selectedRows).toHaveLength(0);
+        expect(inputs[1]).toHaveFocus();
+
+        await user.tab();
+        expect(button).toHaveFocus();
+
+        // Come back to the table, we should remember roughly where we were, in this case, on the cell containing the input.
+        // We may want this to focus the input itself instead of the cell.
+        await user.tab({shift: true});
+        expect(inputs[0]).toHaveFocus(); // TODO: this should be the second input if we were on it previously, but it's always the first input right now
+      });
+
+      describe('pointer interactions', () => {
+        installPointerEvent();
+
+        it('should support editing a textfield in a cell in a table with mouse interactions', async () => {
+          let {getByRole, getAllByRole} = render(
+            <>
+              <Table aria-label="Files" selectionMode={selectionMode}>
+                <MyTableHeader>
+                  <Column>
+                    <MyCheckbox slot="selection" />
+                  </Column>
+                  <MyColumn id="name" isRowHeader>Name</MyColumn>
+                  <MyColumn>Type</MyColumn>
+                  <MyColumn>Description</MyColumn>
+                </MyTableHeader>
+                <TableBody>
+                  <MyRow id="1" textValue="Edit">
+                    <Cell>
+                      <MyCheckbox slot="selection" />
+                    </Cell>
+                    <Cell>Games</Cell>
+                    <Cell>File folder</Cell>
+                    <Cell>
+                      <TextField aria-label="Change description 1">
+                        <Input />
+                      </TextField>
+                      <TextField aria-label="Change description 2">
+                        <Input />
+                      </TextField>
+                    </Cell>
+                  </MyRow>
+                  <MyRow id="2" textValue="Bold">
+                    <Cell>
+                      <MyCheckbox slot="selection" />
+                    </Cell>
+                    <Cell>Fonts</Cell>
+                    <Cell>Font folder</Cell>
+                    <Cell>
+                      <TextField aria-label="Change description 3">
+                        <Input />
+                      </TextField>
+                      <TextField aria-label="Change description 4">
+                        <Input />
+                      </TextField>
+                    </Cell>
+                  </MyRow>
+                </TableBody>
+              </Table>
+              <button>After</button>
+            </>
+          );
+
+          // click on the first textfield in the first row
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          let inputs = getAllByRole('textbox');
+          await user.click(inputs[0]);
+          expect(inputs[0]).toHaveFocus();
+          await user.keyboard('{ArrowRight}');
+          expect(inputs[1]).toHaveFocus();
+          await user.keyboard('{ArrowLeft}');
+          expect(inputs[0]).toHaveFocus();
+          // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+          await user.keyboard('B ');
+          expect(tableTester.selectedRows).toHaveLength(0);
+          expect(inputs[0]).toHaveFocus();
+
+          // click on the second textfield in the first row
+          await user.click(inputs[1]);
+          expect(inputs[1]).toHaveFocus();
+          await user.keyboard('{ArrowRight}');
+          expect(tableTester.rows[0]).toHaveFocus();
+          await user.keyboard('{ArrowLeft}');
+          expect(inputs[1]).toHaveFocus();
+          // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+          await user.keyboard('E ');
+          expect(tableTester.selectedRows).toHaveLength(0);
+          expect(inputs[1]).toHaveFocus();
+        });
+      });
+    });
+
+    it('should support navigation with a disabled textfield in a cell in a non-selectable table', async () => {
+      let {getByRole, getAllByRole} = render(
+        <>
+          <Table aria-label="Files">
+            <MyTableHeader>
+              <MyColumn id="name" isRowHeader>Name</MyColumn>
+              <MyColumn>Type</MyColumn>
+              <MyColumn>Description</MyColumn>
+            </MyTableHeader>
+            <TableBody>
+              <MyRow id="1" textValue="Edit">
+                <Cell>Games</Cell>
+                <Cell>File folder</Cell>
+                <Cell>
+                  <TextField isDisabled aria-label="Change description 1">
+                    <Input />
+                  </TextField>
+                  <TextField aria-label="Change description 2">
+                    <Input />
+                  </TextField>
+                </Cell>
+              </MyRow>
+              <MyRow id="2" textValue="Bold">
+                <Cell>Fonts</Cell>
+                <Cell>Font folder</Cell>
+                <Cell>
+                  <TextField isDisabled aria-label="Change description 3">
+                    <Input />
+                  </TextField>
+                  <TextField isDisabled aria-label="Change description 4">
+                    <Input />
+                  </TextField>
+                </Cell>
+              </MyRow>
+            </TableBody>
+          </Table>
+          <button>After</button>
+        </>
+      );
+
+      // Keyboard navigate to first textfield in first row
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid'), interactionType: 'keyboard'});
+      let inputs = getAllByRole('textbox');
+      let button = getByRole('button', {name: 'After'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      expect(inputs[1]).toHaveFocus();
+      await user.keyboard('{ArrowRight}');
+      expect(tableTester.rows[0]).toHaveFocus();
+      await user.keyboard('{ArrowLeft}');
+      expect(inputs[1]).toHaveFocus();
+      // Type a string that would trigger a typeahead or selection if we weren't in a textfield
+      await user.keyboard('B ');
+      expect(tableTester.selectedRows).toHaveLength(0);
+      expect(inputs[1]).toHaveFocus();
+
+      // TODO: correct behaviour? selection cursor is where it would be if you pressed down, so it doesn't do anything, so should it be allowed to navigate cells now?
+      await user.keyboard('{ArrowDown}');
+      await user.tab();
+      expect(button).toHaveFocus();
     });
   });
 });

@@ -233,7 +233,7 @@ function InternalCard(props) {
   // We don't want to focus the checkbox (or any other focusable elements) within the Card
   // when pressing the arrow keys so we delete the key down handler here. Arrow key navigation between
   // the cards in the CardView is handled by useGrid => useSelectableCollection instead.
-  delete gridCellProps.onKeyDownCapture;
+  delete gridCellProps.onKeyDown;
   return (
     <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
       <CardBase

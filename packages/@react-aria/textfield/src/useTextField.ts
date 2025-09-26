@@ -11,14 +11,16 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
+  KeyboardEvent,
   LabelHTMLAttributes,
   RefObject,
+  useCallback,
   useEffect,
   useState
 } from 'react';
@@ -107,6 +109,8 @@ export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultEle
   errorMessageProps: DOMAttributes
 }
 
+let KEYS_TO_CONTINUE_PROPAGATION = new Set(['Tab', 'Escape', 'Enter']);
+
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - Props for the text field.
@@ -122,10 +126,60 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isRequired = false,
     isReadOnly = false,
     type = 'text',
-    validationBehavior = 'aria'
+    validationBehavior = 'aria',
+    onKeyDown: onKeyDownProp,
+    onKeyUp: onKeyUpProp
   } = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
-  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
+  let onKeyDown = useCallback((e: BaseEvent<KeyboardEvent<HTMLInputElement>>) => {
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'Home')
+      && (e.target as HTMLInputElement).selectionStart === 0
+      && (e.target as HTMLInputElement).selectionEnd === 0) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if ((e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'End')
+      && (e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length
+      && (e.target as HTMLInputElement).selectionEnd === (e.target as HTMLInputElement).value.length) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else {
+      if (!e.isPropagationStopped()) {
+        e.stopPropagation();
+      }
+    }
+    onKeyDownProp?.(e);
+  }, [onKeyDownProp]);
+  let onKeyUp = useCallback((e: BaseEvent<KeyboardEvent<any>>) => {
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp')
+      && (e.target as HTMLInputElement).selectionStart === 0
+      && (e.target as HTMLInputElement).selectionEnd === 0) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if ((e.key === 'ArrowRight' || e.key === 'ArrowDown')
+      && (e.target as HTMLInputElement).selectionStart === (e.target as HTMLInputElement).value.length
+      && (e.target as HTMLInputElement).selectionEnd === (e.target as HTMLInputElement).value.length) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else if (KEYS_TO_CONTINUE_PROPAGATION.has(e.key)) {
+      if (e.isPropagationStopped()) {
+        e.continuePropagation();
+      }
+    } else {
+      if (!e.isPropagationStopped()) {
+        e.stopPropagation();
+      }
+    };
+    onKeyUpProp?.(e);
+  }, [onKeyUpProp]);
+  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>({...props, onKeyDown, onKeyUp}, ref);
   let validationState = useFormValidationState({
     ...props,
     value
@@ -194,6 +248,26 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         autoCorrect: props.autoCorrect,
         spellCheck: props.spellCheck,
         [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: props.enterKeyHint,
+
+        // TODO: Always?? or only if we're inside a grid? in which case maybe I should do this in all of Grid hooks by checking if target instance of HTMLInputElement?
+        onPointerDown: (e) => {
+          e.stopPropagation();
+          props.onKeyDown?.(e);
+        },
+        onPointerUp: (e) => {
+          e.stopPropagation();
+          props.onKeyUp?.(e);
+        },
+        onClick: (e) => {
+          e.stopPropagation();
+          // @ts-expect-error
+          props.onClick?.(e);
+        },
+        onDoubleClick: (e) => {
+          e.stopPropagation();
+          // @ts-expect-error
+          props.onDoubleClick?.(e);
+        },
 
         // Clipboard events
         onCopy: props.onCopy,
