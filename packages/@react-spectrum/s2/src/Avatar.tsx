@@ -11,7 +11,7 @@
  */
 
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, forwardRef} from 'react';
+import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -53,13 +53,17 @@ const imageStyles = style({
   }
 }, getAllowedOverrides({width: false}));
 
-export const AvatarContext = createContext<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>>>(null);
+export interface AvatarContextValue extends AvatarProps {
+  render?: (avatar: ReactNode) => ReactNode
+}
+
+export const AvatarContext = createContext<ContextValue<Partial<AvatarContextValue>, DOMRefValue<HTMLImageElement>>>(null);
 
 /**
  * An avatar is a thumbnail representation of an entity, such as a user or an organization.
  */
 export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
-  [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
+  [props, ref] = useSpectrumContextProps(props as AvatarContextValue, ref, AvatarContext);
   let domRef = useDOMRef(ref);
   let {
     alt = '',
@@ -71,11 +75,12 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
     slot = 'avatar',
     ...otherProps
   } = props;
+  let render = (props as AvatarContextValue).render;
   const domProps = filterDOMProps(otherProps);
 
   let remSize = size / 16 + 'rem';
   let isLarge = size >= 64;
-  return (
+  let image = (
     <Image
       {...domProps}
       ref={domRef}
@@ -90,4 +95,10 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
       styles={imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );
+
+  if (render) {
+    return render(image);
+  }
+
+  return image;
 });

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncComboBoxStory, AsyncComboBoxStoryType, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithIcons} from '../stories/ComboBox.stories';
+import {AsyncComboBoxStory, AsyncComboBoxStoryType, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithAvatars, WithIcons} from '../stories/ComboBox.stories';
 import {ComboBox} from '../src';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -55,6 +55,12 @@ export const WithDynamic: Story = {
 export const Icons: Story = {
   ...WithIcons,
   name: 'With Icons',
+  play: Static.play
+};
+
+export const Avatars: Story = {
+  ...WithAvatars,
+  name: 'With Avatars',
   play: Static.play
 };
 

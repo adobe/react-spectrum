@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncPickerStory, AsyncPickerStoryType, ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithIcons} from '../stories/Picker.stories';
+import {AsyncPickerStory, AsyncPickerStoryType, ContextualHelpExample, CustomWidth, Dynamic, Example, Sections, WithAvatars, WithIcons} from '../stories/Picker.stories';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Picker} from '../src';
@@ -53,6 +53,12 @@ export const DynamicExample: Story = {
 export const Icons: Story = {
   ...WithIcons,
   name: 'With Icons',
+  play: Default.play
+};
+
+export const Avatars: Story = {
+  ...WithAvatars,
+  name: 'With Avatars',
   play: Default.play
 };
 
