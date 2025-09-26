@@ -13,20 +13,37 @@
 import {action} from '@storybook/addon-actions';
 import {
   ActionButton,
+  ActionMenu,
   Cell,
+  Checkbox,
+  CheckboxGroup,
+  ColorArea,
   Column,
+  ComboBox,
+  ComboBoxItem,
   Content,
+  DatePicker,
   Heading,
   IllustratedMessage,
   Link,
   MenuItem,
   MenuSection,
+  NumberField,
+  Picker,
+  PickerItem,
+  Radio,
+  RadioGroup,
   Row,
+  Slider,
+  Switch,
   TableBody,
   TableHeader,
   TableView,
   TableViewProps,
-  Text
+  Tag,
+  TagGroup,
+  Text,
+  TextField
 } from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
@@ -924,6 +941,166 @@ export const ColSpan: StoryObj<typeof ColSpanExample> = {
   argTypes: {
     selectionMode: {
       control: false
+    }
+  }
+};
+
+let data: {id: string, name: string, description: string, type: string}[] = [
+  {id: '1', name: 'Name', description: 'Who you are', type: 'text'},
+  {id: '2', name: 'Date of birth', description: 'For horoscopes', type: 'date'},
+  {id: '3', name: 'Favourite colour', description: 'For your personality', type: 'combobox'},
+  {id: '4', name: 'Pets', description: 'For your enjoyment', type: 'picker'},
+  {id: '5', name: 'Allowance', description: 'For your future', type: 'number'},
+  {id: '6', name: 'Height', description: 'In inches, for your basketball career', type: 'slider'},
+  {id: '7', name: 'Actions', description: 'To take right now', type: 'menu'},
+  {id: '8', name: 'Checkbox', description: 'To check', type: 'checkbox'},
+  {id: '9', name: 'Radio', description: 'To choose', type: 'radio'},
+  {id: '10', name: 'Wall colour', description: 'So your room sparks joy', type: 'color'},
+  {id: '11', name: 'References', description: 'Handy link to your favourite website', type: 'link'},
+  {id: '12', name: 'Mythical dogs', description: 'Which would you adopt', type: 'tags'},
+  {id: '13', name: 'Superstitions enabled', description: 'Whether or not 13 is bad luck', type: 'switch'}
+];
+
+let dataColumns = [
+  {name: 'Name', id: 'name', isRowHeader: true, minWidth: 200},
+  {name: 'Data', id: 'editable', minWidth: 300},
+  {name: 'Description', id: 'description', minWidth: 200}
+];
+
+let formatOptions: Intl.NumberFormatOptions = {
+  style: 'currency',
+  currency: 'USD'
+};
+
+export const TableWithTextFields: StoryObj<typeof TableView> = {
+  render: (args) => (
+    <TableView overflowMode="wrap" aria-label="Editable fields table" {...args} styles={style({width: 800, height: 400})}>
+      <TableHeader columns={dataColumns}>
+        {(column) => (
+          <Column allowsResizing minWidth={column.minWidth} isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={data}>
+        {item => (
+          <Row id={item.id} columns={dataColumns}>
+            {(column) => {
+              if (column.name === 'Data') {
+                switch (item.type) {
+                  case 'text':
+                    return <Cell><div style={{display: 'flex', paddingInline: '8px', gap: '8px'}}><TextField aria-label="First name" /><TextField aria-label="Last name" /></div></Cell>;
+                  case 'date':
+                    return <Cell><div style={{display: 'flex', paddingInline: '8px'}}><DatePicker aria-label={item.name} /></div></Cell>;
+                  case 'combobox':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <ComboBox aria-label={item.name}>
+                            <ComboBoxItem id="1">Red</ComboBoxItem>
+                            <ComboBoxItem id="2">Green</ComboBoxItem>
+                            <ComboBoxItem id="3">Blue</ComboBoxItem>
+                          </ComboBox>
+                        </div>
+                      </Cell>
+                    );
+                  case 'picker':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <Picker aria-label={item.name}>
+                            <PickerItem id="1">Cat</PickerItem>
+                            <PickerItem id="2">Dog</PickerItem>
+                            <PickerItem id="3">Bird</PickerItem>
+                          </Picker>
+                        </div>
+                      </Cell>
+                    );
+                  case 'number':
+                    return <Cell><div style={{display: 'flex', paddingInline: '8px'}}><NumberField formatOptions={formatOptions} aria-label={item.name} /></div></Cell>;
+                  case 'slider':
+                    return <Cell><div style={{display: 'flex', paddingInline: '8px'}}><Slider labelPosition="side" aria-label={item.name} minValue={0} maxValue={100} step={1} /></div></Cell>;
+                  case 'menu':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <ActionMenu>
+                            <MenuItem>Copy</MenuItem>
+                            <MenuItem>Delete</MenuItem>
+                          </ActionMenu>
+                        </div>
+                      </Cell>
+                    );
+                  case 'checkbox':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <CheckboxGroup aria-label="Packing" orientation="horizontal">
+                            <Checkbox value="airpods">Airpods</Checkbox>
+                            <Checkbox value="kindle">Kindle</Checkbox>
+                          </CheckboxGroup>
+                        </div>
+                      </Cell>
+                    );
+                  case 'radio':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <RadioGroup aria-label="In-flight meal" orientation="horizontal">
+                            <Radio value="chicken">Chicken</Radio>
+                            <Radio value="veggie">Veggie</Radio>
+                          </RadioGroup>
+                        </div>
+                      </Cell>
+                    );
+                  case 'color':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <ColorArea aria-label={item.name} />
+                        </div>
+                      </Cell>
+                    );
+                  case 'link':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}><Link href="https://adobe.com">Adobe</Link></div>
+                      </Cell>
+                    );
+                  case 'tags':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <TagGroup selectionMode="multiple" aria-label={item.name}>
+                            <Tag>Cerberus</Tag>
+                            <Tag>Gellert</Tag>
+                            <Tag>Fenris</Tag>
+                          </TagGroup>
+                        </div>
+                      </Cell>
+                    );
+                  case 'switch':
+                    return (
+                      <Cell>
+                        <div style={{display: 'flex', paddingInline: '8px'}}>
+                          <Switch aria-label={item.name} />
+                        </div>
+                      </Cell>
+                    );
+                }
+              }
+              return <Cell>{item[column.id]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  ),
+  args: {
+    ...Example.args,
+    keyboardNavigationBehavior: 'tab'
+  },
+  parameters: {
+    docs: {
+      disable: true
     }
   }
 };
