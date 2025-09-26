@@ -1,0 +1,28 @@
+.spectrum {
+  --spectrum-meter-large-text-color: var(--spectrum-alias-text-color);
+  --spectrum-meter-large-track-color: var(--spectrum-alias-track-color-default);
+  --spectrum-meter-large-track-fill-color: var(--spectrum-global-color-blue-500);
+  --spectrum-meter-large-track-color-positive: var(--spectrum-semantic-positive-color-status);
+  --spectrum-meter-large-track-color-warning: var(--spectrum-semantic-notice-color-status);
+  --spectrum-meter-large-track-color-critical: var(--spectrum-semantic-negative-color-status);
+  --spectrum-meter-large-track-color-disabled: var(--spectrum-alias-track-color-disabled);
+  --spectrum-meter-large-track-fill-color-disabled: var(--spectrum-alias-track-color-disabled);
+  --spectrum-meter-large-width: var(--spectrum-global-dimension-size-2400);
+  --spectrum-meter-large-label-gap-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-meter-large-height: var(--spectrum-global-dimension-size-75);
+  --spectrum-meter-large-fill-border-radius: 0;
+  --spectrum-meter-large-label-gap-y: var(--spectrum-global-dimension-size-115);
+  --spectrum-meter-small-text-color: var(--spectrum-alias-text-color);
+  --spectrum-meter-small-track-color: var(--spectrum-alias-track-color-default);
+  --spectrum-meter-small-track-fill-color: var(--spectrum-global-color-blue-500);
+  --spectrum-meter-small-track-color-positive: var(--spectrum-semantic-positive-color-status);
+  --spectrum-meter-small-track-color-warning: var(--spectrum-semantic-notice-color-status);
+  --spectrum-meter-small-track-color-critical: var(--spectrum-semantic-negative-color-status);
+  --spectrum-meter-small-track-color-disabled: var(--spectrum-alias-track-color-disabled);
+  --spectrum-meter-small-track-fill-color-disabled: var(--spectrum-alias-track-color-disabled);
+  --spectrum-meter-small-width: var(--spectrum-global-dimension-size-2400);
+  --spectrum-meter-small-label-gap-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-meter-small-height: var(--spectrum-global-dimension-size-50);
+  --spectrum-meter-small-fill-border-radius: 0;
+  --spectrum-meter-small-label-gap-y: var(--spectrum-global-dimension-size-115);
+}

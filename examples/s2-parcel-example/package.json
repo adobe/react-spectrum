@@ -21,7 +21,9 @@
           "**/@react-spectrum/s2/**",
           "src/**/*.{js,jsx,ts,tsx}"
         ],
-        "types": ["css"]
+        "types": [
+          "css"
+        ]
       }
     ]
   }

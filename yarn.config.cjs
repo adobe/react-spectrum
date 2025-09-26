@@ -50,6 +50,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       && workspace.ident !== '@internationalized/string-compiler'
       && workspace.ident !== 'tailwindcss-react-aria-components'
       && workspace.ident !== '@react-spectrum/s2'
+      && workspace.ident !== '@spectrum-css/vars'
       && workspace.manifest.rsp?.type !== 'cli'
     ) {
 
@@ -190,6 +191,7 @@ function enforceCSS({Yarn}) {
       && !name.startsWith('@react-spectrum/test-utils')
       && name.startsWith('@react-spectrum')
       && !name.startsWith('@react-spectrum/mcp')
+      && !name.startsWith('@spectrum-css/vars')
       && workspace.pkg.dependencies?.has('@adobe/spectrum-css-temp')) {
 
       workspace.set('targets', {
@@ -212,6 +214,7 @@ function isPublishing(workspace) {
     && !name.includes('@react-spectrum/s2-docs')
     && !name.includes('parcel')
     && !name.includes('@adobe/spectrum-css-temp')
+    && !name.includes('@spectrum-css/vars')
     && !name.includes('css-module-types')
     && !name.includes('eslint')
     && !name.includes('optimize-locales-plugin')

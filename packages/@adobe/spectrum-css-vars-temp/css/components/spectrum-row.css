@@ -1,0 +1,7 @@
+:root {
+  --spectrum-list-background-color: var(--spectrum-global-color-gray-75);
+  --spectrum-list-focus-indicator-color: var(--spectrum-alias-border-color-focus);
+  --spectrum-list-text-color: var(--spectrum-global-color-gray-800);
+  --spectrum-list-background-color-hover: var(--spectrum-alias-background-color-hover-overlay);
+  --spectrum-list-text-color-down: var(--spectrum-global-color-gray-800);
+}

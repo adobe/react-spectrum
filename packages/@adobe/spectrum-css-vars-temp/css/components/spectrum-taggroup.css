@@ -1,0 +1,4 @@
+:root {
+  --spectrum-taggroup-tag-gap-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-taggroup-tag-gap-y: var(--spectrum-global-dimension-size-100);
+}

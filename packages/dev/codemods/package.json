@@ -28,7 +28,6 @@
     "@react-types/shared": "^3.32.0",
     "@types/node": "^22",
     "boxen": "^5.1.2",
-    "build": "^0.1.4",
     "chalk": "^4.0.0",
     "execa": "^5.1.1",
     "jscodeshift": "^0.15.2",

@@ -1,0 +1,4 @@
+.spectrum {
+  --spectrum-flyout-padding-x: 0px;
+  --spectrum-flyout-padding-y: var(--spectrum-global-dimension-size-50);
+}

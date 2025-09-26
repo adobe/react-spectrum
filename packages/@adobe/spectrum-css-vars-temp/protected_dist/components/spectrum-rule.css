@@ -1,0 +1,11 @@
+.spectrum {
+  --spectrum-rule-large-background-color: var(--spectrum-global-color-gray-800);
+  --spectrum-rule-large-height: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-rule-large-border-radius: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-rule-medium-background-color: var(--spectrum-global-color-gray-300);
+  --spectrum-rule-medium-height: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-rule-medium-border-radius: var(--spectrum-global-dimension-static-size-10);
+  --spectrum-rule-small-background-color: var(--spectrum-global-color-gray-300);
+  --spectrum-rule-small-height: var(--spectrum-global-dimension-static-size-10);
+  --spectrum-rule-small-border-radius: var(--spectrum-global-dimension-static-size-10);
+}

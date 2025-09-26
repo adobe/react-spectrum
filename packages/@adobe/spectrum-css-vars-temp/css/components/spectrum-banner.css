@@ -1,0 +1,29 @@
+:root {
+  --spectrum-banner-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-banner-border-radius: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-padding-y: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-banner-padding-x: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-text-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-banner-text-line-height: var(--spectrum-alias-heading-text-line-height);
+  --spectrum-banner-error-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-banner-error-background-color: var(--spectrum-semantic-negative-color-default);
+  --spectrum-banner-error-border-radius: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-error-padding-y: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-banner-error-padding-x: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-error-text-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-banner-error-text-line-height: var(--spectrum-alias-heading-text-line-height);
+  --spectrum-banner-info-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-banner-info-background-color: var(--spectrum-semantic-informative-color-default);
+  --spectrum-banner-info-border-radius: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-info-padding-y: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-banner-info-padding-x: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-info-text-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-banner-info-text-line-height: var(--spectrum-alias-heading-text-line-height);
+  --spectrum-banner-warning-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-banner-warning-background-color: var(--spectrum-semantic-notice-color-default);
+  --spectrum-banner-warning-border-radius: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-warning-padding-y: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-banner-warning-padding-x: var(--spectrum-global-dimension-static-size-100);
+  --spectrum-banner-warning-text-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-banner-warning-text-line-height: var(--spectrum-alias-heading-text-line-height);
+}

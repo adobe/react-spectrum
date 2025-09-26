@@ -16,14 +16,24 @@ const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
-let yargs = require('yargs');
+const {parseArgs} = require('util');
 
 
-let argv = yargs
-  .option('verbose', {alias: 'v', type: 'boolean'})
-  .option('output', {alias: 'o', type: 'string'})
-  .option('githash', {type: 'string'})
-  .argv;
+const args = parseArgs({
+  options: {
+    verbose: {
+      short: 'v',
+      type: 'boolean'
+    },
+    output: {
+      short: 'o',
+      type: 'string'
+    },
+    githash: {
+      type: 'string'
+    }
+  }
+});
 
 build().catch(err => {
   console.error(err.stack);
@@ -38,15 +48,15 @@ build().catch(err => {
 async function build() {
   let backupDir = tempy.directory();
   let archiveDir;
-  if (argv.githash) {
+  if (args.values.githash) {
     archiveDir = tempy.directory();
-    console.log('checking out archive of', argv.githash, 'into', archiveDir);
-    await run('sh', ['-c', `git archive ${argv.githash} | tar -x -C ${archiveDir}`], {stdio: 'inherit'});
+    console.log('checking out archive of', args.values.githash, 'into', archiveDir);
+    await run('sh', ['-c', `git archive ${args.values.githash} | tar -x -C ${archiveDir}`], {stdio: 'inherit'});
 
     await run('sh', ['-c', `git archive HEAD | tar -x -C ${backupDir}`], {stdio: 'inherit'});
   }
   let srcDir = archiveDir ?? path.join(__dirname, '..');
-  let distDir = path.join(__dirname, '..', 'dist', argv.output ?? 'branch-api');
+  let distDir = path.join(__dirname, '..', 'dist', args.values.output ?? 'branch-api');
   // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
   fs.removeSync(distDir);
   // Create a temp directory to build the site in
@@ -113,6 +123,11 @@ async function build() {
     fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
   } catch (e) {
     fs.copySync(path.join(backupDir, 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
+  }
+  try {
+    fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-vars-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-vars-temp'));
+  } catch (e) {
+    fs.copySync(path.join(backupDir, 'packages', '@adobe', 'spectrum-css-vars-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-vars-temp'));
   }
   fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));

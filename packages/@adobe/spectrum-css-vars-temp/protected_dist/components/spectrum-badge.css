@@ -1,0 +1,6 @@
+.spectrum {
+  --spectrum-badge-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-badge-error-background-color: var(--spectrum-semantic-negative-color-default);
+  --spectrum-badge-info-background-color: var(--spectrum-semantic-informative-color-default);
+  --spectrum-badge-warning-background-color: var(--spectrum-semantic-notice-color-default);
+}
