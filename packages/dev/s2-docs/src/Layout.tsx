@@ -96,7 +96,28 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             lg: 'none'
           }
         })}>
-        <div className={style({isolation: 'isolate', width: 'full'})}>
+        <div
+          className={style({
+            isolation: 'isolate',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            maxWidth: {
+              default: 'full',
+              lg: 1280
+            },
+            marginX: 'auto',
+            marginY: 0,
+            padding: {
+              default: 0,
+              lg: 12
+            },
+            paddingBottom: 0,
+            gap: {
+              default: 0,
+              lg: 12
+            }
+          })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
             currentPage={currentPage}
