@@ -59,6 +59,10 @@
     position: absolute;
     transition-property: translate, width, height;
     transition-duration: 200ms;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
   &[data-selected] {
