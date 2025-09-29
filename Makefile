@@ -118,7 +118,11 @@ check-examples:
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	cd starters/docs && yarn --no-immutable && yarn tsc
+	mkdir -p ../react-aria-starter
+	mkdir -p dist
+	cp -r starters/docs ../react-aria-starter
+	cd ../react-aria-starter/docs && yarn --no-immutable && yarn tsc
+	cp -r docs/dist/ ../starters/docs/dist
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
