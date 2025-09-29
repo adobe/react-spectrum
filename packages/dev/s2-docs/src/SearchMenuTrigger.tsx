@@ -83,7 +83,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         return;
       }
 
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && isSearchOpen) {
         e.preventDefault();
         onClose();
       } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)))) {
@@ -97,7 +97,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, open]);
+  }, [isSearchOpen, onClose, open]);
   
   
   return (

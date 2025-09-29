@@ -332,8 +332,8 @@ Use [Autocomplete](Autocomplete.html) from React Aria Components with a [SearchF
 
 ```tsx render
 "use client";
-import {MenuTrigger, ActionButton, Menu, MenuItem, Popover, SearchField} from '@react-spectrum/s2';
-import {Autocomplete, useFilter} from 'react-aria-components';
+import {Autocomplete, MenuTrigger, ActionButton, Menu, MenuItem, Popover, SearchField} from '@react-spectrum/s2';
+import {useFilter} from 'react-aria-components';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example() {
@@ -342,7 +342,7 @@ function Example() {
   return (
     <MenuTrigger>
       <ActionButton>Add tag...</ActionButton>
-      <Popover>
+      <Popover aria-label="Select a tag">
         {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
           <SearchField aria-label="Search tags" autoFocus />
@@ -371,8 +371,7 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start" type="s2"
 "use client";
-import type {Selection} from 'react-aria-components';
-import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, ActionButton, Selection} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example(props) {
@@ -408,8 +407,7 @@ Each section in a menu may have independent selection states by passing `selecti
 
 ```tsx render hideImports
 "use client";
-import type {Selection} from 'react-aria-components';
-import {Menu, MenuTrigger, MenuItem, MenuSection, Header, Heading, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, MenuSection, Header, Heading, ActionButton, Selection} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
