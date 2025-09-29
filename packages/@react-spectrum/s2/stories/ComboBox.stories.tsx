@@ -34,9 +34,13 @@ const meta: Meta<typeof ComboBox<any>> = {
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    placeholder: {control: {type: 'text'}}
   },
-  args: {...getActionArgs(events)},
+  args: {
+    ...getActionArgs(events),
+    placeholder: 'Select a value'
+  },
   title: 'ComboBox'
 };
 

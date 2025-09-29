@@ -313,9 +313,8 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                 style({
                   order: 1,
                   truncate: true,
-                  opacity: {
-                    default: 1,
-                    isProgressVisible: 0
+                  visibility: {
+                    isProgressVisible: 'hidden'
                   }
                 })({isProgressVisible})
               }],
@@ -325,9 +324,8 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                   size: fontRelative(20),
                   marginStart: '--iconMargin',
                   flexShrink: 0,
-                  opacity: {
-                    default: 1,
-                    isProgressVisible: 0
+                  visibility: {
+                    isProgressVisible: 'hidden'
                   }
                 })({isProgressVisible})
               }],
@@ -341,9 +339,8 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
               }],
               [ImageContext, {
                 styles: style({
-                  opacity: {
-                    default: 1,
-                    isProgressVisible: 0
+                  visibility: {
+                    isProgressVisible: 'hidden'
                   }
                 })({isProgressVisible})
               }],
@@ -357,9 +354,8 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                   insetStart: '--badgePosition',
                   marginTop: 'calc((self(height) * -1)/2)',
                   marginStart: 'calc((self(height) * -1)/2)',
-                  opacity: {
-                    default: 1,
-                    isProgressVisible: 0
+                  visibility: {
+                    isProgressVisible: 'hidden'
                   }
                 })({isProgressVisible})
               }]
@@ -372,9 +368,9 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  opacity: {
-                    default: 0,
-                    isProgressVisible: 1
+                  visibility: {
+                    default: 'hidden',
+                    isProgressVisible: 'visible'
                   }
                 })({isProgressVisible, isPending})}>
                 <ProgressCircle
