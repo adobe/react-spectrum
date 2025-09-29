@@ -16,6 +16,74 @@ const RAC_SRC_ROOT = path.join(REPO_ROOT, 'packages/react-aria-components/src');
 const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT];
 const S2_DOCS_PAGES_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const DIST_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
+const LICENSE_COMMENT_REGEX = /^\s*\{\/\*[\s\S]*?Copyright\s+20\d{2}\s+Adobe[\s\S]*?\*\/\}\s*/;
+const S2_ICON_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
+const S2_ILLUSTRATION_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations');
+
+let iconNamesCache = null;
+let illustrationNamesCache = null;
+
+function getIconNames() {
+  if (iconNamesCache) {
+    return iconNamesCache;
+  }
+
+  try {
+    const files = fs.readdirSync(S2_ICON_ROOT);
+    const names = new Set();
+
+    for (const fileName of files) {
+      if (!fileName.toLowerCase().endsWith('.svg')) {
+        continue;
+      }
+
+      const normalized = fileName.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1');
+      const cleaned = normalized.trim();
+      if (cleaned) {
+        names.add(cleaned);
+      }
+    }
+
+    iconNamesCache = Array.from(names).sort((a, b) => a.localeCompare(b));
+  } catch {
+    iconNamesCache = [];
+  }
+
+  return iconNamesCache;
+}
+
+function getIllustrationNames() {
+  if (illustrationNamesCache) {
+    return illustrationNamesCache;
+  }
+
+  try {
+    const names = new Set();
+    const directories = ['linear', 'gradient/generic1', 'gradient/generic2'];
+
+    for (const dir of directories) {
+      const illustrationPath = path.join(S2_ILLUSTRATION_ROOT, dir);
+      if (!fs.existsSync(illustrationPath)) {
+        continue;
+      }
+
+      const files = fs.readdirSync(illustrationPath);
+      for (const fileName of files) {
+        if (fileName.endsWith('.tsx')) {
+          // Extract name without extension
+          const name = fileName.replace(/\.tsx$/, '');
+          names.add(name);
+        }
+      }
+    }
+
+    illustrationNamesCache = Array.from(names).sort((a, b) => a.localeCompare(b));
+  } catch {
+    illustrationNamesCache = [];
+  }
+
+  return illustrationNamesCache;
+}
 
 // Pre-load a ts-morph project so we can query type information.
 const project = new Project({
@@ -269,6 +337,123 @@ function remarkDocsComponentsToMarkdown() {
     const relatedTypes = new Set();
     visit(tree, ['mdxJsxFlowElement', 'mdxJsxTextElement'], (node, index, parent) => {
       const name = node.name;
+      if (name === 'InstallCommand') {
+        const pkgAttr = node.attributes?.find(a => a.name === 'pkg');
+        if (!pkgAttr) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        let pkg = '';
+        if (pkgAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          pkg = pkgAttr.value.value.replace(/['"`]/g, '').trim();
+        } else if (typeof pkgAttr.value === 'string') {
+          pkg = pkgAttr.value.trim();
+        }
+
+        if (!pkg) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const flagsAttr = node.attributes?.find(a => a.name === 'flags');
+        let flags = '';
+        if (flagsAttr) {
+          if (flagsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            flags = flagsAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof flagsAttr.value === 'string') {
+            flags = flagsAttr.value.trim();
+          }
+        }
+
+        const commandText = `npm install ${pkg}${flags ? ' ' + flags : ''}`.trim();
+
+        const codeNode = {
+          type: 'code',
+          lang: 'bash',
+          meta: '',
+          value: commandText
+        };
+
+        parent.children.splice(index, 1, codeNode);
+        return index;
+      }
+      if (name === 'IconCards') {
+        const iconList = getIconNames();
+        const header = ['| Icon |', '|------|'];
+        const rows = iconList.map(iconName => `| ${iconName} |`);
+        const tableMarkdown = iconList.length ? `${header.join('\n')}\n${rows.join('\n')}` : '> Icon list unavailable in this build.';
+        const iconCardsNode = unified().use(remarkParse).parse(tableMarkdown);
+        parent.children.splice(index, 1, ...iconCardsNode.children);
+        return index;
+      }
+      if (name === 'IllustrationCards') {
+        const illustrationList = getIllustrationNames();
+        const header = ['| Illustration |', '|--------------|'];
+        const rows = illustrationList.map(illustrationName => `| ${illustrationName} |`);
+        const tableMarkdown = illustrationList.length ? `${header.join('\n')}\n${rows.join('\n')}` : '> Illustration list unavailable in this build.';
+        const illustrationCardsNode = unified().use(remarkParse).parse(tableMarkdown);
+        parent.children.splice(index, 1, ...illustrationCardsNode.children);
+        return index;
+      }
+      if (name === 'IconColors') {
+        const colorsAttr = node.attributes?.find(a => a.name === 'colors');
+        let colorList = [];
+        
+        if (colorsAttr && colorsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          // Extract string literals from array expression: ['white', 'black', ...] 
+          const expr = colorsAttr.value.value;
+          const matches = expr.match(/['"]([^'"]+)['"]/g);
+          if (matches) {
+            colorList = matches.map(m => m.slice(1, -1)); // Remove quotes
+          }
+        }
+
+        if (colorList.length > 0) {
+          const header = ['| Color |', '|-------|'];
+          const rows = colorList.map(color => `| ${color} |`);
+          const tableMarkdown = `${header.join('\n')}\n${rows.join('\n')}`;
+          const iconColorsNode = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...iconColorsNode.children);
+        } else {
+          // If no colors found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+      if (name === 'IconSizes') {
+        const sizesAttr = node.attributes?.find(a => a.name === 'sizes');
+        let sizeList = [];
+        
+        if (sizesAttr && sizesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          // Extract objects from array expression: [{size: 'XS', pixels: '14px'}, ...]
+          const expr = sizesAttr.value.value;
+          // Match {size: 'X', pixels: 'Ypx'} patterns
+          const objectMatches = expr.match(/\{[^}]+\}/g);
+          if (objectMatches) {
+            sizeList = objectMatches.map(obj => {
+              const sizeMatch = obj.match(/size:\s*['"]([^'"]+)['"]/);
+              const pixelsMatch = obj.match(/pixels:\s*['"]([^'"]+)['"]/);
+              return {
+                size: sizeMatch ? sizeMatch[1] : '',
+                pixels: pixelsMatch ? pixelsMatch[1] : ''
+              };
+            }).filter(item => item.size && item.pixels);
+          }
+        }
+
+        if (sizeList.length > 0) {
+          const header = ['| Size | Pixels |', '|------|--------|'];
+          const rows = sizeList.map(({size, pixels}) => `| ${size} | ${pixels} |`);
+          const tableMarkdown = `${header.join('\n')}\n${rows.join('\n')}`;
+          const iconSizesNode = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...iconSizesNode.children);
+        } else {
+          // If no sizes found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
       if (name === 'PageDescription') {
         // Assume first child is expression "docs.exports.Component.description".
         const exprNode = node.children?.find((c) => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression');
@@ -278,7 +463,6 @@ function remarkDocsComponentsToMarkdown() {
             const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
-              // eslint-disable-next-line max-depth
               if (node.type === 'mdxJsxFlowElement') {
                 parent.children[index] = {
                   type: 'paragraph',
@@ -402,6 +586,44 @@ function remarkDocsComponentsToMarkdown() {
         });
 
         // Replace ExampleSwitcher node with generated markdown.
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
+      }
+
+      if (name === 'BundlerSwitcher') {
+        const bundlerItems = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem');
+        const newNodes = [];
+
+        const extractLabel = (itemNode) => {
+          const labelAttr = itemNode.attributes?.find(a => a.name === 'label');
+          if (!labelAttr) {return null;}
+
+          if (labelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            return labelAttr.value.value.replace(/['"`]/g, '').trim();
+          }
+
+          if (typeof labelAttr.value === 'string') {
+            return labelAttr.value.trim();
+          }
+
+          return null;
+        };
+
+        bundlerItems.forEach((itemNode) => {
+          const label = extractLabel(itemNode) || 'Configuration';
+
+          newNodes.push({
+            type: 'heading',
+            depth: 3,
+            children: [{type: 'text', value: label}]
+          });
+
+          const itemChildren = (itemNode.children || []).filter(child => child.type !== 'text' || child.value.trim() !== '');
+          if (itemChildren.length) {
+            newNodes.push(...itemChildren);
+          }
+        });
+
         parent.children.splice(index, 1, ...newNodes);
         return index + newNodes.length;
       }
@@ -851,7 +1073,8 @@ async function main() {
   };
 
   for (const filePath of mdxFiles) {
-    const mdContent = fs.readFileSync(filePath, 'utf8');
+    const rawContent = fs.readFileSync(filePath, 'utf8');
+    const mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
     const processor = unified()
       .use(remarkParse)
       .use(remarkMdx)
