@@ -2,13 +2,13 @@
 
 import {CloseButton, Content, Heading, IllustratedMessage, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {getLibraryFromPage} from './library';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
+import {OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 
@@ -55,13 +55,7 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
   return (
     <RACDialog
       {...props}
-      className={dialogStyle({padding})}>
-      {composeRenderProps(props.children, (children) => (
-        <OverlayTriggerStateContext.Provider value={null}>
-          {children}
-        </OverlayTriggerStateContext.Provider>
-      ))}
-    </RACDialog>
+      className={dialogStyle({padding})} />
   );
 };
 
@@ -103,7 +97,7 @@ function MobileNav({pages, currentPage}: PageProps) {
     });
     return sectionArray;
   }, [getSectionsForLibrary, selectedLibrary]);
-  
+
 
   useEffect(() => {
       // Auto-select first section initially or when library changes
@@ -168,7 +162,7 @@ function MobileNav({pages, currentPage}: PageProps) {
     if (!searchValue.trim()) {
       return pages;
     }
-    
+
     let searchLower = searchValue.toLowerCase();
     return pages.filter(page => {
       let pageTitle = title(page).toLowerCase();
@@ -179,9 +173,9 @@ function MobileNav({pages, currentPage}: PageProps) {
   let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
     let librarySections = getSectionsForLibrary(libraryId);
     let pages = librarySections.get(sectionName) ?? [];
-    
+
     let filteredPages = filterPages(pages, searchValue);
-    
+
     return filteredPages
       .sort((a, b) => title(a).localeCompare(title(b)))
       .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
@@ -209,7 +203,7 @@ function MobileNav({pages, currentPage}: PageProps) {
   let getSectionNamesForLibrary = (libraryId: string) => {
     let librarySections = getSectionsForLibrary(libraryId);
     let sectionArray = [...librarySections.keys()];
-    
+
     // Show 'Components' first
     sectionArray.sort((a, b) => {
       if (a === 'Components') {
@@ -220,7 +214,7 @@ function MobileNav({pages, currentPage}: PageProps) {
       }
       return a.localeCompare(b);
     });
-    
+
     return sectionArray;
   };
 
@@ -263,10 +257,11 @@ function MobileNav({pages, currentPage}: PageProps) {
       scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
     }
   }, [selectedSection, selectedLibrary]);
+  let state = useContext(OverlayTriggerStateContext);
 
   return (
     <div className={style({minHeight: '100dvh', paddingBottom: 24, boxSizing: 'border-box'})}>
-      <Tabs 
+      <Tabs
         aria-label="Libraries"
         density="compact"
         selectedKey={selectedLibrary}
@@ -294,16 +289,16 @@ function MobileNav({pages, currentPage}: PageProps) {
               ref={headerRef}
               className={style({position: 'sticky', zIndex: 1, backgroundColor: 'layer-2'})}
               style={{top: tabListHeight}}>
-              <SearchField 
-                aria-label="Search" 
+              <SearchField
+                aria-label="Search"
                 value={searchValue}
                 onChange={handleSearchChange}
                 onFocus={handleSearchFocus}
                 onBlur={handleSearchBlur}
                 styles={style({marginY: 12})} />
               <TagGroup
-                aria-label="Navigation sections" 
-                selectionMode="single" 
+                aria-label="Navigation sections"
+                selectionMode="single"
                 selectedKeys={selectedSection ? [selectedSection] : []}
                 onSelectionChange={handleTagSelection}
                 styles={style({margin: 12})}
@@ -313,6 +308,7 @@ function MobileNav({pages, currentPage}: PageProps) {
             </div>
             <div ref={scrollContainerRef}>
               <ComponentCardView
+                onAction={() => state?.close()}
                 items={getItemsForSelection(selectedSection, library.id, searchValue)}
                 ariaLabel="Pages"
                 size="S"
