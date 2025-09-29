@@ -134,12 +134,12 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-  mkdir -p ../react-aria-tailwind-starter
+	mkdir -p ../react-aria-tailwind-starter
 	mkdir -p starters/tailwind/dist
-  cp -r starters/tailwind ../react-aria-tailwind-starter
-  cd ../react-aria-tailwind-starter && yarn --no-immutable && yarn tsc
-  cp -r tailwind/dist/ ../starters/tailwind/dist
-  cd ../starters/tailwind
+	cp -r starters/tailwind ../react-aria-tailwind-starter
+	cd ../react-aria-tailwind-starter && yarn --no-immutable && yarn tsc
+	cp -r tailwind/dist/ ../starters/tailwind/dist
+	cd ../starters/tailwind
 
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
