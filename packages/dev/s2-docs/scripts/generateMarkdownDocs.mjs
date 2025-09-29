@@ -732,6 +732,113 @@ function remarkDocsComponentsToMarkdown() {
         parent.children[index] = {type: 'text', value: ''};
         return index;
       }
+      if (name === 'S2StyleProperties') {
+        const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
+        let propertyList = [];
+        
+        if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          // Extract string literals from array expression: ['margin', 'marginStart', ...] 
+          const expr = propertiesAttr.value.value;
+          const matches = expr.match(/['"]([^'"]+)['"]/g);
+          if (matches) {
+            propertyList = matches.map(m => m.slice(1, -1)); // Remove quotes
+          }
+        }
+
+        if (propertyList.length > 0) {
+          // Generate markdown bullet list with inline code
+          const listItems = propertyList.map(prop => `- \`${prop}\``).join('\n');
+          const listNode = unified().use(remarkParse).parse(listItems);
+          parent.children.splice(index, 1, ...listNode.children);
+          return index + listNode.children.length;
+        } else {
+          // If no properties found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+      if (name === 'S2Colors') {
+        const colorSections = [
+          {
+            title: 'Background colors',
+            description: 'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
+            colors: [
+              'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
+              'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
+              'negative', 'negative-subtle', 'informative', 'informative-subtle',
+              'positive', 'positive-subtle', 'notice', 'notice-subtle',
+              'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
+              'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
+              'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
+              'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
+              'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle',
+              'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
+              'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
+              'brown', 'brown-subtle', 'silver', 'silver-subtle', 'disabled'
+            ]
+          },
+          {
+            title: 'Text colors',
+            description: 'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
+            colors: [
+              'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
+              'heading', 'title', 'body', 'detail', 'code'
+            ]
+          },
+          {
+            title: 'Semantic colors',
+            description: 'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
+            scales: ['accent-color', 'informative-color', 'negative-color', 'notice-color', 'positive-color']
+          },
+          {
+            title: 'Global colors',
+            description: 'The following values are available across all color properties.',
+            scales: [
+              'gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery',
+              'green', 'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia',
+              'magenta', 'pink', 'turquoise', 'brown', 'silver', 'cinnamon'
+            ]
+          }
+        ];
+
+        const newNodes = [];
+        for (const section of colorSections) {
+          // Add heading
+          newNodes.push({
+            type: 'heading',
+            depth: 4,
+            children: [{type: 'text', value: section.title}]
+          });
+
+          // Add description
+          newNodes.push({
+            type: 'paragraph',
+            children: [{type: 'text', value: section.description}]
+          });
+
+          // Add color list
+          if (section.colors) {
+            const listItems = section.colors.map(color => `- \`${color}\``).join('\n');
+            const listNode = unified().use(remarkParse).parse(listItems);
+            newNodes.push(...listNode.children);
+          } else if (section.scales) {
+            // For scales, note that they include numbered variants (e.g., gray-100, gray-200, etc.)
+            const scaleNote = section.scales.map(scale => {
+              const baseName = scale.replace(/-color$/, '');
+              // Gray scale includes 25, 50, 75, while others start at 100
+              if (baseName === 'gray') {
+                return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
+              }
+              return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
+            }).join('\n');
+            const scaleNode = unified().use(remarkParse).parse(scaleNote);
+            newNodes.push(...scaleNode.children);
+          }
+        }
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
+      }
       if (name === 'StateTable') {
         // Extract interface name from properties attribute
         const propertiesAttr = node.attributes?.find(a => a.name === 'properties');

@@ -1,6 +1,7 @@
-import {getColorScale, colorSwatch} from './color.macro' with {type: 'macro'};
+import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
+import {Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
+import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
 
 export function S2Colors() {
   return (
@@ -135,7 +136,7 @@ export function S2Colors() {
 function ColorScale({scale}) {
   return scale.map(([name, className]) => (
     <Color key={name} name={name} className={className} />
-  ))
+  ));
 }
 
 function Color({name, className}) {
@@ -177,5 +178,5 @@ export function IconColors() {
       <Color name="brown" className={colorSwatch('brown', 'fill')} />
       <Color name="silver" className={colorSwatch('silver', 'fill')} />
     </div>
-  )
+  );
 }
