@@ -121,7 +121,7 @@ starter:
 	mkdir -p ../react-aria-starter
 	mkdir -p starters/docs/dist
 	cp -r starters/docs ../react-aria-starter
-	cd ../react-aria-starter/docs && yarn --no-immutable && yarn up react-aria-components --latest && yarn tsc
+	cd ../react-aria-starter/docs && yarn --no-immutable && yarn upgrade --latest react-aria-components && yarn tsc
 	cp -r docs/dist/ ../starters/docs/dist
 	cd ../starters/docs
 
@@ -137,7 +137,7 @@ tailwind-starter:
 	mkdir -p ../react-aria-tailwind-starter
 	mkdir -p starters/tailwind/dist
 	cp -r starters/tailwind ../react-aria-tailwind-starter
-	cd ../react-aria-tailwind-starter && yarn --no-immutable && yarn up react-aria-components --latest && yarn tsc
+	cd ../react-aria-tailwind-starter && yarn --no-immutable && yarn upgrade --latest react-aria-components  tailwindcss-react-aria-components && yarn tsc
 	cp -r tailwind/dist/ ../starters/tailwind/dist
 	cd ../starters/tailwind
 
