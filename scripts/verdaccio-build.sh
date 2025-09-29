@@ -27,8 +27,10 @@ npm set registry $registry
 
 cd starters/docs
 yarn config set npmRegistryServer $registry
+yarn config set nmHoistingLimits workspaces
 cd ../tailwind
 yarn config set npmRegistryServer $registry
+yarn config set nmHoistingLimits workspaces
 cd ../..
 
 # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
