@@ -1,34 +1,24 @@
 'use client';
 
 import {ActionButton, Badge, Text} from '@react-spectrum/s2';
-import {AdobeLogo} from './icons/AdobeLogo';
-import AlertTriangle from '@react-spectrum/s2/icons/AlertTriangle';
+// @ts-ignore
+import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
+import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {MarkdownMenu} from './MarkdownMenu';
+// @ts-ignore
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useState} from 'react';
-import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 function getButtonText(currentPage) {
-  if (currentPage.url.includes('react-aria')) {
-    return 'React Aria';
-  } else if (currentPage.url.includes('react-internationalized')) {
-    return 'React Internationalized';
-  }
-  return 'React Spectrum';
+  return getLibraryLabel(getLibraryFromPage(currentPage));
 }
 
 function getButtonIcon(currentPage) {
-  if (currentPage.url.includes('react-aria')) {
-    return <ReactAriaLogo  />;
-  } else if (currentPage.url.includes('react-internationalized')) {
-    return <InternationalizedLogo />;
-  }
-  return <AdobeLogo />;
+  return getLibraryIcon(getLibraryFromPage(currentPage));
 }
 
 export default function Header(props: PageProps) {
@@ -122,7 +112,7 @@ export default function Header(props: PageProps) {
             overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
             <Badge variant="informative" size="M" styles={style({marginEnd: 8})}>
-              <AlertTriangle />
+              <BetaApp />
               <Text>Beta Preview</Text>
             </Badge>
             <MarkdownMenu url={currentPage.url} />
