@@ -119,10 +119,11 @@ check-examples:
 
 starter:
 	mkdir -p ../react-aria-starter
-	mkdir -p dist
+	mkdir -p starters/docs/dist
 	cp -r starters/docs ../react-aria-starter
 	cd ../react-aria-starter/docs && yarn --no-immutable && yarn tsc
 	cp -r docs/dist/ ../starters/docs/dist
+	cd ../starters/docs
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
@@ -133,7 +134,13 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-	cd starters/tailwind && yarn --no-immutable && yarn tsc
+  mkdir -p ../react-aria-tailwind-starter
+	mkdir -p starters/tailwind/dist
+  cp -r starters/tailwind ../react-aria-tailwind-starter
+  cd ../react-aria-tailwind-starter && yarn --no-immutable && yarn tsc
+  cp -r tailwind/dist/ ../starters/tailwind/dist
+  cd ../starters/tailwind
+
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
