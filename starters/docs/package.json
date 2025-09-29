@@ -1,8 +1,4 @@
 {
-  "name": "react-aria-starter-docs",
-  "version": "0.0.1",
-  "private": true,
-  "packageManager": "yarn@4.2.2",
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

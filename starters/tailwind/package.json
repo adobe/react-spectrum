@@ -1,8 +1,4 @@
 {
-  "name": "react-aria-tailwind-starter",
-  "version": "0.0.1",
-  "private": true,
-  "packageManager": "yarn@4.2.2",
   "devDependencies": {
     "@babel/preset-react": "^7.24.1",
     "@storybook/addon-interactions": "^8.6.14",
