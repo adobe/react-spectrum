@@ -57,54 +57,51 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Picker, PickerItem, Text} from '@react-spectrum/s2';
+import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 
-<Picker label="Permissions" defaultValue="read">
-  <PickerItem id="read" textValue="Read">
-    {/*- begin highlight -*/}
-    <Comment />
-    <Text slot="label">Read</Text>
-    <Text slot="description">Comment only</Text>
-    {/*- end highlight -*/}
-  </PickerItem>
-  <PickerItem id="write" textValue="Write">
-    <Edit />
-    <Text slot="label">Write</Text>
-    <Text slot="description">Read and write only</Text>
-  </PickerItem>
-  <PickerItem id="admin" textValue="Admin">
-    <UserSettings />
-    <Text slot="label">Admin</Text>
-    <Text slot="description">Full access</Text>
-  </PickerItem>
-</Picker>
-```
-
-```tsx render
-"use client";
-import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
-
-const users = Array.from({length: 10}, (_, i) => ({
+const users = Array.from({length: 5}, (_, i) => ({
   id: `user${i + 1}`,
   name: `User ${i + 1}`,
   email: `user${i + 1}@example.com`,
   avatar: 'https://i.imgur.com/kJOwAdv.png'
 }));
 
-<Picker label="Share" items={users}>
-  {(item) => (
-    <PickerItem id={item.id} textValue={item.name}>
+<div className={style({display: 'flex', gap: 12, flexWrap: 'wrap'})}>
+  <Picker label="Permissions" defaultValue="read">
+    <PickerItem id="read" textValue="Read">
       {/*- begin highlight -*/}
-      <Avatar slot="avatar" src={item.avatar} />
+      <Comment />
+      <Text slot="label">Read</Text>
+      <Text slot="description">Comment only</Text>
       {/*- end highlight -*/}
-      <Text slot="label">{item.name}</Text>
-      <Text slot="description">{item.email}</Text>
     </PickerItem>
-  )}
-</Picker>
+    <PickerItem id="write" textValue="Write">
+      <Edit />
+      <Text slot="label">Write</Text>
+      <Text slot="description">Read and write only</Text>
+    </PickerItem>
+    <PickerItem id="admin" textValue="Admin">
+      <UserSettings />
+      <Text slot="label">Admin</Text>
+      <Text slot="description">Full access</Text>
+    </PickerItem>
+  </Picker>
+  <Picker label="Share" items={users}>
+    {(item) => (
+      <PickerItem id={item.id} textValue={item.name}>
+        {/*- begin highlight -*/}
+        <Avatar slot="avatar" src={item.avatar} />
+        {/*- end highlight -*/}
+        <Text slot="label">{item.name}</Text>
+        <Text slot="description">{item.email}</Text>
+      </PickerItem>
+    )}
+  </Picker>
+</div>
 ```
 
 <InlineAlert variant="notice">
