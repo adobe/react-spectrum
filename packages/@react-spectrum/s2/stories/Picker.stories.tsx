@@ -49,7 +49,9 @@ const meta: Meta<typeof Picker<any>> = {
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    defaultSelectedKey: {table: {disable: true}},
+    selectedKey: {table: {disable: true}}
   },
   args: {...getActionArgs(events)},
   title: 'Picker'
