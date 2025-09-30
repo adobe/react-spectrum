@@ -15,7 +15,7 @@ import path from 'path';
 
 function writeToFile(filepath, data) {
   let buffer = Buffer.from(data);
-  fs.writeFile(filepath, buffer);
+  fs.writeFileSync(filepath, buffer);
 }
 
 /**
