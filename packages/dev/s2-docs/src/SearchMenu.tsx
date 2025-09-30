@@ -199,10 +199,30 @@ export function SearchMenu(props: SearchMenuProps) {
   }, []);
 
   const selectedItems = useMemo(() => {
+    let items: typeof transformedComponents = [];
     if (searchValue.trim().length > 0 && selectedSectionId === 'all') {
-      return filteredComponents.flatMap(s => s.children) || [];
+      items = filteredComponents.flatMap(s => s.children) || [];
+    } else {
+      items = (filteredComponents.find(s => s.id === selectedSectionId)?.children) || [];
     }
-    return (filteredComponents.find(s => s.id === selectedSectionId)?.children) || [];
+    
+    // Sort to show "Introduction" first when search is empty
+    if (searchValue.trim().length === 0) {
+      items = [...items].sort((a, b) => {
+        const aIsIntro = a.name === 'Introduction';
+        const bIsIntro = b.name === 'Introduction';
+        
+        if (aIsIntro && !bIsIntro) {
+          return -1;
+        }
+        if (!aIsIntro && bIsIntro) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    
+    return items;
   }, [filteredComponents, selectedSectionId, searchValue]);
 
   const selectedSectionName = useMemo(() => {

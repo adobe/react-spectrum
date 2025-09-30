@@ -200,10 +200,30 @@ function MobileNav({pages, currentPage}: PageProps) {
     if (!section) {
       return [];
     }
+    let items: ComponentCardItem[] = [];
     if (section === 'all') {
-      return getAllContent(libraryId, searchValue);
+      items = getAllContent(libraryId, searchValue);
+    } else {
+      items = getSectionContent(section, libraryId, searchValue);
     }
-    return getSectionContent(section, libraryId, searchValue);
+    
+    // Sort to show "Introduction" first when search is empty
+    if (searchValue.trim().length === 0) {
+      items = [...items].sort((a, b) => {
+        const aIsIntro = a.name === 'Introduction';
+        const bIsIntro = b.name === 'Introduction';
+        
+        if (aIsIntro && !bIsIntro) {
+          return -1;
+        }
+        if (!aIsIntro && bIsIntro) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    
+    return items;
   };
 
   let getSectionNamesForLibrary = (libraryId: string) => {
