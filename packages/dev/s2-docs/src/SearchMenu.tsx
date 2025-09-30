@@ -176,13 +176,6 @@ export function SearchMenu(props: SearchMenuProps) {
     return sections;
   }, [searchValue, sections]);
 
-  let handleSearchFieldKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape' && !searchValue.trim()) {
-      e.preventDefault();
-      onClose();
-    }
-  }, [onClose, searchValue]);
-
   const handleTabSelectionChange = React.useCallback((key: Key) => {
     if (searchValue) {
       setSearchValue('');
@@ -251,7 +244,6 @@ export function SearchMenu(props: SearchMenuProps) {
             <Autocomplete>
               <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
                 <SearchField
-                  onKeyDown={handleSearchFieldKeyDown}
                   value={searchValue}
                   onChange={setSearchValue}
                   ref={searchRef}
