@@ -409,7 +409,7 @@ describe('ComboBox', () => {
     expect(options[0]).toHaveTextContent('No results');
   });
 
-  it('should support onAction', async () => {
+  it.each(['keyboard', 'mouse'])('should support onAction with %s', async (interactionType) => {
     let onAction = jest.fn();
     function WithCreateOption() {
       let [inputValue, setInputValue] = useState('');
@@ -457,8 +457,29 @@ describe('ComboBox', () => {
     expect(options).toHaveLength(1);
     expect(options[0]).toHaveTextContent('Create "L"');
 
-    await user.keyboard('{ArrowDown}{Enter}');
+    if (interactionType === 'keyboard') {
+      await user.keyboard('{ArrowDown}{Enter}');
+    } else {
+      await user.click(options[0]);
+    }
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(comboboxTester.combobox).toHaveValue('');
+    
+    // Repeat with an option selected.
+    await comboboxTester.selectOption({option: 'Cat'});
+
+    await user.keyboard('s');
+
+    options = comboboxTester.options();
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Create "Cats"');
+
+    if (interactionType === 'keyboard') {
+      await user.keyboard('{ArrowDown}{Enter}');
+    } else {
+      await user.click(options[0]);
+    }
+    expect(onAction).toHaveBeenCalledTimes(2);
+    expect(comboboxTester.combobox).toHaveValue('Cat');
   });
 });
