@@ -11,7 +11,8 @@
   "private": true,
   "dependencies": {
     "@svgr/core": "^8.1.0",
-    "fs-extra": "^11.0.0"
+    "fs-extra": "^11.0.0",
+    "prettier": "^3.6.2"
   },
   "publishConfig": {
     "access": "public"
