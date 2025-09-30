@@ -1,4 +1,3 @@
-import { any } from "prop-types";
 import { useState } from "react";
 import {
   Group,
@@ -31,9 +30,9 @@ export function StarRatingGroup({
   let [hoveredRating, setHoveredRating] =
     useState<string | undefined>(undefined);
 
-  let onPointerOver = (e: any) => {
-    if (e.target.dataset?.rating) {
-      setHoveredRating(e.target.dataset.rating);
+  let onPointerOver = (e: React.PointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).dataset?.rating) {
+      setHoveredRating((e.target as HTMLElement).dataset.rating);
     }
   };
 
