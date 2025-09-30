@@ -1,9 +1,10 @@
 'use client';
 
 import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
-import {Autocomplete, AutocompleteProps, Dialog, Key, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
+import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
+import Fuse from 'fuse.js';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
@@ -76,12 +77,14 @@ export function SearchMenu(props: SearchMenuProps) {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
         const section: string = (page.exports?.section as string) || 'Components';
+        const tags: string[] = (page.exports?.tags as string[]) || [];
 
         return {
           id: name,
           name: title,
           href: page.url,
-          section
+          section,
+          tags
         };
       });
 
@@ -127,21 +130,43 @@ export function SearchMenu(props: SearchMenuProps) {
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue]);
 
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  const filter: NonNullable<AutocompleteProps<any>['filter']> = React.useCallback((textValue, inputValue) => {
-    return textValue != null && contains(textValue, inputValue);
-  }, [contains]);
+  const fuse = useMemo(() => {
+    const allItems = sections.flatMap(section => section.children);
+    return new Fuse(allItems, {
+      keys: [
+        {name: 'name', weight: 0.7},
+        {name: 'tags', weight: 0.3}
+      ],
+      threshold: 0.4,
+      includeScore: true,
+      ignoreLocation: true
+    });
+  }, [sections]);
 
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
       return sections;
     }
-    return sections.map(section => ({
-      ...section,
-      children: section.children.filter(item => contains(item.name, searchValue))
-    })).filter(section => section.children.length > 0);
-  }, [sections, searchValue, contains]);
+
+    const results = fuse.search(searchValue);
+    const resultsBySection = new Map<string, typeof transformedComponents>();
+    
+    results.forEach(result => {
+      const item = result.item;
+      const section = item.section || 'Components';
+      if (!resultsBySection.has(section)) {
+        resultsBySection.set(section, []);
+      }
+      resultsBySection.get(section)!.push(item);
+    });
+
+    return sections
+      .map(section => ({
+        ...section,
+        children: resultsBySection.get(section.name) || []
+      }))
+      .filter(section => section.children.length > 0);
+  }, [sections, searchValue, fuse]);
 
   const tags = useMemo(() => {
     if (searchValue.trim().length > 0) {
@@ -223,7 +248,7 @@ export function SearchMenu(props: SearchMenuProps) {
         </TabList>
         {orderedTabs.map((tab, i) => (
           <TabPanel key={tab.id} id={tab.id}>
-            <Autocomplete filter={filter}>
+            <Autocomplete>
               <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
                 <SearchField
                   onKeyDown={handleSearchFieldKeyDown}
