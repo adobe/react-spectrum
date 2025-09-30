@@ -4,12 +4,14 @@ import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, Ta
 import {Autocomplete, AutocompleteProps, Dialog, Key, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
+import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
+// @ts-ignore
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, useEffect, useMemo, useRef, useState} from 'react';
-import {SelectableCollectionContext} from '../../../react-aria-components/src/context';
+import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
@@ -34,29 +36,10 @@ function CloseButton({onClose}: {onClose: () => void}) {
   );
 }
 
-const getCurrentLibrary = (currentPage: Page): Library => {
-  if (currentPage.url.includes('react-aria')) {
-    return 'react-aria';
-  } else if (currentPage.url.includes('react-internationalized')) {
-    return 'internationalized';
-  }
-  return 'react-spectrum';
-};
-
-const getLibraryFromUrl = (url: string): Library => {
-  if (url.includes('react-aria')) {
-    return 'react-aria';
-  }
-  if (url.includes('react-internationalized')) {
-    return 'internationalized';
-  }
-  return 'react-spectrum';
-};
-
 export function SearchMenu(props: SearchMenuProps) {
   let {pages, currentPage, onClose, overlayId} = props;
 
-  const currentLibrary = getCurrentLibrary(currentPage);
+  const currentLibrary = getLibraryFromPage(currentPage);
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
   let [searchValue, setSearchValue] = useState(props.initialSearchValue);
 
@@ -249,7 +232,7 @@ export function SearchMenu(props: SearchMenuProps) {
 
               <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
                 {sections.length > 0 && (
-                  <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', paddingY: 8})}>
+                  <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
                     <SelectableCollectionContext.Provider value={null}>
                       <TagGroup
                         selectionMode="single"

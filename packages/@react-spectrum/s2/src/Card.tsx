@@ -635,7 +635,7 @@ export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
-export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+export const UserCard = forwardRef(function UserCard(props: UserCardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">

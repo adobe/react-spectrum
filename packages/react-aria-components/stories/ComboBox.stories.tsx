@@ -331,3 +331,39 @@ const MyListBoxLoaderIndicator = (props) => {
     </ListBoxLoadMoreItem>
   );
 };
+
+export function WithCreateOption() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      allowsEmptyCollection
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      <Label style={{display: 'block'}}>Favorite Animal</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <Popover placement="bottom end">
+        <ListBox
+          data-testid="combo-box-list-box"
+          className={styles.menu}>
+          {inputValue.length > 0 && (
+            <MyListBoxItem onAction={() => alert('hi')}>
+              {`Create "${inputValue}"`}
+            </MyListBoxItem>
+          )}
+          <MyListBoxItem>Aardvark</MyListBoxItem>
+          <MyListBoxItem>Cat</MyListBoxItem>
+          <MyListBoxItem>Dog</MyListBoxItem>
+          <MyListBoxItem>Kangaroo</MyListBoxItem>
+          <MyListBoxItem>Panda</MyListBoxItem>
+          <MyListBoxItem>Snake</MyListBoxItem>
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+}

@@ -19,7 +19,7 @@ import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope, useKeyboard} from 'react-aria';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {style} from '../style' with {type: 'macro'};
+import {lightDark, style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -40,9 +40,8 @@ const actionBarStyles = style({
   boxSizing: 'border-box',
   outlineStyle: 'solid',
   outlineWidth: 1,
-  outlineOffset: -1,
   outlineColor: {
-    default: 'gray-200',
+    default: lightDark('transparent-white-25', 'gray-200'),
     isEmphasized: 'transparent',
     forcedColors: 'ButtonBorder'
   },
@@ -90,6 +89,9 @@ export interface ActionBarProps extends SlotProps {
 
 export const ActionBarContext = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
+/**
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
+ */
 export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);

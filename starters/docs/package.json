@@ -4,7 +4,9 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.24.1",
+    "@babel/preset-typescript": "^7.27.1",
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^8.6.14",
@@ -17,7 +19,7 @@
     "@types/react-dom": "^18.3.0",
     "clsx": "^2.1.1",
     "lightningcss-loader": "^2.1.0",
-    "lucide-react": "^0.292.0",
+    "lucide-react": "^0.517.0",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-aria-components": "latest",

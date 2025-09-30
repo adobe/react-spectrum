@@ -33,7 +33,7 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' 
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L' | 'XL',
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean
 }

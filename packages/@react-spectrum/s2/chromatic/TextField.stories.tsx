@@ -34,7 +34,8 @@ type Story = StoryObj<typeof TextField>;
 export const Example: Story = {
   render: (args) => <TextField {...args} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   }
 };
 
@@ -57,6 +58,7 @@ export const ContextualHelpExample: Story = {
   ),
   args: {
     label: 'Segment',
+    placeholder: 'Enter your name',
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
@@ -80,14 +82,16 @@ export const ContextualHelpExample: Story = {
 export const TextAreaExample: StoryObj<typeof TextArea> = {
   render: (args) => <TextArea {...args} />,
   args: {
-    label: 'Comment'
+    label: 'Comment',
+    placeholder: 'Enter your name'
   }
 };
 
 export const CustomWidth: Story = {
   render: (args) => <TextField {...args} styles={style({width: 384})} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   },
   parameters: {
     docs: {
@@ -99,7 +103,8 @@ export const CustomWidth: Story = {
 export const SmallWidth: Story = {
   render: (args) => <TextField {...args} styles={style({width: 48})} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   },
   parameters: {
     docs: {
@@ -111,7 +116,8 @@ export const SmallWidth: Story = {
 export const UNSAFEWidth: Story = {
   render: (args) => <TextField {...args} UNSAFE_style={{width: 384}} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   },
   parameters: {
     docs: {

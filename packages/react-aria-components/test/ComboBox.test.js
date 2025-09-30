@@ -13,7 +13,7 @@
 import {act} from '@testing-library/react';
 import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import React from 'react';
+import React, {useState} from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -407,5 +407,58 @@ describe('ComboBox', () => {
     expect(options).toHaveLength(1);
     expect(comboboxTester.listbox).toBeTruthy();
     expect(options[0]).toHaveTextContent('No results');
+  });
+
+  it('should support onAction', async () => {
+    let onAction = jest.fn();
+    function WithCreateOption() {
+      let [inputValue, setInputValue] = useState('');
+    
+      return (
+        <ComboBox
+          allowsEmptyCollection
+          inputValue={inputValue}
+          onInputChange={setInputValue}>
+          <Label style={{display: 'block'}}>Favorite Animal</Label>
+          <div style={{display: 'flex'}}>
+            <Input />
+            <Button>
+              <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+            </Button>
+          </div>
+          <Popover placement="bottom end">
+            <ListBox>
+              {inputValue.length > 0 && (
+                <ListBoxItem onAction={onAction}>
+                  {`Create "${inputValue}"`}
+                </ListBoxItem>
+              )}
+              <ListBoxItem>Aardvark</ListBoxItem>
+              <ListBoxItem>Cat</ListBoxItem>
+              <ListBoxItem>Dog</ListBoxItem>
+              <ListBoxItem>Kangaroo</ListBoxItem>
+              <ListBoxItem>Panda</ListBoxItem>
+              <ListBoxItem>Snake</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      );
+    }
+
+    let tree = render(<WithCreateOption />);
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    act(() => {
+      comboboxTester.combobox.focus();
+    });
+
+    await user.keyboard('L');
+
+    let options = comboboxTester.options();
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Create "L"');
+
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(comboboxTester.combobox).toHaveValue('');
   });
 });

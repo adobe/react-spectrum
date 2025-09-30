@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -85,18 +85,35 @@ function preventScrollStandard() {
 //    on the window.
 // 2. Set `overscroll-behavior: contain` on nested scrollable regions so they do not scroll the page when at
 //    the top or bottom. Work around a bug where this does not work when the element does not actually overflow
-//    by preventing default in a `touchmove` event.
+//    by preventing default in a `touchmove` event. This is best effort: we can't prevent default when pinch
+//    zooming or when an element contains text selection, which may allow scrolling in some cases.
 // 3. Prevent default on `touchend` events on input elements and handle focusing the element ourselves.
 // 4. When focus moves to an input, create an off screen input and focus that temporarily. This prevents 
 //    Safari from scrolling the page. After a small delay, focus the real input and scroll it into view
 //    ourselves, without scrolling the whole page.
 function preventScrollMobileSafari() {
   let scrollable: Element;
+  let allowTouchMove = false;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
-    scrollable = getScrollParent(e.target as Element, true);
-    if (scrollable === document.documentElement && scrollable === document.body) {
-      return;
+    let target = e.target as Element;
+    scrollable = isScrollable(target) ? target : getScrollParent(target, true);
+    allowTouchMove = false;
+    
+    // If the target is selected, don't preventDefault in touchmove to allow user to adjust selection.
+    let selection = target.ownerDocument.defaultView!.getSelection();
+    if (selection && !selection.isCollapsed && selection.containsNode(target, true)) {
+      allowTouchMove = true;
+    }
+
+    // If this is a focused input element with a selected range, allow user to drag the selection handles.
+    if (
+      'selectionStart' in target && 
+      'selectionEnd' in target &&
+      (target.selectionStart as number) < (target.selectionEnd as number) &&
+      target.ownerDocument.activeElement === target
+    ) {
+      allowTouchMove = true;
     }
   };
 
@@ -114,6 +131,11 @@ function preventScrollMobileSafari() {
   document.head.prepend(style);
 
   let onTouchMove = (e: TouchEvent) => {
+    // Allow pinch-zooming.
+    if (e.touches.length === 2 || allowTouchMove) {
+      return;
+    }
+
     // Prevent scrolling the window.
     if (!scrollable || scrollable === document.documentElement || scrollable === document.body) {
       e.preventDefault();

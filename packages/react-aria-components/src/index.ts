@@ -14,7 +14,7 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
+export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext, SelectableCollectionContext, FieldInputContext} from './RSPContexts';
 
 export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
@@ -39,7 +39,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListSection} from './GridList';
+export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListHeaderContext, GridListSection} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
@@ -156,3 +156,4 @@ export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFiel
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {SelectableCollectionContextValue} from './RSPContexts';

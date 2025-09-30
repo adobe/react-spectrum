@@ -299,7 +299,10 @@ const panelStyles = style({
   font: 'body',
   height: '--disclosure-panel-height',
   overflow: 'clip',
-  transition: '[height]'
+  transition: {
+    default: '[height]',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  }
 });
 
 const panelInner = style({
