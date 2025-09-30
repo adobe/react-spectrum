@@ -1,0 +1,77 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: 
+
+date: 2025-10-1
+---
+
+# October 1, 2025 Release
+
+## Enhancements
+
+* Calendar
+  * Add `selectionAlignment` prop to Calendar components - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8752)
+* Disclosure
+  * Add support for disclosure animation for React Aria Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8867)
+* Select
+  * Add support for multiple selection to React Aria Select - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8734), [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/8880)
+* Miscellaneous
+  * Add support for animated selection indicators - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8876)
+
+## Fixes
+
+* Color
+  * Fix ColorLoupe position in ColorSlider for RTL locales - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8894)
+* Collection
+  * Prevent crash in React Aria collections when used with Suspence and `useTransition` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8835)
+* Combobox
+  * Fix `onAction` with keyboard in ComboBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8910)
+* Date and Time
+  * Fix the day the week starts with when specifiying `ISO 8601` in the locale - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8815), [PR](https://github.com/adobe/react-spectrum/pull/8877)
+  * Fix date parsing with seconds in offset - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8900)
+  * Ensure `isReadonly` applies to all non-literal date segments - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/7969)
+  * Add `isReadOnly` to the render props in React Aria DateField/DatePicker - [@Mr-Heidari](https://github.com/Mr-Heidari) - [PR](https://github.com/adobe/react-spectrum/pull/8818)
+* Disclosure
+  * Don't display Disclosure Panel content when it is not expanded and disabled - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8893)
+* Focus Management
+  * Fix keyboard navigation to skip over hidden inputs to next available input - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8794)
+  * Fix collection dirty node tracking with Suspense - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8892)
+  * Fix unexpected `onBlur` events in React Aria Checkbox and Radio - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8567)
+* GridList
+  * Fix accessibiilty violations in GridList sections - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8932)
+* Layout and Positioning
+  * Make `scrollIntoView` respect `scroll-margin` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8715)
+  * Fix `DOMLayoutDelegate` miscalculation of item & visible rects - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8696)
+  * Overlay positioning incorrect when animation starts on first render - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8789)
+* Menu
+  * Show checkboxes for selected items when `ContextualHelpTrigger` `isUnavailable` is set to false - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8921)
+* Modals
+  * Improve behavior of React Aria Modals on iOS 26 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8888)
+  * Allow pinch zooming and text selection in React Aria Modals on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8922)
+* NumberField
+  * Pass `disabled` prop to hidden input in React Aria NumberField - [@tklepzig](https://github.com/tklepzig) - [PR](https://github.com/adobe/react-spectrum/pull/8706)
+* Tree
+  * Speed up flattening when expandening keys in Tree Collection - [@snowystinger](https://github.com/snowystinger) = [PR](https://github.com/adobe/react-spectrum/pull/8774)
+* Miscellaneous
+  * Avoid triggering `onClick` on disabled links - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/8828)
+
+## Docs
+
+* Clarify React Aria Toast close button placement - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8923)
+
+## Under Construction
+
+* Autocomplete
+  * Automatically detect if wrapped collection supports virtual focus - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8862)
+  * Properly allow user to keyboard edit the Autocomplete input field when collection becomes empty - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8861)
