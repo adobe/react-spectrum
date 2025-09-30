@@ -55,7 +55,7 @@
   /* Add padding at the bottom to account for the rest of the viewport height behind the keyboard.
    * This is necessary so that there isn't a visible gap that appears while the keyboard is animating
    * in and out. Fall back to the safe area inset to account for things like iOS home indicator.
-     We also add an additional 100vh of padding (offset by the bottom position below) so the tray 
+     We also add an additional 100vh of padding (offset by the bottom position below) so the tray
      extends behind Safari's address bar and keyboard in iOS 26. */
   padding-bottom: calc(max(calc(100dvh - var(--spectrum-visual-viewport-height)), env(safe-area-inset-bottom)) + 100vh);
   position: absolute;
@@ -75,6 +75,8 @@
   /* Exit animations */
   transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
     transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
+
+  box-sizing: content-box;
 }
 
 .is-open {
