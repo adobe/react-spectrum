@@ -34,6 +34,7 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
@@ -306,6 +307,11 @@ const dividerStyle = style({
   width: 'full'
 });
 
+const avatar = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual'
+});
+
 // Not from any design, just following the sizing of the existing rows
 export const LOADER_ROW_HEIGHTS = {
   S: {
@@ -365,6 +371,13 @@ export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | '
   children: ReactNode
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 const checkmarkIconSize = {
   S: 'XS',
   M: 'M',
@@ -392,6 +405,11 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                 [IconContext, {
                   slots: {
                     icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+                  }
+                }],
+                [AvatarContext, {
+                  slots: {
+                    avatar: {size: avatarSize[size], styles: avatar}
                   }
                 }],
                 [TextContext, {

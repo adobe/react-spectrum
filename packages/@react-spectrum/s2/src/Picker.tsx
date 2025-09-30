@@ -33,6 +33,7 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {AvatarContext} from './Avatar';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
@@ -239,6 +240,11 @@ const iconStyles = style({
   color: {
     isLoading: 'disabled'
   }
+});
+
+const avatar = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual'
 });
 
 const loadingWrapperStyles = style({
@@ -468,6 +474,13 @@ function PickerProgressCircle(props) {
   );
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
@@ -519,7 +532,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label]) {display: none;}')}>
               {({selectedItems, defaultChildren}) => {
                 return (
                   <Provider
@@ -529,6 +542,14 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                           icon: {
                             render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
                             styles: icon
+                          }
+                        }
+                      }],
+                      [AvatarContext, {
+                        slots: {
+                          avatar: {
+                            size: avatarSize[size ?? 'M'],
+                            styles: avatar
                           }
                         }
                       }],
@@ -606,21 +627,27 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
             }}}>
             <DefaultProvider
-              context={TextContext}
-              value={{
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({size})},
-                  label: {styles: label({size})},
-                  description: {styles: description({...renderProps, size})}
-                }
-              }}>
-              {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
-              {renderProps.selectionMode === 'multiple' && !isLink && (
-                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
-                  <CheckmarkIcon size={size} className={checkboxIconStyles} />
-                </div>
+              context={AvatarContext}
+              value={{slots: {
+                avatar: {size: avatarSize[size], styles: avatar}
+              }}}>
+              <DefaultProvider
+                context={TextContext}
+                value={{
+                  slots: {
+                    [DEFAULT_SLOT]: {styles: label({size})},
+                    label: {styles: label({size})},
+                    description: {styles: description({...renderProps, size})}
+                  }
+                }}>
+                {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+                {renderProps.selectionMode === 'multiple' && !isLink && (
+                  <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+                    <CheckmarkIcon size={size} className={checkboxIconStyles} />
+                  </div>
               )}
-              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+                {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+              </DefaultProvider>
             </DefaultProvider>
           </DefaultProvider>
         );
