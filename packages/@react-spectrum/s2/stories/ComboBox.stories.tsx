@@ -318,6 +318,7 @@ export function WithCreateOption() {
   return (
     <ComboBox
       label="Favorite Animal"
+      placeholder="Select a value"
       inputValue={inputValue}
       onInputChange={setInputValue}>
       {inputValue.length > 0 && (
