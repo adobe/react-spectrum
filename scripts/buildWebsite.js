@@ -110,11 +110,11 @@ async function build() {
             let contents = fs.readFileSync(docFile, 'utf8');
             let m = contents.match(/after_version:\s*(.*)/);
             if (!m || semver.gt(json.version, m[1])) {
-              fs.cpSync(docFile, destFile);
+              fs.cpSync(docFile, destFile, {recursive: true});
               hasDocs = true;
             }
           } else {
-            fs.cpSync(docFile, destFile);
+            fs.cpSync(docFile, destFile, {recursive: true});
           }
         }
       }
