@@ -90,7 +90,7 @@ const users = Array.from({length: 5}, (_, i) => ({
       <Text slot="description">Full access</Text>
     </PickerItem>
   </Picker>
-  <Picker label="Share" items={users}>
+  <Picker label="Share" items={users} defaultValue="user1">
     {(item) => (
       <PickerItem id={item.id} textValue={item.name}>
         {/*- begin highlight -*/}

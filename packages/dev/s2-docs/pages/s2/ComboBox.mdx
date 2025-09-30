@@ -90,7 +90,7 @@ const users = Array.from({length: 5}, (_, i) => ({
       <Text slot="description">Full access</Text>
     </ComboBoxItem>
   </ComboBox>
-  <ComboBox label="Share" items={users}>
+  <ComboBox label="Share" items={users} defaultSelectedKey="user1" placeholder="Select a user">
     {(item) => (
       <ComboBoxItem id={item.id} textValue={item.name}>
         {/*- begin highlight -*/}
