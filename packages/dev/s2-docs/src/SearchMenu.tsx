@@ -55,6 +55,15 @@ export function SearchMenu(props: SearchMenuProps) {
 
   const searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
 
+  // Auto-focus search field when menu opens
+  // We don't put autoFocus on the SearchField because it will cause a flicker when switching tabs
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      searchRef.current?.focus();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Transform pages data into component data structure
   const transformedComponents = useMemo(() => {
     if (!pages || !Array.isArray(pages)) {
