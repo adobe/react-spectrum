@@ -218,7 +218,6 @@ export function SearchMenu(props: SearchMenuProps) {
               <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
                 <SearchField
                   onKeyDown={handleSearchFieldKeyDown}
-                  autoFocus
                   value={searchValue}
                   onChange={setSearchValue}
                   ref={searchRef}
