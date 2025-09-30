@@ -102,7 +102,7 @@ export type {ActionButtonProps} from './ActionButton';
 export type {ActionButtonGroupProps} from './ActionButtonGroup';
 export type {ActionMenuProps} from './ActionMenu';
 export type {AlertDialogProps} from './AlertDialog';
-export type {AvatarProps, AvatarContextValue} from './Avatar';
+export type {AvatarProps} from './Avatar';
 export type {AvatarGroupProps} from './AvatarGroup';
 export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {BadgeProps} from './Badge';

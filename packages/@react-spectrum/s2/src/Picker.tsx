@@ -34,7 +34,7 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {baseColor, edgeToText, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -242,15 +242,10 @@ const iconStyles = style({
   }
 });
 
-const buttonAvatar = style({
+const avatar = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual',
-  alignSelf: 'center'
+  marginEnd: 'text-to-visual'
 });
-
-const itemAvatar = mergeStyles(buttonAvatar, style({
-  marginTop: fontRelative(6) // made up, need feedback
-}));
 
 const loadingWrapperStyles = style({
   gridColumnStart: '1',
@@ -537,7 +532,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label]) {display: none;}')}>
               {({selectedItems, defaultChildren}) => {
                 return (
                   <Provider
@@ -553,8 +548,8 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       [AvatarContext, {
                         slots: {
                           avatar: {
-                            render: centerBaseline({slot: 'avatar', styles: iconCenterWrapper}),
-                            size: avatarSize[size ?? 'M'], styles: buttonAvatar
+                            size: avatarSize[size ?? 'M'],
+                            styles: avatar
                           }
                         }
                       }],
@@ -634,7 +629,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
             <DefaultProvider
               context={AvatarContext}
               value={{slots: {
-                avatar: {size: avatarSize[size], styles: itemAvatar}
+                avatar: {size: avatarSize[size], styles: avatar}
               }}}>
               <DefaultProvider
                 context={TextContext}

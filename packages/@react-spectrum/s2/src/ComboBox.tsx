@@ -36,7 +36,7 @@ import {
 import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {baseColor, edgeToText, focusRing, fontRelative, space, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -309,9 +309,7 @@ const dividerStyle = style({
 
 const avatar = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual',
-  marginTop: fontRelative(6), // made up, need feedback
-  alignSelf: 'center'
+  marginEnd: 'text-to-visual'
 });
 
 // Not from any design, just following the sizing of the existing rows
