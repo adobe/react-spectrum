@@ -156,7 +156,6 @@
     "eslint-plugin-rulesdir": "^0.2.2",
     "fast-check": "^2.19.0",
     "fast-glob": "^3.1.0",
-    "fs-extra": "^11.0.0",
     "glob": "^11.0.3",
     "globals": "^15.11.0",
     "identity-obj-proxy": "^3.0.0",

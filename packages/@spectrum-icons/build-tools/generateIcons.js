@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 
 function writeToFile(filepath, data) {
