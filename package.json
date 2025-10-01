@@ -70,7 +70,7 @@
     "packages/dev/mcp"
   ],
   "devDependencies": {
-    "@actions/core": "^1.1.0",
+    "@actions/core": "^1.10.0",
     "@actions/github": "^1.1.0",
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.3",
@@ -143,7 +143,7 @@
     "color-space": "^1.16.0",
     "concurrently": "^6.0.2",
     "cross-env": "^7.0.2",
-    "cross-spawn": "^7.0.3",
+    "cross-spawn": "^7.0.5",
     "delta-e": "^0.0.8",
     "diff": "^5.1.0",
     "eslint": "^9.12.0",
