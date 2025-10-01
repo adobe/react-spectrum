@@ -125,6 +125,18 @@ const mobileTabPanel = style({
   outlineStyle: 'none'
 });
 
+const stickySearchContainer = style({
+  width: 'full',
+  position: 'sticky',
+  top: 64,
+  zIndex: 1,
+  backgroundColor: 'layer-2',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+  paddingY: 8
+});
+
 function MobileTab(props: Omit<RACTabProps, 'children'> & {children: ReactNode}) {
   let contentId = useId();
   return (
@@ -451,7 +463,7 @@ function MobileNav({pages, currentPage}: PageProps) {
           </div>
           {libraries.map(library => (
             <MobileTabPanel key={library.id} id={library.id}>
-              <div className={style({width: 'full', position: 'fixed', zIndex: 1, backgroundColor: 'layer-2', display: 'flex', flexDirection: 'column', gap: 8, paddingY: 8})}>
+              <div className={stickySearchContainer}>
                 <SearchField 
                   aria-label="Search" 
                   value={searchValue}
@@ -465,7 +477,7 @@ function MobileNav({pages, currentPage}: PageProps) {
                   selectedKeys={selectedSection ? [selectedSection] : []}
                   onSelectionChange={handleTagSelection}
                   styles={style({marginX: 8})}
-                  UNSAFE_style={{overflow: 'auto', whiteSpace: 'nowrap'}}
+                  UNSAFE_style={{overflow: 'auto', whiteSpace: 'nowrap', paddingBottom: 4}}
                   items={tags}>
                   {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
                 </TagGroup>
