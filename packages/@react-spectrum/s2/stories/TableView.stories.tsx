@@ -38,7 +38,7 @@ import {categorizeArgTypes, getActionArgs} from './utils';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
-import {Key, SelectionMode} from '@react-types/shared';
+import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useCallback, useRef, useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
@@ -1459,7 +1459,6 @@ interface EditableTableProps extends TableViewProps {}
 
 export const EditableTable: StoryObj<EditableTableProps> = {
   render: function EditableTable(props) {
-    let selectionMode = props.selectionMode ?? 'none' as SelectionMode;
     let columns = editableColumns;
     let [editableItems, setEditableItems] = useState(defaultItems);
     let intermediateValue = useRef<any>(null);
