@@ -16,6 +16,74 @@ const RAC_SRC_ROOT = path.join(REPO_ROOT, 'packages/react-aria-components/src');
 const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT];
 const S2_DOCS_PAGES_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const DIST_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
+const LICENSE_COMMENT_REGEX = /^\s*\{\/\*[\s\S]*?Copyright\s+20\d{2}\s+Adobe[\s\S]*?\*\/\}\s*/;
+const S2_ICON_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
+const S2_ILLUSTRATION_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations');
+
+let iconNamesCache = null;
+let illustrationNamesCache = null;
+
+function getIconNames() {
+  if (iconNamesCache) {
+    return iconNamesCache;
+  }
+
+  try {
+    const files = fs.readdirSync(S2_ICON_ROOT);
+    const names = new Set();
+
+    for (const fileName of files) {
+      if (!fileName.toLowerCase().endsWith('.svg')) {
+        continue;
+      }
+
+      const normalized = fileName.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1');
+      const cleaned = normalized.trim();
+      if (cleaned) {
+        names.add(cleaned);
+      }
+    }
+
+    iconNamesCache = Array.from(names).sort((a, b) => a.localeCompare(b));
+  } catch {
+    iconNamesCache = [];
+  }
+
+  return iconNamesCache;
+}
+
+function getIllustrationNames() {
+  if (illustrationNamesCache) {
+    return illustrationNamesCache;
+  }
+
+  try {
+    const names = new Set();
+    const directories = ['linear', 'gradient/generic1', 'gradient/generic2'];
+
+    for (const dir of directories) {
+      const illustrationPath = path.join(S2_ILLUSTRATION_ROOT, dir);
+      if (!fs.existsSync(illustrationPath)) {
+        continue;
+      }
+
+      const files = fs.readdirSync(illustrationPath);
+      for (const fileName of files) {
+        if (fileName.endsWith('.tsx')) {
+          // Extract name without extension
+          const name = fileName.replace(/\.tsx$/, '');
+          names.add(name);
+        }
+      }
+    }
+
+    illustrationNamesCache = Array.from(names).sort((a, b) => a.localeCompare(b));
+  } catch {
+    illustrationNamesCache = [];
+  }
+
+  return illustrationNamesCache;
+}
 
 // Pre-load a ts-morph project so we can query type information.
 const project = new Project({
@@ -269,6 +337,123 @@ function remarkDocsComponentsToMarkdown() {
     const relatedTypes = new Set();
     visit(tree, ['mdxJsxFlowElement', 'mdxJsxTextElement'], (node, index, parent) => {
       const name = node.name;
+      if (name === 'InstallCommand') {
+        const pkgAttr = node.attributes?.find(a => a.name === 'pkg');
+        if (!pkgAttr) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        let pkg = '';
+        if (pkgAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          pkg = pkgAttr.value.value.replace(/['"`]/g, '').trim();
+        } else if (typeof pkgAttr.value === 'string') {
+          pkg = pkgAttr.value.trim();
+        }
+
+        if (!pkg) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const flagsAttr = node.attributes?.find(a => a.name === 'flags');
+        let flags = '';
+        if (flagsAttr) {
+          if (flagsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            flags = flagsAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof flagsAttr.value === 'string') {
+            flags = flagsAttr.value.trim();
+          }
+        }
+
+        const commandText = `npm install ${pkg}${flags ? ' ' + flags : ''}`.trim();
+
+        const codeNode = {
+          type: 'code',
+          lang: 'bash',
+          meta: '',
+          value: commandText
+        };
+
+        parent.children.splice(index, 1, codeNode);
+        return index;
+      }
+      if (name === 'IconCards') {
+        const iconList = getIconNames();
+        const header = ['| Icon |', '|------|'];
+        const rows = iconList.map(iconName => `| ${iconName} |`);
+        const tableMarkdown = iconList.length ? `${header.join('\n')}\n${rows.join('\n')}` : '> Icon list unavailable in this build.';
+        const iconCardsNode = unified().use(remarkParse).parse(tableMarkdown);
+        parent.children.splice(index, 1, ...iconCardsNode.children);
+        return index;
+      }
+      if (name === 'IllustrationCards') {
+        const illustrationList = getIllustrationNames();
+        const header = ['| Illustration |', '|--------------|'];
+        const rows = illustrationList.map(illustrationName => `| ${illustrationName} |`);
+        const tableMarkdown = illustrationList.length ? `${header.join('\n')}\n${rows.join('\n')}` : '> Illustration list unavailable in this build.';
+        const illustrationCardsNode = unified().use(remarkParse).parse(tableMarkdown);
+        parent.children.splice(index, 1, ...illustrationCardsNode.children);
+        return index;
+      }
+      if (name === 'IconColors') {
+        const colorsAttr = node.attributes?.find(a => a.name === 'colors');
+        let colorList = [];
+        
+        if (colorsAttr && colorsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          // Extract string literals from array expression: ['white', 'black', ...] 
+          const expr = colorsAttr.value.value;
+          const matches = expr.match(/['"]([^'"]+)['"]/g);
+          if (matches) {
+            colorList = matches.map(m => m.slice(1, -1)); // Remove quotes
+          }
+        }
+
+        if (colorList.length > 0) {
+          const header = ['| Color |', '|-------|'];
+          const rows = colorList.map(color => `| ${color} |`);
+          const tableMarkdown = `${header.join('\n')}\n${rows.join('\n')}`;
+          const iconColorsNode = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...iconColorsNode.children);
+        } else {
+          // If no colors found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+      if (name === 'IconSizes') {
+        const sizesAttr = node.attributes?.find(a => a.name === 'sizes');
+        let sizeList = [];
+        
+        if (sizesAttr && sizesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          // Extract objects from array expression: [{size: 'XS', pixels: '14px'}, ...]
+          const expr = sizesAttr.value.value;
+          // Match {size: 'X', pixels: 'Ypx'} patterns
+          const objectMatches = expr.match(/\{[^}]+\}/g);
+          if (objectMatches) {
+            sizeList = objectMatches.map(obj => {
+              const sizeMatch = obj.match(/size:\s*['"]([^'"]+)['"]/);
+              const pixelsMatch = obj.match(/pixels:\s*['"]([^'"]+)['"]/);
+              return {
+                size: sizeMatch ? sizeMatch[1] : '',
+                pixels: pixelsMatch ? pixelsMatch[1] : ''
+              };
+            }).filter(item => item.size && item.pixels);
+          }
+        }
+
+        if (sizeList.length > 0) {
+          const header = ['| Size | Pixels |', '|------|--------|'];
+          const rows = sizeList.map(({size, pixels}) => `| ${size} | ${pixels} |`);
+          const tableMarkdown = `${header.join('\n')}\n${rows.join('\n')}`;
+          const iconSizesNode = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...iconSizesNode.children);
+        } else {
+          // If no sizes found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
       if (name === 'PageDescription') {
         // Assume first child is expression "docs.exports.Component.description".
         const exprNode = node.children?.find((c) => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression');
@@ -278,7 +463,6 @@ function remarkDocsComponentsToMarkdown() {
             const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
-              // eslint-disable-next-line max-depth
               if (node.type === 'mdxJsxFlowElement') {
                 parent.children[index] = {
                   type: 'paragraph',
@@ -406,6 +590,44 @@ function remarkDocsComponentsToMarkdown() {
         return index + newNodes.length;
       }
 
+      if (name === 'BundlerSwitcher') {
+        const bundlerItems = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem');
+        const newNodes = [];
+
+        const extractLabel = (itemNode) => {
+          const labelAttr = itemNode.attributes?.find(a => a.name === 'label');
+          if (!labelAttr) {return null;}
+
+          if (labelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            return labelAttr.value.value.replace(/['"`]/g, '').trim();
+          }
+
+          if (typeof labelAttr.value === 'string') {
+            return labelAttr.value.trim();
+          }
+
+          return null;
+        };
+
+        bundlerItems.forEach((itemNode) => {
+          const label = extractLabel(itemNode) || 'Configuration';
+
+          newNodes.push({
+            type: 'heading',
+            depth: 3,
+            children: [{type: 'text', value: label}]
+          });
+
+          const itemChildren = (itemNode.children || []).filter(child => child.type !== 'text' || child.value.trim() !== '');
+          if (itemChildren.length) {
+            newNodes.push(...itemChildren);
+          }
+        });
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
+      }
+
       // Handle standalone VisualExample, generate a minimal snippet
       if (name === 'VisualExample') {
         const evalExpression = (expr) => {
@@ -509,6 +731,113 @@ function remarkDocsComponentsToMarkdown() {
         // Fallback – replace with empty string to avoid unhandled component.
         parent.children[index] = {type: 'text', value: ''};
         return index;
+      }
+      if (name === 'S2StyleProperties') {
+        const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
+        let propertyList = [];
+        
+        if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          // Extract string literals from array expression: ['margin', 'marginStart', ...] 
+          const expr = propertiesAttr.value.value;
+          const matches = expr.match(/['"]([^'"]+)['"]/g);
+          if (matches) {
+            propertyList = matches.map(m => m.slice(1, -1)); // Remove quotes
+          }
+        }
+
+        if (propertyList.length > 0) {
+          // Generate markdown bullet list with inline code
+          const listItems = propertyList.map(prop => `- \`${prop}\``).join('\n');
+          const listNode = unified().use(remarkParse).parse(listItems);
+          parent.children.splice(index, 1, ...listNode.children);
+          return index + listNode.children.length;
+        } else {
+          // If no properties found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+      if (name === 'S2Colors') {
+        const colorSections = [
+          {
+            title: 'Background colors',
+            description: 'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
+            colors: [
+              'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
+              'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
+              'negative', 'negative-subtle', 'informative', 'informative-subtle',
+              'positive', 'positive-subtle', 'notice', 'notice-subtle',
+              'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
+              'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
+              'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
+              'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
+              'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle',
+              'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
+              'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
+              'brown', 'brown-subtle', 'silver', 'silver-subtle', 'disabled'
+            ]
+          },
+          {
+            title: 'Text colors',
+            description: 'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
+            colors: [
+              'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
+              'heading', 'title', 'body', 'detail', 'code'
+            ]
+          },
+          {
+            title: 'Semantic colors',
+            description: 'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
+            scales: ['accent-color', 'informative-color', 'negative-color', 'notice-color', 'positive-color']
+          },
+          {
+            title: 'Global colors',
+            description: 'The following values are available across all color properties.',
+            scales: [
+              'gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery',
+              'green', 'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia',
+              'magenta', 'pink', 'turquoise', 'brown', 'silver', 'cinnamon'
+            ]
+          }
+        ];
+
+        const newNodes = [];
+        for (const section of colorSections) {
+          // Add heading
+          newNodes.push({
+            type: 'heading',
+            depth: 4,
+            children: [{type: 'text', value: section.title}]
+          });
+
+          // Add description
+          newNodes.push({
+            type: 'paragraph',
+            children: [{type: 'text', value: section.description}]
+          });
+
+          // Add color list
+          if (section.colors) {
+            const listItems = section.colors.map(color => `- \`${color}\``).join('\n');
+            const listNode = unified().use(remarkParse).parse(listItems);
+            newNodes.push(...listNode.children);
+          } else if (section.scales) {
+            // For scales, note that they include numbered variants (e.g., gray-100, gray-200, etc.)
+            const scaleNote = section.scales.map(scale => {
+              const baseName = scale.replace(/-color$/, '');
+              // Gray scale includes 25, 50, 75, while others start at 100
+              if (baseName === 'gray') {
+                return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
+              }
+              return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
+            }).join('\n');
+            const scaleNode = unified().use(remarkParse).parse(scaleNote);
+            newNodes.push(...scaleNode.children);
+          }
+        }
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
       }
       if (name === 'StateTable') {
         // Extract interface name from properties attribute
@@ -851,7 +1180,8 @@ async function main() {
   };
 
   for (const filePath of mdxFiles) {
-    const mdContent = fs.readFileSync(filePath, 'utf8');
+    const rawContent = fs.readFileSync(filePath, 'utf8');
+    const mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
     const processor = unified()
       .use(remarkParse)
       .use(remarkMdx)
