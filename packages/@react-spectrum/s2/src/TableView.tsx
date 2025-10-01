@@ -20,6 +20,7 @@ import {
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
+  DEFAULT_SLOT,
   Form,
   Key,
   OverlayTriggerStateContext,
@@ -1162,6 +1163,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
         [ButtonContext, null],
         [ActionButtonContext, {
           slots: {
+            [DEFAULT_SLOT]: {},
             edit: {
               onPress: () => setIsOpen(true),
               isPending: isSaving,
