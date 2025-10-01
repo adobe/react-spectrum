@@ -589,10 +589,9 @@ function Example() {
 }
 ```
 
-## Row actions
+## Item actions
 
-By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items can also trigger a custom action instead via providing a `onAction` prop to the ListBoxItem.
-As shown in the example below, a "Create" action is added for the current input value. Note that interacting with said item does not update selection or the input value.
+Use the `onAction` prop on a `<ListBoxItem>` to perform a custom action when the item is selected. This example adds a "Create" action for the current input value.
 
 ```tsx example
 function Example() {
