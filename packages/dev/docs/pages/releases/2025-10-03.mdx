@@ -11,23 +11,36 @@ import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description: 
+description: Happy fall! This release brings some long-awaited features, including multi-selection in React Aria Select and enhanced animation support across our components. We've also addressed key bugs, such as better collection handling with React Suspense, and improved mobile behavior in React Aria Modal, especially for iOS 26, with fixes for pinch zooming and text selection. Lastly, onAction can now be used on a ComboBoxItem to perform a custom action when the item is selected, enabling the ability to add a “Create” option for the current input value.
 
-date: 2025-10-1
+date: 2025-10-3
 ---
 
-# October 1, 2025 Release
+# October 3, 2025 Release
+
+Happy fall! This release brings some long-awaited features, including multi-selection in [React Aria Select]() and enhanced animation support across our components. For example, [React Aria Disclosure]() now provides `—disclosure-panel-width` and `—disclosure-panel-height` CSS variables to help you implement smooth animations. We've also added a new `SelectionIndicator` component that can be used within collection items (e.g., [GridList](), [ListBox](), [Menu](), [RadioGroup](), [Table](), [Tabs](), [TagGroup](), [ToggleButtonGroup](), [Tree]()) to animate selection changes.
+
+In addition, this release includes important bug fixes such as improved collection handling with React Suspense, as well as enhancements to React Aria Modal, particularly for those using iOS 26, which also includes fixing the pinch zooming and text selection on mobile. Lastly, onAction can now be used on a ComboBoxItem to perform a custom action when the item is selected, enabling the ability to add a “Create” option for the current input value.
+
+### Multi-Selection in React Aria Select:
+In order to support multi-selection in React Aria Select, we are updating the API from `selectedKey` to  `value`. The deprecated API is supported for backward compatibility, but only supports single selection. Please see our [docs](link to the docs) to see more on how to implement multi-selection in Select. 
+
 
 ## Enhancements
 
 * Calendar
   * Add `selectionAlignment` prop to Calendar components - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8752)
+* Combobox
+  * Support `onAction` on ComboBox items - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8910), [PR](https://github.com/adobe/react-spectrum/pull/8947)
 * Disclosure
   * Add support for disclosure animation for React Aria Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8867)
 * Select
   * Add support for multiple selection to React Aria Select - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8734), [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/8880)
 * Miscellaneous
   * Add support for animated selection indicators - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8876)
+* Modals
+  * Improve behavior of modals on iOS 26 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8888), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8948)
+  * Allow pinch zooming and text selection in Modals on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8922)
 
 ## Fixes
 
@@ -35,18 +48,16 @@ date: 2025-10-1
   * Fix ColorLoupe position in ColorSlider for RTL locales - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8894)
 * Collection
   * Prevent crash in React Aria collections when used with Suspence and `useTransition` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8835)
-* Combobox
-  * Fix `onAction` with keyboard in ComboBox - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8910)
+  * Fix collection dirty node tracking with Suspense - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8892)
 * Date and Time
   * Fix the day the week starts with when specifiying `ISO 8601` in the locale - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8815), [PR](https://github.com/adobe/react-spectrum/pull/8877)
-  * Fix date parsing with seconds in offset - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8900)
+  * Fix date parsing when there are seconds in the offset - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8900)
   * Ensure `isReadonly` applies to all non-literal date segments - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/7969)
   * Add `isReadOnly` to the render props in React Aria DateField/DatePicker - [@Mr-Heidari](https://github.com/Mr-Heidari) - [PR](https://github.com/adobe/react-spectrum/pull/8818)
 * Disclosure
-  * Don't display Disclosure Panel content when it is not expanded and disabled - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8893)
+  * Don't display DisclosurePanel content when it is not expanded and disabled - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8893)
 * Focus Management
   * Fix keyboard navigation to skip over hidden inputs to next available input - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8794)
-  * Fix collection dirty node tracking with Suspense - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8892)
   * Fix unexpected `onBlur` events in React Aria Checkbox and Radio - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8567)
 * GridList
   * Fix accessibiilty violations in GridList sections - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8932)
@@ -56,9 +67,6 @@ date: 2025-10-1
   * Overlay positioning incorrect when animation starts on first render - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8789)
 * Menu
   * Show checkboxes for selected items when `ContextualHelpTrigger` `isUnavailable` is set to false - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8921)
-* Modals
-  * Improve behavior of React Aria Modals on iOS 26 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8888)
-  * Allow pinch zooming and text selection in React Aria Modals on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8922)
 * NumberField
   * Pass `disabled` prop to hidden input in React Aria NumberField - [@tklepzig](https://github.com/tklepzig) - [PR](https://github.com/adobe/react-spectrum/pull/8706)
 * Tree
