@@ -431,7 +431,7 @@ function MobileNav({pages, currentPage}: PageProps) {
       // Ensure newly selected section starts at the top of the vertical scroll area
       scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
     }
-  }, [selectedSection, selectedLibrary]);
+  }, [selectedSection, selectedLibrary, searchValue]);
 
   return (
     <div className={style({minHeight: '100dvh', paddingBottom: 24, boxSizing: 'border-box'})}>
