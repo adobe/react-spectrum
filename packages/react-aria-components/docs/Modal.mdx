@@ -422,7 +422,7 @@ A `Modal` can be targeted with the `.react-aria-Modal` CSS selector, or by overr
 
 By default, `Modal` includes a builtin `ModalOverlay`, which renders a backdrop over the page when a modal is open. This can be targeted using the `.react-aria-ModalOverlay` CSS selector. To customize the `ModalOverlay` with a different class name or other attributes, render a `ModalOverlay` and place a `Modal` inside.
 
-The `--visual-viewport-height` and `--page-height` CSS custom property will be set on the `ModalOverlay`, which you can use to set the height to account for the virtual keyboard on mobile.
+The `--page-height` and `--visual-viewport-height` CSS custom property will be set on the `ModalOverlay`, the latter of which you can use to set the height of the Modal to account for the virtual keyboard on mobile.
 
 ```css render=false
 .react-aria-ModalOverlay {
