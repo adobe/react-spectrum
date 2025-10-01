@@ -4,7 +4,6 @@ import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, Ta
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
-import Fuse from 'fuse.js';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
@@ -130,29 +129,40 @@ export function SearchMenu(props: SearchMenuProps) {
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue]);
 
-  const fuse = useMemo(() => {
-    const allItems = sections.flatMap(section => section.children);
-    return new Fuse(allItems, {
-      keys: [
-        {name: 'name', weight: 0.7},
-        {name: 'tags', weight: 0.3}
-      ],
-      threshold: 0.4,
-      includeScore: true,
-      ignoreLocation: true
-    });
-  }, [sections]);
-
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
       return sections;
     }
 
-    const results = fuse.search(searchValue);
+    const searchLower = searchValue.toLowerCase();
+    const allItems = sections.flatMap(section => section.children);
+    
+    // Filter items where name or tags start with search value
+    const matchedItems = allItems.filter(item => {
+      const nameMatch = item.name.toLowerCase().startsWith(searchLower);
+      const tagMatch = item.tags.some(tag => tag.toLowerCase().startsWith(searchLower));
+      return nameMatch || tagMatch;
+    });
+    
+    // Sort to prioritize name matches over tag matches
+    const sortedItems = matchedItems.sort((a, b) => {
+      const aNameMatch = a.name.toLowerCase().startsWith(searchLower);
+      const bNameMatch = b.name.toLowerCase().startsWith(searchLower);
+      
+      if (aNameMatch && !bNameMatch) {
+        return -1;
+      }
+      if (!aNameMatch && bNameMatch) {
+        return 1;
+      }
+      
+      // If both match by name or both match by tag, maintain original order
+      return 0;
+    });
+    
     const resultsBySection = new Map<string, typeof transformedComponents>();
     
-    results.forEach(result => {
-      const item = result.item;
+    sortedItems.forEach(item => {
       const section = item.section || 'Components';
       if (!resultsBySection.has(section)) {
         resultsBySection.set(section, []);
@@ -166,7 +176,7 @@ export function SearchMenu(props: SearchMenuProps) {
         children: resultsBySection.get(section.name) || []
       }))
       .filter(section => section.children.length > 0);
-  }, [sections, searchValue, fuse]);
+  }, [sections, searchValue]);
 
   const tags = useMemo(() => {
     if (searchValue.trim().length > 0) {

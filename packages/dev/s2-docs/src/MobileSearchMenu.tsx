@@ -11,7 +11,6 @@ import type {PageProps} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
   isDismissible?: boolean,
@@ -170,9 +169,30 @@ function MobileNav({pages, currentPage}: PageProps) {
     }
     
     let searchLower = searchValue.toLowerCase();
-    return pages.filter(page => {
+    
+    // Filter items where name or tags start with search value
+    let matchedPages = pages.filter(page => {
       let pageTitle = title(page).toLowerCase();
-      return pageTitle.includes(searchLower);
+      let nameMatch = pageTitle.startsWith(searchLower);
+      let tags: string[] = page.exports?.tags || [];
+      let tagMatch = tags.some(tag => tag.toLowerCase().startsWith(searchLower));
+      return nameMatch || tagMatch;
+    });
+    
+    // Sort to prioritize name matches over tag matches
+    return matchedPages.sort((a, b) => {
+      let aNameMatch = title(a).toLowerCase().startsWith(searchLower);
+      let bNameMatch = title(b).toLowerCase().startsWith(searchLower);
+      
+      if (aNameMatch && !bNameMatch) {
+        return -1;
+      }
+      if (!aNameMatch && bNameMatch) {
+        return 1;
+      }
+      
+      // If both match by name or both match by tag, maintain original order
+      return 0;
     });
   };
 

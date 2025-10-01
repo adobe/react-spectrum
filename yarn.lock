@@ -7449,7 +7449,6 @@ __metadata:
     "@react-types/shared": "npm:^3.30.0"
     "@react-types/textfield": "npm:^3.12.3"
     fast-glob: "npm:^3.3.3"
-    fuse.js: "npm:^7.1.0"
     globals-docs: "npm:^2.4.1"
     gray-matter: "npm:^4.0.3"
     json5: "npm:^2.2.3"
@@ -17491,13 +17490,6 @@ __metadata:
   version: 1.2.3
   resolution: "functions-have-names@npm:1.2.3"
   checksum: 10c0/33e77fd29bddc2d9bb78ab3eb854c165909201f88c75faa8272e35899e2d35a8a642a15e7420ef945e1f64a9670d6aa3ec744106b2aa42be68ca5114025954ca
-  languageName: node
-  linkType: hard
-
-"fuse.js@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "fuse.js@npm:7.1.0"
-  checksum: 10c0/c0d1b1d192a4bdf3eade897453ddd28aff96b70bf3e49161a45880f9845ebaee97265595db633776700a5bcf8942223c752754a848d70c508c3c9fd997faad1e
   languageName: node
   linkType: hard
 
