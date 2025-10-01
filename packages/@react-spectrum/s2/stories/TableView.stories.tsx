@@ -13,14 +13,11 @@
 import {action} from '@storybook/addon-actions';
 import {
   ActionButton,
-  ActionMenu,
-  Button,
   Cell,
-  CellProps,
   Column,
   ColumnProps,
   Content,
-  Dialog,
+  EditableCell,
   Heading,
   IllustratedMessage,
   Link,
@@ -37,22 +34,17 @@ import {
   Text,
   TextField
 } from '../src';
-import {Button as AriaButton, DialogTrigger, OverlayTriggerStateContext, Popover, Provider, SortDescriptor} from 'react-aria-components';
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {colorMix, style} from '../style/spectrum-theme' with {type: 'macro'};
-import {colorScheme, getAllowedOverrides, StylesProp} from '../src/style-utils' with {type: 'macro'};
-import {CSSProperties, forwardRef, KeyboardEvent, ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, forwardRefType, Key, SelectionMode} from '@react-types/shared';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {Key, SelectionMode} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useCallback, useRef, useState} from 'react';
+import {SortDescriptor} from 'react-aria-components';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
-import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useIsMobileDevice} from '../src/utils';
-import {useLayoutEffect} from '@react-aria/utils';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
-import {VisuallyHidden} from 'react-aria';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -1403,361 +1395,56 @@ const ResizableTable = () => {
   }
 };
 
-const editableCell = style<{density: 'compact' | 'spacious' | 'regular', selectionMode: 'none' | 'single' | 'multiple'}>({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: 'full',
-  height: {
-    density: {
-      compact: '[30px]',
-      regular: '[38px]',
-      spacious: '[46px]'
-    }
-  },
-  flexDirection: 'row',
-  backgroundColor: {
-    default: 'transparent',
-    ':hover': {
-      selectionMode: {
-        none: colorMix('gray-25', 'gray-900', 7),
-        single: '--s2-container-bg',
-        multiple: '--s2-container-bg'
-      }
-    },
-    ':focus:focus-visible': {
-      selectionMode: {
-        none: '--s2-container-bg',
-        single: '--s2-container-bg',
-        multiple: '--s2-container-bg'
-      }
-    }
-  }
-});
-
-
-let popover = style({
-  ...colorScheme(),
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: 'layer-2'
-  },
-  backgroundColor: '--s2-container-bg',
-  borderBottomRadius: 'default',
-  // Use box-shadow instead of filter when an arrow is not shown.
-  // This fixes the shadow stacking problem with submenus.
-  boxShadow: 'elevated',
-  borderStyle: 'solid',
-  borderWidth: 1,
-  borderColor: {
-    default: 'gray-200',
-    forcedColors: 'ButtonBorder'
-  },
-  boxSizing: 'content-box',
-  isolation: 'isolate',
-  pointerEvents: {
-    isExiting: 'none'
-  },
-  outlineStyle: 'none',
-  minWidth: '--trigger-width',
-  padding: 8,
-  display: 'flex',
-  alignItems: 'center'
-}, getAllowedOverrides());
-
-let editButton = style<{isForcedVisible: boolean}>({
-  display: {
-    default: 'none',
-    isForcedVisible: 'flex',
-    ':is([role="row"]:hover *)': 'flex',
-    ':is([role="row"][data-focus-visible-within] *)': 'flex',
-    '@media not (any-pointer: fine)': 'flex'
-  },
-  flexShrink: 0
-});
-
-function EditableTrigger(props: {isSaving: boolean, density: 'compact' | 'spacious' | 'regular', isForcedVisible: boolean}) {
-  let {isSaving, density, isForcedVisible} = props;
-
-  let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
-  if (density === 'compact') {
-    size = 'S';
-  } else if (density === 'spacious') {
-    size = 'L';
-  }
-
-  return (
-    <div className={editButton({isForcedVisible})}>
-      <ActionButton size={size} isPending={isSaving} isQuiet={!isSaving} aria-label="Edit cell" styles={style({flexShrink: 0})}>
-        <Edit />
-      </ActionButton>
-    </div>
-  );
-}
-
-interface EditableCellProps<T = string> extends Omit<CellProps, 'children'> {
-  /** The current value that the data set is aware of. */
-  value: T,
-  /** How to know when the value was successfully edited in the overlay. */
-  onSubmit: (value: T) => void,
-  /** Whether the value is currently being saved. Track in your data set. */
-  isSaving?: boolean,
-  /** How to know if the newly selected value is valid, this determines if we should close the overlay. */
-  isValid: (value: T) => boolean,
-  /** How does the current value display in the actual cell. */
-  displayValue: (value: T) => ReactNode,
-  /**
-   * A renderProps pattern, it should return the component that will be used when editing the cell. Note: the component can contain and combine any other components you want.
-   * The value and onChange keys in the props will be replaced by whatever is passed in to valueKey and setValueKey.
-   */
-  children: (props: {
-    'aria-label': string,
-    autoFocus: boolean,
-    isInvalid: boolean,
-    // value: T,
-    // onChange: (value: T) => void,
-    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void,
-    styles?: StylesProp,
-    [key:string]: any
-  }) => ReactElement,
-  /** The density of the table. */
-  density?: 'compact' | 'spacious' | 'regular',
-  /** The key to use for the value in the props. */
-  valueKey?: string,
-  /** The key to use for the onChange in the props. */
-  setValueKey?: string,
-  /** The selection mode of the table. */
-  selectionMode: SelectionMode
-}
-
-const EditableCell = (forwardRef as forwardRefType)(function EditableCell<T = string>(props: EditableCellProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {value, valueKey = 'value', setValueKey = 'onChange', onSubmit, isSaving, isValid, displayValue, children, density = 'regular', selectionMode, ...otherProps} = props;
-  let domRef = useDOMRef(ref);
-  let popoverRef = useRef<HTMLDivElement>(null);
-  let [isOpen, setIsOpen] = useState(false);
-  let [triggerWidth, setTriggerWidth] = useState(0);
-  let [tableWidth, setTableWidth] = useState(0);
-  let [verticalOffset, setVerticalOffset] = useState(0);
-  let [internalValue, _setInternalValue] = useState(value);
-  let isMobile = !useMediaQuery('(any-pointer: fine)');
-  let setInternalValue = (value: T) => {
-    _setInternalValue(value);
-  };
-
-  useEffect(() => {
-    // sync controlled value in case it's updated outside of this workflow
-    setInternalValue(value);
-  }, [value]);
-
-
-  // Popover positioning
-  useLayoutEffect(() => {
-    let width = domRef.current?.clientWidth || 0;
-    let cell = domRef.current?.closest('[role="rowheader"],[role="gridcell"]');
-    let boundingRect = cell?.parentElement?.getBoundingClientRect();
-    let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
-
-    let tableWidth = domRef.current?.closest('[role="grid"]')?.clientWidth || 0;
-    setTriggerWidth(width);
-    setVerticalOffset(verticalOffset);
-    setTableWidth(tableWidth);
-  }, [domRef, density]);
-
-  // Validation, save if valid and emit onSubmit, otherwise error message is shown and popover remains open
-  let [valid, setValid] = useState(isValid(value));
-
-  let validateAndCommit = () => {
-    if (isValid(internalValue)) {
-      setValid(true);
-      onSubmit(internalValue);
-      setIsOpen(false);
-      return true;
-    }
-    setValid(false);
-    return false;
-  };
-
-  // Cancel, don't save the value
-  let cancel = () => {
-    setIsOpen(false);
-    setInternalValue(value);
-  };
-
-  // Special keyboard shortcut handling, maybe move to attach to attach to div here and use capturing instead?
-  let onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    switch (e.key) {
-      case 'Enter':
-        validateAndCommit();
-        break;
-      case 'Escape':
-        cancel();
-        break;
-    }
-  };
-
-  return (
-    <div
-      ref={domRef}
-      // @ts-ignore not sure why this is complaining
-      className={editableCell({selectionMode, density})}
-      {...otherProps}>
-      <div
-        className={style({
-          flexGrow: 1,
-          flexShrink: 1,
-          minWidth: 0,
-          display: 'flex',
-          width: 'full',
-          height: 'full',
-          justifyContent: {
-            default: 'start',
-            align: {
-              end: 'end'
-            }
-          },
-          alignItems: 'center',
-          color: {
-            isSaving: 'neutral-subdued'
-          }
-        })({isSaving})}>
-        <div
-          className={style({
-            flexGrow: 1,
-            flexShrink: 1,
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            truncate: true,
-            justifyContent: 'start'
-          })}>
-          {displayValue(value)}
-        </div>
-      </div>
-      <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <EditableTrigger density={density} isSaving={isSaving ?? false} isForcedVisible={isOpen || !!isSaving} />
-        {!isMobile ? (
-          <Popover
-            ref={popoverRef}
-            shouldCloseOnInteractOutside={() => {
-              if (!popoverRef.current?.contains(document.activeElement)) {
-                return false;
-              }
-              return validateAndCommit();
-            }}
-            triggerRef={domRef}
-            aria-label="Edit cell"
-            offset={verticalOffset}
-            containerPadding={0}
-            placement="bottom left"
-            style={{
-              minWidth: `calc(${Math.min(triggerWidth - 32 + 16, tableWidth - 32 + 16)}px)`,
-              maxWidth: `calc(${tableWidth - 32 + 16}px)`,
-              // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
-              zIndex: undefined
-            }}
-            className={popover}>
-            <Provider
-              values={[
-                [OverlayTriggerStateContext, null]
-              ]}>
-              <div className={style({width: 'full', display: 'flex', alignItems: 'baseline', gap: 16})} style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
-                {children({
-                  'aria-label': 'Edit cell',
-                  autoFocus: true,
-                  isInvalid: !valid,
-                  [valueKey]: internalValue,
-                  [setValueKey]: setInternalValue,
-                  onKeyDown: onKeyDown,
-                  styles: style({flexGrow: 1, flexShrink: 1, minWidth: '--input-width'})
-                })}
-                {/** Screen reader only buttons. */}
-                <VisuallyHidden>
-                  <AriaButton excludeFromTabOrder onPress={cancel} aria-label="Cancel" />
-                  <AriaButton excludeFromTabOrder onPress={validateAndCommit} aria-label="Save" />
-                </VisuallyHidden>
-              </div>
-            </Provider>
-          </Popover>
-        ) : (
-          <Dialog>
-            {({close}) => (
-              <Provider
-                values={[
-                  [OverlayTriggerStateContext, null]
-                ]}>
-                <Heading>Edit cell</Heading>
-                <Content>
-                  <div className={style({display: 'flex', flexDirection: 'column', gap: 24, padding: 4})}>
-                    {children({
-                      'aria-label': 'Edit cell',
-                      autoFocus: true,
-                      isInvalid: !valid,
-                      [valueKey]: internalValue,
-                      [setValueKey]: setInternalValue,
-                      onKeyDown: onKeyDown,
-                      isMobile: true
-                    })}
-                    <div className={style({display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'end'})}>
-                      <Button variant="secondary" fillStyle="outline" onPress={() => {cancel(); close();}}>Cancel</Button>
-                      <Button
-                        variant="accent"
-                        onPress={() => {
-                          if (validateAndCommit()) {
-                            close();
-                          }
-                        }}>Confirm</Button>
-                    </div>
-                  </div>
-                </Content>
-              </Provider>
-            )}
-          </Dialog>
-        )}
-      </DialogTrigger>
-    </div>
-  );
-});
-
 let defaultItems = [
   {id: 1,
     fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 2,
     fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 3,
     fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 4,
     fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 5,
     fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 6,
     fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 7,
     fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 8,
     fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 9,
     fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   },
   {id: 10,
     fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla',
-    isSaving: {}
+    isSaving: {},
+    intermediateValue: {}
   }
 ];
 
@@ -1768,18 +1455,14 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
   {name: 'Farmer', id: 'farmer', width: '2fr', minWidth: 150}
 ];
 
-let mobileColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
-  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '2fr', showDivider: true},
-  {name: 'Farmer', id: 'farmer', width: '1fr'}
-];
-
 interface EditableTableProps extends TableViewProps {}
 
 export const EditableTable: StoryObj<EditableTableProps> = {
   render: function EditableTable(props) {
     let selectionMode = props.selectionMode ?? 'none' as SelectionMode;
-    let isMobile = useIsMobileDevice(); // edit mode may be same experience on mobile eventually
+    let columns = editableColumns;
     let [editableItems, setEditableItems] = useState(defaultItems);
+    let intermediateValue = useRef<any>(null);
 
     // Replace all of this with real API calls, this is purely demonstrative.
     let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
@@ -1792,7 +1475,12 @@ export const EditableTable: StoryObj<EditableTableProps> = {
       currentRequests.current.delete(id);
     }, []);
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
-    let onChange = useCallback((value: any, id: Key, columnId: Key) => {
+    let onChange = useCallback((id: Key, columnId: Key) => {
+      let value = intermediateValue.current;
+      if (value === null) {
+        return;
+      }
+      intermediateValue.current = null;
       let alreadySaving = currentRequests.current.get(id);
       if (alreadySaving) {
         // remove and cancel the previous request
@@ -1811,90 +1499,72 @@ export const EditableTable: StoryObj<EditableTableProps> = {
       });
     }, [saveItem]);
 
-    // Demo only.
-    let columns = useMemo(() => {
-      return isMobile ? mobileColumns : editableColumns;
-    }, [isMobile]);
+    let onIntermediateChange = useCallback((value: any) => {
+      intermediateValue.current = value;
+    }, []);
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-        <TableView aria-label="Dynamic table" {...props} styles={style({width: {default: 800, isMobile: 'calc(100vw - 32px)'}, height: 208})({isMobile})}>
+        <TableView aria-label="Dynamic table" {...props} styles={style({width: 800, height: 208})}>
           <TableHeader columns={columns}>
             {(column) => (
               <Column {...column}>{column.name}</Column>
             )}
           </TableHeader>
-          <TableBody items={editableItems} dependencies={[isMobile, columns, props.density, selectionMode]}>
+          <TableBody items={editableItems}>
             {item => (
               <Row id={item.id} columns={columns}>
                 {(column) => {
                   if (column.id === 'fruits') {
                     return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <div className={style({display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'center'})}>
-                          <EditableCell
-                            selectionMode={selectionMode}
-                            align={column.align}
-                            displayValue={value => value.toString()}
-                            isValid={value => value.length > 0}
-                            isSaving={item.isSaving[column.id!]}
-                            value={item[column.id]}
-                            density={props.density}
-                            onSubmit={value => onChange(value, item.id, column.id!)}>
-                            {(props) => (
-                              <TextField
-                                errorMessage="Please enter a valid non empty value"
-                                {...props} />
-                            )}
-                          </EditableCell>
-                          <ActionMenu>
-                            <MenuItem>Cut</MenuItem>
-                            <MenuItem>Copy</MenuItem>
-                            <MenuItem>Paste</MenuItem>
-                          </ActionMenu>
-                        </div>
-                      </Cell>
+                      <EditableCell
+                        align={column.align}
+                        showDivider={column.showDivider}
+                        onSubmit={() => onChange(item.id, column.id!)}
+                        onCancel={() => {}}
+                        isSaving={item.isSaving[column.id!]}
+                        renderEditing={() => (
+                          <TextField
+                            aria-label="Edit fruit"
+                            autoFocus
+                            validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                            defaultValue={item[column.id!]}
+                            onChange={value => onIntermediateChange(value)} />
+                        )}>
+                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                      </EditableCell>
                     );
                   }
                   if (column.id === 'farmer') {
                     return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <EditableCell
-                          selectionMode={selectionMode}
-                          align={column.align}
-                          displayValue={value => {
-                            return (
-                              <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-                                <User />
-                                {value}
-                              </div>
-                            );
-                          }}
-                          isValid={() => true}
-                          valueKey="selectedKey"
-                          setValueKey="onSelectionChange"
-                          isSaving={item.isSaving[column.id!]}
-                          value={item[column.id]}
-                          density={props.density}
-                          onSubmit={value => onChange(value, item.id, column.id!)}>
-                          {(props) => {
-                            return (
-                              <Picker {...props}>
-                                <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
-                                <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
-                                <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
-                                <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
-                                <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
-                                <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
-                                <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
-                                <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
-                                <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
-                                <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
-                              </Picker>
-                            );
-                          }}
-                        </EditableCell>
-                      </Cell>
+                      <EditableCell
+                        align={column.align}
+                        showDivider={column.showDivider}
+                        onSubmit={() => onChange(item.id, column.id!)}
+                        onCancel={() => {}}
+                        isSaving={item.isSaving[column.id!]}
+                        renderEditing={() => (
+                          <Picker
+                            aria-label="Edit farmer"
+                            autoFocus
+                            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                            defaultValue={item[column.id!]}
+                            onChange={value => onIntermediateChange(value)}>
+                            <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
+                            <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
+                            <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
+                            <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
+                            <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
+                            <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
+                            <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
+                            <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
+                            <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
+                            <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
+                          </Picker>
+                        )}>
+                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                      </EditableCell>
                     );
                   }
                   if (column.id === 'status') {
