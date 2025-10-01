@@ -134,7 +134,7 @@ const stickySearchContainer = style({
   display: 'flex',
   flexDirection: 'column',
   gap: 8,
-  paddingY: 8
+  paddingTop: 8
 });
 
 function MobileTab(props: Omit<RACTabProps, 'children'> & {children: ReactNode}) {
@@ -470,17 +470,18 @@ function MobileNav({pages, currentPage}: PageProps) {
                   onChange={handleSearchChange}
                   onFocus={handleSearchFocus}
                   onBlur={handleSearchBlur}
-                  styles={style({marginX: 16, marginTop: 8})} />
-                <TagGroup
-                  aria-label="Navigation sections" 
-                  selectionMode="single" 
-                  selectedKeys={selectedSection ? [selectedSection] : []}
-                  onSelectionChange={handleTagSelection}
-                  styles={style({marginX: 8})}
-                  UNSAFE_style={{overflow: 'auto', whiteSpace: 'nowrap', paddingBottom: 4}}
-                  items={tags}>
-                  {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
-                </TagGroup>
+                  styles={style({marginX: 16})} />
+                <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
+                  <TagGroup
+                    aria-label="Navigation sections" 
+                    selectionMode="single" 
+                    selectedKeys={selectedSection ? [selectedSection] : []}
+                    onSelectionChange={handleTagSelection}
+                    UNSAFE_style={{whiteSpace: 'nowrap'}}
+                    items={tags}>
+                    {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
+                  </TagGroup>
+                </div>
               </div>
               <div ref={scrollContainerRef} className={style({paddingX: 12})}>
                 <ComponentCardView
