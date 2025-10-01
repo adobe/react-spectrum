@@ -18,12 +18,12 @@ date: 2025-10-3
 
 # October 3, 2025 Release
 
-Happy fall! This release brings some long-awaited features, including multi-selection in [React Aria Select]() and enhanced animation support across our components. For example, [React Aria Disclosure]() now provides `—disclosure-panel-width` and `—disclosure-panel-height` CSS variables to help you implement smooth animations. We've also added a new `SelectionIndicator` component that can be used within collection items (e.g., [GridList](), [ListBox](), [Menu](), [RadioGroup](), [Table](), [Tabs](), [TagGroup](), [ToggleButtonGroup](), [Tree]()) to animate selection changes.
+Happy fall! This release brings some long-awaited features, including multi-selection in [React Aria Select]() and enhanced animation support across our components. For example, [React Aria Disclosure](../react-aria/Disclosure.html) now provides `—disclosure-panel-width` and `—disclosure-panel-height` CSS variables to help you implement smooth animations. We've also added a new `SelectionIndicator` component that can be used within collection items (e.g., [GridList](../react-aria/GridList.html#anatomy), [ListBox](../react-aria/ListBox.html#anatomy), [Menu](../react-aria/Menu.html#anatomy), [RadioGroup](../react-aria/RadioGroup.html#anatomy), [Table](../react-aria/Table.html#anatomy), [Tabs](../react-aria/Tabs.html#example), [TagGroup](../react-aria/TagGroup.html#anatomy), [ToggleButtonGroup](../react-aria/ToggleButtonGroup.html#animation), [Tree](../react-aria/Tree.html#anatomy)) to animate selection changes.
 
 In addition, this release includes important bug fixes such as improved collection handling with React Suspense, as well as enhancements to React Aria Modal, particularly for those using iOS 26, which also includes fixing the pinch zooming and text selection on mobile. Lastly, onAction can now be used on a ComboBoxItem to perform a custom action when the item is selected, enabling the ability to add a “Create” option for the current input value.
 
 ### Multi-Selection in React Aria Select:
-In order to support multi-selection in React Aria Select, we are updating the API from `selectedKey` to  `value`. The deprecated API is supported for backward compatibility, but only supports single selection. Please see our [docs](link to the docs) to see more on how to implement multi-selection in Select. 
+In order to support multi-selection in React Aria Select, we are updating the API from `selectedKey` to  `value`. The deprecated API is supported for backward compatibility, but only supports single selection. Please see our [docs](../react-aria/Select.html#multiple-selection) to see more on how to implement multi-selection in Select. 
 
 
 ## Enhancements
