@@ -33,6 +33,7 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {AvatarContext} from './Avatar';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
@@ -69,7 +70,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
@@ -77,7 +78,7 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -241,6 +242,11 @@ const iconStyles = style({
   }
 });
 
+const avatar = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual'
+});
+
 const loadingWrapperStyles = style({
   gridColumnStart: '1',
   gridColumnEnd: '-1',
@@ -339,6 +345,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     );
   }
   let scale = useScale();
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
 
   return (
     <AriaSelect
@@ -394,49 +402,54 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 estimatedHeadingHeight: 50,
                 padding: 8,
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]}}>
-              <PopoverBase
+              <Popover
                 hideArrow
+                padding="none"
                 offset={menuOffset}
+                crossOffset={isQuiet ? RTLFlipOffset * -12 : undefined}
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
                   width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
                 }}
                 styles={style({
-                  marginStart: {
-                    isQuiet: -12
-                  },
                   minWidth: {
-                    default: '[var(--trigger-width)]',
+                    default: '--trigger-width',
                     isQuiet: 192
                   },
                   width: {
-                    default: '[var(--trigger-width)]',
-                    isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                    default: '--trigger-width',
+                    isQuiet: '[calc(var(--trigger-width) - 24)]'
                   }
                 })(props)}>
-                <Provider
-                  values={[
-                    [HeaderContext, {styles: listboxHeader({size})}],
-                    [HeadingContext, {
-                      // @ts-ignore
-                      role: 'presentation',
-                      styles: sectionHeading
-                    }],
-                    [TextContext, {
-                      slots: {
-                        description: {styles: description({size})}
-                      }
-                    }]
-                  ]}>
-                  <ListBox
-                    dependencies={props.dependencies}
-                    items={items}
-                    className={listbox({size})}>
-                    {renderer}
-                  </ListBox>
-                </Provider>
-              </PopoverBase>
+                <div
+                  className={style({
+                    display: 'flex',
+                    size: 'full'
+                  })}>
+                  <Provider
+                    values={[
+                      [HeaderContext, {styles: listboxHeader({size})}],
+                      [HeadingContext, {
+                        // @ts-ignore
+                        role: 'presentation',
+                        styles: sectionHeading
+                      }],
+                      [TextContext, {
+                        slots: {
+                          description: {styles: description({size})}
+                        }
+                      }]
+                    ]}>
+                    <ListBox
+                      dependencies={props.dependencies}
+                      items={items}
+                      className={listbox({size})}>
+                      {renderer}
+                    </ListBox>
+                  </Provider>
+                </div>
+              </Popover>
             </Virtualizer>
           </InternalPickerContext.Provider>
         </>
@@ -461,6 +474,13 @@ function PickerProgressCircle(props) {
   );
 }
 
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
+
 interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
@@ -479,6 +499,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     loadingCircle,
     buttonRef
   } = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // For mouse interactions, pickers open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
@@ -511,8 +532,8 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-              {({selectedItems, defaultChildren, selectedText}) => {
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label]) {display: none;}')}>
+              {({selectedItems, defaultChildren}) => {
                 return (
                   <Provider
                     values={[
@@ -521,6 +542,14 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                           icon: {
                             render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
                             styles: icon
+                          }
+                        }
+                      }],
+                      [AvatarContext, {
+                        slots: {
+                          avatar: {
+                            size: avatarSize[size ?? 'M'],
+                            styles: avatar
                           }
                         }
                       }],
@@ -541,7 +570,10 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1 ? defaultChildren : <Text slot="label">{selectedText}</Text>}
+                    {selectedItems.length <= 1
+                      ? defaultChildren
+                      : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
+                    }
                   </Provider>
                 );
               }}
@@ -595,21 +627,27 @@ export function PickerItem(props: PickerItemProps): ReactNode {
               icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
             }}}>
             <DefaultProvider
-              context={TextContext}
-              value={{
-                slots: {
-                  [DEFAULT_SLOT]: {styles: label({size})},
-                  label: {styles: label({size})},
-                  description: {styles: description({...renderProps, size})}
-                }
-              }}>
-              {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
-              {renderProps.selectionMode === 'multiple' && !isLink && (
-                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
-                  <CheckmarkIcon size={size} className={checkboxIconStyles} />
-                </div>
+              context={AvatarContext}
+              value={{slots: {
+                avatar: {size: avatarSize[size], styles: avatar}
+              }}}>
+              <DefaultProvider
+                context={TextContext}
+                value={{
+                  slots: {
+                    [DEFAULT_SLOT]: {styles: label({size})},
+                    label: {styles: label({size})},
+                    description: {styles: description({...renderProps, size})}
+                  }
+                }}>
+                {renderProps.selectionMode === 'single' && !isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+                {renderProps.selectionMode === 'multiple' && !isLink && (
+                  <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
+                    <CheckmarkIcon size={size} className={checkboxIconStyles} />
+                  </div>
               )}
-              {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+                {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+              </DefaultProvider>
             </DefaultProvider>
           </DefaultProvider>
         );

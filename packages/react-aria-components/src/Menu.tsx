@@ -15,7 +15,7 @@ import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBra
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
@@ -38,7 +38,9 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SeparatorContext} from './Separator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
@@ -257,10 +259,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             /* eslint-disable-next-line react-hooks/rules-of-hooks */
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
-          <CollectionRoot
-            collection={state.collection}
-            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
-            scrollRef={ref} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={state.collection}
+              persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+              scrollRef={ref} />
+          </SharedElementTransition>
         </Provider>
         {emptyState}
       </div>
@@ -438,7 +442,8 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
               description: descriptionProps
             }
           }],
-          [KeyboardContext, keyboardShortcutProps]
+          [KeyboardContext, keyboardShortcutProps],
+          [SelectionIndicatorContext, {isSelected: states.isSelected}]
         ]}>
         {renderProps.children}
       </Provider>

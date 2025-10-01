@@ -153,7 +153,7 @@ interface CodeOutputProps {
 export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   let {name, importSource, props, controls, propsObject} = useContext(Context);
   let searchParams = new URLSearchParams();
-  
+
   let exampleType = useContext(ExampleSwitcherContext);
   if (exampleType) {
     searchParams.set('exampleType', String(exampleType));
@@ -162,8 +162,8 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   for (let prop in props) {
     let value = props[prop];
     if (
-      value != null && 
-      controls[prop] != null && 
+      value != null &&
+      controls[prop] != null &&
       (controls[prop].default == null || value !== controls[prop].default)
     ) {
       searchParams.set(prop, JSON.stringify(value));
@@ -249,9 +249,9 @@ function renderChildren(children, indent = '') {
       let badge = renderElement('NotificationBadge', {value: 12}, undefined, indent);
       result = <>{result}{result ? '\n  ' + indent : null}{badge}</>;
     }
-    
+
     return result;
-  } else if (children?.text) {
+  } else if (children?.text != null) {
     return children.text;
   } else if (Array.isArray(children)) {
     return children.map((c, i) => <React.Fragment key={i}>{i > 0 ? '\n  ' + indent : null}{c}</React.Fragment>);
@@ -379,13 +379,13 @@ function renderImports(name: string, importSource: string, props: Props) {
   if (props.contextualHelp) {
     components.push('ContextualHelp', 'Heading', 'Content');
   }
-  
+
   imports.push(renderImport(components.join(', '), importSource));
 
   if (props.children?.icon && !props.children?.avatar) {
     imports.push('\n', renderImport(props.children.icon.replace(/^(\d)/, '_$1'), `@react-spectrum/s2/icons/${props.children.icon}`, true));
   }
-  
+
   imports.push('\n\n');
   return imports;
 }
@@ -474,7 +474,7 @@ function UnionControl({control, value, onChange, isPicker = false}) {
   let length = control.value.elements.reduce((p, v) => p + v.value, '').length;
   if (isPicker || control.options?.control === 'picker' || length > 18) {
     return (
-      <Picker 
+      <Picker
         label={control.name}
         contextualHelp={<PropContextualHelp control={control} />}
         selectedKey={value == null && control.optional && !control.default ? '__none' : value}
@@ -567,6 +567,7 @@ function NumberControl({control, value, onChange}: ControlProps) {
   return (
     <NumberField
       label={control.name}
+      placeholder="–"
       contextualHelp={<PropContextualHelp control={control} />}
       value={value}
       onChange={onChange}
@@ -688,6 +689,7 @@ function StringControl({control, value, onChange}: ControlProps) {
   return (
     <TextField
       label={control.name}
+      placeholder="–"
       contextualHelp={<PropContextualHelp control={control} />}
       value={value || ''}
       onChange={onChange}
@@ -704,6 +706,7 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
           <div className={style({display: 'flex', gap: 4})}>
             <TextField
               aria-label={control.name}
+              placeholder="–"
               value={objectValue?.text || ''}
               onChange={text => onChange({...objectValue, text})}
               styles={style({width: 80, flexGrow: 1})} />
@@ -714,14 +717,14 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
         )}
         {(control.slots.avatar || control.slots.badge) &&
           <ToggleButtonGroup density="compact" isJustified>
-            {control.slots.avatar && 
+            {control.slots.avatar &&
               <ToggleButton
                 isSelected={objectValue?.avatar ?? false}
                 onChange={avatar => onChange({...objectValue, avatar})}>
                 Avatar
               </ToggleButton>
             }
-            {control.slots.badge && 
+            {control.slots.badge &&
               <ToggleButton
                 isSelected={objectValue?.badge ?? false}
                 onChange={badge => onChange({...objectValue, badge})}>
@@ -848,7 +851,7 @@ function LocaleControl({control, value, onChange}: ControlProps) {
   let updateLocale = locale => {
     let calendar, numberingSystem;
     if (extension === 'calendar') {
-      calendar = (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0]; 
+      calendar = (preferences.find(p => p.value === locale)?.ordering || 'gregory').split(' ')[0];
     } else if (extension === 'numberingSystem') {
       numberingSystem = new Intl.NumberFormat(locale).resolvedOptions().numberingSystem;
       if (numberingSystem === 'arabext') {
@@ -930,6 +933,7 @@ function DurationControl({control, value, onChange}: ControlProps) {
   return (
     <NumberField
       label={control.name}
+      placeholder="–"
       contextualHelp={<PropContextualHelp control={control} />}
       value={value.months}
       minValue={1}
@@ -983,7 +987,7 @@ function ColorSpaceControl({control, value}) {
           if (props.channel) {
             props.channel = getColorChannels(colorSpace)[0];
           }
-          
+
           delete props.xChannel;
           delete props.yChannel;
           return props;
@@ -1034,7 +1038,7 @@ function PlacementControl({control, value, onChange}) {
 
 function PlacementControlItem(props) {
   return (
-    <ListBoxItem 
+    <ListBoxItem
       {...props}
       aria-label={props.id}
       className={style({
@@ -1069,7 +1073,7 @@ function ArrayControl({control, valueType, value = [], onChange}) {
   let ref = useRef<HTMLDivElement | null>(null);
   return (
     <Wrapper ref={ref} control={control} styles={style({gridColumnStart: 1, gridColumnEnd: -1, width: 150})}>
-      {value.length === 0 && 
+      {value.length === 0 &&
         <ActionButton
           size="S"
           aria-label="Add item"
@@ -1145,12 +1149,14 @@ function SizeControl({control, value, onChange}: ControlProps) {
       <div className={style({display: 'flex', gap: 4, width: 130})}>
         <NumberField
           aria-label="Width"
+          placeholder="–"
           value={value?.width}
           onChange={width => onChange(new Size(width, value?.height ?? 0))}
           styles={style({flexShrink: 1, flexGrow: 1})}
           hideStepper />
         <NumberField
           aria-label="Height"
+          placeholder="–"
           value={value?.height}
           onChange={height => onChange(new Size(value?.width ?? 0, height))}
           styles={style({flexShrink: 1, flexGrow: 1})}

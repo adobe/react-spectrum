@@ -79,13 +79,46 @@ function Example(props) {
 }
 ```
 
+### Animation
+
+Render a `SelectionIndicator` within each `ToggleButton` to animate selection changes.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/SegmentedControl.css']}
+"use client";
+import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator} from 'react-aria-components';
+import './SegmentedControl.css';
+
+function SegmentedControlItem(props: ToggleButtonProps) {
+  return (
+    <ToggleButton {...props} className="segmented-control-item">
+      {/*- begin highlight -*/}
+      <SelectionIndicator />
+      {/*- end highlight -*/}
+      <span>{props.children}</span>
+    </ToggleButton>
+  );
+}
+
+<ToggleButtonGroup
+  className="segmented-control"
+  defaultSelectedKeys={['day']}
+  disallowEmptySelection>
+  <SegmentedControlItem id="day">Day</SegmentedControlItem>
+  <SegmentedControlItem id="week">Week</SegmentedControlItem>
+  <SegmentedControlItem id="month">Month</SegmentedControlItem>
+  <SegmentedControlItem id="year">Year</SegmentedControlItem>
+</ToggleButtonGroup>
+```
+
 ## API
 
 <Anatomy />
 
-```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html'}}
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <ToggleButtonGroup>
-  <ToggleButton />
+  <ToggleButton>
+    <SelectionIndicator />
+  </ToggleButton>
 </ToggleButtonGroup>
 ```
 

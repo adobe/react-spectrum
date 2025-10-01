@@ -8,7 +8,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
-```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']} initialProps={{label: 'Ice cream flavor'}} type="s2"
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']} initialProps={{label: 'Ice cream flavor', placeholder: 'Select a flavor'}} type="s2"
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 <ComboBox/* PROPS */>
@@ -43,7 +43,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" items={options} selectionMode="single">
+    <ComboBox label="Animals" items={options} selectionMode="single" placeholder="Select an animal">
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -53,34 +53,56 @@ function Example() {
 
 ### Slots
 
-`ComboBoxItem` supports icons, and `label` and `description` text slots.
+`ComboBoxItem` supports icons, avatars, and `label` and `description` text slots.
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2';
+import {Avatar, ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Comment from '@react-spectrum/s2/icons/Comment';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 
-<ComboBox label="Permissions" defaultSelectedKey="read">
-  <ComboBoxItem id="read" textValue="Read">
-    {/*- begin highlight -*/}
-    <Comment />
-    <Text slot="label">Read</Text>
-    <Text slot="description">Comment only</Text>
-    {/*- end highlight -*/}
-  </ComboBoxItem>
-  <ComboBoxItem id="write" textValue="Write">
-    <Edit />
-    <Text slot="label">Write</Text>
-    <Text slot="description">Read and write only</Text>
-  </ComboBoxItem>
-  <ComboBoxItem id="admin" textValue="Admin">
-    <UserSettings />
-    <Text slot="label">Admin</Text>
-    <Text slot="description">Full access</Text>
-  </ComboBoxItem>
-</ComboBox>
+const users = Array.from({length: 5}, (_, i) => ({
+  id: `user${i + 1}`,
+  name: `User ${i + 1}`,
+  email: `user${i + 1}@example.com`,
+  avatar: 'https://i.imgur.com/kJOwAdv.png'
+}));
+
+<div className={style({display: 'flex', gap: 12, flexWrap: 'wrap'})}>
+  <ComboBox label="Permissions" defaultSelectedKey="read" placeholder="Select a permission level">
+    <ComboBoxItem id="read" textValue="Read">
+      {/*- begin highlight -*/}
+      <Comment />
+      <Text slot="label">Read</Text>
+      <Text slot="description">Comment only</Text>
+      {/*- end highlight -*/}
+    </ComboBoxItem>
+    <ComboBoxItem id="write" textValue="Write">
+      <Edit />
+      <Text slot="label">Write</Text>
+      <Text slot="description">Read and write only</Text>
+    </ComboBoxItem>
+    <ComboBoxItem id="admin" textValue="Admin">
+      <UserSettings />
+      <Text slot="label">Admin</Text>
+      <Text slot="description">Full access</Text>
+    </ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Share" items={users} defaultSelectedKey="user1" placeholder="Select a user">
+    {(item) => (
+      <ComboBoxItem id={item.id} textValue={item.name}>
+        {/*- begin highlight -*/}
+        <Avatar slot="avatar" src={item.avatar} />
+        {/*- end highlight -*/}
+        <Text slot="label">{item.name}</Text>
+        <Text slot="description">{item.email}</Text>
+      </ComboBoxItem>
+    )}
+  </ComboBox>
+</div>
+
 ```
 
 <InlineAlert variant="notice">
@@ -96,7 +118,7 @@ Use the `<ComboBoxSection>` component to group options. A `<Header>` element, wi
 "use client";
 import {ComboBox, ComboBoxItem, ComboBoxSection, Header, Heading, Text} from '@react-spectrum/s2';
 
-<ComboBox label="Preferred fruit or vegetable">
+<ComboBox label="Preferred fruit or vegetable" placeholder="Select an option">
   {/*- begin highlight -*/}
   <ComboBoxSection>
     <Header>
@@ -151,6 +173,7 @@ function Example() {
   return (
     <ComboBox
       label="Star Wars Character Lookup"
+      placeholder="Select a character"
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
@@ -164,6 +187,42 @@ function Example() {
 }
 ```
 
+### Actions
+
+Use the `onAction` prop on a `<ComboBoxItem>` to perform a custom action when the item is selected. This example adds a "Create" action for the current input value.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      placeholder="Select an animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {/*- begin highlight -*/}
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('Creating ' + inputValue)}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      {/*- end highlight -*/}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
+  );
+}
+```
+
 ### Links
 
 Use the `href` prop on a `<ComboBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
@@ -172,7 +231,7 @@ Use the `href` prop on a `<ComboBoxItem>` to create a link. See the **client sid
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
-<ComboBox label="Bookmarks">
+<ComboBox label="Bookmarks" placeholder="Select a bookmark">
   <ComboBoxItem href="https://adobe.com/" target="_blank">Adobe</ComboBoxItem>
   <ComboBoxItem href="https://apple.com/" target="_blank">Apple</ComboBoxItem>
   <ComboBoxItem href="https://google.com/" target="_blank">Google</ComboBoxItem>
@@ -196,6 +255,7 @@ function Example() {
     <div>
       <ComboBox
         label="Pick an animal"
+        placeholder="Select an animal"
         /*- begin highlight -*/
         selectedKey={animal}
         onSelectionChange={setAnimal}>
@@ -230,6 +290,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Favorite Animal"
+        placeholder="Select an animal"
         /*- begin highlight -*/
         /* PROPS */
         inputValue={value}
@@ -297,6 +358,7 @@ function ControlledComboBox() {
     <div>
        <ComboBox
         label="Pick a engineering major"
+        placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
         selectedKey={fieldState.selectedKey}
@@ -329,6 +391,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Animal"
+        placeholder="e.g. Cat"
         /*- begin highlight -*/
         name="animal"
         /* PROPS */
@@ -357,7 +420,7 @@ Use the `menuTrigger` prop to control when the popover opens:
 
 The `align`, `direction`, `shouldFlip` and `menuWidth` props control the behavior of the popover.
 
-```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal'}} type="s2"
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="s2"
 "use client";
 import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 

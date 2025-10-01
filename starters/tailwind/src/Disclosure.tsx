@@ -97,7 +97,7 @@ export interface DisclosurePanelProps extends AriaDisclosurePanelProps {
 
 export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
   return (
-    <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'h-(--disclosure-panel-height) transition-[height] overflow-clip')}>
+    <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip')}>
       <div className="px-4 py-2">{children}</div>
     </AriaDisclosurePanel>
   );

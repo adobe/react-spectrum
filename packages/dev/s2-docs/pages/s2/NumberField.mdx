@@ -12,9 +12,10 @@ import docs from 'docs:@react-spectrum/s2';
   component={NumberField}
   docs={docs.exports.NumberField}
   links={docs.links}
-  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'hideStepper', 'isDisabled']}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'hideStepper', 'isDisabled']}
   initialProps={{
     label: 'Width',
+    placeholder: 'Enter a number',
     defaultValue: 1024,
     minValue: 0
   }}
@@ -36,6 +37,7 @@ function Example() {
     <div>
       <NumberField
         label="Cookies to buy"
+        placeholder="Enter a number"
         ///- begin highlight -///
         value={value}
         onChange={setValue}
@@ -58,6 +60,7 @@ Use the `formatOptions` prop to control how the value is formatted (according to
   props={['formatOptions']}
   initialProps={{
     label: 'Value',
+    placeholder: 'Enter a number',
     defaultValue: 5,
     formatOptions: {style: 'decimal'}
   }}
@@ -77,6 +80,7 @@ Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Step
   props={['minValue', 'maxValue', 'step']}
   initialProps={{
     label: 'Amount',
+    placeholder: 'Enter a number',
     minValue: 0,
     maxValue: 150,
     defaultValue: 50,
@@ -95,7 +99,10 @@ By default, `NumberField` displays the value using the numbering system for the 
 import {Provider, NumberField} from '@react-spectrum/s2';
 
 <Provider/* PROPS */>
-  <NumberField label="Value" defaultValue={1024} />
+  <NumberField
+    label="Value"
+    defaultValue={1024}
+    placeholder="Enter a number" />
 </Provider>
 ```
 
@@ -103,7 +110,7 @@ import {Provider, NumberField} from '@react-spectrum/s2';
 
 Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
-```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true, placeholder: 'Enter a number'}} type="s2"
 "use client";
 import {NumberField, Button, Form} from '@react-spectrum/s2';
 

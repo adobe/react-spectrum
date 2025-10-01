@@ -1,8 +1,9 @@
-import {MobileNav, MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
+import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
 import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
 import './anatomy.css';
+import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
@@ -36,6 +37,7 @@ const components = {
   Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
   PropTable,
   StateTable,
+  ClassAPI,
   ExampleSwitcher,
   TypeLink
 };
@@ -87,91 +89,99 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
       </head>
       <body
         className={style({
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          maxWidth: {
-            default: 'full',
-            lg: 1280
-          },
-          marginX: 'auto',
-          marginY: 0,
-          padding: {
-            default: 0,
-            lg: 12
-          },
-          paddingBottom: 0,
-          gap: {
-            default: 0,
-            lg: 12
-          },
+          margin: 0,
+          padding: 0,
           overscrollBehavior: {
             default: 'auto',
             lg: 'none'
           }
         })}>
-        <Header pages={pages} currentPage={currentPage} />
-        <MobileHeader
-          toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
-          nav={<MobileNav key="nav" pages={pages} currentPage={currentPage} />} />
-        <div className={style({display: 'flex', width: 'full'})}>
-          <Nav pages={pages} currentPage={currentPage} />
-          <main 
-            key={currentPage.url}
-            style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
-            className={style({
-              isolation: 'isolate',
-              backgroundColor: 'base',
-              padding: {
-                default: 12,
-                lg: 40
-              },
-              borderRadius: {
-                default: 'none',
-                lg: 'xl'
-              },
-              boxShadow: {
-                lg: 'emphasized'
-              },
-              width: 'full',
-              boxSizing: 'border-box',
-              flexGrow: 1,
-              display: 'flex',
-              justifyContent: 'space-between',
-              position: 'relative',
-              height: {
-                lg: '[calc(100vh - 72px)]'
-              },
-              overflow: {
-                lg: 'auto'
-              }
-            })}>
-            <article
+        <div
+          className={style({
+            isolation: 'isolate',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            maxWidth: {
+              default: 'full',
+              lg: 1280
+            },
+            marginX: 'auto',
+            marginY: 0,
+            padding: {
+              default: 0,
+              lg: 12
+            },
+            paddingBottom: 0,
+            gap: {
+              default: 0,
+              lg: 12
+            }
+          })}>
+          <Header pages={pages} currentPage={currentPage} />
+          <MobileHeader
+            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+            pages={pages}
+            currentPage={currentPage} />
+          <div className={style({display: 'flex', width: 'full'})}>
+            <Nav pages={pages} currentPage={currentPage} />
+            <main 
+              key={currentPage.url}
+              style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
               className={style({
-                maxWidth: 768,
-                width: 'full',
-                height: 'fit'
-              })}>
-              {React.cloneElement(children, {components})}
-            </article>
-            <aside
-              className={style({
-                position: 'sticky',
-                top: 0,
-                height: 'fit',
-                maxHeight: 'screen',
-                overflow: 'auto',
-                paddingY: 32,
-                boxSizing: 'border-box',
-                display: {
+                isolation: 'isolate',
+                backgroundColor: 'base',
+                padding: {
+                  default: 12,
+                  lg: 40
+                },
+                borderRadius: {
                   default: 'none',
-                  lg: 'block'
+                  lg: 'xl'
+                },
+                boxShadow: {
+                  lg: 'emphasized'
+                },
+                width: 'full',
+                boxSizing: 'border-box',
+                flexGrow: 1,
+                display: 'flex',
+                justifyContent: 'space-between',
+                position: 'relative',
+                height: {
+                  lg: '[calc(100vh - 72px)]'
+                },
+                overflow: {
+                  lg: 'auto'
                 }
               })}>
-              <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-              <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-            </aside>
-          </main>
+              <article
+                className={style({
+                  maxWidth: 768,
+                  width: 'full',
+                  height: 'fit'
+                })}>
+                {React.cloneElement(children, {components})}
+              </article>
+              <aside
+                className={style({
+                  position: 'sticky',
+                  top: 0,
+                  height: 'fit',
+                  maxHeight: 'screen',
+                  overflow: 'auto',
+                  paddingY: 32,
+                  boxSizing: 'border-box',
+                  display: {
+                    default: 'none',
+                    lg: 'block'
+                  }
+                })}>
+                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
+                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+              </aside>
+            </main>
+          </div>
         </div>
       </body>
     </Provider>
