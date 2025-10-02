@@ -175,7 +175,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   if (typeof document !== 'undefined') {
     let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
     // Prevent Firefox from adding scrollbars when the page has a fractional height.
-    let fractionalHeightDifference = scrollingElement.clientHeight - scrollingElement.getBoundingClientRect().height;
+    let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
     pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
   }
 
