@@ -219,7 +219,7 @@ describe('TableView', () => {
                             <PickerItem textValue="Isla" id="Isla"><Text>Isla</Text></PickerItem>
                           </Picker>
                         )}>
-                        <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                        <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>
                       </EditableCell>
                     );
                   }
@@ -236,6 +236,7 @@ describe('TableView', () => {
             )}
           </TableBody>
         </TableView>
+        <button>After</button>
       </div>
     );
   }
@@ -288,6 +289,12 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
       expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
+
+      await user.tab();
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+      await user.tab({shift: true});
+      expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByRole('button', {name: 'Edit farmer'})).toHaveFocus();
     });
 
     it('should perform validation when editing text in a cell', async () => {
