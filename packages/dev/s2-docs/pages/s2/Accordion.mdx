@@ -3,6 +3,8 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['collapsible', 'expandable', 'disclosure'];
+
 # Accordion
 
 <PageDescription>{docs.exports.Accordion.description}</PageDescription>
@@ -10,8 +12,9 @@ import docs from 'docs:@react-spectrum/s2';
 ```tsx render docs={docs.exports.Accordion} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled', 'allowsMultipleExpanded']} type="s2"
 "use client";
 import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<Accordion/* PROPS */>
+<Accordion styles={style({width: 220})}/* PROPS */>
   <Disclosure id="personal">
     <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>Personal information form here.</DisclosurePanel>
