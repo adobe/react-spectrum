@@ -209,7 +209,7 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
 };
 
 function MobileNav({pages, currentPage}: PageProps) {
-  let overlayTriggerState = React.useContext(OverlayTriggerStateContext);
+  let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
   let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
