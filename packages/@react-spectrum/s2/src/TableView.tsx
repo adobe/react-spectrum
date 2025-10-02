@@ -1125,6 +1125,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
   let [tableWidth, setTableWidth] = useState(0);
   let [verticalOffset, setVerticalOffset] = useState(0);
   let tableVisualOptions = useContext(InternalTableContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   let {density} = useContext(InternalTableContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
@@ -1171,6 +1172,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               size,
               styles: style({
                 // TODO: really need access to display here instead, but not possible right now
+                // will be addressable with displayOuter
                 visibility: {
                   default: 'hidden',
                   isForcedVisible: 'visible',
@@ -1202,12 +1204,12 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             return false;
           }}
           triggerRef={cellRef}
-          aria-label="Edit cell"
+          aria-label={stringFormatter.format('table.editCell')}
           offset={verticalOffset}
-          placement="bottom left"
+          placement="bottom start"
           style={{
-            minWidth: `calc(${Math.min(triggerWidth - 32 + 16, tableWidth - 32 + 16)}px)`,
-            maxWidth: `calc(${tableWidth - 32 + 16}px)`,
+            minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
+            maxWidth: `${tableWidth}px`,
             // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
             zIndex: undefined
           }}
@@ -1227,8 +1229,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
               {renderEditing()}
               <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
-                <ActionButton isQuiet onPress={cancel} aria-label="Cancel"><Close /></ActionButton>
-                <ActionButton isQuiet type="submit" aria-label="Save"><Checkmark /></ActionButton>
+                <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
+                <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
               </div>
             </Form>
           </Provider>
