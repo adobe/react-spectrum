@@ -4,6 +4,8 @@ export default Layout;
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['autocomplete', 'search', 'typeahead'];
+
 # ComboBox
 
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
@@ -189,7 +191,7 @@ function Example() {
 
 ### Actions
 
-Use the `onAction` prop on a `<ComboBoxItem>` to perform a custom action when the item is selected. This example adds a "Create" action for the current input value.
+Use the `onAction` prop on a `<ComboBoxItem>` to perform a custom action when the item is pressed. This example adds a "Create" action for the current input value.
 
 ```tsx render
 "use client";
