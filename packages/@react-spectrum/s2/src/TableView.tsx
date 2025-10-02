@@ -1170,6 +1170,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               isPending: isSaving,
               isQuiet: !isSaving,
               size,
+              excludeFromTabOrder: true,
               styles: style({
                 // TODO: really need access to display here instead, but not possible right now
                 // will be addressable with displayOuter
