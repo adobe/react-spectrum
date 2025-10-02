@@ -1030,7 +1030,7 @@ const cellContent = style({
       highlight: {
         default: 'normal',
         isRowHeader: {
-          isSelected: 'medium'
+          isSelected: 'bold'
         }
       }
     }

@@ -201,7 +201,7 @@ export let label = style({
   color: 'inherit',
   fontWeight: {
     default: 'normal',
-    isSelected: 'medium'
+    isSelected: 'bold'
   },
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding',

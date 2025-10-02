@@ -271,7 +271,7 @@ const treeCellGrid = style({
   },
   fontWeight: {
     default: 'normal',
-    isSelected: 'medium'
+    isSelected: 'bold'
   },
   '--rowSelectedBorderColor': {
     type: 'outlineColor',
