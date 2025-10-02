@@ -917,9 +917,9 @@ workflows:
           requires:
             - install
       - verdaccio:
-          # filters:
-          #   branches:
-          #     only: main
+          filters:
+            branches:
+              only: main
           requires:
             - install
       - v-docs:
