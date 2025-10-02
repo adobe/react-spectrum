@@ -153,17 +153,17 @@ export const WithAvatars: Story = {
     <Picker {...args}>
       <PickerItem textValue="User One">
         <Avatar slot="avatar" src={SRC_URL_1} />
-        <Text slot="label">User One</Text>
+        <Text>User One</Text>
         <Text slot="description">user.one@example.com</Text>
       </PickerItem>
       <PickerItem textValue="User Two">
         <Avatar slot="avatar" src={SRC_URL_2} />
-        <Text slot="label">User Two</Text>
+        <Text>User Two</Text>
         <Text slot="description">user.two@example.com<br />123-456-7890</Text>
       </PickerItem>
       <PickerItem textValue="User Three">
         <Avatar slot="avatar" src={SRC_URL_2} />
-        <Text slot="label">User Three</Text>
+        <Text>User Three</Text>
       </PickerItem>
     </Picker>
   ),
