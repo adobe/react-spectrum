@@ -1,13 +1,12 @@
 import React from 'react';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
-export const InternationalizedLogo = () => {
+export const InternationalizedLogo = ({size = 32}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       id="Layer_1"
-      viewBox="0 0 160 160"
-      className={style({margin: 0, height: 40, width: 40})}>
+      viewBox="15 17 135 128"
+      style={{width: size, height: size}}>
       <defs>
         <clipPath id="clippath">
           <path

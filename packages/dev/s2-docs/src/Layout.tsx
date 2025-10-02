@@ -177,8 +177,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+                {currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0 && (
+                  <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
+                )}
+                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} /> 
               </aside>
             </main>
           </div>

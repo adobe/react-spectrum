@@ -77,7 +77,7 @@ export function Tab(props: TabProps) {
       )}>
       {composeRenderProps(props.children, children => (<>
         {children}
-        <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference transition-[translate,width,height]" />
+        <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference motion-safe:transition-[translate,width,height] " />
       </>))}
     </RACTab>
   );
