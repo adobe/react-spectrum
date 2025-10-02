@@ -189,7 +189,7 @@ const rowBackgroundColor = {
         default: 'gray-100',
         isEmphasized: {
           highlightMode: {
-            normal: 'blue-200',
+            normal: 'blue-900/10',
             inverse: 'blue-800/85'
           }
         }

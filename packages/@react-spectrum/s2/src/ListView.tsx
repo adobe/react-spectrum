@@ -139,7 +139,7 @@ const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: b
     highlightMode: {
       normal: {
         isEmphasized: {
-          isSelected: 'blue-200'
+          isSelected: 'blue-900/10'
         }
       },
       inverse: {
