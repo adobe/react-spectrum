@@ -45,7 +45,6 @@ export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
 export {Input, InputContext} from './Input';
 export {Section, CollectionRendererContext, DefaultCollectionRenderer} from './Collection';
-export {createLeafComponent as UNSTABLE_createLeafComponent, createBranchComponent as UNSTABLE_createBranchComponent, CollectionBuilder as UNSTABLE_CollectionBuilder} from '@react-aria/collections';
 export {Collection, createLeafComponent, createBranchComponent, CollectionBuilder} from '@react-aria/collections';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
