@@ -99,6 +99,10 @@ import {ChevronRight} from 'lucide-react';
   height: var(--disclosure-panel-height);
   transition: height 250ms;
   overflow: clip;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 ```
 

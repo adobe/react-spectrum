@@ -300,6 +300,7 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>isLoading</Code> to <Code>loadingState</Code> and provide the appropriate loading state.</li>
+          <li className={style({font: 'body', marginY: 8})}><Code>defaultSelectedKey</Code> and <Code>selectedKey</Code> have been deprecated in favor of <Code>defaultValue</Code> and <Code>value</Code> respectively. See the <Link href="?path=/docs/picker--docs">props table</Link> for the new accepted types.</li>
         </ul>
 
         <H3>ProgressBar</H3>
