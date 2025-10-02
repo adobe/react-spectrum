@@ -13,7 +13,7 @@
 import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
@@ -171,10 +171,18 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   });
 
   let viewport = useViewportSize();
+  let pageHeight: number | undefined = undefined;
+  if (typeof document !== 'undefined') {
+    let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
+    // Prevent Firefox from adding scrollbars when the page has a fractional height.
+    let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
+    pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
+  }
+
   let style = {
     ...renderProps.style,
     '--visual-viewport-height': viewport.height + 'px',
-    '--page-height': typeof document !== 'undefined' ? document.body.getBoundingClientRect().height + 'px' : undefined
+    '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
   return (
