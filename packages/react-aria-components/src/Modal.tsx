@@ -182,7 +182,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   let style = {
     ...renderProps.style,
     '--visual-viewport-height': viewport.height + 'px',
-    '--page-height': pageHeight + 'px'
+    '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
 
   return (
