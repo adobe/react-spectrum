@@ -32,7 +32,7 @@ import {
 } from '../src';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import {Key} from '@react-types/shared';
-import {pointerMap, User} from '@react-aria/test-utils';
+import {installPointerEvent, pointerMap, User} from '@react-aria/test-utils';
 import React, {useCallback, useRef, useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -46,6 +46,7 @@ describe('TableView', () => {
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     jest.useFakeTimers();
   });
 
@@ -123,22 +124,17 @@ describe('TableView', () => {
 
   interface EditableTableProps extends TableViewProps {}
 
-  function EditableTable(props: EditableTableProps & {delay?: number, shouldSucceed?: boolean}) {
-    let {delay = 0, shouldSucceed = true} = props;
+  function EditableTable(props: EditableTableProps & {delay?: number}) {
+    let {delay = 0} = props;
     let columns = editableColumns;
     let [editableItems, setEditableItems] = useState(defaultItems);
     let intermediateValue = useRef<any>(null);
 
-    let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
-      let succeeds = shouldSucceed;
-      if (succeeds) {
-        setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: {...i.isSaving, [columnId]: false}} : i));
-      } else {
-        setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: prevValue, isSaving: {...i.isSaving, [columnId]: false}} : i));
-      }
+    let saveItem = useCallback((id: Key, columnId: Key) => {
+      setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: {...i.isSaving, [columnId]: false}} : i));
       currentRequests.current.delete(id);
-    }, [shouldSucceed]);
-    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
+    }, []);
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
     let onChange = useCallback((id: Key, columnId: Key) => {
       let value = intermediateValue.current;
       if (value === null) {
@@ -152,12 +148,11 @@ describe('TableView', () => {
         clearTimeout(alreadySaving.request);
       }
       setEditableItems(prev => {
-        let prevValue = prev.find(i => i.id === id)?.[columnId];
         let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value, isSaving: {...i.isSaving, [columnId]: true}} : i);
         let timeout = setTimeout(() => {
-          saveItem(id, columnId, alreadySaving?.prevValue ?? prevValue);
+          saveItem(id, columnId);
         }, delay);
-        currentRequests.current.set(id, {request: timeout, prevValue});
+        currentRequests.current.set(id, {request: timeout});
         return newItems;
       });
     }, [saveItem, delay]);
@@ -245,118 +240,203 @@ describe('TableView', () => {
     );
   }
 
-  it('should edit text in a cell', async () => {
-    let {getByRole} = render(
-      <EditableTable />
-    );
+  describe('keyboard', () => {
+    it('should edit text in a cell either through a TextField or a Picker', async () => {
+      let {getByRole} = render(
+        <EditableTable />
+      );
 
-    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await user.tab();
-    await user.keyboard('{ArrowRight}');
-    await user.keyboard('{Enter}');
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
 
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
 
-    let input = within(dialog).getByRole('textbox');
-    expect(input).toHaveFocus();
+      let input = within(dialog).getByRole('textbox');
+      expect(input).toHaveFocus();
 
-    await user.keyboard(' Crisp');
-    await user.keyboard('{Enter}'); // implicitly submit through form
+      await user.keyboard(' Crisp');
+      await user.keyboard('{Enter}'); // implicitly submit through form
 
-    act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
 
-    expect(dialog).not.toBeInTheDocument();
+      expect(dialog).not.toBeInTheDocument();
 
-    expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+
+      // navigate to Farmer column
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+
+      dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let selectTester = testUtilUser.createTester('Select', {root: dialog});
+      expect(selectTester.trigger).toHaveFocus();
+      await selectTester.selectOption({option: 'Steven'});
+      act(() => {jest.runAllTimers();});
+      await user.tab();
+      await user.tab();
+      expect(within(dialog).getByRole('button', {name: 'Save'})).toHaveFocus();
+      await user.keyboard('{Enter}');
+
+      act(() => {jest.runAllTimers();});
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
+    });
+
+    it('should perform validation when editing text in a cell', async () => {
+      let {getByRole} = render(
+        <EditableTable />
+      );
+
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let input = within(dialog).getByRole('textbox');
+      expect(input).toHaveFocus();
+
+      await user.clear(input);
+      await user.keyboard('{Enter}');
+
+      act(() => {jest.runAllTimers();});
+
+      expect(dialog).toBeInTheDocument();
+      expect(input).toHaveFocus();
+      expect(document.getElementById(input.getAttribute('aria-describedby')!)).toHaveTextContent('Fruit name is required');
+
+      await user.keyboard('Peaches');
+      await user.tab();
+      await user.tab();
+      await user.keyboard('{Enter}');
+
+      act(() => {jest.runAllTimers();});
+
+      expect(dialog).not.toBeInTheDocument();
+
+      expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+    });
+
+    it('should be cancellable through the buttons in the dialog', async () => {
+      let {getByRole} = render(
+        <EditableTable />
+      );
+
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let input = within(dialog).getByRole('textbox');
+      expect(input).toHaveFocus();
+
+      await user.keyboard(' Crisp');
+      await user.tab();
+      await user.keyboard('{Enter}');
+
+      act(() => {jest.runAllTimers();});
+
+      expect(dialog).not.toBeInTheDocument();
+
+      expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+    });
+
+    it('should be cancellable through Escape key', async () => {
+      let {getByRole} = render(
+        <EditableTable />
+      );
+
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let input = within(dialog).getByRole('textbox');
+      expect(input).toHaveFocus();
+
+      await user.keyboard(' Crisp');
+      await user.keyboard('{Escape}');
+
+      act(() => {jest.runAllTimers();});
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+    });
   });
 
-  it('should perform validation when editing text in a cell', async () => {
-    let {getByRole} = render(
-      <EditableTable />
-    );
+  describe('pointer', () => {
+    installPointerEvent();
 
-    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await user.tab();
-    await user.keyboard('{ArrowRight}');
-    await user.keyboard('{Enter}');
+    it('should edit text in a cell', async () => {
+      let {getByRole} = render(
+        <EditableTable />
+      );
 
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.click(within(tableTester.findCell({text: 'Apples'})).getByRole('button'));
 
-    let input = within(dialog).getByRole('textbox');
-    expect(input).toHaveFocus();
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
 
-    await user.clear(input);
-    await user.keyboard('{Enter}');
+      await user.click(within(dialog).getByRole('textbox'));
+      await user.keyboard(' Crisp');
+      await user.click(document.body);
 
-    act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
 
-    expect(dialog).toBeInTheDocument();
-    expect(input).toHaveFocus();
-    expect(document.getElementById(input.getAttribute('aria-describedby')!)).toHaveTextContent('Fruit name is required');
-
-    await user.keyboard('Peaches');
-    await user.tab();
-    await user.tab();
-    await user.keyboard('{Enter}');
-
-    act(() => {jest.runAllTimers();});
-
-    expect(dialog).not.toBeInTheDocument();
-
-    expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+      expect(dialog).not.toBeInTheDocument();
+      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+    });
   });
 
-  it('should be cancellable through the buttons in the dialog', async () => {
-    let {getByRole} = render(
-      <EditableTable />
-    );
+  describe('pending', () => {
+    it('should display a pending state when editing a cell', async () => {
+      let {getByRole} = render(
+        <EditableTable delay={10000} />
+      );
 
-    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await user.tab();
-    await user.keyboard('{ArrowRight}');
-    await user.keyboard('{Enter}');
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
 
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
 
-    let input = within(dialog).getByRole('textbox');
-    expect(input).toHaveFocus();
+      let input = within(dialog).getByRole('textbox');
+      expect(input).toHaveFocus();
 
-    await user.keyboard(' Crisp');
-    await user.tab();
-    await user.keyboard('{Enter}');
+      await user.keyboard(' Crisp');
+      await user.keyboard('{Enter}'); // implicitly submit through form
 
-    act(() => {jest.runAllTimers();});
+      act(() => {jest.advanceTimersByTime(5000);});
 
-    expect(dialog).not.toBeInTheDocument();
+      expect(dialog).not.toBeInTheDocument();
+      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
+      expect(button).toHaveAttribute('aria-disabled', 'true');
+      expect(button).toHaveFocus();
 
-    expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
-  });
+      act(() => {jest.runAllTimers();});
 
-  it('should be cancellable through Escape key', async () => {
-    let {getByRole} = render(
-      <EditableTable />
-    );
-
-    let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await user.tab();
-    await user.keyboard('{ArrowRight}');
-    await user.keyboard('{Enter}');
-
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
-
-    let input = within(dialog).getByRole('textbox');
-    expect(input).toHaveFocus();
-
-    await user.keyboard(' Crisp');
-    await user.keyboard('{Escape}');
-
-    act(() => {jest.runAllTimers();});
-
-    expect(dialog).not.toBeInTheDocument();
-    expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(button).not.toHaveAttribute('aria-disabled');
+      expect(button).toHaveFocus();
+    });
   });
 });
