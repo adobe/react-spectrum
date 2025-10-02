@@ -31,8 +31,8 @@ import {
   TextField
 } from '../src';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-import {Key} from '@react-types/shared';
 import {installPointerEvent, pointerMap, User} from '@react-aria/test-utils';
+import {Key} from '@react-types/shared';
 import React, {useCallback, useRef, useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
