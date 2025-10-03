@@ -157,7 +157,12 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 <PropTable component={docs.exports.Tooltip} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Tooltip" properties={docs.exports.TooltipRenderProps.properties} />
+<StateTable
+  defaultClassName="react-aria-Tooltip"
+  properties={docs.exports.TooltipRenderProps.properties}
+  cssVariables={{
+    '--trigger-anchor-point': 'The position of the trigger relative to the tooltip. Use with `transform-origin` when applying scale transitions.'
+  }} />
 
 ### OverlayArrow
 

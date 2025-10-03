@@ -11,10 +11,11 @@ interface StateTableProps {
   links?: any,
   showOptional?: boolean,
   hideSelector?: boolean,
-  defaultClassName?: string
+  defaultClassName?: string,
+  cssVariables?: {[name: string]: string}
 }
 
-export function StateTable({properties, links, showOptional, hideSelector, defaultClassName}: StateTableProps) {
+export function StateTable({properties, links, showOptional, hideSelector, defaultClassName, cssVariables}: StateTableProps) {
   if (links) {
     setLinks(links);
   }
@@ -61,6 +62,37 @@ export function StateTable({properties, links, showOptional, hideSelector, defau
       <>
         <DefaultClassName defaultClassName={defaultClassName} />
         {table}
+      </>
+    );
+  }
+
+  if (cssVariables) {
+    table = (
+      <>
+        {table}
+        <Table style={{marginTop: 16}}>
+          <TableHeader>
+            <TableRow>
+              <TableColumn role="columnheader">CSS Variable</TableColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Object.entries(cssVariables).map(([name, description]) => (
+              <Fragment key={name}>
+                <TableRow>
+                  <TableCell role="rowheader" hideBorder>
+                    <code className={codeStyle}>
+                      <span className={codeStyles.property}>{name}</span>
+                    </code>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>{renderHTMLfromMarkdown(description, {forceInline: true})}</TableCell>
+                </TableRow>
+              </Fragment>
+            ))}
+          </TableBody>
+        </Table>
       </>
     );
   }

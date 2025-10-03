@@ -152,7 +152,13 @@ function Example() {
 
 <PropTable component={docs.exports.Popover} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Popover" properties={docs.exports.PopoverRenderProps.properties} />
+<StateTable
+  defaultClassName="react-aria-Popover"
+  properties={docs.exports.PopoverRenderProps.properties}
+  cssVariables={{
+    '--trigger-width': 'The width of the popover trigger element.',
+    '--trigger-anchor-point': 'The position of the trigger relative to the popover. Use with `transform-origin` when applying scale transitions.'
+  }} />
 
 ### OverlayArrow
 
