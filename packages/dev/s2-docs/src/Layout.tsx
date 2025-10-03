@@ -74,8 +74,19 @@ const getDescription = (currentPage: Page): string => {
   return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
 };
 
+let articleStyles = style({
+  maxWidth: {
+    default: 'none',
+    isWithToC: 768
+  },
+  width: 'full',
+  height: 'fit'
+});
+
+
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
+  let hasToC = currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0;
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -156,11 +167,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 }
               })}>
               <article
-                className={style({
-                  maxWidth: 768,
-                  width: 'full',
-                  height: 'fit'
-                })}>
+                className={articleStyles({isWithToC: hasToC})}>
                 {React.cloneElement(children, {components})}
               </article>
               <aside
@@ -177,10 +184,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                {currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0 && (
+                {hasToC && (
                   <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
                 )}
-                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} /> 
+                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
               </aside>
             </main>
           </div>
