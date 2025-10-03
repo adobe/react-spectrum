@@ -154,7 +154,7 @@ const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP_VALUE = 1;
 
 export interface SliderStateOptions<T> extends SliderProps<T> {
-  numberFormatter: Intl.NumberFormat
+  numberFormatter: {format(value: number): string}
 }
 
 /**
