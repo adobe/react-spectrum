@@ -182,15 +182,12 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 <PropTable component={docs.exports.Modal} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Modal" properties={docs.exports.ModalRenderProps.properties} />
-
 ### ModalOverlay
 
-<PropTable component={docs.exports.ModalOverlay} links={docs.links} showDescription />
-
-<StateTable
-  defaultClassName="react-aria-ModalOverlay"
-  properties={docs.exports.ModalRenderProps.properties}
+<PropTable
+  component={docs.exports.ModalOverlay}
+  links={docs.links}
+  showDescription
   cssVariables={{
     '--visual-viewport-height': 'The height of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API), i.e. space above the software keyboard.',
     '--page-height': 'The height of the `<body>` element. Useful for sizing the modal backdrop.'
@@ -199,5 +196,3 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ### Dialog
 
 <PropTable component={docs.exports.Dialog} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Dialog" properties={docs.exports.DialogRenderProps.properties} />
