@@ -90,6 +90,7 @@ cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.
 cd icon-library-test
 echo "Installing and building icon library"
 yarn install --no-immutable
+yarn up @react-spectrum/s2
 yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
 yarn transform-icons --type illustration -i './src/illustrations/*.svg' -o ./ --isLibrary
 
@@ -112,6 +113,7 @@ yarn npm publish --tag latest
 echo "Building icon builder fixture"
 cd ../../../scripts/icon-builder-fixture
 yarn install --no-immutable
+yarn up @react-spectrum/s2
 yarn tsc
 yarn build --public-url ./
 
