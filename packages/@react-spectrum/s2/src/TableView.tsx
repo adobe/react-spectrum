@@ -467,12 +467,11 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: '[6px]',
-  pointerEvents: 'none'
+  borderRadius: '[6px]'
 } as const;
 
 function CellFocusRing() {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({

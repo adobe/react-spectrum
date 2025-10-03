@@ -5,6 +5,7 @@
   "type": "module",
   "bin": "dist/index.js",
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "node ./scripts/build-data.mjs && tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "node --enable-source-maps dist/index.js"
