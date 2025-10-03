@@ -120,7 +120,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 0 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} /> : null}
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
