@@ -77,7 +77,12 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
    */
   formValue?: 'text' | 'key',
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean
+  allowsEmptyCollection?: boolean,
+  /**
+   * Whether the trigger remains pressed when the overlay is open.
+   * @default true
+   */
+  isTriggerPressedWhenOpen?: boolean
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
@@ -123,7 +128,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let {
     name,
     formValue = 'key',
-    allowsCustomValue
+    allowsCustomValue,
+    isTriggerPressedWhenOpen = true
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -207,7 +213,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: isTriggerPressedWhenOpen && state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
