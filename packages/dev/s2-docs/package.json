@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@babel/parser": "^7.26.3",
     "@parcel/plugin": "^2.16.0",
     "@parcel/rsc": "^2.16.0",
     "@react-aria/focus": "^3.20.4",
