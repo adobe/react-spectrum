@@ -35,6 +35,12 @@ echo 'build rsp-cra-18'
 cd examples/rsp-cra-18
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
+yarn up @adobe/react-spectrum
+yarn up @react-aria/dnd
+yarn up @react-spectrum/provider
+yarn up @spectrum-icons/illustrations
+yarn up @spectrum-icons/workflow
+yarn up react-aria-components
 
 # Build CRA test app and move to dist folder. Store the size of the build in a text file.
 yarn build | tee build-stats.txt
