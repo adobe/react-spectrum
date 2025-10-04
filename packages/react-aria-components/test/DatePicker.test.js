@@ -107,6 +107,15 @@ describe('DatePicker', () => {
     expect(button).toHaveAttribute('data-pressed');
   });
 
+  it('should not apply isPressed state to button when expanded and isTriggerPressedWhenOpen is false', async () => {
+    let {getByRole} = render(<TestDatePicker isTriggerPressedWhenOpen={false} />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support data-open state', async () => {
     let {getByRole} = render(<TestDatePicker />);
     let datePicker = document.querySelector('.react-aria-DatePicker');

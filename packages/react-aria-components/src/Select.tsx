@@ -86,7 +86,12 @@ export interface SelectProps<T extends object = {}, M extends SelectionMode = 's
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
    */
-  placeholder?: string
+  placeholder?: string,
+  /**
+   * Whether the trigger remains pressed when the overlay is open.
+   * @default true
+   */
+  isTriggerPressedWhenOpen?: boolean
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any, SelectionMode>, HTMLDivElement>>(null);
@@ -131,6 +136,7 @@ interface SelectInnerProps<T extends object> {
 function SelectInner<T extends object>({props, selectRef: ref, collection}: SelectInnerProps<T>) {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
+  let {isTriggerPressedWhenOpen = true} = props;
   let state = useSelectState({
     ...props,
     collection,
@@ -201,7 +207,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: isTriggerPressedWhenOpen && state.isOpen, autoFocus: props.autoFocus}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',

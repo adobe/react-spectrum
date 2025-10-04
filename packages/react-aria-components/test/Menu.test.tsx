@@ -489,6 +489,25 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 
+  it('should not apply isPressed state on trigger when expanded and isPressedWhenOpen is false', async () => {
+    let {getByRole} = render(
+      <MenuTrigger isPressedWhenOpen={false}>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support onScroll', () => {
     let onScroll = jest.fn();
     let {getByRole} = renderMenu({onScroll});
