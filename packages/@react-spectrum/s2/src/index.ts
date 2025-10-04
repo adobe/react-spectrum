@@ -78,7 +78,7 @@ export {Skeleton, useIsSkeleton} from './Skeleton';
 export {SkeletonCollection} from './SkeletonCollection';
 export {StatusLight, StatusLightContext} from './StatusLight';
 export {Switch, SwitchContext} from './Switch';
-export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from './TableView';
+export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell} from './TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
