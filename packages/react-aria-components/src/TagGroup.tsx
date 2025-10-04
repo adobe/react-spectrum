@@ -12,9 +12,20 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DOMProps,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
 import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
-import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
@@ -26,7 +37,13 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
-export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-TagGroup'
+   */
+  className?: string
+}
 
 export interface TagListRenderProps {
   /**
@@ -51,6 +68,11 @@ export interface TagListRenderProps {
 }
 
 export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TagList'
+   */
+  className?: ClassNameOrFunction<TagListRenderProps>,
   /** Provides content to display when there are no items in the tag list. */
   renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }
@@ -198,6 +220,11 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
 }
 
 export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tag'
+   */
+  className?: ClassNameOrFunction<TagRenderProps>,
   /** A unique id for the tag. */
   id?: Key,
   /**
