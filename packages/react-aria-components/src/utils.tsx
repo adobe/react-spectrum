@@ -63,7 +63,7 @@ export interface DOMProps extends StyleProps, SharedDOMProps {
   children?: ReactNode
 }
 
-type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
+export type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
 type StyleOrFunction<T> = CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined);
 
 export interface StyleRenderProps<T> {

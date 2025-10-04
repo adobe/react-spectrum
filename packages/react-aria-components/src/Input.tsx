@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {
+ ClassNameOrFunction,
+ ContextValue,
+ StyleRenderProps,
+ useContextProps,
+ useRenderProps
+} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
@@ -44,11 +50,16 @@ export interface InputRenderProps {
 }
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {
-  /**
-   * Temporary text that occupies the text input when it is empty.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/placeholder).
-   */
-  placeholder?: string
+ /**
+  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+  * @default 'react-aria-Input'
+  */
+ className?: ClassNameOrFunction<InputRenderProps>,
+ /**
+  * Temporary text that occupies the text input when it is empty.
+  * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/placeholder).
+  */
+ placeholder?: string
 }
 
 export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
