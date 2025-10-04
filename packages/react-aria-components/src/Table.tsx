@@ -343,7 +343,13 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks,
+  /**
+   * Whether keyboard navigation to focusable elements within grid list items is
+   * via the left/right arrow keys or the tab key.
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab'
 }
 
 /**
