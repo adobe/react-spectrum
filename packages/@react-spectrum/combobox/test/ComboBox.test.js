@@ -5268,9 +5268,9 @@ describe('ComboBox', function () {
 
       if (parseInt(React.version, 10) >= 19) {
         it('resets to defaultSelectedKey when submitting form action', async () => {
-          function Test() {        
+          function Test() {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
@@ -5280,11 +5280,11 @@ describe('ComboBox', function () {
               </Provider>
             );
           }
-    
+
           let {getByTestId, getByRole} = render(<Test />);
           let input = getByRole('combobox');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           await act(async () => await user.click(button));
           expect(input).toHaveValue('Two');
@@ -5599,7 +5599,7 @@ describe('ComboBox', function () {
         it('resets to defaultSelectedKey when submitting form action', async () => {
           function Test() {
             const [value, formAction] = React.useActionState(() => '2', '1');
-            
+
             return (
               <Provider theme={theme}>
                 <form action={formAction}>
@@ -5609,11 +5609,11 @@ describe('ComboBox', function () {
               </Provider>
             );
           }
-    
+
           let {getByTestId} = render(<Test />);
           let input = document.querySelector('input[name=combobox]');
           expect(input).toHaveValue('One');
-    
+
           let button = getByTestId('submit');
           await act(async () => await user.click(button));
           expect(input).toHaveValue('Two');

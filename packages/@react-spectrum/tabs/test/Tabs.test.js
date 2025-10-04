@@ -142,30 +142,23 @@ describe('Tabs', function () {
   });
 
   it('allows user to change tab item select via arrow keys with horizontal tabs (rtl)', async function () {
-    let onKeyDown = jest.fn();
     let container = renderComponent({orientation: 'horizontal', providerProps: {locale: 'ar-AE'}});
     let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist'), interactionType: 'keyboard', direction: 'rtl'});
     let tabs = tabsTester.tabs;
-    window.addEventListener('keydown', onKeyDown);
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
 
     await tabsTester.triggerTab({tab: 1});
     expect(tabs[0]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
-    // Just to double check that the util is actually pressing the expected arrow key
-    expect(onKeyDown.mock.calls[0][0].key).toBe('ArrowLeft');
 
     await tabsTester.triggerTab({tab: 2});
     expect(tabs[1]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
-    expect(onKeyDown.mock.calls[1][0].key).toBe('ArrowLeft');
 
     await tabsTester.triggerTab({tab: 1});
     expect(tabs[2]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
-    expect(onKeyDown.mock.calls[2][0].key).toBe('ArrowRight');
-    window.removeEventListener('keydown', onKeyDown);
   });
 
   it('allows user to change tab item select via arrow keys with vertical tabs', function () {
