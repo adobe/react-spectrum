@@ -12,7 +12,16 @@
 
 import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useHover, useLocale, useToast, useToastRegion} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  RenderProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {createPortal} from 'react-dom';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
@@ -45,6 +54,11 @@ export interface ToastRegionRenderProps<T> {
 }
 
 export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ToastRegion'
+   */
+  className?: ClassNameOrFunction<ToastRegionRenderProps<T>>,
   /** The queue of toasts to display. */
   queue: ToastQueue<T>,
   /** A function to render each toast, or children containing a `<ToastList>`. */
@@ -153,7 +167,13 @@ export interface ToastRenderProps<T> {
   isFocusVisible: boolean
 }
 
-export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {}
+export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Toast'
+   */
+  className?: ClassNameOrFunction<ToastRenderProps<T>>
+}
 
 /**
  * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
