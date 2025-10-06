@@ -28,6 +28,7 @@ yarn config set npmAlwaysAuth --home false
 yarn config set npmAuthToken --home abc
 yarn config set unsafeHttpWhitelist --home localhost
 npm set registry $registry
+echo "@react-spectrum:registry=$registry" >> ~/.npmrc
 
 # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
 # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
