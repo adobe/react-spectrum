@@ -135,6 +135,13 @@
   }
 }
 
+.react-aria-TreeLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+}
+
 .react-aria-TreeItem[data-href] {
   cursor: pointer;
 }

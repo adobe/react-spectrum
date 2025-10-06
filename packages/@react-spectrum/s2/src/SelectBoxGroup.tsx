@@ -26,6 +26,7 @@ import {IllustrationContext} from '../src/Icon';
 import {pressScale} from './pressScale';
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef} from 'react';
 import {TextContext} from './Content';
+import {useFocusVisible} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>, keyof GlobalDOMAttributes | 'layout' | 'dragAndDropHooks' | 'dependencies' | 'renderEmptyState' | 'children' | 'onAction' | 'shouldFocusOnHover' | 'selectionBehavior' | 'shouldSelectOnPressUp' | 'shouldFocusWrap' | 'style' | 'className'> {
@@ -293,7 +294,7 @@ const gridStyles = style<{orientation?: Orientation}>({
  */
 export function SelectBox(props: SelectBoxProps): ReactNode {
   let {children, isDisabled: individualDisabled = false, UNSAFE_style, UNSAFE_className, styles, ...otherProps} = props;
-  
+
   let {
     orientation = 'vertical',
     isDisabled: groupDisabled = false
@@ -301,6 +302,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
 
   const isDisabled = individualDisabled || groupDisabled;
   const ref = useRef<HTMLDivElement>(null);
+  let {isFocusVisible} = useFocusVisible();
 
   return (
     <ListBoxItem
@@ -308,6 +310,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       ref={ref}
       className={renderProps => (UNSAFE_className || '') + selectBoxStyles({
         ...renderProps,
+        isFocusVisible: isFocusVisible && renderProps.isFocused,
         orientation
       }, styles)}
       style={pressScale(ref, UNSAFE_style)}
@@ -315,7 +318,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       {({isSelected, isDisabled, isHovered}) => {
         return (
           <>
-            <div 
+            <div
               className={style({
                 position: 'absolute',
                 top: 8,
@@ -330,8 +333,8 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
                     isDisabled,
                     size: 'M'
                   } as any)}>
-                  <Checkmark 
-                    size="S" 
+                  <Checkmark
+                    size="S"
                     className={iconStyles} />
                 </div>
               )}
@@ -382,27 +385,22 @@ export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T
     ...otherProps
   } = props;
 
-  const selectBoxContextValue = useMemo(
-    () => {
-      const contextValue = {
-        orientation,
-        isDisabled
-      };
-      return contextValue;
-    },
-    [orientation, isDisabled]
-  );
+  const selectBoxContextValue = useMemo(() => ({
+    orientation,
+    isDisabled
+  }), [orientation, isDisabled]);
 
   return (
-    <ListBox
-      selectionMode={selectionMode}
-      layout="grid"
-      className={(UNSAFE_className || '') + gridStyles({orientation}, styles)}
-      style={UNSAFE_style}
-      {...otherProps}>
-      <SelectBoxContext.Provider value={selectBoxContextValue}>
+    <SelectBoxContext.Provider value={selectBoxContextValue}>
+      <ListBox
+        selectionMode={selectionMode}
+        layout="grid"
+        orientation={orientation}
+        className={(UNSAFE_className || '') + gridStyles({orientation}, styles)}
+        style={UNSAFE_style}
+        {...otherProps}>
         {children}
-      </SelectBoxContext.Provider>
-    </ListBox>
+      </ListBox>
+    </SelectBoxContext.Provider>
   );
 });

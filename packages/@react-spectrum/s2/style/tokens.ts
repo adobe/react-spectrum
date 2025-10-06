@@ -11,6 +11,7 @@
  */
 
 // package.json in this directory is not the real package.json. Lint rule not smart enough.
+import assert from 'assert';
 // eslint-disable-next-line rulesdir/imports
 import * as tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
@@ -167,4 +168,13 @@ export function fontSizeToken(name: keyof typeof tokens): number {
   }
 
   return index;
+}
+
+export function shadowToken(name: 'drop-shadow-emphasized' | 'drop-shadow-elevated' | 'drop-shadow-dragged'): string[] {
+  let token = tokens[name];
+  return token.value.map(layer => {
+    // Spread must also be zero, since filter: drop-shadow() does not support it.
+    assert.equal(layer.spread, '0px');
+    return `${layer.x} ${layer.y} ${layer.blur} light-dark(${layer.color.sets.light.value}, ${layer.color.sets.dark.value})`;
+  });
 }

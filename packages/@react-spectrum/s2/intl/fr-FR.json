@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Nouvelle activité",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Sélectionner…",
+  "picker.selectedCount": "{count, plural, =0 {Aucun élément sélectionné} one {# élément sélectionné} other {# éléments sélectionnés}}",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Chargement...",

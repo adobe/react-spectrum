@@ -284,6 +284,9 @@ const selectionSpanStyles = style({
   forcedColorAdjust: 'none'
 });
 
+/**
+ * Calendars display a grid of days in one or more months and allow users to select a single date.
+ */
 export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {

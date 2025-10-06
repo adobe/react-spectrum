@@ -1,0 +1,138 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {NumberField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['input'];
+
+# NumberField
+
+<PageDescription>{docs.exports.NumberField.description}</PageDescription>
+
+<VisualExample
+  component={NumberField}
+  docs={docs.exports.NumberField}
+  links={docs.links}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'hideStepper', 'isDisabled']}
+  initialProps={{
+    label: 'Width',
+    placeholder: 'Enter a number',
+    defaultValue: 1024,
+    minValue: 0
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the number value. The `onChange` event is called when the user finishes editing the value (e.g. on blur, incrementing, or decrementing).
+
+```tsx render
+"use client";
+import {NumberField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(25);
+  return (
+    <div>
+      <NumberField
+        label="Cookies to buy"
+        placeholder="Enter a number"
+        ///- begin highlight -///
+        value={value}
+        onChange={setValue}
+        ///- end highlight -///
+      />
+      <p>Current value: {value}</p>
+    </div>
+  );
+}
+```
+
+### Format options
+
+Use the `formatOptions` prop to control how the value is formatted (according to the user's locale). This is compatible with the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat) API.
+
+<VisualExample
+  component={NumberField}
+  docs={docs.exports.NumberField}
+  links={docs.links}
+  props={['formatOptions']}
+  initialProps={{
+    label: 'Value',
+    placeholder: 'Enter a number',
+    defaultValue: 5,
+    formatOptions: {style: 'decimal'}
+  }}
+  controlOptions={{
+    formatOptions: {showDetails: true}
+  }}
+  type="s2" />
+
+### Value scale
+
+Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Steps are calculated starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+
+<VisualExample
+  component={NumberField}
+  docs={docs.exports.NumberField}
+  links={docs.links}
+  props={['minValue', 'maxValue', 'step']}
+  initialProps={{
+    label: 'Amount',
+    placeholder: 'Enter a number',
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: 50,
+    step: 5
+  }}
+  type="s2" />
+
+### Numbering system
+
+By default, `NumberField` displays the value using the numbering system for the user's locale. Use `<Provider>` to override the numbering system by setting the [Unicode numbering system locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem#adding_a_numbering_system_via_the_locale_string). The Latin, Arabic, Devanagari, Bengali, and Han positional decimal numbering systems are currently supported.
+
+{console.log(docs.exports.Provider)}
+
+```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-nu-deva'}} controlOptions={{locale: 'numberingSystem'}} type="s2"
+"use client";
+import {Provider, NumberField} from '@react-spectrum/s2';
+
+<Provider/* PROPS */>
+  <NumberField
+    label="Value"
+    defaultValue={1024}
+    placeholder="Enter a number" />
+</Provider>
+```
+
+## Forms
+
+Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true, placeholder: 'Enter a number'}} type="s2"
+"use client";
+import {NumberField, Button, Form} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <NumberField
+        {...props}
+        label="Width"
+        ///- begin highlight -///
+        name="width"
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.NumberField} links={docs.links} />

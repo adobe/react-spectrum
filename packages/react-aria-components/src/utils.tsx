@@ -63,7 +63,7 @@ export interface DOMProps extends StyleProps, SharedDOMProps {
   children?: ReactNode
 }
 
-type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
+export type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
 type StyleOrFunction<T> = CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined);
 
 export interface StyleRenderProps<T> {
@@ -73,7 +73,7 @@ export interface StyleRenderProps<T> {
   style?: StyleOrFunction<T>
 }
 
-type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
+export type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
   /** The children of the component. A function may be provided to alter the children based on component state. */

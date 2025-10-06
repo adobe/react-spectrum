@@ -17,10 +17,11 @@ export interface AutocompleteProps<T extends object>
   items?: Iterable<T>;
   children: React.ReactNode | ((item: T) => React.ReactNode);
   onAction?: (id: Key) => void;
+  renderEmptyState?: () => React.ReactNode
 }
 
 export function Autocomplete<T extends object>(
-  { label, placeholder, items, children, onAction, ...props }:
+  { label, placeholder, items, children, onAction, renderEmptyState, ...props }:
     AutocompleteProps<T>
 ) {
   let { contains } = useFilter({ sensitivity: 'base' });
@@ -29,7 +30,7 @@ export function Autocomplete<T extends object>(
       <div className="my-autocomplete">
         <AriaAutocomplete filter={contains} {...props}>
           <SearchField label={label} placeholder={placeholder} />
-          <Menu items={items} onAction={onAction}>
+          <Menu items={items} onAction={onAction} renderEmptyState={renderEmptyState}>
             {children}
           </Menu>
         </AriaAutocomplete>

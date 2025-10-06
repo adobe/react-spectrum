@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Új tevékenység",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Kiválasztás…",
+  "picker.selectedCount": "{count, plural, =0 {Egy elem sincs kijelölve} one {# elem kijelölve} other {# elem kijelölve}}",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Betöltés folyamatban…",

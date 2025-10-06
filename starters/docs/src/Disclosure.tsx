@@ -2,33 +2,34 @@
 import {
   Button,
   Disclosure as AriaDisclosure,
-  DisclosurePanel,
-  DisclosureProps as AriaDisclosureProps,
+  DisclosurePanel as AriaDisclosurePanel,
+  DisclosureProps,
+  DisclosurePanelProps,
+  HeadingProps,
 } from 'react-aria-components';
 import {Heading} from './Content';
 import {ChevronRight} from 'lucide-react';
-
 import './Disclosure.css';
 
-export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'> {
-  title?: string;
-  children?: React.ReactNode;
+export function Disclosure(props: DisclosureProps) {
+  return <AriaDisclosure {...props} />;
 }
 
-export function Disclosure({ title, children, ...props }: DisclosureProps) {
+export function DisclosureHeader({children, ...props}: HeadingProps) {
   return (
-    (
-      <AriaDisclosure {...props}>
-        <Heading>
-          <Button slot="trigger">
-            <ChevronRight size={18} />
-            {title}
-          </Button>
-        </Heading>
-        <DisclosurePanel>
-          <p>{children}</p>
-        </DisclosurePanel>
-      </AriaDisclosure>
-    )
+    <Heading {...props}>
+      <Button slot="trigger">
+        <ChevronRight size={18} />
+        {children}
+      </Button>
+    </Heading>
+  );
+}
+
+export function DisclosurePanel(props: DisclosurePanelProps) {
+  return (
+    <AriaDisclosurePanel {...props}>
+      <div>{props.children}</div>
+    </AriaDisclosurePanel>
   );
 }

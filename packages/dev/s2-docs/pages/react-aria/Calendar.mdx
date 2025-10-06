@@ -8,6 +8,8 @@ import {Calendar as TailwindCalendar} from 'tailwind-starter/Calendar';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
 
+export const tags = ['date'];
+
 # Calendar
 
 <PageDescription>{docs.exports.Calendar.description}</PageDescription>
@@ -19,7 +21,7 @@ import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
     links={vanillaDocs.links}
     props={['isDisabled']}
     type="vanilla"
-    files={["starters/docs/src/Calendar.tsx", "starters/docs/src/Calendar.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/Calendar.tsx", "starters/docs/src/Calendar.css"]} />
   <VisualExample
     component={TailwindCalendar}
     docs={vanillaDocs.exports.Calendar}
@@ -28,37 +30,6 @@ import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
     type="tailwind"
     files={["starters/tailwind/src/Calendar.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
-
-## Anatomy
-
-<Anatomy
-  role="img"
-  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
-
-A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each `CalendarGrid` consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
-
-`Calendar` also supports an optional error message element, which can be used to provide more context about any validation errors.
-
-```tsx
-import {Calendar, Heading, Button, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Text} from 'react-aria-components';
-
-<Calendar>
-  <Button slot="previous" />
-  <Heading />
-  <Button slot="next" />
-  <CalendarGrid>
-    <CalendarGridHeader>
-      {day => <CalendarHeaderCell />}
-    </CalendarGridHeader>
-    <CalendarGridBody>
-      {date => <CalendarCell date={date} />}
-    </CalendarGridBody>
-  </CalendarGrid>
-  <Text slot="errorMessage" />
-</Calendar>
-```
-
-Most of this anatomy is shared with [RangeCalendar](RangeCalendar.html), so you can reuse many components between them.
 
 ## Value
 
@@ -96,11 +67,11 @@ By default, `Calendar` displays the value using the calendar system for the user
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
 import {I18nProvider} from 'react-aria-components';
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseDate} from '@internationalized/date';
 import {Calendar} from 'vanilla-starter/Calendar';
 
 <I18nProvider/* PROPS */>
-  <Calendar defaultValue={now(getLocalTimeZone())} />
+  <Calendar defaultValue={parseDate('2025-02-03')} />
 </I18nProvider>
 ```
 
@@ -111,8 +82,7 @@ import {Calendar} from 'vanilla-starter/Calendar';
 ```tsx render
 "use client";
 import type {AnyCalendarDate} from '@internationalized/date';
-import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
-import {GregorianCalendar} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
 import {Calendar} from 'vanilla-starter/Calendar';
 
 export default (
@@ -172,17 +142,15 @@ class Custom454 extends GregorianCalendar {
 
 ## Validation
 
-Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. The `isDateUnavailable` callback prevents certain dates from being selected. See the Forms guide to learn more.
+Use the `minValue` and `maxValue` props to set the valid date range. The `isDateUnavailable` callback prevents certain dates from being selected. For custom validation rules, set the `isInvalid` prop and the `errorMessage` slot.
 
-```tsx render
+```tsx render docs={vanillaDocs.exports.Calendar} links={docs.links} props={['isInvalid', 'errorMessage']} wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
 import {useLocale} from 'react-aria';
 import {Calendar} from 'vanilla-starter/Calendar';
-import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
 
-function Example() {
+function Example(props) {
   let {locale} = useLocale();
   let now = today(getLocalTimeZone());
   let disabledRanges = [
@@ -193,9 +161,10 @@ function Example() {
 
   return (
     <Calendar
-      label="Appointment date"
+      {...props}
+      aria-label="Appointment date"
       ///- begin highlight -///
-      isRequired
+      /* PROPS */
       minValue={today(getLocalTimeZone())}
       isDateUnavailable={date => (
         isWeekend(date, locale) ||
@@ -212,7 +181,7 @@ function Example() {
 
 Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to display more than one month at a time. The `pageBehavior` prop controls whether pagination advances by a single month or multiple. The `firstDayOfWeek` prop overrides the locale-specified first day of the week.
 
-```tsx render docs={docs.exports.Calendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}}
+```tsx render docs={docs.exports.Calendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
 import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
 import {useDateFormatter} from 'react-aria';
@@ -222,6 +191,7 @@ function Example(props) {
   let monthFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
+    timeZone: 'UTC'
   });
 
   return (
@@ -240,7 +210,7 @@ function Example(props) {
               {i === 0 && 
                 <Button slot="previous">◀</Button>
               }
-              <h2 style={{flex: 1, textAlign: 'center'}}>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</h2>
+              <h2 style={{flex: 1, textAlign: 'center'}}>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate('UTC'))}</h2>
               {i === props.visibleDuration.months - 1 && 
                 <Button slot="next">▶</Button>
               }
@@ -275,7 +245,7 @@ function Example() {
     <div>
       <Button
         style={{marginBottom: 20}}
-        onClick={() => setFocusedDate(today(getLocalTimeZone()))}>
+        onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
         Today
       </Button>
       <Calendar
@@ -317,38 +287,47 @@ import {Button} from 'vanilla-starter/Button';
 
 ## API
 
+<Anatomy
+  role="img"
+  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
+
+```tsx links={{Calendar: '#calendar', Button: 'Button.html', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+<Calendar>
+  <Button slot="previous" />
+  <Heading />
+  <Button slot="next" />
+  <CalendarGrid>
+    <CalendarGridHeader>
+      {day => <CalendarHeaderCell />}
+    </CalendarGridHeader>
+    <CalendarGridBody>
+      {date => <CalendarCell date={date} />}
+    </CalendarGridBody>
+  </CalendarGrid>
+  <Text slot="errorMessage" />
+</Calendar>
+```
+
 ### Calendar
 
 <PropTable component={docs.exports.Calendar} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Calendar" properties={docs.exports.CalendarRenderProps.properties} />
 
 ### CalendarGrid
 
 <PropTable component={docs.exports.CalendarGrid} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarGrid" properties={docs.exports.CalendarGridRenderProps.properties} /> */}
-
 ### CalendarGridHeader
 
 <PropTable component={docs.exports.CalendarGridHeader} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-CalendarGridHeader" properties={docs.exports.CalendarGridHeaderRenderProps.properties} /> */}
 
 ### CalendarHeaderCell
 
 <PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarHeaderCell" properties={docs.exports.CalendarHeaderCellRenderProps.properties} /> */}
-
 ### CalendarGridBody
 
 <PropTable component={docs.exports.CalendarGridBody} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarGridBody" properties={docs.exports.CalendarGridBodyRenderProps.properties} /> */}
-
 ### CalendarCell
 
 <PropTable component={docs.exports.CalendarCell} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-CalendarCell" properties={docs.exports.CalendarCellRenderProps.properties} />
