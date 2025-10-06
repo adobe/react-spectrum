@@ -28,7 +28,6 @@ yarn config set npmAlwaysAuth --home false
 yarn config set npmAuthToken --home abc
 yarn config set unsafeHttpWhitelist --home localhost
 npm set registry $registry
-echo "@react-spectrum:registry=$registry" >> ~/.npmrc
 
 # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
 # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
@@ -41,9 +40,9 @@ mkdir icon-test
 
 npm cache clean --force
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
-npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+npm_config_registry=$registry npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-test/S2_lin_3D_48.svg
-npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
+npm_config_registry=$registry npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
 echo 'concluded icon builder'
 
 echo 'testing icon builder library'
