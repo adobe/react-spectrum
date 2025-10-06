@@ -12,14 +12,14 @@ export const tags = ['popup', 'overlay'];
 ```tsx render docs={docs.exports.Popover} links={docs.links} props={['placement', 'size', 'offset', 'crossOffset', 'shouldFlip', 'hideArrow']} type="s2" initialProps={{size: 'S'}}
 "use client";
 import {Popover, DialogTrigger, ActionButton, Form, TextField, Switch, Button} from '@react-spectrum/s2';
-import Filter from '@react-spectrum/s2/icons/Filter';
+import Feedback from '@react-spectrum/s2/icons/Feedback';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example(props) {
   return (
     <DialogTrigger>
-      <ActionButton aria-label="Filters">
-        <Filter />
+      <ActionButton aria-label="Feedback">
+        <Feedback />
       </ActionButton>
       {/*- begin focus -*/}
       <Popover {...props}/* PROPS */>
