@@ -160,10 +160,36 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'usePress': usePressSvg
 };
 
-const illustrationStyles = style({
+// Overrides for specific illustrations so they fit within the cards.
+const propOverrides = {
+  DateField: {
+    viewBox: '0 -56 276 276'
+  },
+  TimeField: {
+    viewBox: '0 -56 276 276'
+  },
+  DatePicker: {
+    style: {alignSelf: 'end'}
+  },
+  DateRangePicker: {
+    style: {alignSelf: 'end'}
+  },
+  DropZone: {
+    viewBox: '0 0 290 220'
+  }
+};
+
+const illustrationContainer = style({
   width: 'full',
   aspectRatio: '3/2',
-  objectFit: 'cover',
+  backgroundColor: '--anatomy-gray-100',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+const illustrationStyles = style({
+  width: 'calc(100% - 16px)',
   userSelect: 'none',
   pointerEvents: 'none'
 });
@@ -183,13 +209,21 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
       <Collection items={items}>
         {(item) => {
           let IllustrationComponent = componentIllustrations[item.name] || ComingSoonSvg;
+          let overrides = propOverrides[item.name] || {};
           return (
             <Card key={item.id} id={item.id} href={item.href} size={size} textValue={item.name}>
               <CardPreview>
-                <IllustrationComponent
-                  aria-hidden="true"
-                  // @ts-ignore
-                  className={illustrationStyles} />
+                <div className={illustrationContainer}>
+                  <IllustrationComponent
+                    {...overrides}
+                    aria-hidden="true"
+                    // @ts-ignore
+                    className={illustrationStyles}
+                    style={{
+                      ...overrides.style,
+                      maxHeight: 'calc(100% - 16px)'
+                    }} />
+                </div>
               </CardPreview>
               <Content>
                 <Text slot="title">{item.name}</Text>
