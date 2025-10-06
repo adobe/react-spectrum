@@ -270,6 +270,19 @@ export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
 
 const TreeExampleSectionRender = (args) => (
   <Tree className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <TreeItem
+      id="reports"
+      textValue="Reports"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        Reports
+      </TreeItemContent>
+    </TreeItem>
     <TreeSection>
       <TreeHeader>Photo Header</TreeHeader>
       <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
@@ -292,19 +305,6 @@ const TreeExampleSectionRender = (args) => (
       </StaticTreeItem>
       <StaticTreeItem id="projects-4" textValue="Projects-4">Project-4</StaticTreeItem>
     </TreeSection>
-    <TreeItem
-      id="reports"
-      textValue="Reports"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        Reports
-      </TreeItemContent>
-    </TreeItem>
     <TreeItem
       id="Tests"
       textValue="Tests"
@@ -605,7 +605,7 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
   });
 
   return (
-    <Tree {...args}  disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
