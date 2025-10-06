@@ -120,7 +120,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 0 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} /> : null}
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
@@ -177,8 +177,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+                {currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0 && (
+                  <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
+                )}
+                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} /> 
               </aside>
             </main>
           </div>
