@@ -40,9 +40,9 @@ mkdir icon-test
 
 npm cache clean --force
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
-npm_config_registry=$registry npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+npm_config_registry=$registry npx @react-spectrum/s2-icon-builder@latest -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-test/S2_lin_3D_48.svg
-npm_config_registry=$registry npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
+npm_config_registry=$registry npx @react-spectrum/s2-icon-builder@latest --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
 echo 'concluded icon builder'
 
 echo 'testing icon builder library'
