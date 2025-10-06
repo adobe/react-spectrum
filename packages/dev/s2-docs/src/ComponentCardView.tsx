@@ -169,13 +169,24 @@ const propOverrides = {
     viewBox: '0 -56 276 276'
   },
   DatePicker: {
-    style: {alignSelf: 'end'}
+    style: {alignSelf: 'end', height: 'calc(100% - 16px)'}
   },
   DateRangePicker: {
-    style: {alignSelf: 'end'}
+    style: {alignSelf: 'end', height: 'calc(100% - 16px)'}
   },
   DropZone: {
-    viewBox: '0 0 290 220'
+    viewBox: '0 0 290 220',
+    style: {height: 'calc(100% - 16px)'}
+  },
+  Select: {
+    // Safari doesn't calculate the max-height correctly with the aspect-ratio.
+    style: {height: 'calc(100% - 16px)'}
+  },
+  Picker: {
+    style: {height: 'calc(100% - 16px)'}
+  },
+  ComboBox: {
+    style: {height: 'calc(100% - 16px)'}
   }
 };
 
@@ -185,11 +196,12 @@ const illustrationContainer = style({
   backgroundColor: '--anatomy-gray-100',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  minHeight: 0
 });
 
 const illustrationStyles = style({
-  width: 'calc(100% - 16px)',
+  maxWidth: 'calc(100% - 16px)',
   userSelect: 'none',
   pointerEvents: 'none'
 });
@@ -220,8 +232,8 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
                     // @ts-ignore
                     className={illustrationStyles}
                     style={{
-                      ...overrides.style,
-                      maxHeight: 'calc(100% - 16px)'
+                      maxHeight: 'calc(100% - 16px)',
+                      ...overrides.style
                     }} />
                 </div>
               </CardPreview>
