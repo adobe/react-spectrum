@@ -219,7 +219,7 @@ function MobileNav({pages, currentPage}: PageProps) {
 
   let getSectionsForLibrary = useCallback((libraryId: string) => {
     let sectionsMap = new Map();
-    let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId);
+    let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId && !page.exports?.hideFromSearch);
     for (let page of filteredPages) {
       let section = page.exports?.section ?? 'Components';
       let sectionPages = sectionsMap.get(section) ?? [];
