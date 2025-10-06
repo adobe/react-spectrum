@@ -440,11 +440,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
-    // let collection = this.virtualizer!.collection;
     let width = this.virtualizer!.visibleRect.width - this.padding - x;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
-    // let skipped = 0;
 
     // If no explicit height is available, use an estimated height.
     if (rectHeight == null) {
@@ -468,7 +466,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, width, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.estimatedSize = isEstimated;
-
     return {
       layoutInfo,
       children: [],
