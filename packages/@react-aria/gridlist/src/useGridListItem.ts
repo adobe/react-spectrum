@@ -101,7 +101,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     let isExpanded = hasChildRows ? state.expandedKeys.has(node.key) : undefined;
     let setSize = 1;
     if (node.level > 0 && node?.parentKey != null) {
-      // console.log('yep', node, node.level)
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
