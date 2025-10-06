@@ -131,9 +131,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            currentPage={currentPage}
-            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} />}
-            pages={pages} />
+            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 0 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
+            pages={pages}
+            currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
             <Nav pages={pages} currentPage={currentPage} />
             <main

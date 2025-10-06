@@ -11,7 +11,20 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DOMProps,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
 import {FieldInputContext} from './RSPContexts';
@@ -49,6 +62,11 @@ export interface TextFieldRenderProps {
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TextField'
+   */
+  className?: ClassNameOrFunction<TextFieldRenderProps>,
   /** Whether the value is invalid. */
   isInvalid?: boolean
 }

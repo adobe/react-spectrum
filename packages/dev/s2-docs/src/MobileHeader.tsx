@@ -134,28 +134,30 @@ export function MobileHeader({toc, pages, currentPage}) {
             marginY: 0,
             ...animation
           })}
-          style={{
+          style={toc ? {
             animationName: fadeOut,
             animationTimeline: 'scroll()',
             animationRange
-          } as CSSProperties}>
+          } as CSSProperties : undefined}>
           {TAB_DEFS[currentLibrary].label}
         </h2>
       </div>
-      <div
-        className={style({
-          ...animation,
-          position: 'absolute',
-          left: '50%',
-          translateX: '-50%'
-        })}
-        style={{
-          animationName: fadeIn,
-          animationTimeline: 'scroll()',
-          animationRange
-        } as CSSProperties}>
-        {toc}
-      </div>
+      {toc && (
+        <div
+          className={style({
+            ...animation,
+            position: 'absolute',
+            left: '50%',
+            translateX: '-50%'
+          })}
+          style={{
+            animationName: fadeIn,
+            animationTimeline: 'scroll()',
+            animationRange
+          } as CSSProperties}>
+          {toc}
+        </div>
+      )}
       <DialogTrigger>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
