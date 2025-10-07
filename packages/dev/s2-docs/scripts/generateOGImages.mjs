@@ -271,9 +271,39 @@ async function getComponentSvg(title) {
     svgContent = svgContent.replace(/background:\s*#f4f6fc/g, 'background: #f8f8f8');
     svgContent = svgContent.replace(/var\(--anatomy-font\)/g, 'adobe-clean');
 
-    // Convert SVG to data URI for use as image source
-    const svgBase64 = Buffer.from(svgContent).toString('base64');
-    return `data:image/svg+xml;base64,${svgBase64}`;
+    const adobeCleanRegularBase64 = Buffer.from(adobeCleanRegular).toString('base64');
+    const adobeCleanBoldBase64 = Buffer.from(adobeCleanBold).toString('base64');
+    
+    const fontFaceStyle = `
+      @font-face {
+        font-family: 'adobe-clean';
+        font-style: normal;
+        font-weight: 400;
+        src: url(data:font/woff2;base64,${adobeCleanRegularBase64}) format('woff2');
+      }
+      @font-face {
+        font-family: 'adobe-clean';
+        font-style: normal;
+        font-weight: 700;
+        src: url(data:font/woff2;base64,${adobeCleanBoldBase64}) format('woff2');
+      }
+    `;
+
+    // Inject style tag into SVG
+    if (svgContent.includes('<defs>')) {
+      svgContent = svgContent.replace('<defs>', `<defs><style>${fontFaceStyle}</style>`);
+    } else if (svgContent.includes('<svg')) {
+      svgContent = svgContent.replace(/<svg([^>]*)>/, `<svg$1><defs><style>${fontFaceStyle}</style></defs>`);
+    }
+
+    // Convert SVG to PNG
+    const pngBuffer = await sharp(Buffer.from(svgContent))
+      .png()
+      .toBuffer();
+    
+    // Convert PNG to data URI to use as image source
+    const pngBase64 = pngBuffer.toString('base64');
+    return `data:image/png;base64,${pngBase64}`;
   } catch (error) {
     console.warn(`Could not load SVG for ${title}: ${error.message}`);
     return null;
