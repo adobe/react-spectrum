@@ -61,7 +61,7 @@ export const getActiveElement = (doc: Document = document): Element | null => {
  * ShadowDOM safe version of event.target.
  */
 export function getEventTarget<T extends Event>(event: T): Element {
-  if (shadowDOM() && (event.target as HTMLElement)?.shadowRoot) {
+  if (shadowDOM() && event.target instanceof HTMLElement && event.target.shadowRoot) {
     if (event.composedPath) {
       return event.composedPath()[0] as Element;
     }
