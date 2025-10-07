@@ -7,14 +7,14 @@ import {shadowDOM} from '@react-stately/flags';
  * ShadowDOM safe version of Node.contains.
  */
 export function nodeContains(
-  node: Node | null | undefined,
-  otherNode: Node | null | undefined
+  node: Node | EventTarget | null | undefined,
+  otherNode: Node | EventTarget | null | undefined
 ): boolean {
   if (!shadowDOM()) {
-    return otherNode && node ? node.contains(otherNode) : false;
+    return node instanceof Node && otherNode instanceof Node ? node.contains(otherNode) : false;
   }
 
-  if (!node || !otherNode) {
+  if (!(node instanceof Node) || !(otherNode instanceof Node)) {
     return false;
   }
 

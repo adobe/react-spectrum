@@ -54,14 +54,14 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onBlur = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!nodeContains(e.currentTarget as Element, e.target as Element)) {
+    if (!nodeContains(e.currentTarget, e.target)) {
       return;
     }
 
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
-    if (state.current.isFocusWithin && !nodeContains(e.currentTarget as Element, e.relatedTarget as Element)) {
+    if (state.current.isFocusWithin && !nodeContains(e.currentTarget, e.relatedTarget)) {
       state.current.isFocusWithin = false;
       removeAllGlobalListeners();
 
@@ -78,7 +78,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!nodeContains(e.currentTarget as Element, e.target as Element)) {
+    if (!nodeContains(e.currentTarget, e.target)) {
       return;
     }
 
@@ -103,7 +103,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       // can manually fire onBlur.
       let currentTarget = e.currentTarget;
       addGlobalListener(ownerDocument, 'focus', e => {
-        if (state.current.isFocusWithin && !nodeContains(currentTarget, e.target as Element)) {
+        if (state.current.isFocusWithin && !nodeContains(currentTarget, e.target)) {
           let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: e.target});
           setEventTarget(nativeEvent, currentTarget);
           let event = createSyntheticEvent<FocusEvent>(nativeEvent);

@@ -16,7 +16,7 @@ import {DragEvent, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {isIPad, isMac, nodeContains, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DropOptions {
@@ -234,7 +234,7 @@ export function useDrop(options: DropOptions): DropResult {
 
     state.dragOverElements.delete(e.target as Element);
     for (let element of state.dragOverElements) {
-      if (!e.currentTarget.contains(element)) {
+      if (!nodeContains(e.currentTarget, element)) {
         state.dragOverElements.delete(element);
       }
     }

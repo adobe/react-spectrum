@@ -1,7 +1,7 @@
 
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
-import {useEffectEvent, useResizeObserver} from '@react-aria/utils';
+import {nodeContains, useEffectEvent, useResizeObserver} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
 interface SafelyMouseToSubmenuOptions {
@@ -148,7 +148,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
             // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
-            if (target && menu.contains(target)) {
+            if (target && nodeContains(menu, target)) {
               target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
             }
           }, 100);

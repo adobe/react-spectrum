@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -79,7 +79,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current?.contains(document.activeElement))
+      !nodeContains(ref.current, document.activeElement))
     ) {
       focusSafely(ref.current);
     }
@@ -131,7 +131,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
@@ -216,7 +216,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as Element)) {
+        if (!e.altKey && nodeContains(ref.current, e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement?.dispatchEvent(
@@ -244,7 +244,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onKeyDown = (e) => {
-    if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
