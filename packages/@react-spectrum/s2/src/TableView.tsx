@@ -1207,7 +1207,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
                   isForcedVisible: 'visible',
                   ':is([role="row"]:hover *)': 'visible',
                   ':is([role="row"][data-focus-visible-within] *)': 'visible',
-                  '@media not (any-pointer: fine)': 'visible'
+                  '@media not ((hover: hover) and (pointer: fine))': 'visible'
                 }
               })({isForcedVisible: isOpen || !!isSaving})
             }
