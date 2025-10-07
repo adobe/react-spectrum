@@ -40,14 +40,14 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs112:first-child {
+  .Jbs12:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv112:first-child {
+    .Jbpv12:first-child {
       margin-top: 0.5rem;
     }
   }
@@ -55,7 +55,7 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs112 Jbpv112"');
+    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12"');
   });
 
   it('should support self references', () => {
@@ -69,47 +69,47 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc112 {
+  ._kc12 {
     border-top-width: 2px;
   }
 
 
-  .hc112 {
+  .hc12 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc112 {
+  .mCPFGYc12 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc112 {
+  .lc12 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc112 {
+  .SMBFGYc12 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv112 {
+  .Rv12 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd112 {
+  .ZjUQgKd12 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc112 {
+  .-m_-mc12 {
     --m: 2px;
   }
 
 
-  .-S_-Sv112 {
+  .-S_-Sv12 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
@@ -117,7 +117,7 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc112 hc112 mCPFGYc112 lc112 SMBFGYc112 Rv112 ZjUQgKd112 -m_-mc112 -S_-Sv112"');
+    expect(js).toMatchInlineSnapshot('" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12"');
   });
 
   it('should support allowed overrides', () => {
@@ -134,9 +134,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw112 pg112"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb112 pHJ3AUd112"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb112 pg112"');
+    expect(js()).toMatchInlineSnapshot('"  gw12 pg12"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb12 pHJ3AUd12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 pg12"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -151,9 +151,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B112 __Ya112"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D112 __Ya112"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D112 __Ya112"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D12 __Ya12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -168,9 +168,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk112 Qk112 Sk112 Rk112"');
-    expect(overrides).toMatchInlineSnapshot('" Tm112 Qm112 Sm112 Rm112"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm112 Qm112 Sm112 Rm112"');
+    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12"');
+    expect(overrides).toMatchInlineSnapshot('" Tm12 Qm12 Sm12 Rm12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -185,9 +185,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE112"');
-    expect(overrides).toMatchInlineSnapshot('" Nk112"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk112 gE112"');
+    expect(js()).toMatchInlineSnapshot('"  gE12"');
+    expect(overrides).toMatchInlineSnapshot('" Nk12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12"');
   });
 
   it('should support runtime conditions', () => {
@@ -208,32 +208,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH112 {
+  .gH12 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF112 {
+  .gF12 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE112 {
+  .gE12 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt112 {
+  .pt12 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po112 {
+  .po12 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm112 {
+  .pm12 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -241,9 +241,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH112 pt112"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF112 po112"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE112 pm112"');
+    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -262,32 +262,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH112 {
+  .gH12 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF112 {
+  .gF12 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h112 {
+  .g_h12 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g3112 {
+  .g312 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH112"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF112"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h112"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g3112"');
+    expect(js({})).toMatchInlineSnapshot('"  gH12"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -301,9 +301,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY112"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe112"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw112"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -321,14 +321,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb112 {
+    .plb12 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple112 {
+    .ple12 {
       color: HighlightText;
     }
   }
@@ -337,8 +337,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb112"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple112"');
+    expect(js({})).toMatchInlineSnapshot('"  plb12"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -346,27 +346,27 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th112 Qh112 Sh112 Rh112"');
+    expect(js).toMatchInlineSnapshot('" Th12 Qh12 Sh12 Rh12"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th112 {
+  .Th12 {
     padding-top: 24px;
   }
 
 
-  .Qh112 {
+  .Qh12 {
     padding-bottom: 24px;
   }
 
 
-  .Sh112 {
+  .Sh12 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh112 {
+  .Rh12 {
     padding-inline-end: 24px;
   }
 }
@@ -384,7 +384,7 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb112 {
+  .gpQzfVb12 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
@@ -405,7 +405,7 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE112 {
+  .-FUeYm-gE12 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }

@@ -7,6 +7,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/overlays/docs/popover-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['popup', 'overlay'];
+
 # Popover
 
 <PageDescription>{docs.exports.Popover.description}</PageDescription>
@@ -148,12 +150,15 @@ function Example() {
 
 ### Popover
 
-<PropTable component={docs.exports.Popover} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Popover" properties={docs.exports.PopoverRenderProps.properties} />
+<PropTable
+  component={docs.exports.Popover}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--trigger-width': 'The width of the popover trigger element.',
+    '--trigger-anchor-point': 'The position of the trigger relative to the popover. Use with `transform-origin` when applying scale transitions.'
+  }} />
 
 ### OverlayArrow
 
 <PropTable component={docs.exports.OverlayArrow} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-OverlayArrow" properties={docs.exports.OverlayArrowRenderProps.properties} />

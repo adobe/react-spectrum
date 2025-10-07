@@ -29,7 +29,7 @@ interface ModalProps extends ModalOverlayProps {
 
 const modalOverlayStyles = style({
   ...colorScheme(),
-  position: 'absolute',
+  position: 'fixed',
   top: 0,
   left: 0,
   width: 'full',

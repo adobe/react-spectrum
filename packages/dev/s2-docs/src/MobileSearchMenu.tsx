@@ -1,16 +1,16 @@
 'use client';
 
-import {CloseButton, Content, Heading, IllustratedMessage, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {CloseButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup, TextContext} from '@react-spectrum/s2';
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {getLibraryFromPage} from './library';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
+import {OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-
+import React, {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useId} from '@react-aria/utils';
 
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
@@ -38,10 +38,156 @@ const dialogStyle = style({
   maxSize: 'inherit'
 });
 
+// Mobile tabs styles - horizontal layout with scrolling
+const mobileTabsWrapper = style({
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  font: 'ui'
+});
+
+const mobileTabListContainer = style({
+  position: 'sticky',
+  top: 0,
+  zIndex: 2,
+  backgroundColor: 'layer-2'
+});
+
+const mobileTabListWrapper = style({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8
+});
+
+const mobileTabList = style({
+  display: 'flex',
+  flexDirection: 'row',
+  gap: 8,
+  paddingX: 12,
+  paddingY: 8,
+  overflow: 'auto',
+  flexGrow: 1,
+  scrollbarWidth: 'none',
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
+});
+
+const mobileTab = style<TabRenderProps>({
+  ...focusRing(),
+  display: 'flex',
+  gap: 8,
+  color: {
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
+    forcedColors: {
+      isSelected: 'Highlight'
+    }
+  },
+  borderRadius: 'sm',
+  paddingX: 12,
+  paddingY: 8,
+  alignItems: 'center',
+  position: 'relative',
+  cursor: 'default',
+  flexShrink: 0,
+  transition: 'default',
+  disableTapHighlight: true,
+  whiteSpace: 'nowrap',
+  fontSize: 'body',
+  fontWeight: {
+    default: 'normal',
+    isSelected: 'medium'
+  }
+});
+
+const mobileSelectionIndicator = style({
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  width: 'full',
+  height: 2,
+  backgroundColor: {
+    default: 'neutral',
+    forcedColors: 'Highlight'
+  },
+  borderStyle: 'none',
+  borderRadius: 'full',
+  transition: '[translate, width, height]'
+});
+
+const mobileTabPanel = style({
+  ...focusRing(),
+  flexGrow: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  outlineStyle: 'none'
+});
+
+const stickySearchContainer = style({
+  width: 'full',
+  position: 'sticky',
+  top: 64,
+  zIndex: 1,
+  backgroundColor: 'layer-2',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+  paddingTop: 8
+});
+
+function MobileTab(props: Omit<RACTabProps, 'children'> & {children: ReactNode}) {
+  let contentId = useId();
+  return (
+    <RACTab
+      {...props}
+      className={renderProps => mobileTab(renderProps)}>
+      <Provider
+        values={[
+          [TextContext, {
+            id: contentId
+          }]
+        ]}>
+        {props.children}
+      </Provider>
+      <SelectionIndicator className={mobileSelectionIndicator} />
+    </RACTab>
+  );
+}
+
+interface MobileTabListProps {
+  children: ReactNode
+}
+
+function MobileTabList({children}: MobileTabListProps) {
+  return (
+    <div className={mobileTabListWrapper}>
+      <div className={style({position: 'relative', flexGrow: 1, overflow: 'hidden'})}>
+        <RACTabList className={mobileTabList}>
+          {children}
+        </RACTabList>
+      </div>
+      <div className={style({paddingEnd: 12, flexShrink: 0})}>
+        <CloseButton />
+      </div>
+    </div>
+  );
+}
+
+function MobileTabPanel(props: Omit<RACTabPanelProps, 'children'> & {children: ReactNode}) {
+  return (
+    <RACTabPanel
+      {...props}
+      className={mobileTabPanel}>
+      {props.children}
+    </RACTabPanel>
+  );
+}
+
 export function MobileSearchMenu({pages, currentPage}) {
   return (
     <MobileCustomDialog padding="none">
-      <CloseButton styles={style({position: 'fixed', top: 12, insetEnd: 12, zIndex: 101})} />
       <MobileNav pages={pages} currentPage={currentPage} />
     </MobileCustomDialog>
   );
@@ -56,24 +202,18 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
     <RACDialog
       {...props}
       className={dialogStyle({padding})}>
-      {composeRenderProps(props.children, (children) => (
-        <OverlayTriggerStateContext.Provider value={null}>
-          {children}
-        </OverlayTriggerStateContext.Provider>
-      ))}
+      {props.children}
     </RACDialog>
   );
 };
 
 function MobileNav({pages, currentPage}: PageProps) {
+  let overlayTriggerState = React.useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
   let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
   let prevSearchWasEmptyRef = useRef<boolean>(true);
-  let headerRef = useRef<HTMLDivElement>(null);
   let scrollContainerRef = useRef<HTMLDivElement>(null);
-  let tabListRef = useRef<HTMLDivElement>(null);
-  let [tabListHeight, setTabListHeight] = useState(0);
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(getLibraryFromPage(currentPage));
 
   let getSectionsForLibrary = useCallback((libraryId: string) => {
@@ -106,7 +246,7 @@ function MobileNav({pages, currentPage}: PageProps) {
   
 
   useEffect(() => {
-      // Auto-select first section initially or when library changes
+    // Auto-select first section initially or when library changes
     if (currentLibrarySectionArray.length > 0 && !selectedSection) {
       setSelectedSection(currentLibrarySectionArray[0]);
     }
@@ -119,20 +259,8 @@ function MobileNav({pages, currentPage}: PageProps) {
     }
   }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
 
-  useEffect(() => {
-    let measure = () => {
-      if (tabListRef.current) {
-        setTabListHeight(tabListRef.current.getBoundingClientRect().height);
-      }
-    };
-
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [selectedLibrary]);
-
   let getOrderedLibraries = () => {
-    let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label}));
+    let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label, icon: TAB_DEFS[id].icon}));
     let currentLibId = getLibraryFromPage(currentPage);
 
     // Move current library to first position
@@ -170,9 +298,30 @@ function MobileNav({pages, currentPage}: PageProps) {
     }
     
     let searchLower = searchValue.toLowerCase();
-    return pages.filter(page => {
+    
+    // Filter items where name or tags start with search value
+    let matchedPages = pages.filter(page => {
       let pageTitle = title(page).toLowerCase();
-      return pageTitle.includes(searchLower);
+      let nameMatch = pageTitle.startsWith(searchLower);
+      let tags: string[] = page.exports?.tags || [];
+      let tagMatch = tags.some(tag => tag.toLowerCase().startsWith(searchLower));
+      return nameMatch || tagMatch;
+    });
+    
+    // Sort to prioritize name matches over tag matches
+    return matchedPages.sort((a, b) => {
+      let aNameMatch = title(a).toLowerCase().startsWith(searchLower);
+      let bNameMatch = title(b).toLowerCase().startsWith(searchLower);
+      
+      if (aNameMatch && !bNameMatch) {
+        return -1;
+      }
+      if (!aNameMatch && bNameMatch) {
+        return 1;
+      }
+      
+      // If both match by name or both match by tag, maintain original order
+      return 0;
     });
   };
 
@@ -200,10 +349,30 @@ function MobileNav({pages, currentPage}: PageProps) {
     if (!section) {
       return [];
     }
+    let items: ComponentCardItem[] = [];
     if (section === 'all') {
-      return getAllContent(libraryId, searchValue);
+      items = getAllContent(libraryId, searchValue);
+    } else {
+      items = getSectionContent(section, libraryId, searchValue);
     }
-    return getSectionContent(section, libraryId, searchValue);
+    
+    // Sort to show "Introduction" first when search is empty
+    if (searchValue.trim().length === 0) {
+      items = [...items].sort((a, b) => {
+        const aIsIntro = a.name === 'Introduction';
+        const bIsIntro = b.name === 'Introduction';
+        
+        if (aIsIntro && !bIsIntro) {
+          return -1;
+        }
+        if (!aIsIntro && bIsIntro) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    
+    return items;
   };
 
   let getSectionNamesForLibrary = (libraryId: string) => {
@@ -262,79 +431,87 @@ function MobileNav({pages, currentPage}: PageProps) {
       // Ensure newly selected section starts at the top of the vertical scroll area
       scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
     }
-  }, [selectedSection, selectedLibrary]);
+  }, [selectedSection, selectedLibrary, searchValue]);
 
   return (
     <div className={style({minHeight: '100dvh', paddingBottom: 24, boxSizing: 'border-box'})}>
-      <Tabs 
-        aria-label="Libraries"
-        density="compact"
-        selectedKey={selectedLibrary}
-        onSelectionChange={(key) => {
-          let newLib = key as Library;
-          setSelectedLibrary(newLib);
-          if (!searchFocused) {
-            let nextSections = getSectionNamesForLibrary(newLib);
-            if (nextSections.length > 0) {
-              setSelectedSection(nextSections[0]);
+      <div className={mobileTabsWrapper}>
+        <RACTabs
+          aria-label="Libraries"
+          selectedKey={selectedLibrary}
+          onSelectionChange={(key) => {
+            let newLib = key as Library;
+            setSelectedLibrary(newLib);
+            if (!searchFocused) {
+              let nextSections = getSectionNamesForLibrary(newLib);
+              if (nextSections.length > 0) {
+                setSelectedSection(nextSections[0]);
+              }
             }
-          }
-        }}
-        styles={style({marginX: 12, marginTop: 12})}>
-        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'layer-2'})}>
-          <TabList>
-            {libraries.map(library => (
-              <Tab key={library.id} id={library.id}>{library.label}</Tab>
-            ))}
-          </TabList>
-        </div>
-        {libraries.map(library => (
-          <TabPanel key={library.id} id={library.id}>
-            <div
-              ref={headerRef}
-              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'layer-2'})}
-              style={{top: tabListHeight}}>
-              <SearchField 
-                aria-label="Search" 
-                value={searchValue}
-                onChange={handleSearchChange}
-                onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
-                styles={style({marginY: 12})} />
-              <TagGroup
-                aria-label="Navigation sections" 
-                selectionMode="single" 
-                selectedKeys={selectedSection ? [selectedSection] : []}
-                onSelectionChange={handleTagSelection}
-                styles={style({margin: 12})}
-                items={tags}>
-                {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
-              </TagGroup>
-            </div>
-            <div ref={scrollContainerRef}>
-              <ComponentCardView
-                items={getItemsForSelection(selectedSection, library.id, searchValue)}
-                ariaLabel="Pages"
-                size="S"
-                renderEmptyState={() => (
-                  <IllustratedMessage styles={style({margin: 32})}>
-                    <NoSearchResults />
-                    <Heading>No results</Heading>
-                    {searchValue.trim().length > 0 ? (
-                      <Content>
-                        No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
-                      </Content>
-                    ) : (
-                      <Content>
-                        No results found in {selectedLibrary}.
-                      </Content>
-                    )}
-                  </IllustratedMessage>
-                )} />
-            </div>
-          </TabPanel>
-        ))}
-      </Tabs>
+          }}>
+          <div className={mobileTabListContainer}>
+            <MobileTabList>
+              {libraries.map(library => (
+                <MobileTab key={library.id} id={library.id}>
+                  <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+                    {library.icon}
+                  </div>
+                  {library.label}
+                </MobileTab>
+              ))}
+            </MobileTabList>
+          </div>
+          {libraries.map(library => (
+            <MobileTabPanel key={library.id} id={library.id}>
+              <div className={stickySearchContainer}>
+                <SearchField 
+                  aria-label="Search" 
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
+                  styles={style({marginX: 16})} />
+                <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
+                  <TagGroup
+                    aria-label="Navigation sections" 
+                    selectionMode="single" 
+                    selectedKeys={selectedSection ? [selectedSection] : []}
+                    onSelectionChange={handleTagSelection}
+                    UNSAFE_style={{whiteSpace: 'nowrap'}}
+                    items={tags}>
+                    {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
+                  </TagGroup>
+                </div>
+              </div>
+              <div ref={scrollContainerRef} className={style({paddingX: 12})}>
+                <ComponentCardView
+                  onAction={() => {
+                    setSearchValue('');
+                    overlayTriggerState?.close();
+                  }}
+                  items={getItemsForSelection(selectedSection, library.id, searchValue)}
+                  ariaLabel="Pages"
+                  size="S"
+                  renderEmptyState={() => (
+                    <IllustratedMessage styles={style({margin: 32})}>
+                      <NoSearchResults />
+                      <Heading>No results</Heading>
+                      {searchValue.trim().length > 0 ? (
+                        <Content>
+                          No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
+                        </Content>
+                      ) : (
+                        <Content>
+                          No results found in {selectedLibrary}.
+                        </Content>
+                      )}
+                    </IllustratedMessage>
+                  )} />
+              </div>
+            </MobileTabPanel>
+          ))}
+        </RACTabs>
+      </div>
     </div>
   );
 }

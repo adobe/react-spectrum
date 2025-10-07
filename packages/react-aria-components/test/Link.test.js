@@ -110,7 +110,8 @@ describe('Link', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Link className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Link>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Link className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Link>);
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-pressed');
@@ -126,6 +127,7 @@ describe('Link', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {

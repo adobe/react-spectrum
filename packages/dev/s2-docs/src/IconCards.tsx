@@ -64,7 +64,7 @@ export function IconCards() {
     <Autocomplete filter={filter}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
         <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
-        <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(8, 8), preserveAspectRatio: true}}>
+        <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
           <ListBox
             onAction={(item) => handleCopyImport(item.toString())}
             items={iconList}

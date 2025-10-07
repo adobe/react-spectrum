@@ -11,9 +11,21 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
@@ -60,6 +72,11 @@ export interface ListBoxRenderProps {
 }
 
 export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ListBox'
+   */
+  className?: ClassNameOrFunction<ListBoxRenderProps>,
   /**
    * How multiple selection should behave in the collection.
    * @default "toggle"
@@ -271,7 +288,13 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   );
 }
 
-export interface ListBoxSectionProps<T> extends SectionProps<T> {}
+export interface ListBoxSectionProps<T> extends SectionProps<T> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-ListBoxSection'
+   */
+  className?: string
+}
 
 function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
@@ -314,6 +337,11 @@ export const ListBoxSection = /*#__PURE__*/ createBranchComponent(SectionNode, L
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
 export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ListBoxItem'
+   */
+  className?: ClassNameOrFunction<ListBoxItemRenderProps>,
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -475,6 +503,11 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
 export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-ListBoxLoadMoreItem'
+   */
+  className?: string,
   /**
    * The load more spinner to render when loading additional items.
    */

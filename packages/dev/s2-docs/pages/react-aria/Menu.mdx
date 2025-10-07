@@ -6,6 +6,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['dropdown'];
+
 # Menu
 
 <PageDescription>{docs.exports.Menu.description}</PageDescription>
@@ -504,19 +506,13 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 
 <PropTable component={docs.exports.Menu} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-Menu" properties={docs.exports.MenuRenderProps.properties} /> */}
-
 ### MenuItem
 
 <PropTable component={docs.exports.MenuItem} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-MenuItem" properties={docs.exports.MenuItemRenderProps.properties} />
-
 ### MenuSection
 
 <PropTable component={docs.exports.MenuSection} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-MenuSection" properties={docs.exports.MenuSectionRenderProps.properties} /> */}
 
 ### SubmenuTrigger
 

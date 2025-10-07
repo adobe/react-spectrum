@@ -1,7 +1,7 @@
 'use client';
 
 import {ActionButton, DialogTrigger} from '@react-spectrum/s2';
-import {AdobeLogo} from './AdobeLogo';
+import {AdobeLogo} from './icons/AdobeLogo';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
@@ -130,33 +130,35 @@ export function MobileHeader({toc, pages, currentPage}) {
             marginY: 0,
             ...animation
           })}
-          style={{
+          style={toc ? {
             animationName: fadeOut,
             animationTimeline: 'scroll()',
             animationRange
-          } as CSSProperties}>
+          } as CSSProperties : undefined}>
           React Aria
         </h2>
       </div>
-      <div
-        className={style({
-          ...animation,
-          position: 'absolute',
-          left: '50%',
-          translateX: '-50%'
-        })}
-        style={{
-          animationName: fadeIn,
-          animationTimeline: 'scroll()',
-          animationRange
-        } as CSSProperties}>
-        {toc}
-      </div>
+      {toc && (
+        <div
+          className={style({
+            ...animation,
+            position: 'absolute',
+            left: '50%',
+            translateX: '-50%'
+          })}
+          style={{
+            animationName: fadeIn,
+            animationTimeline: 'scroll()',
+            animationRange
+          } as CSSProperties}>
+          {toc}
+        </div>
+      )}
       <DialogTrigger>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        <Modal size="fullscreenTakeover" style={{zIndex: 100}}>
+        <Modal size="fullscreenTakeover" style={{zIndex: 100, height: '100dvh'}}>
           <MobileSearchMenu pages={pages} currentPage={currentPage} />
         </Modal>
       </DialogTrigger>
