@@ -455,6 +455,19 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: Install fonts
+          command: |
+            mkdir -p ~/.fonts
+            # Adobe Clean Spectrum VF
+            wget -O ~/.fonts/adobe-clean-spectrum-vf.woff2 "https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3"
+            # Adobe Clean Spectrum SRF VF
+            wget -O ~/.fonts/adobe-clean-spectrum-srf-vf.woff2 "https://use.typekit.net/af/4a1d0d/0000000000000000775c55a4/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3"
+            # Source Code Pro
+            wget -O ~/.fonts/source-code-pro-400.woff2 "https://use.typekit.net/af/80f457/00000000000000007758ce1d/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n4&v=3"
+            wget -O ~/.fonts/source-code-pro-700.woff2 "https://use.typekit.net/af/88da4d/00000000000000007758ce1a/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n7&v=3"
+            fc-cache -f -v
+
+      - run:
           name: build docs
           command: make website
 
@@ -470,6 +483,19 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
+          name: Install fonts
+          command: |
+            mkdir -p ~/.fonts
+            # Adobe Clean Spectrum VF
+            wget -O ~/.fonts/adobe-clean-spectrum-vf.woff2 "https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3"
+            # Adobe Clean Spectrum SRF VF
+            wget -O ~/.fonts/adobe-clean-spectrum-srf-vf.woff2 "https://use.typekit.net/af/4a1d0d/0000000000000000775c55a4/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3"
+            # Source Code Pro
+            wget -O ~/.fonts/source-code-pro-400.woff2 "https://use.typekit.net/af/80f457/00000000000000007758ce1d/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n4&v=3"
+            wget -O ~/.fonts/source-code-pro-700.woff2 "https://use.typekit.net/af/88da4d/00000000000000007758ce1a/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n7&v=3"
+            fc-cache -f -v
+
+      - run:
           name: build docs
           command: make website-production
 
@@ -483,6 +509,19 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: Install fonts
+          command: |
+            mkdir -p ~/.fonts
+            # Adobe Clean Spectrum VF
+            wget -O ~/.fonts/adobe-clean-spectrum-vf.woff2 "https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3"
+            # Adobe Clean Spectrum SRF VF
+            wget -O ~/.fonts/adobe-clean-spectrum-srf-vf.woff2 "https://use.typekit.net/af/4a1d0d/0000000000000000775c55a4/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3"
+            # Source Code Pro
+            wget -O ~/.fonts/source-code-pro-400.woff2 "https://use.typekit.net/af/80f457/00000000000000007758ce1d/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n4&v=3"
+            wget -O ~/.fonts/source-code-pro-700.woff2 "https://use.typekit.net/af/88da4d/00000000000000007758ce1a/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n7&v=3"
+            fc-cache -f -v
 
       - run:
           name: build s2 docs
