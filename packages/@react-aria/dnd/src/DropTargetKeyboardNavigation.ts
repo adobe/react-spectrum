@@ -21,6 +21,7 @@ export function navigate(
     case 'up':
       return previousDropTarget(keyboardDelegate, collection, target, wrap);
     case 'down':
+      // console.log('keyboard', nextDropTarget(keyboardDelegate, collection, target, wrap));
       return nextDropTarget(keyboardDelegate, collection, target, wrap);
   }
 }
@@ -57,8 +58,14 @@ function nextDropTarget(
       nextKey = horizontal === 'right' ? keyboardDelegate.getKeyRightOf?.(target.key) : keyboardDelegate.getKeyLeftOf?.(target.key);
     } else {
       nextKey = keyboardDelegate.getKeyBelow?.(target.key);
+      // console.log('nextKey', nextKey)
     }
     let nextCollectionKey = collection.getKeyAfter(target.key);
+    if (collection.getItem(nextCollectionKey).type === 'content') {
+      nextCollectionKey = collection.getKeyAfter(nextCollectionKey);
+    }
+    console.log('next keys', nextKey, nextCollectionKey);
+    debugger;
 
     // If the keyboard delegate did not move to the next key in the collection,
     // jump to that key with the same drop position. Otherwise, try the other
@@ -100,10 +107,12 @@ function nextDropTarget(
       }
       case 'after': {
         // If this is the last sibling in a level, traverse to the parent.
-        let targetNode = collection.getItem(target.key);        
+        let targetNode = collection.getItem(target.key);
+        // console.log('targetNode', targetNode);
         if (targetNode && targetNode.nextKey == null && targetNode.parentKey != null) {
           // If the parent item has an item after it, use the "before" position.
           let parentNode = collection.getItem(targetNode.parentKey);
+          console.log('parentNode', parentNode);
           if (parentNode?.nextKey != null) {
             return {
               type: 'item',
@@ -250,6 +259,7 @@ function getLastChild(collection: Collection<Node<unknown>>, key: Key): DropTarg
   // Checking if the next item has a greater level is a silly way to determine if the item is expanded.
   let targetNode = collection.getItem(key);
   let nextKey = collection.getKeyAfter(key);
+  // console.log('next', nextKey);
   let nextNode = nextKey != null ? collection.getItem(nextKey) : null;
   if (targetNode && nextNode && nextNode.level > targetNode.level) {
     let children = getChildNodes(targetNode, collection);
