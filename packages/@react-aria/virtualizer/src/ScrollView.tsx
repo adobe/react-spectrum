@@ -25,7 +25,7 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {getEventTarget, useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
@@ -87,7 +87,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   let [isScrolling, setScrolling] = useState(false);
 
   let onScroll = useCallback((e) => {
-    if (e.target !== e.currentTarget) {
+    if (getEventTarget(e) !== e.currentTarget) {
       return;
     }
 

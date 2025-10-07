@@ -18,7 +18,7 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './c
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {getEventTarget, isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DragOptions {
@@ -102,7 +102,7 @@ export function useDrag(options: DragOptions): DragResult {
     // If this drag was initiated by a mobile screen reader (e.g. VoiceOver or TalkBack), enter virtual dragging mode.
     if (modalityOnPointerDown.current === 'virtual') {
       e.preventDefault();
-      startDragging(e.target as HTMLElement);
+      startDragging(getEventTarget(e) as HTMLElement);
       modalityOnPointerDown.current = null;
       return;
     }
@@ -188,7 +188,7 @@ export function useDrag(options: DragOptions): DragResult {
 
     // Wait a frame before we set dragging to true so that the browser has time to
     // render the preview image before we update the element that has been dragged.
-    let target = e.target;
+    let target = getEventTarget(e);
     requestAnimationFrame(() => {
       setDragging(target as Element);
     });
@@ -340,16 +340,17 @@ export function useDrag(options: DragOptions): DragResult {
         }
       },
       onKeyDownCapture(e) {
-        if (e.target === e.currentTarget && e.key === 'Enter') {
+        if (getEventTarget(e) === e.currentTarget && e.key === 'Enter') {
           e.preventDefault();
           e.stopPropagation();
         }
       },
       onKeyUpCapture(e) {
-        if (e.target === e.currentTarget && e.key === 'Enter') {
+        let eventTarget = getEventTarget(e);
+        if (eventTarget === e.currentTarget && e.key === 'Enter') {
           e.preventDefault();
           e.stopPropagation();
-          startDragging(e.target as HTMLElement);
+          startDragging(eventTarget as HTMLElement);
         }
       },
       onClick(e) {
@@ -357,7 +358,7 @@ export function useDrag(options: DragOptions): DragResult {
         if (isVirtualClick(e.nativeEvent) || modalityOnPointerDown.current === 'virtual') {
           e.preventDefault();
           e.stopPropagation();
-          startDragging(e.target as HTMLElement);
+          startDragging(getEventTarget(e) as HTMLElement);
         }
       }
     };

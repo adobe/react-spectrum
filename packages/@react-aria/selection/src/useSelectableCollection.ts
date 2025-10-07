@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isCtrlKeyPressed, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -134,7 +134,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!nodeContains(ref.current, e.target as Element)) {
+    if (!nodeContains(ref.current, getEventTarget(e) as Element)) {
       return;
     }
 
@@ -333,9 +333,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   });
 
   let onFocus = (e: FocusEvent) => {
+    let eventTarget = getEventTarget(e);
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
-      if (!nodeContains(e.currentTarget, e.target)) {
+      if (!nodeContains(e.currentTarget, eventTarget)) {
         manager.setFocused(false);
       }
 
@@ -343,7 +344,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     // Focus events can bubble through portals. Ignore these events.
-    if (!nodeContains(e.currentTarget, e.target)) {
+    if (!nodeContains(e.currentTarget, eventTarget)) {
       return;
     }
 
@@ -565,7 +566,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     onBlur,
     onMouseDown(e) {
       // Ignore events that bubbled through portals.
-      if (scrollRef.current === e.target) {
+      if (scrollRef.current === getEventTarget(e)) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }

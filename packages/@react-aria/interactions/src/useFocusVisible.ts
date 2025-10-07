@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
+import {getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
 import {ignoreFocusEvent} from './utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
@@ -90,10 +90,12 @@ function handleClickEvent(e: MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
+  const eventTarget = getEventTarget(e);
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document || ignoreFocusEvent || !e.isTrusted) {
+  if (
+    eventTarget === window || eventTarget === document || ignoreFocusEvent || !e.isTrusted) {
     return;
   }
 

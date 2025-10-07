@@ -13,7 +13,7 @@
  /* eslint-disable rulesdir/pure-render */
 
 import {getOffset} from './getOffset';
-import {nodeContains} from './shadowdom/DOMFunctions';
+import {getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
 import {Orientation} from '@react-types/shared';
 import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
@@ -81,7 +81,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   };
 
   let onMouseUp = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
+    const target = getEventTarget(e) as HTMLElement;
     dragging.current = false;
     let nextOffset = getNextOffset(e);
     if (handlers.current.onDrag) {

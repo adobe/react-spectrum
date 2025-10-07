@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
-import {filterDOMProps, nodeContains, useLayoutEffect} from '@react-aria/utils';
-import {HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
+import {filterDOMProps, getEventTarget, nodeContains, useLayoutEffect} from '@react-aria/utils';
+import {FocusEvent, HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaToolbarProps extends AriaLabelingProps {
@@ -56,7 +56,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
 
   const onKeyDown: KeyboardEventHandler = (e) => {
     // don't handle portalled events
-    if (!nodeContains(e.currentTarget, e.target as HTMLElement)) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as HTMLElement)) {
       return;
     }
     if (
@@ -100,17 +100,20 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
 
   // Record the last focused child when focus moves out of the toolbar.
   const lastFocused = useRef<HTMLElement | null>(null);
-  const onBlur = (e) => {
+  const onBlur = (e: FocusEvent) => {
     if (!nodeContains(e.currentTarget, e.relatedTarget) && !lastFocused.current) {
-      lastFocused.current = e.target;
+      const eventTarget = getEventTarget(e);
+      if (eventTarget instanceof HTMLElement) {
+        lastFocused.current = eventTarget;
+      }
     }
   };
 
   // Restore focus to the last focused child when focus returns into the toolbar.
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
-  const onFocus = (e) => {
-    if (lastFocused.current && !nodeContains(e.currentTarget, e.relatedTarget) && nodeContains(ref.current, e.target)) {
+  const onFocus = (e: FocusEvent) => {
+    if (lastFocused.current && !nodeContains(e.currentTarget, e.relatedTarget) && nodeContains(ref.current, getEventTarget(e))) {
       lastFocused.current?.focus();
       lastFocused.current = null;
     }

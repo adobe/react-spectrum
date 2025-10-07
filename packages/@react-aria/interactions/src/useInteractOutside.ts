@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, nodeContains, useEffectEvent} from '@react-aria/utils';
+import {getEventTarget, getOwnerDocument, nodeContains, useEffectEvent} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef} from 'react';
 
@@ -118,14 +118,15 @@ function isValidEvent(event, ref) {
   if (event.button > 0) {
     return false;
   }
-  if (event.target) {
+  let eventTarget = getEventTarget(event);
+  if (eventTarget instanceof Element) {
     // if the event target is no longer in the document, ignore
-    const ownerDocument = event.target.ownerDocument;
-    if (!ownerDocument || !nodeContains(ownerDocument.documentElement, event.target)) {
+    const ownerDocument = eventTarget.ownerDocument;
+    if (!ownerDocument || !nodeContains(ownerDocument.documentElement, eventTarget)) {
       return false;
     }
     // If the target is within a top layer element (e.g. toasts), ignore.
-    if (event.target.closest('[data-react-aria-top-layer]')) {
+    if (eventTarget.closest('[data-react-aria-top-layer]')) {
       return false;
     }
   }
@@ -134,7 +135,7 @@ function isValidEvent(event, ref) {
     return false;
   }
 
-  // When the event source is inside a Shadow DOM, event.target is just the shadow root.
+  // When the event source is inside a Shadow DOM, getEventTarget(event) is just the shadow root.
   // Using event.composedPath instead means we can get the actual element inside the shadow root.
   // This only works if the shadow root is open, there is no way to detect if it is closed.
   // If the event composed path contains the ref, interaction is inside.

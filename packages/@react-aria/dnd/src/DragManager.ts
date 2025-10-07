@@ -14,7 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
-import {isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
+import {getEventTarget, isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {RefObject, useEffect, useState} from 'react';
 
@@ -243,7 +243,7 @@ class DragSession {
     this.cancelEvent(e);
 
     if (e.key === 'Enter') {
-      if (e.altKey || nodeContains(this.getCurrentActivateButton(), e.target as Node)) {
+      if (e.altKey || nodeContains(this.getCurrentActivateButton(), getEventTarget(e) as Node)) {
         this.activate(this.currentDropTarget, this.currentDropItem);
       } else {
         this.drop();
@@ -257,28 +257,29 @@ class DragSession {
 
   onFocus(e: FocusEvent): void {
     let activateButton = this.getCurrentActivateButton();
-    if (e.target === activateButton) {
+    let eventTarget = getEventTarget(e);
+    if (eventTarget === activateButton) {
       // TODO: canceling this breaks the focus ring. Revisit when we support tabbing.
       this.cancelEvent(e);
       return;
     }
 
     // Prevent focus events, except to the original drag target.
-    if (e.target !== this.dragTarget.element) {
+    if (eventTarget !== this.dragTarget.element) {
       this.cancelEvent(e);
     }
 
     // Ignore focus events on the window/document (JSDOM). Will be handled in onBlur, below.
-    if (!(e.target instanceof HTMLElement) || e.target === this.dragTarget.element) {
+    if (!(eventTarget instanceof HTMLElement) || eventTarget === this.dragTarget.element) {
       return;
     }
 
     let dropTarget =
-      this.validDropTargets.find(target => target.element === e.target as HTMLElement) ||
-      this.validDropTargets.find(target => nodeContains(target.element, e.target as HTMLElement));
+      this.validDropTargets.find(target => target.element === eventTarget as HTMLElement) ||
+      this.validDropTargets.find(target => nodeContains(target.element, eventTarget as HTMLElement));
 
     if (!dropTarget) {
-      // if (e.target === activateButton) {
+      // if (eventTarget === activateButton) {
       //   activateButton.focus();
       // }
       if (this.currentDropTarget) {
@@ -289,7 +290,7 @@ class DragSession {
       return;
     }
 
-    let item = dropItems.get(e.target as HTMLElement);
+    let item = dropItems.get(eventTarget as HTMLElement);
     if (dropTarget) {
       this.setCurrentDropTarget(dropTarget, item);
     }
@@ -302,7 +303,7 @@ class DragSession {
       return;
     }
 
-    if (e.target !== this.dragTarget.element) {
+    if (getEventTarget(e) !== this.dragTarget.element) {
       this.cancelEvent(e);
     }
 
@@ -321,15 +322,16 @@ class DragSession {
     this.cancelEvent(e);
     if (isVirtualClick(e) || this.isVirtualClick) {
       let dropElements = dropItems.values();
-      let item = [...dropElements].find(item => item.element === e.target as HTMLElement || nodeContains(item.activateButtonRef?.current, e.target as HTMLElement));
-      let dropTarget = this.validDropTargets.find(target => nodeContains(target.element, e.target as HTMLElement));
+      let eventTarget = getEventTarget(e);
+      let item = [...dropElements].find(item => item.element === eventTarget as HTMLElement || nodeContains(item.activateButtonRef?.current, eventTarget as HTMLElement));
+      let dropTarget = this.validDropTargets.find(target => nodeContains(target.element, eventTarget as HTMLElement));
       let activateButton = item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
-      if (nodeContains(activateButton, e.target as HTMLElement) && dropTarget) {
+      if (nodeContains(activateButton, eventTarget as HTMLElement) && dropTarget) {
         this.activate(dropTarget, item);
         return;
       }
 
-      if (e.target === this.dragTarget.element) {
+      if (eventTarget === this.dragTarget.element) {
         this.cancel();
         return;
       }
@@ -350,7 +352,7 @@ class DragSession {
 
   cancelEvent(e: Event): void {
     // Allow focusin and focusout on the drag target so focus ring works properly.
-    if ((e.type === 'focusin' || e.type === 'focusout') && (e.target === this.dragTarget?.element || e.target === this.getCurrentActivateButton())) {
+    if ((e.type === 'focusin' || e.type === 'focusout') && (getEventTarget(e) === this.dragTarget?.element || getEventTarget(e) === this.getCurrentActivateButton())) {
       return;
     }
 

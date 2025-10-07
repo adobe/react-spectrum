@@ -25,7 +25,7 @@ import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useId} from '@react-aria/utils';
+import {getEventTarget, useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
@@ -195,13 +195,13 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
       {...otherProps}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
-        if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+        if (e.pointerType === 'mouse' && !(getEventTarget(e) as Element).closest('button,input,textarea')) {
           e.preventDefault();
           e.currentTarget.querySelector('input')?.focus();
         }
       }}
       onPointerUp={e => {
-        if (e.pointerType !== 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+        if (e.pointerType !== 'mouse' && !(getEventTarget(e) as Element).closest('button,input,textarea')) {
           e.preventDefault();
           e.currentTarget.querySelector('input')?.focus();
         }

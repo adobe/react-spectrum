@@ -1,5 +1,6 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 
+import {SyntheticEvent} from 'react';
 import {isShadowRoot} from '../domHelpers';
 import {shadowDOM} from '@react-stately/flags';
 
@@ -57,14 +58,20 @@ export const getActiveElement = (doc: Document = document): Element | null => {
   return activeElement;
 };
 
+type EventTargetType<T> = {
+  target: T;
+};
+
 /**
  * ShadowDOM safe version of event.target.
  */
-export function getEventTarget<T extends Event>(event: T): Element {
-  if (shadowDOM() && event.target instanceof HTMLElement && event.target.shadowRoot) {
-    if (event.composedPath) {
-      return event.composedPath()[0] as Element;
+export function getEventTarget<E, SE extends SyntheticEvent<E>>(event: SE): SE extends EventTargetType<infer Target> ? Target : never;
+export function getEventTarget(event: Event): EventTarget | null;
+export function getEventTarget<E, SE extends SyntheticEvent<E>>(event: Event | SE): EventTarget | null {
+  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot) {
+    if ('composedPath' in event) {
+      return event.composedPath()[0];
     }
   }
-  return event.target as Element;
+  return event.target;
 }

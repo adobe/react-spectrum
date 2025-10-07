@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getEventTarget, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -96,7 +96,7 @@ function preventScrollMobileSafari() {
   let allowTouchMove = false;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
-    let target = e.target as Element;
+    let target = getEventTarget(e) as Element;
     scrollable = isScrollable(target) ? target : getScrollParent(target, true);
     allowTouchMove = false;
     
@@ -154,7 +154,7 @@ function preventScrollMobileSafari() {
   };
 
   let onBlur = (e: FocusEvent) => {
-    let target = e.target as HTMLElement;
+    let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Focus without scrolling the whole page, and then scroll into view manually.

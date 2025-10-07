@@ -326,8 +326,9 @@ export function usePress(props: PressHookProps): PressResult {
     let state = ref.current;
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && nodeContains(e.currentTarget, getEventTarget(e.nativeEvent))) {
-          if (shouldPreventDefaultKeyboard(getEventTarget(e.nativeEvent), e.key)) {
+        let eventTarget = getEventTarget(e.nativeEvent);
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && nodeContains(e.currentTarget, eventTarget) && eventTarget instanceof Element) {
+          if (shouldPreventDefaultKeyboard(eventTarget, e.key)) {
             e.preventDefault();
           }
 
@@ -345,7 +346,7 @@ export function usePress(props: PressHookProps): PressResult {
             // instead of the same element where the key down event occurred. Make it capturing so that it will trigger
             // before stopPropagation from useKeyboard on a child element may happen and thus we can still call triggerPress for the parent element.
             let originalTarget = e.currentTarget;
-            let pressUp = (e) => {
+            let pressUp = (e: KeyboardEvent) => {
               if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && nodeContains(originalTarget, getEventTarget(e)) && state.target) {
                 triggerPressUp(createEvent(state.target, e), 'keyboard');
               }
@@ -411,30 +412,32 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(getEventTarget(e), e.key)) {
-          e.preventDefault();
-        }
-
         let target = getEventTarget(e);
-        let wasPressed = nodeContains(state.target, getEventTarget(e));
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', wasPressed);
-        if (wasPressed) {
-          triggerSyntheticClick(e, state.target);
-        }
-        removeAllGlobalListeners();
+        if(target instanceof Element) {
+          if (shouldPreventDefaultKeyboard(target, e.key)) {
+            e.preventDefault();
+          }
 
-        // If a link was triggered with a key other than Enter, open the URL ourselves.
-        // This means the link has a role override, and the default browser behavior
-        // only applies when using the Enter key.
-        if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && nodeContains(state.target, target) && !e[LINK_CLICKED]) {
-          // Store a hidden property on the event so we only trigger link click once,
-          // even if there are multiple usePress instances attached to the element.
-          e[LINK_CLICKED] = true;
-          openLink(state.target, e, false);
-        }
+          let wasPressed = nodeContains(state.target, target);
+          triggerPressEnd(createEvent(state.target, e), 'keyboard', wasPressed);
+          if (wasPressed) {
+            triggerSyntheticClick(e, state.target);
+          }
+          removeAllGlobalListeners();
 
-        state.isPressed = false;
-        state.metaKeyEvents?.delete(e.key);
+          // If a link was triggered with a key other than Enter, open the URL ourselves.
+          // This means the link has a role override, and the default browser behavior
+          // only applies when using the Enter key.
+          if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && nodeContains(state.target, target) && !e[LINK_CLICKED]) {
+            // Store a hidden property on the event so we only trigger link click once,
+            // even if there are multiple usePress instances attached to the element.
+            e[LINK_CLICKED] = true;
+            openLink(state.target, e, false);
+          }
+
+          state.isPressed = false;
+          state.metaKeyEvents?.delete(e.key);
+        }
       } else if (e.key === 'Meta' && state.metaKeyEvents?.size) {
         // If we recorded keydown events that occurred while the Meta key was pressed,
         // and those haven't received keyup events already, fire keyup events ourselves.
@@ -481,7 +484,7 @@ export function usePress(props: PressHookProps): PressResult {
           // Release pointer capture so that touch interactions can leave the original target.
           // This enables onPointerLeave and onPointerEnter to fire.
           let target = getEventTarget(e.nativeEvent);
-          if ('releasePointerCapture' in target) {
+          if (target instanceof Element && 'releasePointerCapture' in target) {
             target.releasePointerCapture(e.pointerId);
           }
 
@@ -501,7 +504,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         if (e.button === 0) {
           if (preventFocusOnPress) {
-            let dispose = preventFocus(e.target as FocusableElement);
+            let dispose = preventFocus(getEventTarget(e) as FocusableElement);
             if (dispose) {
               state.disposables.push(dispose);
             }
@@ -614,7 +617,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         if (preventFocusOnPress) {
-          let dispose = preventFocus(e.target as FocusableElement);
+          let dispose = preventFocus(getEventTarget(e) as FocusableElement);
           if (dispose) {
             state.disposables.push(dispose);
           }
@@ -677,7 +680,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && nodeContains(state.target, e.target as Element) && state.pointerType != null) {
+        if (state.target && nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
@@ -872,7 +875,7 @@ export function usePress(props: PressHookProps): PressResult {
 }
 
 function isHTMLAnchorLink(target: Element): target is HTMLAnchorElement {
-  return target.tagName === 'A' && target.hasAttribute('href');
+  return !!target && target.tagName === 'A' && target.hasAttribute('href');
 }
 
 function isValidKeyboardEvent(event: KeyboardEvent, currentTarget: Element): boolean {

@@ -15,9 +15,9 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {DOMAttributes, HoverEvents} from '@react-types/shared';
-import {getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {DOMAttributes, FocusableElement, HoverEvent, HoverEvents} from '@react-types/shared';
+import {getEventTarget, getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
+import {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
@@ -99,16 +99,17 @@ export function useHover(props: HoverProps): HoverResult {
     isHovered: false,
     ignoreEmulatedMouseEvents: false,
     pointerType: '',
-    target: null
+    target: null as (EventTarget & FocusableElement) | null
   }).current;
 
   useEffect(setupGlobalTouchEvents, []);
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
-    let triggerHoverStart = (event, pointerType) => {
+    let triggerHoverStart = (event: SyntheticEvent<FocusableElement>, pointerType: string) => {
       state.pointerType = pointerType;
-      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, event.target)) {
+      let eventTarget = getEventTarget(event);
+      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, eventTarget)) {
         return;
       }
 
@@ -120,8 +121,8 @@ export function useHover(props: HoverProps): HoverResult {
       // even though the originally hovered target may have shrunk in size so it is no longer hovered.
       // However, a pointerover event will be fired on the new target the mouse is over.
       // In Chrome this happens immediately. In Safari and Firefox, it happens upon moving the mouse one pixel.
-      addGlobalListener(getOwnerDocument(event.target), 'pointerover', e => {
-        if (state.isHovered && state.target && !nodeContains(state.target, e.target as Element)) {
+      addGlobalListener(getOwnerDocument(eventTarget instanceof Element ? eventTarget : null), 'pointerover', e => {
+        if (state.isHovered && state.target && !nodeContains(state.target, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
       }, {capture: true});
@@ -129,8 +130,8 @@ export function useHover(props: HoverProps): HoverResult {
       if (onHoverStart) {
         onHoverStart({
           type: 'hoverstart',
-          target,
-          pointerType
+          target: target as HTMLElement,
+          pointerType: pointerType as HoverEvent['pointerType']
         });
       }
 
@@ -141,7 +142,7 @@ export function useHover(props: HoverProps): HoverResult {
       setHovered(true);
     };
 
-    let triggerHoverEnd = (event, pointerType) => {
+    let triggerHoverEnd = (_event, pointerType: string) => {
       let target = state.target;
       state.pointerType = '';
       state.target = null;
@@ -156,8 +157,8 @@ export function useHover(props: HoverProps): HoverResult {
       if (onHoverEnd) {
         onHoverEnd({
           type: 'hoverend',
-          target,
-          pointerType
+          target: target as HTMLElement,
+          pointerType: pointerType as HoverEvent['pointerType']
         });
       }
 
@@ -180,7 +181,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onPointerLeave = (e) => {
-        if (!isDisabled && nodeContains(e.currentTarget, e.target as Element)) {
+        if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
       };
@@ -198,7 +199,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onMouseLeave = (e) => {
-        if (!isDisabled && nodeContains(e.currentTarget, e.target as Element)) {
+        if (!isDisabled && nodeContains(e.currentTarget, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, 'mouse');
         }
       };

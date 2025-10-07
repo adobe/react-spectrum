@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getEventTarget, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -131,7 +131,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
@@ -216,7 +216,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && nodeContains(ref.current, e.target as Element)) {
+        if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement?.dispatchEvent(
@@ -229,7 +229,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let onFocus = (e) => {
     keyWhenFocused.current = node.key;
-    if (e.target !== ref.current) {
+    if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the row itself. We also want to
       // set the focused key when a child element receives focus.
@@ -244,7 +244,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onKeyDown = (e) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
