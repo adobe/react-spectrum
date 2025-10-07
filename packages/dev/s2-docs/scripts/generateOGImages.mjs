@@ -91,9 +91,15 @@ const [adobeCleanRegular, adobeCleanBold] = await Promise.all([
 
 // Mappings for components that don't match their SVG file names
 const componentSvgExceptions = {
+  'Accordion': 'DisclosureGroup.svg',
+  'ActionButtonGroup': 'ButtonGroup.svg', // TODO: get better illustration
+  'ActionMenu': 'Menu.svg',
+  'Drag and Drop': 'DragAndDrop.svg',
   'GridList': 'ListView.svg',
+  'LinkButton': 'Button.svg', // TODO: get better illustration
   'Select': 'Picker.svg',
-  'Drag and Drop': 'DragAndDrop.svg'
+  'TableView': 'Table.svg',
+  'TreeView': 'Tree.svg'
 };
 
 function getLibraryLogo(subtitle) {
