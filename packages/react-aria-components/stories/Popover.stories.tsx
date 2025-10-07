@@ -483,7 +483,7 @@ function ScrollingBoundaryContainerExample(args) {
               zIndex: 5
             }}>
             <Dialog>
-              Should match the width of the trigger button
+              This is some dummy content for the popover
             </Dialog>
           </Popover>
         </DialogTrigger>
