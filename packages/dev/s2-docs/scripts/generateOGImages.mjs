@@ -291,18 +291,16 @@ for (let file of files) {
     .replace(/\\/g, '/')
     .replace(/\.mdx?$/, '');
   let subtitle = getSubtitle(slug);
-  let isIndexPage = slug.includes('/index');
+  let isIndexPage = slug === 'index' || slug.endsWith('/index');
 
   // Get component SVG if available
   const componentSvg = await getComponentSvg(title);
-  if (!componentSvg) {
-    continue;
-  }
 
-  let svg = await satori(
-    isIndexPage ? 
+  // Determine layout type
+  let layout;
+  if (isIndexPage) {
     // Index page layout: Centered logo and library name
-    {
+    layout = {
       type: 'div',
       props: {
         style: {
@@ -342,10 +340,76 @@ for (let file of files) {
           }
         }
       }
-    }
-    :
+    };
+  } else if (!componentSvg) {
+    // Page without illustration: Centered logo + page title + library name
+    layout = {
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#ffffff',
+          fontFamily: 'adobe-clean',
+          color: '#000000'
+        },
+        children: {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              gap: 40
+            },
+            children: [
+              // Library logo
+              getLibraryLogo(subtitle),
+              // Text content
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8
+                  },
+                  children: [
+                    {
+                      type: 'div',
+                      props: {
+                        style: {
+                          fontSize: 84,
+                          fontWeight: 700,
+                          lineHeight: 1.1
+                        },
+                        children: title
+                      }
+                    },
+                    {
+                      type: 'div',
+                      props: {
+                        style: {
+                          fontSize: 56,
+                          fontWeight: 400,
+                          color: '#464646'
+                        },
+                        children: subtitle
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+  } else {
     // Component page layout: Component illustration + bottom section
-    {
+    layout = {
       type: 'div',
       props: {
         style: {
@@ -372,7 +436,7 @@ for (let file of files) {
                 padding: '40px',
                 borderBottom: '1px solid #e5e5e5'
               },
-              children: componentSvg ? {
+              children: {
                 type: 'img',
                 props: {
                   src: componentSvg,
@@ -381,16 +445,6 @@ for (let file of files) {
                     height: '320px',
                     objectFit: 'contain'
                   }
-                }
-              } : {
-                type: 'div',
-                props: {
-                  style: {
-                    fontSize: 72,
-                    fontWeight: 400,
-                    color: '#464646'
-                  },
-                  children: title
                 }
               }
             }
@@ -450,7 +504,11 @@ for (let file of files) {
           }
         ]
       }
-    },
+    };
+  }
+
+  let svg = await satori(
+    layout,
     {
       width: 1200,
       height: 630,
