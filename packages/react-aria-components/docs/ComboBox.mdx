@@ -589,9 +589,40 @@ function Example() {
 }
 ```
 
+## Item actions
+
+Use the `onAction` prop on a `<ListBoxItem>` to perform a custom action when the item is pressed. This example adds a "Create" action for the current input value.
+
+```tsx example
+function Example() {
+  let [inputValue, setInputValue] = React.useState('');
+
+  return (
+    <MyComboBox
+      label="Favorite Animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {/*- begin highlight -*/}
+      {inputValue.length > 0 && (
+        <ListBoxItem onAction={() => alert('Creating ' + inputValue)}>
+          {`Create "${inputValue}"`}
+        </ListBoxItem>
+      )}
+      {/*- end highlight -*/}
+      <ListBoxItem>Aardvark</ListBoxItem>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
+      <ListBoxItem>Panda</ListBoxItem>
+      <ListBoxItem>Snake</ListBoxItem>
+    </MyComboBox>
+  );
+}
+```
+
 ## Links
 
-By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value.
+Items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value.
 
 ```tsx example
 <MyComboBox label="Tech company websites">

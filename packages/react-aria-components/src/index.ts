@@ -14,7 +14,7 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
+export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext, SelectableCollectionContext, FieldInputContext} from './RSPContexts';
 
 export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
@@ -39,13 +39,13 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListSection} from './GridList';
+export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListHeaderContext, GridListSection} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
 export {Input, InputContext} from './Input';
 export {Section, CollectionRendererContext, DefaultCollectionRenderer} from './Collection';
-export {Collection, createLeafComponent as UNSTABLE_createLeafComponent, createBranchComponent as UNSTABLE_createBranchComponent, CollectionBuilder as UNSTABLE_CollectionBuilder} from '@react-aria/collections';
+export {Collection, createLeafComponent, createBranchComponent, CollectionBuilder} from '@react-aria/collections';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
@@ -60,7 +60,9 @@ export {ProgressBar, ProgressBarContext} from './ProgressBar';
 export {RadioGroup, Radio, RadioGroupContext, RadioContext, RadioGroupStateContext} from './RadioGroup';
 export {SearchField, SearchFieldContext} from './SearchField';
 export {Select, SelectValue, SelectContext, SelectValueContext, SelectStateContext} from './Select';
+export {SelectionIndicator, SelectionIndicatorContext} from './SelectionIndicator';
 export {Separator, SeparatorContext} from './Separator';
+export {SharedElementTransition, SharedElement} from './SharedElementTransition';
 export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOutputContext, SliderTrackContext, SliderStateContext} from './Slider';
 export {Switch, SwitchContext} from './Switch';
 export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
@@ -125,6 +127,8 @@ export type {ProgressBarProps, ProgressBarRenderProps} from './ProgressBar';
 export type {RadioGroupProps, RadioGroupRenderProps, RadioProps, RadioRenderProps} from './RadioGroup';
 export type {SearchFieldProps, SearchFieldRenderProps} from './SearchField';
 export type {SelectProps, SelectValueProps, SelectValueRenderProps, SelectRenderProps} from './Select';
+export type {SelectionIndicatorProps} from './SelectionIndicator';
+export type {SharedElementTransitionProps, SharedElementProps, SharedElementRenderProps} from './SharedElementTransition';
 export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
@@ -152,3 +156,4 @@ export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFiel
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {SelectableCollectionContextValue} from './RSPContexts';

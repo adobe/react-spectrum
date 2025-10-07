@@ -1,0 +1,115 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Autocomplete';
+import '../../tailwind/tailwind.css';
+
+export const tags = ['combobox', 'typeahead', 'input'];
+
+# Autocomplete
+
+<PageDescription>{docs.exports.Autocomplete.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Autocomplete} links={vanillaDocs.links} props={['label', 'disableAutoFocusFirst']} initialProps={{label: 'Commands'}} type="vanilla" files={["starters/docs/src/Autocomplete.tsx", "starters/docs/src/Autocomplete.css"]}
+  "use client";
+  import {Autocomplete} from 'vanilla-starter/Autocomplete';
+  import {MenuItem} from 'vanilla-starter/Menu';
+
+  <Autocomplete/* PROPS */>
+    <MenuItem>Create new file...</MenuItem>
+    <MenuItem>Create new folder...</MenuItem>
+    <MenuItem>Assign to...</MenuItem>
+    <MenuItem>Assign to me</MenuItem>
+    <MenuItem>Change status...</MenuItem>
+    <MenuItem>Change priority...</MenuItem>
+    <MenuItem>Add label...</MenuItem>
+    <MenuItem>Remove label...</MenuItem>
+  </Autocomplete>
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Autocomplete} links={vanillaDocs.links} props={['label', 'disableAutoFocusFirst']} initialProps={{label: 'Commands'}} type="tailwind" files={["starters/tailwind/src/Autocomplete.tsx"]}
+  "use client";
+  import {Autocomplete, AutocompleteItem} from 'tailwind-starter/Autocomplete';
+
+  <Autocomplete/* PROPS */>
+    <AutocompleteItem>Create new file...</AutocompleteItem>
+    <AutocompleteItem>Create new folder...</AutocompleteItem>
+    <AutocompleteItem>Assign to...</AutocompleteItem>
+    <AutocompleteItem>Assign to me</AutocompleteItem>
+    <AutocompleteItem>Change status...</AutocompleteItem>
+    <AutocompleteItem>Change priority...</AutocompleteItem>
+    <AutocompleteItem>Add label...</AutocompleteItem>
+    <AutocompleteItem>Remove label...</AutocompleteItem>
+  </Autocomplete>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+Autocomplete filters a [Menu](Menu.html) or [ListBox](ListBox.html) using a [TextField](TextField.html) or [SearchField](SearchField.html). It can be used to build UI patterns such as command palettes, searchable menus, and filterable selects, and supports features such as static and dynamic collections, sections, disabled items, links, etc.
+
+### Asynchronous loading
+
+When the `filter` prop is not set, the items are controlled. This example uses a backend API to perform searching instead of filtering a static list on the client.
+
+```tsx render
+"use client";
+import {Autocomplete} from 'vanilla-starter/Autocomplete';
+import {MenuItem} from 'vanilla-starter/Menu';
+import {useAsyncList} from 'react-stately';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<{name: string}>({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        {signal}
+      );
+
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <Autocomplete
+      label="Star Wars Character Search"
+      /*- begin highlight -*/
+      filter={null}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      items={list.items}
+      /*- end highlight -*/
+      renderEmptyState={() => 'No results found.'}>
+      {(item) => (
+        <MenuItem
+          id={item.name}
+          href={`https://www.starwars.com/databank/${
+            item.name.toLowerCase().replace(/\s/g, '-')
+          }`}
+          target="_blank">
+          {item.name}
+        </MenuItem>
+      )}
+    </Autocomplete>
+  );
+}
+```
+
+## API
+
+```tsx links={{Autocomplete: '#autocomplete', SearchField: 'SearchField.html', TextField: 'TextField.html', Menu: 'Menu.html', ListBox: 'ListBox.html'}}
+<Autocomplete>
+  <SearchField /> or <TextField />
+  <Menu /> or <ListBox />
+</Autocomplete>
+```
+
+### Autocomplete
+
+<PropTable component={docs.exports.Autocomplete} links={docs.links} />

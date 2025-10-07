@@ -1,0 +1,41 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ProgressBar} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['loading', 'progress'];
+
+# ProgressBar
+
+<PageDescription>{docs.exports.ProgressBar.description}</PageDescription>
+
+<VisualExample
+  component={ProgressBar}
+  docs={docs.exports.ProgressBar}
+  links={docs.links}
+  props={['label', 'value', 'isIndeterminate', 'size', 'staticColor', 'labelPosition', 'formatOptions', 'valueLabel']}
+  initialProps={{label: "Loading…", value: 50}}
+  controlOptions={{value: {control: 'slider'}}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
+
+<VisualExample
+  component={ProgressBar}
+  docs={docs.exports.ProgressBar}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
+
+## API
+
+<PropTable component={docs.exports.ProgressBar} links={docs.links} />

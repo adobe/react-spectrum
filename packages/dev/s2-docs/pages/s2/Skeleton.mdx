@@ -1,0 +1,56 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['loading', 'placeholder', 'shimmer', 'ghost'];
+
+# Skeleton
+
+<PageDescription>{docs.exports.Skeleton.description}</PageDescription>
+
+```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}}
+"use client";
+import {Skeleton, Image, Heading, Text} from '@react-spectrum/s2'
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import preview from 'url:./assets/preview.png';
+import Select from '@react-spectrum/s2/icons/Select';
+
+<Skeleton/* PROPS */>
+  <div className={style({display: 'flex', gap: 16})}>
+    <Image
+      src={preview}
+      width={1600}
+      height={1200}
+      styles={style({height: 160, borderRadius: 'default', flexShrink: 0})} />
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+      <Text styles={style({font: 'heading-lg'})}>Placeholder title</Text>
+      <Text styles={style({font: 'body'})}>This is placeholder content approximating the length of the real content to avoid layout shifting when the real content appears.</Text>
+      <div className={style({display: 'flex', gap: 4, alignItems: 'center'})}>
+        <Select />
+        <Text styles={style({font: 'ui'})}>Here is an icon.</Text>
+      </div>
+    </div>
+  </div>
+</Skeleton>
+```
+
+## Content
+
+Skeleton replaces text, images, and icons inside it with a placeholder shimmer effect. Use mock data within your real component to create a loading screen that accurately simulates the final layout.
+
+The following components are currently affected by Skeleton:
+
+* [Image](Image.html)
+* `Text`
+* [Link](Link.html)
+* `Icon`
+* [StatusLight](StatusLight.html)
+* [Badge](Badge.html)
+* [Meter](Meter.html)
+
+Form components within a skeleton are also disabled.
+
+## API
+
+<PropTable component={docs.exports.Skeleton} links={docs.links} />

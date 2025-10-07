@@ -782,10 +782,7 @@ describe('GridList', () => {
     expect(document.activeElement).toBe(items[1]);
 
     await user.tab();
-    expect(document.activeElement).toBe(buttonRef.current);
-
-    await user.tab();
-    expect(document.activeElement).toBe(document.body);
+    expect(document.body).toHaveFocus();
   });
 
   it('should support rendering a TagGroup with tabbing navigation inside a GridListItem', async () => {

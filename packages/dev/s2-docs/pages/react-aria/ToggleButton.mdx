@@ -1,0 +1,67 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {ToggleButton as VanillaToggleButton} from 'vanilla-starter/ToggleButton';
+import {ToggleButton as TailwindToggleButton} from 'tailwind-starter/ToggleButton';
+import tailwindDocs from 'docs:tailwind-starter/ToggleButton';
+import '../../tailwind/tailwind.css';
+
+export const tags = ['button', 'btn'];
+
+# ToggleButton
+
+<PageDescription>{docs.exports.ToggleButton.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaToggleButton}
+    docs={docs.exports.ToggleButton}
+    links={docs.links}
+    props={['isDisabled']}
+    initialProps={{children: 'Pin'}}
+    type="vanilla"
+    files={["starters/docs/src/ToggleButton.tsx", "starters/docs/src/ToggleButton.css"]} />
+  <VisualExample
+    component={TailwindToggleButton}
+    docs={tailwindDocs.exports.ToggleButton}
+    links={tailwindDocs.links}
+    props={['isDisabled']}
+    initialProps={{children: 'Pin'}}
+    type="tailwind"
+    files={["starters/tailwind/src/ToggleButton.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Selection
+
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
+
+```tsx render
+"use client";
+import {useState} from 'react';
+import {ToggleButton} from 'vanilla-starter/ToggleButton';
+import {Star} from 'lucide-react';
+
+function Example(props) {
+  let [selected, setSelection] = useState(false);
+
+  return (
+    <>
+      <ToggleButton
+        {...props}
+        aria-label="Star"
+        /*- begin highlight -*/
+        isSelected={selected}
+        onChange={setSelection}>
+        {/*- end highlight -*/}
+        <Star size={18} />
+      </ToggleButton>
+      <p>{selected ? 'Starred' : 'Not starred'}</p>
+    </>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.ToggleButton} links={docs.links} />

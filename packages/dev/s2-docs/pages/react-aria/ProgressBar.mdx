@@ -1,0 +1,82 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/ProgressBar';
+import progressCircleDocs from 'docs:vanilla-starter/ProgressCircle';
+import {ProgressBar as VanillaProgressBar} from 'vanilla-starter/ProgressBar';
+import {ProgressCircle as VanillaProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {ProgressBar as TailwindProgressBar} from 'tailwind-starter/ProgressBar';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/progress/docs/anatomy.svg';
+
+export const tags = ['loading', 'progress'];
+
+# ProgressBar
+
+<PageDescription>{docs.exports.ProgressBar.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaProgressBar}
+    docs={vanillaDocs.exports.ProgressBar}
+    links={vanillaDocs.links}
+    props={['label', 'value', 'isIndeterminate', 'formatOptions', 'valueLabel']}
+    initialProps={{label: 'Loading…', value: 80}}
+    controlOptions={{value: {control: 'slider'}}}
+    type="vanilla"
+    files={["starters/docs/src/ProgressBar.tsx", "starters/docs/src/ProgressBar.css"]} />
+  <VisualExample
+    component={TailwindProgressBar}
+    docs={vanillaDocs.exports.ProgressBar}
+    links={vanillaDocs.links}
+    props={['label', 'value', 'isIndeterminate', 'formatOptions', 'valueLabel']}
+    initialProps={{label: 'Loading…', value: 80}}
+    controlOptions={{value: {control: 'slider'}}}
+    type="tailwind"
+    files={["starters/tailwind/src/ProgressBar.tsx"]} />
+</ExampleSwitcher>
+
+## Value
+
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
+
+<VisualExample
+  component={VanillaProgressBar}
+  docs={docs.exports.ProgressBar}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
+
+## ProgressCircle
+
+Use SVG within a `<ProgressBar>` to build a circular progress indicator or spinner.
+
+<VisualExample
+  component={VanillaProgressCircle}
+  docs={progressCircleDocs.exports.ProgressCircle}
+  links={progressCircleDocs.links}
+  props={['value', 'isIndeterminate']}
+  initialProps={{'aria-label': 'Loading…', value: 60, size: 64}}
+  controlOptions={{value: {control: 'slider'}}}
+  type="vanilla"
+  files={["starters/docs/src/ProgressCircle.tsx"]} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{ProgressBar: '#progressbar'}}
+<ProgressBar>
+  <Label />
+</ProgressBar>
+```
+
+### ProgressBar
+
+<PropTable component={docs.exports.ProgressBar} links={docs.links} showDescription />

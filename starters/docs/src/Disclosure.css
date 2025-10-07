@@ -1,6 +1,13 @@
 @import "./theme.css";
 
 .react-aria-Disclosure {
+  width: 100%;
+
+  .react-aria-Heading {
+    margin: 0;
+    padding: 0.5em 0;
+  }
+
   .react-aria-Button[slot=trigger] {
     background: none;
     border: none;
@@ -26,6 +33,13 @@
 }
 
 .react-aria-DisclosurePanel {
-  margin-left: 32px;
+  margin-left: 26px;
   color: var(--text-color);
+  height: var(--disclosure-panel-height);
+  transition: height 250ms;
+  overflow: clip;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }

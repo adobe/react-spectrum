@@ -1,9 +1,8 @@
 import React from 'react';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
-export const ReactAriaLogo = () => {
+export const ReactAriaLogo = ({size = 32}) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" className={style({margin: 0, height: 40, width: 40})}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="15.79 17.64 131.21 126.14" style={{width: size, height: size}}>
       <defs>
         <clipPath id="a">
           <path

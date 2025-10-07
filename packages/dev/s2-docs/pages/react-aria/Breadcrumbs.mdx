@@ -1,0 +1,95 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/breadcrumbs/docs/anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+export const tags = ['navigation'];
+
+# Breadcrumbs
+
+<PageDescription>{docs.exports.Breadcrumbs.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['isDisabled']} type="vanilla" files={["starters/docs/src/Breadcrumbs.tsx", "starters/docs/src/Breadcrumbs.css"]}
+  "use client";
+  import {Breadcrumbs, Breadcrumb} from 'vanilla-starter/Breadcrumbs';
+
+  <Breadcrumbs/* PROPS */>
+    <Breadcrumb href="/">Home</Breadcrumb>
+    <Breadcrumb href="/react-aria/">React Aria</Breadcrumb>
+    <Breadcrumb>Breadcrumbs</Breadcrumb>
+  </Breadcrumbs>
+  ```
+
+  ```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['isDisabled']} type="tailwind" files={["starters/tailwind/src/Breadcrumbs.tsx"]}
+  "use client";
+  import {Breadcrumbs, Breadcrumb} from 'tailwind-starter/Breadcrumbs';
+
+  <Breadcrumbs/* PROPS */>
+    <Breadcrumb href="/">Home</Breadcrumb>
+    <Breadcrumb href="/react-aria/">React Aria</Breadcrumb>
+    <Breadcrumb>Breadcrumbs</Breadcrumb>
+  </Breadcrumbs>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`Breadcrumbs` follows the [Collection Components API](collections.html?component=Breadcrumbs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. The `onAction` event is called when a user presses a breadcrumb.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {Breadcrumbs, Breadcrumb} from 'vanilla-starter/Breadcrumbs';
+import {useState} from 'react';
+
+function Example() {
+  let [breadcrumbs, setBreadcrumbs] = useState([
+    {id: 1, label: 'Home'},
+    {id: 2, label: 'Trendy'},
+    {id: 3, label: 'March 2022 Assets'}
+  ]);
+
+  let navigate = (id: Key) => {
+    let i = breadcrumbs.findIndex(item => item.id === id);
+    setBreadcrumbs(breadcrumbs.slice(0, i + 1));
+  };
+
+  return (
+    /*- begin highlight -*/
+    <Breadcrumbs items={breadcrumbs} onAction={navigate}>
+      {item => <Breadcrumb>{item.label}</Breadcrumb>}
+    </Breadcrumbs>
+    /*- end highlight -*/
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>When breadcrumbs are used as a main navigation element for a page, they can be placed in a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html). Landmarks help assistive technology users quickly find major sections of a page. Place breadcrumbs inside a `<nav>` element with an `aria-label` to create a navigation landmark.</Content>
+</InlineAlert>
+
+## API
+
+<Anatomy />
+
+```tsx links={{Breadcrumbs: '#breadcrumbs', Breadcrumb: '#breadcrumb', Link: 'Link.html'}}
+<Breadcrumbs>
+  <Breadcrumb>
+    <Link />
+  </Breadcrumb>
+</Breadcrumbs>
+```
+
+### Breadcrumbs
+
+<PropTable component={docs.exports.Breadcrumbs} links={docs.links} />
+
+### Breadcrumb
+
+<PropTable component={docs.exports.Breadcrumb} links={docs.links} />

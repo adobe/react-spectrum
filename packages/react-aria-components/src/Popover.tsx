@@ -12,7 +12,14 @@
 
 import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {filterDOMProps, mergeProps, nodeContains, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {OverlayArrowContext} from './OverlayArrow';
@@ -22,6 +29,11 @@ import React, {Context, createContext, ForwardedRef, forwardRef, useContext, use
 import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Popover'
+   */
+  className?: ClassNameOrFunction<PopoverRenderProps>,
   /**
    * The name of the component that triggered the popover. This is reflected on the element
    * as the `data-trigger` attribute, and can be used to provide specific

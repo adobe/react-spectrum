@@ -19,3 +19,5 @@ packages/dev/storybook-builder-parcel/iframe.html
 packages/dev/storybook-builder-parcel/preview.js
 starters/docs/registry
 starters/tailwind/registry
+starters/docs/yarn.lock
+starters/tailwind/yarn.lock

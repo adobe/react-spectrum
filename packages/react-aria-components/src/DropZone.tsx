@@ -11,7 +11,15 @@
  */
 
 import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  Provider,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
 import {filterDOMProps, isFocusable, nodeContains, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
@@ -47,7 +55,13 @@ export interface DropZoneRenderProps {
   isDisabled: boolean
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DropZone'
+   */
+  className?: ClassNameOrFunction<DropZoneRenderProps>
+}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
