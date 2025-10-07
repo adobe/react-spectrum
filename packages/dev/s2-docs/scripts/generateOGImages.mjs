@@ -291,6 +291,7 @@ for (let file of files) {
     .replace(/\\/g, '/')
     .replace(/\.mdx?$/, '');
   let subtitle = getSubtitle(slug);
+  let isIndexPage = slug.includes('/index');
 
   // Get component SVG if available
   const componentSvg = await getComponentSvg(title);
@@ -299,6 +300,51 @@ for (let file of files) {
   }
 
   let svg = await satori(
+    isIndexPage ? 
+    // Index page layout: Centered logo and library name
+    {
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#ffffff',
+          fontFamily: 'adobe-clean',
+          color: '#000000'
+        },
+        children: {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              alignItems: 'center',
+              gap: 40
+            },
+            children: [
+              // Library logo
+              getLibraryLogo(subtitle),
+              // Library name
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    fontSize: 84,
+                    fontWeight: 700,
+                    lineHeight: 1.1
+                  },
+                  children: subtitle
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+    :
+    // Component page layout: Component illustration + bottom section
     {
       type: 'div',
       props: {
