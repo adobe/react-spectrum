@@ -455,15 +455,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Install fonts
-          command: |
-            mkdir -p ~/.fonts
-            # Adobe Clean Regular (400)
-            wget -O ~/.fonts/adobe-clean-regular.woff "https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
-            # Adobe Clean Bold (700)
-            wget -O ~/.fonts/adobe-clean-bold.woff "https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3"
-
-      - run:
           name: build docs
           command: make website
 
@@ -479,15 +470,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: Install fonts
-          command: |
-            mkdir -p ~/.fonts
-            # Adobe Clean Regular (400)
-            wget -O ~/.fonts/adobe-clean-regular.woff "https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
-            # Adobe Clean Bold (700)
-            wget -O ~/.fonts/adobe-clean-bold.woff "https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3"
-
-      - run:
           name: build docs
           command: make website-production
 
@@ -501,15 +483,6 @@ jobs:
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: Install fonts
-          command: |
-            mkdir -p ~/.fonts
-            # Adobe Clean Regular (400)
-            wget -O ~/.fonts/adobe-clean-regular.woff "https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
-            # Adobe Clean Bold (700)
-            wget -O ~/.fonts/adobe-clean-bold.woff "https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3"
 
       - run:
           name: build s2 docs
