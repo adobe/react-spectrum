@@ -258,7 +258,7 @@ describe('TableView', () => {
       let input = within(dialog).getByRole('textbox');
       expect(input).toHaveFocus();
 
-      await user.keyboard(' Crisp');
+      await user.keyboard('Apples Crisp');
       await user.keyboard('{Enter}'); // implicitly submit through form
 
       act(() => {jest.runAllTimers();});
@@ -429,7 +429,7 @@ describe('TableView', () => {
       let input = within(dialog).getByRole('textbox');
       expect(input).toHaveFocus();
 
-      await user.keyboard(' Crisp');
+      await user.keyboard('Apples Crisp');
       await user.keyboard('{Enter}'); // implicitly submit through form
 
       act(() => {jest.advanceTimersByTime(5000);});
@@ -444,6 +444,41 @@ describe('TableView', () => {
 
       expect(button).not.toHaveAttribute('aria-disabled');
       expect(button).toHaveFocus();
+    });
+
+    it('should allow tabbing off a pending button', async () => {
+      let {getByRole} = render(
+        <EditableTable delay={10000} />
+      );
+
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+
+      let dialog = getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let input = within(dialog).getByRole('textbox');
+      expect(input).toHaveFocus();
+
+      await user.keyboard('Apples Crisp');
+      await user.keyboard('{Enter}'); // implicitly submit through form
+
+      act(() => {jest.advanceTimersByTime(5000);});
+
+      expect(dialog).not.toBeInTheDocument();
+      expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+      let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
+      expect(button).toHaveAttribute('aria-disabled', 'true');
+      expect(button).toHaveFocus();
+
+      await user.tab();
+      expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+      act(() => {jest.runAllTimers();});
+
+      expect(button).not.toHaveAttribute('aria-disabled');
     });
   });
 });
