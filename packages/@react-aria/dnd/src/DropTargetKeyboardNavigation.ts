@@ -58,14 +58,12 @@ function nextDropTarget(
       nextKey = horizontal === 'right' ? keyboardDelegate.getKeyRightOf?.(target.key) : keyboardDelegate.getKeyLeftOf?.(target.key);
     } else {
       nextKey = keyboardDelegate.getKeyBelow?.(target.key);
-      // console.log('nextKey', nextKey)
     }
     let nextCollectionKey = collection.getKeyAfter(target.key);
-    if (collection.getItem(nextCollectionKey).type === 'content') {
-      nextCollectionKey = collection.getKeyAfter(nextCollectionKey);
+    let nextCollectionNode = nextCollectionKey && collection.getItem(nextCollectionKey);
+    if (nextCollectionNode && nextCollectionNode.type === 'content') {
+      nextCollectionKey = nextCollectionKey ? collection.getKeyAfter(nextCollectionKey) : null;
     }
-    console.log('next keys', nextKey, nextCollectionKey);
-    debugger;
 
     // If the keyboard delegate did not move to the next key in the collection,
     // jump to that key with the same drop position. Otherwise, try the other
