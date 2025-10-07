@@ -89,22 +89,6 @@ const [adobeCleanRegular, adobeCleanBold] = await Promise.all([
   loadFont('https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3')
 ]);
 
-// Detect font MIME type and CSS format for inlining
-function detectFontFormatAndMime(bytes) {
-  const buf = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
-  const header = buf.subarray(0, 4).toString('ascii');
-  if (header === 'wOF2') {
-    return {mime: 'font/woff2', format: 'woff2'};
-  }
-  if (header === 'wOFF') {
-    return {mime: 'font/woff', format: 'woff'};
-  }
-  if (header === 'OTTO') {
-    return {mime: 'font/otf', format: 'opentype'};
-  }
-  return {mime: 'font/woff2', format: 'woff2'};
-}
-
 // Mappings for components that don't match their SVG file names
 const componentSvgExceptions = {
   'Accordion': 'DisclosureGroup.svg',
@@ -286,14 +270,6 @@ async function getComponentSvg(title) {
     svgContent = svgContent.replace(/background:\s*var\(--anatomy-gray-100\)/g, 'background: #f8f8f8');
     svgContent = svgContent.replace(/background:\s*#f4f6fc/g, 'background: #f8f8f8');
     svgContent = svgContent.replace(/var\(--anatomy-font\)/g, 'adobe-clean');
-
-    // Inline fonts so text within illustration renders in CI
-    const regMeta = detectFontFormatAndMime(adobeCleanRegular);
-    const boldMeta = detectFontFormatAndMime(adobeCleanBold);
-    const regB64 = Buffer.from(adobeCleanRegular).toString('base64');
-    const boldB64 = Buffer.from(adobeCleanBold).toString('base64');
-    const fontCss = `<style>@font-face{font-family:'adobe-clean';src:url(data:${regMeta.mime};base64,${regB64}) format('${regMeta.format}');font-weight:400;font-style:normal;font-display:block}@font-face{font-family:'adobe-clean';src:url(data:${boldMeta.mime};base64,${boldB64}) format('${boldMeta.format}');font-weight:700;font-style:normal;font-display:block}</style>`;
-    svgContent = svgContent.replace(/<svg\b[^>]*>/i, (m) => m + fontCss);
 
     // Convert SVG to data URI for use as image source
     const svgBase64 = Buffer.from(svgContent).toString('base64');
