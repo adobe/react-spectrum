@@ -271,15 +271,9 @@ async function getComponentSvg(title) {
     svgContent = svgContent.replace(/background:\s*#f4f6fc/g, 'background: #f8f8f8');
     svgContent = svgContent.replace(/var\(--anatomy-font\)/g, 'adobe-clean');
 
-    // Pre-render SVG to PNG to avoid issues with fonts not being available when SVG is used as img src
-    const pngBuffer = await sharp(Buffer.from(svgContent))
-      .resize(340, 320, {fit: 'contain', background: {r: 248, g: 248, b: 248, alpha: 1}})
-      .png()
-      .toBuffer();
-    
-    // Convert PNG to data URI
-    const pngBase64 = pngBuffer.toString('base64');
-    return `data:image/png;base64,${pngBase64}`;
+    // Convert SVG to data URI for use as image source
+    const svgBase64 = Buffer.from(svgContent).toString('base64');
+    return `data:image/svg+xml;base64,${svgBase64}`;
   } catch (error) {
     console.warn(`Could not load SVG for ${title}: ${error.message}`);
     return null;
