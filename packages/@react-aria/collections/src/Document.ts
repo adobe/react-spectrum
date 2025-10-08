@@ -13,7 +13,7 @@
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
 import {CollectionNodeClass} from './CollectionBuilder';
 import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
-import {Node} from '@react-types/shared';
+import {Key, Node} from '@react-types/shared';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
 // Portal to a fake DOM implementation. This gives us efficient access to the tree of rendered objects, and
@@ -403,6 +403,42 @@ export class ElementNode<T> extends BaseNode<T> {
   removeAttribute(): void {}
 }
 
+const MAX_UPDATE_ITERATIONS = 100000;
+const UPDATE_TIMEOUT_MS = 10000; // 10 seconds
+const MAX_RECURSION_DEPTH = 1000;
+
+function checkIterationLimit(currentCount: number, max: number = MAX_UPDATE_ITERATIONS) {
+  if (currentCount > max) {
+    throw new Error(
+      'Collection update exceeded maximum iteration limit. This was likely caused by duplicate IDs in your collection, or an unsupported nesting structure. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids'
+    );
+  }
+}
+
+function checkTimeout(startTime: number, timeoutMs: number = UPDATE_TIMEOUT_MS) {
+  if (startTime !== Infinity && Date.now() - startTime > timeoutMs) {
+    throw new Error(
+      'Collection update took too long (>10s). This was likely caused by duplicate IDs in your collection, or an unsupported nesting structure. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids'
+    );
+  }
+}
+
+function checkRecursionDepth(depth: number) {
+  if (depth > MAX_RECURSION_DEPTH) {
+    throw new Error(
+      'Collection nesting exceeded maximum depth. This was likely caused by circular references or unsupported nesting structures. Please check your component structure.'
+    );
+  }
+}
+
+function checkDuplicateKey(seenKeys: Set<Key>, key: Key, existingNode: any, currentNode: any) {
+  if (seenKeys.has(key) && existingNode && existingNode !== currentNode) {
+    throw new Error(
+      `Duplicate key "${key}" detected in collection. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids`
+    );
+  }
+}
+
 /**
  * A mutable Document in the fake DOM. It owns an immutable Collection instance,
  * which is lazily copied on write during updates.
@@ -419,6 +455,8 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   private subscriptions: Set<() => void> = new Set();
   private queuedRender = false;
   private inSubscription = false;
+  private updateStartTime: number = Infinity;
+  private seenKeysInUpdate: Set<Key> = new Set();
 
   constructor(collection: C) {
     // @ts-ignore
@@ -447,15 +485,25 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.dirtyNodes.add(node);
   }
 
-  private addNode(element: ElementNode<T>): void {
+  private addNode(element: ElementNode<T>, depth: number = 0): void {
     if (element.isHidden || element.node == null) {
       return;
     }
 
+    checkRecursionDepth(depth);
+    checkTimeout(this.updateStartTime);
+
     let collection = this.getMutableCollection();
-    if (!collection.getItem(element.node.key)) {
+    let key = element.node.key;
+
+    let existingNode = collection.getItem(key);
+    checkDuplicateKey(this.seenKeysInUpdate, key, existingNode, element.node);
+
+    this.seenKeysInUpdate.add(key);
+
+    if (!existingNode) {
       for (let child of element) {
-        this.addNode(child);
+        this.addNode(child, depth + 1);
       }
     }
 
@@ -491,8 +539,16 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection(): void {
+    this.updateStartTime = Date.now();
+    this.seenKeysInUpdate.clear();
+
     // First, remove disconnected nodes and update the indices of dirty element children.
+    let iterationCount = 0;
+    
     for (let element of this.dirtyNodes) {
+      checkIterationLimit(++iterationCount);
+      checkTimeout(this.updateStartTime);
+
       if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
         this.removeNode(element);
       } else {
@@ -501,7 +557,11 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     // Next, update dirty collection nodes.
+    iterationCount = 0;
     for (let element of this.dirtyNodes) {
+      checkIterationLimit(++iterationCount);
+      checkTimeout(this.updateStartTime);
+
       if (element instanceof ElementNode) {
         if (element.isConnected && !element.isHidden) {
           element.updateNode();
@@ -526,6 +586,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         this.nextCollection = null;
       }
     }
+
+    this.updateStartTime = Infinity;
+    this.seenKeysInUpdate.clear();
   }
 
   queueUpdate(): void {

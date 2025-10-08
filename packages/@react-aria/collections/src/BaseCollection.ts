@@ -129,6 +129,20 @@ export class SectionNode<T> extends FilterableNode<T> {
   }
 }
 
+const MAX_ITERATIONS = 100000;
+
+function checkCircularReference(visitedKeys: Set<Key>, node: Node<any>) {
+  if (visitedKeys.has(node.key)) {
+    throw new Error(`Circular reference detected in collection at key "${node.key}". This was likely caused by duplicate IDs. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids`);
+  }
+}
+
+function checkIterationLimit(currentIterationCount: number) {
+  if (currentIterationCount > MAX_ITERATIONS) {
+    throw new Error('Collection iteration exceeded maximum limit. This was likely caused by duplicate IDs or circular references in your collection. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids');
+  }
+}
+
 /**
  * An immutable Collection implementation. Updates are only allowed
  * when it is not marked as frozen. This can be subclassed to implement
@@ -151,7 +165,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
 
   *[Symbol.iterator](): IterableIterator<Node<T>> {
     let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
+    let visitedKeys = new Set<Key>();
+    let iterationCount = 0;
+    
     while (node) {
+      checkCircularReference(visitedKeys, node);
+      checkIterationLimit(iterationCount);
+      iterationCount++;
+      visitedKeys.add(node.key);
       yield node;
       node = node.nextKey != null ? this.keyMap.get(node.nextKey) : undefined;
     }
@@ -163,7 +184,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       *[Symbol.iterator]() {
         let parent = keyMap.get(key);
         let node = parent?.firstChildKey != null ? keyMap.get(parent.firstChildKey) : null;
+        let visitedKeys = new Set<Key>();
+        let iterationCount = 0;
+        
         while (node) {
+          checkCircularReference(visitedKeys, node);
+          checkIterationLimit(iterationCount);
+          iterationCount++;
+          visitedKeys.add(node.key);
           yield node as Node<T>;
           node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
         }
@@ -179,8 +207,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
 
     if (node.prevKey != null) {
       node = this.keyMap.get(node.prevKey);
+      let visitedKeys = new Set<Key>();
+      let iterationCount = 0;
 
       while (node && node.type !== 'item' && node.lastChildKey != null) {
+        checkCircularReference(visitedKeys, node);
+        checkIterationLimit(iterationCount);
+        iterationCount++;
+        visitedKeys.add(node.key);
         node = this.keyMap.get(node.lastChildKey);
       }
 
@@ -200,7 +234,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
       return node.firstChildKey;
     }
 
+    let visitedKeys = new Set<Key>();
+    let iterationCount = 0;
+
     while (node) {
+      checkCircularReference(visitedKeys, node);
+      checkIterationLimit(iterationCount);
+      iterationCount++;
+      visitedKeys.add(node.key);
       if (node.nextKey != null) {
         return node.nextKey;
       }
@@ -221,7 +262,14 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
 
   getLastKey(): Key | null {
     let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
+    let visitedKeys = new Set<Key>();
+    let iterationCount = 0;
+
     while (node?.lastChildKey != null) {
+      checkCircularReference(visitedKeys, node);
+      checkIterationLimit(iterationCount);
+      iterationCount++;
+      visitedKeys.add(node.key);
       node = this.keyMap.get(node.lastChildKey);
     }
 
@@ -313,8 +361,14 @@ function filterChildren<T>(collection: BaseCollection<T>, newCollection: BaseCol
   let firstNode: Node<T> | null = null;
   let lastNode: Node<T> | null = null;
   let currentNode = collection.getItem(firstChildKey);
+  let visitedKeys = new Set<Key>();
+  let iterationCount = 0;
 
   while (currentNode != null) {
+    checkCircularReference(visitedKeys, currentNode);
+    checkIterationLimit(iterationCount);
+    iterationCount++;
+    visitedKeys.add(currentNode.key);
     let newNode: Mutable<CollectionNode<T>> | null = (currentNode as CollectionNode<T>).filter(collection, newCollection, filterFn);
     if (newNode != null) {
       newNode.nextKey = null;

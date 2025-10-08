@@ -241,13 +241,37 @@ export class CollectionBuilder<T extends object> {
   }
 }
 
+const MAX_COLLECTION_ITERATIONS = 100000;
+
+function checkCircularReference(visitedKeys: Set<Key>, key: Key) {
+  if (visitedKeys.has(key)) {
+    throw new Error(
+      `Circular reference detected in collection at key "${key}". This was likely caused by duplicate IDs. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids`
+    );
+  }
+}
+
+function checkIterationLimit(count: number) {
+  if (count > MAX_COLLECTION_ITERATIONS) {
+    throw new Error(
+      'Collection iteration exceeded maximum limit. This was likely caused by duplicate IDs or circular references. Please ensure all items have unique IDs: https://react-spectrum.adobe.com/react-aria/collections.html#unique-ids'
+    );
+  }
+}
+
 // Wraps an iterator function as an iterable object, and caches the results.
 function iterable<T>(iterator: () => IterableIterator<Node<T>>): Iterable<Node<T>> {
   let cache: Array<Node<T>> = [];
   let iterable: null | IterableIterator<Node<T>> = null;
   return {
     *[Symbol.iterator]() {
+      let visitedKeys = new Set<Key>();
+      let iterationCount = 0;
+
       for (let item of cache) {
+        checkCircularReference(visitedKeys, item.key);
+        checkIterationLimit(++iterationCount);
+        visitedKeys.add(item.key);
         yield item;
       }
 
@@ -256,6 +280,9 @@ function iterable<T>(iterator: () => IterableIterator<Node<T>>): Iterable<Node<T
       }
 
       for (let item of iterable) {
+        checkCircularReference(visitedKeys, item.key);
+        checkIterationLimit(++iterationCount);
+        visitedKeys.add(item.key);
         cache.push(item);
         yield item;
       }
