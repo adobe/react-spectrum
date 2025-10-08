@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, getActiveElement, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {
   InputHTMLAttributes,
@@ -254,7 +254,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onButtonPressStart = (e) => {
     // If focus is already on the input, keep it there so we don't hide the
     // software keyboard when tapping the increment/decrement buttons.
-    if (document.activeElement === inputRef.current) {
+    if (getActiveElement(document) === inputRef.current) {
       return;
     }
 

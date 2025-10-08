@@ -71,7 +71,7 @@ import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {getActiveElement, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -1197,7 +1197,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
           onOpenChange={setIsOpen}
           ref={popoverRef}
           shouldCloseOnInteractOutside={() => {
-            if (!nodeContains(popoverRef.current, document.activeElement)) {
+            if (!nodeContains(popoverRef.current, getActiveElement(document))) {
               return false;
             }
             formRef.current?.requestSubmit();

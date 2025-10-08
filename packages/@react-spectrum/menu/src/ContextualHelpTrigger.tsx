@@ -22,7 +22,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
 import {useSubmenuTrigger} from '@react-aria/menu';
-import {nodeContains} from '@react-aria/utils';
+import {getActiveElement, nodeContains} from '@react-aria/utils';
 import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps {
@@ -99,7 +99,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
     setTimeout(() => {
       submenuTriggerState.close();
-      if (parentMenuRef.current && !nodeContains(parentMenuRef.current, document.activeElement)) {
+      if (parentMenuRef.current && !nodeContains(parentMenuRef.current, getActiveElement(document))) {
         parentMenuRef.current.focus();
       }
     }, 220); // Matches transition duration

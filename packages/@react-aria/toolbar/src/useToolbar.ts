@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
-import {filterDOMProps, getEventTarget, nodeContains, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, getActiveElement, getEventTarget, nodeContains, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent, HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
@@ -81,7 +81,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
       // to the first or last focusable child, and let the
       // browser handle the Tab key as usual from there.
       e.stopPropagation();
-      lastFocused.current = document.activeElement as HTMLElement;
+      lastFocused.current = getActiveElement(document) as HTMLElement;
       if (e.shiftKey) {
         focusManager.focusFirst();
       } else {

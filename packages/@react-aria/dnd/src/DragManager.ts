@@ -14,7 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
-import {getEventTarget, isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {RefObject, useEffect, useState} from 'react';
 
@@ -420,7 +420,7 @@ class DragSession {
     // For now, the activate button is reachable by screen readers and ArrowLeft/ArrowRight
     // is usable specifically by Tree. Will need tabbing for other components.
     // let activateButton = this.getCurrentActivateButton();
-    // if (activateButton && document.activeElement !== activateButton) {
+    // if (activateButton && getActiveElement(document) !== activateButton) {
     //   activateButton.focus();
     //   return;
     // }
@@ -452,7 +452,7 @@ class DragSession {
 
   previous(): void {
     // let activateButton = this.getCurrentActivateButton();
-    // if (activateButton && document.activeElement === activateButton) {
+    // if (activateButton && getActiveElement(document) === activateButton) {
     //   let target = this.currentDropItem ?? this.currentDropTarget;
     //   if (target) {
     //     target.element.focus();
@@ -572,7 +572,7 @@ class DragSession {
       // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
       // This corrects state such as whether focus ring should appear.
       // useDroppableCollection handles this itself, so this is only for standalone drop zones.
-      document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
+      getActiveElement(document)?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 
     this.setCurrentDropTarget(null);

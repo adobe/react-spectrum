@@ -18,6 +18,7 @@ import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
 import {RefObject} from '@react-types/shared';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
+import {getActiveElement} from '@react-aria/utils';
 import {useDisplayNames} from './useDisplayNames';
 import {useSpinButton} from '@react-aria/spinbutton';
 
@@ -339,7 +340,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     let element = ref.current;
     return () => {
       // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
-      if (document.activeElement === element) {
+      if (getActiveElement(document) === element) {
         let prev = focusManager.focusPrevious();
         if (!prev) {
           focusManager.focusNext();

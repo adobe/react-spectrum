@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getEventTarget, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely, PressHookProps, useLongPress, usePress} from '@react-aria/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
@@ -169,7 +169,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (!shouldUseVirtualFocus) {
         if (focus) {
           focus();
-        } else if (document.activeElement !== ref.current && ref.current) {
+        } else if (getActiveElement(document) !== ref.current && ref.current) {
           focusSafely(ref.current);
         }
       } else {

@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, isFocusVisible} from '@react-aria/interactions';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {getEventTarget, getScrollParent, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, getScrollParent, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
@@ -75,7 +75,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (nodeContains(ref.current, document.activeElement) && ref.current !== document.activeElement) {
+        if (nodeContains(ref.current, getActiveElement(document)) && ref.current !== getActiveElement(document)) {
           return;
         }
 
@@ -90,7 +90,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
       if (
         (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !nodeContains(ref.current, document.activeElement)
+        !nodeContains(ref.current, getActiveElement(document))
       ) {
         focusSafely(ref.current);
       }
@@ -109,12 +109,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
+    let activeElement = getActiveElement(document);
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || state.isKeyboardNavigationDisabled || !ref.current || !activeElement) {
       return;
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = activeElement;
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -244,7 +245,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && document.activeElement === ref.current) {
+      if (focusMode === 'child' && getActiveElement(document) === ref.current) {
         focus();
       }
     });

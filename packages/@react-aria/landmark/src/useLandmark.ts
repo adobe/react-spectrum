@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {useCallback, useEffect, useState} from 'react';
-import {getEventTarget, useLayoutEffect, nodeContains} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, useLayoutEffect, nodeContains} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -55,7 +55,7 @@ interface Landmark {
 export interface LandmarkControllerOptions {
   /**
    * The element from which to start navigating.
-   * @default document.activeElement
+   * @default getActiveElement(document)
    */
   from?: FocusableElement
 }
@@ -400,15 +400,15 @@ class LandmarkManager implements LandmarkManagerApi {
     instance.setupIfNeeded();
     return {
       navigate(direction, opts) {
-        let element = opts?.from || (document!.activeElement as FocusableElement);
+        let element = opts?.from || (getActiveElement(document) as FocusableElement);
         return instance!.navigate(element, direction === 'backward');
       },
       focusNext(opts) {
-        let element = opts?.from || (document!.activeElement as FocusableElement);
+        let element = opts?.from || (getActiveElement(document) as FocusableElement);
         return instance!.navigate(element, false);
       },
       focusPrevious(opts) {
-        let element = opts?.from || (document!.activeElement as FocusableElement);
+        let element = opts?.from || (getActiveElement(document) as FocusableElement);
         return instance!.navigate(element, true);
       },
       focusMain() {

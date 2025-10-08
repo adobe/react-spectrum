@@ -20,7 +20,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, mergeProps, nodeContains, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, getActiveElement, mergeProps, nodeContains, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
@@ -198,7 +198,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   // Focus the popover itself on mount, unless a child element is already focused.
   // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
   useEffect(() => {
-    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !nodeContains(ref.current, document.activeElement)) {
+    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !nodeContains(ref.current, getActiveElement(document))) {
       focusSafely(ref.current);
     }
   }, [isDialog, ref, props.trigger]);

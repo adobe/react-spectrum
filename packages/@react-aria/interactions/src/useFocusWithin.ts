@@ -83,7 +83,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       return;
     }
 
-    // Double check that document.activeElement actually matches eventTarget in case a previously chained
+    // Double check that getActiveElement(document) actually matches eventTarget in case a previously chained
     // focus handler already moved focus somewhere else.
     const ownerDocument = getOwnerDocument(eventTarget instanceof Element ? eventTarget : null);
     const activeElement = getActiveElement(ownerDocument);

@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
 import {ignoreFocusEvent} from './utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
@@ -292,18 +292,20 @@ const nonTextInputTypes = new Set([
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  let document = getOwnerDocument(e?.target as Element);
-  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLInputElement : HTMLInputElement;
-  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLTextAreaElement : HTMLTextAreaElement;
-  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLElement : HTMLElement;
-  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).KeyboardEvent : KeyboardEvent;
+  const eventTarget = e ? getEventTarget(e) as Element: null;
+  let document = getOwnerDocument(e ? getEventTarget(e) as Element: null);
+  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).HTMLElement : HTMLElement;
+  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(eventTarget).KeyboardEvent : KeyboardEvent;
+  const activeElement = getActiveElement(document);
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
   isTextInput = isTextInput ||
-    (document.activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(document.activeElement.type)) ||
-    document.activeElement instanceof IHTMLTextAreaElement ||
-    (document.activeElement instanceof IHTMLElement && document.activeElement.isContentEditable);
+    (activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type)) ||
+    activeElement instanceof IHTMLTextAreaElement ||
+    (activeElement instanceof IHTMLElement && activeElement.isContentEditable);
   return !(isTextInput && modality === 'keyboard' && e instanceof IKeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 

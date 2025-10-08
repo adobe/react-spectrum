@@ -13,7 +13,7 @@
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
-import {getEventTarget} from './shadowdom/DOMFunctions';
+import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
 
 interface ViewportSize {
   width: number,
@@ -54,7 +54,8 @@ export function useViewportSize(): ViewportSize {
       if (willOpenKeyboard(getEventTarget(e) as Element)) {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
-          if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
+          let activeElement = getActiveElement(document);
+          if (!activeElement || !willOpenKeyboard(activeElement)) {
             setSize(size => {
               let newSize = {width: window.innerWidth, height: window.innerHeight};
               if (newSize.width === size.width && newSize.height === size.height) {

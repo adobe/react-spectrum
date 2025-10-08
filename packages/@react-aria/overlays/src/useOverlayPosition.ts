@@ -15,7 +15,7 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
-import {nodeContains, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {getActiveElement, nodeContains, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaPositionProps extends PositionProps {
@@ -154,8 +154,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // so it can be restored after repositioning. This way if the overlay height
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
-    if (scrollRef.current && nodeContains(scrollRef.current, document.activeElement)) {
-      let anchorRect = document.activeElement?.getBoundingClientRect();
+    if (scrollRef.current && nodeContains(scrollRef.current, getActiveElement(document))) {
+      let anchorRect = getActiveElement(document)?.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
       // otherwise anchor from the bottom.
@@ -207,9 +207,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     Object.keys(position.position).forEach(key => overlay.style[key] = (position.position!)[key] + 'px');
     overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : '';
 
+    let activeElement = getActiveElement(document);
     // Restore scroll position relative to anchor element.
-    if (anchor && document.activeElement && scrollRef.current) {
-      let anchorRect = document.activeElement.getBoundingClientRect();
+    if (anchor && activeElement && scrollRef.current) {
+      let anchorRect = activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
       scrollRef.current.scrollTop += newOffset - anchor.offset;

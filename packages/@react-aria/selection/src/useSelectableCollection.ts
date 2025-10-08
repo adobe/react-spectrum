@@ -312,7 +312,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
               }
             } while (last);
 
-            if (next && !nodeContains(next, document.activeElement)) {
+            if (next && !nodeContains(next, getActiveElement(document))) {
               focusWithoutScrolling(next);
             }
           }
@@ -378,7 +378,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = getItemElement(ref, manager.focusedKey);
       if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!nodeContains(element, document.activeElement) && !shouldUseVirtualFocus) {
+        if (!nodeContains(element, getActiveElement(document)) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 

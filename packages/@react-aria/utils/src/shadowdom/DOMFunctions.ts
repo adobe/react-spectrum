@@ -65,13 +65,11 @@ type EventTargetType<T> = {
 /**
  * ShadowDOM safe version of event.target.
  */
-export function getEventTarget<E, SE extends SyntheticEvent<E>>(event: SE): SE extends EventTargetType<infer Target> ? Target : never;
-export function getEventTarget(event: Event): EventTarget | null;
-export function getEventTarget<E, SE extends SyntheticEvent<E>>(event: Event | SE): EventTarget | null {
-  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot) {
-    if ('composedPath' in event) {
-      return event.composedPath()[0];
-    }
+export function getEventTarget<NodeType, SE extends SyntheticEvent<NodeType>>(event: SE): SE extends EventTargetType<infer Target> ? Target : never;
+export function getEventTarget(event: Event): Event['target'];
+export function getEventTarget<NodeType, SE extends SyntheticEvent<NodeType>>(event: Event | SE): Event['target'] {
+  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot && 'composedPath' in event) {
+    return event.composedPath()[0] || null;
   }
   return event.target;
 }
