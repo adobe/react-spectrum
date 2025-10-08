@@ -15,7 +15,7 @@ const buttonStyles = tv({
   base: 'border-0 bg-transparent flex gap-2 items-center cursor-default rounded-xs text-sm text-gray-800 dark:text-gray-200'
 });
 
-export interface ColorPickerProps extends AriaColorPickerProps {
+export interface ColorPickerProps extends Omit<AriaColorPickerProps, 'children'> {
   label?: string;
   children?: React.ReactNode;
 }
