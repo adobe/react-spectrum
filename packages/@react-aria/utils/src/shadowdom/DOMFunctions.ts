@@ -1,5 +1,6 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 
+import {SyntheticEvent} from 'react';
 import {isShadowRoot} from '../domHelpers';
 import {shadowDOM} from '@react-stately/flags';
 
@@ -7,14 +8,14 @@ import {shadowDOM} from '@react-stately/flags';
  * ShadowDOM safe version of Node.contains.
  */
 export function nodeContains(
-  node: Node | null | undefined,
-  otherNode: Node | null | undefined
+  node: Node | EventTarget | null | undefined,
+  otherNode: Node | EventTarget | null | undefined
 ): boolean {
   if (!shadowDOM()) {
-    return otherNode && node ? node.contains(otherNode) : false;
+    return node instanceof Node && otherNode instanceof Node ? node.contains(otherNode) : false;
   }
 
-  if (!node || !otherNode) {
+  if (!(node instanceof Node) || !(otherNode instanceof Node)) {
     return false;
   }
 
@@ -57,14 +58,28 @@ export const getActiveElement = (doc: Document = document): Element | null => {
   return activeElement;
 };
 
+type EventTargetType<T> = {
+  target: T;
+};
+
 /**
  * ShadowDOM safe version of event.target.
  */
-export function getEventTarget<T extends Event>(event: T): Element {
-  if (shadowDOM() && (event.target as HTMLElement).shadowRoot) {
-    if (event.composedPath) {
-      return event.composedPath()[0] as Element;
+export function getEventTarget<NodeType, SE extends SyntheticEvent<NodeType>>(event: SE): SE extends EventTargetType<infer Target> ? Target : never;
+export function getEventTarget(event: Event): Event['target'];
+export function getEventTarget<NodeType, SE extends SyntheticEvent<NodeType>>(event: Event | SE): Event['target'] {
+  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot) {
+    if ('composedPath' in event) {
+      return event.composedPath()[0] || null;
+    } else if ('composedPath' in event.nativeEvent) {
+      /** If Typescript types are to be strictly trusted, there is a risk 
+       * that the return type of this branch doesn't match the return type of the first overload.
+       * In practice, SyntheticEvents only seem to have `target: EventTarget & T` when the event
+       * doesn't bubble. In that case, .composedPath()[0] and .target should always
+       * be the same.
+       */
+      return event.nativeEvent.composedPath()[0] || null
     }
   }
-  return event.target as Element;
+  return event.target;
 }

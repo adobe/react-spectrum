@@ -12,6 +12,7 @@
 
 import {getScrollParents} from './getScrollParents';
 import {isChrome} from './platform';
+import {nodeContains} from './shadowdom/DOMFunctions';
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
@@ -113,7 +114,7 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
     if (child.offsetParent === ancestor) {
       // Stop once we have found the ancestor we are interested in.
       break;
-    } else if (child.offsetParent.contains(ancestor)) {
+    } else if (nodeContains(child.offsetParent, ancestor)) {
       // If the ancestor is not `position:relative`, then we stop at
       // _its_ offset parent, and we subtract off _its_ offset, so that
       // we end up with the proper offset from child to ancestor.
@@ -131,7 +132,7 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
 export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollIntoViewportOpts): void {
-  if (targetElement && document.contains(targetElement)) {
+  if (targetElement && nodeContains(document, targetElement)) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
     // If scrolling is not currently prevented then we aren't in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view

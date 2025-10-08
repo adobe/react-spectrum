@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -96,7 +96,7 @@ function preventScrollMobileSafari() {
   let allowTouchMove = false;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
-    let target = e.target as Element;
+    let target = getEventTarget(e) as Element;
     scrollable = isScrollable(target) ? target : getScrollParent(target, true);
     allowTouchMove = false;
     
@@ -111,7 +111,7 @@ function preventScrollMobileSafari() {
       'selectionStart' in target && 
       'selectionEnd' in target &&
       (target.selectionStart as number) < (target.selectionEnd as number) &&
-      target.ownerDocument.activeElement === target
+      getActiveElement(target.ownerDocument) === target
     ) {
       allowTouchMove = true;
     }
@@ -154,7 +154,7 @@ function preventScrollMobileSafari() {
   };
 
   let onBlur = (e: FocusEvent) => {
-    let target = e.target as HTMLElement;
+    let target = getEventTarget(e) as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement | null;
     if (relatedTarget && willOpenKeyboard(relatedTarget)) {
       // Focus without scrolling the whole page, and then scroll into view manually.
@@ -174,8 +174,9 @@ function preventScrollMobileSafari() {
   // Override programmatic focus to scroll into view without scrolling the whole page.
   let focus = HTMLElement.prototype.focus;
   HTMLElement.prototype.focus = function (opts) {
+    let activeElement = getActiveElement(document)
     // Track whether the keyboard was already visible before.
-    let wasKeyboardVisible = document.activeElement != null && willOpenKeyboard(document.activeElement);
+    let wasKeyboardVisible = activeElement != null && willOpenKeyboard(activeElement);
 
     // Focus the element without scrolling the page.
     focus.call(this, {...opts, preventScroll: true});

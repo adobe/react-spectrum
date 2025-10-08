@@ -54,14 +54,14 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onBlur = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e))) {
       return;
     }
 
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
-    if (state.current.isFocusWithin && !(e.currentTarget as Element).contains(e.relatedTarget as Element)) {
+    if (state.current.isFocusWithin && !nodeContains(e.currentTarget, e.relatedTarget)) {
       state.current.isFocusWithin = false;
       removeAllGlobalListeners();
 
@@ -77,14 +77,15 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
+    const eventTarget = getEventTarget(e);
     // Ignore events bubbling through portals.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, eventTarget)) {
       return;
     }
 
-    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // Double check that getActiveElement(document) actually matches eventTarget in case a previously chained
     // focus handler already moved focus somewhere else.
-    const ownerDocument = getOwnerDocument(e.target);
+    const ownerDocument = getOwnerDocument(eventTarget instanceof Element ? eventTarget : null);
     const activeElement = getActiveElement(ownerDocument);
     if (!state.current.isFocusWithin && activeElement === getEventTarget(e.nativeEvent)) {
       if (onFocusWithin) {
@@ -103,8 +104,8 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       // can manually fire onBlur.
       let currentTarget = e.currentTarget;
       addGlobalListener(ownerDocument, 'focus', e => {
-        if (state.current.isFocusWithin && !nodeContains(currentTarget, e.target as Element)) {
-          let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: e.target});
+        if (state.current.isFocusWithin && !nodeContains(currentTarget, eventTarget)) {
+          let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: eventTarget});
           setEventTarget(nativeEvent, currentTarget);
           let event = createSyntheticEvent<FocusEvent>(nativeEvent);
           onBlur(event);

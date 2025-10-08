@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, getEventTarget, isCtrlKeyPressed, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -134,7 +134,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!ref.current?.contains(e.target as Element)) {
+    if (!nodeContains(ref.current, getEventTarget(e) as Element)) {
       return;
     }
 
@@ -292,7 +292,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Tab': {
-        if (!allowsTabNavigation) {
+        if (!allowsTabNavigation && ref.current) {
           // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
           // However, collections should be treated as a single tab stop, with arrow key navigation internally.
           // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
@@ -312,7 +312,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
               }
             } while (last);
 
-            if (next && !next.contains(document.activeElement)) {
+            if (next && !nodeContains(next, getActiveElement(document))) {
               focusWithoutScrolling(next);
             }
           }
@@ -333,9 +333,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   });
 
   let onFocus = (e: FocusEvent) => {
+    let eventTarget = getEventTarget(e);
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
-      if (!e.currentTarget.contains(e.target)) {
+      if (!nodeContains(e.currentTarget, eventTarget)) {
         manager.setFocused(false);
       }
 
@@ -343,7 +344,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     // Focus events can bubble through portals. Ignore these events.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, eventTarget)) {
       return;
     }
 
@@ -377,7 +378,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = getItemElement(ref, manager.focusedKey);
       if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!element.contains(document.activeElement) && !shouldUseVirtualFocus) {
+        if (!nodeContains(element, getActiveElement(document)) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 
@@ -391,7 +392,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   let onBlur = (e) => {
     // Don't set blurred and then focused again if moving focus within the collection.
-    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+    if (!nodeContains(e.currentTarget, e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
     }
   };
@@ -565,7 +566,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     onBlur,
     onMouseDown(e) {
       // Ignore events that bubbled through portals.
-      if (scrollRef.current === e.target) {
+      if (scrollRef.current === getEventTarget(e)) {
         // Prevent focus going to the collection when clicking on the scrollbar.
         e.preventDefault();
       }

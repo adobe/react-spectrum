@@ -13,9 +13,10 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
+import {getActiveElement} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -291,7 +292,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // Also only scroll into view if the cell actually got focused.
       // There are some cases where the cell might be disabled or inside,
       // an inert container and we don't want to scroll then.
-      if (getInteractionModality() !== 'pointer' && document.activeElement === ref.current) {
+      if (getInteractionModality() !== 'pointer' && getActiveElement(document) === ref.current) {
         scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
@@ -334,11 +335,12 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         }
       },
       onPointerDown(e) {
+        const eventTarget = getEventTarget(e);
         // This is necessary on touch devices to allow dragging
         // outside the original pressed element.
         // (JSDOM does not support this)
-        if ('releasePointerCapture' in e.target) {
-          e.target.releasePointerCapture(e.pointerId);
+        if (eventTarget instanceof Element && 'releasePointerCapture' in eventTarget) {
+          eventTarget.releasePointerCapture(e.pointerId);
         }
       },
       onContextMenu(e) {

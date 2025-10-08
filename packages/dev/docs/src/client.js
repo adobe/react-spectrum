@@ -13,6 +13,7 @@
 import {ActionButton, Flex, Link} from '@adobe/react-spectrum';
 import DocSearch from './DocSearch';
 import docsStyle from './docs.css';
+import {nodeContains} from '@react-aria/utils';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
@@ -82,7 +83,7 @@ function Hamburger() {
 
     nav.classList.toggle(docsStyle.visible);
 
-    if (nav.classList.contains(docsStyle.visible)) {
+    if (nodeContains(nav.classList, docsStyle.visible)) {
       setIsPressed(true);
       main.setAttribute('aria-hidden', 'true');
       themeSwitcher.setAttribute('aria-hidden', 'true');
@@ -108,7 +109,7 @@ function Hamburger() {
     let removeVisible = (isNotResponsive = false) => {
       setIsPressed(false);
 
-      if (nav.contains(document.activeElement) && !isNotResponsive) {
+      if (nodeContains(nav, document.activeElement) && !isNotResponsive) {
         hamburgerButton.focus();
       }
 
@@ -131,7 +132,7 @@ function Hamburger() {
 
     /* trap keyboard focus within expanded nav */
     let onKeydownTab = (event) => {
-      if (event.keyCode === 9 && nav.classList.contains(docsStyle.visible)) {
+      if (event.keyCode === 9 && nodeContains(nav.classList, docsStyle.visible)) {
         let tabbables = nav.querySelectorAll('button, a[href]');
         let first = tabbables[0];
         let last = tabbables[tabbables.length - 1];

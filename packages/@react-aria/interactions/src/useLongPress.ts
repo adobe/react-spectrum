@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, LongPressEvent} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, getActiveElement, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
@@ -83,7 +83,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
           e.target.dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
 
           // Ensure target is focused. On touch devices, browsers typically focus on pointer up.
-          if (getOwnerDocument(e.target).activeElement !== e.target) {
+          if (getActiveElement(getOwnerDocument(e.target)) !== e.target) {
             focusWithoutScrolling(e.target as FocusableElement);
           }
 
