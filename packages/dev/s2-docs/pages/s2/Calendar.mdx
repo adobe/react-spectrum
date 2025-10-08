@@ -4,6 +4,8 @@ export default Layout;
 import {Calendar} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['date'];
+
 # Calendar
 
 <PageDescription>{docs.exports.Calendar.description}</PageDescription>
@@ -26,7 +28,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";

@@ -87,6 +87,10 @@ const iconStyles = style({
   justifyContent: 'end'
 });
 
+/**
+ * DateFields allow users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
 export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(
   props: DateFieldProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {

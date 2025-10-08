@@ -4,6 +4,8 @@ export default Layout;
 import {SearchField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['input'];
+
 # SearchField
 
 <PageDescription>{docs.exports.SearchField.description}</PageDescription>
@@ -12,9 +14,10 @@ import docs from 'docs:@react-spectrum/s2';
   component={SearchField}
   docs={docs.exports.SearchField}
   links={docs.links}
-  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
-    label: 'Search'
+    label: 'Search',
+    placeholder: 'Search documents'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -31,11 +34,12 @@ import {useState} from 'react';
 function Example() {
   let [search, setSearch] = useState('');
   let [submittedSearch, setSubmittedSearch] = useState('');
-  
+
   return (
     <div>
       <SearchField
         label="Search"
+        placeholder="Search documents"
         ///- begin highlight -///
         value={search}
         onChange={setSearch}
@@ -64,6 +68,7 @@ function Example(props) {
       <SearchField
         {...props}
         label="Search"
+        placeholder="Search documents"
         ///- begin highlight -///
         name="search"
         /* PROPS */

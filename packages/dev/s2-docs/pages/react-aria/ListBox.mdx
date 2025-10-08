@@ -8,6 +8,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['options'];
+
 # ListBox
 
 <PageDescription>{docs.exports.ListBox.description}</PageDescription>
@@ -372,11 +374,12 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
 
-```tsx links={{ListBox: '#listbox', ListBoxItem: '#listboxitem', ListBoxSection: '#listboxsection', ListBoxLoadMoreItem: '#listboxloadmoreitem'}}
+```tsx links={{ListBox: '#listbox', ListBoxItem: '#listboxitem', ListBoxSection: '#listboxsection', ListBoxLoadMoreItem: '#listboxloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <ListBox>
   <ListBoxItem>
     <Text slot="label" />
     <Text slot="description" />
+    <SelectionIndicator />
   </ListBoxItem>
   <ListBoxSection>
     <Header />
@@ -390,22 +393,14 @@ function Example() {
 
 <PropTable component={docs.exports.ListBox} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-ListBox" properties={docs.exports.ListBoxRenderProps.properties} />
-
 ### ListBoxItem
 
 <PropTable component={docs.exports.ListBoxItem} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-ListBoxItem" properties={docs.exports.ListBoxItemRenderProps.properties} />
 
 ### ListBoxSection
 
 <PropTable component={docs.exports.ListBoxSection} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-ListBoxSection" properties={docs.exports.ListBoxSectionRenderProps.properties} /> */}
-
 ### ListBoxLoadMoreItem
 
 <PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-ListBoxLoadMoreItem" properties={docs.exports.ListBoxLoadMoreItemRenderProps.properties} /> */}

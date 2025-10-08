@@ -109,7 +109,7 @@ export default function Lazy() {
   return (
     <>
       <Section title="Color">
-        <ColorField label="Primary Color" />
+        <ColorField placeholder="-" label="Primary Color" />
         <ColorSwatchPicker>
           <ColorSwatch color="#A00" />
           <ColorSwatch color="#f80" />
@@ -153,16 +153,16 @@ export default function Lazy() {
             <Checkbox value="baseball">Baseball</Checkbox>
             <Checkbox value="basketball">Basketball</Checkbox>
           </CheckboxGroup>
-          <NumberField label="Width" defaultValue={1024} minValue={0} />
+          <NumberField placeholder="Enter a width" label="Width" defaultValue={1024} minValue={0} />
           <RadioGroup label="Favorite pet">
             <Radio value="dogs">Dogs</Radio>
             <Radio value="cats">Cats</Radio>
           </RadioGroup>
           <SearchField label="Search" />
           <Switch>Low power mode</Switch>
-          <TextArea label="Description" />
-          <TextField label="Email" />
-          <TextField label="Password" />
+          <TextArea placeholder="Enter a description" label="Description" />
+          <TextField placeholder="Enter a email" label="Email" />
+          <TextField placeholder="Enter a password" label="Password" />
           <SelectBoxGroup aria-label="Choose a cloud">
             <SelectBox id="aws" textValue="Amazon Web Services">
               <Server />
@@ -359,7 +359,7 @@ export default function Lazy() {
       </Section>
 
       <Section title="Pickers">
-        <ComboBox label="Favorite Animal">
+        <ComboBox placeholder="Select a value" label="Favorite Animal">
           <ComboBoxItem id="red panda">Red Panda</ComboBoxItem>
           <ComboBoxItem id="cat">Cat</ComboBoxItem>
           <ComboBoxItem id="dog">Dog</ComboBoxItem>

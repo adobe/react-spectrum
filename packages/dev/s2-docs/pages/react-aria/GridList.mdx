@@ -7,6 +7,8 @@ import vanillaDocs from 'docs:vanilla-starter/GridList';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
 
+export const tags = ['list view'];
+
 # GridList
 
 <PageDescription>{docs.exports.GridList.description}</PageDescription>
@@ -263,11 +265,11 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
 
-```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button.html', Checkbox: 'Checkbox.html'}}
+```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button.html', Checkbox: 'Checkbox.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <GridList>
   <GridListItem>
     <Button slot="drag" />
-    <Checkbox slot="selection" />
+    <Checkbox slot="selection" /> or <SelectionIndicator />
   </GridListItem>
   <GridListLoadMoreItem />
 </GridList>
@@ -277,16 +279,10 @@ function Example() {
 
 <PropTable component={docs.exports.GridList} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-GridList" properties={docs.exports.GridListRenderProps.properties} />
-
 ### GridListItem
 
 <PropTable component={docs.exports.GridListItem} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-GridListItem" properties={docs.exports.GridListItemRenderProps.properties} />
-
 ### GridListLoadMoreItem
 
 <PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-GridListLoadMoreItem" properties={docs.exports.GridListLoadMoreItemRenderProps.properties} /> */}

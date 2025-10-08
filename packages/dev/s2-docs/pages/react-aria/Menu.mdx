@@ -6,6 +6,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['dropdown'];
+
 # Menu
 
 <PageDescription>{docs.exports.Menu.description}</PageDescription>
@@ -280,7 +282,7 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 
 ### Autocomplete
 
-Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](../react-aria/Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
 
 ```tsx render
 "use client";
@@ -411,7 +413,7 @@ function Example() {
 
 ### Custom trigger
 
-`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render hideImports
 "use client";
@@ -469,7 +471,7 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 
 <Anatomy />
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Popover: 'Popover.html', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator.html', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Popover: 'Popover.html', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator.html', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <MenuTrigger>
   <Button />
   <Popover>
@@ -478,6 +480,7 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
         <Text slot="label" />
         <Text slot="description" />
         <Keyboard />
+        <SelectionIndicator />
       </MenuItem>
       <Separator />
       <MenuSection>
@@ -503,19 +506,13 @@ import {MenuTrigger, Menu, MenuItem, Button, Popover} from 'react-aria-component
 
 <PropTable component={docs.exports.Menu} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-Menu" properties={docs.exports.MenuRenderProps.properties} /> */}
-
 ### MenuItem
 
 <PropTable component={docs.exports.MenuItem} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-MenuItem" properties={docs.exports.MenuItemRenderProps.properties} />
-
 ### MenuSection
 
 <PropTable component={docs.exports.MenuSection} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-MenuSection" properties={docs.exports.MenuSectionRenderProps.properties} /> */}
 
 ### SubmenuTrigger
 

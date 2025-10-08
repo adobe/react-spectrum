@@ -8,6 +8,8 @@ import {RangeCalendar as TailwindRangeCalendar} from 'tailwind-starter/RangeCale
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
+export const tags = ['calendar'];
+
 # RangeCalendar
 
 <PageDescription>{docs.exports.RangeCalendar.description}</PageDescription>
@@ -31,7 +33,7 @@ import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -328,34 +330,22 @@ import {Button} from 'vanilla-starter/Button';
 
 <PropTable component={docs.exports.RangeCalendar} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-RangeCalendar" properties={docs.exports.RangeCalendarRenderProps.properties} />
-
 ### CalendarGrid
 
 <PropTable component={docs.exports.CalendarGrid} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-CalendarGrid" properties={docs.exports.CalendarGridRenderProps.properties} /> */}
 
 ### CalendarGridHeader
 
 <PropTable component={docs.exports.CalendarGridHeader} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarGridHeader" properties={docs.exports.CalendarGridHeaderRenderProps.properties} /> */}
-
 ### CalendarHeaderCell
 
 <PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-CalendarHeaderCell" properties={docs.exports.CalendarHeaderCellRenderProps.properties} /> */}
 
 ### CalendarGridBody
 
 <PropTable component={docs.exports.CalendarGridBody} links={docs.links} showDescription />
 
-{/* <StateTable defaultClassName="react-aria-CalendarGridBody" properties={docs.exports.CalendarGridBodyRenderProps.properties} /> */}
-
 ### CalendarCell
 
 <PropTable component={docs.exports.CalendarCell} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-CalendarCell" properties={docs.exports.CalendarCellRenderProps.properties} />

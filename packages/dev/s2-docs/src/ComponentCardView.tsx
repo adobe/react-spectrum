@@ -85,8 +85,11 @@ export interface ComponentCardItem {
 }
 
 const componentIllustrations: Record<string, React.ComponentType | undefined> = {
+  'Accordion': DisclosureGroupSvg,
   'ActionButton': ActionButtonSvg,
+  'ActionButtonGroup': ButtonGroupSvg, // TODO: get better illustration
   'ActionGroup': ActionGroupSvg,
+  'ActionMenu': MenuSvg,
   'Badge': BadgeSvg,
   'Breadcrumbs': BreadcrumbsSvg,
   'Button': ButtonSvg,
@@ -121,6 +124,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'Label': LabelSvg,
   'LabeledValue': LabeledValueSvg,
   'Link': LinkSvg,
+  'LinkButton': ButtonSvg, // TODO: get better illustration
   'ListBox': ListBoxSvg,
   'ListView': ListViewSvg,
   'Menu': MenuSvg,
@@ -140,6 +144,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'StatusLight': StatusLightSvg,
   'Switch': SwitchSvg,
   'Table': TableSvg,
+  'TableView': TableSvg,
   'Tabs': TabsSvg,
   'TagGroup': TagGroupSvg,
   'TextArea': TextAreaSvg,
@@ -150,6 +155,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'ToggleButtonGroup': ActionGroupSvg, // ToggleButtonGroup -> ActionGroup
   'Tooltip': TooltipSvg,
   'Tree': TreeSvg,
+  'TreeView': TreeSvg,
   'useFocus': useFocusSvg,
   'useFocusRing': useFocusRingSvg,
   'useFocusWithin': useFocusWithinSvg,
@@ -160,10 +166,48 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'usePress': usePressSvg
 };
 
-const illustrationStyles = style({
+// Overrides for specific illustrations so they fit within the cards.
+const propOverrides = {
+  DateField: {
+    viewBox: '0 -56 276 276'
+  },
+  TimeField: {
+    viewBox: '0 -56 276 276'
+  },
+  DatePicker: {
+    style: {alignSelf: 'end', height: 'calc(100% - 16px)'}
+  },
+  DateRangePicker: {
+    style: {alignSelf: 'end', height: 'calc(100% - 16px)'}
+  },
+  DropZone: {
+    viewBox: '0 0 290 220',
+    style: {height: 'calc(100% - 16px)'}
+  },
+  Select: {
+    // Safari doesn't calculate the max-height correctly with the aspect-ratio.
+    style: {height: 'calc(100% - 16px)'}
+  },
+  Picker: {
+    style: {height: 'calc(100% - 16px)'}
+  },
+  ComboBox: {
+    style: {height: 'calc(100% - 16px)'}
+  }
+};
+
+const illustrationContainer = style({
   width: 'full',
   aspectRatio: '3/2',
-  objectFit: 'cover',
+  backgroundColor: '--anatomy-gray-100',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: 0
+});
+
+const illustrationStyles = style({
+  maxWidth: 'calc(100% - 16px)',
   userSelect: 'none',
   pointerEvents: 'none'
 });
@@ -183,13 +227,21 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
       <Collection items={items}>
         {(item) => {
           let IllustrationComponent = componentIllustrations[item.name] || ComingSoonSvg;
+          let overrides = propOverrides[item.name] || {};
           return (
             <Card key={item.id} id={item.id} href={item.href} size={size} textValue={item.name}>
               <CardPreview>
-                <IllustrationComponent
-                  aria-hidden="true"
-                  // @ts-ignore
-                  className={illustrationStyles} />
+                <div className={illustrationContainer}>
+                  <IllustrationComponent
+                    {...overrides}
+                    aria-hidden="true"
+                    // @ts-ignore
+                    className={illustrationStyles}
+                    style={{
+                      maxHeight: 'calc(100% - 16px)',
+                      ...overrides.style
+                    }} />
+                </div>
               </CardPreview>
               <Content>
                 <Text slot="title">{item.name}</Text>

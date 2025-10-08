@@ -6,7 +6,6 @@ import * as t from '@babel/types';
  * Transforms TextField:
  * - Comment out icon (it has not been implemented yet).
  * - Remove isQuiet (it is no longer supported in Spectrum 2).
- * - Remove placeholder (it has been removed due to accessibility issues).
  * - Change validationState="invalid" to isInvalid.
  * - Remove validationState="valid" (it is no longer supported in Spectrum 2).
  */
@@ -16,9 +15,6 @@ export default function transformTextField(path: NodePath<t.JSXElement>): void {
 
   // Remove isQuiet
   removeProp(path, {propName: 'isQuiet'});
-
-  // Remove placeholder
-  removeProp(path, {propName: 'placeholder'});
 
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {

@@ -6,6 +6,8 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['svg', 'gradient', 'linear', 'symbol'];
+
 # Illustrations
 
 <PageDescription>React Spectrum offers a collection of illustrations that can be imported from `@react-spectrum/s2/illustrations`.</PageDescription>
@@ -45,6 +47,8 @@ Then, add it to your `.parcelrc`:
 Now you can import illustration SVGs using the `illustration:` [pipeline](https://parceljs.org/features/plugins/#named-pipelines):
 
 `import Illustration from 'illustration:./path/to/Illustration.svg';`
+
+Note that you must use the name `illustration` for the pipeline.
 
 ### Other bundlers
 

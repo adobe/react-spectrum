@@ -7,6 +7,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['data', 'grid'];
+
 # Table
 
 <PageDescription>{docs.exports.Table.description}</PageDescription>
@@ -657,7 +659,7 @@ function ReorderableTable() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem'}}
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <ResizableTableContainer>
   <Table>
     <TableHeader>
@@ -669,7 +671,9 @@ function ReorderableTable() {
     <TableBody>
       <Row>
         <Cell><Button slot="drag" /></Cell>
-        <Cell><Checkbox slot="selection" /></Cell>
+        <Cell>
+          <Checkbox slot="selection" /> or <SelectionIndicator />
+        </Cell>
         <Cell />
         <Cell />
       </Row>
@@ -683,37 +687,25 @@ function ReorderableTable() {
 
 <PropTable component={docs.exports.Table} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Table" properties={docs.exports.TableRenderProps.properties} />
-
 ### TableHeader
 
 <PropTable component={docs.exports.TableHeader} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TableHeader" properties={docs.exports.TableHeaderRenderProps.properties} /> */}
 
 ### Column
 
 <PropTable component={docs.exports.Column} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Column" properties={docs.exports.ColumnRenderProps.properties} />
-
 ### TableBody
 
 <PropTable component={docs.exports.TableBody} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TableBody" properties={docs.exports.TableBodyRenderProps.properties} /> */}
 
 ### Row
 
 <PropTable component={docs.exports.Row} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Row" properties={docs.exports.RowRenderProps.properties} />
-
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Cell" properties={docs.exports.CellRenderProps.properties} />
 
 ### ResizableTableContainer
 
@@ -723,10 +715,6 @@ function ReorderableTable() {
 
 <PropTable component={docs.exports.ColumnResizer} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-ColumnResizer" properties={docs.exports.ColumnResizerRenderProps.properties} />
-
 ### TableLoadMoreItem
 
 <PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TableLoadMoreItem" properties={docs.exports.TableLoadMoreItemRenderProps.properties} /> */}

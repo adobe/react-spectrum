@@ -7,6 +7,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['dialog', 'popup', 'overlay'];
+
 # Modal
 
 <PageDescription>{docs.exports.Modal.description}</PageDescription>
@@ -121,7 +123,7 @@ function Example() {
 
 ## Custom trigger
 
-`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -180,16 +182,17 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 <PropTable component={docs.exports.Modal} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Modal" properties={docs.exports.ModalRenderProps.properties} />
-
 ### ModalOverlay
 
-<PropTable component={docs.exports.ModalOverlay} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-ModalOverlay" properties={docs.exports.ModalRenderProps.properties} />
+<PropTable
+  component={docs.exports.ModalOverlay}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--visual-viewport-height': 'The height of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API), i.e. space above the software keyboard.',
+    '--page-height': 'The height of the `<body>` element. Useful for sizing the modal backdrop.'
+  }} />
 
 ### Dialog
 
 <PropTable component={docs.exports.Dialog} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Dialog" properties={docs.exports.DialogRenderProps.properties} />

@@ -51,7 +51,7 @@ export const Example: Story = {
               People
             </DisclosureTitle>
             <DisclosurePanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} />
+              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
             </DisclosurePanel>
           </Disclosure>
         </Accordion>
@@ -113,7 +113,7 @@ export const WithDisabledDisclosure: Story = {
               People
             </DisclosureTitle>
             <DisclosurePanel>
-              <TextField label="Name" />
+              <TextField label="Name" placeholder="Enter your name" />
             </DisclosurePanel>
           </Disclosure>
         </Accordion>
@@ -155,7 +155,7 @@ function ControlledAccordion(props) {
             People
           </DisclosureTitle>
           <DisclosurePanel>
-            <TextField label="Name" />
+            <TextField label="Name" placeholder="Enter your name" />
           </DisclosurePanel>
         </Disclosure>
       </Accordion>
@@ -193,7 +193,7 @@ export const ControlledOpen: Story = {
             People
           </DisclosureTitle>
           <DisclosurePanel>
-            <TextField label="Name" />
+            <TextField label="Name" placeholder="Enter your name" />
           </DisclosurePanel>
         </Disclosure>
       </Accordion>
@@ -231,7 +231,7 @@ export const WithActionButton: Story = {
               <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
             </DisclosureHeader>
             <DisclosurePanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} />
+              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
             </DisclosurePanel>
           </Disclosure>
         </Accordion>
@@ -239,4 +239,3 @@ export const WithActionButton: Story = {
     );
   }
 };
-

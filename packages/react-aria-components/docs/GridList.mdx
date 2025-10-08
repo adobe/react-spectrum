@@ -231,12 +231,12 @@ A grid list consists of a container element, with rows of data inside. The rows 
 If the list supports row selection, each row can optionally include a selection checkbox.
 
 ```tsx
-import {GridList, GridListItem, Checkbox, Button} from 'react-aria-components';
+import {GridList, GridListItem, Checkbox, Button, SelectionIndicator} from 'react-aria-components';
 
 <GridList>
   <GridListItem>
     <Button slot="drag" />
-    <Checkbox slot="selection" />
+    <Checkbox slot="selection" /> or <SelectionIndicator />
   </GridListItem>
 </GridList>
 ```
