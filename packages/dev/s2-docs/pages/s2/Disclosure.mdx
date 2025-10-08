@@ -1,0 +1,100 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['accordion', 'collapsible', 'expandable'];
+
+# Disclosure
+
+<PageDescription>{docs.exports.Disclosure.description}</PageDescription>
+
+```tsx render docs={docs.exports.Disclosure} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled']} type="s2"
+"use client";
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Disclosure
+  styles={style({width: 250})}
+  /* PROPS */>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
+  <DisclosurePanel>Details about system requirements here.</DisclosurePanel>
+</Disclosure>
+```
+
+## Expanding
+
+Use the `isExpanded` or `defaultExpanded` prop to set the expanded state, and `onExpandedChange` to handle user interactions.
+
+```tsx render
+"use client";
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  let [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <Disclosure
+      styles={style({width: 250})}
+      /*- begin highlight -*/
+      isExpanded={isExpanded}
+      onExpandedChange={setIsExpanded}>
+      {/*- end highlight -*/}
+      <DisclosureTitle>Download, Install, and Set Up</DisclosureTitle>
+      <DisclosurePanel>Instructions on how to download, install, and set up</DisclosurePanel>
+    </Disclosure>
+  );
+}
+```
+
+## Content
+
+Use `DisclosureHeader` to add additional elements alongside the title, such as action buttons or icons.
+
+```tsx render
+"use client";
+import {Disclosure, DisclosureTitle, DisclosurePanel, DisclosureHeader, ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Disclosure styles={style({width: 250})}>
+  {/*- begin highlight -*/}
+  <DisclosureHeader>
+    <DisclosureTitle>Project Settings</DisclosureTitle>
+    <ActionButton>Edit</ActionButton>
+  </DisclosureHeader>
+  {/*- end highlight -*/}
+  <DisclosurePanel>
+    Configure your project settings including name, description, and permissions.
+  </DisclosurePanel>
+</Disclosure>
+```
+
+## API
+
+```tsx links={{Disclosure: '#disclosure', DisclosureHeader: '#disclosureheader', DisclosureTitle: '#disclosuretitle', DisclosurePanel: '#disclosurepanel'}}
+<Disclosure>
+  <DisclosureHeader>
+    <DisclosureTitle />
+  </DisclosureHeader>
+  <DisclosurePanel />
+</Disclosure>
+```
+
+### Disclosure
+
+<PropTable component={docs.exports.Disclosure} links={docs.links} showDescription />
+
+### DisclosureHeader
+
+<PropTable component={docs.exports.DisclosureHeader} links={docs.links} showDescription />
+
+### DisclosureTitle
+
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} showDescription />
+
+### DisclosurePanel
+
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} showDescription />

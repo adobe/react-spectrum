@@ -28,7 +28,7 @@ const disclosure = tv({
 
 const disclosureButton = tv({
   extend: focusRing,
-  base: "rounded-lg flex gap-2 items-center w-full text-start p-2 cursor-default",
+  base: "bg-transparent border-0 rounded-lg flex gap-2 items-center w-full text-start p-2 cursor-default",
   variants: {
     isDisabled: {
       true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
@@ -75,7 +75,7 @@ export function DisclosureHeader({ children }: DisclosureHeaderProps) {
   let { isExpanded } = useContext(DisclosureStateContext)!;
   let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
-    <Heading className="text-lg font-semibold">
+    <Heading className="text-lg font-semibold m-0">
       <Button
         slot="trigger"
         className={(renderProps) => disclosureButton({ ...renderProps, isInGroup })}
@@ -97,8 +97,8 @@ export interface DisclosurePanelProps extends AriaDisclosurePanelProps {
 
 export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
   return (
-    <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'group-data-[expanded]:px-4 group-data-[expanded]:py-2')}>
-      {children}
+    <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip')}>
+      <div className="px-4 py-2">{children}</div>
     </AriaDisclosurePanel>
   );
 }

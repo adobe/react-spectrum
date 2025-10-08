@@ -11,6 +11,7 @@
  */
 
 import {
+  Avatar,
   Button,
   Content,
   ContextualHelp,
@@ -25,13 +26,15 @@ import {
   PickerSection,
   Text
 } from '../src';
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
+
+const events = ['onOpenChange', 'onChange', 'onLoadMore'];
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -41,13 +44,16 @@ const meta: Meta<typeof Picker<any>> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange', 'onLoadMore']),
+    ...categorizeArgTypes('Events', events),
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
     children: {table: {disable: true}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    defaultSelectedKey: {table: {disable: true}},
+    selectedKey: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'Picker'
 };
 
@@ -136,6 +142,33 @@ export const WithIcons: Story = {
   ),
   args: {
     label: 'Where to share'
+  }
+};
+
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <Picker {...args}>
+      <PickerItem textValue="User One">
+        <Avatar slot="avatar" src={SRC_URL_1} />
+        <Text>User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </PickerItem>
+      <PickerItem textValue="User Two">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text>User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </PickerItem>
+      <PickerItem textValue="User Three">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text>User Three</Text>
+      </PickerItem>
+    </Picker>
+  ),
+  args: {
+    label: 'Share'
   }
 };
 

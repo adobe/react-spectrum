@@ -169,7 +169,8 @@ describe('RadioGroup', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress});
+    let onClickCapture = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : '', onClick, onPress, onClickCapture});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
@@ -185,6 +186,7 @@ describe('RadioGroup', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state with keyboard', async () => {
@@ -607,11 +609,68 @@ describe('RadioGroup', () => {
     await user.keyboard('[ArrowLeft]');
     expect(document.activeElement).toBe(radios[0]);
   });
-  
+
   it('should support form prop', () => {
     let {getAllByRole} = renderGroup({form: 'test'});
     for (let radio of getAllByRole('radio')) {
       expect(radio).toHaveAttribute('form', 'test');
     }
+  });
+
+  it('should not trigger onBlur/onFocus on sequential presses of a Radio', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a" onFocus={onFocus} onBlur={onBlur}>A</Radio>
+        <Radio value="b">B</Radio>
+      </RadioGroup>
+    );
+
+    let radios = getAllByRole('radio');
+    let radio = radios[0];
+    let label = radio.closest('label');
+
+    await user.click(label);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+
+    onFocus.mockClear();
+
+    await user.click(label);
+
+    expect(onFocus).not.toHaveBeenCalled();
+    expect(onBlur).not.toHaveBeenCalled();
+  });
+
+  it('should trigger onBlur when moving focus between different Radio buttons', async () => {
+    let onBlurA = jest.fn();
+    let onFocusA = jest.fn();
+    let onBlurB = jest.fn();
+    let onFocusB = jest.fn();
+
+    let {getAllByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio value="a" onFocus={onFocusA} onBlur={onBlurA}>A</Radio>
+        <Radio value="b" onFocus={onFocusB} onBlur={onBlurB}>B</Radio>
+      </RadioGroup>
+    );
+
+    let radios = getAllByRole('radio');
+    let radioA = radios[0];
+    let radioB = radios[1];
+    let labelA = radioA.closest('label');
+    let labelB = radioB.closest('label');
+
+    await user.click(labelA);
+    expect(onFocusA).toHaveBeenCalledTimes(1);
+    expect(onBlurA).not.toHaveBeenCalled();
+
+    await user.click(labelB);
+    expect(onFocusB).toHaveBeenCalledTimes(1);
+    expect(onBlurA).toHaveBeenCalledTimes(1);
   });
 });

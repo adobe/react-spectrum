@@ -20,13 +20,41 @@ import './styles.css';
 
 export default {
   title: 'React Aria Components/DatePicker',
-  component: DatePicker
+  component: DatePicker,
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    granularity: {
+      control: 'select',
+      options: ['day', 'hour', 'minute', 'second']
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    isInvalid: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    isReadOnly: {
+      control: 'boolean'
+    },
+    validationBehavior: {
+      control: 'select',
+      options: ['native', 'aria']
+    }
+  }
 } as Meta<typeof DatePicker>;
 
 export type DatePickerStory = StoryFn<typeof DatePicker>;
+export type DateRangePickerStory = StoryFn<typeof DateRangePicker>;
 
-export const DatePickerExample: DatePickerStory = () => (
-  <DatePicker data-testid="date-picker-example">
+export const DatePickerExample: DatePickerStory = (args) => (
+  <DatePicker data-testid="date-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <DateInput className={styles.field}>
@@ -58,8 +86,8 @@ export const DatePickerExample: DatePickerStory = () => (
   </DatePicker>
 );
 
-export const DatePickerTriggerWidthExample: DatePickerStory = () => (
-  <DatePicker data-testid="date-picker-example">
+export const DatePickerTriggerWidthExample: DatePickerStory = (args) => (
+  <DatePicker data-testid="date-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>
       <DateInput className={styles.field} style={{flex: 1}}>
@@ -93,8 +121,8 @@ export const DatePickerTriggerWidthExample: DatePickerStory = () => (
   </DatePicker>
 );
 
-export const DateRangePickerExample: DatePickerStory = () => (
-  <DateRangePicker data-testid="date-range-picker-example">
+export const DateRangePickerExample: DateRangePickerStory = (args) => (
+  <DateRangePicker data-testid="date-range-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
       <div className={styles.field}>
@@ -132,8 +160,8 @@ export const DateRangePickerExample: DatePickerStory = () => (
   </DateRangePicker>
 );
 
-export const DateRangePickerTriggerWidthExample: DatePickerStory = () => (
-  <DateRangePicker data-testid="date-range-picker-example">
+export const DateRangePickerTriggerWidthExample: DateRangePickerStory = (args) => (
+  <DateRangePicker data-testid="date-range-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex', width: 300}}>
       <div className={styles.field} style={{flex: 1}}>

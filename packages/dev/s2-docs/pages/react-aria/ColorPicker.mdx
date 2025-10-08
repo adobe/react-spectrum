@@ -7,6 +7,8 @@ import {ColorPicker as VanillaColorPicker} from 'vanilla-starter/ColorPicker';
 import {ColorPicker as TailwindColorPicker} from 'tailwind-starter/ColorPicker';
 import '../../tailwind/tailwind.css';
 
+export const tags = ['input'];
+
 # ColorPicker
 
 <PageDescription>{docs.exports.ColorPicker.description}</PageDescription>
@@ -19,7 +21,7 @@ import '../../tailwind/tailwind.css';
     props={['label']}
     initialProps={{label: 'Fill', defaultValue: '#5100FF'}}
     type="vanilla"
-    files={["starters/docs/src/ColorPicker.tsx", "starters/docs/src/ColorPicker.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/ColorPicker.tsx", "starters/docs/src/ColorPicker.css"]} />
   <VisualExample
     component={TailwindColorPicker}
     docs={vanillaDocs.exports.ColorPicker}
@@ -29,18 +31,6 @@ import '../../tailwind/tailwind.css';
     type="tailwind"
     files={["starters/tailwind/src/ColorPicker.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
-
-## Anatomy
-
-A color picker does not render any UI by itself. You can render any combination of color components as children of a color picker, including [ColorArea](ColorArea.html), [ColorSlider](ColorSlider.html), [ColorWheel](ColorWheel.html), [ColorField](ColorField.html), [ColorSwatch](ColorSwatch.html), and [ColorSwatchPicker](ColorSwatchPicker.html). `ColorPicker` manages the state of the selected color, and coordinates the value between all of the components inside it.
-
-```tsx
-import {ColorPicker} from 'react-aria-components';
-
-<ColorPicker>
-  {/* Color components here */}
-</ColorPicker>
-```
 
 ## Value
 
@@ -63,7 +53,7 @@ function Example() {
         value={value}
         onChange={setValue} />
         {/*- end highlight -*/}
-      <p>Selected color: {value.toString('hsl')}</p>
+      <pre style={{fontSize: 12}}>Selected color: {value.toString('hsl')}</pre>
     </>
   );
 }
@@ -199,5 +189,3 @@ import {ColorSwatchPicker, ColorSwatchPickerItem} from 'vanilla-starter/ColorSwa
 ## API
 
 <PropTable component={docs.exports.ColorPicker} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-ColorPicker" properties={docs.exports.ColorPickerRenderProps.properties} />

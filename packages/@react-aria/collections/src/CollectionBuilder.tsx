@@ -19,7 +19,6 @@ import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
@@ -114,15 +113,6 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
     return document.getCollection();
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  useLayoutEffect(() => {
-    document.isMounted = true;
-    document.isInitialRender = false;
-    return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by
-      // React calling removeChild on every item in the collection.
-      document.isMounted = false;
-    };
-  }, [document]);
   return {collection, document};
 }
 

@@ -1,0 +1,125 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['toggle group', 'tabs'];
+
+# SegmentedControl
+
+<PageDescription>{docs.exports.SegmentedControl.description}</PageDescription>
+
+```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2"
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+
+<SegmentedControl/* PROPS */>
+  <SegmentedControlItem id="day">Day</SegmentedControlItem>
+  <SegmentedControlItem id="week">Week</SegmentedControlItem>
+  <SegmentedControlItem id="month">Month</SegmentedControlItem>
+  <SegmentedControlItem id="year">Year</SegmentedControlItem>
+</SegmentedControl>
+```
+
+## Content
+
+SegmentedControlItem supports icons and text as children. When a visible label is omitted, provide an `aria-label`.
+
+<ExampleSwitcher type={null} examples={['Icon + Text', 'Icon only']}>
+
+```tsx render
+"use client";
+import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
+import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
+import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
+import AlignRight from '@react-spectrum/s2/icons/AlignRight';
+
+<SegmentedControl aria-label="Text alignment">
+  <SegmentedControlItem id="left">
+    {/*- begin highlight -*/}
+    <AlignLeft />
+    <Text>Align left</Text>
+    {/*- end highlight -*/}
+  </SegmentedControlItem>
+  <SegmentedControlItem id="center">
+    <AlignCenter />
+    <Text>Align center</Text>
+  </SegmentedControlItem>
+  <SegmentedControlItem id="right">
+    <AlignRight />
+    <Text>Align right</Text>
+  </SegmentedControlItem>
+</SegmentedControl>
+```
+
+```tsx render
+"use client";
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
+import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
+import AlignRight from '@react-spectrum/s2/icons/AlignRight';
+
+<SegmentedControl aria-label="Text alignment">
+  <SegmentedControlItem id="left" aria-label="Align left">
+    {/*- begin highlight -*/}
+    <AlignLeft />
+     {/*- end highlight -*/}
+  </SegmentedControlItem>
+  <SegmentedControlItem id="center" aria-label="Align center">
+    <AlignCenter />
+  </SegmentedControlItem>
+  <SegmentedControlItem id="right" aria-label="Align right">
+    <AlignRight />
+  </SegmentedControlItem>
+</SegmentedControl>
+```
+
+</ExampleSwitcher>
+
+## Selection
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of a `<SegmentedControlItem>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tabs#single-selection) for more details.
+
+```tsx render
+"use client";
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState('month');
+
+  return (
+    <div>
+      <SegmentedControl
+        /*- begin highlight -*/
+        selectedKey={selected} 
+        onSelectionChange={setSelected}
+        /*- end highlight -*/
+        aria-label="Time granularity">
+        <SegmentedControlItem id="day">Day</SegmentedControlItem>
+        <SegmentedControlItem id="week" isDisabled>Week</SegmentedControlItem>
+        <SegmentedControlItem id="month">Month</SegmentedControlItem>
+        <SegmentedControlItem id="year">Year</SegmentedControlItem>
+      </SegmentedControl>
+      <p>Selected: {selected}</p>
+    </div>
+  );
+}
+```
+
+## API
+
+```tsx links={{SegmentedControl: '#segmentedcontrol', SegmentedControlItem: '#segmentedcontrolitem'}}
+<SegmentedControl>
+  <SegmentedControlItem>
+    <Icon />
+    <Text />
+  </SegmentedControlItem>
+</SegmentedControl>
+```
+
+### SegmentedControl
+<PropTable component={docs.exports.SegmentedControl} links={docs.links} />
+
+### SegmentedControlItem
+<PropTable component={docs.exports.SegmentedControlItem} links={docs.links} />

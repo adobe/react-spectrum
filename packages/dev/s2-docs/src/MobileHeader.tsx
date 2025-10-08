@@ -1,11 +1,15 @@
 'use client';
 
-import {ActionButton, MenuTrigger} from '@react-spectrum/s2';
-import {AdobeLogo} from './AdobeLogo';
-import {CSSProperties, useEffect, useRef} from 'react';
+import {ActionButton, DialogTrigger} from '@react-spectrum/s2';
+import {getLibraryFromPage} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
+import {Modal} from '../../../@react-spectrum/s2/src/Modal';
+import React, {CSSProperties, lazy, useEffect, useRef} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TAB_DEFS} from './constants';
+
+const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
 
 let fadeOut = keyframes(`
   0% {
@@ -55,7 +59,7 @@ const animation = {
 
 const animationRange = '24px 64px';
 
-export function MobileHeader({toc, nav}) {
+export function MobileHeader({toc, pages, currentPage}) {
   let ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -77,6 +81,9 @@ export function MobileHeader({toc, nav}) {
     }
   }, []);
 
+  let currentLibrary = getLibraryFromPage(currentPage);
+  let icon = TAB_DEFS[currentLibrary].icon;
+
   return (
     <div
       ref={ref}
@@ -92,7 +99,7 @@ export function MobileHeader({toc, nav}) {
         },
         alignItems: 'center',
         gap: 12,
-        zIndex: 100,
+        zIndex: 1,
         overflow: 'clip',
         '--base-bg': {
           type: 'backgroundColor',
@@ -120,41 +127,45 @@ export function MobileHeader({toc, nav}) {
           alignItems: 'center',
           flexGrow: 1
         })}>
-        <AdobeLogo />
-        <h2 
+        {icon}
+        <h2
           className={style({
             font: 'heading-sm',
             marginY: 0,
             ...animation
           })}
-          style={{
+          style={toc ? {
             animationName: fadeOut,
             animationTimeline: 'scroll()',
             animationRange
-          } as CSSProperties}>
-          React Aria
+          } as CSSProperties : undefined}>
+          {TAB_DEFS[currentLibrary].label}
         </h2>
       </div>
-      <div
-        className={style({
-          ...animation,
-          position: 'absolute',
-          left: '50%',
-          translateX: '-50%'
-        })}
-        style={{
-          animationName: fadeIn,
-          animationTimeline: 'scroll()',
-          animationRange
-        } as CSSProperties}>
-        {toc}
-      </div>
-      <MenuTrigger align="end">
+      {toc && (
+        <div
+          className={style({
+            ...animation,
+            position: 'absolute',
+            left: '50%',
+            translateX: '-50%'
+          })}
+          style={{
+            animationName: fadeIn,
+            animationTimeline: 'scroll()',
+            animationRange
+          } as CSSProperties}>
+          {toc}
+        </div>
+      )}
+      <DialogTrigger>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        {nav}
-      </MenuTrigger>
+        <Modal size="fullscreenTakeover" style={{zIndex: 100, height: '100dvh'}}>
+          <MobileSearchMenu pages={pages} currentPage={currentPage} />
+        </Modal>
+      </DialogTrigger>
     </div>
   );
 }

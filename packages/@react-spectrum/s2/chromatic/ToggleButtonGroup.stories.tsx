@@ -11,12 +11,14 @@
  */
 
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
-import {categorizeArgTypes, StaticColorDecorator} from '../stories/utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from '../stories/utils';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 import {Text, ToggleButton, ToggleButtonGroup} from '../src';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'];
 
 const meta: Meta<typeof ToggleButtonGroup> = {
   component: ToggleButtonGroup,
@@ -25,8 +27,9 @@ const meta: Meta<typeof ToggleButtonGroup> = {
   },
   decorators: [StaticColorDecorator],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp', 'onChange'])
+    ...categorizeArgTypes('Events', events)
   },
+  args: {...getActionArgs(events)},
   title: 'S2 Chromatic/ToggleButtonGroup'
 };
 

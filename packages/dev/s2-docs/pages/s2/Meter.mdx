@@ -1,0 +1,41 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Meter} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['gauge', 'progress', 'level'];
+
+# Meter
+
+<PageDescription>{docs.exports.Meter.description}</PageDescription>
+
+<VisualExample
+  component={Meter}
+  docs={docs.exports.Meter}
+  links={docs.links}
+  props={['label', 'value', 'variant', 'size', 'staticColor', 'labelPosition', 'formatOptions', 'valueLabel']}
+  initialProps={{label: "Storage space", value: 35}}
+  controlOptions={{value: {control: 'slider'}}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
+
+<VisualExample
+  component={Meter}
+  docs={docs.exports.Meter}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
+
+## API
+
+<PropTable component={docs.exports.Meter} links={docs.links} />

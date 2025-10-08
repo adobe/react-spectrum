@@ -1,0 +1,204 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Calendar} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['date'];
+
+# Calendar
+
+<PageDescription>{docs.exports.Calendar.description}</PageDescription>
+
+<VisualExample
+  component={Calendar}
+  docs={docs.exports.Calendar}
+  links={docs.links}
+  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled']}
+  initialProps={{'aria-label': 'Event date'}}
+  controlOptions={{
+    visibleMonths: {
+      minValue: 1,
+      maxValue: 3
+    }
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2"
+  wide />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+
+```tsx render
+"use client";
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {Calendar} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(parseDate('2020-02-03'));
+  
+  return (
+    <>
+      <Calendar
+        ///- begin highlight -///
+        value={date}
+        onChange={setDate}
+        ///- end highlight -///
+      />
+      <p>Selected date: {date.toDate(getLocalTimeZone()).toLocaleDateString()}</p>
+    </>
+  );
+}
+```
+
+### International calendars
+
+By default, `Calendar` displays the value using the calendar system for the user's locale. Use `<Provider>` to override the calendar system by setting the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string). The `onChange` event always receives a date in the same calendar as the `value` or `defaultValue` (Gregorian if no value is provided), regardless of the displayed locale.
+
+```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}} type="s2"
+"use client";
+import {Provider, Calendar} from '@react-spectrum/s2';
+import {parseDate} from '@internationalized/date';
+
+<Provider/* PROPS */>
+  <Calendar defaultValue={parseDate('2025-02-03')} />
+</Provider>
+```
+
+### Custom calendar systems
+
+`Calendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+
+```tsx render
+"use client";
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
+import {Calendar} from '@react-spectrum/s2';
+
+export default (
+  <Calendar
+    firstDayOfWeek="sun"
+    ///- begin highlight -///
+    createCalendar={() => new Custom454()} />
+    ///- end highlight -///
+);
+
+// See @internationalized/date docs linked above.
+///- begin collapse -///
+class Custom454 extends GregorianCalendar {
+  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+  getDaysInMonth(date) {
+    return this.weekPattern[date.month - 1] * 7;
+  }
+
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < this.weekPattern.length; months++) {
+      let weeksInMonth = this.weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  getFormattableMonth(date) {
+    let gregorian = toCalendar(date, new GregorianCalendar());
+    return gregorian.set({month: date.month, day: 1});
+  }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
+}
+///- end collapse -///
+```
+
+## Validation
+
+Use the `minValue` and `maxValue` props to set the valid date range. The `isDateUnavailable` callback prevents certain dates from being selected. For custom validation rules, set the `isInvalid` and `errorMessage` props.
+
+```tsx render docs={docs.exports.Calendar} links={docs.links} props={['isInvalid', 'errorMessage']} wide type="s2"
+"use client";
+import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+import {Calendar} from '@react-spectrum/s2';
+
+function Example(props) {
+  let {locale} = useLocale();
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({ days: 5 })],
+    [now.add({ days: 14 }), now.add({ days: 16 })],
+    [now.add({ days: 23 }), now.add({ days: 24 })]
+  ];
+
+  return (
+    <Calendar
+      {...props}
+      aria-label="Appointment date"
+      ///- begin highlight -///
+      /* PROPS */
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={date => (
+        isWeekend(date, locale) ||
+        disabledRanges.some((interval) =>
+          date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        )
+      )} />
+      ///- end highlight -///
+  );
+}
+```
+
+## Controlling the focused date
+
+Use the `focusedValue` or `defaultFocusedValue` prop to control which date is focused. This controls which month is visible. The `onFocusChange` event is called when a date is focused by the user.
+
+```tsx render
+"use client";
+import {Calendar, ActionButton} from '@react-spectrum/s2';
+import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
+import {useState} from 'react';
+
+function Example() {
+  let defaultDate = new CalendarDate(2021, 7, 1);
+  let [focusedDate, setFocusedDate] = useState(defaultDate);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
+      <ActionButton onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
+        Today
+      </ActionButton>
+      <Calendar
+        ///- begin highlight -///
+        focusedValue={focusedDate}
+        onFocusChange={setFocusedDate}
+        ///- end highlight -///
+      />
+    </div>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.Calendar} links={docs.links} />

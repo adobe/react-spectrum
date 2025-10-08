@@ -1,4 +1,4 @@
-import {Disclosure} from '../src/Disclosure';
+import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src/Disclosure';
 
 import type {Meta, StoryFn} from '@storybook/react';
 
@@ -14,9 +14,9 @@ export default meta;
 type Story = StoryFn<typeof Disclosure>;
 
 export const Example: Story = (args) => (
-  <Disclosure {...args} style={{width: '400px'}}>Details on managing your account</Disclosure>
+  <Disclosure {...args} style={{width: '400px'}}>
+    <DisclosureHeader>Manage your account</DisclosureHeader>
+    <DisclosurePanel>Details on managing your account</DisclosurePanel>
+  </Disclosure>
 );
 
-Example.args = {
-  title: 'Manage your account'
-};

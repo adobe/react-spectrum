@@ -1,0 +1,33 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {LinkButton, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['button'];
+
+# LinkButton
+
+<PageDescription>{docs.exports.LinkButton.description}</PageDescription>
+
+<VisualExample
+  component={LinkButton}
+  docs={docs.exports.LinkButton}
+  props={['children', 'variant', 'staticColor', 'fillStyle', 'size', 'isDisabled']}
+  initialProps={{children: 'Link', href: 'https://react-spectrum.adobe.com/', target: '_blank'}}
+  slots={{icon: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## API
+
+```tsx links={{LinkButton: '#linkbutton'}}
+<LinkButton>
+  <Icon />
+  <Text />
+</LinkButton>
+```
+
+### LinkButton
+
+<PropTable component={docs.exports.LinkButton} links={docs.links} />

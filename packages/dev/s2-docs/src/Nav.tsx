@@ -1,15 +1,22 @@
 'use client';
 
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Header, Heading, Menu, MenuItem, MenuSection, Picker, pressScale} from '@react-spectrum/s2';
+import {getLibraryFromPage} from './library';
 import {Link} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
+import {Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
+  let currentLibrary = getLibraryFromPage(currentPage);
   let sections = new Map();
   for (let page of pages) {
-    let section = page.exports?.section ?? 'React Aria';
+    let library = getLibraryFromPage(page);
+    if (library !== currentLibrary) {
+      continue;
+    }
+
+    let section = page.exports?.section ?? 'Components';
     let sectionPages = sections.get(section) ?? [];
     sectionPages.push(page);
     sections.set(section, sectionPages);
@@ -29,6 +36,8 @@ export function Nav({pages, currentPage}: PageProps) {
         height: 'fit',
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
+        paddingX: 12,
+        minWidth: 180,
         display: {
           default: 'none',
           lg: 'block'
@@ -37,8 +46,20 @@ export function Nav({pages, currentPage}: PageProps) {
       {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
           <SideNav>
-            {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
-              <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+            {pages
+              .sort((a, b) => {
+                let aIntro = isIntroduction(a);
+                let bIntro = isIntroduction(b);
+                if (aIntro && !bIntro) {
+                  return -1;
+                }
+                if (!aIntro && bIntro) {
+                  return 1;
+                }
+                return title(a).localeCompare(title(b));
+              })
+              .map(page => (
+                <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
             ))}
           </SideNav>
         </SideNavSection>
@@ -47,33 +68,17 @@ export function Nav({pages, currentPage}: PageProps) {
   );
 }
 
-export function MobileNav({pages, currentPage}: PageProps) {
-  let sections = new Map();
-  for (let page of pages) {
-    let section = page.exports?.section ?? 'React Aria';
-    let sectionPages = sections.get(section) ?? [];
-    sectionPages.push(page);
-    sections.set(section, sectionPages);
-  }
-
-  return (
-    <Menu size="L" selectionMode="single" selectedKeys={[currentPage.url]}>
-      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
-        <MenuSection key={name}>
-          <Header>
-            <Heading>{name}</Heading>
-          </Header>
-          {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
-            <MenuItem key={page.url} id={page.url} href={page.url}>{title(page)}</MenuItem>
-          ))}
-        </MenuSection>
-      ))}
-    </Menu>
-  );
-}
-
 function title(page) {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
+}
+
+function isIntroduction(page) {
+  let navTitle = page.exports?.navigationTitle;
+  if (typeof navTitle === 'string' && navTitle.trim().toLowerCase() === 'introduction') {
+    return true;
+  }
+  let t = title(page);
+  return typeof t === 'string' && t.trim().toLowerCase() === 'introduction';
 }
 
 function SideNavSection({title, children}) {
@@ -101,9 +106,7 @@ export function SideNav({children}) {
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
-        minWidth: 160,
-        width: 192,
-        maxWidth: 240,
+        width: 'full',
         boxSizing: 'border-box'
       })}>
       {children}
@@ -206,13 +209,11 @@ export function OnPageNav({children}) {
   );
 }
 
-export function MobileOnPageNav({children}) {
+export function MobileOnPageNav({children, currentPage}) {
   let [selected, setSelected] = useState('');
-
   useEffect(() => {
     let elements = Array.from(document.querySelectorAll('article > :is(h1,h2,h3,h4,h5)'));
     elements.reverse();
-
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -222,7 +223,7 @@ export function MobileOnPageNav({children}) {
           visible.delete(entry.target);
         }
       }
-      
+
       let lastVisible = elements.find(e => visible.has(e));
       if (lastVisible) {
         setSelected('#' + lastVisible.id!);
@@ -241,7 +242,7 @@ export function MobileOnPageNav({children}) {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return (
     <Picker aria-label="Table of contents" selectedKey={selected} isQuiet size="L">

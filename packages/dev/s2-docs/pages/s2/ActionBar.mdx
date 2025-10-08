@@ -1,0 +1,82 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['toolbar'];
+
+# ActionBar
+
+<PageDescription>{docs.exports.ActionBar.description}</PageDescription>
+
+```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2"
+"use client";
+import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell, Text} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let rows = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: '67'},
+  {id: 2, name: 'Blastoise', type: 'Water', level: '56'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: '83'},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: '100'}
+];
+
+function Example(props) {
+  return (
+    <TableView
+      aria-label="Table with action bar"
+      selectionMode="multiple"
+      defaultSelectedKeys={[2]}
+      styles={style({width: 'full', height: 250})}
+      renderActionBar={(selectedKeys) => (
+        /*- begin focus -*/
+        <ActionBar {...props}/* PROPS */>
+          <ActionButton onPress={() => alert('Edit action')}>
+            <Edit />
+            <Text>Edit</Text>
+          </ActionButton>
+          <ActionButton onPress={() => alert('Copy action')}>
+            <Copy />
+            <Text>Copy</Text>
+          </ActionButton>
+          <ActionButton onPress={() => alert('Delete action')}>
+            <Delete />
+            <Text>Delete</Text>
+          </ActionButton>
+        </ActionBar>
+        /*- end focus -*/
+      )}>
+      <TableHeader>
+        <Column key="name" isRowHeader>Name</Column>
+        <Column key="type">Type</Column>
+        <Column key="level">Level</Column>
+      </TableHeader>
+      <TableBody items={rows}>
+        {item => (
+          <Row>
+            <Cell key="name">{item.name}</Cell>
+            <Cell key="type">{item.type}</Cell>
+            <Cell key="level">{item.level}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
+## API
+
+```tsx links={{ActionBar: '#actionbar', ActionButton: 'ActionButton.html'}}
+<ActionBar>
+  <ActionButton />
+</ActionBar>
+```
+
+### ActionBar
+
+<PropTable component={docs.exports.ActionBar} links={docs.links} />
