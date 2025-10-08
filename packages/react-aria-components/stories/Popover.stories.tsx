@@ -469,7 +469,7 @@ export const PopoverTriggerWidthExample: PopoverStory = () => (
 function ScrollingBoundaryContainerExample(args) {
   let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);
   return (
-    <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto'}}>
+    <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto', border: '1px solid light-dark(black, white)'}}>
       <div style={{width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <DialogTrigger>
           <Button style={{width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Open popover</Button>
@@ -483,7 +483,7 @@ function ScrollingBoundaryContainerExample(args) {
               zIndex: 5
             }}>
             <Dialog>
-              Should match the width of the trigger button
+              This is some dummy content for the popover
             </Dialog>
           </Popover>
         </DialogTrigger>
