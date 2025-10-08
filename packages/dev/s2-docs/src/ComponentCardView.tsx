@@ -85,8 +85,11 @@ export interface ComponentCardItem {
 }
 
 const componentIllustrations: Record<string, React.ComponentType | undefined> = {
+  'Accordion': DisclosureGroupSvg,
   'ActionButton': ActionButtonSvg,
+  'ActionButtonGroup': ButtonGroupSvg, // TODO: get better illustration
   'ActionGroup': ActionGroupSvg,
+  'ActionMenu': MenuSvg,
   'Badge': BadgeSvg,
   'Breadcrumbs': BreadcrumbsSvg,
   'Button': ButtonSvg,
@@ -121,6 +124,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'Label': LabelSvg,
   'LabeledValue': LabeledValueSvg,
   'Link': LinkSvg,
+  'LinkButton': ButtonSvg, // TODO: get better illustration
   'ListBox': ListBoxSvg,
   'ListView': ListViewSvg,
   'Menu': MenuSvg,
@@ -140,6 +144,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'StatusLight': StatusLightSvg,
   'Switch': SwitchSvg,
   'Table': TableSvg,
+  'TableView': TableSvg,
   'Tabs': TabsSvg,
   'TagGroup': TagGroupSvg,
   'TextArea': TextAreaSvg,
@@ -150,6 +155,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'ToggleButtonGroup': ActionGroupSvg, // ToggleButtonGroup -> ActionGroup
   'Tooltip': TooltipSvg,
   'Tree': TreeSvg,
+  'TreeView': TreeSvg,
   'useFocus': useFocusSvg,
   'useFocusRing': useFocusRingSvg,
   'useFocusWithin': useFocusWithinSvg,
