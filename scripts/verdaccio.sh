@@ -72,7 +72,7 @@ yarn version apply --all
 commit_to_revert="HEAD~0"
 
 # Publish packages to verdaccio
-yarn workspaces foreach --all --no-private -pt npm publish
+yarn workspaces foreach --all --no-private -pt npm publish --tag latest
 
 if [ "$ci" = true ];
 then
