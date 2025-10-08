@@ -9,8 +9,9 @@ import {type Library, TAB_DEFS} from './constants';
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
-import React, {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useId} from '@react-aria/utils';
+
 
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
@@ -208,7 +209,7 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
 };
 
 function MobileNav({pages, currentPage}: PageProps) {
-  let overlayTriggerState = React.useContext(OverlayTriggerStateContext);
+  let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
   let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
@@ -218,7 +219,7 @@ function MobileNav({pages, currentPage}: PageProps) {
 
   let getSectionsForLibrary = useCallback((libraryId: string) => {
     let sectionsMap = new Map();
-    let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId);
+    let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId && !page.exports?.hideFromSearch);
     for (let page of filteredPages) {
       let section = page.exports?.section ?? 'Components';
       let sectionPages = sectionsMap.get(section) ?? [];
@@ -243,7 +244,7 @@ function MobileNav({pages, currentPage}: PageProps) {
     });
     return sectionArray;
   }, [getSectionsForLibrary, selectedLibrary]);
-  
+
 
   useEffect(() => {
     // Auto-select first section initially or when library changes
@@ -296,9 +297,9 @@ function MobileNav({pages, currentPage}: PageProps) {
     if (!searchValue.trim()) {
       return pages;
     }
-    
+
     let searchLower = searchValue.toLowerCase();
-    
+
     // Filter items where name or tags start with search value
     let matchedPages = pages.filter(page => {
       let pageTitle = title(page).toLowerCase();
@@ -307,19 +308,19 @@ function MobileNav({pages, currentPage}: PageProps) {
       let tagMatch = tags.some(tag => tag.toLowerCase().startsWith(searchLower));
       return nameMatch || tagMatch;
     });
-    
+
     // Sort to prioritize name matches over tag matches
     return matchedPages.sort((a, b) => {
       let aNameMatch = title(a).toLowerCase().startsWith(searchLower);
       let bNameMatch = title(b).toLowerCase().startsWith(searchLower);
-      
+
       if (aNameMatch && !bNameMatch) {
         return -1;
       }
       if (!aNameMatch && bNameMatch) {
         return 1;
       }
-      
+
       // If both match by name or both match by tag, maintain original order
       return 0;
     });
@@ -328,9 +329,9 @@ function MobileNav({pages, currentPage}: PageProps) {
   let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
     let librarySections = getSectionsForLibrary(libraryId);
     let pages = librarySections.get(sectionName) ?? [];
-    
+
     let filteredPages = filterPages(pages, searchValue);
-    
+
     return filteredPages
       .sort((a, b) => title(a).localeCompare(title(b)))
       .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
@@ -355,13 +356,13 @@ function MobileNav({pages, currentPage}: PageProps) {
     } else {
       items = getSectionContent(section, libraryId, searchValue);
     }
-    
+
     // Sort to show "Introduction" first when search is empty
     if (searchValue.trim().length === 0) {
       items = [...items].sort((a, b) => {
         const aIsIntro = a.name === 'Introduction';
         const bIsIntro = b.name === 'Introduction';
-        
+
         if (aIsIntro && !bIsIntro) {
           return -1;
         }
@@ -371,14 +372,14 @@ function MobileNav({pages, currentPage}: PageProps) {
         return 0;
       });
     }
-    
+
     return items;
   };
 
   let getSectionNamesForLibrary = (libraryId: string) => {
     let librarySections = getSectionsForLibrary(libraryId);
     let sectionArray = [...librarySections.keys()];
-    
+
     // Show 'Components' first
     sectionArray.sort((a, b) => {
       if (a === 'Components') {
@@ -389,7 +390,7 @@ function MobileNav({pages, currentPage}: PageProps) {
       }
       return a.localeCompare(b);
     });
-    
+
     return sectionArray;
   };
 
@@ -464,8 +465,8 @@ function MobileNav({pages, currentPage}: PageProps) {
           {libraries.map(library => (
             <MobileTabPanel key={library.id} id={library.id}>
               <div className={stickySearchContainer}>
-                <SearchField 
-                  aria-label="Search" 
+                <SearchField
+                  aria-label="Search"
                   value={searchValue}
                   onChange={handleSearchChange}
                   onFocus={handleSearchFocus}
@@ -473,8 +474,8 @@ function MobileNav({pages, currentPage}: PageProps) {
                   styles={style({marginX: 16})} />
                 <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
                   <TagGroup
-                    aria-label="Navigation sections" 
-                    selectionMode="single" 
+                    aria-label="Navigation sections"
+                    selectionMode="single"
                     selectedKeys={selectedSection ? [selectedSection] : []}
                     onSelectionChange={handleTagSelection}
                     UNSAFE_style={{whiteSpace: 'nowrap'}}
