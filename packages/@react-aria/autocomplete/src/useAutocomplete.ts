@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, RefObject, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, openLink, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -311,7 +311,11 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
           // Trigger click action on item when Enter key was pressed.
           if (focusedNodeId != null) {
             let item = document.getElementById(focusedNodeId);
-            item?.click();
+            if (item instanceof HTMLAnchorElement && item.href) {
+              openLink(item, e.nativeEvent);
+            } else if (item) {
+              item.click();
+            }
           }
           break;
       }
