@@ -68,8 +68,18 @@ type EventTargetType<T> = {
 export function getEventTarget<NodeType, SE extends SyntheticEvent<NodeType>>(event: SE): SE extends EventTargetType<infer Target> ? Target : never;
 export function getEventTarget(event: Event): Event['target'];
 export function getEventTarget<NodeType, SE extends SyntheticEvent<NodeType>>(event: Event | SE): Event['target'] {
-  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot && 'composedPath' in event) {
-    return event.composedPath()[0] || null;
+  if (shadowDOM() && (event.target instanceof Element) && event.target.shadowRoot) {
+    if ('composedPath' in event) {
+      return event.composedPath()[0] || null;
+    } else if ('composedPath' in event.nativeEvent) {
+      /** If Typescript types are to be strictly trusted, there is a risk 
+       * that the return type of this branch doesn't match the return type of the first overload.
+       * In practice, SyntheticEvents only seem to have `target: EventTarget & T` when the event
+       * doesn't bubble. In that case, .composedPath()[0] and .target should always
+       * be the same.
+       */
+      return event.nativeEvent.composedPath()[0] || null
+    }
   }
   return event.target;
 }
