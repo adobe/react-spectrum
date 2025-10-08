@@ -61,7 +61,7 @@ function Example() {
   let triggerRef = useRef(null);
 
   return (
-    <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: 64, alignItems: 'center'}}>
       <Button onPress={() => setOpen(!isOpen)}>
         Open popover
       </Button>
