@@ -21,6 +21,7 @@ import {
   useId
 } from 'react-aria';
 import {
+  ClassNameOrFunction,
   ContextValue,
   RenderProps,
   SlotProps,
@@ -67,6 +68,11 @@ export interface ButtonRenderProps {
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Button'
+   */
+  className?: ClassNameOrFunction<ButtonRenderProps>,
   /**
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.

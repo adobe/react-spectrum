@@ -3,9 +3,21 @@ import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBra
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  DOMProps,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {ContextValue, DEFAULT_SLOT, DOMProps, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, UNSTABLE_useFilteredTableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
@@ -208,6 +220,11 @@ const ResizableTableContainerContext = createContext<ResizableTableContainerCont
 
 export interface ResizableTableContainerProps extends DOMProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-ResizableTableContainer'
+   */
+  className?: string,
+  /**
    * Handler that is called when a user starts a column resize.
    */
   onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
@@ -306,6 +323,11 @@ export interface TableRenderProps {
 }
 
 export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLTableElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Table'
+   */
+  className?: ClassNameOrFunction<TableRenderProps>,
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: ReactNode,
   /**
@@ -545,6 +567,11 @@ export interface TableHeaderRenderProps {
 }
 
 export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents, GlobalDOMAttributes<HTMLTableSectionElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TableHeader'
+   */
+  className?: ClassNameOrFunction<TableHeaderRenderProps>,
   /** A list of table columns. */
   columns?: Iterable<T>,
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -676,6 +703,11 @@ export interface ColumnRenderProps {
 }
 
 export interface ColumnProps extends RenderProps<ColumnRenderProps>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Column'
+   */
+  className?: ClassNameOrFunction<ColumnRenderProps>,
   /** The unique id of the column. */
   id?: Key,
   /** Whether the column allows sorting. */
@@ -814,6 +846,11 @@ export interface ColumnResizerRenderProps {
 }
 
 export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColumnResizer'
+   */
+  className?: ClassNameOrFunction<ColumnResizerRenderProps>,
   /** A custom accessibility label for the resizer. */
   'aria-label'?: string
 }
@@ -930,6 +967,11 @@ export interface TableBodyRenderProps {
 }
 
 export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps>, GlobalDOMAttributes<HTMLTableSectionElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TableBody'
+   */
+  className?: ClassNameOrFunction<TableBodyRenderProps>,
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
@@ -1018,6 +1060,11 @@ export interface RowRenderProps extends ItemRenderProps {
 }
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Row'
+   */
+  className?: ClassNameOrFunction<RowRenderProps>,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
@@ -1233,6 +1280,11 @@ export interface CellRenderProps {
 }
 
 export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttributes<HTMLTableCellElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Cell'
+   */
+  className?: ClassNameOrFunction<CellRenderProps>,
   /** The unique id of the cell. */
   id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
@@ -1393,6 +1445,11 @@ function RootDropIndicator() {
 }
 
 export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLTableRowElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-TableLoadMoreItem'
+   */
+  className?: string,
   /**
    * The load more spinner to render when loading additional items.
    */

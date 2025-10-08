@@ -120,17 +120,18 @@ async function buildPageIndex(library: Library): Promise<PageInfo[]> {
   // Read llms.txt to enumerate available pages without downloading them all.
   const llmsUrl = `${libBaseUrl(library)}/llms.txt`;
   const txt = await fetchText(llmsUrl);
-  const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)\s*$/;
+  const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)(?:\s*:\s*(.*))?\s*$/;
   for (const line of txt.split(/\r?\n/)) {
     const m = line.match(re);
     if (!m) {continue;}
     const display = (m[1] || '').trim();
     const href = (m[2] || '').trim();
+    const desc = (m[3] || '').trim() || undefined;
     if (!href || !/\.md$/i.test(href)) {continue;}
     const key = href.replace(/\.md$/i, '').replace(/\\/g, '/');
     const title = display || path.basename(key);
     const url = `${DEFAULT_CDN_BASE}/${key}.md`;
-    const info: PageInfo = {key, title, description: undefined, filePath: url, sections: []};
+    const info: PageInfo = {key, title, description: desc, filePath: url, sections: []};
     pages.push(info);
     pageCache.set(info.key, info);
   }

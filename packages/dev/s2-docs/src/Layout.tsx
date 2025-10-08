@@ -74,8 +74,19 @@ const getDescription = (currentPage: Page): string => {
   return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
 };
 
+let articleStyles = style({
+  maxWidth: {
+    default: 'none',
+    isWithToC: 768
+  },
+  width: 'full',
+  height: 'fit'
+});
+
+
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
+  let hasToC = currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0;
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -120,12 +131,12 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={<MobileToc key="toc" toc={currentPage.tableOfContents ?? []} />}
+            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 0 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
             <Nav pages={pages} currentPage={currentPage} />
-            <main 
+            <main
               key={currentPage.url}
               style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
               className={style({
@@ -156,11 +167,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 }
               })}>
               <article
-                className={style({
-                  maxWidth: 768,
-                  width: 'full',
-                  height: 'fit'
-                })}>
+                className={articleStyles({isWithToC: hasToC})}>
                 {React.cloneElement(children, {components})}
               </article>
               <aside
@@ -177,7 +184,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
+                {hasToC && (
+                  <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
+                )}
                 <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
               </aside>
             </main>
@@ -203,9 +212,9 @@ function Toc({toc}) {
   );
 }
 
-function MobileToc({toc}) {
+function MobileToc({toc, currentPage}) {
   return (
-    <MobileOnPageNav>
+    <MobileOnPageNav currentPage={currentPage}>
       {renderMobileToc(toc)}
     </MobileOnPageNav>
   );

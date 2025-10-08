@@ -1,10 +1,17 @@
 import {AriaColorAreaProps, useColorArea} from 'react-aria';
+import {
+  ClassNameOrFunction,
+  Provider,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {ColorAreaContext} from './RSPContexts';
 import {ColorAreaState, useColorAreaState} from 'react-stately';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
-import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 
 export interface ColorAreaRenderProps {
@@ -19,7 +26,13 @@ export interface ColorAreaRenderProps {
   state: ColorAreaState
 }
 
-export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColorArea'
+   */
+  className?: ClassNameOrFunction<ColorAreaRenderProps>
+}
 
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 

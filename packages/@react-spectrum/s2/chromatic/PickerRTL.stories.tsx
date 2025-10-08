@@ -22,4 +22,4 @@ const meta: Meta<typeof Picker<any>> = {
 };
 
 export default meta;
-export {Default, WithSections, DynamicExample, Icons, WithCustomWidth, ContextualHelp} from './Picker.stories';
+export {Default, WithSections, DynamicExample, Icons, Avatars, WithCustomWidth, ContextualHelp} from './Picker.stories';
