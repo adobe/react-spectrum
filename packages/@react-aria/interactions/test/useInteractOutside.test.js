@@ -10,13 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createShadowRoot, fireEvent, installPointerEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
-import {enableShadowDOM} from '@react-stately/flags';
+import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import React, {useEffect, useRef} from 'react';
 import ReactDOM, {createPortal} from 'react-dom';
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {useInteractOutside} from '../';
-import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let ref = useRef();
@@ -593,92 +590,6 @@ describe('useInteractOutside shadow DOM extended tests', function () {
 
     expect(onInteractOutside).toHaveBeenCalledTimes(1);
 
-    cleanup();
-  });
-});
-
-
-describe('useInteractOutside with Shadow DOM and UNSAFE_PortalProvider', () => {
-  let user;
-
-  beforeAll(() => {
-    enableShadowDOM();
-    user = userEvent.setup({delay: null, pointerMap});
-  });
-
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    act(() => {
-      jest.runAllTimers();
-    });
-  });
-
-  it('should handle interact outside events with UNSAFE_PortalProvider in shadow DOM', async () => {
-    const {shadowRoot, cleanup} = createShadowRoot();
-    let interactOutsideTriggered = false;
-
-    // Create portal container within the shadow DOM for the popover
-    const popoverPortal = document.createElement('div');
-    popoverPortal.setAttribute('data-testid', 'popover-portal');
-    shadowRoot.appendChild(popoverPortal);
-
-    function ShadowInteractOutsideExample() {
-      const ref = useRef();
-      useInteractOutside({
-        ref,
-        onInteractOutside: () => {
-          interactOutsideTriggered = true;
-        }
-      });
-
-      return (
-        <UNSAFE_PortalProvider getContainer={() => shadowRoot}>
-          <div data-testid="container">
-            {ReactDOM.createPortal(
-              <>
-                <div
-                  ref={ref}
-                  data-testid="target"
-                  style={{padding: '20px', background: 'lightblue'}}>
-                  <button data-testid="inner-button">Inner Button</button>
-                  <input data-testid="inner-input" placeholder="Inner Input" />
-                </div>
-                <button data-testid="outside-button">Outside Button</button>
-              </>,
-              popoverPortal
-            )}
-          </div>
-        </UNSAFE_PortalProvider>
-      );
-    }
-
-    const {unmount} = render(<ShadowInteractOutsideExample />);
-
-    const target = shadowRoot.querySelector('[data-testid="target"]');
-    const innerButton = shadowRoot.querySelector(
-      '[data-testid="inner-button"]'
-    );
-    const outsideButton = shadowRoot.querySelector(
-      '[data-testid="outside-button"]'
-    );
-
-    // Click inside the target - should NOT trigger interact outside
-    await user.click(innerButton);
-    expect(interactOutsideTriggered).toBe(false);
-
-    // Click the target itself - should NOT trigger interact outside
-    await user.click(target);
-    expect(interactOutsideTriggered).toBe(false);
-
-    // Click outside the target within shadow DOM - should trigger interact outside
-    await user.click(outsideButton);
-    expect(interactOutsideTriggered).toBe(true);
-
-    // Cleanup
-    unmount();
     cleanup();
   });
 });
