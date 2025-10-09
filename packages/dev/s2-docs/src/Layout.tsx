@@ -50,7 +50,7 @@ function anchorId(children) {
 const getTitle = (currentPage: Page): string => {
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
-  return library ? `${pageTitle} - ${library}` : pageTitle;
+  return library ? `${pageTitle} | ${library}` : pageTitle;
 };
 
 const getOgImageUrl = (currentPage: Page): string => {
@@ -72,6 +72,9 @@ const getDescription = (currentPage: Page): string => {
   const explicitDescription = (currentPage as any).description || currentPage.exports?.description;
   if (explicitDescription) {
     return explicitDescription as string;
+  }
+  if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
+    return `Documentation for ${library || 'React Spectrum'}`;
   }
   return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
 };
