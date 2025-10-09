@@ -13,7 +13,7 @@ import {Popover} from './Popover';
 
 import './ColorPicker.css';
 
-export interface ColorPickerProps extends AriaColorPickerProps {
+export interface ColorPickerProps extends Omit<AriaColorPickerProps, 'children'> {
   label?: string;
   children?: React.ReactNode;
 }
