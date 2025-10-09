@@ -1,0 +1,328 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['box'];
+
+# Card
+
+<PageDescription>{docs.exports.Card.description}</PageDescription>
+
+```tsx render docs={docs.exports.Card} links={docs.links} props={['variant', 'size', 'density']} type="s2" wide
+"use client";
+import {Card, CardPreview, Image, Content, Text, ActionMenu, MenuItem, Footer, StatusLight} from '@react-spectrum/s2';
+import preview from 'url:./assets/preview.png';
+
+<Card/* PROPS */>
+  <CardPreview>
+    <Image src={preview} />
+  </CardPreview>
+  <Content>
+    <Text slot="title">Card title</Text>
+    <ActionMenu>
+      <MenuItem>Edit</MenuItem>
+      <MenuItem>Share</MenuItem>
+      <MenuItem>Delete</MenuItem>
+    </ActionMenu>
+    <Text slot="description">Card description. Give a concise overview of the context or functionality that's mentioned in the card title.</Text>
+  </Content>
+  <Footer>
+    <StatusLight size="S" variant="positive">Published</StatusLight>
+  </Footer>
+</Card>
+```
+
+## Content
+
+Cards are flexible containers that represent objects a user can select or navigate to. Most cards include a preview, metadata, and an optional footer. Spectrum includes several pre-defined card components with layouts for specific use cases, or you can combine these sections to create custom cards.
+
+### Asset
+
+A `AssetCard` represents an asset such as an image, video, document, or folder. The `CardPreview` can contain either an `Image` or illustration. By default, images are displayed in a square preview without cropping. Add metadata in the `Content` section using the `title` and `description` slots.
+
+<ExampleSwitcher type={null} examples={['Image', 'Illustration']}>
+
+```tsx render docs={docs.exports.AssetCard} links={docs.links} props={['variant', 'size']} type="s2" wide
+"use client";
+import {AssetCard, CardPreview, Image, Content, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+
+<AssetCard/* PROPS */>
+  <CardPreview>
+    <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+  </CardPreview>
+  <Content>
+    <Text slot="title">Desert Sunset</Text>
+    <ActionMenu>
+      <MenuItem>Edit</MenuItem>
+      <MenuItem>Share</MenuItem>
+      <MenuItem>Delete</MenuItem>
+    </ActionMenu>
+    <Text slot="description">PNG • 2/3/2024</Text>
+  </Content>
+</AssetCard>
+```
+
+```tsx render docs={docs.exports.AssetCard} links={docs.links} props={['variant', 'size']} type="s2" wide
+"use client";
+import {AssetCard, CardPreview, Content, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import FolderGradient from '@react-spectrum/s2/illustrations/gradient/generic2/FolderClose';
+
+<AssetCard/* PROPS */>
+  <CardPreview>
+    <FolderGradient />
+  </CardPreview>
+  <Content>
+    <Text slot="title">Projects</Text>
+    <ActionMenu>
+      <MenuItem>Edit</MenuItem>
+      <MenuItem>Share</MenuItem>
+      <MenuItem>Delete</MenuItem>
+    </ActionMenu>
+    <Text slot="description">10 items • 6/14/2024</Text>
+  </Content>
+</AssetCard>
+```
+
+</ExampleSwitcher>
+
+### User
+
+A `UserCard` represents a user profile. It includes an [Avatar](Avatar.html) and a `Content` section with `title` and `description` slots, along with an optional header image and `Footer`.
+
+```tsx render docs={docs.exports.UserCard} links={docs.links} props={['variant', 'size']} type="s2" wide
+"use client";
+import {UserCard, CardPreview, Image, Avatar, Content, Text, Footer, StatusLight} from '@react-spectrum/s2';
+import preview from 'url:./assets/preview.png';
+
+<UserCard/* PROPS */>
+  <CardPreview>
+    <Image src={preview} />
+  </CardPreview>
+  <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
+  <Content>
+    <Text slot="title">Simone Carter</Text>
+    <Text slot="description">Art Director at Luma Creative Studios. Visual storyteller and coffee enthusiast.</Text>
+  </Content>
+  <Footer>
+    <StatusLight size="S" variant="positive">Available</StatusLight>
+  </Footer>
+</UserCard>
+```
+
+### Product
+
+A `ProductCard` represents a product a user can take action on. It has a a thumbnail image and a `Content` section with `title` and `description` slots, a `Footer` containing a call to action, and an optional header image.
+
+```tsx render docs={docs.exports.ProductCard} links={docs.links} props={['variant', 'size']} type="s2" wide
+"use client";
+import {ProductCard, CardPreview, Image, Content, Text, Footer, Button} from '@react-spectrum/s2';
+import preview from 'url:./assets/preview.png';
+import logo from 'url:./assets/logo.svg';
+
+<ProductCard/* PROPS */>
+  <CardPreview>
+    <Image slot="preview" src={preview} />
+  </CardPreview>
+  <Image slot="thumbnail" src={logo} />
+  <Content>
+    <Text slot="title">Command + R</Text>
+    <Text slot="description">Your all-in-one shortcut for apps, automations, and devices.</Text>
+  </Content>
+  <Footer>
+    <Button variant="primary">Buy now</Button>
+  </Footer>
+</ProductCard>
+```
+
+### Collection
+
+A `CollectionCardPreview` displays up to 4 images in a collection of assets. When 4 images are provided, the first one is displayed as a larger hero image.
+
+```tsx render docs={docs.exports.Card} links={docs.links} props={['variant', 'size']} type="s2" wide
+"use client";
+import {Card, CollectionCardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Folder from '@react-spectrum/s2/icons/Folder';
+
+<Card/* PROPS */>
+  <CollectionCardPreview>
+    <Image alt="" src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+    <Image alt="" src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+    <Image alt="" src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+    <Image alt="" src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+  </CollectionCardPreview>
+  <Content>
+    <Text slot="title">Travel</Text>
+    <div className={style({gridColumnEnd: 'span 2', display: 'flex', alignItems: 'center', gap: 8})}>
+      <Folder />
+      <Text slot="description">20 photos</Text>
+    </div>
+  </Content>
+</Card>
+```
+
+### Gallery
+
+A card can omit its `Content` section and display only a preview to create a gallery card typically seen in a waterfall layout. Ensure that the preview image has `alt` text, and any content placed above the preview has enough contrast against the background.
+
+```tsx render docs={docs.exports.Card} links={docs.links} props={['size']} type="s2" wide
+"use client";
+import {Card, CardPreview, Image, Badge, Avatar} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Card/* PROPS */>
+  <CardPreview>
+    <Image
+      alt="Narrow mountain trail with green grass and sharp peaks in the background"
+      src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      styles={style({width: 'full', aspectRatio: 'square', objectFit: 'cover', pointerEvents: 'none'})} />
+    <Badge
+      variant="yellow"
+      styles={style({
+        position: 'absolute',
+        top: 16,
+        insetEnd: 16
+      })}>
+      Free
+    </Badge>
+    <Avatar
+      src="https://i.imgur.com/xIe7Wlb.png"
+      size={24}
+      isOverBackground
+      styles={style({
+        position: 'absolute',
+        bottom: 16,
+        insetStart: 16
+      })} />
+  </CardPreview>
+</Card>
+```
+
+### Custom
+
+Combine the `CardPreview`, `Content`, and `Footer` components to create custom cards. Add additional elements and styles within these sections to create custom layouts as needed.
+
+```tsx render docs={docs.exports.Card} links={docs.links} props={['variant', 'density']} type="s2" wide
+"use client";
+import {Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Select from '@react-spectrum/s2/icons/Select';
+
+<Card/* PROPS */>
+  <CardPreview>
+    <Image
+      alt=""
+      src="https://images.unsplash.com/photo-1671225137978-aa9a19071b9a?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+  </CardPreview>
+  <Content>
+    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'space-between'})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
+        <Select />
+        <Text slot="description">Click through rate</Text>
+      </div>
+      <div className={style({display: 'flex', flexDirection: 'column'})}>
+        <Text styles={style({font: 'title-xl'})}>1.012%</Text>
+        <Text styles={style({font: 'ui-sm', color: 'positive-900'})}>21% ↑ average</Text>
+      </div>
+    </div>
+  </Content>
+</Card>
+```
+
+## Skeleton
+
+Wrap a card in a `Skeleton` to display a loading state. Placeholder text content and images are displayed in a skeleton style.
+
+```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2" wide
+import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+
+<Skeleton isLoading>
+  <Card>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Placeholder title</Text>
+      <Text slot="description">This is placeholder content approximating the length of the real content to avoid layout shifting when the real content appears.</Text>
+    </Content>
+  </Card>
+</Skeleton>
+```
+
+## API
+
+### Card
+
+```tsx
+<Card>
+  <CardPreview>
+    <Image /> or <Illustration />
+  </CardView>
+  <Content>
+    <Text slot="title" />
+    <ActionMenu />
+    <Text slot="description" />
+  </Content>
+  <Footer />
+</Card>
+```
+
+<PropTable component={docs.exports.Card} links={docs.links} />
+
+### AssetCard
+
+```tsx
+<AssetCard>
+  <CardPreview>
+    <Image /> or <Illustration />
+  </CardView>
+  <Content>
+    <Text slot="title" />
+    <ActionMenu />
+    <Text slot="description" />
+  </Content>
+</AssetCard>
+```
+
+<PropTable component={docs.exports.AssetCard} links={docs.links} />
+
+### UserCard
+
+```tsx
+<UserCard>
+  <CardPreview>
+    <Image />
+  </CardView>
+  <Avatar />
+  <Content>
+    <Text slot="title" />
+    <ActionMenu />
+    <Text slot="description" />
+  </Content>
+  <Footer />
+</UserCard>
+```
+
+<PropTable component={docs.exports.UserCard} links={docs.links} />
+
+### ProductCard
+
+```tsx
+<ProductCard>
+  <CardPreview>
+    <Image slot="preview" />
+  </CardView>
+  <Image slot="thumbnail" />
+  <Content>
+    <Text slot="title" />
+    <ActionMenu />
+    <Text slot="description" />
+  </Content>
+  <Footer>
+    <Button /> or <LinkButton />
+  </Footer>
+</ProductCard>
+```
+
+<PropTable component={docs.exports.ProductCard} links={docs.links} />

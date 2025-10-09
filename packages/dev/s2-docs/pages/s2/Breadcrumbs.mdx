@@ -1,0 +1,108 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['navigation'];
+
+# Breadcrumbs
+
+<PageDescription>{docs.exports.Breadcrumbs.description}</PageDescription>
+
+```tsx render docs={docs.exports.Breadcrumbs} links={docs.links} props={['size', 'isDisabled']} initialProps={{}} type="s2"
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+
+<Breadcrumbs/* PROPS */>
+  <Breadcrumb href="/">Home</Breadcrumb>
+  <Breadcrumb href="/react-spectrum">React Spectrum</Breadcrumb>
+  <Breadcrumb>Breadcrumbs</Breadcrumb>
+</Breadcrumbs>
+```
+
+## Content
+
+`Breadcrumbs` follows the [Collection Components API](collections.html?component=Breadcrumbs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. The `onAction` event is called when a user presses a breadcrumb.
+
+```tsx render
+"use client";
+import {Breadcrumbs, Breadcrumb, type Key} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [breadcrumbs, setBreadcrumbs] = useState([
+    {id: 1, label: 'Home'},
+    {id: 2, label: 'Library'},
+    {id: 3, label: 'Documents'},
+    {id: 4, label: 'Annual Reports'}
+  ]);
+
+  let navigate = (id: Key) => {
+    let i = breadcrumbs.findIndex(item => item.id === id);
+    setBreadcrumbs(breadcrumbs.slice(0, i + 1));
+  };
+
+  return (
+    /*- begin highlight -*/
+    <Breadcrumbs items={breadcrumbs} onAction={navigate}>
+      {item => <Breadcrumb>{item.label}</Breadcrumb>}
+    </Breadcrumbs>
+    /*- end highlight -*/
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>When breadcrumbs are used as a main navigation element for a page, they can be placed in a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html). Landmarks help assistive technology users quickly find major sections of a page. Place breadcrumbs inside a `<nav>` element with an `aria-label` to create a navigation landmark.</Content>
+</InlineAlert>
+
+### Overflow Behavior
+
+Breadcrumbs automatically collapse items into a menu when space is limited. A maximum of 4 items are shown including the root and menu button.
+
+```tsx render
+"use client";
+import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<div
+  className={style({
+    width: 400,
+    padding: 16,
+    borderWidth: 1,
+    borderStyle: 'solid', 
+    borderColor: 'gray-300',
+    borderRadius: 'default',
+    resize: 'horizontal',
+    overflow: 'hidden'
+  })}>
+  {/*- begin focus -*/}
+  <Breadcrumbs>
+    <Breadcrumb>Documents</Breadcrumb>
+    <Breadcrumb>My Shared Folder</Breadcrumb>
+    <Breadcrumb>Projects and Workflows</Breadcrumb>
+    <Breadcrumb>Annual Reports 2024</Breadcrumb>
+    <Breadcrumb>Marketing Materials</Breadcrumb>
+    <Breadcrumb>Q3 Campaign Assets</Breadcrumb>
+    <Breadcrumb>Final Deliverables</Breadcrumb>
+  </Breadcrumbs>
+  {/*- end focus -*/}
+</div>
+```
+
+## API
+
+```tsx links={{Breadcrumbs: '#breadcrumbs', Breadcrumb: '#breadcrumb'}}
+<Breadcrumbs>
+  <Breadcrumb />
+</Breadcrumbs>
+```
+
+### Breadcrumbs
+
+<PropTable component={docs.exports.Breadcrumbs} links={docs.links} />
+
+### Breadcrumb
+
+<PropTable component={docs.exports.Breadcrumb} links={docs.links} />

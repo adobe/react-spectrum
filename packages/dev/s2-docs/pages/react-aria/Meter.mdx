@@ -1,0 +1,70 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {Meter as VanillaMeter} from 'vanilla-starter/Meter';
+import {ProgressCircle as VanillaProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {Meter as TailwindMeter} from 'tailwind-starter/Meter';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/meter/docs/anatomy.svg';
+
+export const tags = ['gauge', 'progress', 'level'];
+
+# Meter
+
+<PageDescription>{docs.exports.Meter.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaMeter}
+    docs={docs.exports.Meter}
+    links={docs.links}
+    props={['value', 'formatOptions', 'valueLabel']}
+    initialProps={{label: 'Storage', value: 25}}
+    controlOptions={{value: {control: 'slider'}}}
+    type="vanilla"
+    files={["starters/docs/src/Meter.tsx", "starters/docs/src/Meter.css"]} />
+  <VisualExample
+    component={TailwindMeter}
+    docs={docs.exports.Meter}
+    links={docs.links}
+    props={['value', 'formatOptions', 'valueLabel']}
+    initialProps={{label: 'Storage', value: 25}}
+    controlOptions={{value: {control: 'slider'}}}
+    type="tailwind"
+    files={["starters/tailwind/src/Meter.tsx"]} />
+</ExampleSwitcher>
+
+## Value
+
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
+
+<VisualExample
+  component={VanillaMeter}
+  docs={docs.exports.Meter}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Data usage',
+    minValue: 0,
+    maxValue: 500,
+    value: 250,
+    formatOptions: {
+      style: 'unit',
+      unit: 'megabyte'
+    }
+  }} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{Meter: '#meter'}}
+<Meter>
+  <Label />
+</Meter>
+```
+
+### Meter
+
+<PropTable component={docs.exports.Meter} links={docs.links} showDescription />

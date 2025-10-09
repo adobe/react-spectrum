@@ -1,0 +1,45 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['group'];
+
+# ActionButtonGroup
+
+<PageDescription>{docs.exports.ActionButtonGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.ActionButtonGroup} links={docs.links} props={['orientation', 'size', 'density', 'staticColor', 'isQuiet', 'isJustified', 'isDisabled']} type="s2"
+"use client";
+import {ActionButtonGroup, ActionButton, Text} from '@react-spectrum/s2';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Paste from '@react-spectrum/s2/icons/Paste';
+
+<ActionButtonGroup/* PROPS */>
+  <ActionButton>
+    <Cut />
+    <Text>Cut</Text>
+  </ActionButton>
+  <ActionButton>
+    <Copy />
+    <Text>Copy</Text>
+  </ActionButton>
+  <ActionButton>
+    <Paste />
+    <Text>Paste</Text>
+  </ActionButton>
+</ActionButtonGroup>
+```
+
+## API
+
+```tsx links={{ActionButtonGroup: '#actionbuttongroup', ActionButton: 'ActionButton.html'}}
+<ActionButtonGroup>
+  <ActionButton />
+</ActionButtonGroup>
+```
+
+### ActionButtonGroup
+
+<PropTable component={docs.exports.ActionButtonGroup} links={docs.links} />

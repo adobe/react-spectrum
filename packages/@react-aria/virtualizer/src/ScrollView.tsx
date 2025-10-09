@@ -86,15 +86,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   let [isScrolling, setScrolling] = useState(false);
 
-  let onScrollTimeout = useCallback(() => {
-    state.isScrolling = false;
-    setScrolling(false);
-    state.scrollTimeout = null;
-
-    window.dispatchEvent(new Event('tk.connect-observer'));
-    onScrollEnd?.();
-  }, [state, onScrollEnd]);
-
   let onScroll = useCallback((e) => {
     if (e.target !== e.currentTarget) {
       return;
@@ -128,21 +119,29 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // keep track of the current timeout time and only reschedule
       // the timer when it is getting close.
       let now = Date.now();
-      if (!('onscrollend' in window) && state.scrollEndTime <= now + 50) {
+      if (state.scrollEndTime <= now + 50) {
         state.scrollEndTime = now + 300;
 
         if (state.scrollTimeout != null) {
           clearTimeout(state.scrollTimeout);
         }
 
-        state.scrollTimeout = setTimeout(onScrollTimeout, 300);
+        state.scrollTimeout = setTimeout(() => {
+          state.isScrolling = false;
+          setScrolling(false);
+          state.scrollTimeout = null;
+
+          window.dispatchEvent(new Event('tk.connect-observer'));
+          if (onScrollEnd) {
+            onScrollEnd();
+          }
+        }, 300);
       }
     });
-  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollTimeout]);
+  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
-  useEvent(ref, 'scrollend', onScrollTimeout);
 
   useEffect(() => {
     return () => {

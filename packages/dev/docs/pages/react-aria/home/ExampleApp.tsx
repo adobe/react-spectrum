@@ -502,38 +502,47 @@ function PlantModal(props: ModalOverlayProps) {
   return (
     <ModalOverlay
       {...props}
+      // Use position: absolute instead of fixed to avoid
+      // being clipped to the "inner" viewport in iOS 26
       className={({isEntering, isExiting}) => `
-      fixed top-0 left-0 w-full h-(--visual-viewport-height) isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
+      absolute top-0 left-0 w-full h-(--page-height) isolate z-20 bg-black/[15%] backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
       {({isEntering, isExiting}) => (<>
-        {!isResized &&
-          <div
-            data-react-aria-top-layer="true"
-            className={`fixed top-0 left-0 w-full h-(--visual-viewport-height) z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
-              ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
-              ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
-            `}>
-            <svg viewBox="0 0 700 620" width={700} height={620}>
-              <Arrow textX={52} x1={88} x2={130} y={50} href="Dialog.html">Dialog</Arrow>
-              <Arrow textX={34} x1={88} x2={150} y={150} href="DropZone.html">DropZone</Arrow>
-              <Arrow textX={54} x1={88} x2={150} y={272} href="Select.html">Select</Arrow>
-              <Arrow textX={32} x1={88} x2={150} y={492} href="DatePicker.html">DatePicker</Arrow>
-              <Arrow textX={616} x1={550} x2={612} y={126} marker="markerStart" href="ComboBox.html">ComboBox</Arrow>
-              <Arrow textX={616} x1={550} x2={612} y={198} marker="markerStart" href="TextField.html">TextField</Arrow>
-              <Arrow points="560,90 590,90 590,338 612,338 590,338 590,585 560,585" textX={616} y={338} marker="none" href="Form.html">Form</Arrow>
-            </svg>
-          </div>
-        }
-        <RACModal
-          {...props}
-          ref={ref}
-          className={({isEntering, isExiting}) => `
-          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
-          ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
-          ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
-        `} />
+        {/* Inner position: sticky div sized to the visual viewport
+            height so the modal appears in view.
+            Note that position: fixed will not work here because this
+            is positioned relative to the containing block, which is
+            the ModalOverlay in this case due to backdrop-blur. */}
+        <div className="sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center p-4 text-center">
+          {!isResized &&
+            <div
+              data-react-aria-top-layer="true"
+              className={`absolute top-0 left-0 w-full h-(--visual-viewport-height) z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
+                ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+                ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+              `}>
+              <svg viewBox="0 0 700 620" width={700} height={620}>
+                <Arrow textX={52} x1={88} x2={130} y={50} href="Dialog.html">Dialog</Arrow>
+                <Arrow textX={34} x1={88} x2={150} y={150} href="DropZone.html">DropZone</Arrow>
+                <Arrow textX={54} x1={88} x2={150} y={272} href="Select.html">Select</Arrow>
+                <Arrow textX={32} x1={88} x2={150} y={492} href="DatePicker.html">DatePicker</Arrow>
+                <Arrow textX={616} x1={550} x2={612} y={126} marker="markerStart" href="ComboBox.html">ComboBox</Arrow>
+                <Arrow textX={616} x1={550} x2={612} y={198} marker="markerStart" href="TextField.html">TextField</Arrow>
+                <Arrow points="560,90 590,90 590,338 612,338 590,338 590,585 560,585" textX={616} y={338} marker="none" href="Form.html">Form</Arrow>
+              </svg>
+            </div>
+          }
+          <RACModal
+            {...props}
+            ref={ref}
+            className={({isEntering, isExiting}) => `
+            w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
+            ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+          `} />
+        </div>
       </>)}
     </ModalOverlay>
   );

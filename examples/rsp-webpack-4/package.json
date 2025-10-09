@@ -17,9 +17,9 @@
     "../../packages/*/*"
   ],
   "dependencies": {
-    "@adobe/react-spectrum": "^3.24.1",
-    "@react-spectrum/provider": "^3.9.7",
-    "@spectrum-icons/workflow": "^4.2.12",
+    "@adobe/react-spectrum": "latest",
+    "@react-spectrum/provider": "latest",
+    "@spectrum-icons/workflow": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

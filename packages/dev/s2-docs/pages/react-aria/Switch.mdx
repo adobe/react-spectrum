@@ -7,6 +7,8 @@ import {Switch as TailwindSwitch} from 'tailwind-starter/Switch';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/switch/docs/anatomy.svg';
 
+export const tags = ['toggle', 'input'];
+
 # Switch
 
 <PageDescription>{docs.exports.Switch.description}</PageDescription>
@@ -19,7 +21,7 @@ import Anatomy from '@react-aria/switch/docs/anatomy.svg';
     props={['children', 'isDisabled']}
     initialProps={{children: 'Low power mode'}}
     type="vanilla"
-    files={["starters/docs/src/Switch.tsx", "starters/docs/src/Switch.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/Switch.tsx", "starters/docs/src/Switch.css"]} />
   <VisualExample
     component={TailwindSwitch}
     docs={docs.exports.Switch}
@@ -29,20 +31,6 @@ import Anatomy from '@react-aria/switch/docs/anatomy.svg';
     type="tailwind"
     files={["starters/tailwind/src/Switch.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
-
-## Anatomy
-
-<Anatomy />
-
-A switch consists of a visual selection indicator and a label. Users may click, touch, or use the <Keyboard>Space</Keyboard> key to toggle it.
-
-In most cases, switches should have a visual label. If a switch does not have a visible label, an `aria-label` or `aria-labelledby` prop must be provided to identify it to assistive technology.
-
-```tsx
-import {Switch} from 'react-aria-components';
-
-<Switch>Label</Switch>
-```
 
 ## Selection
 
@@ -85,16 +73,20 @@ import {Form} from 'react-aria-components';
 
 <Form>
   {/*- begin highlight -*/}
-  <Switch name="wifi">
-    {/*- end highlight -*/}
-    Wi-Fi
-  </Switch>
+  <Switch name="wifi">Wi-Fi</Switch>
+  {/*- end highlight -*/}
   <Button type="submit" style={{marginTop: 8}}>Submit</Button>
 </Form>
 ```
 
 ## API
 
-<PropTable component={docs.exports.Switch} links={docs.links} showDescription />
+<Anatomy />
 
-<StateTable defaultClassName="react-aria-Switch" properties={docs.exports.SwitchRenderProps.properties} />
+```tsx links={{Switch: '#switch'}}
+<Switch>Label</Switch>
+```
+
+### Switch
+
+<PropTable component={docs.exports.Switch} links={docs.links} />

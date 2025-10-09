@@ -1,0 +1,121 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {DatePicker} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['calendar'];
+
+# DatePicker
+
+<PageDescription>{docs.exports.DatePicker.description}</PageDescription>
+
+<VisualExample
+  component={DatePicker}
+  docs={docs.exports.DatePicker}
+  props={['label', 'granularity', 'maxVisibleMonths', 'pageBehavior', 'firstDayOfWeek', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  initialProps={{label: 'Event date'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+
+```tsx render
+"use client";
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from 'react-aria';
+import {DatePicker} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [date, setDate] = useState(parseDate('2020-02-03'));
+  let formatter = useDateFormatter({ dateStyle: 'full' });
+  
+  return (
+    <>
+      <DatePicker
+        ///- begin highlight -///
+        value={date}
+        onChange={setDate} />
+        {/*- end highlight -*/}
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
+    </>
+  );
+}
+```
+
+### Format options
+
+The date format is automatically determined based on the user's locale. `DatePicker` supports several props to control how values are displayed.
+
+```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}} type="s2"
+"use client";
+import {parseZonedDateTime} from '@internationalized/date';
+import {DatePicker} from '@react-spectrum/s2';
+
+<DatePicker
+  /* PROPS */
+  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
+```
+
+### International calendars
+
+By default, `DatePicker` displays the value using the calendar system for the user's locale. Use `<Provider>` to override the calendar system by setting the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string). The `onChange` event always receives a date in the same calendar as the `value` or `defaultValue` (Gregorian if no value is provided), regardless of the displayed locale.
+
+```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}} type="s2"
+"use client";
+import {Provider, DatePicker} from '@react-spectrum/s2';
+import {parseZonedDateTime} from '@internationalized/date';
+
+<Provider/* PROPS */>
+  <DatePicker defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
+</Provider>
+```
+
+## Forms
+
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. The `isDateUnavailable` callback prevents certain dates from being selected. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+"use client";
+import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+import {DatePicker, Form, Button} from '@react-spectrum/s2';
+
+function Example(props) {
+  let {locale} = useLocale();
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({ days: 5 })],
+    [now.add({ days: 14 }), now.add({ days: 16 })],
+    [now.add({ days: 23 }), now.add({ days: 24 })]
+  ];
+
+  return (
+    <Form>
+      <DatePicker
+        {...props}
+        label="Appointment date"
+        ///- begin highlight -///
+        name="date"
+        /* PROPS */
+        minValue={today(getLocalTimeZone())}
+        isDateUnavailable={date => (
+          isWeekend(date, locale) ||
+          disabledRanges.some((interval) =>
+            date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+          )
+        )}
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.DatePicker} links={docs.links} />

@@ -118,7 +118,7 @@ check-examples:
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	cd starters/docs && yarn --no-immutable && yarn tsc
+	cd starters/docs && yarn --no-immutable && yarn up react-aria-components && yarn tsc
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
@@ -129,7 +129,8 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-	cd starters/tailwind && yarn --no-immutable && yarn tsc
+	cd starters/tailwind && yarn --no-immutable && yarn up react-aria-components && yarn up tailwindcss-react-aria-components && yarn tsc
+
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
@@ -143,7 +144,8 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
-	node scripts/extractStarter.mjs
+	yarn workspace @react-spectrum/s2-docs generate:md
+	yarn workspace @react-spectrum/s2-docs generate:og
 	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
 	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs/
 	mkdir -p dist/$$(git rev-parse HEAD)

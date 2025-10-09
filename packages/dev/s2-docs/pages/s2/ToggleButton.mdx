@@ -1,0 +1,63 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ToggleButton, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['button', 'btn'];
+
+# ToggleButton
+
+<PageDescription>{docs.exports.ToggleButton.description}</PageDescription>
+
+<VisualExample
+  component={ToggleButton}
+  docs={docs.exports.ToggleButton}
+  props={['children', 'size', 'staticColor', 'isQuiet', 'isEmphasized', 'isDisabled']}
+  initialProps={{children: 'Pin'}}
+  slots={{icon: true, avatar: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Selection
+
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
+
+```tsx render
+"use client";
+import {ToggleButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+import Star from '@react-spectrum/s2/icons/Star';
+
+function Example(props) {
+  let [selected, setSelection] = useState(false);
+
+  return (
+    <>
+      <ToggleButton
+        {...props}
+        aria-label="Star"
+        /*- begin highlight -*/
+        isSelected={selected}
+        onChange={setSelection}>
+        {/*- end highlight -*/}
+        <Star />
+      </ToggleButton>
+      <p>{selected ? 'Starred' : 'Not starred'}</p>
+    </>
+  );
+}
+```
+
+## API
+
+```tsx links={{ToggleButton: '#toggleButton', Avatar: 'Avatar.html'}}
+<ToggleButton>
+  <Icon /> or <Avatar />
+  <Text />
+</ToggleButton>
+```
+
+### ToggleButton
+
+<PropTable component={docs.exports.ToggleButton} links={docs.links} />

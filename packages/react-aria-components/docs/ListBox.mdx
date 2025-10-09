@@ -149,12 +149,13 @@ A listbox consists of a container element, with a list of items or sections insi
 Users can select one or more items by clicking, tapping, or navigating with the keyboard.
 
 ```tsx
-import {ListBox, ListBoxItem, ListBoxSection, Header, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, ListBoxSection, Header, Text, SelectionIndicator} from 'react-aria-components';
 
 <ListBox>
   <ListBoxItem>
     <Text slot="label" />
     <Text slot="description" />
+    <SelectionIndicator />
   </ListBoxItem>
   <ListBoxSection>
     <Header />

@@ -1,0 +1,23 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {StatusLight} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['indicator', 'dot', 'badge'];
+
+# StatusLight
+
+<PageDescription>{docs.exports.StatusLight.description}</PageDescription>
+
+<VisualExample
+  component={StatusLight}
+  docs={docs.exports.StatusLight}
+  props={['children', 'variant', 'size']}
+  initialProps={{variant: "positive", children: "Ready"}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## API
+
+<PropTable component={docs.exports.StatusLight} links={docs.links} />

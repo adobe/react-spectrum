@@ -1,0 +1,81 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {TextArea} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['multiline', 'input'];
+
+# TextArea
+
+<PageDescription>{docs.exports.TextArea.description}</PageDescription>
+
+<VisualExample
+  component={TextArea}
+  docs={docs.exports.TextArea}
+  links={docs.links}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  initialProps={{
+    label: 'Description',
+    placeholder: 'Describe the product above'
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the text value, and `onChange` to handle user input.
+
+```tsx render
+"use client";
+import {TextArea} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [name, setName] = useState('');
+
+  return (
+    <>
+      <TextArea
+        label="Comment"
+        placeholder="Share your thoughts!"
+        ///- begin highlight -///
+        value={name}
+        onChange={setName} />
+      {/*- end highlight -*/}
+      <p>Your comment: {name}</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, or `maxLength` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.TextArea} links={docs.links} props={['isRequired', 'necessityIndicator', 'minLength', 'maxLength']} initialProps={{isRequired: true, minLength: 10}}
+"use client";
+import {TextArea, Button, Form} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <TextArea
+        {...props}
+        label="Comment"
+        placeholder="Share your thoughts!"
+        ///- begin highlight -///
+        name="email"
+        description="Please provide at least 10 characters."
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.TextArea} links={docs.links} />
