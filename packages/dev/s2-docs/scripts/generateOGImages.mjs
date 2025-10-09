@@ -53,7 +53,11 @@ async function getTitle(filePath) {
   }
   let match = parsed.content.match(/^#\s+(.+)$/m);
   if (match) {
-    return match[1].trim();
+    let title = match[1].trim();
+    // Strip out any React components (like <VersionBadge />)
+    title = title.replace(/<[A-Z]\w*[^>]*\/>/g, '').trim();
+    title = title.replace(/<[A-Z]\w*[^>]*>.*?<\/[A-Z]\w*>/g, '').trim();
+    return title;
   }
   return path.basename(filePath, path.extname(filePath));
 }
