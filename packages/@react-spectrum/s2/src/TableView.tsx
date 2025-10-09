@@ -1087,11 +1087,11 @@ const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean,
     ':is([role="rowheader"]:hover, [role="gridcell"]:hover)': {
       selectionMode: {
         none: colorMix('gray-25', 'gray-900', 7),
-        single: '--s2-container-bg',
-        multiple: '--s2-container-bg'
+        single: 'gray-25',
+        multiple: 'gray-25'
       }
     },
-    ':is([role="row"][data-focus-visible-within] [role="rowheader"]:focus-within, [role="row"][data-focus-visible-within] [role="gridcell"]:focus-within)': '--s2-container-bg'
+    ':is([role="row"][data-focus-visible-within] [role="rowheader"]:focus-within, [role="row"][data-focus-visible-within] [role="gridcell"]:focus-within)': 'gray-25'
   }
 });
 
@@ -1125,13 +1125,16 @@ let editPopover = style({
 }, getAllowedOverrides());
 
 interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
+  /** The component which will handle editing the cell. For example, a `TextField` or a `Picker`. */
   renderEditing: () => ReactNode,
+  /** Whether the cell is currently being saved. */
   isSaving?: boolean,
+  /** Handler that is called when the value has been changed and is ready to be saved. */
   onSubmit: () => void
 }
 
 /**
- * An exditable cell within a table row.
+ * An editable cell within a table row.
  */
 export const EditableCell = forwardRef(function EditableCell(props: EditableCellProps, ref: ForwardedRef<HTMLDivElement>) {
   let {children, showDivider = false, textValue, isSaving, ...otherProps} = props;
