@@ -229,6 +229,12 @@ for (let file of files) {
     .relative(pagesDir, file)
     .replace(/\\/g, '/')
     .replace(/\.mdx?$/, '');
+  
+  // Skip the error page
+  if (slug === 'error') {
+    continue;
+  }
+  
   let subtitle = getSubtitle(slug);
   let isIndexPage = slug === 'index' || slug.endsWith('/index');
 
