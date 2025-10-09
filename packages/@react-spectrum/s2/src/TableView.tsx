@@ -122,7 +122,7 @@ export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledB
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple'}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -291,6 +291,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onResizeEnd: propsOnResizeEnd,
     onAction,
     onLoadMore,
+    selectionMode = 'none',
     ...otherProps
   } = props;
 
@@ -315,11 +316,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     loadingState,
     onLoadMore,
     isInResizeMode,
-    setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode,
+    selectionMode
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
-  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+  let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -362,6 +364,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isQuiet
             })}
             selectionBehavior="toggle"
+            selectionMode={selectionMode}
             onRowAction={onAction}
             {...otherProps}
             selectedKeys={selectedKeys}
@@ -1053,6 +1056,45 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   );
 });
 
+
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+  ...commonCellStyles,
+  color: {
+    default: baseColor('neutral'),
+    isSaving: baseColor('neutral-subdued')
+  },
+  paddingY: centerPadding(),
+  boxSizing: 'border-box',
+  height: 'calc(100% - 1px)', // so we don't overlap the border of the next cell
+  width: 'full',
+  fontSize: controlFont(),
+  alignItems: 'center',
+  display: 'flex',
+  borderStyle: {
+    default: 'none',
+    isDivider: 'solid'
+  },
+  borderEndWidth: {
+    default: 0,
+    isDivider: 1
+  },
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
+  backgroundColor: {
+    default: 'transparent',
+    ':is([role="rowheader"]:hover, [role="gridcell"]:hover)': {
+      selectionMode: {
+        none: colorMix('gray-25', 'gray-900', 7),
+        single: '--s2-container-bg',
+        multiple: '--s2-container-bg'
+      }
+    },
+    ':is([role="row"][data-focus-visible-within] [role="rowheader"]:focus-within, [role="row"][data-focus-visible-within] [role="gridcell"]:focus-within)': '--s2-container-bg'
+  }
+});
+
 let editPopover = style({
   ...colorScheme(),
   '--s2-container-bg': {
@@ -1085,15 +1127,14 @@ let editPopover = style({
 interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
   renderEditing: () => ReactNode,
   isSaving?: boolean,
-  onSubmit: () => void,
-  onCancel: () => void
+  onSubmit: () => void
 }
 
 /**
  * An exditable cell within a table row.
  */
 export const EditableCell = forwardRef(function EditableCell(props: EditableCellProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {children, showDivider = false, textValue, ...otherProps} = props;
+  let {children, showDivider = false, textValue, isSaving, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useObjectRef(ref);
   textValue ||= typeof children === 'string' ? children : undefined;
@@ -1101,10 +1142,11 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
   return (
     <RACCell
       ref={domRef}
-      className={renderProps => cell({
+      className={renderProps => editableCell({
         ...renderProps,
         ...tableVisualOptions,
-        isDivider: showDivider
+        isDivider: showDivider,
+        isSaving
       })}
       textValue={textValue}
       {...otherProps}>
@@ -1128,7 +1170,7 @@ const nonTextInputTypes = new Set([
 ]);
 
 function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
-  let {children, align, renderEditing, isSaving, onSubmit, onCancel, isFocusVisible, cellRef} = props;
+  let {children, align, renderEditing, isSaving, onSubmit, isFocusVisible, cellRef} = props;
   let [isOpen, setIsOpen] = useState(false);
   let popoverRef = useRef<HTMLDivElement>(null);
   let formRef = useRef<HTMLFormElement>(null);
@@ -1180,10 +1222,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     }
   }, [isOpen]);
 
-  // Cancel, don't save the value
   let cancel = () => {
     setIsOpen(false);
-    onCancel();
   };
 
   return (
