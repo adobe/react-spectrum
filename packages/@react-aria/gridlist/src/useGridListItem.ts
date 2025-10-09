@@ -11,7 +11,8 @@
  */
 
 import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
+import {Collection, DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
+import {CollectionNode} from '@react-aria/collections';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -104,7 +105,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
-        let siblings = state.collection.getSiblings?.(parent.key)!;
+        let siblings = getDirectChildren(parent as CollectionNode<T>, state.collection as Collection<CollectionNode<T>>);
         setSize = [...siblings].filter(row => row.type === 'item').length;
       }
     } else {
@@ -323,4 +324,14 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
+}
+
+function getDirectChildren<T>(parent: CollectionNode<T>, collection: Collection<CollectionNode<T>>) {
+  let node = parent?.firstChildKey != null ? collection.getItem(parent.firstChildKey) : null;
+  let siblings: CollectionNode<T>[] = [];
+  while (node) {
+    siblings.push(node);
+    node = node.nextKey != null ? collection.getItem(node.nextKey) : null;
+  }
+  return siblings;
 }
