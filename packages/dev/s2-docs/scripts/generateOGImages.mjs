@@ -310,7 +310,7 @@ for (let file of files) {
                   style: {
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 8
+                    gap: 0
                   },
                   children: [
                     {
