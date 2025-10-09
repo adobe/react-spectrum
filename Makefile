@@ -109,6 +109,8 @@ website:
 website-production:
 	node scripts/buildWebsite.js $$PUBLIC_URL
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	# Uncomment this when we are ready to release.
+	# $(MAKE) s2-docs-production
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
 	$(MAKE) s2-storybook-docs
@@ -144,12 +146,18 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
+	BASE_URL=https://reactspectrum.blob.core.windows.net PUBLIC_URL=/reactspectrum/$$(git rev-parse HEAD)/s2-docs DIST_DIR=dist/$$(git rev-parse HEAD)/s2-docs $(MAKE) build-s2-docs
+
+s2-docs-production:
+	BASE_URL=https://react-spectrum.adobe.com PUBLIC_URL=/beta DIST_DIR=dist/production/docs/beta $(MAKE) build-s2-docs
+
+build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
-	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry node scripts/buildRegistry.mjs
-	REGISTRY_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs/registry yarn build:s2-docs --public-url /reactspectrum/$$(git rev-parse HEAD)/s2-docs/
-	mkdir -p dist/$$(git rev-parse HEAD)
-	mv packages/dev/s2-docs/dist dist/$$(git rev-parse HEAD)/s2-docs
-	mkdir -p dist/$$(git rev-parse HEAD)/s2-docs/registry
-	mv starters/docs/registry dist/$$(git rev-parse HEAD)/s2-docs/registry/vanilla
-	mv starters/tailwind/registry dist/$$(git rev-parse HEAD)/s2-docs/registry/tailwind
+	REGISTRY_URL=$(BASE_URL)$(PUBLIC_URL)/registry node scripts/buildRegistry.mjs
+	REGISTRY_URL=$(BASE_URL)$(PUBLIC_URL)/registry yarn build:s2-docs --public-url $(PUBLIC_URL)
+	mkdir -p $(DIST_DIR)
+	mv packages/dev/s2-docs/dist/* $(DIST_DIR)
+	mkdir -p $(DIST_DIR)/registry
+	mv starters/docs/registry $(DIST_DIR)/registry/vanilla
+	mv starters/tailwind/registry $(DIST_DIR)/registry/tailwind
