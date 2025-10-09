@@ -485,16 +485,6 @@ jobs:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: install fontconfig and fonts
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y fontconfig wget
-            sudo mkdir -p /usr/local/share/fonts
-            sudo wget -O /usr/local/share/fonts/AdobeClean-Regular.ttf "https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
-            sudo wget -O /usr/local/share/fonts/AdobeClean-Bold.ttf "https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3"
-            sudo fc-cache -f -v
-
-      - run:
           name: build s2 docs
           command: make s2-docs
 

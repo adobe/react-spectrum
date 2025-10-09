@@ -10,26 +10,6 @@ const __dirname = path.dirname(__filename);
 
 const pagesDir = path.resolve(__dirname, '../pages');
 const outputDir = path.resolve(__dirname, '../dist/og');
-const illustrationsDir = path.resolve(__dirname, '../../docs/pages/assets/component-illustrations');
-
-const cssVariables = {
-  '--anatomy-gray-50': '#FFFFFF',
-  '--anatomy-gray-75': '#FDFDFE', 
-  '--anatomy-gray-100': '#f4f6fc',
-  '--anatomy-gray-200': '#E5EBF7',
-  '--anatomy-gray-300': '#DAE2F4',
-  '--anatomy-gray-400': '#beccea',
-  '--anatomy-gray-500': '#a2b6e1',
-  '--anatomy-gray-600': '#718dcf',
-  '--anatomy-gray-700': '#4a6fc3',
-  '--anatomy-gray-800': '#496EC2',
-  '--anatomy-gray-900': '#486EC2',
-  '--spectrum-global-color-gray-300': '#d3d3d3',
-  '--spectrum-global-color-gray-400': '#bcbcbc',
-  '--spectrum-global-color-gray-700': '#464646',
-  '--spectrum-alias-border-color-focus': '#0f62fe',
-  '--anatomy-font': 'adobe-clean'
-};
 
 async function getMdxFiles(dir) {
   let entries = await fs.readdir(dir, {withFileTypes: true});
@@ -92,19 +72,6 @@ const [adobeCleanRegular, adobeCleanBold] = await Promise.all([
   loadFont('https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3'),
   loadFont('https://use.typekit.net/af/eaf09c/000000000000000000017703/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3')
 ]);
-
-// Mappings for components that don't match their SVG file names
-const componentSvgExceptions = {
-  'Accordion': 'DisclosureGroup.svg',
-  'ActionButtonGroup': 'ButtonGroup.svg', // TODO: get better illustration
-  'ActionMenu': 'Menu.svg',
-  'Drag and Drop': 'DragAndDrop.svg',
-  'GridList': 'ListView.svg',
-  'LinkButton': 'Button.svg', // TODO: get better illustration
-  'Select': 'Picker.svg',
-  'TableView': 'Table.svg',
-  'TreeView': 'Tree.svg'
-};
 
 function getLibraryLogo(subtitle) {
   if (subtitle === 'React Aria') {
@@ -252,38 +219,6 @@ function getLibraryLogo(subtitle) {
   }
 }
 
-async function getComponentSvg(title) {
-  // First try exception mappings
-  let svgFileName = componentSvgExceptions[title];
-  
-  // If no exception mapping, try automatic name matching
-  if (!svgFileName) {
-    svgFileName = `${title}.svg`;
-  }
-  
-  try {
-    const svgPath = path.join(illustrationsDir, svgFileName);
-    let svgContent = await fs.readFile(svgPath, 'utf8');
-    
-    // Replace CSS variables with actual colors
-    for (const [variable, color] of Object.entries(cssVariables)) {
-      svgContent = svgContent.replace(new RegExp(`var\\(${variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\)`, 'g'), color);
-    }
-    
-    // Replace SVG background to match container background
-    svgContent = svgContent.replace(/background:\s*var\(--anatomy-gray-100\)/g, 'background: #f8f8f8');
-    svgContent = svgContent.replace(/background:\s*#f4f6fc/g, 'background: #f8f8f8');
-    svgContent = svgContent.replace(/var\(--anatomy-font\)/g, 'adobe-clean');
-
-    // Convert SVG to data URI for use as image source
-    const svgBase64 = Buffer.from(svgContent).toString('base64');
-    return `data:image/svg+xml;base64,${svgBase64}`;
-  } catch (error) {
-    console.warn(`Could not load SVG for ${title}: ${error.message}`);
-    return null;
-  }
-}
-
 await fs.mkdir(outputDir, {recursive: true});
 const files = await getMdxFiles(pagesDir);
 console.log(`Generating OG images for ${files.length} pages…`);
@@ -296,9 +231,6 @@ for (let file of files) {
     .replace(/\.mdx?$/, '');
   let subtitle = getSubtitle(slug);
   let isIndexPage = slug === 'index' || slug.endsWith('/index');
-
-  // Get component SVG if available
-  const componentSvg = await getComponentSvg(title);
 
   // Determine layout type
   let layout;
@@ -345,8 +277,8 @@ for (let file of files) {
         }
       }
     };
-  } else if (!componentSvg) {
-    // Page without illustration: Centered logo + page title + library name
+  } else {
+    // Regular page layout: Centered logo + page title + library name
     layout = {
       type: 'div',
       props: {
@@ -409,104 +341,6 @@ for (let file of files) {
             ]
           }
         }
-      }
-    };
-  } else {
-    // Component page layout: Component illustration + bottom section
-    layout = {
-      type: 'div',
-      props: {
-        style: {
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#ffffff',
-          fontFamily: 'adobe-clean',
-          color: '#000000'
-        },
-        children: [
-          // Top section: Component illustration
-          {
-            type: 'div',
-            props: {
-              style: {
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-                height: '394px', // 10/16 of 630px total height
-                backgroundColor: '#f8f8f8',
-                padding: '40px',
-                borderBottom: '1px solid #e5e5e5'
-              },
-              children: {
-                type: 'img',
-                props: {
-                  src: componentSvg,
-                  style: {
-                    width: '340px',
-                    height: '320px',
-                    objectFit: 'contain'
-                  }
-                }
-              }
-            }
-          },
-          // Bottom section: Library logo + text
-          {
-            type: 'div',
-            props: {
-              style: {
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
-                height: '236px', // 6/16 of 630px total height
-                padding: '0 60px',
-                gap: 40
-              },
-              children: [
-                // Library logo (Adobe for React Spectrum, React Aria, or Internationalized)
-                getLibraryLogo(subtitle),
-                // Text content
-                {
-                  type: 'div',
-                  props: {
-                    style: {
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 8
-                    },
-                    children: [
-                      {
-                        type: 'div',
-                        props: {
-                          style: {
-                            fontSize: 84,
-                            fontWeight: 700,
-                            lineHeight: 1.1
-                          },
-                          children: title
-                        }
-                      },
-                      {
-                        type: 'div',
-                        props: {
-                          style: {
-                            fontSize: 56,
-                            fontWeight: 400,
-                            color: '#464646'
-                          },
-                          children: subtitle
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        ]
       }
     };
   }
