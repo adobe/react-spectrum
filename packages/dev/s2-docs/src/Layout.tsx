@@ -7,6 +7,7 @@ import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
+import {getLibraryFromPage, getLibraryLabel} from './library';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
@@ -46,18 +47,8 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
-const getLibraryName = (currentPage: Page): string => {
-  if (currentPage.name.startsWith('react-aria/')) {
-    return 'React Aria';
-  }
-  if (currentPage.name.startsWith('internationalized/')) {
-    return 'Internationalized';
-  }
-  return 'React Spectrum';
-};
-
 const getTitle = (currentPage: Page): string => {
-  let library = getLibraryName(currentPage);
+  let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
   return library ? `${pageTitle} - ${library}` : pageTitle;
 };
@@ -76,7 +67,7 @@ const getOgImageUrl = (currentPage: Page): string => {
 };
 
 const getDescription = (currentPage: Page): string => {
-  let library = getLibraryName(currentPage);
+  let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
   const explicitDescription = (currentPage as any).description || currentPage.exports?.description;
   if (explicitDescription) {
