@@ -406,7 +406,7 @@ let rows = [
 ];
 
 let rowWithSections = [
-  {id: 'section_1', name: 'Section 1', children: 
+  {id: 'section_1', name: 'Section 1', childItems: 
     [{id: 'projects', name: 'Projects', childItems: [
       {id: 'project-1', name: 'Project 1'},
       {id: 'project-2', name: 'Project 2', childItems: [
@@ -422,7 +422,7 @@ let rowWithSections = [
         {id: 'project-5C', name: 'Project 5C'}
     ]}
   ]}]},
-  {id: 'section_2', name: 'Section 2', children: 
+  {id: 'section_2', name: 'Section 2', childItems: 
     [{id: 'reports', name: 'Reports', childItems: [
       {id: 'reports-1', name: 'Reports 1', childItems: [
         {id: 'reports-1A', name: 'Reports 1A', childItems: [
@@ -616,17 +616,23 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
 };
 
 const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
+  let treeData = useTreeData<any>({
+    initialItems: args.items as any ?? rowWithSections,
+    getKey: item => item.id,
+    getChildren: item => item.childItems
+  });
+
   return (
-    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={rowWithSections} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <Collection items={rowWithSections}>
+    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <Collection items={treeData.items}>
         {section => (
           <TreeSection>
-            <TreeHeader>{section.name}</TreeHeader>
-            <Collection items={section.children}>
+            <TreeHeader>{section.value.name}</TreeHeader>
+            <Collection items={section.children ?? []}>
               {item =>  
-              <DynamicTreeItemSection id={item.id} childItems={item.childItems ?? []} textValue={item.name}>
-                {item.name}
-              </DynamicTreeItemSection>
+              <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+                {item.value.name}
+              </DynamicTreeItem>
               }
             </Collection>
           </TreeSection>
@@ -1402,11 +1408,11 @@ export const TreeWithDragAndDropVirtualized = {
 const VirtualizedTreeExampleSectionRender = (args) => (
   <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30, headingHeight: 30}}>
     <Tree className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      {/* <TreeSection>
+      <TreeSection>
         <TreeHeader>Photo Header</TreeHeader>
         <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
         <StaticTreeItem id="edited photos" textValue="Edited photos">Edited Photos</StaticTreeItem>
-      </TreeSection> */}
+      </TreeSection>
       <TreeSection>
         <TreeHeader>Project Header</TreeHeader>
         <StaticTreeItem id="projects" textValue="Projects" title="Projects">
@@ -1424,7 +1430,7 @@ const VirtualizedTreeExampleSectionRender = (args) => (
           <StaticTreeItem id="projects-4" textValue="Projects-4">Project-4</StaticTreeItem>
         </StaticTreeItem>
       </TreeSection>
-      {/* <TreeItem
+      <TreeItem
         id="reports"
         textValue="Reports"
         className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
@@ -1451,7 +1457,7 @@ const VirtualizedTreeExampleSectionRender = (args) => (
             <Text>{`${isFocused} Tests`}</Text>
           )}
         </TreeItemContent>
-      </TreeItem> */}
+      </TreeItem>
     </Tree>
   </Virtualizer>
 );
