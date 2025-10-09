@@ -1242,6 +1242,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               styles: style({
                 // TODO: really need access to display here instead, but not possible right now
                 // will be addressable with displayOuter
+                // Could use `hidden` attribute instead of css, but I don't have access to much of this state at the moment
                 visibility: {
                   default: 'hidden',
                   isForcedVisible: 'visible',
