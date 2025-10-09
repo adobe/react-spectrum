@@ -1038,9 +1038,6 @@ workflows:
     when:
       and:
         - equal: [ "beta-docs", << pipeline.parameters.GHA_Action >> ]
-        - or:
-          - equal: [ "release", << pipeline.parameters.GHA_Event >>]
-          - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
       - docs-beta:
