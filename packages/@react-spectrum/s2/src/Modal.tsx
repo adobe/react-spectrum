@@ -12,13 +12,13 @@
 
 import {colorScheme} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface ModalProps extends ModalOverlayProps {
+interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | keyof GlobalDOMAttributes> {
   /**
    * The size of the Modal.
    *
@@ -29,7 +29,7 @@ interface ModalProps extends ModalOverlayProps {
 
 const modalOverlayStyles = style({
   ...colorScheme(),
-  position: 'fixed',
+  position: 'absolute',
   top: 0,
   left: 0,
   width: 'full',
