@@ -50,6 +50,9 @@ const getLibraryName = (currentPage: Page): string => {
   if (currentPage.name.startsWith('react-aria/')) {
     return 'React Aria';
   }
+  if (currentPage.name.startsWith('internationalized/')) {
+    return 'Internationalized';
+  }
   return 'React Spectrum';
 };
 
