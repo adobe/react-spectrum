@@ -79,7 +79,7 @@ function getLibraryLogo(subtitle) {
       type: 'svg',
       props: {
         width: 156,
-        height: 138,
+        height: 150,
         viewBox: '15.79 17.64 131.21 126.14',
         xmlns: 'http://www.w3.org/2000/svg',
         children: [
@@ -131,7 +131,7 @@ function getLibraryLogo(subtitle) {
       type: 'svg',
       props: {
         width: 156,
-        height: 138,
+        height: 148,
         viewBox: '15 17 135 128',
         xmlns: 'http://www.w3.org/2000/svg',
         children: [
@@ -255,7 +255,7 @@ for (let file of files) {
             style: {
               display: 'flex',
               alignItems: 'center',
-              gap: 40
+              gap: 44
             },
             children: [
               // Library logo
@@ -298,7 +298,7 @@ for (let file of files) {
             style: {
               display: 'flex',
               alignItems: 'center',
-              gap: 40
+              gap: 44
             },
             children: [
               // Library logo
