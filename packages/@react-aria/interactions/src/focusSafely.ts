@@ -30,12 +30,12 @@ export function focusSafely(element: FocusableElement): void {
   // causing the page to scroll when moving focus if the element is transitioning
   // from off the screen.
   const ownerDocument = getOwnerDocument(element);
-  const activeElement = getActiveElement(ownerDocument);
   if (getInteractionModality() === 'virtual') {
-    let lastFocusedElement = activeElement;
+    let lastFocusedElement = getActiveElement(ownerDocument);
     runAfterTransition(() => {
-      // If focus did not move and the element is still in the document, focus it.
-      if (getActiveElement(ownerDocument) === lastFocusedElement && element.isConnected) {
+      const activeElement = getActiveElement(ownerDocument);
+      // If focus did not move or focus was lost to the body, and the element is still in the document, focus it.
+      if ((activeElement === lastFocusedElement || activeElement === ownerDocument.body) && element.isConnected) {
         focusWithoutScrolling(element);
       }
     });

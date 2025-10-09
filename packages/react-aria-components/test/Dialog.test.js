@@ -10,17 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {
   Button,
   Dialog,
   DialogTrigger,
   Heading,
+  Input,
+  Label,
+  Menu,
+  MenuItem,
+  MenuTrigger,
   Modal,
   ModalOverlay,
   OverlayArrow,
-  Popover
+  Popover,
+  TextField
 } from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
@@ -29,6 +35,7 @@ describe('Dialog', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   it('should have a base default set of attributes', () => {
@@ -378,5 +385,60 @@ describe('Dialog', () => {
       expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
       await user.click(document.body);
     });
+  });
+  
+  it('ensure Input autoFocus works when opening Modal from MenuItem via keyboard', async () => {
+    function App() {
+      const [isOpen, setOpen] = React.useState(false);
+      return (
+        <>
+          <MenuTrigger>
+            <Button>Open menu</Button>
+            <Popover>
+              <Menu>
+                <MenuItem onAction={() => setOpen(true)}>Add account</MenuItem>
+                <MenuItem>Sign out</MenuItem>
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+          <ModalOverlay isDismissable isOpen={isOpen} onOpenChange={setOpen}>
+            <Modal>
+              <Dialog>
+                <form>
+                  <Heading slot="title">Sign up</Heading>
+                  <TextField autoFocus>
+                    <Label>Email</Label>
+                    <Input data-testid="email" />
+                  </TextField>
+                  <TextField>
+                    <Label>Password</Label>
+                    <Input />
+                  </TextField>
+                </form>
+              </Dialog>
+            </Modal>
+          </ModalOverlay>
+        </>
+      );
+    }
+
+    const {getAllByRole, getByRole, getByTestId} = render(<App />);
+    const button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const menuitem = getAllByRole('menuitem')[0];
+    expect(document.activeElement).toBe(menuitem);
+    await user.keyboard('{Enter}');
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const input = getByTestId('email');
+    expect(document.activeElement).toBe(input);
   });
 });

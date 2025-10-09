@@ -34,7 +34,17 @@ echo 'build rsp-cra-18'
 # install packages in CRA test app
 cd examples/rsp-cra-18
 yarn config set npmRegistryServer $registry
+
+echo "Available versions of react-aria-components:" && curl -s "$registry/react-aria-components" | jq -r '.versions | keys[]' 2>/dev/null || curl -s "$registry/react-aria-components" | grep -o '"version":"[^"]*"' | sed 's/"version":"//g' | sed 's/"//g' | sort -V
+
 yarn install --no-immutable
+yarn up @adobe/react-spectrum
+yarn up @react-aria/dnd
+yarn up @react-spectrum/provider
+yarn up @spectrum-icons/illustrations
+yarn up @spectrum-icons/workflow
+yarn up react-aria-components
+yarn why react-aria-components
 
 # Build CRA test app and move to dist folder. Store the size of the build in a text file.
 yarn build | tee build-stats.txt
