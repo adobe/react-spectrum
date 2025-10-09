@@ -162,7 +162,7 @@ export function MobileHeader({toc, pages, currentPage}) {
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        <Modal size="fullscreenTakeover" style={{zIndex: 100, height: '100dvh'}}>
+        <Modal size="fullscreenTakeover">
           <MobileSearchMenu pages={pages} currentPage={currentPage} />
         </Modal>
       </DialogTrigger>
