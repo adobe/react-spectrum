@@ -48,8 +48,18 @@ function anchorId(children) {
 }
 
 const getTitle = (currentPage: Page): string => {
+  const explicitTitle = (currentPage as any).pageTitle || currentPage.exports?.pageTitle;
+  if (explicitTitle && explicitTitle !== currentPage.tableOfContents?.[0]?.title && explicitTitle !== currentPage.name) {
+    return explicitTitle as string;
+  }
+  
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
-  const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  const pageTitle = currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  
+  if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
+    return library || 'React Spectrum';
+  }
+  
   return library ? `${pageTitle} | ${library}` : pageTitle;
 };
 
