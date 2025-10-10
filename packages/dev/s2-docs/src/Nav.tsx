@@ -11,6 +11,10 @@ export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = getLibraryFromPage(currentPage);
   let sections = new Map();
   for (let page of pages) {
+    if (page.exports?.hideNav) {
+      continue;
+    }
+    
     let library = getLibraryFromPage(page);
     if (library !== currentLibrary) {
       continue;
