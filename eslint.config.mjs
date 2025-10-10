@@ -5,7 +5,6 @@ import reactHooks from "eslint-plugin-react-hooks";
 import jest from "eslint-plugin-jest";
 import monorepo from "@jdb8/eslint-plugin-monorepo";
 import * as rspRules from "eslint-plugin-rsp-rules";
-import { fixupPluginRules } from "@eslint/compat";
 import globals from "globals";
 import babelParser from "@babel/eslint-parser";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
@@ -67,7 +66,7 @@ export default [{
         react,
         rulesdir,
         "jsx-a11y": jsxA11Y,
-        "react-hooks": fixupPluginRules(reactHooks),
+        "react-hooks": reactHooks,
         jest,
         monorepo,
         "rsp-rules": rspRules,
@@ -332,7 +331,7 @@ export default [{
         react,
         rulesdir,
         "jsx-a11y": jsxA11Y,
-        "react-hooks": fixupPluginRules(reactHooks),
+        "react-hooks": reactHooks,
         jest,
         "@typescript-eslint": typescriptEslint,
         monorepo,
