@@ -109,7 +109,7 @@ export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
 export type {FieldErrorProps, FieldErrorRenderProps} from './FieldError';
 export type {FileTriggerProps} from './FileTrigger';
 export type {FormProps} from './Form';
-export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps, GridListLoadMoreItemProps} from './GridList';
+export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps, GridListLoadMoreItemProps, GridListSectionProps} from './GridList';
 export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';

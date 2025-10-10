@@ -478,6 +478,21 @@ jobs:
           paths:
             - '*/docs/'
 
+  docs-beta:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build docs
+          command: make s2-docs-production
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/docs/'
+
   s2-docs:
     executor: rsp-xlarge
     steps:
@@ -801,9 +816,10 @@ jobs:
       - run:
           name: deploy
           command: |
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt;*.html;*.rsc"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8" --cache-control "max-age=300"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8" --cache-control "max-age=300"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.html;*.rsc" --cache-control "max-age=300"
 
   comment:
     executor: rsp
@@ -1017,6 +1033,26 @@ workflows:
               only: main
           requires:
             - docs-production
+
+
+  beta-docs:
+    when:
+      and:
+        - equal: [ "beta-docs", << pipeline.parameters.GHA_Action >> ]
+    jobs:
+      - install
+      - docs-beta:
+          filters:
+            branches:
+              only: beta-docs
+          requires:
+            - install
+      - deploy-production:
+          filters:
+            branches:
+              only: beta-docs
+          requires:
+            - docs-beta
 
   nightly:
     triggers:
