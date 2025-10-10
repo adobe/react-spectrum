@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isTabbable, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isTabbable, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useStableCallback, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -416,7 +416,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   });
 
-  let updateActiveDescendant = useEffectEvent(() => {
+  let updateActiveDescendant = useStableCallback(() => {
     let keyToFocus = delegate.getFirstKey?.() ?? null;
 
     // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
@@ -447,7 +447,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   }, [manager.collection, updateActiveDescendant]);
 
-  let resetFocusFirstFlag = useEffectEvent(() => {
+  let resetFocusFirstFlag = useStableCallback(() => {
     // If user causes the focused key to change in any other way, clear shouldVirtualFocusFirst so we don't
     // accidentally move focus from under them. Skip this if the collection was empty because we might be in a load
     // state and will still want to focus the first item after load

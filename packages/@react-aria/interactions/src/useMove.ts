@@ -13,7 +13,7 @@
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
 import React, {useMemo, useRef} from 'react';
-import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners, useStableCallback} from '@react-aria/utils';
 
 export interface MoveResult {
   /** Props to spread on the target element. */
@@ -43,7 +43,7 @@ export function useMove(props: MoveEvents): MoveResult {
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let move = useEffectEvent((originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
+  let move = useStableCallback((originalEvent: EventBase, pointerType: PointerType, deltaX: number, deltaY: number) => {
     if (deltaX === 0 && deltaY === 0) {
       return;
     }
@@ -71,7 +71,7 @@ export function useMove(props: MoveEvents): MoveResult {
     });
   });
 
-  let end = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
+  let end = useStableCallback((originalEvent: EventBase, pointerType: PointerType) => {
     restoreTextSelection();
     if (state.current.didMove) {
       onMoveEnd?.({

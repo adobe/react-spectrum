@@ -28,3 +28,7 @@ export function useEffectEvent<T extends Function>(fn?: T): T {
     return f?.(...args);
   }, []);
 }
+
+export function useStableCallback<T extends Function>(fn?: T): T {
+  return useEffectEvent<T>(fn);
+}
