@@ -208,7 +208,7 @@ let DynamicSectionTree = ({treeProps = {}, rowProps = {}}) => (
           <TreeHeader>{section.name}</TreeHeader>
           <Collection items={section.childItems}>
             {item => (
-              <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
+              <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name} {...rowProps}>
                 {item.name}
               </DynamicTreeItem>
             )}
@@ -1962,7 +1962,7 @@ describe('Tree', () => {
 
   describe('sections', () => {
     it('should support sections', () => {
-      let {getAllByRole} = render(<StaticSectionTree />)
+      let {getAllByRole} = render(<StaticSectionTree />);
 
       let groups = getAllByRole('rowgroup');
       expect(groups).toHaveLength(2);
@@ -1981,7 +1981,7 @@ describe('Tree', () => {
   });
 
   it('should have the expected attributes on the rows in sections', () => {
-    let {getAllByRole} = render(<StaticSectionTree />)
+    let {getAllByRole} = render(<StaticSectionTree />);
 
     let rows = getAllByRole('row');
     let rowNoChild = rows[0];
