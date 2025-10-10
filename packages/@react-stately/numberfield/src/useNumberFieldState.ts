@@ -42,26 +42,26 @@ export interface NumberFieldState extends FormValidationState {
    * Values can be partially entered, and may be valid even if they cannot currently be parsed to a number.
    * Can be used to implement validation as a user types.
    */
-  validate(value: string): boolean,
+  validate: (value: string) => boolean,
   /** Sets the current text value of the input. */
-  setInputValue(val: string): void,
+  setInputValue: (val: string) => void,
   /** Sets the number value. */
-  setNumberValue(val: number): void,
+  setNumberValue: (val: number) => void,
   /**
    * Commits the current input value. The value is parsed to a number, clamped according
    * to the minimum and maximum values of the field, and snapped to the nearest step value.
    * This will fire the `onChange` prop with the new value, and if uncontrolled, update the `numberValue`.
    * Typically this is called when the field is blurred.
    */
-  commit(): void,
+  commit: () => void,
   /** Increments the current input value to the next step boundary, and fires `onChange`. */
-  increment(): void,
+  increment: () => void,
   /** Decrements the current input value to the next step boundary, and fires `onChange`. */
-  decrement(): void,
+  decrement: () => void,
   /** Sets the current value to the `maxValue` if any, and fires `onChange`. */
-  incrementToMax(): void,
+  incrementToMax: () => void,
   /** Sets the current value to the `minValue` if any, and fires `onChange`. */
-  decrementToMin(): void
+  decrementToMin: () => void
 }
 
 export interface NumberFieldStateOptions extends NumberFieldProps {

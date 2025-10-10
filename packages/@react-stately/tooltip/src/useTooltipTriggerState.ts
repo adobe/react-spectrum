@@ -25,9 +25,9 @@ export interface TooltipTriggerState {
    * depending on a global warmup timer. The `immediate` option shows the
    * tooltip immediately instead.
    */
-  open(immediate?: boolean): void,
+  open: (immediate?: boolean) => void,
   /** Hides the tooltip. */
-  close(immediate?: boolean): void
+  close: (immediate?: boolean) => void
 }
 
 let tooltips = {};
