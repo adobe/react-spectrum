@@ -25,7 +25,7 @@
     "@react-spectrum/parcel-namer-s2": "^0.3.2",
     "@react-spectrum/parcel-transformer-s2-icon": "^0.3.2",
     "@swc/helpers": "^0.5.0",
-    "glob": "^8.0.3"
+    "glob": "^11.0.3"
   },
   "peerDependencies": {
     "@react-spectrum/s2": ">=0.8.0",

@@ -347,7 +347,7 @@ To configure Remix to load React Spectrum styles, CSS Side-Effect Imports is req
 However, to make it work with SSR, a small amount of configuration is required. Add the following to your `vite.config.js` or `vite.config.ts` file. This will ensure that React Spectrum’s CSS can be built properly.
 
 ```tsx
-import glob from 'glob';
+import {globSync} from 'glob';
 
 export default defineConfig({
   ssr: {
@@ -355,7 +355,7 @@ export default defineConfig({
       '@adobe/react-spectrum',
       '@react-spectrum/*',
       '@spectrum-icons/*',
-    ].flatMap((spec) => glob.sync(`${spec}`, { cwd: 'node_modules/' })),
+    ].flatMap((spec) => globSync(`${spec}`, { cwd: 'node_modules/' })),
   }
 });
 ```

@@ -77,32 +77,6 @@ Or run the documentation and browse to [http://localhost:1234/](http://localhost
 yarn start:docs
 ```
 
-### Component/Hook scaffolding
-If you are looking to contribute a brand new component or Hook in a package that does not exist yet, please run the following command.
-```bash
-yarn plop
-```
-This will start a series of cli prompts to determine what template files and folders should be generated to help quick start your contribution.
-The prompts are as follows:
-
-1. What type of project are you setting up?
-    - Select "React Spectrum v3"
-
-2. Scope name(s)
-    - Select the package scopes that make sense for your contribution (e.g. react-spectrum if you are contributing a component, react-aria for an aria Hook, etc)
-
-3. Package name, all lowercase (e.g. textfield)
-
-4. Component name, please use appropriate uppercase (e.g. TextField)
-    - If you are contributing a non-component Hook, just enter the name of your Hook.
-
-5. Component css module name, blank if N/A. If unsure, check @adobe/spectrum-css-temp/components for a module containing the desired css (e.g. textfield)
-    - If you cannot find the component CSS module name in @adobe/spectrum-css-temp/components, feel free to reach out to a team member via GitHub Issues or Discussions.
-
-Upon answering all the prompts, the appropriate package(s) should be generated and ready for modification.
-
-**Note:** With regards to the generated docs files, please feel free to remove them if you won't be contributing docs. If you are contributing docs for a new component or Hook, please submit them in a separate pull request so that we can decide when to deploy them to our docs site.
-
 ### Tests
 We use [jest](https://jestjs.io/) for unit tests and [react-testing-library](https://testing-library.com/docs/react-testing-library/intro) for rendering and writing assertions. Please make sure you include tests with your pull requests. Our CI will run the tests on PRs as well as the linter and type checker. You can see on each PR whether you have passed all our checks. We split the tests into 2 groups.
 
@@ -154,7 +128,7 @@ yarn start:docs
 Then, open [http://localhost:1234](http://localhost:1234) in your browser.
 
 ### Verdaccio
-We use [Verdaccio](https://verdaccio.org/) to set up a private registry for our packages to test our components in our example apps. 
+We use [Verdaccio](https://verdaccio.org/) to set up a private registry for our packages to test our components in our example apps.
 
 To run verdaccio, first ensure that your `git status` is clean. If your computer has an Intel chip, add the line `shopt -s globstar extglob` in the `verdaccio.sh` file after line 21. Save and commit these changes under a clear message like "Do not push". If you have an Apple silicon chip, you may skip this step.
 
