@@ -187,7 +187,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // adjusted space. In very specific cases this might result in the scrollbars disappearing
       // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
       // an infinite loop. This matches how browsers behavior with native CSS grid layout.
-      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
+      if (!isTestEnv && (dom.checkVisibility?.() ?? true) && (clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight)) {
         state.width = dom.clientWidth;
         state.height = dom.clientHeight;
         flush(() => {
@@ -201,7 +201,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
-  let [update, setUpdate] = useState({});
+  let [update, setUpdate] = useState<{} | false>(false);
   useLayoutEffect(() => {
     if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
       // React doesn't allow flushSync inside effects, so queue a microtask.
@@ -227,7 +227,9 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
   useLayoutEffect(() => {
-    updateSize(fn => fn());
+    if (update) {
+      updateSize(fn => fn());
+    }
   }, [update]);
 
   let onResize = useCallback(() => {
