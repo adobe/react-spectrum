@@ -405,7 +405,7 @@ let rows = [
   ]}
 ];
 
-let rowWithSections = [
+let rowsWithSections = [
   {id: 'section_1', name: 'Section 1', childItems: [
     {id: 'projects', name: 'Projects', childItems: [
       {id: 'project-1', name: 'Project 1'},
@@ -557,7 +557,7 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
 
 const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
-    initialItems: args.items as any ?? rowWithSections,
+    initialItems: args.items as any ?? rowsWithSections,
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
