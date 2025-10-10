@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createShadowRoot, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {act, createShadowRoot, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, Menu, MenuItem, MenuTrigger, OverlayArrow, Popover, Pressable} from '../';
-import {enableShadowDOM} from '@react-stately/flags';
 import React, {useRef} from 'react';
 import {screen} from 'shadow-dom-testing-library';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
@@ -276,18 +275,16 @@ describe('Popover', () => {
     expect(dialog).toBeInTheDocument();
   });
 
-  it.only('temp1234', async function () {
-    const template = document.createElement('div');
-    template.attachShadow({mode: 'open'});
-    document.body.appendChild(template);
+  it('test overlay and overlay trigger inside the same shadow root to have interactable content', async function () {
+    const {shadowRoot, cleanup} = createShadowRoot();
 
     const appContainer = document.createElement('div');
     appContainer.setAttribute('id', 'appRoot');
-    template.appendChild(appContainer);
+    shadowRoot.appendChild(appContainer);
 
     const portal = document.createElement('div');
     portal.id = 'shadow-dom-portal';
-    template.appendChild(portal);
+    shadowRoot.appendChild(portal);
 
     const onAction = jest.fn();
     const user = userEvent.setup({delay: null, pointerMap});
@@ -327,6 +324,6 @@ describe('Popover', () => {
 
     await user.click(openItem);
     expect(onAction).toHaveBeenCalledTimes(1);
-    document.body.removeChild(template);
+    cleanup();
   });
 });
