@@ -40,7 +40,6 @@ import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
-  // private flattenedRows: Node<T>[];
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
   private firstKey;
@@ -1054,7 +1053,6 @@ interface TreeGridCollectionOptions {
 }
 
 interface FlattenedTree<T> {
-  // flattenedRows: Node<T>[],
   keyMap: Map<Key, CollectionNode<T>>,
   itemCount: number
 }
@@ -1064,7 +1062,6 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
     expandedKeys = new Set()
   } = opts;
   let keyMap: Map<Key, CollectionNode<T>> = new Map();
-  // let flattenedRows: Node<T>[] = [];
   // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
   let itemCount = 0;
   let parentLookup: Map<Key, boolean> = new Map();
@@ -1105,7 +1102,6 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
           itemCount++;
         }
 
-        // flattenedRows.push(modifiedNode);
         parentLookup.set(modifiedNode.key, true);
       }
     } else if (node.type !== null) {
@@ -1122,7 +1118,6 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
   }
 
   return {
-    // flattenedRows,
     keyMap,
     itemCount
   };
