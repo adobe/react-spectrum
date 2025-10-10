@@ -64,12 +64,11 @@ const getTitle = (currentPage: Page): string => {
 };
 
 const getOgImageUrl = (currentPage: Page): string => {
-  const slug = currentPage.url.replace(/^\//, '').replace(/\.html$/, '');
   let publicUrl = (import.meta as any).publicUrl || '/';
   if (!publicUrl.endsWith('/')) {
     publicUrl += '/';
   }
-  return publicUrl + 'og/' + slug + '.png';
+  return publicUrl + 'og/' + currentPage.url.replace(publicUrl, '').replace(/\.html$/, '.png');
 };
 
 const getDescription = (currentPage: Page): string => {
