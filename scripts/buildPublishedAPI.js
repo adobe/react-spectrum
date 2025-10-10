@@ -11,7 +11,8 @@
  */
 
 const tempy = require('tempy');
-const fs = require('fs-extra');
+const fs = require('fs');
+const {readFile} = require('node:fs/promises');
 const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
@@ -45,7 +46,7 @@ build().catch(err => {
 async function build() {
   let distDir = args.values.output ?? path.join(__dirname, '..', 'dist', args.values.output ?? 'base-api');
   // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
-  fs.removeSync(distDir);
+  fs.rmSync(distDir, {recursive: true, force: true});
   // Create a temp directory to build the site in
   let dir = tempy.directory();
   console.log(`Building published api into ${dir}...`);
@@ -131,7 +132,7 @@ async function build() {
     let promises = [];
     for (let p of packages) {
       let promise = new Promise((resolve, reject) => {
-        fs.readFile(path.join(packagesDir, p), 'utf8').then(async (contents) => {
+        readFile(path.join(packagesDir, p), 'utf8').then(async (contents) => {
           let json = JSON.parse(contents);
           if (!json.private && json.name !== '@adobe/react-spectrum') {
             try {
@@ -159,10 +160,10 @@ async function build() {
   cleanPkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
-  fs.copySync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'));
-  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
+  fs.cpSync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
+  fs.cpSync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
+  fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
 
   // Install dependencies from npm
   console.log('install our latest packages from npm');
@@ -175,20 +176,20 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'docs'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'));
-  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.cpSync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
+  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {recursive: true});
+  fs.rmSync(path.join(dir, 'packages', 'dev', 'docs'), {recursive: true, force: true});
+  fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  fs.cpSync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
+  fs.cpSync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
   let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  fs.cpSync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {recursive: true});
 
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');
@@ -197,8 +198,9 @@ async function build() {
       continue;
     }
     if (!p.includes('spectrum-css') && !p.includes('example-theme') && fs.existsSync(path.join(dir, 'node_modules', p))) {
-      fs.moveSync(path.join(dir, 'node_modules', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
-      fs.removeSync(path.join(dir, 'packages', path.dirname(p), 'dist'));
+      fs.cpSync(path.join(dir, 'node_modules', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)), {recursive: true});
+      fs.rmSync(path.join(dir, 'node_modules', path.dirname(p)), {recursive: true, force: true});
+      fs.rmSync(path.join(dir, 'packages', path.dirname(p), 'dist'), {recursive: true, force: true});
       let json = JSON.parse(fs.readFileSync(path.join(dir, 'packages', p)), 'utf8');
       if (!p.includes('@react-types')) {
         delete json.types;
@@ -216,7 +218,7 @@ async function build() {
 
   // link all our packages
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(cleanPkg, false, 2));
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'));
+  fs.rmSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'), {recursive: true, force: true});
   console.log('linking packages');
   await run('yarn', ['constraints', '--fix'], {cwd: dir, stdio: 'inherit'});
   await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
@@ -228,10 +230,10 @@ async function build() {
   // Copy the build back into dist, and delete the temp dir.
   // dev/docs/node_modules has some react spectrum components, we don't want those, and i couldn't figure out how to not build them
   // it probably means two different versions, so there may be a bug lurking here
-  fs.removeSync(path.join(dir, 'packages', 'dev'));
-  fs.removeSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'));
-  fs.copySync(path.join(dir, 'packages'), distDir);
-  fs.removeSync(dir);
+  fs.rmSync(path.join(dir, 'packages', 'dev'), {recursive: true, force: true});
+  fs.rmSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'), {recursive: true, force: true});
+  fs.cpSync(path.join(dir, 'packages'), distDir, {recursive: true});
+  fs.rmSync(dir, {recursive: true, force: true});
 }
 
 function run(cmd, args, opts) {
