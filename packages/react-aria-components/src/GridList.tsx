@@ -12,9 +12,20 @@
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent, HeaderNode, ItemNode, LoaderNode, SectionNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
@@ -59,6 +70,11 @@ export interface GridListRenderProps {
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-GridList'
+   */
+  className?: ClassNameOrFunction<GridListRenderProps>,
   /**
    * Whether typeahead navigation is disabled.
    * @default false
@@ -272,6 +288,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-GridListItem'
+   */
+  className?: ClassNameOrFunction<GridListItemRenderProps>,
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -515,6 +536,11 @@ function RootDropIndicator() {
 
 export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-GridListLoadMoreItem'
+   */
+  className?: string,
+  /**
    * The load more spinner to render when loading additional items.
    */
   children?: ReactNode,
@@ -573,7 +599,13 @@ export const GridListLoadMoreItem = createLeafComponent(LoaderNode, function Gri
   );
 });
 
-export interface GridListSectionProps<T> extends SectionProps<T> {}
+export interface GridListSectionProps<T> extends SectionProps<T> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-GridListSection'
+   */
+  className?: string
+}
 
 /**
  * A GridListSection represents a section within a GridList.

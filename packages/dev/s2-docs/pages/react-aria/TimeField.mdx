@@ -35,7 +35,7 @@ export const tags = ['date', 'input'];
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](../internationalized/date/) package. `TimeField` accepts plain [Time](../internationalized/date/Time.html), [CalendarDateTime](../internationalized/date/CalendarDateTime.html), or [ZonedDateTime](../internationalized/date/ZonedDate), but only displays the time.
+Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. `TimeField` accepts plain [Time](../internationalized/date/Time.html), [CalendarDateTime](../internationalized/date/CalendarDateTime.html), or [ZonedDateTime](../internationalized/date/ZonedDateTime.html), but only displays the time.
 
 ```tsx render
 "use client";
@@ -118,16 +118,10 @@ import {Form} from 'react-aria-components';
 
 <PropTable component={docs.exports.TimeField} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-TimeField" properties={docs.exports.DateFieldRenderProps.properties} />
-
 ### DateInput
 
 <PropTable component={docs.exports.DateInput} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-DateInput" properties={docs.exports.DateInputRenderProps.properties} />
-
 ### DateSegment
 
 <PropTable component={docs.exports.DateSegment} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-DateSegment" properties={docs.exports.DateSegmentRenderProps.properties} />

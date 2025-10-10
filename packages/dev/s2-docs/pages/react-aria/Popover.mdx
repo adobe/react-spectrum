@@ -69,7 +69,7 @@ export const tags = ['popup', 'overlay'];
 
 ## Custom trigger
 
-`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -150,12 +150,15 @@ function Example() {
 
 ### Popover
 
-<PropTable component={docs.exports.Popover} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Popover" properties={docs.exports.PopoverRenderProps.properties} />
+<PropTable
+  component={docs.exports.Popover}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--trigger-width': 'The width of the popover trigger element.',
+    '--trigger-anchor-point': 'The position of the trigger relative to the popover. Use with `transform-origin` when applying scale transitions.'
+  }} />
 
 ### OverlayArrow
 
 <PropTable component={docs.exports.OverlayArrow} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-OverlayArrow" properties={docs.exports.OverlayArrowRenderProps.properties} />

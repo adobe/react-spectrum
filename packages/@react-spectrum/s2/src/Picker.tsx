@@ -532,7 +532,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label]) {display: none;}')}>
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
               {({selectedItems, defaultChildren}) => {
                 return (
                   <Provider
@@ -556,16 +556,24 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       [TextContext, {
                         slots: {
                           description: {},
-                          [DEFAULT_SLOT]: {styles: style({
-                            display: 'block',
-                            flexGrow: 1,
-                            truncate: true
-                          })},
-                          label: {styles: style({
-                            display: 'block',
-                            flexGrow: 1,
-                            truncate: true
-                          })}
+                          [DEFAULT_SLOT]: {
+                            styles: style({
+                              display: 'block',
+                              flexGrow: 1,
+                              truncate: true
+                            }),
+                            // @ts-ignore
+                            'data-slot': 'label'
+                          },
+                          label: {
+                            styles: style({
+                              display: 'block',
+                              flexGrow: 1,
+                              truncate: true
+                            }),
+                            // @ts-ignore not technically necessary, but good for consistency
+                            'data-slot': 'label'
+                          }
                         }
                       }],
                       [InsideSelectValueContext, true]
