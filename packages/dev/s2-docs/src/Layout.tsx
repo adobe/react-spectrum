@@ -64,7 +64,7 @@ const getTitle = (currentPage: Page): string => {
 };
 
 const getOgImageUrl = (currentPage: Page): string => {
-  let publicUrl = (import.meta as any).publicUrl || '/';
+  let publicUrl = process.env.PUBLIC_URL || '/';
   if (!publicUrl.endsWith('/')) {
     publicUrl += '/';
   }

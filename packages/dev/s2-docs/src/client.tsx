@@ -49,7 +49,7 @@ async function navigate(pathname: string, push = false) {
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
   let link = (e.target as Element).closest('a');
-  let publicUrl = (import.meta as any).publicUrl;
+  let publicUrl = process.env.PUBLIC_URL || '/';
   let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   if (
     link &&
