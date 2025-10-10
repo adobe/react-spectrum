@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeItemProps, TreeSection, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeItemProps, TreeProps, TreeSection, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
@@ -270,7 +270,7 @@ export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
 
 const TreeExampleSectionRender = (args) => (
   <Tree className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <TreeItem
+    <TreeItem
       id="reports"
       textValue="Reports"
       className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
@@ -344,8 +344,8 @@ export const TreeExampleSection = {
       control: 'radio',
       options: ['selection', 'all']
     }
-  },
-}
+  }
+};
 
 export const TreeExampleStaticNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
   render: (args) => <TreeExampleStaticNoActionsRender {...args} />,
@@ -406,8 +406,8 @@ let rows = [
 ];
 
 let rowWithSections = [
-  {id: 'section_1', name: 'Section 1', childItems: 
-    [{id: 'projects', name: 'Projects', childItems: [
+  {id: 'section_1', name: 'Section 1', childItems: [
+    {id: 'projects', name: 'Projects', childItems: [
       {id: 'project-1', name: 'Project 1'},
       {id: 'project-2', name: 'Project 2', childItems: [
         {id: 'project-2A', name: 'Project 2A'},
@@ -420,10 +420,11 @@ let rowWithSections = [
         {id: 'project-5A', name: 'Project 5A'},
         {id: 'project-5B', name: 'Project 5B'},
         {id: 'project-5C', name: 'Project 5C'}
+      ]}
     ]}
-  ]}]},
-  {id: 'section_2', name: 'Section 2', childItems: 
-    [{id: 'reports', name: 'Reports', childItems: [
+  ]},
+  {id: 'section_2', name: 'Section 2', childItems: [
+    {id: 'reports', name: 'Reports', childItems: [
       {id: 'reports-1', name: 'Reports 1', childItems: [
         {id: 'reports-1A', name: 'Reports 1A', childItems: [
           {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
@@ -434,9 +435,9 @@ let rowWithSections = [
         {id: 'reports-1C', name: 'Reports 1C'}
       ]},
       {id: 'reports-2', name: 'Reports 2'}
-    ]}] 
-  }
-]
+    ]}
+  ]}
+];
 
 const MyTreeLoader = (props) => {
   let {omitChildren} = props;
@@ -534,67 +535,6 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   );
 };
 
-const DynamicTreeItemSection = (props: DynamicTreeItemProps) => {
-  let {childItems, renderLoader, supportsDragging} = props;
-
-  return (
-    <>
-      <TreeItem
-        {...props}
-        className={({isFocused, isSelected, isHovered, isFocusVisible, isDropTarget}) => classNames(styles, 'tree-item', {
-          focused: isFocused,
-          'focus-visible': isFocusVisible,
-          selected: isSelected,
-          hovered: isHovered,
-          'drop-target': isDropTarget
-        })}>
-        <TreeItemContent>
-          {({isExpanded, hasChildItems, level, selectionBehavior, selectionMode}) => (
-            <>
-              {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-                <MyCheckbox slot="selection" />
-              )}
-              <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
-                {hasChildItems && (
-                <Button className={styles.chevron} slot="chevron">
-                  <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
-                    <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </div>
-                </Button>
-                )}
-                {supportsDragging && <Button slot="drag">≡</Button>}
-                <Text>{props.children}</Text>
-                <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
-                <MenuTrigger>
-                  <Button aria-label="Menu">☰</Button>
-                  <Popover>
-                    <Menu className={styles.menu} onAction={action('menu action')}>
-                      <MyMenuItem>Foo</MyMenuItem>
-                      <MyMenuItem>Bar</MyMenuItem>
-                      <MyMenuItem>Baz</MyMenuItem>
-                    </Menu>
-                  </Popover>
-                </MenuTrigger>
-              </div>
-            </>
-          )}
-        </TreeItemContent>
-        <Collection items={childItems}>
-          {(item: any) => (
-            <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
-              {item.name}
-            </DynamicTreeItem>
-          )}
-        </Collection>
-        {renderLoader?.(props.id) && <MyTreeLoader isLoading={props.isLoading} onLoadMore={props.onLoadMore} /> }
-      </TreeItem>
-      {props.isLastInRoot && <MyTreeLoader isLoading={props.isLoading} onLoadMore={props.onLoadMore} /> }
-    </>
-  );
-};
-
 let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']);
 
 const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
@@ -630,9 +570,9 @@ const TreeSectionExampleDynamicRender = <T extends object>(args: TreeProps<T>): 
             <TreeHeader>{section.value.name}</TreeHeader>
             <Collection items={section.children ?? []}>
               {item =>  
-              <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
-                {item.value.name}
-              </DynamicTreeItem>
+                (<DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+                  {item.value.name}
+                </DynamicTreeItem>)
               }
             </Collection>
           </TreeSection>
@@ -1483,8 +1423,8 @@ export const VirtualizedTreeSectionRender = {
       control: 'radio',
       options: ['selection', 'all']
     }
-  },
-}
+  }
+};
 interface ITreeItem {
   id: string,
   name: string,
