@@ -1,14 +1,50 @@
 import {Layout} from '../src/Layout';
-import {LinkButton} from '@react-spectrum/s2';
+import {LinkButton, ProductCard, CardPreview, Content, Footer, Text} from '@react-spectrum/s2';
+import {WelcomeHeader} from './WelcomeHeader';
+import {TAB_DEFS} from '../src/constants';
 export default Layout;
 
 export const section = 'Getting started';
+export const hideNav = true;
 
-# Welcome!
+<WelcomeHeader />
 
 The React Spectrum docs have a new look! This is a **beta preview** so keep in mind that we will be continuing to make improvements before the full release.
 
-<LinkButton href="s2/getting-started.html" variant="accent" size="L">Get Started with Spectrum 2</LinkButton>
+<div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
+  <ProductCard size="L">
+    {TAB_DEFS['react-spectrum'].icon}
+    <Content>
+      <Text slot="title">{TAB_DEFS['react-spectrum'].label}</Text>
+      <Text slot="description">{TAB_DEFS['react-spectrum'].description}</Text>
+    </Content>
+    <Footer>
+      <LinkButton href="s2/index.html" variant="accent">Get started</LinkButton>
+    </Footer>
+  </ProductCard>
+
+  <ProductCard size="L">
+    {TAB_DEFS['react-aria'].icon}
+    <Content>
+      <Text slot="title">{TAB_DEFS['react-aria'].label}</Text>
+      <Text slot="description">{TAB_DEFS['react-aria'].description}</Text>
+    </Content>
+    <Footer>
+      <LinkButton href="react-aria/Autocomplete.html" variant="accent">Explore</LinkButton>
+    </Footer>
+  </ProductCard>
+
+  <ProductCard size="L">
+    {TAB_DEFS['internationalized'].icon}
+    <Content>
+      <Text slot="title">{TAB_DEFS['internationalized'].label}</Text>
+      <Text slot="description">{TAB_DEFS['internationalized'].description}</Text>
+    </Content>
+    <Footer>
+      <LinkButton href="internationalized/date/index.html" variant="accent">Show Packages</LinkButton>
+    </Footer>
+  </ProductCard>
+</div>
 
 ## What's new?
 
@@ -22,4 +58,4 @@ The React Spectrum docs have a new look! This is a **beta preview** so keep in m
 
 ## Roadmap
 
-The existing docs are still available [here](https://react-spectrum.adobe.com/react-spectrum/index.html). We plan to do a full release of the new docs site by early 2026, so we welcome any and all feedback!
+The existing docs are still available [here](https://react-spectrum.adobe.com/index.html). We plan to do a full release of the new docs site by early 2026, so we welcome any and all feedback!
