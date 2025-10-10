@@ -297,5 +297,8 @@
   },
   "locales": [
     "en-US"
-  ]
+  ],
+  "dependencies": {
+    "shadow-dom-testing-library": "^1.13.1"
+  }
 }

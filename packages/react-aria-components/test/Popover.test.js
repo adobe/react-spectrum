@@ -14,6 +14,7 @@ import {act, createShadowRoot, pointerMap, render, waitFor} from '@react-spectru
 import {Button, Dialog, DialogTrigger, Menu, MenuItem, MenuTrigger, OverlayArrow, Popover, Pressable} from '../';
 import {enableShadowDOM} from '@react-stately/flags';
 import React, {useRef} from 'react';
+import {screen} from 'shadow-dom-testing-library';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
@@ -276,16 +277,12 @@ describe('Popover', () => {
   });
 
   it.only('temp1234', async function () {
-    enableShadowDOM();
-    const root = document.createElement('div')
-    document.body.appendChild(root)
-
-    const template  = document.createElement('template')
-    template.setAttribute('shadowrootmode', 'open')
-    root.appendChild(template)
+    const template = document.createElement('div');
+    template.attachShadow({mode: 'open'});
+    document.body.appendChild(template);
 
     const appContainer = document.createElement('div');
-    appContainer.setAttribute('id', 'appRoot')
+    appContainer.setAttribute('id', 'appRoot');
     template.appendChild(appContainer);
 
     const portal = document.createElement('div');
@@ -313,26 +310,23 @@ describe('Popover', () => {
         </MenuTrigger>
       );
     }
-    const {container, debug} = render(
+    render(
       <UNSAFE_PortalProvider getContainer={() => portal}>
         <ShadowApp />
       </UNSAFE_PortalProvider>,
       {container: appContainer}
     );
 
-    let button = container.querySelector('button');
-
-    await user.click(button)
-    debug();
-
-
-    const menu = template.querySelector('[role=menu]')
-    expect(menu).toBeVisible()
-    let menuItems = Array.from(template.querySelectorAll('[role="menuitem"]'));
-    let openItem = menuItems.find(item => item.textContent?.trim() === 'Open…');
-    expect(openItem).toBeTruthy();
+    let button = await screen.findByShadowRole('button');
+    await user.click(button);
+    let menu = await screen.findByShadowRole('menu');
+    expect(menu).toBeVisible();
+    let items = await screen.findAllByShadowRole('menuitem');
+    let openItem = items.find(item => item.textContent?.trim() === 'Open…');
+    expect(openItem).toBeVisible();
 
     await user.click(openItem);
     expect(onAction).toHaveBeenCalledTimes(1);
+    document.body.removeChild(template);
   });
 });
