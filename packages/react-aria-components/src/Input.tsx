@@ -82,7 +82,7 @@ export const Input = /*#__PURE__*/ createHideableComponent(function Input(props:
     autoFocus: props.autoFocus
   });
 
-  let isInvalid = !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
+  let isInvalid = !!props['aria-invalid'] && props['aria-invalid'] !== false && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
     ...props,
     values: {
