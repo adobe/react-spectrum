@@ -65,15 +65,11 @@ const getTitle = (currentPage: Page): string => {
 
 const getOgImageUrl = (currentPage: Page): string => {
   const slug = currentPage.url.replace(/^\//, '').replace(/\.html$/, '');
-  
-  if (slug.includes('s2-docs/')) {
-    // For build links, use the full URL
-    const ogPath = slug.replace(/s2-docs\//, 's2-docs/og/');
-    return `https://reactspectrum.blob.core.windows.net/${ogPath}.png`;
+  let publicUrl = (import.meta as any).publicUrl || '/';
+  if (!publicUrl.endsWith('/')) {
+    publicUrl += '/';
   }
-  
-  // For production, use relative path with /og/ prefix
-  return `/og/${slug}.png`;
+  return publicUrl + 'og/' + slug + '.png';
 };
 
 const getDescription = (currentPage: Page): string => {
