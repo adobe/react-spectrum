@@ -839,7 +839,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   // eslint-disable-next-line
   }, []);
 
-  // console.log('hey', [...state.collection.getChildren!(item.key)], item);
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
@@ -1039,15 +1038,6 @@ export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoa
   );
 });
 
-// function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
-//   if (!expanded) {
-//     return new Set<Key>();
-//   }
-
-//   return expanded === 'all'
-//     ? 'all'
-//     : new Set(expanded);
-// }
 interface TreeGridCollectionOptions {
   expandedKeys: Set<Key>
 }
