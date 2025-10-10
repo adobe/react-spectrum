@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {AriaTreeTests} from './AriaTree.test-util';
-import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeItem, TreeItemContent, TreeLoadMoreItem, useDragAndDrop, Virtualizer} from '../';
+import {Button, Checkbox, Collection, DropIndicator, ListLayout, Text, Tree, TreeHeader, TreeItem, TreeItemContent, TreeLoadMoreItem, TreeSection, useDragAndDrop, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 // @ts-ignore
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
@@ -71,6 +71,30 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
   </Tree>
 );
 
+let StaticSectionTree = ({treeProps = {}, rowProps = {}}) => (
+  <Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} disabledBehavior="selection" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+    <TreeSection aria-label="Section 1">
+      <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
+    </TreeSection>
+    <TreeSection>
+      <TreeHeader>Section 2</TreeHeader>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A" {...rowProps}>
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2" {...rowProps}>
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3" {...rowProps}>
+          Projects-3
+        </StaticTreeItem>
+      </StaticTreeItem>
+    </TreeSection>
+  </Tree>
+);
+
 let rows = [
   {id: 'projects', name: 'Projects', childItems: [
     {id: 'project-1', name: 'Project 1'},
@@ -98,6 +122,40 @@ let rows = [
       {id: 'reports-1C', name: 'Reports 1C'}
     ]},
     {id: 'reports-2', name: 'Reports 2'}
+  ]}
+];
+
+let rowsWithSections = [
+  {id: 'section_1', name: 'Section 1', childItems: [
+    {id: 'projects', name: 'Projects', childItems: [
+      {id: 'project-1', name: 'Project 1'},
+      {id: 'project-2', name: 'Project 2', childItems: [
+        {id: 'project-2A', name: 'Project 2A'},
+        {id: 'project-2B', name: 'Project 2B'},
+        {id: 'project-2C', name: 'Project 2C'}
+      ]},
+      {id: 'project-3', name: 'Project 3'},
+      {id: 'project-4', name: 'Project 4'},
+      {id: 'project-5', name: 'Project 5', childItems: [
+        {id: 'project-5A', name: 'Project 5A'},
+        {id: 'project-5B', name: 'Project 5B'},
+        {id: 'project-5C', name: 'Project 5C'}
+      ]}
+    ]}
+  ]},
+  {id: 'section_2', name: 'Section 2', childItems: [
+    {id: 'reports', name: 'Reports', childItems: [
+      {id: 'reports-1', name: 'Reports 1', childItems: [
+        {id: 'reports-1A', name: 'Reports 1A', childItems: [
+          {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+            {id: 'reports-1ABC', name: 'Reports 1ABC'}
+          ]}
+        ]},
+        {id: 'reports-1B', name: 'Reports 1B'},
+        {id: 'reports-1C', name: 'Reports 1C'}
+      ]},
+      {id: 'reports-2', name: 'Reports 2'}
+    ]}
   ]}
 ];
 
@@ -139,6 +197,25 @@ let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
         {item.name}
       </DynamicTreeItem>
     )}
+  </Tree>
+);
+
+let DynamicSectionTree = ({treeProps = {}, rowProps = {}}) => (
+  <Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rowsWithSections} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+    <Collection items={rowsWithSections}>
+      {section => (
+        <TreeSection>
+          <TreeHeader>{section.name}</TreeHeader>
+          <Collection items={section.childItems}>
+            {item => (
+              <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
+                {item.name}
+              </DynamicTreeItem>
+            )}
+          </Collection>
+        </TreeSection>
+      )}
+    </Collection>
   </Tree>
 );
 
@@ -1882,6 +1959,133 @@ describe('Tree', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('sections', () => {
+    it('should support sections', () => {
+      let {getAllByRole} = render(<StaticSectionTree />)
+
+      let groups = getAllByRole('rowgroup');
+      expect(groups).toHaveLength(2);
+
+      expect(groups[0]).toHaveClass('react-aria-TreeSection');
+      expect(groups[1]).toHaveClass('react-aria-TreeSection');
+
+      expect(groups[0].getAttribute('aria-label')).toEqual('Section 1');
+
+      expect(groups[1]).toHaveAttribute('aria-labelledby');
+      const labelId = groups[1].getAttribute('aria-labelledby');
+      const labelElement = labelId ? document.getElementById(labelId) : null;
+      expect(labelElement).not.toBeNull();
+      expect(labelElement).toHaveTextContent('Section 2');
+    });
+  });
+
+  it('should have the expected attributes on the rows in sections', () => {
+    let {getAllByRole} = render(<StaticSectionTree />)
+
+    let rows = getAllByRole('row');
+    let rowNoChild = rows[0];
+    expect(rowNoChild).toHaveAttribute('aria-label', 'Photos');
+    expect(rowNoChild).not.toHaveAttribute('aria-expanded');
+    expect(rowNoChild).not.toHaveAttribute('data-expanded');
+    expect(rowNoChild).toHaveAttribute('data-level', '1');
+    expect(rowNoChild).not.toHaveAttribute('data-has-child-items');
+    expect(rowNoChild).toHaveAttribute('data-rac');
+
+    let header = rows[1];
+    expect(header).toHaveClass('react-aria-TreeHeader');
+    expect(within(header).getByRole('rowheader')).toHaveTextContent('Section 2');
+
+    let rowWithChildren = rows[2];
+    // Row has action since it is expandable but not selectable.
+    expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects');
+    expect(rowWithChildren).toHaveAttribute('data-expanded', 'true');
+    expect(rowWithChildren).toHaveAttribute('data-level', '1');
+    expect(rowWithChildren).toHaveAttribute('data-has-child-items', 'true');
+    expect(rowWithChildren).toHaveAttribute('data-rac');
+
+    let level2ChildRow = rows[3];
+    expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1');
+    expect(level2ChildRow).toHaveAttribute('data-expanded', 'true');
+    expect(level2ChildRow).toHaveAttribute('data-level', '2');
+    expect(level2ChildRow).toHaveAttribute('data-has-child-items', 'true');
+    expect(level2ChildRow).toHaveAttribute('data-rac');
+
+    let level3ChildRow = rows[4];
+    expect(level3ChildRow).toHaveAttribute('aria-label', 'Projects-1A');
+    expect(level3ChildRow).not.toHaveAttribute('data-expanded');
+    expect(level3ChildRow).toHaveAttribute('data-level', '3');
+    expect(level3ChildRow).not.toHaveAttribute('data-has-child-items');
+    expect(level3ChildRow).toHaveAttribute('data-rac');
+
+    let level2ChildRow2 = rows[5];
+    expect(level2ChildRow2).toHaveAttribute('aria-label', 'Projects-2');
+    expect(level2ChildRow2).not.toHaveAttribute('data-expanded');
+    expect(level2ChildRow2).toHaveAttribute('data-level', '2');
+    expect(level2ChildRow2).not.toHaveAttribute('data-has-child-items');
+    expect(level2ChildRow2).toHaveAttribute('data-rac');
+
+    let level2ChildRow3 = rows[6];
+    expect(level2ChildRow3).toHaveAttribute('aria-label', 'Projects-3');
+    expect(level2ChildRow3).not.toHaveAttribute('data-expanded');
+    expect(level2ChildRow3).toHaveAttribute('data-level', '2');
+    expect(level2ChildRow3).not.toHaveAttribute('data-has-child-items');
+    expect(level2ChildRow3).toHaveAttribute('data-rac');
+  });
+
+  it('should support dynamic trees with sections', () => {
+    let {getByRole, getAllByRole} = render(<DynamicSectionTree />);
+    let tree = getByRole('treegrid');
+    expect(tree).toHaveAttribute('class', 'react-aria-Tree');
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(22);
+
+
+    let header = rows[0];
+    expect(header).toHaveClass('react-aria-TreeHeader');
+    expect(within(header).getByRole('rowheader')).toHaveTextContent('Section 1');
+
+    // Check the rough structure to make sure dynamic rows are rendering as expected (just checks the expandable rows and their attributes)
+    expect(rows[1]).toHaveAttribute('aria-label', 'Projects');
+    expect(rows[1]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[1]).toHaveAttribute('aria-level', '1');
+    expect(rows[1]).toHaveAttribute('aria-posinset', '1');  // aria-posinset value is relative to their section
+    expect(rows[1]).toHaveAttribute('aria-setsize', '1'); // aria-setsize value is relative to their section
+    expect(rows[1]).toHaveAttribute('data-has-child-items', 'true');
+
+    expect(rows[3]).toHaveAttribute('aria-label', 'Project 2');
+    expect(rows[3]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[3]).toHaveAttribute('aria-level', '2');
+    expect(rows[3]).toHaveAttribute('aria-posinset', '2');
+    expect(rows[3]).toHaveAttribute('aria-setsize', '5');
+    expect(rows[3]).toHaveAttribute('data-has-child-items', 'true');
+
+    expect(rows[9]).toHaveAttribute('aria-label', 'Project 5');
+    expect(rows[9]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[9]).toHaveAttribute('aria-level', '2');
+    expect(rows[9]).toHaveAttribute('aria-posinset', '5');
+    expect(rows[9]).toHaveAttribute('aria-setsize', '5');
+    expect(rows[9]).toHaveAttribute('data-has-child-items', 'true');
+
+    header = rows[13];
+    expect(header).toHaveClass('react-aria-TreeHeader');
+    expect(within(header).getByRole('rowheader')).toHaveTextContent('Section 2');
+
+    expect(rows[14]).toHaveAttribute('aria-label', 'Reports');
+    expect(rows[14]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[14]).toHaveAttribute('aria-level', '1');
+    expect(rows[14]).toHaveAttribute('aria-posinset', '1');
+    expect(rows[14]).toHaveAttribute('aria-setsize', '1');
+    expect(rows[14]).toHaveAttribute('data-has-child-items', 'true');
+
+    expect(rows[18]).toHaveAttribute('aria-label', 'Reports 1ABC');
+    expect(rows[18]).toHaveAttribute('aria-level', '5');
+    expect(rows[18]).toHaveAttribute('aria-posinset', '1');
+    expect(rows[18]).toHaveAttribute('aria-setsize', '1');
+  });
+
+
 });
 
 AriaTreeTests({
