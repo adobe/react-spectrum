@@ -59,6 +59,10 @@ function nextDropTarget(
       nextKey = keyboardDelegate.getKeyBelow?.(target.key);
     }
     let nextCollectionKey = collection.getKeyAfter(target.key);
+    let nextCollectionNode = nextCollectionKey && collection.getItem(nextCollectionKey);
+    if (nextCollectionNode && nextCollectionNode.type === 'content') {
+      nextCollectionKey = nextCollectionKey ? collection.getKeyAfter(nextCollectionKey) : null;
+    }
 
     // If the keyboard delegate did not move to the next key in the collection,
     // jump to that key with the same drop position. Otherwise, try the other
@@ -100,7 +104,7 @@ function nextDropTarget(
       }
       case 'after': {
         // If this is the last sibling in a level, traverse to the parent.
-        let targetNode = collection.getItem(target.key);        
+        let targetNode = collection.getItem(target.key);
         if (targetNode && targetNode.nextKey == null && targetNode.parentKey != null) {
           // If the parent item has an item after it, use the "before" position.
           let parentNode = collection.getItem(targetNode.parentKey);

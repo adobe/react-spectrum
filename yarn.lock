@@ -5759,6 +5759,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/gridlist@workspace:packages/@react-aria/gridlist"
   dependencies:
+    "@react-aria/collections": "npm:^3.0.0"
     "@react-aria/focus": "npm:^3.21.2"
     "@react-aria/grid": "npm:^3.14.5"
     "@react-aria/i18n": "npm:^3.12.13"

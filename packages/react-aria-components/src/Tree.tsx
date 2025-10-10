@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSection, useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {
@@ -25,38 +25,106 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, useCachedChildren} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {GridListHeader, GridListHeaderContext, GridListHeaderInnerContext} from './GridList';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
-  private flattenedRows: Node<T>[];
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
+  private firstKey;
+  private lastKey;
+  private expandedKeys;
 
   constructor(opts) {
-    let {collection, expandedKeys} = opts;
-    let {flattenedRows, keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
-    this.flattenedRows = flattenedRows;
+    let {collection, lastExpandedKeys, expandedKeys} = opts;
+    let {keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
     this.keyMap = keyMap;
     this.itemCount = itemCount;
+    this.firstKey = [...this.keyMap.keys()][0];
+    this.lastKey = [...this.keyMap.keys()][this.keyMap.size - 1];
+    this.expandedKeys = expandedKeys;
+
+     // diff lastExpandedKeys and expandedKeys so we only clone what has changed
+    for (let key of expandedKeys) {
+      if (!lastExpandedKeys.has(key)) {
+        // traverse upward until you hit a section, and clone it
+        let currentKey = key;
+        while (currentKey != null) {
+          let item = this.getItem(currentKey) as CollectionNode<T>;
+          if (item?.type === 'section') {
+            // replace the item with a clone
+            this.keyMap.set(currentKey, item.clone());
+            break;
+          } else {
+            currentKey = item?.parentKey;
+          }
+        }
+      }
+    }
+
+    for (let key of lastExpandedKeys) {
+      if (!expandedKeys.has(key)) {
+        let currentKey = key;
+        while (currentKey != null) {
+          let item = this.getItem(currentKey) as CollectionNode<T>;
+          if (item?.type === 'section') {
+            // replace the item with a clone
+            this.keyMap.set(currentKey, item.clone());
+            break;
+          } else {
+            currentKey = item?.parentKey;
+          }
+        }
+      }
+    }
   }
 
-  // TODO: should this collection's getters reflect the flattened structure or the original structure
-  // If we respresent the flattened structure, it is easier for the keyboard nav but harder to find all the nodes
   *[Symbol.iterator]() {
-    yield* this.flattenedRows;
+    function* traverseDepthFirst(node: CollectionNode<T> | null, expandedKeys: Set<Key>) {
+      if (!node) {
+        return;
+      }
+      
+      // Always yield the current node first
+      yield node;
+  
+      // If node is expanded, traverse its children
+      if (expandedKeys.has(node.key) && node.firstChildKey) {
+        let firstChild = keyMap.get(node.firstChildKey);
+        // Skip content nodes
+        while (firstChild && firstChild.type === 'content') {
+          firstChild = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : undefined;
+        }
+        if (firstChild) {
+          yield* traverseDepthFirst(firstChild, expandedKeys);
+        }
+      }
+  
+      // Then traverse to next sibling
+      let nextNode = node && node.nextKey ? keyMap.get(node.nextKey) : null;
+      if (nextNode) {
+        yield* traverseDepthFirst(nextNode, expandedKeys);
+      }
+    }
+
+    let keyMap = this.keyMap;
+    let expandedKeys = this.expandedKeys;
+    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
+    yield* traverseDepthFirst(node as CollectionNode<T>, expandedKeys);
   }
+
 
   get size() {
     return this.itemCount;
@@ -71,37 +139,179 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   at(idx: number) {
-    return this.flattenedRows[idx];
+    let keyMap = this.keyMap;
+    let expandedKeys = this.expandedKeys;
+
+    function getKeyAfter(key: Key) {
+      let node = keyMap.get(key);
+      if (!node) {
+        return null;
+      }
+  
+      if ((expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
+        node = keyMap.get(node.firstChildKey);
+        while (node && node.type === 'content' && node.nextKey != null) {
+          node = keyMap.get(node.nextKey);
+        }
+        return node ? node.key : null;
+      }
+  
+      while (node) {
+        if (node.nextKey != null) {
+          return node.nextKey;
+        }
+  
+        if (node.parentKey != null) {
+          node = keyMap.get(node.parentKey);
+        } else {
+          return null;
+        }
+      }
+  
+      return null;
+    }
+
+    let firstKey = this.getFirstKey();
+    let node = firstKey ? keyMap.get(firstKey) : null;
+    for (let i = 0; i < idx; i++) {
+      if (node) {
+        let keyAfter = getKeyAfter(node.key);
+        node = keyAfter ? keyMap.get(keyAfter) : null;
+      }
+    }
+    return node as Node<T>;
   }
 
   getFirstKey() {
-    return this.flattenedRows[0]?.key;
+    let node = this.keyMap.get(this.firstKey);
+    if (!node) {
+      return null;
+    }
+
+    // Skip over any nodes that aren't an item node (e.g. section or header node)
+    while (node) {
+      if (node.type !== 'item' && node.firstChildKey) {
+        node = this.keyMap.get(node.firstChildKey);
+      } else {
+        break;
+      }
+    }
+
+    return node ? node.key : null;
   }
 
   getLastKey() {
-    return this.flattenedRows[this.flattenedRows.length - 1]?.key;
+    let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
+
+    if (!node) {
+      return null;
+    }
+
+    // If the node's parent is expanded, then we can assume that this is the actual last key
+    if (node.parentKey && this.expandedKeys.has(node.parentKey)) {
+      return node.key;
+    }
+
+    // If the node's parent is not expanded, find the top-most non-expanded node since it's possible for them to be nested
+    let parentNode = node.parentKey ? this.keyMap.get(node.parentKey) : null;
+    while (parentNode && parentNode.type !== 'section' && node && node.parentKey && !this.expandedKeys.has(parentNode.key)) {
+      node = this.keyMap.get(node.parentKey);
+      parentNode = node && node.parentKey ? this.keyMap.get(node.parentKey) : null;
+    }
+
+    return node?.key ?? null;
   }
 
   getKeyAfter(key: Key) {
-    let index = this.flattenedRows.findIndex(row => row.key === key);
-    return this.flattenedRows[index + 1]?.key;
+    let node = this.keyMap.get(key);
+    if (!node) {
+      return null;
+    }
+
+    if ((this.expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
+      return node.firstChildKey;
+    }
+
+    while (node) {
+      if (node.nextKey != null) {
+        return node.nextKey;
+      }
+
+      if (node.parentKey != null) {
+        node = this.keyMap.get(node.parentKey);
+      } else {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   getKeyBefore(key: Key) {
-    let index = this.flattenedRows.findIndex(row => row.key === key);
-    return this.flattenedRows[index - 1]?.key;
+    let node = this.keyMap.get(key);
+    if (!node) {
+      return null;
+    }
+
+    if (node.prevKey != null) {
+      node = this.keyMap.get(node.prevKey);
+
+      while (node && node.type !== 'item' && node.lastChildKey != null) {
+        node = this.keyMap.get(node.lastChildKey);
+      }
+
+      // If the lastChildKey is expanded, check its lastChildKey
+      while (node && this.expandedKeys.has(node.key) && node.lastChildKey != null) {
+        node = this.keyMap.get(node.lastChildKey);
+      }
+
+      return node?.key ?? null;
+    }
+
+    return node.parentKey;
   }
 
-  // Note that this will return Content nodes in addition to nested TreeItems
   getChildren(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
+    let expandedKeys = this.expandedKeys;
     return {
       *[Symbol.iterator]() {
+        function* traverseDepthFirst(node: CollectionNode<T> | null, expandedKeys: Set<Key>) {
+          if (!node) {
+            return;
+          }
+
+          // Always yield the current node first
+          yield node;
+      
+          // If node is expanded, traverse its children
+          if (expandedKeys.has(node.key) && node.firstChildKey) {
+            let firstChild = keyMap.get(node.firstChildKey);
+            // Skip content nodes
+            while (firstChild && firstChild.type === 'content') {
+              firstChild = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : undefined;
+            }
+            if (firstChild) {
+              yield* traverseDepthFirst(firstChild, expandedKeys);
+            }
+          }
+      
+          // Then traverse to next sibling
+          let nextNode = node && node.nextKey ? keyMap.get(node.nextKey) : null;
+          if (nextNode) {
+            yield* traverseDepthFirst(nextNode, expandedKeys);
+          }
+        }
+
         let parent = keyMap.get(key);
-        let node = parent?.firstChildKey != null ? keyMap.get(parent.firstChildKey) : null;
-        while (node) {
-          yield node as Node<T>;
-          node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
+        let node = parent?.firstChildKey ? keyMap.get(parent.firstChildKey) : null;
+        if (parent && parent.type === 'section' && node) {
+          yield* traverseDepthFirst(node, expandedKeys);
+        } else {
+          while (node) {
+            yield node as Node<T>;
+            node = node.nextKey != null ? keyMap.get(node.nextKey) : undefined;
+          }
         }
       }
     };
@@ -234,14 +444,22 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   // Kinda annoying that we have to replicate this code here as well as in useTreeState, but don't want to add
   // flattenCollection stuff to useTreeState. Think about this later
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
-    propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
+    propExpandedKeys ? new Set(propExpandedKeys) : undefined,
+    propDefaultExpandedKeys ? new Set(propDefaultExpandedKeys) : new Set(),
     onExpandedChange
   );
 
-  let flattenedCollection = useMemo(() => {
-    return new TreeCollection<object>({collection, expandedKeys});
-  }, [collection, expandedKeys]);
+  let [lastCollection, setLastCollection] = useState(collection);
+  let [lastExpandedKeys, setLastExpandedKeys] = useState(expandedKeys);
+  let [flattenedCollection, setFlattenedCollection] = useState(() => new TreeCollection<object>({collection, lastExpandedKeys: new Set(), expandedKeys}));
+
+
+  // if the lastExpandedKeys is not the same as the currentExpandedKeys or the collection has changed, then run this!
+  if (!areSetsEqual(lastExpandedKeys, expandedKeys) || collection !== lastCollection) {
+    setFlattenedCollection(new TreeCollection<object>({collection, lastExpandedKeys, expandedKeys}));
+    setLastCollection(collection);
+    setLastExpandedKeys(expandedKeys);
+  }
 
   let state = useTreeState({
     ...props,
@@ -308,7 +526,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           if (e.target.type === 'item') {
             let key = e.target.key;
             let item = state.collection.getItem(key);
-            let isExpanded = expandedKeys !== 'all' && expandedKeys.has(key);
+            let isExpanded = expandedKeys.has(key);
             if (item && item.hasChildNodes && (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())) {
               state.toggleKey(key);
             }
@@ -825,21 +1043,11 @@ export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoa
   );
 });
 
-function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
-  if (!expanded) {
-    return new Set<Key>();
-  }
-
-  return expanded === 'all'
-    ? 'all'
-    : new Set(expanded);
-}
 interface TreeGridCollectionOptions {
   expandedKeys: Set<Key>
 }
 
 interface FlattenedTree<T> {
-  flattenedRows: Node<T>[],
   keyMap: Map<Key, CollectionNode<T>>,
   itemCount: number
 }
@@ -849,12 +1057,11 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
     expandedKeys = new Set()
   } = opts;
   let keyMap: Map<Key, CollectionNode<T>> = new Map();
-  let flattenedRows: Node<T>[] = [];
   // Need to count the items here because BaseCollection will return the full item count regardless if items are hidden via collapsed rows
   let itemCount = 0;
   let parentLookup: Map<Key, boolean> = new Map();
 
-  let visitNode = (node: Node<T>) => {
+  let visitNode = (node: Node<T>, isInSection: boolean) => {
     if (node.type === 'item' || node.type === 'loader') {
       let parentKey = node?.parentKey;
       let clone = {...node};
@@ -864,6 +1071,12 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         let hasContentNode = [...collection.getChildren(parentKey)][0].type !== 'item';
         if (hasContentNode) {
           clone.index = node?.index != null ? node?.index - 1 : 0;
+        }
+
+        if (isInSection) {
+          if (node.type === 'item') {
+            clone.level = node?.level != null ? node?.level - 1 : 0;
+          }
         }
 
         // For loader nodes that have a parent (aka non-root level loaders), these need their levels incremented by 1 for parity with their sibiling rows
@@ -884,7 +1097,6 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
           itemCount++;
         }
 
-        flattenedRows.push(modifiedNode);
         parentLookup.set(modifiedNode.key, true);
       }
     } else if (node.type !== null) {
@@ -892,16 +1104,15 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
     }
 
     for (let child of collection.getChildren(node.key)) {
-      visitNode(child);
+      visitNode(child, isInSection);
     }
   };
 
   for (let node of collection) {
-    visitNode(node);
+    visitNode(node, node.type === 'section');
   }
 
   return {
-    flattenedRows,
     keyMap,
     itemCount
   };
@@ -999,4 +1210,65 @@ function RootDropIndicator() {
       </div>
     </div>
   );
+}
+
+export interface GridListSectionProps<T> extends SectionProps<T> {}
+
+/**
+ * A TreeSection represents a section within a Tree.
+ */
+export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T extends object>(props: GridListSectionProps<T>, ref: ForwardedRef<HTMLElement>, item: Node<T>) => {
+  let state = useContext(TreeStateContext)!;
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let headingRef = useRef(null);
+  ref = useObjectRef<HTMLElement>(ref);
+  let {rowHeaderProps, rowProps, rowGroupProps} = useGridListSection({
+    'aria-label': props['aria-label'] ?? undefined
+  }, state, ref);
+  let renderProps = useRenderProps({
+    defaultClassName: 'react-aria-TreeSection',
+    className: props.className,
+    style: props.style,
+    values: {}
+  });
+
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+
+  return (
+    <section
+      {...mergeProps(DOMProps, renderProps, rowGroupProps)}
+      ref={ref}>
+      <Provider
+        values={[
+          [GridListHeaderContext, {...rowProps, ref: headingRef}],
+          [GridListHeaderInnerContext, {...rowHeaderProps}]
+        ]}>
+        <CollectionBranch
+          collection={state.collection}
+          parent={item} />
+      </Provider>
+    </section>
+  );
+});
+
+export const TreeHeader = (props: HTMLAttributes<HTMLElement>): ReactNode => {
+  return (
+    <GridListHeader className="react-aria-TreeHeader" {...props}>
+      {props.children}
+    </GridListHeader>
+  );
+};
+
+function areSetsEqual<T>(a: Set<T>, b: Set<T>) {
+  if (a.size !== b.size) {
+    return false;
+  }
+
+  for (let item of a) {
+    if (!b.has(item)) {
+      return false;
+    }
+  }
+  return true;
 }
