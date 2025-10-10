@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Dialog, DialogTrigger, OverlayArrow, Popover, Pressable} from '../';
+import {act, createShadowRoot, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {Button, Dialog, DialogTrigger, Menu, MenuItem, MenuTrigger, OverlayArrow, Popover, Pressable} from '../';
+import {enableShadowDOM} from '@react-stately/flags';
 import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
@@ -272,5 +273,66 @@ describe('Popover', () => {
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeInTheDocument();
+  });
+
+  it.only('temp1234', async function () {
+    enableShadowDOM();
+    const root = document.createElement('div')
+    document.body.appendChild(root)
+
+    const template  = document.createElement('template')
+    template.setAttribute('shadowrootmode', 'open')
+    root.appendChild(template)
+
+    const appContainer = document.createElement('div');
+    appContainer.setAttribute('id', 'appRoot')
+    template.appendChild(appContainer);
+
+    const portal = document.createElement('div');
+    portal.id = 'shadow-dom-portal';
+    template.appendChild(portal);
+
+    const onAction = jest.fn();
+    const user = userEvent.setup({delay: null, pointerMap});
+
+    function ShadowApp() {
+      return (
+        <MenuTrigger>
+          <Button>
+            Open
+          </Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem key="new">New…</MenuItem>
+              <MenuItem key="open">Open…</MenuItem>
+              <MenuItem key="save">Save</MenuItem>
+              <MenuItem key="save-as">Save as…</MenuItem>
+              <MenuItem key="print">Print…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+    }
+    const {container, debug} = render(
+      <UNSAFE_PortalProvider getContainer={() => portal}>
+        <ShadowApp />
+      </UNSAFE_PortalProvider>,
+      {container: appContainer}
+    );
+
+    let button = container.querySelector('button');
+
+    await user.click(button)
+    debug();
+
+
+    const menu = template.querySelector('[role=menu]')
+    expect(menu).toBeVisible()
+    let menuItems = Array.from(template.querySelectorAll('[role="menuitem"]'));
+    let openItem = menuItems.find(item => item.textContent?.trim() === 'Open…');
+    expect(openItem).toBeTruthy();
+
+    await user.click(openItem);
+    expect(onAction).toHaveBeenCalledTimes(1);
   });
 });
