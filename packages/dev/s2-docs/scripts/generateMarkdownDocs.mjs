@@ -695,6 +695,37 @@ function remarkDocsComponentsToMarkdown() {
         return index;
       }
 
+      // Render a simple command snippet.
+      if (name === 'Command') {
+        const commandAttr = node.attributes?.find(a => a.name === 'command');
+        if (!commandAttr) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        let command = '';
+        if (commandAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          command = commandAttr.value.value.replace(/['"`]/g, '').trim();
+        } else if (typeof commandAttr.value === 'string') {
+          command = commandAttr.value.trim();
+        }
+
+        if (!command) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const codeNode = {
+          type: 'code',
+          lang: 'bash',
+          meta: '',
+          value: command
+        };
+
+        parent.children.splice(index, 1, codeNode);
+        return index;
+      }
+
       // Render an unordered list of icon names.
       if (name === 'IconCards') {
         const iconList = getIconNames();
