@@ -1,7 +1,7 @@
 'use client';
 
 import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
-import {Autocomplete, AutocompleteProps, Dialog, Key, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
+import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
@@ -55,6 +55,15 @@ export function SearchMenu(props: SearchMenuProps) {
 
   const searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
 
+  // Auto-focus search field when menu opens
+  // We don't put autoFocus on the SearchField because it will cause a flicker when switching tabs
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      searchRef.current?.focus();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Transform pages data into component data structure
   const transformedComponents = useMemo(() => {
     if (!pages || !Array.isArray(pages)) {
@@ -62,17 +71,19 @@ export function SearchMenu(props: SearchMenuProps) {
     }
 
     const components = pages
-      .filter(page => page.url && page.url.endsWith('.html') && getLibraryFromUrl(page.url) === selectedLibrary)
+      .filter(page => page.url && page.url.endsWith('.html') && getLibraryFromUrl(page.url) === selectedLibrary && !page.exports?.hideFromSearch)
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
         const section: string = (page.exports?.section as string) || 'Components';
+        const tags: string[] = (page.exports?.tags as string[]) || [];
 
         return {
           id: name,
           name: title,
           href: page.url,
-          section
+          section,
+          tags
         };
       });
 
@@ -118,21 +129,54 @@ export function SearchMenu(props: SearchMenuProps) {
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue]);
 
-  let {contains} = useFilter({sensitivity: 'base'});
-
-  const filter: NonNullable<AutocompleteProps<any>['filter']> = React.useCallback((textValue, inputValue) => {
-    return textValue != null && contains(textValue, inputValue);
-  }, [contains]);
-
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
       return sections;
     }
-    return sections.map(section => ({
-      ...section,
-      children: section.children.filter(item => contains(item.name, searchValue))
-    })).filter(section => section.children.length > 0);
-  }, [sections, searchValue, contains]);
+
+    const searchLower = searchValue.toLowerCase();
+    const allItems = sections.flatMap(section => section.children);
+    
+    // Filter items where name or tags start with search value
+    const matchedItems = allItems.filter(item => {
+      const nameMatch = item.name.toLowerCase().startsWith(searchLower);
+      const tagMatch = item.tags.some(tag => tag.toLowerCase().startsWith(searchLower));
+      return nameMatch || tagMatch;
+    });
+    
+    // Sort to prioritize name matches over tag matches
+    const sortedItems = matchedItems.sort((a, b) => {
+      const aNameMatch = a.name.toLowerCase().startsWith(searchLower);
+      const bNameMatch = b.name.toLowerCase().startsWith(searchLower);
+      
+      if (aNameMatch && !bNameMatch) {
+        return -1;
+      }
+      if (!aNameMatch && bNameMatch) {
+        return 1;
+      }
+      
+      // If both match by name or both match by tag, maintain original order
+      return 0;
+    });
+    
+    const resultsBySection = new Map<string, typeof transformedComponents>();
+    
+    sortedItems.forEach(item => {
+      const section = item.section || 'Components';
+      if (!resultsBySection.has(section)) {
+        resultsBySection.set(section, []);
+      }
+      resultsBySection.get(section)!.push(item);
+    });
+
+    return sections
+      .map(section => ({
+        ...section,
+        children: resultsBySection.get(section.name) || []
+      }))
+      .filter(section => section.children.length > 0);
+  }, [sections, searchValue]);
 
   const tags = useMemo(() => {
     if (searchValue.trim().length > 0) {
@@ -141,13 +185,6 @@ export function SearchMenu(props: SearchMenuProps) {
     }
     return sections;
   }, [searchValue, sections]);
-
-  let handleSearchFieldKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape' && !searchValue.trim()) {
-      e.preventDefault();
-      onClose();
-    }
-  }, [onClose, searchValue]);
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
     if (searchValue) {
@@ -172,10 +209,30 @@ export function SearchMenu(props: SearchMenuProps) {
   }, []);
 
   const selectedItems = useMemo(() => {
+    let items: typeof transformedComponents = [];
     if (searchValue.trim().length > 0 && selectedSectionId === 'all') {
-      return filteredComponents.flatMap(s => s.children) || [];
+      items = filteredComponents.flatMap(s => s.children) || [];
+    } else {
+      items = (filteredComponents.find(s => s.id === selectedSectionId)?.children) || [];
     }
-    return (filteredComponents.find(s => s.id === selectedSectionId)?.children) || [];
+    
+    // Sort to show "Introduction" first when search is empty
+    if (searchValue.trim().length === 0) {
+      items = [...items].sort((a, b) => {
+        const aIsIntro = a.name === 'Introduction';
+        const bIsIntro = b.name === 'Introduction';
+        
+        if (aIsIntro && !bIsIntro) {
+          return -1;
+        }
+        if (!aIsIntro && bIsIntro) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    
+    return items;
   }, [filteredComponents, selectedSectionId, searchValue]);
 
   const selectedSectionName = useMemo(() => {
@@ -214,11 +271,9 @@ export function SearchMenu(props: SearchMenuProps) {
         </TabList>
         {orderedTabs.map((tab, i) => (
           <TabPanel key={tab.id} id={tab.id}>
-            <Autocomplete filter={filter}>
+            <Autocomplete>
               <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
                 <SearchField
-                  onKeyDown={handleSearchFieldKeyDown}
-                  autoFocus
                   value={searchValue}
                   onChange={setSearchValue}
                   ref={searchRef}

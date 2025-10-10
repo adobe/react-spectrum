@@ -367,9 +367,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
               styles: style({
                 paddingY: '--labelPadding',
                 order: 1,
-                opacity: {
-                  default: 1,
-                  isProgressVisible: 0
+                visibility: {
+                  isProgressVisible: 'hidden'
                 }
               })({isProgressVisible}),
               // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
@@ -381,9 +380,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
                 size: fontRelative(20),
                 marginStart: '--iconMargin',
                 flexShrink: 0,
-                opacity: {
-                  default: 1,
-                  isProgressVisible: 0
+                visibility: {
+                  isProgressVisible: 'hidden'
                 }
               })({isProgressVisible})
             }]
@@ -396,9 +394,9 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                opacity: {
-                  default: 0,
-                  isProgressVisible: 1
+                visibility: {
+                  default: 'hidden',
+                  isProgressVisible: 'visible'
                 }
               })({isProgressVisible, isPending})}>
               <ProgressCircle

@@ -205,8 +205,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
   let isLinkOverride = manager.isLink(key) && linkBehavior === 'override';
+  let isActionOverride = onAction && options['UNSTABLE_itemBehavior'] === 'action';
   let hasLinkAction = manager.isLink(key) && linkBehavior !== 'selection' && linkBehavior !== 'none';
-  let allowsSelection = !isDisabled && manager.canSelectItem(key) && !isLinkOverride;
+  let allowsSelection = !isDisabled && manager.canSelectItem(key) && !isLinkOverride && !isActionOverride;
   let allowsActions = (onAction || hasLinkAction) && !isDisabled;
   let hasPrimaryAction = allowsActions && (
     manager.selectionBehavior === 'replace'
@@ -225,6 +226,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let performAction = (e) => {
     if (onAction) {
       onAction();
+      ref.current?.dispatchEvent(new CustomEvent('react-aria-item-action', {bubbles: true}));
     }
 
     if (hasLinkAction && ref.current) {

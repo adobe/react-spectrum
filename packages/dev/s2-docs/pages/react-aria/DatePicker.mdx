@@ -8,6 +8,8 @@ import {DatePicker as TailwindDatePicker} from 'tailwind-starter/DatePicker';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
 
+export const tags = ['calendar', 'input'];
+
 # DatePicker
 
 <PageDescription>{docs.exports.DatePicker.description}</PageDescription>
@@ -33,7 +35,7 @@ import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -155,5 +157,3 @@ function Example() {
 ### DatePicker
 
 <PropTable component={docs.exports.DatePicker} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-DatePicker" properties={docs.exports.DatePickerRenderProps.properties} />

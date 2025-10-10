@@ -10,11 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from './utils';
+import {ClassNameOrFunction, ContextValue, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
-import {SharedElement, SharedElementPropsBase} from './SharedElementTransition';
+import {SharedElement, SharedElementPropsBase, SharedElementRenderProps} from './SharedElementTransition';
 
 export interface SelectionIndicatorProps extends SharedElementPropsBase {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-SelectionIndicator'
+   */
+  className?: ClassNameOrFunction<SharedElementRenderProps>,
+  /** Whether the SelectionIndicator is visible. This is usually set automatically by the parent component. */
   isSelected?: boolean
 }
 

@@ -11,6 +11,10 @@ export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = getLibraryFromPage(currentPage);
   let sections = new Map();
   for (let page of pages) {
+    if (page.exports?.hideNav) {
+      continue;
+    }
+    
     let library = getLibraryFromPage(page);
     if (library !== currentLibrary) {
       continue;
@@ -209,13 +213,11 @@ export function OnPageNav({children}) {
   );
 }
 
-export function MobileOnPageNav({children}) {
+export function MobileOnPageNav({children, currentPage}) {
   let [selected, setSelected] = useState('');
-
   useEffect(() => {
     let elements = Array.from(document.querySelectorAll('article > :is(h1,h2,h3,h4,h5)'));
     elements.reverse();
-
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -225,7 +227,7 @@ export function MobileOnPageNav({children}) {
           visible.delete(entry.target);
         }
       }
-      
+
       let lastVisible = elements.find(e => visible.has(e));
       if (lastVisible) {
         setSelected('#' + lastVisible.id!);
@@ -244,7 +246,7 @@ export function MobileOnPageNav({children}) {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return (
     <Picker aria-label="Table of contents" selectedKey={selected} isQuiet size="L">

@@ -1,30 +1,47 @@
 'use client';
+
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-export function IconSizes() {
+type SizeInfo = {
+  size: string,
+  pixels: string
+};
+
+const labelStyle = style({
+  font: 'ui-sm',
+  fontWeight: {
+    size: {
+      'M': 'bold',
+      default: 'normal'
+    }
+  }
+});
+
+let renderCheckMark = (size: string) => {
+  if (size === 'XS') {
+    return <CheckmarkCircle styles={iconStyle({size: 'XS'})} />;
+  } else if (size === 'S') {
+    return <CheckmarkCircle styles={iconStyle({size: 'S'})} />;
+  } else if (size === 'M') {
+    return <CheckmarkCircle styles={iconStyle({size: 'M'})} />;
+  } else if (size === 'L') {
+    return <CheckmarkCircle styles={iconStyle({size: 'L'})} />;
+  } else if (size === 'XL') {
+    return <CheckmarkCircle styles={iconStyle({size: 'XL'})} />;
+  }
+  return null;
+};
+
+export function IconSizes({sizes}: {sizes: SizeInfo[]}) {
   return (
     <div className={style({display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'end'})}>
-      <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
-        <CheckmarkCircle styles={iconStyle({size: 'XS'})} />
-        <span className={style({font: 'ui-sm'})}>XS (14px)</span>
-      </div>
-      <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
-        <CheckmarkCircle styles={iconStyle({size: 'S'})} />
-        <span className={style({font: 'ui-sm'})}>S (16px)</span>
-      </div>
-      <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
-        <CheckmarkCircle styles={iconStyle({size: 'M'})} />
-        <span className={style({font: 'ui-sm', fontWeight: 'bold'})}>M (20px)</span>
-      </div>
-      <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
-        <CheckmarkCircle styles={iconStyle({size: 'L'})} />
-        <span className={style({font: 'ui-sm'})}>L (22px)</span>
-      </div>
-      <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
-        <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
-        <span className={style({font: 'ui-sm'})}>XL (26px)</span>
-      </div>
+      {sizes.map(({size, pixels}) => (
+        <div key={size} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4})}>
+          {renderCheckMark(size)}
+          <span className={labelStyle({size})}>{size} ({pixels})</span>
+        </div>
+      ))}
     </div>
   );
 }

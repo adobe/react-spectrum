@@ -5,6 +5,8 @@ import {StaticTable} from '../../src/StaticTable';
 export default Layout;
 
 export const section = 'Guides';
+export const tags = ['codemod', 'upgrade', 'update'];
+export const description = 'Migrating to Spectrum 2 in React Spectrum';
 
 # Migrating to Spectrum 2
 
@@ -127,7 +129,6 @@ No updates needed.
 ### ColorField
 
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
-- Remove `placeholder` (it has been removed due to accessibility issues)
 - Change `validationState="invalid"` to `isInvalid`
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
 
@@ -147,7 +148,6 @@ No updates needed.
 
 - Change `menuWidth` value from a `DimensionValue` to a pixel value
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
-- Remove `placeholder` (it is no longer supported in Spectrum 2)
 - Change `validationState="invalid"` to `isInvalid`
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
 - Update `Item` to be a `ComboBoxItem`
@@ -275,6 +275,7 @@ No updates needed.
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
 - Update `Item` to be a `PickerItem`
 - Change `isLoading` to `loadingState` and provide the appropriate loading state.
+- Update `defaultSelectedKey` and `selectedKey` to be `defaultValue` and `value` respectively. See the [Picker](Picker.html#value) documentation for more details.
 
 ### ProgressBar
 
@@ -308,7 +309,6 @@ No updates needed.
 
 ### SearchField
 
-- Remove `placeholder` (it has been removed due to accessibility issues)
 - <PendingBadge /> Comment out icon (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
 - Change `validationState="invalid"` to `isInvalid`
@@ -370,7 +370,6 @@ No updates needed.
 
 - <PendingBadge /> Comment out `icon` (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
-- Remove `placeholder`  (it has been removed due to accessibility issues)
 - Change `validationState="invalid"` to `isInvalid`
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
 
@@ -378,7 +377,6 @@ No updates needed.
 
 - <PendingBadge /> Comment out `icon` (it has not been implemented yet)
 - Remove `isQuiet` (it is no longer supported in Spectrum 2)
-- Remove `placeholder`  (it has been removed due to accessibility issues)
 - Change `validationState="invalid"` to `isInvalid`
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
 

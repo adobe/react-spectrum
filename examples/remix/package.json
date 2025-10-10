@@ -19,7 +19,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@react-aria/optimize-locales-plugin": "^1.1.4",
+    "@react-aria/optimize-locales-plugin": "latest",
     "@remix-run/dev": "^2.3.1",
     "@remix-run/eslint-config": "^2.3.1",
     "@types/react": "^18",

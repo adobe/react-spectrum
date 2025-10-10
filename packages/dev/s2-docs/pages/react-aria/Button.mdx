@@ -10,6 +10,8 @@ import tailwindDocs from 'docs:tailwind-starter/Button';
 import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 
+export const tags = ['btn'];
+
 # Button
 
 <PageDescription>{docs.exports.Button.description}</PageDescription>
@@ -42,9 +44,9 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 
 ## Events
 
-Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. This is similar to `onClick`, but normalized for consistency across browsers, devices, and interaction methods. Read our [blog post](/blog/building-a-button-part-1.html) to learn more.
+Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. This is similar to `onClick`, but normalized for consistency across browsers, devices, and interaction methods. Read our [blog post](https://react-spectrum.adobe.com/blog/building-a-button-part-1.html) to learn more.
 
-The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See [usePress](usePress.html) for more details.
+The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) for more details.
 
 ```tsx render
 "use client";
@@ -120,5 +122,3 @@ import {Link} from 'react-aria-components';
 ## API
 
 <PropTable component={docs.exports.Button} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-Button" properties={docs.exports.ButtonRenderProps.properties} />

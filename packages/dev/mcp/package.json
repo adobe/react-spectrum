@@ -5,6 +5,7 @@
   "type": "module",
   "bin": "dist/index.js",
   "scripts": {
+    "prepublishOnly": "yarn build",
     "build": "node ./scripts/build-data.mjs && tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "node --enable-source-maps dist/index.js"
@@ -16,7 +17,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "typescript": "^5.8.2"
   },
   "engines": {

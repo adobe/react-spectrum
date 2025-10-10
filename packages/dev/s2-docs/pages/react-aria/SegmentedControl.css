@@ -17,6 +17,10 @@
     border-radius: 8px;
     background: var(--gray-50);
     outline: 2px solid var(--gray-600);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
   .segmented-control-item {

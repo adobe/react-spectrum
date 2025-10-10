@@ -7,6 +7,8 @@ import vanillaDocs from 'docs:vanilla-starter/TagGroup';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/tag/docs/anatomy.svg';
 
+export const tags = ['chips', 'pills'];
+
 # TagGroup
 
 <PageDescription>{docs.exports.TagGroup.description}</PageDescription>
@@ -153,10 +155,6 @@ function Example(props) {
 
 <PropTable component={docs.exports.TagList} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-TagList" properties={docs.exports.TagListRenderProps.properties} />
-
 ### Tag
 
 <PropTable component={docs.exports.Tag} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Tag" properties={docs.exports.TagRenderProps.properties} />

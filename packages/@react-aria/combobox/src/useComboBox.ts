@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useEvent, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -354,6 +354,10 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   }, [focusedItem]);
 
+  useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
+    state.close();
+  } : undefined);
+
   return {
     labelProps,
     buttonProps: {
@@ -383,7 +387,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
-      linkBehavior: 'selection' as const
+      linkBehavior: 'selection' as const,
+      ['UNSTABLE_itemBehavior']: 'action'
     }),
     descriptionProps,
     errorMessageProps,

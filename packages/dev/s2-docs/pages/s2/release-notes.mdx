@@ -2,8 +2,32 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 export const section = 'Releases';
+export const tags = ['changelog', 'versions', 'updates'];
+export const description = 'Release notes for React Spectrum';
 
 # Release Notes
+
+## v0.12.0
+
+### Updates
+* [ActionButton](ActionButton.html): Add pending state
+* [ColorSlider](ColorSlider.html): Fix `ColorLoupe` position in RTL locales
+* [ComboBox](ComboBox.html): Support avatars and onAction
+* [CustomDialog](Dialog.html#custom-dialog): Support custom widths
+* [Dialog](Dialog.html): Add XL size
+* [Disclosure](Disclosure.html): Add animation to disclosure
+* [InlineAlert](InlineAlert.html): Support heading-less Inline Alerts
+* [Picker](Picker.html): Support multiple selection and avatars
+* [Tags](TagGroup.html): Fix Tag collapse calculation for removable tags
+* [Tooltip](Tooltip.html): Prevent text overflow by default
+* Allow placeholders in supported S2 components (e.g. ColorArea, ComboBox, NumberField, SearchField, TextArea, TextField)
+* Apply `page.css` styles to the Shadow DOM
+
+### Popover Styling Updates
+
+The Popover component has been updated to better support custom styling. To 
+remove the preset padding, use the new `padding` prop and wrap your Popover content
+in a custom div with your desired styling.
 
 ## v0.11.0
 
@@ -36,7 +60,7 @@ If you previously used `page.css` without a `Provider`, you'll need to add a `Pr
 
 * [CardView](CardView.html): Fix ActionBar from not scrolling
 * [ActionButton](ActionButton.html): Fix avatar-only ActionButtons to have square dimensions
-* [Tabs](Tabs.html): Improve selection indicator animation, fix collasped tabs
+* [Tabs](Tabs.html): Improve selection indicator animation, fix collapsed tabs
 * [ProgressCircle](ProgressCircle.html): Add track outline in High Contrast Mode
 * [Switch](Switch.html): Fix the toggle in RTL locales
 * [TreeView](TreeView.html): Support async loading
@@ -53,7 +77,7 @@ If you previously used `page.css` without a `Provider`, you'll need to add a `Pr
 
 ### Updates
 
-* [Combobox](Combobox.html): Support for virtualization and async loading
+* [ComboBox](ComboBox.html): Support for virtualization and async loading
 * [Dialog](Dialog.html): Update sizes
 * [Picker](Picker.html): Support for virtualization and async loading
 * [Popover](Popover.html): Add `triggerRef` prop

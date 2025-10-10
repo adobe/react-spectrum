@@ -11,12 +11,25 @@
  */
 
 import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+ ClassNameOrFunction,
+ ContextValue,
+ RenderProps,
+ SlotProps,
+ useContextProps,
+ useRenderProps
+} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {}
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+ /**
+  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+  * @default 'react-aria-Link'
+  */
+ className?: ClassNameOrFunction<LinkRenderProps>
+}
 
 export interface LinkRenderProps {
   /**

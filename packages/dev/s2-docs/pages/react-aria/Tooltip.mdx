@@ -7,6 +7,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/tooltip/docs/anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['hint', 'popup', 'info'];
+
 # Tooltip
 
 <PageDescription>{docs.exports.Tooltip.description}</PageDescription>
@@ -132,7 +134,7 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
-[DialogTrigger](Dialog.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
+[DialogTrigger](Modal.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
 
 ## API
 
@@ -153,12 +155,14 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 ### Tooltip
 
-<PropTable component={docs.exports.Tooltip} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Tooltip" properties={docs.exports.TooltipRenderProps.properties} />
+<PropTable
+  component={docs.exports.Tooltip}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--trigger-anchor-point': 'The position of the trigger relative to the tooltip. Use with `transform-origin` when applying scale transitions.'
+  }} />
 
 ### OverlayArrow
 
 <PropTable component={docs.exports.OverlayArrow} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-OverlayArrow" properties={docs.exports.OverlayArrowRenderProps.properties} />

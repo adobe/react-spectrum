@@ -303,7 +303,6 @@ const allowedOverrides = [
   'insetY',
   'insetStart',
   'insetEnd',
-  'opacity',
   'visibility'
 ] as const;
 

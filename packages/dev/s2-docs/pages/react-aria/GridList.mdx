@@ -7,6 +7,8 @@ import vanillaDocs from 'docs:vanilla-starter/GridList';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
 
+export const tags = ['list view'];
+
 # GridList
 
 <PageDescription>{docs.exports.GridList.description}</PageDescription>
@@ -277,16 +279,10 @@ function Example() {
 
 <PropTable component={docs.exports.GridList} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-GridList" properties={docs.exports.GridListRenderProps.properties} />
-
 ### GridListItem
 
 <PropTable component={docs.exports.GridListItem} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-GridListItem" properties={docs.exports.GridListItemRenderProps.properties} />
-
 ### GridListLoadMoreItem
 
 <PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-GridListLoadMoreItem" properties={docs.exports.GridListLoadMoreItemRenderProps.properties} /> */}
