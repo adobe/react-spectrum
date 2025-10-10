@@ -7,6 +7,7 @@ import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
+import {getLibraryFromPage, getLibraryLabel} from './library';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
@@ -46,30 +47,44 @@ function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
-const getLibraryName = (currentPage: Page): string => {
-  if (currentPage.name.startsWith('react-aria/')) {
-    return 'React Aria';
-  }
-  return 'React Spectrum';
-};
-
 const getTitle = (currentPage: Page): string => {
-  let library = getLibraryName(currentPage);
-  const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
-  return library ? `${pageTitle} - ${library}` : pageTitle;
+  const explicitTitle = (currentPage as any).pageTitle || currentPage.exports?.pageTitle;
+  if (explicitTitle && explicitTitle !== currentPage.tableOfContents?.[0]?.title && explicitTitle !== currentPage.name) {
+    return explicitTitle as string;
+  }
+  
+  let library = getLibraryLabel(getLibraryFromPage(currentPage));
+  const pageTitle = currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
+  
+  if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
+    return library || 'React Spectrum';
+  }
+  
+  return library ? `${pageTitle} | ${library}` : pageTitle;
 };
 
 const getOgImageUrl = (currentPage: Page): string => {
   const slug = currentPage.url.replace(/^\//, '').replace(/\.html$/, '');
+  
+  if (slug.includes('s2-docs/')) {
+    // For build links, use the full URL
+    const ogPath = slug.replace(/s2-docs\//, 's2-docs/og/');
+    return `https://reactspectrum.blob.core.windows.net/${ogPath}.png`;
+  }
+  
+  // For production, use relative path with /og/ prefix
   return `/og/${slug}.png`;
 };
 
 const getDescription = (currentPage: Page): string => {
-  let library = getLibraryName(currentPage);
+  let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.exports?.title ?? currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
   const explicitDescription = (currentPage as any).description || currentPage.exports?.description;
   if (explicitDescription) {
     return explicitDescription as string;
+  }
+  if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
+    return `Documentation for ${library || 'React Spectrum'}`;
   }
   return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
 };
@@ -86,7 +101,7 @@ let articleStyles = style({
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
-  let hasToC = currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0;
+  let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -135,7 +150,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
-            <Nav pages={pages} currentPage={currentPage} />
+            {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
             <main
               key={currentPage.url}
               style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
