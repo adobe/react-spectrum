@@ -56,7 +56,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     this.lastKey = [...this.keyMap.keys()][this.keyMap.size - 1];
     this.expandedKeys = expandedKeys;
 
-     // diff lastExpandedKeys and expandedKeys
+     // diff lastExpandedKeys and expandedKeys so we only clone what has changed
     for (let key of expandedKeys) {
       if (!lastExpandedKeys.has(key)) {
         // traverse upward until you hit a section, and clone it
@@ -103,9 +103,12 @@ class TreeCollection<T> implements ICollection<Node<T>> {
       // If node is expanded, traverse its children
       if (expandedKeys.has(node.key) && node.firstChildKey) {
         let firstChild = keyMap.get(node.firstChildKey);
-        let nextNode = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : null;
-        if (nextNode) {
-          yield* traverseDepthFirst(nextNode, expandedKeys);
+        // Skip content nodes
+        while (firstChild && firstChild.type === 'content') {
+          firstChild = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : undefined;
+        }
+        if (firstChild) {
+          yield* traverseDepthFirst(firstChild, expandedKeys);
         }
       }
   
@@ -257,7 +260,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
         node = this.keyMap.get(node.lastChildKey);
       }
 
-      // if the lastChildKey is expanded, check its lastChildKey
+      // If the lastChildKey is expanded, check its lastChildKey
       while (node && this.expandedKeys.has(node.key) && node.lastChildKey != null) {
         node = this.keyMap.get(node.lastChildKey);
       }
@@ -268,7 +271,6 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     return node.parentKey;
   }
 
-  // Note that this will return Content nodes in addition to nested TreeItems
   getChildren(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
     let expandedKeys = this.expandedKeys;
@@ -285,9 +287,12 @@ class TreeCollection<T> implements ICollection<Node<T>> {
           // If node is expanded, traverse its children
           if (expandedKeys.has(node.key) && node.firstChildKey) {
             let firstChild = keyMap.get(node.firstChildKey);
-            let nextNode = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : null;
-            if (nextNode) {
-              yield* traverseDepthFirst(nextNode, expandedKeys);
+            // Skip content nodes
+            while (firstChild && firstChild.type === 'content') {
+              firstChild = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : undefined;
+            }
+            if (firstChild) {
+              yield* traverseDepthFirst(firstChild, expandedKeys);
             }
           }
       
