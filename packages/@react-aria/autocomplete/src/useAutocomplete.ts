@@ -311,11 +311,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
           // Trigger click action on item when Enter key was pressed.
           if (focusedNodeId != null) {
             let item = document.getElementById(focusedNodeId);
-            if (item instanceof HTMLAnchorElement && item.href) {
-              openLink(item, e.nativeEvent);
-            } else if (item) {
-              item.click();
-            }
+            item?.dispatchEvent(new PointerEvent('click', e.nativeEvent));
           }
           break;
       }
