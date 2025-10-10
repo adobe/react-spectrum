@@ -41,7 +41,7 @@ export {useValueEffect} from './useValueEffect';
 export {scrollIntoView, scrollIntoViewport} from './scrollIntoView';
 export {clamp, snapValueToStep} from '@react-stately/utils';
 export {isVirtualClick, isVirtualPointerEvent} from './isVirtualEvent';
-export {useEffectEvent} from './useEffectEvent';
+export {useEffectEvent, useStableCallback} from './useEffectEvent';
 export {useDeepMemo} from './useDeepMemo';
 export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';

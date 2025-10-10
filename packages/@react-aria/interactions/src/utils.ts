@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerWindow, isFocusable, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getOwnerWindow, isFocusable, useLayoutEffect, useStableCallback} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 
 // Turn a native event into a React synthetic event.
@@ -48,7 +48,7 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: 
     };
   }, []);
 
-  let dispatchBlur = useEffectEvent((e: ReactFocusEvent<Target>) => {
+  let dispatchBlur = useStableCallback((e: ReactFocusEvent<Target>) => {
     onBlur?.(e);
   });
 

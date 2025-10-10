@@ -16,7 +16,7 @@ import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useCallback, useEffect, useRef} from 'react';
-import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners, useStableCallback} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -153,7 +153,7 @@ export function useSpinButton(
     prevTouchPosition.current = touchPosition;
   }, []);
 
-  const onIncrementPressStart = useEffectEvent(
+  const onIncrementPressStart = useStableCallback(
     (initialStepDelay: number) => {
       clearAsync();
       isSpinning.current = true;
@@ -170,7 +170,7 @@ export function useSpinButton(
     }
   );
 
-  const onDecrementPressStart = useEffectEvent(
+  const onDecrementPressStart = useStableCallback(
     (initialStepDelay: number) => {
       clearAsync();
       isSpinning.current = true;
