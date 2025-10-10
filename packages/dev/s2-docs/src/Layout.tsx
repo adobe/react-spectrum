@@ -101,7 +101,7 @@ let articleStyles = style({
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
-  let hasToC = currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents[0].children.length > 0;
+  let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -150,7 +150,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
-            <Nav pages={pages} currentPage={currentPage} />
+            {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
             <main
               key={currentPage.url}
               style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
