@@ -52,7 +52,7 @@ export const OverlayContext: React.Context<{contain: boolean, setContain: React.
  */
 export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let isSSR = useIsSSR();
-  let {portalContainer = isSSR ? null : document.body, isExiting} = props;
+  let {portalContainer = isSSR ? null : document.body} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
@@ -68,7 +68,7 @@ export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
+      <FocusScope restoreFocus>
         {contents}
       </FocusScope>
     );
