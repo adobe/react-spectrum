@@ -752,6 +752,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
     if (renderers.links) {
       describe('with links', function () {
+        installPointerEvent();
         it('should trigger the link option when hitting Enter', async function () {
           let {getByRole} = (renderers.links!)();
           let input = getByRole('searchbox');
