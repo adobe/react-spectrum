@@ -179,7 +179,6 @@ describe('TableView', () => {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -199,7 +198,6 @@ describe('TableView', () => {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
