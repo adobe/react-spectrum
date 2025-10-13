@@ -41,7 +41,7 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
-import {inertValue, useId, useLayoutEffect, useResizeObserver, useStableCallback} from '@react-aria/utils';
+import {inertValue, useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
@@ -146,7 +146,7 @@ function TagGroupInner<T>({
     [collection, tagState.visibleTagCount, isCollapsed]
   );
 
-  let updateVisibleTagCount = useStableCallback(() => {
+  let updateVisibleTagCount = useEffectEvent(() => {
     if (maxRows == null) {
       setTagState({visibleTagCount: collection.size, showCollapseButton: false});
     }
@@ -229,7 +229,7 @@ function TagGroupInner<T>({
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
     document.fonts?.ready.then(() => updateVisibleTagCount());
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let handlePressCollapse = () => {

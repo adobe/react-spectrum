@@ -11,7 +11,7 @@
  */
 
 import {Dispatch, MutableRefObject, useRef, useState} from 'react';
-import {useLayoutEffect, useStableCallback} from './';
+import {useEffectEvent, useLayoutEffect} from './';
 
 type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 
@@ -25,7 +25,7 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
 
   // Store the function in a ref so we can always access the current version
   // which has the proper `value` in scope.
-  let nextRef = useStableCallback(() => {
+  let nextRef = useEffectEvent(() => {
     if (!effect.current) {
       return;
     }
@@ -55,7 +55,7 @@ export function useValueEffect<S>(defaultValue: S | (() => S)): [S, Dispatch<Set
     }
   });
 
-  let queue = useStableCallback(fn => {
+  let queue = useEffectEvent(fn => {
     effect.current = fn(value);
     nextRef();
   });

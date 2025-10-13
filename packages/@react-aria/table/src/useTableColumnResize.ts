@@ -18,7 +18,7 @@ import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useId, useStableCallback} from '@react-aria/utils';
+import {mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
 import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
@@ -88,7 +88,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     }
   });
 
-  let startResize = useStableCallback((item) => {
+  let startResize = useEffectEvent((item) => {
     if (!isResizingRef.current) {
       lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
       state.startResize(item.key);
@@ -98,13 +98,13 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     isResizingRef.current = true;
   });
 
-  let resize = useStableCallback((item, newWidth) => {
+  let resize = useEffectEvent((item, newWidth) => {
     let sizes = state.updateResizedColumns(item.key, newWidth);
     onResize?.(sizes);
     lastSize.current = sizes;
   });
 
-  let endResize = useStableCallback((item) => {
+  let endResize = useEffectEvent((item) => {
     if (isResizingRef.current) {
       if (lastSize.current == null) {
         lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));

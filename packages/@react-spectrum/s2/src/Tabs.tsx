@@ -33,7 +33,7 @@ import {CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {inertValue, useId, useLabels, useLayoutEffect, useResizeObserver, useStableCallback} from '@react-aria/utils';
+import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
@@ -216,7 +216,7 @@ export function TabList<T extends object>(props: TabListProps<T>): ReactNode | n
   if (showTabs) {
     return <TabListInner {...props} />;
   }
-
+  
   return (
     <div className={tablistWrapper(null, props.styles)}>
       {listRef && <div className={tablist({orientation, labelBehavior, density})}>
@@ -628,7 +628,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   let children = useMemo(() => [...collection], [collection]);
 
   let listRef = useRef<HTMLDivElement | null>(null);
-  let updateOverflow = useStableCallback(() => {
+  let updateOverflow = useEffectEvent(() => {
     if (orientation === 'vertical' || !listRef.current || !containerRef?.current) {
       return;
     }
@@ -664,7 +664,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
     document.fonts?.ready.then(() => updateOverflow());
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   let menuId = useId();

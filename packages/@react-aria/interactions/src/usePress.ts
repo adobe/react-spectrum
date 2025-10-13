@@ -27,8 +27,8 @@ import {
   mergeProps,
   nodeContains,
   openLink,
+  useEffectEvent,
   useGlobalListeners,
-  useStableCallback,
   useSyncRef
 } from '@react-aria/utils';
 import {createSyntheticEvent, preventFocus, setEventTarget} from './utils';
@@ -197,7 +197,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
-  let triggerPressStart = useStableCallback((originalEvent: EventBase, pointerType: PointerType) => {
+  let triggerPressStart = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
     let state = ref.current;
     if (isDisabled || state.didFirePressStart) {
       return false;
@@ -221,7 +221,7 @@ export function usePress(props: PressHookProps): PressResult {
     return shouldStopPropagation;
   });
 
-  let triggerPressEnd = useStableCallback((originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
+  let triggerPressEnd = useEffectEvent((originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
     let state = ref.current;
     if (!state.didFirePressStart) {
       return false;
@@ -253,7 +253,7 @@ export function usePress(props: PressHookProps): PressResult {
     return shouldStopPropagation;
   });
 
-  let triggerPressUp = useStableCallback((originalEvent: EventBase, pointerType: PointerType) => {
+  let triggerPressUp = useEffectEvent((originalEvent: EventBase, pointerType: PointerType) => {
     let state = ref.current;
     if (isDisabled) {
       return false;
@@ -270,7 +270,7 @@ export function usePress(props: PressHookProps): PressResult {
     return true;
   });
 
-  let cancel = useStableCallback((e: EventBase) => {
+  let cancel = useEffectEvent((e: EventBase) => {
     let state = ref.current;
     if (state.isPressed && state.target) {
       if (state.didFirePressStart && state.pointerType != null) {
@@ -291,13 +291,13 @@ export function usePress(props: PressHookProps): PressResult {
     }
   });
 
-  let cancelOnPointerExit = useStableCallback((e: EventBase) => {
+  let cancelOnPointerExit = useEffectEvent((e: EventBase) => {
     if (shouldCancelOnPointerExit) {
       cancel(e);
     }
   });
 
-  let triggerClick = useStableCallback((e: RMouseEvent<FocusableElement>) => {
+  let triggerClick = useEffectEvent((e: RMouseEvent<FocusableElement>) => {
     if (isDisabled) {
       return;
     }
@@ -305,7 +305,7 @@ export function usePress(props: PressHookProps): PressResult {
     onClick?.(e);
   });
 
-  let triggerSyntheticClick = useStableCallback((e: KeyboardEvent | TouchEvent, target: FocusableElement) => {
+  let triggerSyntheticClick = useEffectEvent((e: KeyboardEvent | TouchEvent, target: FocusableElement) => {
     if (isDisabled) {
       return;
     }

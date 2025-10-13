@@ -15,9 +15,9 @@ import {Collection, Key, Node, Selection} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SelectionManager} from '@react-stately/selection';
+import {useEffectEvent, useUpdateEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
-import {useStableCallback, useUpdateEffect} from '@react-aria/utils';
 
 export interface GridSelectionAnnouncementProps {
   /**
@@ -46,7 +46,7 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
   // We do this using an ARIA live region.
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
-  let announceSelectionChange = useStableCallback(() => {
+  let announceSelectionChange = useEffectEvent(() => {
     if (!state.selectionManager.isFocused || selection === lastSelection.current) {
       lastSelection.current = selection;
 

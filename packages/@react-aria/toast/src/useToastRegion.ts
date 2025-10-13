@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect, useStableCallback} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -46,7 +46,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
 
   let isHovered = useRef(false);
   let isFocused = useRef(false);
-  let updateTimers = useStableCallback(() => {
+  let updateTimers = useEffectEvent(() => {
     if (isHovered.current || isFocused.current) {
       state.pauseAll();
     } else {

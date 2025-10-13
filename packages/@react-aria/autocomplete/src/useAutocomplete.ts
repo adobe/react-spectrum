@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, RefObject, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEvent, useId, useLabels, useObjectRef, useStableCallback} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -106,7 +106,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     return () => clearTimeout(timeout.current);
   }, []);
 
-  let updateActiveDescendant = useStableCallback((e: Event) => {
+  let updateActiveDescendant = useEffectEvent((e: Event) => {
     // Ensure input is focused if the user clicks on the collection directly.
     if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
       inputRef.current.focus();
@@ -165,7 +165,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));
 
-  let focusFirstItem = useStableCallback(() => {
+  let focusFirstItem = useEffectEvent(() => {
     delayNextActiveDescendant.current = true;
     collectionRef.current?.dispatchEvent(
       new CustomEvent(FOCUS_EVENT, {
@@ -178,7 +178,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     );
   });
 
-  let clearVirtualFocus = useStableCallback((clearFocusKey?: boolean) => {
+  let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
     moveVirtualFocus(getActiveElement());
     queuedActiveDescendant.current = null;
     state.setFocusedNodeId(null);
@@ -321,7 +321,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
   };
 
-  let onKeyUpCapture = useStableCallback((e) => {
+  let onKeyUpCapture = useEffectEvent((e) => {
     // Dispatch simulated key up events for things like triggering links in listbox
     // Make sure to stop the propagation of the input keyup event so that the simulated keyup/down pair
     // is detected by usePress instead of the original keyup originating from the input
