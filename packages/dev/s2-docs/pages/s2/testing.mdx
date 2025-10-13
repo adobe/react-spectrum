@@ -7,18 +7,18 @@ import testUtilDocs from 'docs:@react-aria/test-utils';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const section = 'Guides';
-export const description = 'Writing tests for apps built with React Aria';
+export const description = 'Writing tests for apps built with React Spectrum';
 
 # Testing
 
-<PageDescription>This page describes how to test an application built with React Aria. It documents the available testing utilities available for each aria pattern and how they can be used to simulate common user interactions.</PageDescription>
+<PageDescription>This page describes how to test an application built with React Spectrum. It documents the available testing utilities available for each aria pattern and how they can be used to simulate common user interactions.</PageDescription>
 
 ## Testing semantics
 
-The recommended way to query for React Aria Components and their internals is by semantics. React Aria
+The recommended way to query for React Spectrum components and their internals is by semantics. React Spectrum
 Components implement [ARIA patterns](https://www.w3.org/TR/wai-aria-practices-1.2/). ARIA is a W3C standard
-that specifies the semantics for many UI components. Unlike the DOM structure of the component, these semantics are much less likely to change over time,
-making them ideal to query for.
+that specifies the semantics for many UI components. Unlike the class names and DOM structure of the component, these
+semantics are much less likely to change over time, making them ideal to query for.
 
 The main attribute to look for when querying is the [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques).
 This attribute represents the type of element a DOM node represents, e.g. a button, list option, or tab.
@@ -27,7 +27,7 @@ This attribute represents the type of element a DOM node represents, e.g. a butt
 
 [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) is useful because it
 enforces that you write tests using semantics instead of implementation details. We use React Testing Library
-to test React Aria itself, and it's quite easy to [query](https://testing-library.com/docs/dom-testing-library/api-queries)
+to test React Spectrum itself, and it's quite easy to [query](https://testing-library.com/docs/dom-testing-library/api-queries)
 elements by role, text, label, etc.
 
 ```tsx
@@ -42,25 +42,19 @@ let option = tree.getByRole('button');
 Querying by semantics covers many scenarios, but what if you have many buttons on a page or its text changes due to translations based on locale?
 In these cases, you may need a way to identify specific elements in tests, and that's where test ids come in.
 
-React Aria Components pass all [data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
+React Spectrum components pass all [data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
 through to their underlying DOM nodes, which allows you to use an attribute like `data-testid` to identify
 a particular instance of a component.
 
 ```tsx
 import {render} from '@testing-library/react';
-import {Input, Label, TextField} from 'react-aria-components';
+import {TextField} from '@react-spectrum/s2';
 
 function LoginForm() {
   return (
     <>
-      <TextField data-testid="username">
-        <Label>Username</Label>
-        <Input />
-      </TextField>
-      <TextField data-testid="password">
-        <Label>Username</Label>
-        <Input />
-      </TextField>
+      <TextField label="Username" data-testid="username" />
+      <TextField label="Password" data-testid="password" />
     </>
   );
 }
@@ -72,7 +66,7 @@ let password = tree.getByTestId('password');
 
 ## Triggering events
 
-React Aria Components rely on many different browser events to support different devices and platforms, so it's important to simulate
+React Spectrum components rely on many different browser events to support different devices and platforms, so it's important to simulate
 these correctly in your tests. For example, a click is really a `mousemove` and `mouseover` the target, followed
 by `mousedown`, `focus`, and `mouseup` events, and finally a `click` event.
 
@@ -99,17 +93,97 @@ userEvent.tab();
 userEvent.click(document.activeElement);
 ```
 
-## React Aria test utils
+## Test setup and common gotchas
+
+### Timers
+
+If you are using fake timers in your test suite, be aware that you may need to advance your timers after various interactions. We have `requestAnimationFrame` calls in various underlying hooks that you will need to also handle by advancing your timers in the tests.
+This happens most prominently in our collection components after selection. In Jest, this can be handled by calling `act(() => jest.runAllTimers());` but you may require more precise control
+depending on the other time-sensitive behavior you are testing. Please see [Jest's timer docs](https://jestjs.io/docs/timer-mocks) or the equivalent docs of your test frameworks for more information on how to do so.
+It is also a good idea to run all timers to completion after each test case to avoid any left over transitions or timeouts that a component may have setup during its lifecycle.
+
+```tsx
+afterEach(() => {
+  act(() => jest.runAllTimers());
+});
+```
+
+Consider adding a `act(() => jest.runAllTimers());` after your simulated user interaction if you run into a test failure that looks like the following:
+
+```
+TestingLibraryElementError: Unable to find an accessible element with the role "listbox"
+```
+
+If you are using real timers instead, you can await a particular state of your app to be reached. If you are using React Testing Library, you can perform a `waitFor` query
+to wait for a dialog to appear:
+
+```tsx
+await waitFor(() => {
+  expect(getByRole('dialog')).toBeInTheDocument();
+});
+```
+
+### Simulating user long press
+
+Some components like Menu support long press operations. Unfortunately, the approach of using the userEvent library to simulate a press event and running timers to hit the
+long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Mock [PointerEvent](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L70-L103)
+globally and use `fireEvent` from `@testing-library/react` to properly simulate these long press events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installPointerEvent} /> utility to automatically set up and tear down this mock in your test.
+Additionally, if you are using fake timers and don't need to control the specific timings around the long press interaction, feel free to use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installPointerEvent, triggerLongPress} from '@react-spectrum/test-utils';
+installPointerEvent();
+
+// In test case
+let button = getByRole('button');
+
+// With fireEvent and specific timing control
+fireEvent.pointerDown(el, {pointerType: 'touch'});
+act(() => jest.advanceTimersByTime(800));
+fireEvent.up(el, {pointerType: 'touch'});
+
+// With triggerLongPress
+triggerLongPress(button);
+```
+
+### Simulating move event
+
+Components like ColorArea, ColorSlider, ColorWheel, and Slider each feature a draggable handle that a user can interact with to change the component's value. Similar to long press, the interactions offered by userEvent library aren't sufficient to trigger
+the underlying event handlers governing these drag/move operations. [Mock MouseEvent globally](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L44-L68) and `fireEvent` from `@testing-library/react` to simulate these drag/move events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installMouseEvent} /> utility to automatically set up and tear down this mock in your test. Additionally, the track dimensions
+for the draggable handle should be mocked so that the move operation calculations can be properly computed.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installMouseEvent} from '@react-spectrum/test-utils';
+installMouseEvent();
+
+beforeAll(() => {
+  jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 10}));
+})
+
+// In test case
+let sliderThumb = getByRole('slider').parentElement;
+
+// With fireEvent, move thumb from 0 to 50
+fireEvent.mouseDown(thumb, {clientX: 0, pageX: 0});
+fireEvent.mouseMove(thumb, {pageX: 50});
+fireEvent.mouseUp(thumb, {pageX: 50});
+```
+
+## React Spectrum test utils
 
 TODO can't place this next to the header here
 <VersionBadge version="beta" />
 
-[@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) is a set of testing utilities that aims to make writing unit tests easier for consumers of React Aria
-or for users who have built their own components following the respective ARIA pattern specification.
+In addition to the test utilities mentioned above, [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) re-exports the same test utils available in `@react-aria/test-utils`, including
+the ARIA pattern testers. These testers are set of testing utilities that aims to make writing unit tests easier for consumers of React Spectrum.
 
 ### Installation
 
-<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+<InstallCommand pkg="@react-spectrum/test-utils" flags="--dev" />
 
 <InlineAlert variant="notice">
   <Heading>Requirements</Heading>
@@ -119,14 +193,14 @@ or for users who have built their own components following the respective ARIA p
 
 ### Setup
 
-Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+Once installed, you can access the `User` that `@react-spectrum/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
 specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
 See [below](#patterns) for what patterns are currently supported.
 
 ```ts
 // YourTest.test.ts
 import {screen} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-spectrum/test-utils';
 
 // Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
 // 'interactionType' specifies what mode of interaction should be simulated by the tester
@@ -150,13 +224,13 @@ See below for the full definition of the `User` object.
 
 ### Patterns
 
-<ExampleSwitcher type={null} examples={['ComboBox', 'GridList', 'ListBox', 'Menu', 'Select', 'Table', 'Tabs', 'Tree']}>
+<ExampleSwitcher type={null} examples={['ComboBox', 'Menu', 'Picker', 'TableView', 'Tabs', 'TreeView']}>
 
 <>
   ```ts isInSwitcher
   // Combobox.test.ts
   import {render} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
+  import {User} from '@react-spectrum/test-utils';
 
   let testUtilUser = new User({interactionType: 'mouse'});
   // ...
@@ -184,68 +258,9 @@ See below for the full definition of the `User` object.
 
 <>
   ```ts isInSwitcher
-  // GridList.test.ts
-  import {render, within} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
-
-  let testUtilUser = new User({interactionType: 'mouse'});
-  // ...
-
-  it('GridList can select a row via keyboard', async function () {
-    // Render your test component/app and initialize the gridlist tester
-    let {getByTestId} = render(
-      <GridList data-testid="test-gridlist" selectionMode="single">
-        ...
-      </GridList>
-    );
-    let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
-
-    let row = gridListTester.rows[0];
-    expect(within(row).getByRole('checkbox')).not.toBeChecked();
-    expect(gridListTester.selectedRows).toHaveLength(0);
-
-    await gridListTester.toggleRowSelection({row: 0});
-    expect(within(row).getByRole('checkbox')).toBeChecked();
-    expect(gridListTester.selectedRows).toHaveLength(1);
-
-    await gridListTester.toggleRowSelection({row: 0});
-    expect(within(row).getByRole('checkbox')).not.toBeChecked();
-    expect(gridListTester.selectedRows).toHaveLength(0);
-  });
-  ```
-  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.GridListTester} isInSwitcher />
-</>
-
-<>
-  ```ts isInSwitcher
-  // ListBox.test.ts
-  import {render} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
-
-  let testUtilUser = new User({interactionType: 'mouse'});
-  // ...
-
-  it('ListBox can select an option via keyboard', async function () {
-    // Render your test component/app and initialize the listbox tester
-    let {getByTestId} = render(
-      <ListBox selectionMode="single" data-testid="test-listbox">
-        ...
-      </ListBox>
-    );
-    let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
-
-    await listboxTester.toggleOptionSelection({option: 4});
-    expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
-  });
-  ```
-  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.ListBoxTester} isInSwitcher />
-</>
-
-<>
-  ```ts isInSwitcher
   // Menu.test.ts
   import {render} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
+  import {User} from '@react-spectrum/test-utils';
 
   let testUtilUser = new User({interactionType: 'mouse'});
   // ...
@@ -278,19 +293,19 @@ See below for the full definition of the `User` object.
 
 <>
   ```ts isInSwitcher
-  // Select.test.ts
+  // Picker.test.ts
   import {render} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
+  import {User} from '@react-spectrum/test-utils';
 
   let testUtilUser = new User({interactionType: 'mouse'});
   // ...
 
-  it('Select can select an option via keyboard', async function () {
+  it('Picker can select an option via keyboard', async function () {
     // Render your test component/app and initialize the select tester
     let {getByTestId} = render(
-      <Select data-testid="test-select">
+      <Picker data-testid="test-select">
       ...
-      </Select>
+      </Picker>
     );
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
     let trigger = selectTester.trigger;
@@ -307,17 +322,17 @@ See below for the full definition of the `User` object.
   ```ts isInSwitcher
   // Table.test.ts
   import {render, within} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
+  import {User} from '@react-spectrum/test-utils';
 
   let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
   // ...
 
-  it('Table can toggle row selection', async function () {
+  it('TableView can toggle row selection', async function () {
     // Render your test component/app and initialize the table tester
     let {getByTestId} = render(
-      <Table data-testid="test-table" selectionMode="multiple">
+      <TableView data-testid="test-table" selectionMode="multiple">
       ...
-      </Table>
+      </TableView>
     );
     let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
     expect(tableTester.selectedRows).toHaveLength(0);
@@ -345,7 +360,7 @@ See below for the full definition of the `User` object.
   ```ts isInSwitcher
   // Tabs.test.ts
   import {render} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
+  import {User} from '@react-spectrum/test-utils';
 
   let testUtilUser = new User({interactionType: 'mouse'});
   // ...
@@ -373,12 +388,12 @@ See below for the full definition of the `User` object.
   ```ts isInSwitcher
   // Tree.test.ts
   import {render, within} from '@testing-library/react';
-  import {User} from '@react-aria/test-utils';
+  import {User} from '@react-spectrum/test-utils';
 
   let testUtilUser = new User({interactionType: 'mouse'});
   // ...
 
-  it('Tree can select a item via keyboard', async function () {
+  it('TreeView can select a item via keyboard', async function () {
     // Render your test component/app and initialize the Tree tester
     let {getByTestId} = render(
       <Tree data-testid="test-tree" selectionMode="multiple">
