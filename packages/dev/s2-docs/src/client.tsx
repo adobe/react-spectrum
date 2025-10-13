@@ -49,6 +49,8 @@ async function navigate(pathname: string, push = false) {
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
   let link = (e.target as Element).closest('a');
+  let publicUrl = process.env.PUBLIC_URL || '/';
+  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   if (
     link &&
     link instanceof HTMLAnchorElement &&
@@ -57,6 +59,7 @@ document.addEventListener('click', e => {
     link.origin === location.origin &&
     link.pathname !== location.pathname &&
     !link.hasAttribute('download') &&
+    link.pathname.startsWith(publicUrlPathname) &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)
