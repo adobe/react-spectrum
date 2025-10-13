@@ -1113,6 +1113,18 @@ function remarkDocsComponentsToMarkdown() {
           }
         }
 
+        // Check for aria-label attribute first
+        const ariaLabelAttr = node.attributes?.find(a => a.name === 'aria-label');
+        let ariaLabel = '';
+        
+        if (ariaLabelAttr) {
+          if (ariaLabelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            ariaLabel = ariaLabelAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof ariaLabelAttr.value === 'string') {
+            ariaLabel = ariaLabelAttr.value.trim();
+          }
+        }
+
         // Extract text content from children
         const extractText = (children) => {
           if (!children) {return '';}
@@ -1129,7 +1141,8 @@ function remarkDocsComponentsToMarkdown() {
             .join('');
         };
 
-        const linkText = extractText(node.children) || href;
+        const childrenText = extractText(node.children);
+        const linkText = ariaLabel || childrenText || href;
 
         if (href) {
           const linkNode = {
@@ -1137,10 +1150,26 @@ function remarkDocsComponentsToMarkdown() {
             url: href,
             children: [{type: 'text', value: linkText}]
           };
-          parent.children[index] = linkNode;
+          
+          // If this is a flow element (block-level), wrap in paragraph to preserve spacing
+          if (node.type === 'mdxJsxFlowElement') {
+            parent.children[index] = {
+              type: 'paragraph',
+              children: [linkNode]
+            };
+          } else {
+            parent.children[index] = linkNode;
+          }
         } else {
           // No href, just convert to plain text
-          parent.children[index] = {type: 'text', value: linkText};
+          if (node.type === 'mdxJsxFlowElement') {
+            parent.children[index] = {
+              type: 'paragraph',
+              children: [{type: 'text', value: linkText}]
+            };
+          } else {
+            parent.children[index] = {type: 'text', value: linkText};
+          }
         }
         return;
       }
