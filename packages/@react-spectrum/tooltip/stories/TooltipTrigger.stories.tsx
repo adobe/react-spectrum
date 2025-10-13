@@ -74,8 +74,7 @@ const argTypes = {
     control: {disable: true}
   },
   closeOnPress: {
-    control: 'boolean',
-    defaultValue: true
+    control: 'boolean'
   }
 };
 
