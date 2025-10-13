@@ -1,0 +1,440 @@
+import {VersionBadge} from '../../src/VersionBadge';
+import {InstallCommand} from '../../src/InstallCommand';
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import testUtilDocs from 'docs:@react-aria/test-utils';
+
+export const section = 'Guides';
+export const description = 'Writing tests for apps built with React Aria';
+
+# Testing
+
+<PageDescription>This page describes how to test an application built with React Aria. It documents the available testing utilities available for each aria pattern and how they can be used to simulate common user interactions.</PageDescription>
+
+## Introduction
+
+Running automated tests on your application helps ensure that it continues to work as expected over time.
+You can use testing tools like [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
+[Jest](https://jestjs.io) or [Mocha](https://mochajs.org) to test applications built with React Aria Components or hooks. These generally
+work quite well out of the box but there are a few things to consider to ensure your tests are the best they
+can be.
+
+The information below covers best practices when writing tests, and be sure to checkout our [test utils](./react-aria-test-utils) that incorporate these
+strategies under the hood, helping streamline the test writing practice for you.
+
+## Testing semantics
+
+Many testing libraries expect you to query for elements in the DOM tree. For example, you might have a test
+that renders a login page, finds the username and password fields, and simulates filling them out and
+submitting the form.
+
+The recommended way to query for React Aria Components and their internals is by semantics. React Aria
+Components implement [ARIA patterns](https://www.w3.org/TR/wai-aria-practices-1.2/). ARIA is a W3C standard
+that specifies the semantics for many UI components. This is used to expose them to assistive technology
+such as screen readers, but can also be used in tests to operate the application programmatically. These semantics
+are much less likely to change over time, and while other DOM nodes may be added or removed, the semantics are more likely to stay stable.
+
+The main attribute to look for when querying is the [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques).
+This attribute represents the type of element a DOM node represents, e.g. a button, list option, or tab.
+
+### React Testing Library
+
+[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) is useful because it
+enforces that you write tests using semantics instead of implementation details. We use React Testing Library
+to test React Aria itself, and it's quite easy to [query](https://testing-library.com/docs/dom-testing-library/api-queries)
+elements by role, text, label, etc.
+
+```tsx
+import {render} from '@testing-library/react';
+
+let tree = render(<MyComponent />);
+let option = tree.getByRole('button');
+```
+
+## Test ids
+
+Querying by semantics covers many scenarios, but what if you have many buttons on a page? How do you find the specific button
+you're looking for in a test? In many cases this could be done by querying by the text in the button or an
+accessibility label associated with it, but sometimes this might change over time or may be affected by things like
+translations in different languages. In these cases, you may need a way to identify specific elements in tests, and that's
+where test ids come in.
+
+React Aria Components pass all [data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
+through to their underlying DOM nodes, which allows you to use an attribute like `data-testid` to identify
+a particular instance of a component. For example, you could add test ids to the two input elements
+in a login form and use them to find the username and password fields.
+
+This example uses React Testing Library, but the idea could be applied in a similar way with other
+testing libraries.
+
+```tsx
+import {render} from '@testing-library/react';
+import {Input, Label, TextField} from 'react-aria-components';
+
+function LoginForm() {
+  return (
+    <>
+      <TextField data-testid="username">
+        <Label>Username</Label>
+        <Input />
+      </TextField>
+      <TextField data-testid="password">
+        <Label>Username</Label>
+        <Input />
+      </TextField>
+    </>
+  );
+}
+
+let tree = render(<LoginForm />);
+let username = tree.getByTestId('username');
+let password = tree.getByTestId('password');
+```
+
+## Triggering events
+
+Most testing libraries include a way to simulate events on an element. React Aria Components rely on
+many different browser events to support different devices and platforms, so it's important to simulate
+these correctly in your tests. For example, rather than only simulating a click event, the tests should
+simulate all of the events that would occur if a real user were interacting with the component.
+
+For example, a click is really a `mousemove` and `mouseover` the target, followed
+by `mousedown`, `focus`, and `mouseup` events, and finally a `click` event. If you only simulated the `click`
+event, you would be missing all of these other preceding events that occur in real-world situations and this
+may make your test not work correctly. The implementation of the component may also change in the future to
+expect these events, making your test brittle. In addition, browsers have default behavior that occurs on
+certain events which would be missing, like focusing elements on mouse down, and toggling checkboxes on click.
+
+The best way to handle this is with the [user-event](https://github.com/testing-library/user-event) library.
+This lets you trigger high level interactions like a user would, and the library handles firing all of the individual
+events that make up that interaction. If you use this library rather than firing events manually, your tests
+will simulate real-world behavior much better and work as expected.
+
+`user-event` can handle many types of interactions, e.g. clicks, tabbing, typing, etc. This example shows how you could
+use it to render a login form and enter text in each field and click the submit button, just as a real user would.
+
+```tsx
+import {render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+let tree = render(<LoginForm />);
+
+// Click on the username field to focus it, and enter the value.
+userEvent.click(tree.getByLabelText('Username'));
+userEvent.type(document.activeElement, 'devon');
+
+// Tab to the password field, and enter the value.
+userEvent.tab();
+userEvent.type(document.activeElement, 'Pas$w0rd');
+
+// Tab to the submit button and click it.
+userEvent.tab();
+userEvent.click(document.activeElement);
+```
+
+## React Aria test utils
+
+TODO can't place this next to the header here
+<VersionBadge version="beta" />
+
+[@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) is a set of testing utilities that aims to make writing unit tests easier for consumers of React Aria
+or for users who have built their own components following the respective ARIA pattern specification. By using the ARIA specification for any given component pattern as a source of truth,
+we can make assumptions about the existence of various aria attributes in a component. This allows us to navigate the component's DOM structure, simulate common interactions, and verify the
+the resulting state of the component.
+
+### Installation
+
+<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+
+Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need
+to be on React 18+ in order for these utilities to work.
+
+### Setup
+
+Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
+See [below](#patterns) for what patterns are currently supported.
+
+```ts
+// YourTest.test.ts
+import {screen} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+// Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
+// 'interactionType' specifies what mode of interaction should be simulated by the tester
+// 'advanceTimer' is used by the tester to advance the timers in the tests for specific interactions (e.g. long press)
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('my test case', async function () {
+  // Render your test component/app
+  render();
+  // Initialize the table tester via providing the 'Table' pattern name and the root element of said table
+  let table = testUtilUser.createTester('Table', {root: screen.getByTestId('test_table')});
+
+  // ...
+});
+```
+
+See below for the full definition of the `User` object.
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### Patterns
+
+<ExampleSwitcher type={null} examples={['ComboBox', 'GridList', 'ListBox', 'Menu', 'Select', 'Table', 'Tabs', 'Tree']}>
+
+<>
+  ```ts isInSwitcher
+  // Combobox.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('ComboBox can select an option via keyboard', async function () {
+    // Render your test component/app and initialize the combobox tester
+    let {getByTestId} = render(
+      <ComboBox data-testid="test-combobox">
+        ...
+      </ComboBox>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: getByTestId('test-combobox'), interactionType: 'keyboard'});
+
+    await comboboxTester.open();
+    expect(comboboxTester.listbox).toBeInTheDocument();
+
+    let options = comboboxTester.options();
+    await comboboxTester.selectOption({option: options[0]});
+    expect(comboboxTester.combobox.value).toBe('One');
+    expect(comboboxTester.listbox).not.toBeInTheDocument();
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.ComboBoxTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // GridList.test.ts
+  import {render, within} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('GridList can select a row via keyboard', async function () {
+    // Render your test component/app and initialize the gridlist tester
+    let {getByTestId} = render(
+      <GridList data-testid="test-gridlist" selectionMode="single">
+        ...
+      </GridList>
+    );
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
+
+    let row = gridListTester.rows[0];
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+    expect(gridListTester.selectedRows).toHaveLength(0);
+
+    await gridListTester.toggleRowSelection({row: 0});
+    expect(within(row).getByRole('checkbox')).toBeChecked();
+    expect(gridListTester.selectedRows).toHaveLength(1);
+
+    await gridListTester.toggleRowSelection({row: 0});
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+    expect(gridListTester.selectedRows).toHaveLength(0);
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.GridListTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // ListBox.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('ListBox can select an option via keyboard', async function () {
+    // Render your test component/app and initialize the listbox tester
+    let {getByTestId} = render(
+      <ListBox selectionMode="single" data-testid="test-listbox">
+        ...
+      </ListBox>
+    );
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
+
+    await listboxTester.toggleOptionSelection({option: 4});
+    expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.ListBoxTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // Menu.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('Menu can open its submenu via keyboard', async function () {
+    // Render your test component/app and initialize the menu tester
+    let {getByTestId} = render(
+      <MenuTrigger>
+        <Button data-testid="test-menutrigger">Menu trigger</Button>
+        ...
+      </MenuTrigger>
+    );
+    let menuTester = testUtilUser.createTester('Menu', {root: getByTestId('test-menutrigger'), interactionType: 'keyboard'});
+
+    await menuTester.open();
+    expect(menuTester.menu).toBeInTheDocument();
+    let submenuTriggers = menuTester.submenuTriggers;
+    expect(submenuTriggers).toHaveLength(1);
+
+    let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
+    expect(submenuTester.menu).toBeInTheDocument();
+
+    await submenuTester.selectOption({option: submenuTester.options()[0]});
+    expect(submenuTester.menu).not.toBeInTheDocument();
+    expect(menuTester.menu).not.toBeInTheDocument();
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.MenuTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // Select.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('Select can select an option via keyboard', async function () {
+    // Render your test component/app and initialize the select tester
+    let {getByTestId} = render(
+      <Select data-testid="test-select">
+      ...
+      </Select>
+    );
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an item');
+
+    await selectTester.selectOption({option: 'Cat'});
+    expect(trigger).toHaveTextContent('Cat');
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.SelectTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // Table.test.ts
+  import {render, within} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+  // ...
+
+  it('Table can toggle row selection', async function () {
+    // Render your test component/app and initialize the table tester
+    let {getByTestId} = render(
+      <Table data-testid="test-table" selectionMode="multiple">
+      ...
+      </Table>
+    );
+    let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
+    expect(tableTester.selectedRows).toHaveLength(0);
+
+    await tableTester.toggleSelectAll();
+    expect(tableTester.selectedRows).toHaveLength(10);
+
+    await tableTester.toggleRowSelection({row: 2});
+    expect(tableTester.selectedRows).toHaveLength(9);
+    let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+    expect(checkbox).not.toBeChecked();
+
+    await tableTester.toggleSelectAll();
+    expect(tableTester.selectedRows).toHaveLength(10);
+    expect(checkbox).toBeChecked();
+
+    await tableTester.toggleSelectAll();
+    expect(tableTester.selectedRows).toHaveLength(0);
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TableTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // Tabs.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('Tabs can change selection via keyboard', async function () {
+    // Render your test component/app and initialize the listbox tester
+    let {getByTestId} = render(
+      <Tabs data-testid="test-tabs">
+        ...
+      </Tabs>
+    );
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByTestId('test-tabs'), interactionType: 'keyboard'});
+
+    let tabs = tabsTester.tabs;
+    expect(tabsTester.selectedTab).toBe(tabs[0]);
+
+    await tabsTester.triggerTab({tab: 1});
+    expect(tabsTester.selectedTab).toBe(tabs[1]);
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TabsTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // Tree.test.ts
+  import {render, within} from '@testing-library/react';
+  import {User} from '@react-aria/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse'});
+  // ...
+
+  it('Tree can select a item via keyboard', async function () {
+    // Render your test component/app and initialize the Tree tester
+    let {getByTestId} = render(
+      <Tree data-testid="test-tree" selectionMode="multiple">
+        ...
+      </Tree>
+    );
+    let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
+
+    await treeTester.toggleRowSelection({row: 0});
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+
+    await treeTester.toggleRowSelection({row: 1});
+    expect(treeTester.selectedRows).toHaveLength(2);
+    expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+
+    await treeTester.toggleRowSelection({row: 0});
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TreeTester} isInSwitcher />
+</>
+
+</ExampleSwitcher>
