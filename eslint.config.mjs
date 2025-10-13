@@ -224,8 +224,28 @@ export default [{
         "react/jsx-boolean-value": ERROR,
         "react/jsx-first-prop-new-line": [ERROR, "multiline"],
         "react/self-closing-comp": ERROR,
+
+        // Core hooks rules
         "react-hooks/rules-of-hooks": ERROR, // https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/CHANGELOG.md
         "react-hooks/exhaustive-deps": WARN,
+
+        // React Compiler rules
+        // 'react-hooks/config': ERROR,
+        // 'react-hooks/error-boundaries': ERROR,
+        // 'react-hooks/component-hook-factories': ERROR,
+        // 'react-hooks/gating': ERROR,
+        // 'react-hooks/globals': ERROR,
+        // 'react-hooks/immutability': ERROR,
+        // 'react-hooks/preserve-manual-memoization': ERROR,
+        // 'react-hooks/purity': ERROR,
+        // 'react-hooks/refs': ERROR,
+        // 'react-hooks/set-state-in-effect': ERROR,
+        // 'react-hooks/set-state-in-render': ERROR,
+        // 'react-hooks/static-components': ERROR,
+        // 'react-hooks/unsupported-syntax': WARN,
+        // 'react-hooks/use-memo': ERROR,
+        // 'react-hooks/incompatible-library': WARN,
+
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
         "rulesdir/imports": [ERROR],
