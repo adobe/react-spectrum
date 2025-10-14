@@ -142,7 +142,7 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 
 Build the docs and MCP server locally, then start the docs server.
 
-```
+```bash
 yarn workspace @react-spectrum/s2-docs generate:md
 yarn workspace @react-spectrum/mcp build
 yarn start:s2-docs
