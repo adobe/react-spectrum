@@ -52,6 +52,21 @@ export interface ComboBoxTesterOpts extends BaseTesterOpts {
   trigger?: HTMLElement
 }
 
+export interface DialogTesterOpts extends BaseTesterOpts {
+  /**
+   * The trigger element for the dialog.
+   */
+  root: HTMLElement,
+  /**
+   * The type of dialog.
+   */
+  dialogType?: 'alertdialog' | 'dialog',
+  /**
+   * The overlay type of the dialog. Used to inform the tester how to find the dialog.
+   */
+  overlayType?: 'modal' | 'popover'
+}
+
 export interface GridListTesterOpts extends BaseTesterOpts {}
 
 export interface ListBoxTesterOpts extends BaseTesterOpts {

@@ -13,6 +13,7 @@
 import {ComboBoxTester} from './combobox';
 import {
   ComboBoxTesterOpts,
+  DialogTesterOpts,
   GridListTesterOpts,
   ListBoxTesterOpts,
   MenuTesterOpts,
@@ -22,6 +23,7 @@ import {
   TreeTesterOpts,
   UserOpts
 } from './types';
+import {DialogTester} from './dialog';
 import {GridListTester} from './gridlist';
 import {ListBoxTester} from './listbox';
 import {MenuTester} from './menu';
@@ -40,7 +42,8 @@ let keyToUtil: {
   'GridList': typeof GridListTester,
   'ListBox': typeof ListBoxTester,
   'Tabs': typeof TabsTester,
-  'Tree': typeof TreeTester
+  'Tree': typeof TreeTester,
+  'Dialog': typeof DialogTester
 } = {
   'Select': SelectTester,
   'Table': TableTester,
@@ -49,13 +52,15 @@ let keyToUtil: {
   'GridList': GridListTester,
   'ListBox': ListBoxTester,
   'Tabs': TabsTester,
-  'Tree': TreeTester
+  'Tree': TreeTester,
+  'Dialog': DialogTester
 } as const;
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 type Tester<T> =
   T extends 'ComboBox' ? ComboBoxTester :
+  T extends 'Dialog' ? DialogTester :
   T extends 'GridList' ? GridListTester :
   T extends 'ListBox' ? ListBoxTester :
   T extends 'Menu' ? MenuTester :
@@ -67,6 +72,7 @@ type Tester<T> =
 
 type TesterOpts<T> =
   T extends 'ComboBox' ? ComboBoxTesterOpts :
+  T extends 'Dialog' ? DialogTesterOpts :
   T extends 'GridList' ? GridListTesterOpts :
   T extends 'ListBox' ? ListBoxTesterOpts :
   T extends 'Menu' ? MenuTesterOpts :
