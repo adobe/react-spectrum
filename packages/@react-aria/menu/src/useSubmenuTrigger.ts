@@ -14,7 +14,7 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, useEffectEvent, useEvent, useId, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -81,15 +81,15 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     }
   }, [openTimeout]);
 
-  let onSubmenuOpen = useEffectEvent((focusStrategy?: FocusStrategy) => {
+  let onSubmenuOpen = useCallback((focusStrategy?: FocusStrategy) => {
     cancelOpenTimeout();
     state.open(focusStrategy);
-  });
+  }, [state, cancelOpenTimeout]);
 
-  let onSubmenuClose = useEffectEvent(() => {
+  let onSubmenuClose = useCallback(() => {
     cancelOpenTimeout();
     state.close();
-  });
+  }, [state, cancelOpenTimeout]);
 
   useLayoutEffect(() => {
     return () => {
