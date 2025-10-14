@@ -15,8 +15,8 @@ type SectionInfo = {
 
 type PageInfo = {
   key: string,          // e.g. "s2/Button"
-  title: string,        // from top-level heading
-  description?: string, // first paragraph after title
+  name: string,         // from top-level heading
+  description?: string, // first paragraph after name
   filePath: string,     // absolute path to markdown file
   sections: SectionInfo[]
 };
@@ -41,8 +41,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // CDN base for docs. Can be overridden via env variable.
-const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE
-  ?? 'https://reactspectrum.blob.core.windows.net/reactspectrum/7d2883a56fb1a0554864b21324d405f758deb3ce/s2-docs';
+const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE ?? 'https://react-spectrum.adobe.com/beta';
 
 function libBaseUrl(library: Library) {
   return `${DEFAULT_CDN_BASE}/${library}`;
@@ -126,12 +125,12 @@ async function buildPageIndex(library: Library): Promise<PageInfo[]> {
     if (!m) {continue;}
     const display = (m[1] || '').trim();
     const href = (m[2] || '').trim();
-    const desc = (m[3] || '').trim() || undefined;
+    const description = (m[3] || '').trim() || undefined;
     if (!href || !/\.md$/i.test(href)) {continue;}
     const key = href.replace(/\.md$/i, '').replace(/\\/g, '/');
-    const title = display || path.basename(key);
-    const url = `${DEFAULT_CDN_BASE}/${key}.md`;
-    const info: PageInfo = {key, title, description: desc, filePath: url, sections: []};
+    const name = display || path.basename(key);
+    const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
+    const info: PageInfo = {key, name, description, filePath, sections: []};
     pages.push(info);
     pageCache.set(info.key, info);
   }
@@ -158,15 +157,15 @@ function parseSectionsFromMarkdown(lines: string[]): SectionInfo[] {
   return sections;
 }
 
-function extractTitleAndDescription(lines: string[]): {title: string, description?: string} {
-  let title = '';
+function extractNameAndDescription(lines: string[]): {name: string, description?: string} {
+  let name = '';
   let description: string | undefined = undefined;
 
   let i = 0;
   for (; i < lines.length; i++) {
     const line = lines[i];
     if (line.startsWith('# ')) {
-      title = line.replace(/^#\s+/, '').trim();
+      name = line.replace(/^#\s+/, '').trim();
       i++;
       break;
     }
@@ -188,7 +187,7 @@ function extractTitleAndDescription(lines: string[]): {title: string, descriptio
     description = descLines.join('\n').trim();
   }
 
-  return {title, description};
+  return {name, description};
 }
 
 async function ensureParsedPage(info: PageInfo): Promise<PageInfo> {
@@ -198,9 +197,9 @@ async function ensureParsedPage(info: PageInfo): Promise<PageInfo> {
 
   const text = await fetchText(info.filePath);
   const lines = text.split(/\r?\n/);
-  const {title, description} = extractTitleAndDescription(lines);
+  const {name, description} = extractNameAndDescription(lines);
   const sections = parseSectionsFromMarkdown(lines);
-  const updated = {...info, title: title || info.title, description, sections};
+  const updated = {...info, name: name || info.name, description, sections};
   pageCache.set(updated.key, updated);
   return updated;
 }
@@ -222,7 +221,7 @@ async function resolvePageRef(library: Library, pageName: string): Promise<PageI
     const maybe = pageCache.get(normalized);
     if (maybe) {return maybe;}
     const filePath = `${DEFAULT_CDN_BASE}/${normalized}.md`;
-    const stub: PageInfo = {key: normalized, title: path.basename(normalized), description: undefined, filePath, sections: []};
+    const stub: PageInfo = {key: normalized, name: path.basename(normalized), description: undefined, filePath, sections: []};
     pageCache.set(stub.key, stub);
     return stub;
   }
@@ -231,7 +230,7 @@ async function resolvePageRef(library: Library, pageName: string): Promise<PageI
   const maybe = pageCache.get(key);
   if (maybe) {return maybe;}
   const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
-  const stub: PageInfo = {key, title: pageName, description: undefined, filePath, sections: []};
+  const stub: PageInfo = {key, name: pageName, description: undefined, filePath, sections: []};
   pageCache.set(stub.key, stub);
   return stub;
 }
@@ -261,7 +260,7 @@ async function startServer(library: Library) {
       const pages = await buildPageIndex(library);
       const items = pages
         .sort((a, b) => a.key.localeCompare(b.key))
-        .map(p => includeDescription ? {key: p.key, title: p.title, description: p.description ?? ''} : {key: p.key, title: p.title});
+        .map(p => includeDescription ? {name: p.name, description: p.description ?? ''} : {name: p.name});
       return {
         content: [{type: 'text', text: JSON.stringify(items, null, 2)}]
       };
@@ -280,8 +279,7 @@ async function startServer(library: Library) {
       const ref = await resolvePageRef(library, page_name);
       const info = await ensureParsedPage(ref);
       const out = {
-        key: info.key,
-        title: info.title,
+        name: info.name,
         description: info.description ?? '',
         sections: info.sections.map(s => s.name)
       };
