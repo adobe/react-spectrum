@@ -2,6 +2,10 @@ import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from
 import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 import '../src/client';
+// @ts-ignore
+import internationalizedFavicon from 'url:../assets/internationalized.ico';
+// @ts-ignore
+import reactAriaFavicon from 'url:../assets/react-aria.ico';
 import './anatomy.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
@@ -84,6 +88,18 @@ const getDescription = (currentPage: Page): string => {
   return library ? `Documentation for ${pageTitle} in ${library}.` : `Documentation for ${pageTitle}.`;
 };
 
+const getFaviconUrl = (currentPage: Page): string => {
+  const library = getLibraryFromPage(currentPage);
+  switch (library) {
+    case 'react-aria':
+      return reactAriaFavicon;
+    case 'internationalized':
+      return internationalizedFavicon;
+    default:
+      return 'https://www.adobe.com/favicon.ico';
+  }
+};
+
 let articleStyles = style({
   maxWidth: {
     default: 'none',
@@ -103,7 +119,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
-        <link rel="icon" href="https://www.adobe.com/favicon.ico" />
+        <link rel="icon" href={getFaviconUrl(currentPage)} />
         <meta name="description" content={getDescription(currentPage)} />
         <meta property="og:image" content={getOgImageUrl(currentPage)} />
         <title>{getTitle(currentPage)}</title>
