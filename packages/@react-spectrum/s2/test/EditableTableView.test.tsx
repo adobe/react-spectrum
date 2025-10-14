@@ -242,7 +242,7 @@ describe('TableView', () => {
   }
 
   describe('keyboard', () => {
-    it.only('should edit text in a cell either through a TextField or a Picker', async () => {
+    it('should edit text in a cell either through a TextField or a Picker', async () => {
       let {getByRole} = render(
         <EditableTable />
       );

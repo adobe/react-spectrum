@@ -29,10 +29,12 @@ import {
 } from '../';
 import React, {useRef} from 'react';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('Dialog', () => {
   let user;
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -68,9 +70,10 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    await user.click(button);
-
-    let dialog = getByRole('alertdialog');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, dialogType: 'alertdialog', overlayType: 'modal'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
+    expect(dialog).toHaveAttribute('role', 'alertdialog');
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
@@ -167,11 +170,11 @@ describe('Dialog', () => {
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-pressed');
 
-    await user.click(button);
-
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
+    await dialogTester.open();
     expect(button).toHaveAttribute('data-pressed');
 
-    let dialog = getByRole('dialog');
+    let dialog = dialogTester.dialog;
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
@@ -386,7 +389,7 @@ describe('Dialog', () => {
       await user.click(document.body);
     });
   });
-  
+
   it('ensure Input autoFocus works when opening Modal from MenuItem via keyboard', async () => {
     function App() {
       const [isOpen, setOpen] = React.useState(false);

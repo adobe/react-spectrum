@@ -60,28 +60,27 @@ export class DialogTester {
       interactionType = this._interactionType
     } = opts;
     let trigger = this.trigger;
-    let isDisabled = trigger.hasAttribute('disabled');
-    if (interactionType === 'mouse' || interactionType === 'touch') {
-      if (interactionType === 'mouse') {
-        await this.user.click(trigger);
-      } else {
-        await this.user.pointer({target: trigger, keys: '[TouchA]'});
-      }
-    } else if (interactionType === 'keyboard' && !isDisabled) {
-      act(() => trigger.focus());
-      await this.user.keyboard('[Enter]');
-    }
-
-    if (this._overlayType === 'popover') {
-      await waitFor(() => {
-        if (trigger.getAttribute('aria-controls') == null && !isDisabled) {
-          throw new Error('No aria-controls found on dialog trigger element.');
+    if (!trigger.hasAttribute('disabled')) {
+      if (interactionType === 'mouse' || interactionType === 'touch') {
+        if (interactionType === 'mouse') {
+          await this.user.click(trigger);
         } else {
-          return true;
+          await this.user.pointer({target: trigger, keys: '[TouchA]'});
         }
-      });
+      } else if (interactionType === 'keyboard') {
+        act(() => trigger.focus());
+        await this.user.keyboard('[Enter]');
+      }
 
-      if (!isDisabled) {
+      if (this._overlayType === 'popover') {
+        await waitFor(() => {
+          if (trigger.getAttribute('aria-controls') == null) {
+            throw new Error('No aria-controls found on dialog trigger element.');
+          } else {
+            return true;
+          }
+        });
+
         let dialogId = trigger.getAttribute('aria-controls');
         await waitFor(() => {
           if (!dialogId || document.getElementById(dialogId) == null) {
@@ -91,23 +90,23 @@ export class DialogTester {
             return true;
           }
         });
-      }
-    } else {
-      let dialog;
-      await waitFor(() => {
-        dialog = document.querySelector(`[role=${this._dialogType}]`);
-        if (dialog == null && !isDisabled) {
-          throw new Error(`No dialog of type ${this._dialogType} found after pressing the trigger.`);
-        } else {
-          return true;
-        }
-      });
-
-      if (dialog && document.activeElement !== this._trigger && dialog.contains(document.activeElement)) {
-        this._dialog = dialog;
       } else {
-        // TODO: is it too brittle to throw here?
-        throw new Error('New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found');
+        let dialog;
+        await waitFor(() => {
+          dialog = document.querySelector(`[role=${this._dialogType}]`);
+          if (dialog == null) {
+            throw new Error(`No dialog of type ${this._dialogType} found after pressing the trigger.`);
+          } else {
+            return true;
+          }
+        });
+
+        if (dialog && document.activeElement !== this._trigger && dialog.contains(document.activeElement)) {
+          this._dialog = dialog;
+        } else {
+          // TODO: is it too brittle to throw here?
+          throw new Error('New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found');
+        }
       }
     }
   }
