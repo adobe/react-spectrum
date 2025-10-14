@@ -1,0 +1,71 @@
+---
+description: Use when formatting commit messages for release notes
+globs:
+alwaysApply: false
+---
+
+Given a list of commit messages, follow the steps to process them.
+
+## Step 1: Categorize Commits
+
+Sort ALL commit messages into one of six main categories. The main categories are the following:
+- Enhancements
+- Fixes
+- Documentation
+- Under Construction
+- To Be Categorized
+- S2
+
+### Categorization Rules:
+Use the following keywords to determine the category:
+| Keyword                    | Category |
+|----------------------------|----------|
+| feat                       | Enhancements|
+| fix                        | Fixes |
+| docs                       | Documentation |
+| alpha, beta, rc            | Under Construction
+| chore, revert, bump, build | To Be Categorized |
+| S2                         | S2 |
+
+Each category name must be written as a Markdown H2 heading using ##.
+
+## Step 2: Rewrite commit messages
+
+Original format: Type (Scope): Summary of changes - [@username](link to username) - [PR](link to PR)
+New Format: Summary of changes - [@username](link to username) - [PR](link to PR)
+
+### General Guidelines:
+- Keep the summary as a single, grammatically correct sentence
+- The message should be concise and easy to read
+- Wrap any camelCase or code-like terms (e.g. onClick, onAction, isDisabled) in backticks (`)
+  - Do NOT use backticks for component names
+- Replace specific terms:
+  - RAC -> React Aria
+  - V3 -> React Spectrum
+- ALWAYS capitalize UI component names
+  - Example:
+    - toast -> Toast
+    - inline alert -> InlineAlert
+
+### Component Names to Capitalize:
+Accordion, Autocomplete, Badge, Breadcrumbs, Buttons, Calendar, Checkbox, CheckboxGroup, Collections, ColorArea, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, ColorWheel, ComboBox, Date and Time, DateField, DatePicker, DateRangePicker, Dialog, Disclosure, DisclosureGroup, Drag and Drop, DropZone, FileTrigger, Form, InlineAlert, Link, Listbox, ListView, Menu, Meter, Modal, NotificationBadge, NumberField, Picker, ProgressBar, ProgressCircle, RadioGroup, RangeCalendar, SearchField, Select, Slider, StatusLight, Switch, Table, Tabs, TagGroup, TextArea, TextField, TimeField, Toast, ToggleButton, ToggleButtonGroup, Tooltip, Tree, Virtualizer.
+
+
+## Step 3: Add Sub-headings
+
+Within the Enhancements, Fixes, and Under Construction categories, group commits by UI component under sub-headings.
+
+### Sub-heading rules:
+- Use sub-headings ONLY for:
+  - Enhancements
+  - Fixes
+  - Under Construction
+- Do NOT create sub-headings for:
+  - Documentation
+  - To Be Categorized
+  - S2
+- Sub-headings should be in alphabetical order
+- Use "Miscellaneous" as a sub-heading for commits that do not belong to a specific component
+- Each category can have its own Miscellaneous sub-heading
+- Write sub-headings and commits as unordered lists using a hyphen (-)
+- Do NOT bold the sub-heading text
