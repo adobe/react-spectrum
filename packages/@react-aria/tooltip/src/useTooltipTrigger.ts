@@ -37,7 +37,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   let {
     isDisabled,
     trigger,
-    closeOnPress
+    closeOnPress = true
   } = props;
 
   let tooltipId = useId();
