@@ -153,7 +153,7 @@ Update your MCP client configuration to use the local MCP server:
 ```json
 {
   "mcpServers": {
-    "React Spectrum": {
+    "React Spectrum (S2)": {
       "command": "node",
       "args": ["{your path here}/react-spectrum/packages/dev/mcp/dist/index.js", "s2"],
       "env": {
@@ -167,5 +167,6 @@ Update your MCP client configuration to use the local MCP server:
         "DOCS_CDN_BASE": "http://localhost:1234"
       }
     }
+  }
 }
 ```
