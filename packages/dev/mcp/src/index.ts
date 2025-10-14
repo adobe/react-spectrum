@@ -41,7 +41,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // CDN base for docs. Can be overridden via env variable.
-const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE ?? 'https://react-spectrum.adobe.com/beta';
+const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE
+  ?? 'https://reactspectrum.blob.core.windows.net/reactspectrum/a22a0aed3e97d0a23b9883679798b85eed68413d/s2-docs';
 
 function libBaseUrl(library: Library) {
   return `${DEFAULT_CDN_BASE}/${library}`;
