@@ -249,8 +249,9 @@ async function startServer(library: Library) {
   }
 
   // list_pages tool
+  const toolPrefix = library === 's2' ? 's2' : 'react_aria';
   server.registerTool(
-    'list_pages',
+    `list_${toolPrefix}_pages`,
     {
       title: library === 's2' ? 'List React Spectrum (@react-spectrum/s2) docs pages' : 'List React Aria docs pages',
       description: `Returns a list of available pages in the ${library} docs.`,
@@ -269,7 +270,7 @@ async function startServer(library: Library) {
 
   // get_page_info tool
   server.registerTool(
-    'get_page_info',
+    `get_${toolPrefix}_page_info`,
     {
       title: 'Get page info',
       description: 'Returns page description and list of sections for a given page.',
@@ -289,7 +290,7 @@ async function startServer(library: Library) {
 
   // get_page tool
   server.registerTool(
-    'get_page',
+    `get_${toolPrefix}_page`,
     {
       title: 'Get page markdown',
       description: 'Returns the full markdown content for a page, or a specific section if provided.',
@@ -322,7 +323,7 @@ async function startServer(library: Library) {
   if (library === 's2') {
     // search_icons tool
     server.registerTool(
-      'search_icons',
+      'search_s2_icons',
       {
         title: 'Search S2 icons',
         description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
@@ -359,7 +360,7 @@ async function startServer(library: Library) {
 
     // search_illustrations tool
     server.registerTool(
-      'search_illustrations',
+      'search_s2_illustrations',
       {
         title: 'Search S2 illustrations',
         description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
