@@ -584,13 +584,13 @@ class TableHeaderNode<T> extends CollectionNode<T> {
   static readonly type = 'tableheader';
 }
 
-function THeadElementType(props) {
+let THeadElementType = forwardRef(function THeadElementType(props: any, ref: ForwardedRef<Element>) {
   let {isVirtualized} = useContext(CollectionRendererContext);
   if (isVirtualized) {
-    return <div {...props} />;
+    return <div {...props} ref={ref} />;
   }
-  return <thead {...props} />;
-}
+  return <thead {...props} ref={ref} />;
+});
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -1343,6 +1343,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
     }
   });
 
+  // TODO: Lint doesn't catch these, it thinks we're not in a component render cycle here?
   let TD = useElementType('td');
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
