@@ -101,7 +101,8 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     ref
   });
 
-  let {focusableProps} = useFocusable(props, ref);
+  let {focusableProps: focusableBaseFocusableProps} = useFocusable(props, ref);
+  let focusableProps = {...focusableBaseFocusableProps};
   if (allowFocusWhenDisabled) {
     focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
   }

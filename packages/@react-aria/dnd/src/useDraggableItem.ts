@@ -66,7 +66,7 @@ const MESSAGES = {
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let isDisabled = state.isDisabled || state.selectionManager.isDisabled(props.key);
-  let {dragProps, dragButtonProps} = useDrag({
+  let {dragProps: draggableDragProps, dragButtonProps} = useDrag({
     getItems() {
       return state.getItems(props.key);
     },
@@ -88,6 +88,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
       clearGlobalDnDState();
     }
   });
+  let dragProps = {...draggableDragProps};
 
   let item = state.collection.getItem(props.key);
   let numKeysForDrag = state.getKeysForDrag(props.key).size;

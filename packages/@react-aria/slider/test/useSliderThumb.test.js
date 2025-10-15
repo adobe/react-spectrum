@@ -113,7 +113,9 @@ describe('useSliderThumb', () => {
       let input0Ref = useRef(null);
       let input1Ref = useRef(null);
       let state = useSliderState({...props, numberFormatter});
-      stateRef.current = state;
+      React.useEffect(() => {
+        stateRef.current = state;
+      }, [state]);
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
       let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb({
         ...commonThumbProps,
@@ -273,7 +275,9 @@ describe('useSliderThumb', () => {
       let trackRef = useRef(null);
       let inputRef = useRef(null);
       let state = useSliderState({...props, numberFormatter});
-      stateRef.current = state;
+      React.useEffect(() => {
+        stateRef.current = state;
+      }, [state]);
       let {trackProps} = useSlider(props, state, trackRef);
       let {inputProps, thumbProps} = useSliderThumb({
         ...props,

@@ -52,8 +52,8 @@ import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
-function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
+function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+  let props = useProviderProps(outerProps);
 
   let {
     isQuiet,
@@ -95,18 +95,21 @@ function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearch
   let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+  let {labelProps: fieldLabelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
     isInvalid,
     errorMessage
   });
 
-  // Focus the button and show focus ring when clicking on the label
-  labelProps.onClick = () => {
-    if (!props.isDisabled && buttonRef.current) {
-      buttonRef.current.focus();
-      setInteractionModality('keyboard');
+  let labelProps = {
+    ...fieldLabelProps,
+    // Focus the button and show focus ring when clicking on the label
+    onClick: () => {
+      if (!props.isDisabled && buttonRef.current) {
+        buttonRef.current.focus();
+        setInteractionModality('keyboard');
+      }
     }
   };
 
@@ -435,9 +438,10 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   // VoiceOver on iOS reads "double tap to collapse" when focused on the input rather than
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
-  inputProps.role = 'searchbox';
-  inputProps['aria-haspopup'] = 'listbox';
-  delete inputProps.onTouchEnd;
+  let newInputProps = {...inputProps};
+  newInputProps.role = 'searchbox';
+  newInputProps['aria-haspopup'] = 'listbox';
+  delete newInputProps.onTouchEnd;
 
   let clearButton = (
     <ClearButton
@@ -491,7 +495,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
     }
   }, [inputRef, popoverRef, isTouchDown]);
 
-  let inputValue = inputProps.value;
+  let inputValue = newInputProps.value;
   let lastInputValue = useRef(inputValue);
   useEffect(() => {
     if (loadingState === 'filtering' && !showLoading) {
@@ -531,8 +535,8 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
         onSubmit(inputValue == null ? null : inputValue.toString(), null);
       }
     } else {
-      if (inputProps.onKeyDown) {
-        inputProps.onKeyDown(e);
+      if (newInputProps.onKeyDown) {
+        newInputProps.onKeyDown(e);
       }
     }
   };
@@ -562,7 +566,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown}}
+          inputProps={{...newInputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

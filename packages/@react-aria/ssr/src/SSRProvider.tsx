@@ -101,6 +101,7 @@ let canUseDOM = Boolean(
 
 let componentIds = new WeakMap();
 
+// TODO: this function needs serious help, haha
 function useCounter(isDisabled = false) {
   let ctx = useContext(SSRContext);
   let ref = useRef<number | null>(null);

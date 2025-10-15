@@ -230,15 +230,16 @@ function InternalCard(props) {
     cardOrientation = 'vertical';
   }
 
+  let newGridCellProps = {...gridCellProps};
   // We don't want to focus the checkbox (or any other focusable elements) within the Card
   // when pressing the arrow keys so we delete the key down handler here. Arrow key navigation between
   // the cards in the CardView is handled by useGrid => useSelectableCollection instead.
-  delete gridCellProps.onKeyDownCapture;
+  delete newGridCellProps.onKeyDownCapture;
   return (
     <div {...rowProps} ref={rowRef} className={classNames(styles, 'spectrum-CardView-row')}>
       <CardBase
         ref={cellRef}
-        articleProps={gridCellProps}
+        articleProps={newGridCellProps}
         isQuiet={isQuiet}
         orientation={cardOrientation}
         item={item}

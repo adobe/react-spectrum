@@ -207,7 +207,8 @@ export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeField
  * Each part of a time value is displayed in an individually editable segment.
  */
 export function useTimeField<T extends TimeValue>(props: AriaTimeFieldOptions<T>, state: TimeFieldState, ref: RefObject<Element | null>): DateFieldAria {
-  let res = useDateField(props, state, ref);
-  res.inputProps.value = state.timeValue?.toString() || '';
-  return res;
+  let {inputProps: dateFieldInputProps, ...res} = useDateField(props, state, ref);
+  let inputProps = {...dateFieldInputProps};
+  inputProps.value = state.timeValue?.toString() || '';
+  return {...res, inputProps};
 }

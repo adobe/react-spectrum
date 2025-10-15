@@ -56,9 +56,9 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 /**
  * ComboBoxes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
  */
-export const ComboBox = React.forwardRef(function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+export const ComboBox = React.forwardRef(function ComboBox<T extends object>(outerProps: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
+  let withProviderProps = useProviderProps(outerProps);
+  let props = useFormProps(withProviderProps);
 
   let hasWarned = useRef(false);
   useEffect(() => {

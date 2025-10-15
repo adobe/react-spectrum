@@ -45,8 +45,8 @@ import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const MobileComboBox = React.forwardRef(function MobileComboBox(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
+export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProps: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
+  let props = useProviderProps(outerProps);
 
   let {
     isQuiet,
@@ -86,18 +86,21 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
   let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+  let {labelProps: fieldLabelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
     isInvalid,
     errorMessage
   });
 
-  // Focus the button and show focus ring when clicking on the label
-  labelProps.onClick = () => {
-    if (!props.isDisabled) {
-      buttonRef.current?.focus();
-      setInteractionModality('keyboard');
+  let labelProps = {
+    ...fieldLabelProps,
+    onClick: () => {
+      // Focus the button and show focus ring when clicking on the label
+      if (!props.isDisabled) {
+        buttonRef.current?.focus();
+        setInteractionModality('keyboard');
+      }
     }
   };
 

@@ -46,9 +46,9 @@ import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
-function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+function SearchAutocomplete<T extends object>(outerProps: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+  let withProviderProps = useProviderProps(outerProps);
+  let props = useFormProps(withProviderProps);
 
   let hasWarned = useRef(false);
   useEffect(() => {

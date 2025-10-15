@@ -161,6 +161,7 @@ export function useSpinButton(
       _async.current = window.setTimeout(
         () => {
           if ((maxValue === undefined || isNaN(maxValue)) || (value === undefined || isNaN(value)) || value < maxValue) {
+            // TODO: false positive??
             onIncrementPressStart(60);
           }
         },

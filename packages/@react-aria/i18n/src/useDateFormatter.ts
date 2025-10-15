@@ -26,9 +26,9 @@ export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
  */
 export function useDateFormatter(options?: DateFormatterOptions): DateFormatter {
   // Reuse last options object if it is shallowly equal, which allows the useMemo result to also be reused.
-  options = useDeepMemo(options ?? {}, isEqual);
+  let memoizedOptions = useDeepMemo(options ?? {}, isEqual);
   let {locale} = useLocale();
-  return useMemo(() => new DateFormatter(locale, options), [locale, options]);
+  return useMemo(() => new DateFormatter(locale, memoizedOptions), [locale, memoizedOptions]);
 }
 
 function isEqual(a: DateFormatterOptions, b: DateFormatterOptions) {
