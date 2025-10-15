@@ -237,8 +237,8 @@ export default [{
         // 'react-hooks/globals': ERROR,
         // 'react-hooks/immutability': ERROR,
         // 'react-hooks/preserve-manual-memoization': ERROR,
-        // 'react-hooks/purity': ERROR,
-        // 'react-hooks/refs': ERROR,
+        'react-hooks/purity': ERROR,
+        // 'react-hooks/refs': ERROR, // can't turn on until https://github.com/facebook/react/issues/34775 is fixed
         'react-hooks/set-state-in-effect': ERROR,
         'react-hooks/set-state-in-render': ERROR,
         'react-hooks/static-components': ERROR,
