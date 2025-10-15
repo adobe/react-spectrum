@@ -12,7 +12,7 @@
 
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {useEffectEvent, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 
 export interface MoveResult {
