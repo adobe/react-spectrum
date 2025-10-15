@@ -118,10 +118,55 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 
 ## Tools
 
+### React Spectrum (S2)
+
 | Tool | Input | Description |
 | --- | --- | --- |
-| `list_pages` | `{ includeDescription?: boolean }` | List available pages in the selected docs library. |
-| `get_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
-| `get_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
-| `search_icons` (S2 only) | `{ terms: string or string[] }` | Search S2 workflow icon names. |
-| `search_illustrations` (S2 only) | `{ terms: string or string[] }` | Search S2 illustration names. |
+| `list_s2_pages` | `{ includeDescription?: boolean }` | List available pages in the S2 docs. |
+| `get_s2_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
+| `get_s2_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
+| `search_s2_icons` | `{ terms: string or string[] }` | Search S2 workflow icon names. |
+| `search_s2_illustrations` | `{ terms: string or string[] }` | Search S2 illustration names. |
+
+### React Aria
+
+| Tool | Input | Description |
+| --- | --- | --- |
+| `list_react_aria_pages` | `{ includeDescription?: boolean }` | List available pages in the React Aria docs. |
+| `get_react_aria_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
+| `get_react_aria_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
+
+## Development
+
+### Testing locally
+
+Build the docs and MCP server locally, then start the docs server.
+
+```bash
+yarn workspace @react-spectrum/s2-docs generate:md
+yarn workspace @react-spectrum/mcp build
+yarn start:s2-docs
+```
+
+Update your MCP client configuration to use the local MCP server:
+
+```json
+{
+  "mcpServers": {
+    "React Spectrum (S2)": {
+      "command": "node",
+      "args": ["{your path here}/react-spectrum/packages/dev/mcp/dist/index.js", "s2"],
+      "env": {
+        "DOCS_CDN_BASE": "http://localhost:1234"
+      }
+    },
+    "React Aria": {
+      "command": "node",
+      "args": ["{your path here}/react-spectrum/packages/dev/mcp/dist/index.js", "react-aria"],
+      "env": {
+        "DOCS_CDN_BASE": "http://localhost:1234"
+      }
+    }
+  }
+}
+```
