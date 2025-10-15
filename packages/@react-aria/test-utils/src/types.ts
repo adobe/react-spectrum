@@ -91,6 +91,14 @@ export interface MenuTesterOpts extends BaseTesterOpts {
   rootMenu?: HTMLElement
 }
 
+export interface RadioGroupTesterOpts extends BaseTesterOpts {
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   * @default 'ltr'
+   */
+  direction?: Direction
+}
+
 export interface SelectTesterOpts extends BaseTesterOpts {
   /**
    * The trigger element for the select. If provided the wrapping element around the target select (as is the case with a ref provided to RSP Select),
