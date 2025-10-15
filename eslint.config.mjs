@@ -241,7 +241,7 @@ export default [{
         // 'react-hooks/refs': ERROR,
         // 'react-hooks/set-state-in-effect': ERROR,
         'react-hooks/set-state-in-render': ERROR,
-        // 'react-hooks/static-components': ERROR,
+        'react-hooks/static-components': ERROR,
         'react-hooks/unsupported-syntax': WARN,
         'react-hooks/use-memo': ERROR,
         'react-hooks/incompatible-library': WARN,
