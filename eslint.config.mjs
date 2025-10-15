@@ -234,9 +234,9 @@ export default [{
         'react-hooks/error-boundaries': ERROR,
         'react-hooks/component-hook-factories': ERROR,
         'react-hooks/gating': ERROR,
-        // 'react-hooks/globals': ERROR,
+        'react-hooks/globals': ERROR,
         // 'react-hooks/immutability': ERROR,
-        // 'react-hooks/preserve-manual-memoization': ERROR,
+        // 'react-hooks/preserve-manual-memoization': ERROR, // No idea how to turn this one on yet
         'react-hooks/purity': ERROR,
         // 'react-hooks/refs': ERROR, // can't turn on until https://github.com/facebook/react/issues/34775 is fixed
         'react-hooks/set-state-in-effect': ERROR,
