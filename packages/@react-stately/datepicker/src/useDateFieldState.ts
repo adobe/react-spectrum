@@ -238,6 +238,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
   if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
+    // TODO: I don't know how to fix this one, the file is a bit crazy in terms of scoped variable sharing, I'm not sure if it's related to the useDateRangePickerState and useCheckboxGroupState reason
     validSegments = {...allSegments};
     setValidSegments(validSegments);
   }

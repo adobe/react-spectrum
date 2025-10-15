@@ -97,6 +97,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   let value = controlledValue || placeholderValue;
 
   let setValue = (newValue: RangeValue<DateValue | null> | null) => {
+    // TODO: I don't know how to fix this one
     value = newValue || {start: null, end: null};
     setPlaceholderValue(value);
     if (isCompleteRange(value)) {
@@ -203,6 +204,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     granularity,
     hasTime,
     setDate(part, date) {
+      // Both the start and end datefields update on form reset back to back, so this is a problem due to not supporting setState callbacks
       if (part === 'start') {
         setDateRange({start: date, end: dateRange?.end ?? null});
       } else {

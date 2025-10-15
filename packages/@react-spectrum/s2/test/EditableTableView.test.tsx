@@ -130,11 +130,11 @@ describe('TableView', () => {
     let [editableItems, setEditableItems] = useState(defaultItems);
     let intermediateValue = useRef<any>(null);
 
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
     let saveItem = useCallback((id: Key, columnId: Key) => {
       setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: {...i.isSaving, [columnId]: false}} : i));
       currentRequests.current.delete(id);
     }, []);
-    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
     let onChange = useCallback((id: Key, columnId: Key) => {
       let value = intermediateValue.current;
       if (value === null) {

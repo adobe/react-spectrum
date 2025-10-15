@@ -350,8 +350,8 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement | HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, TableContext);
+export const Table = forwardRef(function Table(outerProps: TableProps, outerRef: ForwardedRef<HTMLTableElement | HTMLDivElement>) {
+  let [props, ref] = useContextProps(outerProps, outerRef, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
   let selectionState = useMultipleSelectionState(props);

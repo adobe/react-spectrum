@@ -24,9 +24,9 @@ import {useTextField} from '@react-aria/textfield';
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */
-export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+export const TextArea = React.forwardRef(function TextArea(outerProps: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+  let withProviderProps = useProviderProps(outerProps);
+  let props = useFormProps(withProviderProps);
   let {
     isDisabled = false,
     isQuiet = false,

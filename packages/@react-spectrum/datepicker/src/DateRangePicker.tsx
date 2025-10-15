@@ -42,9 +42,9 @@ import {useProviderProps} from '@react-spectrum/provider';
  * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
  * to enter or select a date and time range.
  */
-export const DateRangePicker = React.forwardRef(function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProps<T>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+export const DateRangePicker = React.forwardRef(function DateRangePicker<T extends DateValue>(outerProps: SpectrumDateRangePickerProps<T>, ref: FocusableRef<HTMLElement>) {
+  let withProviderProps = useProviderProps(outerProps);
+  let props = useFormProps(withProviderProps);
   let {
     isQuiet,
     isDisabled,
@@ -101,8 +101,9 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
+  let newDescriptionProps = {...descriptionProps};
   if (description && !props.description) {
-    descriptionProps.id = undefined;
+    newDescriptionProps.id = undefined;
   }
 
   let placeholder: DateValue | null | undefined = placeholderValue;
@@ -125,7 +126,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
       elementType="span"
       description={description}
       labelProps={labelProps}
-      descriptionProps={descriptionProps}
+      descriptionProps={newDescriptionProps}
       errorMessageProps={errorMessageProps}
       validationState={validationState}
       isInvalid={isInvalid}

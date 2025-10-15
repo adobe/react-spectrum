@@ -70,23 +70,24 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
   // but when sent by context we want the title to win.
-  triggerProps.id = useId();
-  overlayProps['aria-labelledby'] = triggerProps.id;
+  let id = useId();
+  let newTriggerProps = {...triggerProps, id};
+  let newOverlayProps = {...overlayProps, 'aria-labelledby': id};
 
   return (
     <Provider
       values={[
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
-        [DialogContext, overlayProps],
+        [DialogContext, newOverlayProps],
         [PopoverContext, {
           trigger: 'DialogTrigger',
           triggerRef: buttonRef,
-          'aria-labelledby': overlayProps['aria-labelledby'],
+          'aria-labelledby': newOverlayProps['aria-labelledby'],
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressResponder {...newTriggerProps} ref={buttonRef} isPressed={state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>

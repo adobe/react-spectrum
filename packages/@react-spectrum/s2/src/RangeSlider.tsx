@@ -48,9 +48,9 @@ export const RangeSliderContext = createContext<ContextValue<Partial<RangeSlider
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(outerProps: RangeSliderProps, outerRef: FocusableRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
+  let [props, ref] = useSpectrumContextProps(outerProps, outerRef, RangeSliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {

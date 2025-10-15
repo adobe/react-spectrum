@@ -385,10 +385,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
   // Unlike "combobox", "aria-expanded" is not a valid attribute on "searchbox".
-  inputProps.role = 'searchbox';
-  inputProps['aria-haspopup'] = 'listbox';
-  delete inputProps['aria-expanded'];
-  delete inputProps.onTouchEnd;
+  let newInputProps = {...inputProps};
+  newInputProps.role = 'searchbox';
+  newInputProps['aria-haspopup'] = 'listbox';
+  delete newInputProps['aria-expanded'];
+  delete newInputProps.onTouchEnd;
 
   let clearButton = (
     <ClearButton
@@ -443,7 +444,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     popoverRef.current?.focus();
   }, [inputRef, popoverRef, isTouchDown]);
 
-  let inputValue = inputProps.value;
+  let inputValue = newInputProps.value;
   let lastInputValue = useRef(inputValue);
   useEffect(() => {
     if (loadingState === 'filtering' && !showLoading) {
@@ -477,7 +478,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
       popoverRef.current?.focus();
     } else {
-      inputProps.onKeyDown?.(e);
+      newInputProps.onKeyDown?.(e);
     }
   };
 
@@ -496,7 +497,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown}}
+          inputProps={{...newInputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

@@ -416,10 +416,11 @@ describe('CheckboxGroup', () => {
   });
 
   if (parseInt(React.version, 10) >= 19) {
-    it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
+    it.only('resets to defaultValue when submitting form action', async () => {
+      function Test() {
         const [value, formAction] = React.useActionState(() => ['dogs', 'cats'], []);
-        
+        console.log('value', value);
+
         return (
           <Provider theme={theme}>
             <form action={formAction}>
@@ -442,6 +443,7 @@ describe('CheckboxGroup', () => {
 
       let button = getByTestId('submit');
       await user.click(button);
+      console.log('after click');
       expect(checkboxes[0]).toBeChecked();
       expect(checkboxes[1]).toBeChecked();
       expect(checkboxes[2]).not.toBeChecked();
