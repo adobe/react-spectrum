@@ -79,6 +79,11 @@ export const Example: Story = {
           variant="accent">
           Show Long Toast
         </Button>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.info('LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.', {...args, onClose: action('onClose')})}
+          variant="accent">
+          Show Long Word Toast
+        </Button>
       </ButtonGroup>
     </>
   )

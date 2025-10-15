@@ -111,7 +111,7 @@ export default function Header(props: PageProps) {
             isSearchOpen={searchOpen}
             overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <Badge variant="informative" size="M" styles={style({marginEnd: 8})}>
+            <Badge variant="indigo" size="M" styles={style({marginEnd: 8})}>
               <BetaApp />
               <Text>Beta Preview</Text>
             </Badge>
