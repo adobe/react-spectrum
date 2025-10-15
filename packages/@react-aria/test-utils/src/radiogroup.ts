@@ -64,10 +64,16 @@ export class RadioGroupTester {
       radio = this.radios[radioIndexOrText];
     } else if (typeof radioIndexOrText === 'string') {
       let label = within(this.radiogroup).getByText(radioIndexOrText);
+      // Label may wrap the radio, or the actual label may be a sibling span, or the radio div could have the label within it
       if (label) {
         radio = within(label).queryByRole('radio');
         if (!radio) {
-          radio = label.closest('[role=radio]');
+          let labelWrapper = label.closest('label');
+          if (labelWrapper) {
+            radio = within(labelWrapper).queryByRole('radio');
+          } else {
+            radio = label.closest('[role=radio]');
+          }
         }
       }
     }
@@ -75,10 +81,14 @@ export class RadioGroupTester {
     return radio;
   }
 
-  // TODO: test all cases here (aka RTL/LTR/horizontal/vertical/index based keyboard movement)
   private async keyboardNavigateToRadio(opts: {radio: HTMLElement, orientation?: Orientation}) {
     let {radio, orientation = 'vertical'} = opts;
     let radios = this.radios;
+    radios = radios.filter(radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true'));
+    if (radios.length === 0) {
+      throw new Error('Radio group doesnt have any activatable radios. Please double check your radio group.');
+    }
+
     let targetIndex = radios.indexOf(radio);
     if (targetIndex === -1) {
       throw new Error('Radio provided is not in the radiogroup');
@@ -89,11 +99,11 @@ export class RadioGroupTester {
       if (selectedRadio != null) {
         act(() => selectedRadio.focus());
       } else {
-        act(() => radios.find(radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true'))?.focus());
+        act(() => radios[0]?.focus());
       }
     }
 
-    let currIndex = this.radios.indexOf(document.activeElement as HTMLElement);
+    let currIndex = radios.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the radiogroup');
     }

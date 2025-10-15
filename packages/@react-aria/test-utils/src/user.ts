@@ -17,6 +17,7 @@ import {
   GridListTesterOpts,
   ListBoxTesterOpts,
   MenuTesterOpts,
+  RadioGroupTesterOpts,
   SelectTesterOpts,
   TableTesterOpts,
   TabsTesterOpts,
@@ -28,6 +29,7 @@ import {GridListTester} from './gridlist';
 import {ListBoxTester} from './listbox';
 import {MenuTester} from './menu';
 import {pointerMap} from './';
+import {RadioGroupTester} from './radiogroup';
 import {SelectTester} from './select';
 import {TableTester} from './table';
 import {TabsTester} from './tabs';
@@ -35,25 +37,27 @@ import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
 let keyToUtil: {
-  'Select': typeof SelectTester,
-  'Table': typeof TableTester,
-  'Menu': typeof MenuTester,
   'ComboBox': typeof ComboBoxTester,
+  'Dialog': typeof DialogTester,
   'GridList': typeof GridListTester,
   'ListBox': typeof ListBoxTester,
+  'Menu': typeof MenuTester,
+  'RadioGroup': typeof RadioGroupTester,
+  'Select': typeof SelectTester,
+  'Table': typeof TableTester,
   'Tabs': typeof TabsTester,
-  'Tree': typeof TreeTester,
-  'Dialog': typeof DialogTester
+  'Tree': typeof TreeTester
 } = {
-  'Select': SelectTester,
-  'Table': TableTester,
-  'Menu': MenuTester,
   'ComboBox': ComboBoxTester,
+  'Dialog': DialogTester,
   'GridList': GridListTester,
   'ListBox': ListBoxTester,
+  'Menu': MenuTester,
+  'RadioGroup': RadioGroupTester,
+  'Select': SelectTester,
+  'Table': TableTester,
   'Tabs': TabsTester,
-  'Tree': TreeTester,
-  'Dialog': DialogTester
+  'Tree': TreeTester
 } as const;
 export type PatternNames = keyof typeof keyToUtil;
 
@@ -64,6 +68,7 @@ type Tester<T> =
   T extends 'GridList' ? GridListTester :
   T extends 'ListBox' ? ListBoxTester :
   T extends 'Menu' ? MenuTester :
+  T extends 'RadioGroup' ? RadioGroupTester :
   T extends 'Select' ? SelectTester :
   T extends 'Table' ? TableTester :
   T extends 'Tabs' ? TabsTester :
@@ -76,6 +81,7 @@ type TesterOpts<T> =
   T extends 'GridList' ? GridListTesterOpts :
   T extends 'ListBox' ? ListBoxTesterOpts :
   T extends 'Menu' ? MenuTesterOpts :
+  T extends 'RadioGroup' ? RadioGroupTesterOpts :
   T extends 'Select' ? SelectTesterOpts :
   T extends 'Table' ? TableTesterOpts :
   T extends 'Tabs' ? TabsTesterOpts :
