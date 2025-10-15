@@ -13,7 +13,7 @@
 import {disableTextSelection, restoreTextSelection}  from './textSelection';
 import {DOMAttributes, MoveEvents, PointerType} from '@react-types/shared';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
+import {useEffectEvent, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
 
 export interface MoveResult {
   /** Props to spread on the target element. */
@@ -88,7 +88,7 @@ export function useMove(props: MoveEvents): MoveResult {
   let endEvent = useEffectEvent(end);
 
   let [pointerDown, setPointerDown] = useState<'pointer' | 'mouse' | 'touch' | null>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pointerDown === 'pointer') {
       let onPointerMove = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
@@ -116,6 +116,11 @@ export function useMove(props: MoveEvents): MoveResult {
       addGlobalListener(window, 'pointermove', onPointerMove, false);
       addGlobalListener(window, 'pointerup', onPointerUp, false);
       addGlobalListener(window, 'pointercancel', onPointerUp, false);
+      return () => {
+        removeGlobalListener(window, 'pointermove', onPointerMove, false);
+        removeGlobalListener(window, 'pointerup', onPointerUp, false);
+        removeGlobalListener(window, 'pointercancel', onPointerUp, false);
+      };
     } else if (pointerDown === 'mouse' && process.env.NODE_ENV === 'test') {
       let onMouseMove = (e: MouseEvent) => {
         if (e.button === 0) {
@@ -133,6 +138,10 @@ export function useMove(props: MoveEvents): MoveResult {
       };
       addGlobalListener(window, 'mousemove', onMouseMove, false);
       addGlobalListener(window, 'mouseup', onMouseUp, false);
+      return () => {
+        removeGlobalListener(window, 'mousemove', onMouseMove, false);
+        removeGlobalListener(window, 'mouseup', onMouseUp, false);
+      };
     } else if (pointerDown === 'touch' && process.env.NODE_ENV === 'test') {
       let onTouchMove = (e: TouchEvent) => {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
@@ -156,6 +165,11 @@ export function useMove(props: MoveEvents): MoveResult {
       addGlobalListener(window, 'touchmove', onTouchMove, false);
       addGlobalListener(window, 'touchend', onTouchEnd, false);
       addGlobalListener(window, 'touchcancel', onTouchEnd, false);
+      return () => {
+        removeGlobalListener(window, 'touchmove', onTouchMove, false);
+        removeGlobalListener(window, 'touchend', onTouchEnd, false);
+        removeGlobalListener(window, 'touchcancel', onTouchEnd, false);
+      };
     }
   }, [pointerDown, addGlobalListener, removeGlobalListener]);
 

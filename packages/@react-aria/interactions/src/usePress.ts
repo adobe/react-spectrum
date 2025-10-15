@@ -29,6 +29,7 @@ import {
   openLink,
   useEffectEvent,
   useGlobalListeners,
+  useLayoutEffect,
   useSyncRef
 } from '@react-aria/utils';
 import {createSyntheticEvent, preventFocus, setEventTarget} from './utils';
@@ -195,7 +196,7 @@ export function usePress(props: PressHookProps): PressResult {
     disposables: []
   });
 
-  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+  let {addGlobalListener, removeAllGlobalListeners, removeGlobalListener} = useGlobalListeners();
 
   let triggerPressStart = useCallback((originalEvent: EventBase, pointerType: PointerType) => {
     let state = ref.current;
@@ -328,7 +329,7 @@ export function usePress(props: PressHookProps): PressResult {
   let triggerSyntheticClickEvent = useEffectEvent(triggerSyntheticClick);
 
   let [isElemKeyPressed, setIsElemKeyPressed] = useState<boolean>(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     let state = ref.current;
     if (isElemKeyPressed) {
       let onKeyUp = (e: KeyboardEvent) => {
@@ -378,12 +379,16 @@ export function usePress(props: PressHookProps): PressResult {
           triggerPressUpEvent(createEvent(state.target, e), 'keyboard');
         }
       };
-      addGlobalListener(getOwnerDocument(state.target), 'keyup', chain(pressUp, onKeyUp), true);
+      let listener = chain(pressUp, onKeyUp);
+      addGlobalListener(getOwnerDocument(state.target), 'keyup', listener, true);
+      return () => {
+        removeGlobalListener(getOwnerDocument(state.target), 'keyup', listener, true);
+      };
     }
-  }, [isElemKeyPressed, addGlobalListener, removeAllGlobalListeners]);
+  }, [isElemKeyPressed, addGlobalListener, removeAllGlobalListeners, removeGlobalListener]);
 
   let [isPointerPressed, setIsPointerPressed] = useState<'pointer' | 'mouse' | 'touch' | null>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     let state = ref.current;
     if (isPointerPressed === 'pointer') {
       let onPointerUp = (e: PointerEvent) => {
@@ -429,6 +434,10 @@ export function usePress(props: PressHookProps): PressResult {
 
       addGlobalListener(getOwnerDocument(state.target), 'pointerup', onPointerUp, false);
       addGlobalListener(getOwnerDocument(state.target), 'pointercancel', onPointerCancel, false);
+      return () => {
+        removeGlobalListener(getOwnerDocument(state.target), 'pointerup', onPointerUp, false);
+        removeGlobalListener(getOwnerDocument(state.target), 'pointercancel', onPointerCancel, false);
+      };
     } else if (isPointerPressed === 'mouse' && process.env.NODE_ENV === 'test') {
       let onMouseUp = (e: MouseEvent) => {
         // Only handle left clicks
@@ -452,6 +461,9 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       addGlobalListener(getOwnerDocument(state.target), 'mouseup', onMouseUp, false);
+      return () => {
+        removeGlobalListener(getOwnerDocument(state.target), 'mouseup', onMouseUp, false);
+      };
     } else if (isPointerPressed === 'touch' && process.env.NODE_ENV === 'test') {
       let onScroll = (e: Event) => {
         if (state.isPressed && nodeContains(getEventTarget(e), state.target)) {
@@ -466,8 +478,11 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       addGlobalListener(getOwnerWindow(state.target), 'scroll', onScroll, true);
+      return () => {
+        removeGlobalListener(getOwnerWindow(state.target), 'scroll', onScroll, true);
+      };
     }
-  }, [isPointerPressed, addGlobalListener]);
+  }, [isPointerPressed, addGlobalListener, removeGlobalListener]);
 
   let pressProps = useMemo(() => {
     let state = ref.current;
