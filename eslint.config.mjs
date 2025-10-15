@@ -239,7 +239,7 @@ export default [{
         // 'react-hooks/preserve-manual-memoization': ERROR,
         // 'react-hooks/purity': ERROR,
         // 'react-hooks/refs': ERROR,
-        // 'react-hooks/set-state-in-effect': ERROR,
+        'react-hooks/set-state-in-effect': ERROR,
         'react-hooks/set-state-in-render': ERROR,
         'react-hooks/static-components': ERROR,
         'react-hooks/unsupported-syntax': WARN,
