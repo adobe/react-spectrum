@@ -7,7 +7,8 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
-const OUT_DIR = path.resolve(__dirname, '../dist/data');
+// Output to s2/dist/data for @react-spectrum/mcp package
+const OUT_DIR = path.resolve(__dirname, '../s2/dist/data');
 
 const ICONS_DIR = path.resolve(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
 const ILLUSTRATIONS_DIR = path.resolve(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations/linear');

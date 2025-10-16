@@ -1,15 +1,9 @@
 {
-  "name": "@react-spectrum/mcp",
+  "name": "mcp-packages",
+  "private": true,
   "version": "0.1.0",
-  "description": "MCP server for React Spectrum (S2) and React Aria documentation",
+  "description": "Shared code for MCP servers",
   "type": "module",
-  "bin": "dist/index.js",
-  "scripts": {
-    "prepublishOnly": "yarn build",
-    "build": "node ./scripts/build-data.mjs && tsc -p tsconfig.json",
-    "start": "node dist/index.js",
-    "dev": "node --enable-source-maps dist/index.js"
-  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",
     "@swc/helpers": "^0.5.0",
@@ -18,13 +12,6 @@
   },
   "devDependencies": {
     "typescript": "^5.8.2"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
   },
   "repository": {
     "type": "git",
@@ -38,7 +25,5 @@
     "dist",
     "src"
   ],
-  "sideEffects": [
-    "*.css"
-  ]
+  "sideEffects": false
 }
