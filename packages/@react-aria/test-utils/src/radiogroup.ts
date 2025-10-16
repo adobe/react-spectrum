@@ -86,12 +86,12 @@ export class RadioGroupTester {
     let radios = this.radios;
     radios = radios.filter(radio => !(radio.hasAttribute('disabled') || radio.getAttribute('aria-disabled') === 'true'));
     if (radios.length === 0) {
-      throw new Error('Radio group doesnt have any activatable radios. Please double check your radio group.');
+      throw new Error('Radio group doesnt have any non-disabled radios. Please double check your radio group.');
     }
 
     let targetIndex = radios.indexOf(radio);
     if (targetIndex === -1) {
-      throw new Error('Radio provided is not in the radiogroup');
+      throw new Error('Radio provided is not in the radio group.');
     }
 
     if (!this.radiogroup.contains(document.activeElement)) {
@@ -105,7 +105,7 @@ export class RadioGroupTester {
 
     let currIndex = radios.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
-      throw new Error('ActiveElement is not in the radiogroup');
+      throw new Error('Active element is not in the radio group.');
     }
 
     let arrowUp = 'ArrowUp';
@@ -140,7 +140,7 @@ export class RadioGroupTester {
     }
 
     if (!radio) {
-      throw new Error('Target radio not found in the radiogroup.');
+      throw new Error('Target radio not found in the radio group.');
     } else if (radio.hasAttribute('disabled')) {
       throw new Error('Target radio is disabled.');
     }

@@ -69,9 +69,9 @@ describe('RadioGroup', () => {
     // instead of using ArrowLeft/ArrowRight
     await user.keyboard('[ArrowLeft]');
     if (props.locale === 'ar-AE' && props.orientation === 'horizontal') {
-      expect(radios[0]).toBeChecked();
+      expect(radioGroupTester.selectedRadio).toBe(radios[0]);
     } else {
-      expect(radios[3]).toBeChecked();
+      expect(radioGroupTester.selectedRadio).toBe(radios[3]);
     }
   });
 });

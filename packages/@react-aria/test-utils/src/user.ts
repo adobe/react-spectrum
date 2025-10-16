@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ComboBoxTester} from './combobox';
+import {CheckboxGroupTester} from './checkboxgroup';
 import {
+  CheckboxGroupTesterOpts,
   ComboBoxTesterOpts,
   DialogTesterOpts,
   GridListTesterOpts,
@@ -24,6 +25,7 @@ import {
   TreeTesterOpts,
   UserOpts
 } from './types';
+import {ComboBoxTester} from './combobox';
 import {DialogTester} from './dialog';
 import {GridListTester} from './gridlist';
 import {ListBoxTester} from './listbox';
@@ -37,6 +39,7 @@ import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
 let keyToUtil: {
+  'CheckboxGroup': typeof CheckboxGroupTester,
   'ComboBox': typeof ComboBoxTester,
   'Dialog': typeof DialogTester,
   'GridList': typeof GridListTester,
@@ -48,6 +51,7 @@ let keyToUtil: {
   'Tabs': typeof TabsTester,
   'Tree': typeof TreeTester
 } = {
+  'CheckboxGroup': CheckboxGroupTester,
   'ComboBox': ComboBoxTester,
   'Dialog': DialogTester,
   'GridList': GridListTester,
@@ -63,6 +67,7 @@ export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 type Tester<T> =
+  T extends 'CheckboxGroup' ? CheckboxGroupTester :
   T extends 'ComboBox' ? ComboBoxTester :
   T extends 'Dialog' ? DialogTester :
   T extends 'GridList' ? GridListTester :
@@ -76,6 +81,7 @@ type Tester<T> =
   never;
 
 type TesterOpts<T> =
+  T extends 'CheckboxGroup' ? CheckboxGroupTesterOpts :
   T extends 'ComboBox' ? ComboBoxTesterOpts :
   T extends 'Dialog' ? DialogTesterOpts :
   T extends 'GridList' ? GridListTesterOpts :

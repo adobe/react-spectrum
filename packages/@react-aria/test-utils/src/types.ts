@@ -39,6 +39,8 @@ export interface BaseTesterOpts extends UserOpts {
   root: HTMLElement
 }
 
+export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
+
 export interface ComboBoxTesterOpts extends BaseTesterOpts {
   /**
    * The base element for the combobox. If provided the wrapping element around the target combobox (as is the the case with a ref provided to RSP ComboBox),
