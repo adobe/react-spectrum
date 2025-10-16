@@ -17,6 +17,7 @@ import {
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
   TagProps as AriaTagProps,
+  ButtonContext as RACButtonContext,
   composeRenderProps,
   ContextValue,
   Provider,
@@ -522,7 +523,10 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphasized, isSelected}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
   return (
-    <>
+    <Provider
+      values={[
+        [RACButtonContext, null]
+      ]}>
       {isInRealDOM && (
         <div
           className={style({
@@ -567,6 +571,6 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
           isStaticColor={isEmphasized && isSelected}
           isDisabled={isDisabled} />
       )}
-    </>
+    </Provider>
   );
 }
