@@ -105,12 +105,12 @@ function escapeCSV(value) {
     return '';
   }
 
-  // normalize newlines for CSV compatibility
+  // Normalize newlines for CSV compatibility
   let stringValue = String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-  // escape any internal double quotes
+  // Escape any internal double quotes
   let escaped = stringValue.replace(/"/g, '""');
 
-  // wrap in quotes so commas/newlines don't break the cell
+  // Wrap in quotes so commas/newlines don't break the cell
   return `"${escaped}"`;
 }
