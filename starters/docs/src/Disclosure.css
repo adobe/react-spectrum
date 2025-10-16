@@ -1,22 +1,43 @@
 @import "./theme.css";
 
 .react-aria-Disclosure {
-  width: 100%;
+  width: calc(var(--spacing) * 50);
 
   .react-aria-Heading {
     margin: 0;
-    padding: 0.5em 0;
   }
 
-  .react-aria-Button[slot=trigger] {
+  .disclosure-button {
     background: none;
     border: none;
     box-shadow: none;
-    font-weight: bold;
-    font-size: 16px;
+    text-shadow: none;
+    width: 100%;
+    color: var(--text-color);
+    font: var(--font-size) system-ui;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    text-align: start;
+    gap: var(--spacing-1);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius);
+    transition: all 200ms;
+    -webkit-tap-highlight-color: transparent;
+
+    &[data-hovered],
+    &[data-pressed] {
+      background: var(--gray-300);
+      color: var(--text-color-hover)
+    }
+
+    &[data-pressed] {
+      scale: 0.97;
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
 
     svg {
       rotate: 0deg;
@@ -27,13 +48,12 @@
     }
   }
 
-  &[data-expanded] .react-aria-Button[slot=trigger] svg {
+  &[data-expanded] .disclosure-button svg {
     rotate: 90deg;
   }
 }
 
 .react-aria-DisclosurePanel {
-  margin-left: 26px;
   color: var(--text-color);
   height: var(--disclosure-panel-height);
   transition: height 250ms;
@@ -41,5 +61,9 @@
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+
+  div {
+    padding: var(--spacing-2) var(--spacing-4);
   }
 }

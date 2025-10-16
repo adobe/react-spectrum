@@ -11,11 +11,11 @@ import {GripVertical} from 'lucide-react';
 import './GridList.css';
 
 export function GridList<T extends object>(
-  { children, ...props }: GridListProps<T>
+  { children, layout = 'grid', ...props }: GridListProps<T>
 ) {
   return (
     (
-      <AriaGridList {...props}>
+      <AriaGridList {...props} layout={layout}>
         {children}
       </AriaGridList>
     )

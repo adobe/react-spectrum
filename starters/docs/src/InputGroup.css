@@ -1,31 +1,24 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .input-group {
   .react-aria-Group {
     display: flex;
     align-items: center;
     width: fit-content;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background: var(--field-background);
+    padding: 0 var(--spacing-2);
+    border-radius: var(--radius);
+    font-size: var(--font-size);
+    color: var(--field-text-color);
     overflow: hidden;
-    transition: all 200ms;
-
-    &[data-hovered] {
-      border-color: var(--border-color-hover);
-    }
+    height: 32px;
 
     &[data-focus-within] {
       outline: 2px solid var(--focus-ring-color);
       outline-offset: -1px;
     }
 
-    &[data-invalid] {
-      border-color: var(--invalid-color);
-    }
-
     &[data-disabled] {
-      border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
     }
   }
@@ -38,6 +31,7 @@
     outline: none;
     border: none;
     background: transparent;
+    box-shadow: none;
 
     &:disabled {
       color: var(--text-color-disabled);

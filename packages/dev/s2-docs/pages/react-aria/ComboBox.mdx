@@ -14,7 +14,7 @@ export const tags = ['autocomplete', 'search', 'typeahead', 'input'];
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select a flavor'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
@@ -28,7 +28,7 @@ export const tags = ['autocomplete', 'search', 'typeahead', 'input'];
   </ComboBox>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select a flavor'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 
@@ -82,7 +82,11 @@ function Example() {
   /*- end collapse -*/
 
   return (
-    <ComboBox label="Preferred fruit or vegetable" items={options}>
+    /*- begin highlight -*/
+    <ComboBox
+      label="Preferred fruit or vegetable"
+      placeholder="Select an option"
+      items={options}>
       {section => (
         <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
@@ -92,6 +96,7 @@ function Example() {
         </ListBoxSection>
       )}
     </ComboBox>
+    /*- end highlight -*/
   );
 }
 ```
@@ -112,7 +117,8 @@ function Example() {
   return (
     <div>
       <ComboBox
-        label="Pick an animal"
+        label="Favorite Animal"
+        placeholder="Select an animal"
         /*- begin highlight -*/
         selectedKey={animal}
         onSelectionChange={setAnimal}>
@@ -148,6 +154,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Favorite Animal"
+        placeholder="Select an animal"
         /*- begin highlight -*/
         /* PROPS */
         inputValue={value}
@@ -215,7 +222,8 @@ function ControlledComboBox() {
   return (
     <div>
        <ComboBox
-        label="Pick a engineering major"
+        label="Engineering major"
+        placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
         selectedKey={fieldState.selectedKey}
@@ -249,6 +257,7 @@ function Example() {
   return (
     <ComboBox
       label="Favorite Animal"
+      placeholder="Select an animal"
       allowsEmptyCollection
       inputValue={inputValue}
       onInputChange={setInputValue}>
@@ -278,11 +287,12 @@ Use the `name` prop to submit the `id` of the selected item to the server. Set t
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 <Form>
   <ComboBox
     label="Animal"
+    placeholder="e.g. Cat"
     /*- begin highlight -*/
     name="animal"
     isRequired
@@ -309,7 +319,7 @@ Use the `menuTrigger` prop to control when the popover opens:
 
 Use `allowsEmptyCollection` to keep the popover open when there are no items available in the list.
 
-```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['menuTrigger', 'allowsEmptyCollection']} initialProps={{label: 'Favorite Animal'}}
+```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['menuTrigger', 'allowsEmptyCollection']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}}
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 

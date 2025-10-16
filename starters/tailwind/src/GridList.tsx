@@ -4,6 +4,7 @@ import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
   Button,
+  composeRenderProps,
   GridListItemProps,
   GridListProps
 } from 'react-aria-components';
@@ -15,7 +16,7 @@ export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>
 ) {
   return (
-    <AriaGridList {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border border-gray-200 dark:border-zinc-600 rounded-lg')}>
+    <AriaGridList {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto w-[200px] relative bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg font-sans')}>
       {children}
     </AriaGridList>
   );
@@ -39,7 +40,7 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props} className={itemStyles}>
-      {({ selectionMode, selectionBehavior, allowsDragging }) => (
+      {composeRenderProps(children, (children, {selectionMode, selectionBehavior, allowsDragging}) => (
         <>
           {/* Add elements for drag and drop and selection. */}
           {allowsDragging && <Button slot="drag">≡</Button>}
@@ -48,7 +49,7 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
           )}
           {children}
         </>
-      )}
+      ))}
     </AriaGridListItem>
   );
 }

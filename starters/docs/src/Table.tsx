@@ -3,7 +3,7 @@ import {
   Button,
   Collection,
   Column as AriaColumn,
-  ColumnProps,
+  ColumnProps as AriaColumnProps,
   Row as AriaRow,
   RowProps,
   Table as AriaTable,
@@ -14,7 +14,9 @@ import {
   TableBodyProps,
   TableBody as AriaTableBody,
   CellProps,
-  Cell as AriaCell
+  Cell as AriaCell,
+  ColumnResizer,
+  Group
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {ChevronUp, ChevronDown, GripVertical} from 'lucide-react';
@@ -24,24 +26,32 @@ export function Table(props: TableProps) {
   return <AriaTable {...props} />;
 }
 
+interface ColumnProps extends AriaColumnProps {
+  allowsResizing?: boolean
+}
+
 export function Column(
   props: Omit<ColumnProps, 'children'> & { children?: React.ReactNode }
 ) {
   return (
-    (
-      <AriaColumn {...props}>
-        {({ allowsSorting, sortDirection }) => (
-          <div className="column-header">
+    <AriaColumn {...props} className="react-aria-Column button-base">
+      {({ allowsSorting, sortDirection }) => (
+        <div className="column-header">
+          <Group
+            role="presentation"
+            tabIndex={-1}
+            className="column-name">
             {props.children}
-            {allowsSorting && (
-              <span aria-hidden="true" className="sort-indicator">
-                {sortDirection === 'ascending' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              </span>
-            )}
-          </div>
-        )}
-      </AriaColumn>
-    )
+          </Group>
+          {allowsSorting && (
+            <span aria-hidden="true" className="sort-indicator">
+              {sortDirection === 'ascending' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </span>
+          )}
+          {props.allowsResizing && <ColumnResizer />}
+        </div>
+      )}
+    </AriaColumn>
   );
 }
 
@@ -54,9 +64,9 @@ export function TableHeader<T extends object>(
     (
       <AriaTableHeader {...otherProps}>
         {/* Add extra columns for drag and drop and selection. */}
-        {allowsDragging && <AriaColumn />}
+        {allowsDragging && <AriaColumn width={20} minWidth={20} style={{width: 20}} className="react-aria-Column button-base" />}
         {selectionBehavior === 'toggle' && (
-          <AriaColumn width={40} minWidth={0}>
+          <AriaColumn width={32} minWidth={32} style={{width: 32}} className="react-aria-Column button-base">
             {selectionMode === 'multiple' && <Checkbox slot="selection" />}
           </AriaColumn>
         )}
@@ -78,7 +88,7 @@ export function Row<T extends object>(
       <AriaRow id={id} {...otherProps}>
         {allowsDragging && (
           <Cell>
-            <Button slot="drag"><GripVertical size={16} /></Button>
+            <Button slot="drag" className="drag-button"><GripVertical /></Button>
           </Cell>
         )}
         {selectionBehavior === 'toggle' && (

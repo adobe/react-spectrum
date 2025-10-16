@@ -2,7 +2,7 @@
 
 .react-aria-Link {
   color: var(--link-color);
-  font-size: 18px;
+  font-size: var(--font-size);
   transition: all 200ms;
   text-decoration: underline;
   cursor: pointer;
@@ -10,19 +10,16 @@
   position: relative;
 
   &[data-hovered] {
-    text-decoration-style: wavy;
+    text-decoration-thickness: 1.5px;
   }
 
   &[data-pressed] {
     color: var(--link-color-pressed);
   }
 
-  &[data-focus-visible]:after {
-    content: '';
-    position: absolute;
-    inset: -3px -6px;
-    border-radius: 6px;
-    border: 2px solid var(--focus-ring-color);
+  &[data-focus-visible] {
+    border-radius: var(--radius-sm);
+    outline: 2px solid var(--focus-ring-color);
   }
 
   &[data-disabled] {

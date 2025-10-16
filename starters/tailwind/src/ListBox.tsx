@@ -21,7 +21,7 @@ export function ListBox<T extends object>(
   { children, ...props }: ListBoxProps<T>
 ) {
   return (
-    <AriaListBox {...props} className={composeTailwindRenderProps(props.className, 'outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg')}>
+    <AriaListBox {...props} className={composeTailwindRenderProps(props.className, 'outline-0 p-1 w-[200px] bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg font-sans')}>
       {children}
     </AriaListBox>
   );

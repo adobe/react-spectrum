@@ -15,13 +15,13 @@ import {Button} from 'tailwind-starter/Button';
 import {Cell, Column, Row, TableHeader} from 'tailwind-starter/Table';
 import {Checkbox} from 'tailwind-starter/Checkbox';
 import {CloudSun, Dessert, Droplet, Droplets, FilterIcon, Mail, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon, Twitter} from 'lucide-react';
-import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, SubmenuTrigger, Table, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
+import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
 import {focusRing} from 'tailwind-starter/utils';
 import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
-import {Menu, MenuItem} from 'tailwind-starter/Menu';
+import {MenuTrigger, Menu, MenuItem, SubmenuTrigger} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
 import plants, {Plant} from './plants';
 import {Popover} from 'tailwind-starter/Popover';
@@ -41,7 +41,7 @@ const allColumns: ColumnProps[] = [
   {id: 'cycle', children: 'Cycle', defaultWidth: 120, allowsSorting: true},
   {id: 'sunlight', children: 'Sunlight', defaultWidth: 120, allowsSorting: true},
   {id: 'watering', children: 'Watering', defaultWidth: 120, allowsSorting: true},
-  {id: 'actions', children: <VisuallyHidden>Actions</VisuallyHidden>, width: 44, minWidth: 44}
+  {id: 'actions', children: <VisuallyHidden>Actions</VisuallyHidden>, width: 64, minWidth: 64}
 ];
 
 let hideOnScroll = document.getElementById('hideOnScroll');
@@ -238,7 +238,7 @@ export function ExampleApp(): React.ReactNode {
                 <span className="truncate capitalize">{item.common_name}</span>
                 <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
                 <MenuTrigger>
-                  <Button aria-label="Actions" variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
+                  <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
                   <Menu placement="bottom end" onAction={action => onAction(item, action)}>
                     <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                     <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
@@ -296,7 +296,7 @@ export function ExampleApp(): React.ReactNode {
                       return (
                         <Cell>
                           <MenuTrigger>
-                            <Button aria-label="Actions" variant="icon">
+                            <Button aria-label="Actions" variant="secondary">
                               <MoreHorizontal aria-hidden className="w-5 h-5" />
                             </Button>
                             <Menu onAction={action => onAction(item, action)}>

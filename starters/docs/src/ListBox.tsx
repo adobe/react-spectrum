@@ -3,10 +3,13 @@ import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
   ListBoxSection as AriaListBoxSection,
+  composeRenderProps,
   ListBoxItemProps,
   ListBoxProps,
   ListBoxSectionProps
 } from 'react-aria-components';
+import {Check} from 'lucide-react';
+import {Text} from './Content';
 
 import './ListBox.css';
 
@@ -23,9 +26,28 @@ export function ListBox<T extends object>(
 }
 
 export function ListBoxItem(props: ListBoxItemProps) {
-  return <AriaListBoxItem {...props} />;
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  return (
+    <AriaListBoxItem {...props} textValue={textValue}>
+      {composeRenderProps(props.children, (children) => (
+        typeof children === 'string' ? <Text slot="label">{children}</Text> : children
+      ))}
+    </AriaListBoxItem>
+  );
 }
 
 export function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>) {
   return <AriaListBoxSection {...props} />;
+}
+
+export function DropdownItem(props: ListBoxItemProps) {
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  return (
+    <ListBoxItem {...props} textValue={textValue} className="dropdown-item">
+      {composeRenderProps(props.children, (children, {isSelected}) => (<>
+        {isSelected && <Check />}
+        {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
+      </>))}
+    </ListBoxItem>
+  );
 }

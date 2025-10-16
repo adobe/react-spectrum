@@ -27,15 +27,15 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 export function Table(props: TableProps) {
   return (
-    <ResizableTableContainer className="max-h-[320px] max-w-[480px] overflow-auto scroll-pt-[2.281rem] relative border border-gray-200 dark:border-zinc-600 rounded-lg">
-      <AriaTable {...props} className="border-separate border-spacing-0" />
+    <ResizableTableContainer className="w-full max-h-[320px] overflow-auto scroll-pt-[2.281rem] relative bg-white dark:bg-zinc-900 box-border border border-gray-300 dark:border-zinc-600 rounded-lg font-sans">
+      <AriaTable {...props} className="border-separate border-spacing-0 box-border overflow-hidden" />
     </ResizableTableContainer>
   );
 }
 
 const columnStyles = tv({
   extend: focusRing,
-  base: 'px-2 h-5 flex-1 flex gap-1 items-center overflow-hidden'
+  base: 'px-2 h-5 box-border flex-1 flex gap-1 items-center overflow-hidden'
 });
 
 const resizerStyles = tv({
@@ -45,7 +45,7 @@ const resizerStyles = tv({
 
 export function Column(props: ColumnProps) {
   return (
-    <AriaColumn {...props} className={composeTailwindRenderProps(props.className, '[&:hover]:z-20 focus-within:z-20 text-start text-sm font-semibold text-gray-700 dark:text-zinc-300 cursor-default')}>
+    <AriaColumn {...props} className={composeTailwindRenderProps(props.className, 'box-border [&:hover]:z-20 focus-within:z-20 text-start text-sm font-semibold text-gray-700 dark:text-zinc-300 cursor-default')}>
       {composeRenderProps(props.children, (children, { allowsSorting, sortDirection }) => (
         <div className="flex items-center">
           <Group
@@ -79,7 +79,7 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && (
-        <AriaColumn width={36} minWidth={36} className="p-2 text-sm font-semibold cursor-default text-start">
+        <AriaColumn width={36} minWidth={36} className="box-border p-2 text-sm font-semibold cursor-default text-start">
           {selectionMode === 'multiple' && <Checkbox slot="selection" />}
         </AriaColumn>
       )}
@@ -121,7 +121,7 @@ export function Row<T extends object>(
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'border-b border-b-gray-200 dark:border-b-zinc-700 group-last/row:border-b-0 [--selected-border:var(--color-blue-200)] dark:[--selected-border:var(--color-blue-900)] group-selected/row:border-(--selected-border) in-[:has(+[data-selected])]:border-(--selected-border) p-2 truncate -outline-offset-2'
+  base: 'box-border border-b border-b-gray-200 dark:border-b-zinc-700 group-last/row:border-b-0 [--selected-border:var(--color-blue-200)] dark:[--selected-border:var(--color-blue-900)] group-selected/row:border-(--selected-border) in-[:has(+[data-selected])]:border-(--selected-border) p-2 truncate -outline-offset-2'
 });
 
 export function Cell(props: CellProps) {
