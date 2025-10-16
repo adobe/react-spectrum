@@ -354,7 +354,10 @@ export const Table = forwardRef(function Table(props: TableProps, ref: Forwarded
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
-  let selectionState = useMultipleSelectionState(props);
+  let selectionState = useMultipleSelectionState({
+    ...props,
+    disabledBehavior: props.disabledBehavior || 'selection'
+  });
   let {selectionBehavior, selectionMode, disallowEmptySelection} = selectionState;
   let hasDragHooks = !!props.dragAndDropHooks?.useDraggableCollectionState;
   let ctx = useMemo(() => ({
