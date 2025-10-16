@@ -978,7 +978,6 @@ describe('Radios', function () {
       expect(radios[4]).toBeChecked();
 
       let radio4 = radioGroupTester.findRadio({radioIndexOrText: 3});
-      console.log('radio4', radio4.outerHTML);
       await radioGroupTester.triggerRadio({radio: radio4, interactionType: 'keyboard'});
       expect(radios[3]).toBeChecked();
 
