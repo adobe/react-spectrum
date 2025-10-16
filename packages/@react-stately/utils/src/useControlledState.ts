@@ -12,9 +12,9 @@
 
 import React, {SetStateAction, useCallback, useEffect, useRef, useState} from 'react';
 
-// Copied from @react-aria/utils
-const useLayoutEffect: typeof React.useLayoutEffect = typeof document !== 'undefined'
-  ? React.useLayoutEffect
+// Use the earliest effect possible to reset the ref below.
+const useEarlyEffect: typeof React.useLayoutEffect = typeof document !== 'undefined'
+  ? React['useInsertionEffect'] ?? React.useLayoutEffect
   : () => {};
 
 export function useControlledState<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void];
@@ -39,7 +39,7 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
   // This ensures that the setState callback argument is reset.
   // Note: the effect should not have any dependencies so that controlled values always reset.
   let currentValue = isControlled ? value : stateValue;
-  useLayoutEffect(() => {
+  useEarlyEffect(() => {
     valueRef.current = currentValue;
   });
 
