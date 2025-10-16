@@ -21,7 +21,7 @@ import {DatePicker} from 'tailwind-starter/DatePicker';
 import {focusRing} from 'tailwind-starter/utils';
 import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
-import {MenuTrigger, Menu, MenuItem, SubmenuTrigger} from 'tailwind-starter/Menu';
+import {Menu, MenuItem, MenuTrigger, SubmenuTrigger} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
 import plants, {Plant} from './plants';
 import {Popover} from 'tailwind-starter/Popover';
