@@ -98,12 +98,12 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-      if (!selectedValues.includes(value)) {
-        selectedValues = selectedValues.concat(value);
-        setValue(selectedValues);
-        // TODO: I don't know how to fix this one, we shared the variable so that when each individual checkbox updates during the reset (all back to back) we'd use the correct value
-        // Otherwise we update the base state each time and never accumulate. It's all because we don't support setState callbacks.
-      }
+      setValue(selectedValues => {
+        if (!selectedValues.includes(value)) {
+          return selectedValues.concat(value);
+        }
+        return selectedValues;
+      });
     },
     removeValue(value) {
       if (props.isReadOnly || props.isDisabled) {
