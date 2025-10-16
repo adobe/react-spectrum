@@ -237,9 +237,9 @@ export function ExampleApp(): React.ReactNode {
                 <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-3 object-contain h-[40px]" />
                 <span className="truncate capitalize">{item.common_name}</span>
                 <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
-                <MenuTrigger>
+                <MenuTrigger placement="bottom end" >
                   <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
-                  <Menu placement="bottom end" onAction={action => onAction(item, action)}>
+                  <Menu onAction={action => onAction(item, action)}>
                     <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                     <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
                     <MenuItem id="delete"><TrashIcon aria-hidden className="w-4 h-4" /> Delete…</MenuItem>
