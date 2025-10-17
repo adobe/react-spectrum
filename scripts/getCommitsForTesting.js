@@ -17,7 +17,12 @@ writeTestingCSV();
 
 async function writeTestingCSV() {
   let data = await listCommits();
-  let prs = [];
+
+  let s2PRs = [];
+  let racPRs = [];
+  let v3PRs = [];
+  let otherPRs = [];
+
   for (let d of data) {
     let row = [];
 
@@ -25,38 +30,68 @@ async function writeTestingCSV() {
     let regex = /\(#(\d+)\)/g;
     let messages = d.commit.message.split('\n');
     let title = messages[0];
-    row.push(title)
-
+    row.push(title);
 
     // Get info about the PR using PR number
     if (regex.test(title)) {
       let num = title.match(regex)[0].replace(/[\(\)#]/g, '');
       let info = await getPR(num);
 
-      // Get testing instructions if it exists
-      let content = info.data.body;
-      const match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
-      let testInstructions = '';
-      if (match) {
-        testInstructions = match[1];
-        testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
-        testInstructions = testInstructions.trim();
-      }
+      // Check for "needs testing" label on the PR
+      if (isReadyForTesting(info.data.labels)) {
+        // Get testing instructions if it exists
+        let content = info.data.body;
+        const match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
+        let testInstructions = '';
+        if (match) {
+          testInstructions = match[1];
+          testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
+          testInstructions = testInstructions.trim();
+          testInstructions = escapeCSV(testInstructions);
+        }
 
-      row.push(escapeCSV(testInstructions));
-      row.push(info.data.html_url)
+        if (testInstructions.length > 350) {
+          row.push('See PR for testing instructions');
+        } else {
+          row.push(testInstructions);
+        }
+        row.push(info.data.html_url);
+
+        if ((/\bs2\b/gi).test(title)) {
+          s2PRs.push(row);
+        } else if ((/\brac\b/gi).test(title)) {
+          racPRs.push(row);
+        } else if ((/\bv3\b/gi).test(title)) {
+          v3PRs.push(row);
+        } else {
+          otherPRs.push(row);
+        }
+      }
     }
-    prs.push(row);
   }
 
   let csvRows = '';
-  for (let pr of prs) {
-    csvRows += pr.join();
-    csvRows += '\n'
+  csvRows += 'V3 \n';
+  for (let v3 of v3PRs) {
+    csvRows += v3.join() + '\n';
   }
 
-  fs.writeFileSync('output.csv', csvRows, 'utf-8')
+  csvRows += '\nRainbow \n'
+  for (let s2 of s2PRs) {
+    csvRows += s2.join() + '\n';
+  }
 
+  csvRows += '\nRAC \n'
+  for (let rac of racPRs) {
+    csvRows += rac.join() + '\n';
+  }
+
+  csvRows += '\nOther \n'
+  for (let other of otherPRs) {
+    csvRows += other.join() + '\n';
+  }
+
+  fs.writeFileSync('output.csv', csvRows, 'utf-8');
 }
 
 async function listCommits() {
@@ -73,7 +108,7 @@ async function listCommits() {
   let endDate = new Date(end).toISOString();
 
   if (isNaN(startDate) || isNaN(endDate)) {
-    console.error('Please verify that your date is correctly formatted')
+    console.error('Please verify that your date is correctly formatted');
   }
 
   let res = await octokit.request(`GET /repos/adobe/react-spectrum/commits?sha=main&since=${startDate}&until=${endDate}`, {
@@ -82,7 +117,7 @@ async function listCommits() {
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
-  })
+  });
 
   return res.data;
 }
@@ -95,9 +130,8 @@ async function getPR(num) {
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
-  })
-
-  return res
+  });
+  return res;
 }
 
 function escapeCSV(value) {
@@ -113,4 +147,18 @@ function escapeCSV(value) {
 
   // Wrap in quotes so commas/newlines don't break the cell
   return `"${escaped}"`;
+}
+
+
+function isReadyForTesting(labels){
+  if (labels.length === 0) {
+    return false;
+  }
+  for (let label of labels) {
+    if (label.name === 'needs testing') {
+      return true;
+    }
+  }
+
+  return false;
 }
