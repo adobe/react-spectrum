@@ -319,11 +319,13 @@ function TagGroupInner<T>({
                 })}>
                 {allItems.map(item => {
                   // pull off individual props as an allow list, don't want refs or other props getting through
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  let {ref, ...itemProps} = item.props;
                   return (
                     <div
-                      style={item.props.UNSAFE_style}
+                      style={itemProps.UNSAFE_style}
                       key={item.key}
-                      className={item.props.className({size, allowsRemoving: Boolean(onRemove)})}>
+                      className={itemProps.className({size, allowsRemoving: Boolean(onRemove)})}>
                       <TagWrapper
                         key={item.key}
                         id={item.key}
@@ -331,8 +333,8 @@ function TagGroupInner<T>({
                         isInRealDOM
                         size={size}
                         allowsRemoving={!!onRemove}
-                        {...item.props}
-                        children={item.props.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})} />
+                        {...itemProps}
+                        children={itemProps.children({size, allowsRemoving: Boolean(onRemove), isInCtx: true})} />
                     </div>
                   );
                 })}
