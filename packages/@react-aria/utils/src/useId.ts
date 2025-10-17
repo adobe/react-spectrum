@@ -26,10 +26,11 @@ export let idsUpdaterMap: Map<string, { current: string | null }[]> = new Map();
 // This allows us to clean up the idsUpdaterMap when the id is no longer used.
 // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
 // This can happen in suspended components where mount/unmount is not called.
-let registry;
+let registry: FinalizationRegistry<[string, (id: string) => void]> | undefined;
 if (typeof FinalizationRegistry !== 'undefined') {
-  registry = new FinalizationRegistry<string>((heldValue) => {
-    idsUpdaterMap.delete(heldValue);
+  registry = new FinalizationRegistry(([id, cleanupCallback]) => {
+    idsUpdaterMap.delete(id);
+    cleanupCallback(id);
   });
 }
 
@@ -37,15 +38,16 @@ if (typeof FinalizationRegistry !== 'undefined') {
  * If a default is not provided, generate an id.
  * @param defaultId - Default component id.
  */
-export function useId(defaultId?: string): string {
+export function useId(defaultId?: string, cleanupCallback?: (id: string) => void): string {
   let [value, setValue] = useState(defaultId);
   let nextId = useRef(null);
 
   let res = useSSRSafeId(value);
   let cleanupRef = useRef(null);
+  let cleanup = useCallback((id: string) => cleanupCallback?.(id), [cleanupCallback]);
 
   if (registry) {
-    registry.register(cleanupRef, res);
+    registry.register(cleanupRef, [res, cleanup]);
   }
 
   if (canUseDOM) {
@@ -66,8 +68,9 @@ export function useId(defaultId?: string): string {
         registry.unregister(cleanupRef);
       }
       idsUpdaterMap.delete(r);
+      cleanup(r);
     };
-  }, [res]);
+  }, [res, cleanup]);
 
   // This cannot cause an infinite loop because the ref is always cleaned up.
   // eslint-disable-next-line
