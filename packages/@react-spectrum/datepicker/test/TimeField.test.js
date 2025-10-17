@@ -287,6 +287,7 @@ describe('TimeField', function () {
       expect(input).toHaveAttribute('name', 'time');
       fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
       fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      await user.keyboard('[Tab][Tab][Tab][Tab]');
       expect(getDescription()).toBe('Selected Time: 9:30 AM');
       expect(input).toHaveValue('09:30:00');
 
@@ -381,6 +382,7 @@ describe('TimeField', function () {
 
           await user.tab({shift: true});
           expect(getDescription()).not.toContain('Value must be 9:00 AM or later.');
+          expect(input.validity.valid).toBe(true);
 
           await user.tab();
           await user.keyboard('6[Tab][ArrowUp]');
@@ -390,6 +392,7 @@ describe('TimeField', function () {
 
           act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
+          expect(input.validity.valid).toBe(false);
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
           await user.keyboard('[ArrowDown]');
@@ -398,6 +401,7 @@ describe('TimeField', function () {
           act(() => document.activeElement.blur());
 
           expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier.');
+          expect(input.validity.valid).toBe(true);
         });
 
         it('supports validate function', async () => {
@@ -424,7 +428,7 @@ describe('TimeField', function () {
           await user.keyboard('10');
 
           expect(getDescription()).toContain('Invalid value');
-          expect(input.validity.valid).toBe(true);
+          expect(input.validity.valid).toBe(false);
 
           act(() => document.activeElement.blur());
 
@@ -530,13 +534,13 @@ describe('TimeField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
 
-          await user.keyboard('[Tab][ArrowUp]');
+          await user.keyboard('[Tab][ArrowUp][Tab][Tab][Tab]');
           expect(getDescription()).not.toContain('Value must be 9:00 AM or later');
 
-          await user.keyboard('6[Tab][ArrowUp]');
+          await user.keyboard('[Tab]6[Tab][ArrowUp][Tab][Tab][Tab]');
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier');
 
-          await user.keyboard('[Tab][Tab][ArrowDown]');
+          await user.keyboard('[Tab][ArrowDown][Tab][Tab]');
           expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier');
         });
 
@@ -554,7 +558,7 @@ describe('TimeField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Invalid value');
 
-          await user.keyboard('[Tab]10');
+          await user.keyboard('[Tab]10[Tab][Tab]');
           expect(getDescription()).not.toContain('Invalid value');
         });
 
