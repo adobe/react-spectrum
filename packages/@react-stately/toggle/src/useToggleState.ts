@@ -24,10 +24,10 @@ export interface ToggleState {
   readonly defaultSelected: boolean,
 
   /** Updates selection state. */
-  setSelected(isSelected: boolean): void,
+  setSelected: (isSelected: boolean) => void,
 
   /** Toggle the selection state. */
-  toggle(): void
+  toggle: () => void
 }
 
 /**

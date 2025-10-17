@@ -17,11 +17,11 @@ export interface AutocompleteState {
   /** The current value of the autocomplete input. */
   inputValue: string,
   /** Sets the value of the autocomplete input. */
-  setInputValue(value: string): void,
+  setInputValue: (value: string) => void,
   /** The id of the current aria-activedescendant of the autocomplete input. */
   focusedNodeId: string | null,
   /** Sets the id of the current aria-activedescendant of the autocomplete input. */
-  setFocusedNodeId(value: string | null): void
+  setFocusedNodeId: (value: string | null) => void
 }
 
 export interface AutocompleteProps {

@@ -40,15 +40,15 @@ export interface QueuedToast<T> extends ToastOptions {
 
 export interface ToastState<T> {
   /** Adds a new toast to the queue. */
-  add(content: T, options?: ToastOptions): string,
+  add: (content: T, options?: ToastOptions) => string,
   /**
    * Closes a toast.
    */
-  close(key: string): void,
+  close: (key: string) => void,
   /** Pauses the timers for all visible toasts. */
-  pauseAll(): void,
+  pauseAll: () => void,
   /** Resumes the timers for all visible toasts. */
-  resumeAll(): void,
+  resumeAll: () => void,
   /** The visible toasts. */
   visibleToasts: QueuedToast<T>[]
 }

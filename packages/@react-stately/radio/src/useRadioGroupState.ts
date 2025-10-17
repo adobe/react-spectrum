@@ -49,13 +49,13 @@ export interface RadioGroupState extends FormValidationState {
   readonly defaultSelectedValue: string | null,
 
   /** Sets the selected value. */
-  setSelectedValue(value: string | null): void,
+  setSelectedValue: (value: string | null) => void,
 
   /** The value of the last focused radio. */
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string | null): void
+  setLastFocusedValue: (value: string | null) => void
 }
 
 let instance = Math.round(Math.random() * 10000000000);

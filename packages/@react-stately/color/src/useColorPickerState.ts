@@ -10,7 +10,7 @@ export interface ColorPickerState {
   /** The current color value of the color picker. */
   color: Color,
   /** Sets the current color value of the color picker. */
-  setColor(color: Color | null): void
+  setColor: (color: Color | null) => void
 }
 
 export function useColorPickerState(props: ColorPickerProps): ColorPickerState {

@@ -44,22 +44,22 @@ export interface CheckboxGroupState extends FormValidationState {
   readonly isRequired: boolean,
 
   /** Returns whether the given value is selected. */
-  isSelected(value: string): boolean,
+  isSelected: (value: string) => boolean,
 
   /** Sets the selected values. */
-  setValue(value: string[]): void,
+  setValue: (value: string[]) => void,
 
   /** Adds a value to the set of selected values. */
-  addValue(value: string): void,
+  addValue: (value: string) => void,
 
   /** Removes a value from the set of selected values. */
-  removeValue(value: string): void,
+  removeValue: (value: string) => void,
 
   /** Toggles a value in the set of selected values. */
-  toggleValue(value: string): void,
+  toggleValue: (value: string) => void,
 
   /** Sets whether one of the checkboxes is invalid. */
-  setInvalid(value: string, validation: ValidationResult): void
+  setInvalid: (value: string, validation: ValidationResult) => void
 }
 
 /**

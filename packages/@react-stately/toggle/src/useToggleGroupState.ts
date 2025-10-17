@@ -43,13 +43,13 @@ export interface ToggleGroupState {
   readonly selectedKeys: Set<Key>,
 
   /** Toggles the selected state for an item by its key. */
-  toggleKey(key: Key): void,
+  toggleKey: (key: Key) => void,
 
   /** Sets whether the given key is selected. */
-  setSelected(key: Key, isSelected: boolean): void,
+  setSelected: (key: Key, isSelected: boolean) => void,
 
   /** Replaces the set of selected keys. */
-  setSelectedKeys(keys: Set<Key>): void
+  setSelectedKeys: (keys: Set<Key>) => void
 }
 
 /**
