@@ -37,35 +37,32 @@ async function writeTestingCSV() {
       let num = title.match(regex)[0].replace(/[\(\)#]/g, '');
       let info = await getPR(num);
 
-      // Check for "needs testing" label on the PR
-      if (isReadyForTesting(info.data.labels)) {
-        // Get testing instructions if it exists
-        let content = info.data.body;
-        const match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
-        let testInstructions = '';
-        if (match) {
-          testInstructions = match[1];
-          testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
-          testInstructions = testInstructions.trim();
-          testInstructions = escapeCSV(testInstructions);
-        }
+      // Get testing instructions if it exists
+      let content = info.data.body;
+      const match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
+      let testInstructions = '';
+      if (match) {
+        testInstructions = match[1];
+        testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
+        testInstructions = testInstructions.trim();
+        testInstructions = escapeCSV(testInstructions);
+      }
 
-        if (testInstructions.length > 350) {
-          row.push('See PR for testing instructions');
-        } else {
-          row.push(testInstructions);
-        }
-        row.push(info.data.html_url);
+      if (testInstructions.length > 350) {
+        row.push('See PR for testing instructions');
+      } else {
+        row.push(testInstructions);
+      }
+      row.push(info.data.html_url);
 
-        if ((/\bs2\b/gi).test(title)) {
-          s2PRs.push(row);
-        } else if ((/\brac\b/gi).test(title)) {
-          racPRs.push(row);
-        } else if ((/\bv3\b/gi).test(title)) {
-          v3PRs.push(row);
-        } else {
-          otherPRs.push(row);
-        }
+      if ((/\bs2\b/gi).test(title)) {
+        s2PRs.push(row);
+      } else if ((/\brac\b/gi).test(title)) {
+        racPRs.push(row);
+      } else if ((/\bv3\b/gi).test(title)) {
+        v3PRs.push(row);
+      } else {
+        otherPRs.push(row);
       }
     }
   }
@@ -101,15 +98,16 @@ async function listCommits() {
     process.exit(1);
   }
 
-  let start = args.positionals[0];
-  let end = args.positionals[1];
+  let start = new Date(args.positionals[0]);
+  let end = new Date(args.positionals[1]);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    console.error('Please verify that your date is correctly formatted')
+    process.exit(1)
+  }
 
   let startDate = new Date(start).toISOString();
   let endDate = new Date(end).toISOString();
-
-  if (isNaN(startDate) || isNaN(endDate)) {
-    console.error('Please verify that your date is correctly formatted');
-  }
 
   let res = await octokit.request(`GET /repos/adobe/react-spectrum/commits?sha=main&since=${startDate}&until=${endDate}`, {
     owner: 'adobe',
@@ -149,16 +147,16 @@ function escapeCSV(value) {
   return `"${escaped}"`;
 }
 
+// We can bring this back if we start using the "needs testing" label
+// function isReadyForTesting(labels){
+//   if (labels.length === 0) {
+//     return false;
+//   }
+//   for (let label of labels) {
+//     if (label.name === 'needs testing') {
+//       return true;
+//     }
+//   }
 
-function isReadyForTesting(labels){
-  if (labels.length === 0) {
-    return false;
-  }
-  for (let label of labels) {
-    if (label.name === 'needs testing') {
-      return true;
-    }
-  }
-
-  return false;
-}
+//   return false;
+// }
