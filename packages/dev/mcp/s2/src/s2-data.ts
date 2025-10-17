@@ -12,8 +12,8 @@ let illustrationAliasesCache: Record<string, string[]> | null = null;
 
 function readBundledJson(filename: string): any | null {
   try {
-    // Go up from common/ to dist/, then to data/
-    const p = path.resolve(__dirname, '..', 'data', filename);
+    // Go up from s2/src/ to dist/, then to data/
+    const p = path.resolve(__dirname, '..', '..', 'data', filename);
     if (!fs.existsSync(p)) {return null;}
     const txt = fs.readFileSync(p, 'utf8');
     return JSON.parse(txt);
