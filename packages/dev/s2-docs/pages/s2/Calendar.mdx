@@ -177,6 +177,7 @@ Use the `focusedValue` or `defaultFocusedValue` prop to control which date is fo
 "use client";
 import {Calendar, ActionButton} from '@react-spectrum/s2';
 import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -184,7 +185,7 @@ function Example() {
   let [focusedDate, setFocusedDate] = useState(defaultDate);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
+    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
       <ActionButton onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
         Today
       </ActionButton>
