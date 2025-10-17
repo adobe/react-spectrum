@@ -417,9 +417,9 @@ describe('CheckboxGroup', () => {
 
   if (parseInt(React.version, 10) >= 19) {
     it('resets to defaultValue when submitting form action', async () => {
-      function Test() {        
+      function Test() {
         const [value, formAction] = React.useActionState(() => ['dogs', 'cats'], []);
-        
+
         return (
           <Provider theme={theme}>
             <form action={formAction}>

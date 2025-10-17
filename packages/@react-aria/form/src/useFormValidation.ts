@@ -11,10 +11,10 @@
  */
 
 import {FormValidationState} from '@react-stately/form';
+import {getOwnerDocument, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {RefObject, Validation, ValidationResult} from '@react-types/shared';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
@@ -84,7 +84,15 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
       return;
     }
 
-    let form = input.form;
+    // Uses closest and querySelector instead of just the form property to work around a React compiler bug.
+    // https://github.com/facebook/react/issues/34891
+    let form = input.closest('form');
+    if (!form) {
+      let formId = input.getAttribute('form');
+      if (formId) {
+        form = getOwnerDocument(input).querySelector(`#${formId}`) as HTMLFormElement | null;
+      }
+    }
 
     let reset = form?.reset;
     if (form) {

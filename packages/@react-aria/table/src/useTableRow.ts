@@ -40,7 +40,8 @@ const EXPANSION_KEYS = {
  */
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): GridRowAria {
   let {node, isVirtualized} = props;
-  let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let {rowProps: gridRowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let rowProps = {...gridRowProps};
   let {direction} = useLocale();
 
   if (isVirtualized && !(tableNestedRows() && 'expandedKeys' in state)) {

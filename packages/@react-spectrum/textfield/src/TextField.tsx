@@ -23,23 +23,23 @@ import {useTextField} from '@react-aria/textfield';
  * communicate the entry requirements.
  */
 export const TextField = forwardRef(function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+  let propsWithProvider = useProviderProps(props);
+  let allProps = useFormProps(propsWithProvider);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let result = useTextField(props, inputRef);
+  let result = useTextField(allProps, inputRef);
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+    if (allProps.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
       console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text');
       hasWarned.current = true;
     }
-  }, [props.placeholder]);
+  }, [allProps.placeholder]);
 
   return (
     <TextFieldBase
-      {...props}
+      {...allProps}
       {...result}
       ref={ref}
       inputRef={inputRef} />

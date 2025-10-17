@@ -32,7 +32,8 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject
     ...otherProps
   } = props;
 
-  let {linkProps} = useLink({isDisabled: isDisabled || isCurrent, elementType, ...otherProps}, ref);
+  let {linkProps: linkBaseLinkProps} = useLink({isDisabled: isDisabled || isCurrent, elementType, ...otherProps}, ref);
+  let linkProps = {...linkBaseLinkProps};
   let isHeading = /^h[1-6]$/.test(elementType);
   let itemProps: DOMAttributes = {};
 

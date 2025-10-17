@@ -77,11 +77,12 @@ export function useToggleButtonGroupItem(props: AriaToggleButtonGroupItemOptions
     }
   };
 
-  let {isPressed, isSelected, isDisabled, buttonProps} = useToggleButton({
+  let {isPressed, isSelected, isDisabled, buttonProps: toggleButtonProps} = useToggleButton({
     ...props,
     id: undefined,
     isDisabled: props.isDisabled || state.isDisabled
   }, toggleState, ref);
+  let buttonProps = {...toggleButtonProps};
   if (state.selectionMode === 'single') {
     buttonProps.role = 'radio';
     buttonProps['aria-checked'] = toggleState.isSelected;
