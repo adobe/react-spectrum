@@ -108,3 +108,31 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `list_react_aria_pages` | `{ includeDescription?: boolean }` | List available pages in the React Aria docs. |
 | `get_react_aria_page_info` | `{ page_name: string }` | Return page description and list of section titles. |
 | `get_react_aria_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
+
+## Development
+
+### Testing locally
+
+Build the docs and MCP server locally, then start the docs server.
+
+```bash
+yarn workspace @react-spectrum/s2-docs generate:md
+yarn workspace @react-aria/mcp build
+yarn start:s2-docs
+```
+
+Update your MCP client configuration to use the local MCP server:
+
+```json
+{
+  "mcpServers": {
+    "React Aria": {
+      "command": "node",
+      "args": ["{your path here}/react-spectrum/packages/dev/mcp/react-aria/dist/index.js"],
+      "env": {
+        "DOCS_CDN_BASE": "http://localhost:1234"
+      }
+    }
+  }
+}
+```

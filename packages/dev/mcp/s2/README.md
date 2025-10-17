@@ -110,3 +110,31 @@ Follow Windsurf MCP [documentation](https://docs.windsurf.com/windsurf/cascade/m
 | `get_s2_page` | `{ page_name: string, section_name?: string }` | Return full page markdown, or only the specified section. |
 | `search_s2_icons` | `{ terms: string \| string[] }` | Search S2 workflow icon names. |
 | `search_s2_illustrations` | `{ terms: string \| string[] }` | Search S2 illustration names. |
+
+## Development
+
+### Testing locally
+
+Build the docs and MCP server locally, then start the docs server.
+
+```bash
+yarn workspace @react-spectrum/s2-docs generate:md
+yarn workspace @react-spectrum/mcp build
+yarn start:s2-docs
+```
+
+Update your MCP client configuration to use the local MCP server:
+
+```json
+{
+  "mcpServers": {
+    "React Spectrum (S2)": {
+      "command": "node",
+      "args": ["{your path here}/react-spectrum/packages/dev/mcp/s2/dist/s2/src/index.js"],
+      "env": {
+        "DOCS_CDN_BASE": "http://localhost:1234"
+      }
+    }
+  }
+}
+```
