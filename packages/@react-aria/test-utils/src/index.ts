@@ -14,5 +14,15 @@ export {triggerLongPress} from './events';
 export {installMouseEvent, installPointerEvent} from './testSetup';
 export {pointerMap} from './userEventMaps';
 export {User} from './user';
+// TODO: had to export these for the docs, but not sure why I didn't have to do
+// so for the v3 docs?
+export {ComboBoxTester} from './combobox';
+export {GridListTester} from './gridlist';
+export {ListBoxTester} from './listbox';
+export {MenuTester} from './menu';
+export {SelectTester} from './select';
+export {TableTester} from './table';
+export {TabsTester} from './tabs';
+export {TreeTester} from './tree';
 
 export type {UserOpts} from './types';
