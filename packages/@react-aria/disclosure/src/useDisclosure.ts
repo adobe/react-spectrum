@@ -73,7 +73,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     if (raf.current) {
       cancelAnimationFrame(raf.current);
     }
-    if (ref.current && !isDisabled && !isSSR) {
+    if (ref.current && !isSSR) {
       let panel = ref.current;
 
       if (isExpandedRef.current == null || typeof panel.getAnimations !== 'function') {
