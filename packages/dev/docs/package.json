@@ -26,7 +26,7 @@
     "@spectrum-icons/workflow": "^4.0.0",
     "algoliasearch": "^4.14.1",
     "clsx": "^2.0.0",
-    "dompurify": "^2.3.10",
+    "dompurify": "^3.2.4",
     "globals-docs": "^2.4.1",
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
