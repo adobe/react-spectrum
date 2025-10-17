@@ -584,6 +584,14 @@ class TableHeaderNode<T> extends CollectionNode<T> {
   static readonly type = 'tableheader';
 }
 
+let THeadElementType = forwardRef(function THeadElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <thead {...props} ref={ref} />;
+});
+
 /**
  * A header within a `<Table>`, containing the table columns.
  */
@@ -603,7 +611,6 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
       }, [])
     });
 
-    let THead = useElementType('thead');
     let {rowGroupProps} = useTableRowGroup();
     let {hoverProps, isHovered} = useHover({
       onHoverStart: props.onHoverStart,
@@ -621,13 +628,13 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
     });
 
     return (
-      <THead
+      <THeadElementType
         {...mergeProps(filterDOMProps(props, {global: true}), rowGroupProps, hoverProps)}
         {...renderProps}
         ref={ref as any}
         data-hovered={isHovered || undefined}>
         {headerRows}
-      </THead>
+      </THeadElementType>
     );
   },
   props => (
@@ -637,16 +644,23 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
   )
 );
 
+let TableHeaderRowElementType = forwardRef(function TableHeaderRowElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <tr {...props} ref={ref} />;
+});
+
 function TableHeaderRow({item}: {item: GridNode<any>}) {
   let ref = useRef<HTMLTableRowElement>(null);
   let state = useContext(TableStateContext)!;
   let {isVirtualized, CollectionBranch} = useContext(CollectionRendererContext);
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized}, state, ref);
   let {checkboxProps} = useTableSelectAllCheckbox(state);
-  let TR = useElementType('tr');
 
   return (
-    <TR {...rowProps} ref={ref}>
+    <TableHeaderRowElementType {...rowProps} ref={ref}>
       <Provider
         values={[
           [CheckboxContext, {
@@ -657,7 +671,7 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
         ]}>
         <CollectionBranch collection={state.collection} parent={item} />
       </Provider>
-    </TR>
+    </TableHeaderRowElementType>
   );
 }
 
@@ -1329,6 +1343,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
     }
   });
 
+  // TODO: Lint doesn't catch these, it thinks we're not in a component render cycle here?
   let TD = useElementType('td');
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
@@ -1372,6 +1387,21 @@ interface TableDropIndicatorProps extends DropIndicatorProps, GlobalDOMAttribute
   buttonRef: RefObject<HTMLDivElement | null>
 }
 
+let TableDropIndicatorRowElementType = forwardRef(function TableDropIndicatorRowElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <tr {...props} ref={ref} />;
+});
+let TableDropIndicatorTDElementType = forwardRef(function TableDropIndicatorTDElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <td {...props} ref={ref} />;
+});
+
 function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HTMLElement>) {
   let {
     dropIndicatorProps,
@@ -1390,24 +1420,21 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
     }
   });
 
-  let TR = useElementType('tr');
-  let TD = useElementType('td');
-
   return (
-    <TR
+    <TableDropIndicatorRowElementType
       {...filterDOMProps(props as any, {global: true})}
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLTableRowElement | null>}
       data-drop-target={isDropTarget || undefined}>
-      <TD
+      <TableDropIndicatorTDElementType
         role="gridcell"
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
-      </TD>
-    </TR>
+      </TableDropIndicatorTDElementType>
+    </TableDropIndicatorRowElementType>
   );
 }
 
