@@ -28,6 +28,7 @@ Use the `value` or `defaultValue` prop to set the color value, and `onChange` to
 import {ColorField} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {parseColor} from '@react-stately/color';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example() {
   let [value, setValue] = useState(parseColor('#e73623'));
@@ -39,7 +40,7 @@ function Example() {
         placeholder="Enter a color"
         value={value}
         onChange={setValue} />
-      <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
+      <pre className={style({font: 'body'})}>Current value: {value.toString('hex')}</pre>
     </div>
   );
 }
@@ -52,13 +53,14 @@ By default, ColorField displays a hex value. Set the `colorSpace` and `channel` 
 ```tsx render
 "use client";
 import {ColorField, parseColor} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
   let [color, setColor] = useState(parseColor('#7f007f'));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div className={style({ display: 'flex', flexDirection: 'column', gap: 8 })}>
       <ColorField
         label="Hue"
         placeholder="Select a hue"
@@ -82,7 +84,7 @@ function Example() {
         onChange={setColor}
         colorSpace="hsl"
         channel="lightness" />
-      <pre style={{fontSize: 12}}>Current value: {color?.toString('hex')}</pre>
+      <pre className={style({font: 'body'})}>Current value: {color?.toString('hex')}</pre>
     </div>
   );
 }
