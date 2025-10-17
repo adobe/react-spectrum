@@ -98,6 +98,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   let setValue = (newValue: RangeValue<DateValue | null> | null) => {
     // TODO: I don't know how to fix this one
+    // eslint-disable-next-line react-hooks/immutability
     value = newValue || {start: null, end: null};
     setPlaceholderValue(value);
     if (isCompleteRange(value)) {

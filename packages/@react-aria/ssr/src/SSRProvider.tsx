@@ -10,33 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {defaultContext, SSRContext, SSRContextValue} from './SSRContext';
 // We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
 // guarded by a check that it only runs on the client side.
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
-import React, {JSX, ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactNode, useContext, useLayoutEffect, useMemo, useState} from 'react';
+import {useCounter} from './useCounter';
 
-// To support SSR, the auto incrementing id counter is stored in a context. This allows
-// it to be reset on every request to ensure the client and server are consistent.
-// There is also a prefix string that is used to support async loading components
-// Each async boundary must be wrapped in an SSR provider, which appends to the prefix
-// and resets the current id counter. This ensures that async loaded components have
-// consistent ids regardless of the loading order.
-interface SSRContextValue {
-  prefix: string,
-  current: number
-}
 
-// Default context value to use in case there is no SSRProvider. This is fine for
-// client-only apps. In order to support multiple copies of React Aria potentially
-// being on the page at once, the prefix is set to a random number. SSRProvider
-// will reset this to zero for consistency between server and client, so in the
-// SSR case multiple copies of React Aria is not supported.
-const defaultContext: SSRContextValue = {
-  prefix: String(Math.round(Math.random() * 10000000000)),
-  current: 0
-};
-
-const SSRContext = React.createContext<SSRContextValue>(defaultContext);
 const IsSSRContext = React.createContext(false);
 
 export interface SSRProviderProps {
@@ -99,50 +80,6 @@ let canUseDOM = Boolean(
   window.document.createElement
 );
 
-let componentIds = new WeakMap();
-
-// TODO: this function needs serious help, haha
-function useCounter(isDisabled = false) {
-  let ctx = useContext(SSRContext);
-  let ref = useRef<number | null>(null);
-  // eslint-disable-next-line rulesdir/pure-render
-  if (ref.current === null && !isDisabled) {
-    // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
-    // This means our id counter will be incremented twice instead of once. This is a problem because on the
-    // server, components are only rendered once and so ids generated on the server won't match the client.
-    // In React 18, useId was introduced to solve this, but it is not available in older versions. So to solve this
-    // we need to use some React internals to access the underlying Fiber instance, which is stable between renders.
-    // This is exposed as ReactCurrentOwner in development, which is all we need since StrictMode only runs in development.
-    // To ensure that we only increment the global counter once, we store the starting id for this component in
-    // a weak map associated with the Fiber. On the second render, we reset the global counter to this value.
-    // Since React runs the second render immediately after the first, this is safe.
-    // @ts-ignore
-    let currentOwner = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
-    if (currentOwner) {
-      let prevComponentValue = componentIds.get(currentOwner);
-      if (prevComponentValue == null) {
-        // On the first render, and first call to useId, store the id and state in our weak map.
-        componentIds.set(currentOwner, {
-          id: ctx.current,
-          state: currentOwner.memoizedState
-        });
-      } else if (currentOwner.memoizedState !== prevComponentValue.state) {
-        // On the second render, the memoizedState gets reset by React.
-        // Reset the counter, and remove from the weak map so we don't
-        // do this for subsequent useId calls.
-        ctx.current = prevComponentValue.id;
-        componentIds.delete(currentOwner);
-      }
-    }
-
-    // eslint-disable-next-line rulesdir/pure-render
-    ref.current = ++ctx.current;
-  }
-
-  // eslint-disable-next-line rulesdir/pure-render
-  return ref.current;
-}
-
 function useLegacySSRSafeId(defaultId?: string): string {
   let ctx = useContext(SSRContext);
 
@@ -188,7 +125,7 @@ function subscribe(onStoreChange: () => void): () => void {
  * until after hydration.
  */
 export function useIsSSR(): boolean {
-  // In React 18, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
+  // In React 18+, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
   if (typeof React['useSyncExternalStore'] === 'function') {
     return React['useSyncExternalStore'](subscribe, getSnapshot, getServerSnapshot);
   }

@@ -514,6 +514,8 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
       }
     } else if (loadingState !== 'filtering') {
       // If loading is no longer happening, clear any timers and hide the loading circle
+      // ignoring error because this is an old and dead component
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowLoading(false);
       if (timeout.current !== null) {
         clearTimeout(timeout.current);

@@ -80,7 +80,9 @@ export const CardView = React.forwardRef(function CardView<T extends object>(pro
     focusMode: 'cell'
   });
 
+  // eslint-disable-next-line react-hooks/immutability
   cardViewLayout.collection = gridCollection;
+  // eslint-disable-next-line react-hooks/immutability
   cardViewLayout.disabledKeys = state.disabledKeys;
 
   let {gridProps} = useGrid({

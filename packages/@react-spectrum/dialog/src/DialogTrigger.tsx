@@ -57,15 +57,14 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let onExiting = () => isExiting.current = true;
   let onExited = () => isExiting.current = false;
 
-   
+
   useEffect(() => {
     return () => {
       if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray' && process.env.NODE_ENV !== 'production') {
         console.warn('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [type]);
 
   if (type === 'popover') {
     return (

@@ -444,7 +444,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       return;
     }
 
-    popoverRef.current?.focus();
+    if (popoverRef.current) {
+      popoverRef.current.focus();
+    }
   }, [inputRef, popoverRef, isTouchDown]);
 
   let inputValue = newInputProps.value;
