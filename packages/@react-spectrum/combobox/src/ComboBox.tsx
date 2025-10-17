@@ -56,24 +56,24 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 /**
  * ComboBoxes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
  */
-export const ComboBox = React.forwardRef(function ComboBox<T extends object>(outerProps: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
-  let withProviderProps = useProviderProps(outerProps);
-  let props = useFormProps(withProviderProps);
+export const ComboBox = React.forwardRef(function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
+  let propsWithProvider = useProviderProps(props);
+  let allProps = useFormProps(propsWithProvider);
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+    if (allProps.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
       console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
       hasWarned.current = true;
     }
-  }, [props.placeholder]);
+  }, [allProps.placeholder]);
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
     // menuTrigger=focus/manual don't apply to mobile combobox
-    return <MobileComboBox {...props} menuTrigger="input" ref={ref} />;
+    return <MobileComboBox {...allProps} menuTrigger="input" ref={ref} />;
   } else {
-    return <ComboBoxBase {...props} ref={ref} />;
+    return <ComboBoxBase {...allProps} ref={ref} />;
   }
 }) as <T>(props: SpectrumComboBoxProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 

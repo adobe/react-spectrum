@@ -52,8 +52,8 @@ import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
-function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
-  let props = useProviderProps(outerProps);
+function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+  let allProps = useProviderProps(props);
 
   let {
     isQuiet,
@@ -64,11 +64,11 @@ function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumS
     name,
     isReadOnly,
     onSubmit = () => {}
-  } = props;
+  } = allProps;
 
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
-    ...props,
+    ...allProps,
     defaultFilter: contains,
     allowsEmptyCollection: true,
     // Needs to be false here otherwise we double up on commitSelection/commitCustomValue calls when
@@ -88,15 +88,15 @@ function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumS
 
   let inputRef = useRef<HTMLInputElement>(null);
   useFormValidation({
-    ...props,
+    ...allProps,
     focus: () => buttonRef.current?.focus()
   }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
-  let errorMessage = props.errorMessage ?? validationErrors.join(' ');
+  let validationState = allProps.validationState || (isInvalid ? 'invalid' : undefined);
+  let errorMessage = allProps.errorMessage ?? validationErrors.join(' ');
 
   let {labelProps: fieldLabelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
-    ...props,
+    ...allProps,
     labelElementType: 'span',
     isInvalid,
     errorMessage
@@ -106,7 +106,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumS
     ...fieldLabelProps,
     // Focus the button and show focus ring when clicking on the label
     onClick: () => {
-      if (!props.isDisabled && buttonRef.current) {
+      if (!allProps.isDisabled && buttonRef.current) {
         buttonRef.current.focus();
         setInteractionModality('keyboard');
       }
@@ -134,7 +134,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumS
   return (
     <>
       <Field
-        {...props}
+        {...allProps}
         labelProps={labelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
@@ -155,13 +155,13 @@ function ForwardMobileSearchAutocomplete<T extends object>(outerProps: SpectrumS
           inputValue={state.inputValue}
           clearInput={() => state.setInputValue('')}
           onPress={() => !isReadOnly && state.open(null, 'manual')}>
-          {state.inputValue || props.placeholder || ''}
+          {state.inputValue || allProps.placeholder || ''}
         </SearchAutocompleteButton>
       </Field>
       <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
         <SearchAutocompleteTray
-          {...props}
+          {...allProps}
           onClose={state.close}
           overlayProps={overlayProps}
           state={state} />

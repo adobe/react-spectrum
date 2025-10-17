@@ -45,8 +45,8 @@ import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProps: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
-  let props = useProviderProps(outerProps);
+export const MobileComboBox = React.forwardRef(function MobileComboBox(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
+  let allProps = useProviderProps(props);
 
   let {
     isQuiet,
@@ -57,14 +57,14 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProp
     name,
     formValue = 'text',
     allowsCustomValue
-  } = props;
+  } = allProps;
   if (allowsCustomValue) {
     formValue = 'text';
   }
 
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
-    ...props,
+    ...allProps,
     defaultFilter: contains,
     allowsEmptyCollection: true,
     // Needs to be false here otherwise we double up on commitSelection/commitCustomValue calls when
@@ -79,15 +79,15 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProp
 
   let inputRef = useRef<HTMLInputElement>(null);
   useFormValidation({
-    ...props,
+    ...allProps,
     focus: () => buttonRef.current?.focus()
   }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
-  let errorMessage = props.errorMessage ?? validationErrors.join(' ');
+  let validationState = allProps.validationState || (isInvalid ? 'invalid' : undefined);
+  let errorMessage = allProps.errorMessage ?? validationErrors.join(' ');
 
   let {labelProps: fieldLabelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
-    ...props,
+    ...allProps,
     labelElementType: 'span',
     isInvalid,
     errorMessage
@@ -97,7 +97,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProp
     ...fieldLabelProps,
     onClick: () => {
       // Focus the button and show focus ring when clicking on the label
-      if (!props.isDisabled) {
+      if (!allProps.isDisabled) {
         buttonRef.current?.focus();
         setInteractionModality('keyboard');
       }
@@ -129,7 +129,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProp
   return (
     <>
       <Field
-        {...props}
+        {...allProps}
         labelProps={labelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
@@ -148,13 +148,13 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(outerProp
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => !isReadOnly && state.open(null, 'manual')}>
-          {state.inputValue || props.placeholder || ''}
+          {state.inputValue || allProps.placeholder || ''}
         </ComboBoxButton>
       </Field>
       <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
         <ComboBoxTray
-          {...props}
+          {...allProps}
           onClose={state.close}
           overlayProps={overlayProps}
           state={state} />
