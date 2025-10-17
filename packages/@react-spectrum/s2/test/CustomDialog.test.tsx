@@ -49,11 +49,9 @@ describe('CustomDialog', () => {
       </DialogTrigger>
     );
 
-
     let trigger = getByRole('button');
     await user.click(trigger);
     act(() => {jest.runAllTimers();});
-
     expect(getByRole('dialog')).toBeVisible();
   });
 });
