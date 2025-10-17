@@ -16,7 +16,7 @@ import {
   ResizableTableContainer,
   RowProps,
   TableHeaderProps,
-  TableProps,
+  TableProps as AriaTableProps,
   composeRenderProps,
   useTableOptions
 } from 'react-aria-components';
@@ -25,9 +25,13 @@ import { tv } from 'tailwind-variants';
 import { Checkbox } from './Checkbox';
 import { composeTailwindRenderProps, focusRing } from './utils';
 
+interface TableProps extends Omit<AriaTableProps, 'className'> {
+  className?: string
+}
+
 export function Table(props: TableProps) {
   return (
-    <ResizableTableContainer onScroll={props.onScroll} className={twMerge(props.className, 'w-full max-h-[320px] overflow-auto scroll-pt-[2.281rem] relative bg-white dark:bg-zinc-900 box-border border border-gray-300 dark:border-zinc-600 rounded-lg font-sans')}>
+    <ResizableTableContainer onScroll={props.onScroll} className={twMerge('w-full max-h-[320px] overflow-auto scroll-pt-[2.281rem] relative bg-white dark:bg-zinc-900 box-border border border-gray-300 dark:border-zinc-600 rounded-lg font-sans', props.className)}>
       <AriaTable {...props} className="border-separate border-spacing-0 box-border overflow-hidden" />
     </ResizableTableContainer>
   );
