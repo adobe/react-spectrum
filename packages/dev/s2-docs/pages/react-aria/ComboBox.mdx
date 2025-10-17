@@ -52,8 +52,8 @@ The following example shows a dynamic collection of items, grouped into sections
 
 ```tsx render
 "use client";
-import {ComboBox} from 'vanilla-starter/ComboBox';
-import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {ListBoxSection, Collection, Header} from 'react-aria-components';
 
 function Example() {
   /*- begin collapse -*/
@@ -86,12 +86,12 @@ function Example() {
     <ComboBox
       label="Preferred fruit or vegetable"
       placeholder="Select an option"
-      items={options}>
+      defaultItems={options}>
       {section => (
         <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+            {item => <ComboBoxItem id={item.name}>{item.name}</ComboBoxItem>}
           </Collection>
         </ListBoxSection>
       )}

@@ -96,15 +96,16 @@
     inset: 0;
     pointer-events: none;
     border-radius: inherit;
-    border: 2px solid transparent;
-    transition: border-color 200ms;
+    border: 2px solid light-dark(black, white);
+    outline: 2px solid light-dark(rgb(255 255 255 / 0.7), rgb(0 0 0 / 0.7));
+    outline-offset: -4px;
+    opacity: 0;
+    transition: opacity 200ms;
   }
 
   &[data-selected] {
     &::after {
-      border-color: light-dark(black, white);
-      outline: 2px solid light-dark(rgb(255 255 255 / 0.7), rgb(0 0 0 / 0.7));
-      outline-offset: -4px;
+      opacity: 1;
     }
   }
 
@@ -125,11 +126,20 @@
 
     .indicator {
       --indicator-border: light-dark(rgb(0 0 0 / 0.9), rgb(255 255 255 / 0.7));
+
+      @media (forced-colors: active) {
+        --indicator-border: ButtonBorder;
+      }
     }
 
     &[data-selected] .indicator {
       --indicator-color: light-dark(black, var(--highlight-foreground));
       --indicator-shadow: transparent;
+
+      @media (forced-colors: active) {
+        --indicator-color: Highlight;
+        --checkmark-color: HighlightText;
+      }
     }
 
     &::before {

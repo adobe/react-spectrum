@@ -8,7 +8,7 @@
                        "help help  help";
   grid-template-columns: 0px 1fr auto;
   align-items: center;
-  width: fit-content;
+  width: auto;
   color: var(--text-color);
 
   .lucide-search {

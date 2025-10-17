@@ -23,6 +23,7 @@
     padding: var(--spacing-2) var(--spacing-3);
     border-radius: var(--radius);
     transition: all 200ms;
+    outline: none;
     -webkit-tap-highlight-color: transparent;
 
     &[data-hovered],
@@ -33,6 +34,10 @@
 
     &[data-pressed] {
       scale: 0.97;
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
     }
 
     &[data-disabled] {

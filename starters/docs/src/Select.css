@@ -8,8 +8,6 @@
   .react-aria-Button {
     --button-color: var(--gray);
     padding: 0 var(--spacing-2) 0 var(--spacing-3);
-    display: flex;
-    align-items: center;
     width: 100%;
     min-width: 0;
 
@@ -43,7 +41,7 @@
 }
 
 .react-aria-Popover[data-trigger=Select] {
-  min-width: var(--trigger-width);
+  width: var(--trigger-width);
   padding: 0;
 
   .react-aria-ListBox {

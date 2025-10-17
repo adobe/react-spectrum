@@ -10,22 +10,32 @@ const exampleStyle = style({
   marginY: 20,
   borderRadius: 'xl',
   display: 'grid',
-  gridTemplateColumns: ['1fr', 'auto'],
-  gridTemplateAreas: [
-    'switcher theme',
-    'example example'
-  ]
+  gridTemplateColumns: {
+    default: [12, '1fr', 12],
+    lg: [24, '1fr', 'auto', 24]
+  },
+  gridTemplateAreas: {
+    default: [
+      '. switcher .',
+      '. theme .',
+      'example example example'
+    ],
+    lg: [
+      '. switcher theme .',
+      'example example example example'
+    ]
+  },
+  paddingTop: {
+    default: 12,
+    lg: 24
+  }
 });
 
 const switcher = style({
   gridArea: 'switcher',
-  marginTop: {
-    default: 12,
-    lg: 24
-  },
-  marginStart: {
-    default: 12,
-    lg: 24
+  justifySelf: {
+    default: 'center',
+    lg: 'start'
   }
 });
 
@@ -34,11 +44,11 @@ const themePicker = style({
   width: 182,
   marginTop: {
     default: 12,
-    lg: 24
+    lg: 0
   },
-  marginEnd: {
-    default: 12,
-    lg: 24
+  justifySelf: {
+    default: 'center',
+    lg: 'start'
   }
 });
 

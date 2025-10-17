@@ -38,6 +38,7 @@
   color: var(--text-color);
   margin-bottom: var(--spacing-2);
   font-weight: 500;
+  contain: inline-size;
 }
 
 .react-aria-FieldError {
@@ -45,12 +46,14 @@
   font: var(--font-size-sm) system-ui;
   color: var(--invalid-color);
   margin-top: var(--spacing-1);
+  contain: inline-size;
 }
 
 .field-description {
   display: block;
   font: var(--font-size-sm) system-ui;
   margin-top: var(--spacing-1);
+  contain: inline-size;
 
   [data-invalid] > & {
     display: none;

@@ -3,11 +3,13 @@
 .react-aria-Link {
   color: var(--link-color);
   font-size: var(--font-size);
-  transition: all 200ms;
+  transition-property: color, text-decoration-thickness;
+  transition-duration: 200ms;
   text-decoration: underline;
   cursor: pointer;
   outline: none;
   position: relative;
+  border-radius: var(--radius-sm);
 
   &[data-hovered] {
     text-decoration-thickness: 1.5px;
@@ -18,7 +20,6 @@
   }
 
   &[data-focus-visible] {
-    border-radius: var(--radius-sm);
     outline: 2px solid var(--focus-ring-color);
   }
 

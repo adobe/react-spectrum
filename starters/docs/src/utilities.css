@@ -134,7 +134,7 @@
   .indicator {
     --indicator-color: var(--gray);
     --indicator-background: oklch(from var(--indicator-color) var(--lightness-100) var(--chroma-100) h);
-    --indicator-border: oklch(from var(--indicator-color) var(--lightness-700) var(--chroma-700) h);
+    --indicator-border: oklch(from var(--indicator-color) var(--lightness-800) var(--chroma-800) h);
     --indicator-drop-shadow: 0 0;
 
     background: var(--indicator-background);

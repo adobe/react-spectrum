@@ -215,7 +215,7 @@
 @media (min-resolution: 200dpi) {
   :root {
     --spacing: calc(0.25rem * 1.25);
-    --font-size: 1.125rem; /* 18px */
+    --font-size: 1.0625rem; /* 17px */
     --font-size-sm: 0.9375rem; /* 15px */
     --font-size-lg: 1.25rem; /* 20px */
   }

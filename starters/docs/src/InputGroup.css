@@ -24,9 +24,9 @@
   }
 
   .react-aria-Input {
-    padding: 0.286rem;
+    padding: var(--spacing-1);
     margin: 0;
-    font-size: 1rem;
+    font: var(--font-size) system-ui;
     color: var(--text-color);
     outline: none;
     border: none;

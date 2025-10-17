@@ -54,7 +54,7 @@ export function ListBoxItem(props: ListBoxItemProps) {
 }
 
 export const dropdownItemStyles = tv({
-  base: 'group flex items-center gap-4 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-sm forced-color-adjust-none',
+  base: 'group flex items-center gap-4 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-sm forced-color-adjust-none no-underline [&[href]]:cursor-pointer',
   variants: {
     isDisabled: {
       false: 'text-gray-900 dark:text-zinc-100',
