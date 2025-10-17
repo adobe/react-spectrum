@@ -255,7 +255,6 @@ describe('TableView', () => {
       let dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
       await dialogTester.open();
       let dialog = dialogTester.dialog;
-      // TODO: also weird that it is dialog.dialog?
       expect(dialog).toBeVisible();
 
       let input = within(dialog!).getByRole('textbox');

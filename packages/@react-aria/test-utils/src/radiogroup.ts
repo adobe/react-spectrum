@@ -146,10 +146,6 @@ export class RadioGroupTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._radiogroup && !this._radiogroup.contains(document.activeElement)) {
-        act(() => this._radiogroup.focus());
-      }
-
       let radioOrientation = this._radiogroup.getAttribute('aria-orientation') || 'horizontal';
       await this.keyboardNavigateToRadio({radio, orientation: radioOrientation as Orientation});
     } else {

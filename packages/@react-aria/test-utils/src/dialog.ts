@@ -61,12 +61,10 @@ export class DialogTester {
     } = opts;
     let trigger = this.trigger;
     if (!trigger.hasAttribute('disabled')) {
-      if (interactionType === 'mouse' || interactionType === 'touch') {
-        if (interactionType === 'mouse') {
-          await this.user.click(trigger);
-        } else {
-          await this.user.pointer({target: trigger, keys: '[TouchA]'});
-        }
+      if (interactionType === 'mouse') {
+        await this.user.click(trigger);
+      } else if (interactionType === 'touch') {
+        await this.user.pointer({target: trigger, keys: '[TouchA]'});
       } else if (interactionType === 'keyboard') {
         act(() => trigger.focus());
         await this.user.keyboard('[Enter]');

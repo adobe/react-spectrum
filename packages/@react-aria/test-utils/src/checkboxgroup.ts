@@ -128,10 +128,6 @@ export class CheckboxGroupTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._checkboxgroup && !this._checkboxgroup.contains(document.activeElement)) {
-        act(() => this._checkboxgroup.focus());
-      }
-
       await this.keyboardNavigateToCheckbox({checkbox});
       await this.user.keyboard('[Space]');
     } else {
