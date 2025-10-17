@@ -59,7 +59,6 @@ export async function ensureParsedPage(info: PageInfo): Promise<PageInfo> {
 }
 
 export async function resolvePageRef(library: Library, pageName: string): Promise<PageInfo> {
-  // Ensure index is loaded
   await buildPageIndex(library);
 
   if (pageCache.has(pageName)) {
