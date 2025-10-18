@@ -321,6 +321,7 @@ describe('Button', () => {
     function TestComponent(props) {
       let [pending, setPending] = useState(false);
       return (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <form
           onSubmit={(e) => {
             // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending

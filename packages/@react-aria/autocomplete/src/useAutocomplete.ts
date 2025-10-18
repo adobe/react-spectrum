@@ -106,7 +106,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     return () => clearTimeout(timeout.current);
   }, []);
 
-  let updateActiveDescendant = useEffectEvent((e: Event) => {
+  let updateActiveDescendant = useCallback((e: Event) => {
     // Ensure input is focused if the user clicks on the collection directly.
     if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
       inputRef.current.focus();
@@ -138,7 +138,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
 
     delayNextActiveDescendant.current = false;
-  });
+  }, [shouldUseVirtualFocus, inputRef, collectionRef, state]);
 
   let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
@@ -165,7 +165,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));
 
-  let focusFirstItem = useEffectEvent(() => {
+  let focusFirstItem = useCallback(() => {
     delayNextActiveDescendant.current = true;
     collectionRef.current?.dispatchEvent(
       new CustomEvent(FOCUS_EVENT, {
@@ -176,9 +176,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
         }
       })
     );
-  });
+  }, [collectionRef]);
 
-  let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
+  let clearVirtualFocus = useCallback((clearFocusKey?: boolean) => {
     moveVirtualFocus(getActiveElement());
     queuedActiveDescendant.current = null;
     state.setFocusedNodeId(null);
@@ -192,7 +192,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     clearTimeout(timeout.current);
     delayNextActiveDescendant.current = false;
     collectionRef.current?.dispatchEvent(clearFocusEvent);
-  });
+  }, [collectionRef, state]);
 
   let lastInputType = useRef('');
   useEvent(inputRef, 'input', e => {
@@ -346,7 +346,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     return () => {
       document.removeEventListener('keyup', onKeyUpCapture, true);
     };
-  }, [onKeyUpCapture]);
+  }, []);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let collectionProps = useLabels({

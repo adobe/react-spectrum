@@ -93,6 +93,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
       }
       setProps(newProps);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

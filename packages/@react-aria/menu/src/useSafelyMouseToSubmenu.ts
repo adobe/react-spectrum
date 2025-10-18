@@ -174,5 +174,5 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
     };
 
-  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, onPointerDown, submenuRef]);
+  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
 }

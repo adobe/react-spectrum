@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerWindow, isFocusable, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getOwnerWindow, isFocusable, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 
 // Turn a native event into a React synthetic event.
@@ -48,10 +48,6 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: 
     };
   }, []);
 
-  let dispatchBlur = useEffectEvent((e: ReactFocusEvent<Target>) => {
-    onBlur?.(e);
-  });
-
   // This function is called during a React onFocus event.
   return useCallback((e: ReactFocusEvent<Target>) => {
     // React does not fire onBlur when an element is disabled. https://github.com/facebook/react/issues/9142
@@ -73,7 +69,7 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: 
         if (target.disabled) {
           // For backward compatibility, dispatch a (fake) React synthetic event.
           let event = createSyntheticEvent<ReactFocusEvent<Target>>(e);
-          dispatchBlur(event);
+          onBlur?.(event);
         }
 
         // We no longer need the MutationObserver once the target is blurred.
@@ -96,7 +92,7 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: 
 
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
-  }, [dispatchBlur]);
+  }, [onBlur]);
 }
 
 export let ignoreFocusEvent = false;

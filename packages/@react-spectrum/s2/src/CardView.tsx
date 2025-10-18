@@ -24,7 +24,7 @@ import {
   WaterfallLayout
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
-import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -218,7 +218,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
-  let updateSize = useEffectEvent(() => {
+  let updateSize = useCallback(() => {
     let w = scrollRef.current?.clientWidth ?? 0;
     let i = SIZES.length - 1;
     while (i > 0) {
@@ -229,7 +229,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
       i--;
     }
     setMaxSizeIndex(i);
-  });
+  }, [scrollRef, density]);
+  let updateSizeEvent = useEffectEvent(updateSize);
 
   useResizeObserver({
     ref: scrollRef,
@@ -238,8 +239,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   });
 
   useLayoutEffect(() => {
-    updateSize();
-  }, [updateSize]);
+    updateSizeEvent();
+  }, []);
 
   // The actual rendered t-shirt size is the minimum between the size prop and the maximum possible size.
   let size = SIZES[Math.min(maxSizeIndex, SIZES.indexOf(sizeProp))];

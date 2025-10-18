@@ -41,7 +41,7 @@ export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement
       animationRef.current.cancel();
       animationRef.current = null;
     }
-  }, [isAnimating]);
+  }, [isAnimating, reduceMotion]);
 }
 
 export type SkeletonElement = ReactElement<{

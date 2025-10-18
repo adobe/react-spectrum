@@ -111,7 +111,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
         documentObject.removeEventListener('touchend', onTouchEnd, true);
       };
     }
-  }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);
+  }, [ref, isDisabled]);
 }
 
 function isValidEvent(event, ref) {

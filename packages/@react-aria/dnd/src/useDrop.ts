@@ -339,7 +339,7 @@ export function useDrop(options: DropOptions): DropResult {
       onDrop: onKeyboardDrop,
       onDropActivate
     });
-  }, [isDisabled, ref, getDropOperationKeyboard, onDropEnter, onDropExit, onKeyboardDrop, onDropActivate]);
+  }, [isDisabled, ref]);
 
   let {dropProps} = useVirtualDrop();
   if (isDisabled) {
