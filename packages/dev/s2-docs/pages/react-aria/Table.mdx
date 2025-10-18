@@ -172,8 +172,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {Collection, TableLoadMoreItem} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
+import {Collection} from 'react-aria-components';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from 'react-stately';
 
@@ -244,9 +244,7 @@ function AsyncSortTable() {
           {/*- begin highlight -*/}
           <TableLoadMoreItem
             onLoadMore={list.loadMore}
-            isLoading={list.loadingState === 'loadingMore'}>
-            <ProgressCircle isIndeterminate aria-label="Loading more..." />
-          </TableLoadMoreItem>
+            isLoading={list.loadingState === 'loadingMore'} />
           {/*- end highlight -*/}
         </TableBody>
       </Table>

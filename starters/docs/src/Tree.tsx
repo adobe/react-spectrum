@@ -7,10 +7,13 @@ import {
   TreeItemContentProps,
   TreeItemContentRenderProps,
   TreeItemProps as AriaTreeItemProps,
-  TreeProps
+  TreeProps,
+  TreeLoadMoreItem as AriaTreeLoadMoreItem,
+  TreeLoadMoreItemProps
 } from 'react-aria-components';
 import {ChevronRight, GripVertical} from 'lucide-react';
 import {Checkbox} from './Checkbox';
+import {ProgressCircle} from './ProgressCircle';
 import './Tree.css';
 
 export function Tree<T extends object>(props: TreeProps<T>) {
@@ -53,5 +56,13 @@ export function TreeItem(props: TreeItemProps) {
       </TreeItemContent>
       {props.children}
     </AriaTreeItem>
+  );
+}
+
+export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
+  return (
+    <AriaTreeLoadMoreItem {...props}>
+      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+    </AriaTreeLoadMoreItem>
   );
 }

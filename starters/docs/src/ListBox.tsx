@@ -5,12 +5,14 @@ import {
   ListBoxSection as AriaListBoxSection,
   composeRenderProps,
   ListBoxItemProps,
+  ListBoxLoadMoreItem as AriaListBoxLoadMoreItem,
+  ListBoxLoadMoreItemProps,
   ListBoxProps,
   ListBoxSectionProps
 } from 'react-aria-components';
 import {Check} from 'lucide-react';
 import {Text} from './Content';
-
+import {ProgressCircle} from './ProgressCircle';
 import './ListBox.css';
 
 export function ListBox<T extends object>(
@@ -49,5 +51,13 @@ export function DropdownItem(props: ListBoxItemProps) {
         {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
       </>))}
     </ListBoxItem>
+  );
+}
+
+export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
+  return (
+    <AriaListBoxLoadMoreItem {...props}>
+      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+    </AriaListBoxLoadMoreItem>
   );
 }

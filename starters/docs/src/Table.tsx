@@ -16,9 +16,12 @@ import {
   CellProps,
   Cell as AriaCell,
   ColumnResizer,
-  Group
+  Group,
+  TableLoadMoreItem as AriaTableLoadMoreItem,
+  TableLoadMoreItemProps
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
+import {ProgressCircle} from './ProgressCircle';
 import {ChevronUp, ChevronDown, GripVertical} from 'lucide-react';
 import './Table.css';
 
@@ -110,4 +113,14 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
 export function Cell(props: CellProps) {
   return <AriaCell {...props} />;
+}
+
+export function TableLoadMoreItem(props: TableLoadMoreItemProps) {
+  return (
+    <AriaTableLoadMoreItem {...props}>
+      <div>
+        <ProgressCircle isIndeterminate aria-label="Loading more..." />
+      </div>
+    </AriaTableLoadMoreItem>
+  );
 }

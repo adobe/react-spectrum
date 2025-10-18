@@ -39,7 +39,6 @@
   text-align: center;
   border-radius: 9999px;
   cursor: default;
-  outline: none;
   forced-color-adjust: none;
   transition: scale 200ms;
   -webkit-tap-highlight-color: transparent;

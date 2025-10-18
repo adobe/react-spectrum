@@ -149,6 +149,8 @@
   cursor: default;
   border-bottom: 0.5px solid var(--border-color);
   border-inline-end: 0.5px solid var(--border-color);
+  position: relative;
+  z-index: calc(sibling-count() - sibling-index());
 
   &:last-child {
     border-inline-end: none;
@@ -177,6 +179,7 @@
     font: inherit;
     text-align: start;
     color: inherit;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     border-color: transparent;
@@ -202,7 +205,7 @@
 
 .react-aria-ColumnResizer {
   width: 1px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background-color: var(--gray-500);
   padding: 0 var(--spacing-2);
   translate: var(--spacing-4) 0;
@@ -228,7 +231,7 @@
   &[data-focus-visible] {
     background-color: var(--focus-ring-color);
     outline: 2px solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 
   &[data-resizing] {
@@ -278,7 +281,6 @@
     border: none;
   }
 
-  .react-aria-Column,
   .react-aria-Cell {
     white-space: nowrap;
     overflow: hidden;
@@ -294,6 +296,12 @@
 }
 
 .react-aria-TableLoadingIndicator {
-  height: 24px;
+  height: 32px;
   position: relative;
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

@@ -11,7 +11,6 @@
   font-weight: 500;
   text-align: center;
   margin: 0;
-  outline: none;
   height: var(--spacing-8);
   padding: 0 var(--spacing-3);
   display: inline-flex;
