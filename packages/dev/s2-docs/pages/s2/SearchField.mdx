@@ -29,6 +29,7 @@ Use the `value` or `defaultValue` prop to set the text value, and `onChange` to 
 ```tsx render
 "use client";
 import {SearchField} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -45,7 +46,7 @@ function Example() {
         onChange={setSearch}
         onSubmit={setSubmittedSearch} />
       {/*- end highlight -*/}
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         Value: {search}{'\n'}
         Submitted value: {submittedSearch}
       </pre>

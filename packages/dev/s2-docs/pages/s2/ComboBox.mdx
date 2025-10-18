@@ -318,6 +318,7 @@ Both `inputValue` and `selectedKey` can be controlled simultaneously. However, e
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function ControlledComboBox() {
@@ -358,7 +359,7 @@ function ControlledComboBox() {
 
   return (
     <div>
-       <ComboBox
+      <ComboBox
         label="Pick a engineering major"
         placeholder="Select a major"
         /*- begin highlight -*/
@@ -370,7 +371,7 @@ function ControlledComboBox() {
         {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         Current selected major id: {fieldState.selectedKey}{'\n'}
         Current input text: {fieldState.inputValue}
       </pre>
