@@ -5895,6 +5895,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-aria/mcp@workspace:packages/dev/mcp/react-aria":
+  version: 0.0.0-use.local
+  resolution: "@react-aria/mcp@workspace:packages/dev/mcp/react-aria"
+  dependencies:
+    "@modelcontextprotocol/sdk": "npm:^1.17.3"
+    "@swc/helpers": "npm:^0.5.0"
+    typescript: "npm:^5.8.2"
+    zod: "npm:^3.23.8"
+  bin:
+    mcp: dist/index.js
+  languageName: unknown
+  linkType: soft
+
 "@react-aria/menu@npm:^3.19.3, @react-aria/menu@workspace:packages/@react-aria/menu":
   version: 0.0.0-use.local
   resolution: "@react-aria/menu@workspace:packages/@react-aria/menu"
@@ -7224,9 +7237,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/mcp@workspace:packages/dev/mcp":
+"@react-spectrum/mcp@workspace:packages/dev/mcp/s2":
   version: 0.0.0-use.local
-  resolution: "@react-spectrum/mcp@workspace:packages/dev/mcp"
+  resolution: "@react-spectrum/mcp@workspace:packages/dev/mcp/s2"
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.17.3"
     "@swc/helpers": "npm:^0.5.0"
@@ -7234,7 +7247,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     zod: "npm:^3.23.8"
   bin:
-    mcp: dist/index.js
+    mcp: dist/s2/src/index.js
   languageName: unknown
   linkType: soft
 
@@ -20950,6 +20963,18 @@ __metadata:
   checksum: 10c0/7579ff94e899e2f76ab64491d76cf606274c874d8f2af4a442c016bd85688927fcfca157ba6bf74b08e9439dc010b248ce05b96cc7c126a354c3bae7fcb48b7f
   languageName: node
   linkType: hard
+
+"mcp-packages@workspace:packages/dev/mcp":
+  version: 0.0.0-use.local
+  resolution: "mcp-packages@workspace:packages/dev/mcp"
+  dependencies:
+    "@modelcontextprotocol/sdk": "npm:^1.17.3"
+    "@swc/helpers": "npm:^0.5.0"
+    fast-glob: "npm:^3.3.3"
+    typescript: "npm:^5.8.2"
+    zod: "npm:^3.23.8"
+  languageName: unknown
+  linkType: soft
 
 "md5@npm:^2.2.1":
   version: 2.2.1

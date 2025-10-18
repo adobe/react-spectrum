@@ -7,11 +7,15 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "es2018",
-    "types": [],
+    "types": ["node"],
     "declaration": false,
     "sourceMap": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "s2/src/s2-data.ts"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "s2/dist",
+    "react-aria/dist"
+  ]
 }
-
-
