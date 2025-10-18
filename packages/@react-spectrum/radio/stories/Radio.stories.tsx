@@ -29,33 +29,24 @@ export default {
     necessityIndicator: 'icon',
     labelPosition: 'top',
     labelAlign: 'start',
-    isInvalid: false,
-    orientation: 'vertical'
+    isInvalid: false
   },
   argTypes: {
     labelPosition: {
-      control: {
-        type: 'radio',
-        options: ['top', 'side']
-      }
+      control: 'radio',
+      options: ['top', 'side']
     },
     necessityIndicator: {
-      control: {
-        type: 'radio',
-        options: ['icon', 'label']
-      }
+      control: 'radio',
+      options: ['icon', 'label']
     },
     labelAlign: {
-      control: {
-        type: 'radio',
-        options: ['start', 'end']
-      }
+      control: 'radio',
+      options: ['start', 'end']
     },
     orientation: {
-      control: {
-        type: 'radio',
-        options: ['horizontal', 'vertical']
-      }
+      control: 'radio',
+      options: ['horizontal', 'vertical']
     }
   }
 } as Meta<typeof RadioGroup>;
