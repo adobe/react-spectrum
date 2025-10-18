@@ -1,6 +1,6 @@
 'use client';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {DragAndDropHooks} from 'react-aria-components';
+import {DragAndDropHooks, Text} from 'react-aria-components';
 
 export interface Pokemon {
   id: number,
@@ -32,10 +32,14 @@ export function PokemonGridList(props: PokemonGridListProps) {
       selectionMode="multiple"
       items={items}
       renderEmptyState={() => 'Drop items here'}
-      dragAndDropHooks={dragAndDropHooks}>
+      dragAndDropHooks={dragAndDropHooks}
+      data-size="small"
+      style={{border: '1px solid var(--border-color'}}>
       {(item) => (
         <GridListItem textValue={item.name}>
-          <strong>{item.name}</strong> – <em>{item.type}</em>
+          <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`} />
+          <Text>{item.name}</Text>
+          <Text slot="description">{item.type}</Text>
         </GridListItem>
       )}
     </GridList>

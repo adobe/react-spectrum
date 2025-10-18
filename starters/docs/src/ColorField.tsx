@@ -6,7 +6,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import {Text} from './Content';
-import {Label, FieldError} from './Form';
+import {Label, FieldError, Description} from './Form';
 
 import './ColorField.css';
 
@@ -23,8 +23,8 @@ export function ColorField(
     (
       <AriaColorField {...props}>
         {label && <Label>{label}</Label>}
-        <Input />
-        {description && <Text slot="description">{description}</Text>}
+        <Input className="react-aria-Input inset" />
+        {description && <Description>{description}</Description>}
         <FieldError>{errorMessage}</FieldError>
       </AriaColorField>
     )

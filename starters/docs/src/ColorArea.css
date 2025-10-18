@@ -2,7 +2,7 @@
 .react-aria-ColorArea {
   width: 192px;
   height: 192px;
-  border-radius: 4px;
+  border-radius: var(--radius);
   flex-shrink: 0;
 }
 

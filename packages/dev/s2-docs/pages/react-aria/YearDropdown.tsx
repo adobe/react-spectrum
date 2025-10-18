@@ -38,7 +38,7 @@ export function YearDropdown(): ReactElement {
   return (
     <Select
       aria-label="Year"
-      style={{flex: 1}}
+      style={{flex: 1, width: 'fit-content'}}
       // The selected year is always at the center of the 40 year range we display.
       selectedKey={20}
       onSelectionChange={key => {

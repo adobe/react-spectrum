@@ -6,6 +6,7 @@ import docs from 'docs:react-aria-components';
 import {Button as VanillaButton} from 'vanilla-starter/Button';
 import {Button as TailwindButton} from 'tailwind-starter/Button';
 /* import {Button as MacroButton} from './ButtonExample'; */
+import vanillaDocs from 'docs:vanilla-starter/Button';
 import tailwindDocs from 'docs:tailwind-starter/Button';
 import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
@@ -19,9 +20,9 @@ export const tags = ['btn'];
 <ExampleSwitcher examples={['Vanilla CSS', 'Tailwind'/*, 'Style Macro'*/]}>
   <VisualExample
     component={VanillaButton}
-    docs={docs.exports.Button}
-    links={docs.links}
-    props={['isPending', 'isDisabled']}
+    docs={vanillaDocs.exports.Button}
+    links={vanillaDocs.links}
+    props={['variant', 'isPending', 'isDisabled']}
     initialProps={{children: 'Press me'}}
     type="vanilla"
     files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css"]} />
@@ -114,7 +115,7 @@ The `Button` component always represents a button semantically. To create a link
 "use client";
 import {Link} from 'react-aria-components';
 
-<Link className="react-aria-Button" href="https://adobe.com/" target="_blank">
+<Link className="react-aria-Button button-base" href="https://adobe.com/" target="_blank">
   Adobe
 </Link>
 ```

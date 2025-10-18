@@ -45,7 +45,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" items={options} selectionMode="single" placeholder="Select an animal">
+    <ComboBox label="Animals" defaultItems={options} selectionMode="single" placeholder="Select an animal">
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -92,7 +92,7 @@ const users = Array.from({length: 5}, (_, i) => ({
       <Text slot="description">Full access</Text>
     </ComboBoxItem>
   </ComboBox>
-  <ComboBox label="Share" items={users} defaultSelectedKey="user1" placeholder="Select a user">
+  <ComboBox label="Share" defaultItems={users} defaultSelectedKey="user1" placeholder="Select a user">
     {(item) => (
       <ComboBoxItem id={item.id} textValue={item.name}>
         {/*- begin highlight -*/}

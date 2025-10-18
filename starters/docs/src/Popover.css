@@ -1,26 +1,29 @@
-@import "./Dialog.css";
 @import "./theme.css";
 
 .react-aria-Popover {
   --background-color: var(--overlay-background);
 
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
+  outline: 1px solid var(--overlay-border);
+  box-sizing: border-box;
+  filter: drop-shadow(var(--popover-shadow));
+  border-radius: var(--radius-lg);
   background: var(--background-color);
   color: var(--text-color);
-  outline: none;
-  max-width: 250px;
   transition: transform 200ms, opacity 200ms;
-  font-family: system-ui;
-  font-size: 0.875rem;
+  font: var(--font-size) system-ui;
   padding: 8px;
+
+  &[data-trigger=MenuTrigger],
+  &[data-trigger=SubmenuTrigger] {
+    padding: 0;
+  }
 
   .react-aria-OverlayArrow svg {
     display: block;
     fill: var(--background-color);
-    stroke: var(--border-color);
-    stroke-width: 1px;
+    stroke: var(--overlay-border);
+    paint-order: stroke;
+    stroke-width: 2px;
   }
 
   &[data-entering],
@@ -72,9 +75,4 @@
       transform: rotate(-90deg);
     }
   }
-}
-
-/* Extra padding for custom trigger example content */
-.react-aria-Popover :where(p, div) {
-  margin: 0;
 }

@@ -37,7 +37,7 @@ export function MonthDropdown(): ReactElement {
   return (
     <Select
       aria-label="Month"
-      style={{flex: 1}}
+      style={{flex: 1, width: 'fit-content'}}
       selectedKey={state.focusedDate.month}
       onSelectionChange={key => {
         if (typeof key === 'number') {

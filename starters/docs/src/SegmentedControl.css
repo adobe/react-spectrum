@@ -1,9 +1,10 @@
+@import "./theme.css";
+@import "./utilities.css";
+
 .segmented-control {
   display: flex;
-  background: var(--gray-100);
   width: fit-content;
-  padding: 2px;
-  border-radius: 8px;
+  border-radius: 9999px;
 
   .react-aria-SelectionIndicator {
     position: absolute;
@@ -14,9 +15,7 @@
     z-index: -1;
     transition-property: translate, width;
     transition-duration: 200ms;
-    border-radius: 8px;
-    background: var(--gray-50);
-    outline: 2px solid var(--gray-600);
+    border-radius: 9999px;
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
@@ -26,25 +25,29 @@
   .segmented-control-item {
     all: unset;
     display: block;
-    color: var(--text-color);
-    font-size: 1rem;
+    color: var(--gray-1200);
+    font: var(--font-size) system-ui;
+    font-weight: 500;
+    height: var(--spacing-8);
     outline: none;
-    padding: 6px 16px;
+    padding: 0 var(--spacing-3);
     position: relative;
     z-index: 1;
-    border-radius: 8px;
+    transition: color 200ms;
+    -webkit-tap-highlight-color: transparent;
 
     span {
       display: inline-block;
       transition: scale 200ms;
     }
 
-     &[data-pressed] span {
-      scale: 0.95;
+    &[data-pressed] span {
+      scale: 0.9;
     }
 
     &[data-selected] {
       z-index: 0;
+      color: var(--highlight-foreground);
     }
 
     &[data-focus-visible] {

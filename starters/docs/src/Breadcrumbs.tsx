@@ -12,7 +12,7 @@ export function Breadcrumb(props: BreadcrumbProps & Omit<LinkProps, 'className'>
     <RACBreadcrumb {...props}>
       {({isCurrent}) => (<>
         <Link {...props} />
-        {!isCurrent && <ChevronRight size={18} />}
+        {!isCurrent && <ChevronRight size={14} />}
       </>)}
     </RACBreadcrumb>
   );

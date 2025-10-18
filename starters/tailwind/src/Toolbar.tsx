@@ -7,7 +7,7 @@ const styles = tv({
   base: 'flex gap-2',
   variants: {
     orientation: {
-      horizontal: 'flex-row',
+      horizontal: 'flex-row items-center',
       vertical: 'flex-col items-start'
     }
   }

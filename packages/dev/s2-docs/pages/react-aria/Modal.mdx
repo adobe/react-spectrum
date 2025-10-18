@@ -19,8 +19,9 @@ export const tags = ['dialog', 'popup', 'overlay'];
   import {DialogTrigger, Heading} from 'react-aria-components';
   import {Modal} from 'vanilla-starter/Modal';
   import {Dialog} from 'vanilla-starter/Dialog';
-  import {Button} from 'vanilla-starter/Button';
+  import {Form} from 'vanilla-starter/Form';
   import {TextField} from 'vanilla-starter/TextField';
+  import {Button} from 'vanilla-starter/Button';
 
   function Example(props) {
     return (
@@ -28,12 +29,16 @@ export const tags = ['dialog', 'popup', 'overlay'];
         <Button>Sign up…</Button>
         <Modal {...props}/* PROPS */>
           <Dialog>
-            <form>
-              <Heading slot="title">Sign up</Heading>
-              <TextField autoFocus label="First Name" />
-              <TextField label="Last Name" />
-              <Button slot="close">Submit</Button>
-            </form>
+            <Heading slot="title">Subscribe to our newsletter</Heading>
+            <p>Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
+            <Form>
+              <TextField autoFocus label="Name" placeholder="Enter your full name" />
+              <TextField label="Email" placeholder="Enter your email" />
+              <div style={{display: 'flex', gap: 8, alignSelf: 'end'}}>
+                <Button slot="close" variant="secondary">Cancel</Button>
+                <Button slot="close">Subscribe</Button>
+              </div>
+            </Form>
           </Dialog>
         </Modal>
       </DialogTrigger>
@@ -46,8 +51,9 @@ export const tags = ['dialog', 'popup', 'overlay'];
   import {DialogTrigger, Heading} from 'react-aria-components';
   import {Modal} from 'tailwind-starter/Modal';
   import {Dialog} from 'tailwind-starter/Dialog';
-  import {Button} from 'tailwind-starter/Button';
+  import {Form} from 'tailwind-starter/Form';
   import {TextField} from 'tailwind-starter/TextField';
+  import {Button} from 'tailwind-starter/Button';
 
   function Example(props) {
     return (
@@ -55,12 +61,12 @@ export const tags = ['dialog', 'popup', 'overlay'];
         <Button>Sign up…</Button>
         <Modal {...props}/* PROPS */>
           <Dialog>
-            <form>
+            <Form>
               <Heading slot="title">Sign up</Heading>
               <TextField autoFocus label="First Name" />
               <TextField label="Last Name" />
-              <Button slot="close">Submit</Button>
-            </form>
+              <Button slot="close" className="self-end">Submit</Button>
+            </Form>
           </Dialog>
         </Modal>
       </DialogTrigger>

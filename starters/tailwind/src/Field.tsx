@@ -6,7 +6,7 @@ import { tv } from 'tailwind-variants';
 import { composeTailwindRenderProps, focusRing } from "./utils";
 
 export function Label(props: LabelProps) {
-  return <RACLabel {...props} className={twMerge('text-sm text-gray-500 dark:text-zinc-400 font-medium cursor-default w-fit', props.className)} />;
+  return <RACLabel {...props} className={twMerge('text-sm text-gray-600 dark:text-zinc-400 font-medium cursor-default w-fit', props.className)} />;
 }
 
 export function Description(props: TextProps) {

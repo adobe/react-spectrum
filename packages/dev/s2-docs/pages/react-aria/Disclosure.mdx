@@ -70,10 +70,10 @@ import {Button} from 'vanilla-starter/Button';
 import {Settings} from 'lucide-react';
 
 <Disclosure style={{width: 200}}>
-  <div style={{display: 'flex', alignItems: 'center'}}>
+  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
     {/*- begin highlight -*/}
     <DisclosureHeader style={{flex: 1}}>Files</DisclosureHeader>
-    <Button aria-label="Settings"><Settings size={16} /></Button>
+    <Button aria-label="Settings"><Settings /></Button>
     {/*- end highlight -*/}
   </div>
   <DisclosurePanel>Files content</DisclosurePanel>

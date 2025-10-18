@@ -1,11 +1,13 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-Slider {
   display: grid;
   grid-template-areas: "label output"
                        "track track";
   grid-template-columns: 1fr auto;
-  max-width: 300px;
+  max-width: min(100%, 300px);
+  font: var(--font-size) system-ui;
   color: var(--text-color);
 
   .react-aria-Label {
@@ -14,51 +16,72 @@
 
   .react-aria-SliderOutput {
     grid-area: output;
+    font-size: var(--font-size);
   }
 
   .react-aria-SliderTrack {
     grid-area: track;
     position: relative;
 
-    /* track line */
-    &:before {
-      content: '';
+    .track {
       display: block;
       position: absolute;
-      background: var(--border-color);
+      border-radius: 9999px;
+    }
+
+    .fill {
+      position: absolute;
+      margin: 1px 0 0 1px;
+      border-radius: inherit;
+      background: var(--tint-900);
+
+      @media (forced-colors: active) {
+        background: Highlight;
+      }
     }
   }
 
   .react-aria-SliderThumb {
-    width: 1.250375rem;
-    height: 1.250375rem;
+    width: calc(var(--spacing) * 5.5);
+    height: calc(var(--spacing) * 5.5);
     border-radius: 50%;
-    background: var(--highlight-background);
-    border: 2px solid var(--background-color);
     forced-color-adjust: none;
+    --indicator-color: var(--tint);
+    --indicator-drop-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
 
     &[data-dragging] {
-      background: var(--highlight-background-pressed);
-    }
-
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
+      background: var(--button-background-pressed);
     }
   }
 
   &[data-orientation=horizontal] {
     flex-direction: column;
-    width: 300px;
+    width: 100%;
 
     .react-aria-SliderTrack {
-      height: 30px;
+      height: var(--spacing-5);
       width: 100%;
 
-      &:before {
-        height: 3px;
+      .track {
+        height: var(--spacing-2);
         width: 100%;
         top: 50%;
         transform: translateY(-50%);
+      }
+
+      .fill {
+        inset-inline-start: var(--start, 0);
+        width: var(--size);
+        height: calc(100% - 2px);
+        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), inset 0 2px 2px rgb(255 255 255 / 0.2), 0 1px 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
+    
+        @media (prefers-color-scheme: dark) {
+          box-shadow: 0 -1px 0 rgb(255 255 255 / 0.6), inset 0 2px 2px rgb(255 255 255 / 0.2), 0 1px 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
+        }
+
+        @media (forced-colors: active) {
+          box-shadow: none;
+        }
       }
     }
 
@@ -77,14 +100,29 @@
     }
 
     .react-aria-SliderTrack {
-      width: 30px;
+      width: var(--spacing-5);
       height: 100%;
 
-      &:before {
-        width: 3px;
+      .track {
+        width: var(--spacing-2);
         height: 100%;
         left: 50%;
         transform: translateX(-50%);
+      }
+
+      .fill {
+        inset-block-end: var(--start, 0);
+        height: var(--size);
+        width: calc(100% - 2px);
+        box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.3), inset 2px 0 2px rgb(255 255 255 / 0.2), 1px 0 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
+    
+        @media (prefers-color-scheme: dark) {
+          box-shadow: -1px 0 0 rgb(255 255 255 / 0.6), inset 2px 0 2px rgb(255 255 255 / 0.2), 1px 0 0 lch(from var(--tint) 42% c h), 0 0 0 1px var(--tint-900);
+        }
+
+        @media (forced-colors: active) {
+          box-shadow: none;
+        }
       }
     }
 
@@ -94,12 +132,16 @@
   }
 
   &[data-disabled] {
-    .react-aria-SliderTrack:before {
-      background: var(--border-color-disabled);
-    }
+    .react-aria-SliderTrack {
+      .track {
+        background: var(--field-background);
+        --border-color: var(--border-color-disabled);
+      }
 
-    .react-aria-SliderThumb {
-      background: var(--border-color-disabled);
+      .fill {
+        background: var(--border-color-disabled);
+        box-shadow: none;
+      }
     }
   }
 }

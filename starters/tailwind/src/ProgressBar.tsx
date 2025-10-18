@@ -13,7 +13,7 @@ export interface ProgressBarProps extends AriaProgressBarProps {
 
 export function ProgressBar({ label, ...props }: ProgressBarProps) {
   return (
-    <AriaProgressBar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
+    <AriaProgressBar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2 font-sans')}>
       {({ percentage, valueText, isIndeterminate }) => (
         <>
           <div className="flex justify-between gap-2">

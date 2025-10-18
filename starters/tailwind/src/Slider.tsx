@@ -20,14 +20,14 @@ const trackStyles = tv({
     },
     isDisabled: {
       false: 'bg-gray-300 dark:bg-zinc-500 forced-colors:bg-[ButtonBorder]',
-      true: 'bg-gray-100 dark:bg-zinc-800 forced-colors:bg-[GrayText]'
+      true: 'bg-gray-200 dark:bg-zinc-800 forced-colors:bg-[GrayText]'
     }
   }
 });
 
 const thumbStyles = tv({
   extend: focusRing,
-  base: 'w-6 h-6 group-orientation-horizontal:mt-6 group-orientation-vertical:ml-3 rounded-full bg-gray-50 dark:bg-zinc-900 border-2 border-gray-700 dark:border-gray-300',
+  base: 'w-5 h-5 group-orientation-horizontal:mt-6 group-orientation-vertical:ml-3 rounded-full bg-gray-50 dark:bg-zinc-900 border-2 border-gray-700 dark:border-gray-300',
   variants: {
     isDragging: {
       true: 'bg-gray-700 dark:bg-gray-300 forced-colors:bg-[ButtonBorder]'
@@ -47,12 +47,12 @@ export function Slider<T extends number | number[]>(
   { label, thumbLabels, ...props }: SliderProps<T>
 ) {
   return (
-    <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64')}>
+    <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64')}>
       <Label>{label}</Label>
       <SliderOutput className="text-sm text-gray-500 dark:text-zinc-400 font-medium orientation-vertical:hidden">
         {({ state }) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>
-      <SliderTrack className="group col-span-2 orientation-horizontal:h-6 orientation-vertical:w-6 orientation-vertical:h-64 flex items-center">
+      <SliderTrack className="group col-span-2 orientation-horizontal:h-5 orientation-vertical:w-5 orientation-vertical:h-64 flex items-center">
         {({ state, ...renderProps }) => <>
           <div className={trackStyles(renderProps)} />
           {state.values.map((_, i) => <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} className={thumbStyles} />)}

@@ -1,13 +1,22 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-RadioGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   color: var(--text-color);
 
-  [slot=description] {
-    font-size: 12px;
+  .radio-items {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  &[data-orientation=vertical] .radio-items {
+    flex-direction: column;
+  }
+
+  &[data-orientation=horizontal] .radio-items {
+    flex-direction: row;
   }
 }
 
@@ -16,71 +25,43 @@
   /* This is needed so the HiddenInput is positioned correctly */
   position: relative;
   align-items: center;
-  gap: 0.499625rem;
-  font-size: 1.000125rem;
+  gap: var(--spacing-2);
+  font: var(--font-size) system-ui;
   color: var(--text-color);
   forced-color-adjust: none;
+  -webkit-tap-highlight-color: transparent;
 
-  &:before {
-    content: '';
-    display: block;
-    width: 1.12525rem;
-    height: 1.12525rem;
+  .indicator {
+    position: relative;
+    width: calc(var(--spacing) * 4.5);
+    height: calc(var(--spacing) * 4.5);
     box-sizing: border-box;
-    border: 0.125125rem solid var(--border-color);
-    background: var(--field-background);
-    border-radius: 1.12525rem;
+    border-radius: 50%;
     transition: all 200ms;
-  }
 
-  &[data-pressed]:before {
-    border-color: var(--border-color-pressed);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      background: transparent;
+      transition: scale 200ms;
+      scale: 0;
+    }
   }
 
   &[data-selected] {
-    &:before {
-      border-color: var(--highlight-background);
-      border-width: 0.375375rem;
-    }
+    .indicator::after {
+      background: white;
+      scale: 0.37;
 
-    &[data-pressed]:before {
-      border-color: var(--highlight-background-pressed);
-    }
-  }
-
-  &[data-focus-visible]:before {
-    outline: 2px solid var(--focus-ring-color);
-    outline-offset: 2px;
-  }
-
-  &[data-invalid] {
-    &:before {
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed]:before {
-      border-color: var(--invalid-color-pressed);
+      @media (forced-colors: active) {
+        background: HighlightText;
+      }
     }
   }
 
   &[data-disabled] {
     color: var(--text-color-disabled);
-
-    &:before {
-      border-color: var(--border-color-disabled);
-    }
   }
-}
-
-.react-aria-RadioGroup .radio-items {
-  display: flex;
-  gap: 8px;
-}
-
-.react-aria-RadioGroup[data-orientation=vertical] .radio-items {
-  flex-direction: column;
-}
-
-.react-aria-RadioGroup[data-orientation=horizontal] .radio-items {
-  flex-direction: row;
 }

@@ -40,7 +40,7 @@ function Example() {
         placeholder="Enter a color"
         value={value}
         onChange={setValue} />
-      <pre className={style({font: 'body'})}>Current value: {value.toString('hex')}</pre>
+      <pre className={style({font: 'body'})}>Current value: {value?.toString('hex')}</pre>
     </div>
   );
 }

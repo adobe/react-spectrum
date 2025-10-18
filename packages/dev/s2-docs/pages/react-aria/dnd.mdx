@@ -59,7 +59,7 @@ function DraggableCOMPONENT() {
   return <PokemonCOMPONENT dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -173,7 +173,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -188,7 +188,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.FileDropItem.id]} /
 ```tsx render
 "use client";
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {useDragAndDrop, isFileDropItem} from 'react-aria-components';
+import {useDragAndDrop, isFileDropItem, Text} from 'react-aria-components';
 import {useState} from 'react';
 
 interface ImageItem {
@@ -222,13 +222,12 @@ function DroppableGridList() {
       items={items}
       dragAndDropHooks={dragAndDropHooks}
       renderEmptyState={() => "Drop images here"}
-      style={{height: 250}}>
+      style={{height: 250}}
+      data-size="small">
       {item => (
         <GridListItem textValue={item.name}>
-          <div style={{display: 'flex', height: 50, gap: 8, alignItems: 'center', width: '100%'}}>
-            <img src={item.url} style={{height: '100%', aspectRatio: '1/1', objectFit: 'contain'}} />
-            <span style={{flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>{item.name}</span>
-          </div>
+          <img src={item.url} />
+          <Text>{item.name}</Text>
         </GridListItem>
       )}
     </GridList>
@@ -360,7 +359,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -401,7 +400,7 @@ function DroppableCOMPONENT() {
   );
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -456,11 +455,7 @@ function DroppableCOMPONENT() {
       }
     },
     renderDropIndicator(target) {
-      return (
-        <DropIndicator
-          target={target}
-          className="drop-indicator" />
-      );
+      return <DropIndicator target={target} />;
     }
     ///- end highlight -///
   });
@@ -468,26 +463,13 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
 ```
 
 </ExampleSwitcher>
-
-```css render hidden
-.drop-indicator {
-  &[data-drop-target] {
-    outline: 1px solid var(--highlight-background);;
-  }
-
-  @supports not selector(:has(.foo)) {
-    /* Undo gap in browsers that don't support :has */
-    margin-bottom: -2px;
-  }
-}
-```
 
 ### Reordering items
 
@@ -694,7 +676,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DndCOMPONENT
     initialItems={defaultItems}
     aria-label="Drag and drop COMPONENT" />
@@ -757,7 +739,7 @@ function DroppableCOMPONENT() {
   return <PokemonCOMPONENT items={items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -805,7 +787,7 @@ function DraggableCOMPONENT() {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>
@@ -859,7 +841,7 @@ function DraggableCOMPONENT() {
   return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
-<div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+<div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
   <DraggableCOMPONENT />
   <DroppableCOMPONENT />
 </div>

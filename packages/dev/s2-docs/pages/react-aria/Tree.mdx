@@ -105,9 +105,9 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Collection, TreeLoadMoreItem} from 'react-aria-components';
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {Collection} from 'react-aria-components';
 import {useAsyncList} from 'react-stately';
 
 interface Character {
@@ -153,7 +153,10 @@ function AsyncLoadingExample() {
   return (
     <Tree
       aria-label="Async loading tree"
-      style={{height: 300}}>
+      style={{height: 300}}
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
       <TreeItem title="Pokemon">
         <Collection items={pokemonList.items}>
           {(item) => <TreeItem id={item.name} title={item.name} />}
@@ -161,9 +164,7 @@ function AsyncLoadingExample() {
         {/*- begin highlight -*/}
         <TreeLoadMoreItem
           onLoadMore={pokemonList.loadMore}
-          isLoading={pokemonList.loadingState === 'loadingMore'}>
-          <ProgressCircle isIndeterminate aria-label="Loading more..." />
-        </TreeLoadMoreItem>
+          isLoading={pokemonList.loadingState === 'loadingMore'} />
         {/*- end highlight -*/}
       </TreeItem>
       <TreeItem title="Star Wars">
@@ -173,9 +174,7 @@ function AsyncLoadingExample() {
         {/*- begin highlight -*/}
         <TreeLoadMoreItem
           onLoadMore={starWarsList.loadMore}
-          isLoading={starWarsList.loadingState === 'loadingMore'}>
-          <ProgressCircle isIndeterminate aria-label="Loading more..." />
-        </TreeLoadMoreItem>
+          isLoading={starWarsList.loadingState === 'loadingMore'} />
         {/*- end highlight -*/}
       </TreeItem>
     </Tree>
