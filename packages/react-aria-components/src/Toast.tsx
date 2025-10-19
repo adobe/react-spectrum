@@ -62,7 +62,7 @@ export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderPr
   /** The queue of toasts to display. */
   queue: ToastQueue<T>,
   /** A function to render each toast, or children containing a `<ToastList>`. */
-  children: ReactNode | ((renderProps: {toast: QueuedToast<T>}) => ReactElement)
+  children: ReactNode | ((renderProps: {toast: QueuedToast<T>, index: number}) => ReactElement)
 }
 
 /**
@@ -121,7 +121,7 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 
 export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | 'children'> {
   /** A function to render each toast. */
-  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
+  children: (renderProps: {toast: QueuedToast<T>; index: number}) => ReactElement
 }
 
 export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
@@ -141,9 +141,9 @@ export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
 
   return (
     <ol {...hoverProps} {...renderProps} ref={ref}>
-      {state.visibleToasts.map((toast) => (
+      {state.visibleToasts.map((toast, index) => (
         <li key={toast.key} style={{display: 'contents'}}>
-          {props.children({toast})}
+          {props.children({toast, index})}
         </li>
       ))}
     </ol>
