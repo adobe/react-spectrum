@@ -170,3 +170,37 @@ export const Empty: ListViewStory = {
   render: (args) => <TemplateEmptyState {...args} />,
   name: 'empty state'
 };
+
+export const SuspendedItem = {
+  render: (args) => {
+    return (
+      <React.Suspense fallback="loading...">
+        <div style={{width: 200}}>
+          <ListView {...args}>
+            <Item>
+              <Text>
+                <WithSuspense>Item 1</WithSuspense>
+              </Text>
+            </Item>
+            <Item>Item 2</Item>
+          </ListView>
+        </div>
+      </React.Suspense>
+    );
+  },
+  name: 'suspended item'
+};
+let data: string;
+const promise = new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+  data = 'data';
+});
+const useData = () => {
+  if (!data) {
+    throw promise;
+  }
+  return data;
+};
+function WithSuspense({children}: { children: React.ReactNode }) {
+  useData();
+  return <>{children}</>;
+}
