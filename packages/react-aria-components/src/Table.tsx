@@ -384,6 +384,13 @@ interface TableInnerProps {
   collection: ITableCollection<Node<object>>
 }
 
+let TableElementType = forwardRef(function TableElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <table {...props} ref={ref} />;
+});
 
 function TableInner({props, forwardedRef: ref, selectionState, collection}: TableInnerProps) {
   [props, ref] = useContextProps(props, ref, SelectableCollectionContext);
@@ -496,7 +503,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     }
   }
 
-  let ElementType = useElementType('table');
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
@@ -510,7 +516,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         [FieldInputContext, null]
       ]}>
       <FocusScope>
-        <ElementType
+        <TableElementType
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           style={style}
           ref={ref as RefObject<HTMLTableElement>}
@@ -526,16 +532,11 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
               scrollRef={tableContainerContext?.scrollRef ?? ref}
               persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
           </SharedElementTransition>
-        </ElementType>
+        </TableElementType>
       </FocusScope>
       {dragPreview}
     </Provider>
   );
-}
-
-function useElementType<E extends keyof JSX.IntrinsicElements>(element: E): E | 'div' {
-  let {isVirtualized} = useContext(CollectionRendererContext);
-  return isVirtualized ? 'div' : element;
 }
 
 export interface TableOptionsContextValue {
@@ -744,6 +745,14 @@ class TableColumnNode extends CollectionNode<unknown> {
   static readonly type = 'column';
 }
 
+let ColumnElementType = forwardRef(function ColumnElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <th {...props} ref={ref} />;
+});
+
 /**
  * A column within a `<Table>`.
  */
@@ -804,12 +813,11 @@ export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props:
     style = {...style, width: layoutState.getColumnWidth(column.key)};
   }
 
-  let TH = useElementType('th');
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
 
   return (
-    <TH
+    <ColumnElementType
       {...mergeProps(DOMProps, columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
@@ -827,7 +835,7 @@ export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props:
         ]}>
         {renderProps.children}
       </Provider>
-    </TH>
+    </ColumnElementType>
   );
 });
 
@@ -994,6 +1002,14 @@ class TableBodyNode<T> extends FilterableNode<T> {
   static readonly type = 'tablebody';
 }
 
+let TableBodyElementType = forwardRef(function TableBodyElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <tbody {...props} ref={ref} />;
+});
+
 /**
  * The body of a `<Table>`, containing the table rows.
  */
@@ -1020,8 +1036,6 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
   });
 
   let emptyState;
-  let TR = useElementType('tr');
-  let TD = useElementType('td');
   let numColumns = collection.columnCount;
 
   if (isEmpty && props.renderEmptyState && state) {
@@ -1036,23 +1050,22 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
     }
 
     emptyState = (
-      <TR role="row" {...rowProps} style={style}>
-        <TD role="rowheader" {...rowHeaderProps} style={style}>
+      <TableRowElementType role="row" {...rowProps} style={style}>
+        <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
           {props.renderEmptyState(renderValues)}
-        </TD>
-      </TR>
+        </TableCellElementType>
+      </TableRowElementType>
     );
   }
 
   let {rowGroupProps} = useTableRowGroup();
-  let TBody = useElementType('tbody');
 
   let DOMProps = filterDOMProps(props, {global: true});
 
   // TODO: TableBody doesn't support being the scrollable body of the table yet, to revisit if needed. Would need to
   // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
   return (
-    <TBody
+    <TableBodyElementType
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref as any}
       data-empty={isEmpty || undefined}>
@@ -1062,7 +1075,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
         parent={collection.body}
         renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       {emptyState}
-    </TBody>
+    </TableBodyElementType>
   );
 });
 
@@ -1116,6 +1129,14 @@ class TableRowNode<T> extends CollectionNode<T> {
     return null;
   }
 }
+
+let TableRowElementType = forwardRef(function TableRowElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <tr {...props} ref={ref} />;
+});
 
 /**
  * A row within a `<Table>`.
@@ -1196,8 +1217,6 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       }
     });
 
-    let TR = useElementType('tr');
-    let TD = useElementType('td');
     let DOMProps = filterDOMProps(props as any, {global: true});
     delete DOMProps.id;
     delete DOMProps.onClick;
@@ -1205,13 +1224,13 @@ export const Row = /*#__PURE__*/ createBranchComponent(
     return (
       <>
         {dropIndicator && !dropIndicator.isHidden && (
-          <TR role="row" style={{height: 0}}>
-            <TD role="gridcell" colSpan={state.collection.columnCount} style={{padding: 0}}>
+          <TableRowElementType role="row" style={{height: 0}}>
+            <TableCellElementType role="gridcell" colSpan={state.collection.columnCount} style={{padding: 0}}>
               <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
-            </TD>
-          </TR>
+            </TableCellElementType>
+          </TableRowElementType>
         )}
-        <TR
+        <TableRowElementType
           {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           ref={ref as any}
           data-disabled={states.isDisabled || undefined}
@@ -1248,7 +1267,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             ]}>
             <CollectionBranch collection={state.collection} parent={item} />
           </Provider>
-        </TR>
+        </TableRowElementType>
       </>
     );
   },
@@ -1311,6 +1330,14 @@ class TableCellNode extends CollectionNode<unknown> {
   static readonly type = 'cell';
 }
 
+let TableCellElementType = forwardRef(function TableCellElementType(props: any, ref: ForwardedRef<Element>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
+  if (isVirtualized) {
+    return <div {...props} ref={ref} />;
+  }
+  return <td {...props} ref={ref} />;
+});
+
 /**
  * A cell within a table row.
  */
@@ -1343,13 +1370,11 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
     }
   });
 
-  // TODO: Lint doesn't catch these, it thinks we're not in a component render cycle here?
-  let TD = useElementType('td');
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
 
   return (
-    <TD
+    <TableCellElementType
       {...mergeProps(DOMProps, renderProps, gridCellProps, focusProps, hoverProps)}
       ref={ref as any}
       data-focused={isFocused || undefined}
@@ -1358,7 +1383,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
         {renderProps.children}
       </CollectionRendererContext.Provider>
-    </TD>
+    </TableCellElementType>
   );
 });
 
@@ -1449,25 +1474,23 @@ function RootDropIndicator() {
   }, dropState!, ref);
   let isDropTarget = dropState!.isDropTarget({type: 'root'});
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let TR = useElementType('tr');
-  let TD = useElementType('td');
 
   if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
     return null;
   }
 
   return (
-    <TR
+    <TableRowElementType
       role="row"
       aria-hidden={dropIndicatorProps['aria-hidden']}
       style={{height: 0}}>
-      <TD
+      <TableCellElementType
         role="gridcell"
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
         <div role="button" {...visuallyHiddenProps} {...dropIndicatorProps} ref={ref} />
-      </TD>
-    </TR>
+      </TableCellElementType>
+    </TableRowElementType>
   );
 }
 
@@ -1509,8 +1532,6 @@ export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableL
     defaultClassName: 'react-aria-TableLoadingIndicator',
     values: null
   });
-  let TR = useElementType('tr');
-  let TD = useElementType('td');
   let rowProps = {};
   let rowHeaderProps = {};
   let style = {};
@@ -1529,21 +1550,21 @@ export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableL
     <>
       {/* Alway render the sentinel. For now onus is on the user for styling when using flex + gap (this would introduce a gap even though it doesn't take room) */}
       {/* @ts-ignore - compatibility with React < 19 */}
-      <TR style={{height: 0}} inert={inertValue(true)}>
-        <TD style={{padding: 0, border: 0}}>
+      <TableRowElementType style={{height: 0}} inert={inertValue(true)}>
+        <TableCellElementType style={{padding: 0, border: 0}}>
           <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'relative', height: 1, width: 1}} />
-        </TD>
-      </TR>
+        </TableCellElementType>
+      </TableRowElementType>
       {isLoading && renderProps.children && (
-        <TR
+        <TableRowElementType
           {...mergeProps(filterDOMProps(props, {global: true}), rowProps)}
           {...renderProps}
           role="row"
           ref={ref as ForwardedRef<HTMLTableRowElement>}>
-          <TD role="rowheader" {...rowHeaderProps} style={style}>
+          <TableCellElementType role="rowheader" {...rowHeaderProps} style={style}>
             {renderProps.children}
-          </TD>
-        </TR>
+          </TableCellElementType>
+        </TableRowElementType>
       )}
     </>
   );
