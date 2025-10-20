@@ -23,6 +23,7 @@
     align-items: center;
     justify-content: center;
     font-style: italic;
+    min-height: var(--spacing-8);
   }
 }
 
@@ -97,6 +98,7 @@
     color: var(--text-color-disabled);
   }
 
+  .react-aria-Text:not([slot]),
   [slot=label] {
     grid-area: label;
     font-weight: 500;

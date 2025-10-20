@@ -36,7 +36,11 @@ const switcher = style({
   justifySelf: {
     default: 'center',
     lg: 'start'
-  }
+  },
+  overflow: 'auto',
+  maxWidth: 'full',
+  padding: 4,
+  margin: -4
 });
 
 const themePicker = style({
@@ -118,9 +122,11 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
 
   return (
     <div className={exampleStyle} data-example-switcher>
-      <SegmentedControl selectedKey={selected} onSelectionChange={onSelectionChange} styles={switcher}>
-        {examples.map(example => <SegmentedControlItem key={example} id={example}>{example}</SegmentedControlItem>)}
-      </SegmentedControl>
+      <div className={switcher}>
+        <SegmentedControl selectedKey={selected} onSelectionChange={onSelectionChange}>
+          {examples.map(example => <SegmentedControlItem key={example} id={example}>{example}</SegmentedControlItem>)}
+        </SegmentedControl>
+      </div>
       {selected === 'Vanilla CSS' &&
         <Picker
           label="Theme"
