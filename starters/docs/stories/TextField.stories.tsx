@@ -7,7 +7,10 @@ const meta: Meta<typeof TextField> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  args: {
+    placeholder: 'Enter your full name'
+  }
 };
 
 export default meta;

@@ -5,9 +5,7 @@ import {
   TextFieldProps as AriaTextFieldProps,
   ValidationResult
 } from 'react-aria-components';
-import {Label, FieldError} from './Form';
-import {Text} from './Content';
-
+import {Label, FieldError, Description} from './Form';
 import './TextField.css';
 
 export interface TextFieldProps extends AriaTextFieldProps {
@@ -20,13 +18,11 @@ export function TextField(
   { label, description, errorMessage, ...props }: TextFieldProps
 ) {
   return (
-    (
-      <AriaTextField {...props}>
-        <Label>{label}</Label>
-        <Input />
-        {description && <Text slot="description">{description}</Text>}
-        <FieldError>{errorMessage}</FieldError>
-      </AriaTextField>
-    )
+    <AriaTextField {...props}>
+      <Label>{label}</Label>
+      <Input className="react-aria-Input inset" />
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaTextField>
   );
 }

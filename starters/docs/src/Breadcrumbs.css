@@ -6,7 +6,6 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: 18px;
   color: var(--text-color);
 
   .react-aria-Breadcrumb {
@@ -15,31 +14,28 @@
   }
 
   .react-aria-Link {
+    font: var(--font-size) system-ui;
     color: var(--link-color-secondary);
     outline: none;
     position: relative;
     text-decoration: none;
     cursor: pointer;
 
-    &[data-hovered] {
+    &[data-hovered],
+    &[data-focus-visible] {
       text-decoration: underline;
     }
 
     &[data-current] {
       color: var(--text-color);
-      font-weight: bold;
+      font-weight: 600;
     }
 
-    &[data-focus-visible]:after {
-      content: '';
-      position: absolute;
-      inset: -2px -4px;
-      border-radius: 6px;
-      border: 2px solid var(--focus-ring-color);
+    &[data-focus-visible] {
+      border-radius: var(--radius-sm);
+      outline: 2px solid var(--focus-ring-color);
     }
-  }
 
-  .react-aria-Link {
     &[data-disabled] {
       cursor: default;
 
