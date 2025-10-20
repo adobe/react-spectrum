@@ -45,7 +45,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" items={options} selectionMode="single" placeholder="Select an animal">
+    <ComboBox label="Animals" defaultItems={options} selectionMode="single" placeholder="Select an animal">
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -92,7 +92,7 @@ const users = Array.from({length: 5}, (_, i) => ({
       <Text slot="description">Full access</Text>
     </ComboBoxItem>
   </ComboBox>
-  <ComboBox label="Share" items={users} defaultSelectedKey="user1" placeholder="Select a user">
+  <ComboBox label="Share" defaultItems={users} defaultSelectedKey="user1" placeholder="Select a user">
     {(item) => (
       <ComboBoxItem id={item.id} textValue={item.name}>
         {/*- begin highlight -*/}
@@ -318,6 +318,7 @@ Both `inputValue` and `selectedKey` can be controlled simultaneously. However, e
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function ControlledComboBox() {
@@ -358,7 +359,7 @@ function ControlledComboBox() {
 
   return (
     <div>
-       <ComboBox
+      <ComboBox
         label="Pick a engineering major"
         placeholder="Select a major"
         /*- begin highlight -*/
@@ -370,7 +371,7 @@ function ControlledComboBox() {
         {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         Current selected major id: {fieldState.selectedKey}{'\n'}
         Current input text: {fieldState.inputValue}
       </pre>

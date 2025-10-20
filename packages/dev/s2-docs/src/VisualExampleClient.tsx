@@ -477,8 +477,8 @@ function UnionControl({control, value, onChange, isPicker = false}) {
       <Picker
         label={control.name}
         contextualHelp={<PropContextualHelp control={control} />}
-        selectedKey={value == null && control.optional && !control.default ? '__none' : value}
-        onSelectionChange={v => onChange(v === '__none' ? null : v)}
+        value={value == null && control.optional && !control.default ? '__none' : value}
+        onChange={v => onChange(v === '__none' ? null : v)}
         styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
         {control.value.elements.filter(e => e.value).map(element => (
@@ -587,8 +587,8 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
       <Picker
         label={control.name}
         contextualHelp={<PropContextualHelp control={control} />}
-        selectedKey={value?.style || 'decimal'}
-        onSelectionChange={id => {
+        value={value?.style || 'decimal'}
+        onChange={id => {
           switch (id) {
             case 'decimal':
               onChange({style: 'decimal'});
@@ -621,8 +621,8 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
         {value?.style === 'decimal' && (
           <Picker
             label="Sign Display"
-            selectedKey={value?.signDisplay ?? 'auto'}
-            onSelectionChange={signDisplay => onChange({...value, signDisplay})}
+            value={value?.signDisplay ?? 'auto'}
+            onChange={signDisplay => onChange({...value, signDisplay})}
             styles={style({width: 130})}>
             <PickerItem id="auto">Auto</PickerItem>
             <PickerItem id="always">Always</PickerItem>
@@ -892,11 +892,11 @@ function LocaleControl({control, value, onChange}: ControlProps) {
 
   return (
     <>
-      <Picker label="Locale" items={locales} selectedKey={lang} onSelectionChange={updateLocale}>
+      <Picker label="Locale" items={locales} value={lang} onChange={updateLocale}>
         {item => <PickerItem id={item.value}>{item.label}</PickerItem>}
       </Picker>
       {extension === 'calendar' && (
-        <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
+        <Picker label="Calendar" value={calendar} onChange={updateCalendar}>
           <PickerSection>
             <Header>
               <Heading>Preferred</Heading>
@@ -916,7 +916,7 @@ function LocaleControl({control, value, onChange}: ControlProps) {
         </Picker>
       )}
       {extension === 'numberingSystem' && (
-        <Picker label="Numbering system" selectedKey={numberingSystem} onSelectionChange={updateNumberingSystem}>
+        <Picker label="Numbering system" value={numberingSystem} onChange={updateNumberingSystem}>
           <PickerItem id="latn">Latin</PickerItem>
           <PickerItem id="arab">Arabic</PickerItem>
           <PickerItem id="hanidec">Hanidec</PickerItem>

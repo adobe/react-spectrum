@@ -296,7 +296,10 @@ const toastContent = style({
   alignItems: 'baseline',
   gridArea: 'content',
   cursor: 'default',
-  width: 'fit'
+  width: 'fit',
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
+  minWidth: 0
 });
 
 const controls = style({
