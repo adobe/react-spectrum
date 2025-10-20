@@ -8,9 +8,9 @@ import {MenuItem, MenuSection} from "../src/Menu";
 const meta: Meta<typeof CommandPalette> = {
   component: CommandPalette,
   parameters: {
-    layout: "centered",
+    layout: 'centered'
   },
-  tags: ["autodocs"],
+  tags: ['autodocs']
 };
 
 export default meta;
@@ -18,7 +18,7 @@ export default meta;
 export const Example = (args: any) => (
   <DialogTrigger>
     <Button>
-      Open Command Palette{" "}
+      Open Command Palette{' '}
       <kbd className="px-1 ml-4 font-sans text-xs rounded-sm border border-white/20 bg-white/10">
         ⌘ J
       </kbd>
@@ -35,13 +35,13 @@ export const Example = (args: any) => (
 
 export const DisabledItems = (args: any) => <Example {...args} />;
 DisabledItems.args = {
-  disabledKeys: ["mint"],
+  disabledKeys: ['mint']
 };
 
 export const Sections = (args: any) => (
   <DialogTrigger>
     <Button>
-      Open Command Palette{" "}
+      Open Command Palette{' '}
       <kbd className="px-1 ml-4 font-sans text-xs rounded-sm border border-white/20 bg-white/10">
         ⌘ J
       </kbd>
@@ -72,5 +72,5 @@ export const Sections = (args: any) => (
 );
 
 Sections.args = {
-  label: "Preferred fruit or vegetable",
+  label: 'Preferred fruit or vegetable',
 };
