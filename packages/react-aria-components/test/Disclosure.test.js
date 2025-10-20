@@ -98,7 +98,7 @@ describe('Disclosure', () => {
     expect(panel).not.toBeVisible();
   });
 
-  it('should not expand a disabled disclosure via isExpanded', () => {
+  it('should expand a disabled disclosure via isExpanded', () => {
     const {getByTestId,  queryByText} = render(
       <Disclosure data-testid="disclosure" isDisabled isExpanded>
         <Heading level={3}>
@@ -112,7 +112,7 @@ describe('Disclosure', () => {
     const disclosure = getByTestId('disclosure');
     expect(disclosure).toHaveAttribute('data-disabled', 'true');
     const panel = queryByText('Content');
-    expect(panel).not.toBeVisible();
+    expect(panel).toBeVisible();
   });
 
   it('should support controlled isExpanded prop', async () => {

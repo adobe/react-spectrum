@@ -46,6 +46,9 @@ export function parseTime(value: string): Time {
 export function parseDate(value: string): CalendarDate {
   let m = value.match(DATE_RE);
   if (!m) {
+    if (ABSOLUTE_RE.test(value)) {
+      throw new Error(`Invalid ISO 8601 date string: ${value}. Use parseAbsolute() instead.`);
+    }
     throw new Error('Invalid ISO 8601 date string: ' + value);
   }
 
@@ -63,6 +66,9 @@ export function parseDate(value: string): CalendarDate {
 export function parseDateTime(value: string): CalendarDateTime {
   let m = value.match(DATE_TIME_RE);
   if (!m) {
+    if (ABSOLUTE_RE.test(value)) {
+      throw new Error(`Invalid ISO 8601 date time string: ${value}. Use parseAbsolute() instead.`);
+    }
     throw new Error('Invalid ISO 8601 date time string: ' + value);
   }
 

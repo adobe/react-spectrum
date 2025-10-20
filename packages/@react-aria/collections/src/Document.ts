@@ -344,6 +344,9 @@ export class ElementNode<T> extends BaseNode<T> {
     node.rendered = rendered;
     node.render = render;
     node.value = value;
+    if (obj['aria-label']) {
+      node['aria-label'] = obj['aria-label'];
+    }
     node.textValue = textValue || (typeof props.children === 'string' ? props.children : '') || obj['aria-label'] || '';
     if (id != null && id !== node.key) {
       throw new Error('Cannot change the id of an item');

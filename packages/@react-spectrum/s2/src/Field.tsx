@@ -197,13 +197,13 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
         if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
           e.preventDefault();
-          e.currentTarget.querySelector('input')?.focus();
+          (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
       onPointerUp={e => {
         if (e.pointerType !== 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
           e.preventDefault();
-          e.currentTarget.querySelector('input')?.focus();
+          (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
       style={props.UNSAFE_style}
