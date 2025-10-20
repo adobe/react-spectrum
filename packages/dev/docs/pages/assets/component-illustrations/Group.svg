@@ -1,0 +1,16 @@
+<svg style="background:var(--anatomy-gray-100); padding: 50px 10px" height="100" viewBox="0 0 200 100">
+  <rect id="Placement_Area" data-name="Placement Area" width="200" height="100" fill="red" opacity="0"/>
+  <g id="Group">
+    <rect id="Group_Container" width="200" height="100" rx="6" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1" stroke-dasharray="4 4"/>
+    <text id="Group_Label" transform="translate(10 20)" fill="var(--anatomy-gray-700)" font-size="12" font-family="var(--anatomy-font)" font-weight="600"><tspan x="0" y="0">Group Label</tspan></text>
+    <g id="Item_1" transform="translate(10 32)">
+      <rect width="180" height="28" rx="4" fill="var(--anatomy-gray-200)"/>
+      <text transform="translate(10 18)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)"><tspan x="0" y="0">Item 1</tspan></text>
+    </g>
+    <g id="Item_2" transform="translate(10 64)">
+      <rect width="180" height="28" rx="4" fill="var(--anatomy-gray-200)"/>
+      <text transform="translate(10 18)" fill="var(--anatomy-gray-700)" font-size="13" font-family="var(--anatomy-font)"><tspan x="0" y="0">Item 2</tspan></text>
+    </g>
+  </g>
+</svg>
+

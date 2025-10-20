@@ -7,6 +7,8 @@ import vanillaDocs from 'docs:vanilla-starter/Tree';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
 
+export const tags = ['data', 'tree', 'nested', 'hierarchy'];
+
 # Tree
 
 <PageDescription>{docs.exports.Tree.description}</PageDescription>
@@ -103,9 +105,9 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Collection, TreeLoadMoreItem} from 'react-aria-components';
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {Collection} from 'react-aria-components';
 import {useAsyncList} from 'react-stately';
 
 interface Character {
@@ -151,7 +153,10 @@ function AsyncLoadingExample() {
   return (
     <Tree
       aria-label="Async loading tree"
-      style={{height: 300}}>
+      style={{height: 300}}
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
       <TreeItem title="Pokemon">
         <Collection items={pokemonList.items}>
           {(item) => <TreeItem id={item.name} title={item.name} />}
@@ -159,9 +164,7 @@ function AsyncLoadingExample() {
         {/*- begin highlight -*/}
         <TreeLoadMoreItem
           onLoadMore={pokemonList.loadMore}
-          isLoading={pokemonList.loadingState === 'loadingMore'}>
-          <ProgressCircle isIndeterminate aria-label="Loading more..." />
-        </TreeLoadMoreItem>
+          isLoading={pokemonList.loadingState === 'loadingMore'} />
         {/*- end highlight -*/}
       </TreeItem>
       <TreeItem title="Star Wars">
@@ -171,9 +174,7 @@ function AsyncLoadingExample() {
         {/*- begin highlight -*/}
         <TreeLoadMoreItem
           onLoadMore={starWarsList.loadMore}
-          isLoading={starWarsList.loadingState === 'loadingMore'}>
-          <ProgressCircle isIndeterminate aria-label="Loading more..." />
-        </TreeLoadMoreItem>
+          isLoading={starWarsList.loadingState === 'loadingMore'} />
         {/*- end highlight -*/}
       </TreeItem>
     </Tree>
@@ -355,12 +356,12 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
 
-```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem'}}
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <Tree>
   <TreeItem>
     <TreeItemContent>
       <Button slot="chevron" />
-      <Checkbox slot="selection" />
+      <Checkbox slot="selection" /> or <SelectionIndicator />
       <Button slot="drag" />
     </TreeItemContent>
     <TreeItem>
@@ -375,20 +376,26 @@ function Example() {
 
 <PropTable component={docs.exports.Tree} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Tree" properties={docs.exports.TreeRenderProps.properties} />
-
 ### TreeItem
 
-<PropTable component={docs.exports.TreeItem} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-TreeItem" properties={docs.exports.TreeItemRenderProps.properties} />
+<PropTable
+  component={docs.exports.TreeItem}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation."
+  }} />
 
 ### TreeItemContent
 
-<PropTable component={docs.exports.TreeItemContent} links={docs.links} showDescription />
+<PropTable component={docs.exports.TreeItemContent} links={docs.links} showDescription hideRenderProps />
 
 ### TreeLoadMoreItem
 
-<PropTable component={docs.exports.TreeLoadMoreItem} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TreeLoadMoreItem" properties={docs.exports.TreeLoadMoreItemRenderProps.properties} /> */}
+<PropTable
+  component={docs.exports.TreeLoadMoreItem}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation."
+  }} />

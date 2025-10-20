@@ -1,10 +1,13 @@
 import {Layout} from '../../src/Layout';
 import {InstallCommand} from '../../src/InstallCommand';
+import {Command} from '../../src/Command';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import {IllustrationCards} from '../../src/IllustrationCards';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['svg', 'gradient', 'linear', 'symbol'];
 
 # Illustrations
 
@@ -46,11 +49,13 @@ Now you can import illustration SVGs using the `illustration:` [pipeline](https:
 
 `import Illustration from 'illustration:./path/to/Illustration.svg';`
 
+Note that you must use the name `illustration` for the pipeline.
+
 ### Other bundlers
 
 The `@react-spectrum/s2-icon-builder` CLI tool can be used to pre-process a folder of SVG illustrations into TSX files.
 
-`npx @react-spectrum/s2-icon-builder -i 'path/to/illustrations/*.svg' --type illustration -o 'path/to/destination'`
+<Command command="npx @react-spectrum/s2-icon-builder -i 'path/to/illustrations/*.svg' --type illustration -o 'path/to/destination'" />
 
 This outputs a folder of TSX files with names corresponding to the input SVG files. You may rename them as you wish. To use them in your application, import them like normal components.
 `import Illustration from './path/to/destination/Illustration';`

@@ -30,6 +30,11 @@ export interface DialogRenderProps {
 }
 
 export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-Dialog'
+   */
+  className?: string,
   /** Children of the dialog. A function may be provided to access a function to close the dialog. */
   children?: ReactNode | ((opts: DialogRenderProps) => ReactNode)
 }

@@ -101,7 +101,7 @@ export const SideImage: Story = {
           <div className={style({padding: {default: 24, sm: 32}, flexGrow: 1, display: 'flex', flexDirection: 'column', rowGap: 32})}>
             <div className={style({display: 'flex', flexDirection: 'column', rowGap: 32, flexGrow: 1})}>
               <Heading slot="title" styles={style({font: 'heading', marginY: 0})}>Add new</Heading>
-              <TextField label="Name" isRequired />
+              <TextField label="Name" isRequired placeholder="Enter your name" />
               <DropZone>
                 <IllustratedMessage orientation="horizontal" size="S">
                   <DropToUpload />

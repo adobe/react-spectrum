@@ -33,7 +33,7 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' 
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L' | 'XL',
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean
 }
@@ -57,10 +57,13 @@ const header = style({
 
 const content =  style({
   flexGrow: 1,
+  flexShrink: {
+    [`@container (height < ${500 / 16}rem)`]: 0
+  },
   overflowY: {
     default: 'auto',
-    // Make the whole dialog scroll rather than only the content when the height it small.
-    [`@media (height < ${400 / 16}rem)`]: 'visible'
+    // Make the whole dialog scroll rather than only the content when the height is small.
+    [`@container (height < ${500 / 16}rem)`]: 'visible'
   },
   font: 'body',
   // TODO: adjust margin on mobile?

@@ -7,6 +7,8 @@ import vanillaDocs from 'docs:vanilla-starter/Tabs';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
 
+export const tags = ['navigation'];
+
 # Tabs
 
 <PageDescription>{docs.exports.Tabs.description}</PageDescription>
@@ -14,7 +16,7 @@ import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
 <ExampleSwitcher>
   ```tsx render docs={docs.exports.Tabs} links={docs.links} props={['orientation', 'keyboardActivation', 'isDisabled']} type="vanilla" files={["starters/docs/src/Tabs.tsx", "starters/docs/src/Tabs.css"]}
   "use client";
-  import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+  import {Tabs, TabList, Tab, TabPanel} from 'vanilla-starter/Tabs';
   import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
   import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
   import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
@@ -80,7 +82,9 @@ import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
 
 ```tsx render
 "use client";
-import {Tabs, TabList, Tab, TabPanel, Collection, Button} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel} from 'vanilla-starter/Tabs';
+import {Button} from 'vanilla-starter/Button';
+import {Collection} from 'react-aria-components';
 import {useState} from 'react';
 
 function Example() {
@@ -146,7 +150,7 @@ Use the `href` prop on a `<Tab>` to create a link. See the **client side routing
 
 ```tsx render
 "use client";
-import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel} from 'vanilla-starter/Tabs';
 import {useSyncExternalStore} from 'react';
 
 export default function Example() {
@@ -189,7 +193,7 @@ Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The 
 ```tsx render
 "use client";
 import type {Key} from 'react-aria-components';
-import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanel} from 'vanilla-starter/Tabs';
 import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
 import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
 import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
@@ -236,10 +240,12 @@ function Example() {
 
 <Anatomy />
 
-```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanel: '#tabpanel'}}
+```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanel: '#tabpanel', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <Tabs>
   <TabList>
-    <Tab />
+    <Tab>
+      <SelectionIndicator />
+    </Tab>
   </TabList>
   <TabPanel />
 </Tabs>
@@ -249,22 +255,14 @@ function Example() {
 
 <PropTable component={docs.exports.Tabs} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Tabs" properties={docs.exports.TabsRenderProps.properties} />
-
 ### TabList
 
 <PropTable component={docs.exports.TabList} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-TabList" properties={docs.exports.TabListRenderProps.properties} />
 
 ### Tab
 
 <PropTable component={docs.exports.Tab} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Tab" properties={docs.exports.TabRenderProps.properties} />
-
 ### TabPanel
 
 <PropTable component={docs.exports.TabPanel} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-TabPanel" properties={docs.exports.TabPanelRenderProps.properties} />
