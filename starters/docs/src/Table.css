@@ -8,7 +8,6 @@
   overflow: clip;
   outline: none;
   border-spacing: 0;
-  min-height: 100px;
   align-self: start;
   width: 100%;
   word-break: break-word;
@@ -21,13 +20,15 @@
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
-    outline-offset: -1px;
   }
 
   &[data-drop-target] {
     outline: 2px solid var(--highlight-background);
-    outline-offset: -1px;
     background: var(--highlight-overlay)
+  }
+
+  &:has(.react-aria-TableBody[data-empty]) {
+    min-height: 100px;
   }
 
   .react-aria-TableHeader {
@@ -63,6 +64,13 @@
     background: var(--gray-100);
   }
 
+  &:nth-child(2n) {
+    background: var(--gray-100);
+    &[data-pressed] {
+      background: var(--gray-200);
+    }
+  }
+
   &[data-selected] {
     background: var(--highlight-background);
     color: var(--highlight-foreground);
@@ -93,7 +101,8 @@
 
   &[data-drop-target] {
     outline: 2px solid var(--highlight-background);
-    background: var(--highlight-overlay)
+    background: var(--highlight-overlay);
+    z-index: 4;
   }
 
   .drag-button {
@@ -275,10 +284,21 @@
   position: relative;
   border: 0.5px solid var(--border-color);
   border-radius: var(--radius);
-  background: var(--background-color);
+  background: var(--overlay-background);
 
   .react-aria-Table {
     border: none;
+    border-radius: 0;
+
+    &:has(.react-aria-TableBody[data-empty]) {
+      height: 100%;
+    }
+  }
+
+  .react-aria-TableHeader {
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   .react-aria-Cell {

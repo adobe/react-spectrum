@@ -38,4 +38,13 @@
       --highlight-background: var(--gray-1600);
     }
   }
+
+  kbd {
+    font: var(--font-size-sm) system-ui;
+    background: var(--highlight-hover);
+    border: 0.5px solid var(--tint-500);
+    padding: 0 var(--spacing-1);
+    border-radius: var(--radius-sm);
+    margin-inline-start: var(--spacing-3);
+  }
 }

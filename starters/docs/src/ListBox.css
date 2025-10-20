@@ -88,7 +88,6 @@
   &[data-pressed] {
     background: var(--highlight-hover);
     border-radius: var(--radius);
-    --border-color: transparent;
   }
 
   &[data-focus-visible] {

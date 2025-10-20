@@ -14,7 +14,7 @@ const example = style({
   borderRadius: 'xl',
   marginY: {
     default: 32,
-    ':is([data-example-switcher] > *)': 0
+    ':is([data-example-switcher] *)': 0
   },
   padding: {
     default: 12,
