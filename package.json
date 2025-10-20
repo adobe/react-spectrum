@@ -168,7 +168,6 @@
     "lucide-react": "^0.517.0",
     "md5": "^2.2.1",
     "motion": "^12.23.6",
-    "npm-cli-login": "^1.0.0",
     "parcel": "^2.16.0",
     "parcel-optimizer-strict-mode": "workspace:^",
     "patch-package": "^6.2.0",
