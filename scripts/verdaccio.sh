@@ -50,14 +50,17 @@ yarn verdaccio --listen $port &>${output}&
 grep -q 'http address' <(tail -f $output)
 
 # Login as test user
-yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
 yarn config set npmPublishRegistry $registry
 yarn config set npmRegistryServer $registry
+yarn config set npmAlwaysAuth false
+yarn config set npmAuthToken abc
 yarn config set unsafeHttpWhitelist localhost
-yarn config set npmAlwaysAuth true
 npm set registry $registry
-# Pause is important so that the username isn't interpreted as both username and password
-(echo "abc"; sleep 2; echo "abc") | yarn npm login
+
+text="
+//localhost:4000/:_authToken=abc
+"
+echo "$text" > .npmrc
 
 if [ "$ci" = true ];
 then
