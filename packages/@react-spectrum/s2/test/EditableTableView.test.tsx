@@ -251,7 +251,6 @@ describe('TableView', () => {
       await user.tab();
       await user.keyboard('{ArrowRight}');
       let dialogTrigger = document.activeElement! as HTMLElement;
-      // TODO: this is a weird case where the popover isn't actually linked to the button, behaving more like a modal
       let dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
       await dialogTester.open();
       let dialog = dialogTester.dialog;

@@ -60,10 +60,6 @@ export interface DialogTesterOpts extends BaseTesterOpts {
    */
   root: HTMLElement,
   /**
-   * The type of dialog.
-   */
-  dialogType?: 'alertdialog' | 'dialog',
-  /**
    * The overlay type of the dialog. Used to inform the tester how to find the dialog.
    */
   overlayType?: 'modal' | 'popover'

@@ -25,15 +25,12 @@ export class DialogTester {
   private _interactionType: UserOpts['interactionType'];
   private _trigger: HTMLElement | undefined;
   private _dialog: HTMLElement | undefined;
-  // TODO: may not need this? Isn't really useful
-  private _dialogType: DialogTesterOpts['dialogType'];
   private _overlayType: DialogTesterOpts['overlayType'];
 
   constructor(opts: DialogTesterOpts) {
-    let {root, user, interactionType, dialogType, overlayType} = opts;
+    let {root, user, interactionType, overlayType} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
-    this._dialogType = dialogType || 'dialog';
     this._overlayType = overlayType || 'modal';
 
     // Handle case where element provided is a wrapper of the trigger button
@@ -91,9 +88,9 @@ export class DialogTester {
       } else {
         let dialog;
         await waitFor(() => {
-          dialog = document.querySelector(`[role=${this._dialogType}]`);
+          dialog = document.querySelector(`[role=dialog], [role=alertdialog]`);
           if (dialog == null) {
-            throw new Error(`No dialog of type ${this._dialogType} found after pressing the trigger.`);
+            throw new Error(`No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.`);
           } else {
             return true;
           }
@@ -102,7 +99,6 @@ export class DialogTester {
         if (dialog && document.activeElement !== this._trigger && dialog.contains(document.activeElement)) {
           this._dialog = dialog;
         } else {
-          // TODO: is it too brittle to throw here?
           throw new Error('New modal dialog doesnt contain the active element OR the active element is still the trigger. Uncertain if the proper modal dialog was found');
         }
       }

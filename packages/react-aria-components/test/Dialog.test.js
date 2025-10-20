@@ -70,7 +70,7 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    let dialogTester = testUtilUser.createTester('Dialog', {root: button, dialogType: 'alertdialog', overlayType: 'modal'});
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
     await dialogTester.open();
     let dialog = dialogTester.dialog;
     expect(dialog).toHaveAttribute('role', 'alertdialog');
