@@ -55,12 +55,12 @@ export interface SearchFieldRenderProps {
    */
   isInvalid: boolean,
   /**
-   * Whether the text field is read only.
+   * Whether the search field is read only.
    * @selector [data-readonly]
    */
   isReadOnly: boolean,
   /**
-   * Whether the text field is required.
+   * Whether the search field is required.
    * @selector [data-required]
    */
   isRequired: boolean,
