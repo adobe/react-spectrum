@@ -12,15 +12,16 @@ export interface TextFieldProps extends AriaTextFieldProps {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string
 }
 
 export function TextField(
-  { label, description, errorMessage, ...props }: TextFieldProps
+  { label, description, errorMessage, placeholder, ...props }: TextFieldProps
 ) {
   return (
     <AriaTextField {...props}>
       <Label>{label}</Label>
-      <Input className="react-aria-Input inset" />
+      <Input className="react-aria-Input inset" placeholder={placeholder} />
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaTextField>
