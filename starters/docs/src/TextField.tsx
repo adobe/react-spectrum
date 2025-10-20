@@ -21,7 +21,7 @@ export function TextField(
   return (
     <AriaTextField {...props}>
       <Label>{label}</Label>
-      <Input className="react-aria-Input inset" placeholder='' />
+      <Input className="react-aria-Input inset" placeholder={placeholder} />
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaTextField>
