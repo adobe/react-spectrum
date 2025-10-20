@@ -337,7 +337,7 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   selectionBehavior?: SelectionBehavior,
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default "selection"
+   * @default "all"
    */
   disabledBehavior?: DisabledBehavior,
   /** Handler that is called when a user performs an action on the row. */
