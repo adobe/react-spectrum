@@ -18,8 +18,8 @@ export function ProgressBar({ label, ...props }: ProgressBarProps) {
           <>
             <Label>{label}</Label>
             <span className="value">{valueText}</span>
-            <div className="bar">
-              <div className="fill" style={{ width: (isIndeterminate ? 40 : percentage) + '%' }} />
+            <div className="track inset">
+              <div className="fill" style={{ '--percent': (isIndeterminate ? 100 : percentage) + '%' } as any} />
             </div>
           </>
         )}

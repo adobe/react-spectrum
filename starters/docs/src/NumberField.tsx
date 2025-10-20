@@ -1,15 +1,14 @@
 'use client';
 import {
-  Button,
   Group,
   Input,
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
   ValidationResult
 } from 'react-aria-components';
+import {Button} from './Button';
 import {Plus, Minus} from 'lucide-react';
-import {Label, FieldError} from './Form';
-import {Text} from './Content';
+import {Label, FieldError, Description} from './Form';
 import './NumberField.css';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {
@@ -26,11 +25,11 @@ export function NumberField(
       <AriaNumberField {...props}>
         <Label>{label}</Label>
         <Group>
-          <Button slot="decrement"><Minus size={18} /></Button>
-          <Input />
-          <Button slot="increment"><Plus size={18} /></Button>
+          <Input className="react-aria-Input inset" />
+          <Button slot="decrement" variant="secondary"><Minus /></Button>
+          <Button slot="increment" variant="secondary"><Plus /></Button>
         </Group>
-        {description && <Text slot="description">{description}</Text>}
+        {description && <Description>{description}</Description>}
         <FieldError>{errorMessage}</FieldError>
       </AriaNumberField>
     )

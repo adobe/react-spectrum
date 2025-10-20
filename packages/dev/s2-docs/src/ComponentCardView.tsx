@@ -42,6 +42,7 @@ import LabelSvg from '@react-spectrum/docs/pages/assets/component-illustrations/
 import LinkSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
 import ListBoxSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
 import ListViewSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ListView.svg';
+import mcpSvg from './icons/mcp.svg';
 import MenuSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
 import MeterSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Meter.svg';
 import NumberFieldSvg from '@react-spectrum/docs/pages/assets/component-illustrations/NumberField.svg';
@@ -77,7 +78,6 @@ import useKeyboardSvg from '@react-spectrum/docs/pages/assets/component-illustra
 import useLongPressSvg from '@react-spectrum/docs/pages/assets/component-illustrations/useLongPress.svg';
 import useMoveSvg from '@react-spectrum/docs/pages/assets/component-illustrations/useMove.svg';
 import usePressSvg from '@react-spectrum/docs/pages/assets/component-illustrations/usePress.svg';
-
 export interface ComponentCardItem {
   id: string,
   name: string,
@@ -85,8 +85,11 @@ export interface ComponentCardItem {
 }
 
 const componentIllustrations: Record<string, React.ComponentType | undefined> = {
+  'Accordion': DisclosureGroupSvg,
   'ActionButton': ActionButtonSvg,
+  'ActionButtonGroup': ButtonGroupSvg, // TODO: get better illustration
   'ActionGroup': ActionGroupSvg,
+  'ActionMenu': MenuSvg,
   'Badge': BadgeSvg,
   'Breadcrumbs': BreadcrumbsSvg,
   'Button': ButtonSvg,
@@ -121,6 +124,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'Label': LabelSvg,
   'LabeledValue': LabeledValueSvg,
   'Link': LinkSvg,
+  'LinkButton': ButtonSvg, // TODO: get better illustration
   'ListBox': ListBoxSvg,
   'ListView': ListViewSvg,
   'Menu': MenuSvg,
@@ -140,6 +144,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'StatusLight': StatusLightSvg,
   'Switch': SwitchSvg,
   'Table': TableSvg,
+  'TableView': TableSvg,
   'Tabs': TabsSvg,
   'TagGroup': TagGroupSvg,
   'TextArea': TextAreaSvg,
@@ -150,6 +155,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'ToggleButtonGroup': ActionGroupSvg, // ToggleButtonGroup -> ActionGroup
   'Tooltip': TooltipSvg,
   'Tree': TreeSvg,
+  'TreeView': TreeSvg,
   'useFocus': useFocusSvg,
   'useFocusRing': useFocusRingSvg,
   'useFocusWithin': useFocusWithinSvg,
@@ -157,7 +163,8 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'useKeyboard': useKeyboardSvg,
   'useLongPress': useLongPressSvg,
   'useMove': useMoveSvg,
-  'usePress': usePressSvg
+  'usePress': usePressSvg,
+  'MCP Server': mcpSvg
 };
 
 // Overrides for specific illustrations so they fit within the cards.

@@ -3,36 +3,16 @@
 .react-aria-Select {
   color: var(--text-color);
   position: relative;
-  max-width: 250px;
-  width: fit-content;
+  width: 200px;
 
   .react-aria-Button {
-    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-    border-radius: 6px;
-    font-size: 0.9380000000000001rem;
-    padding: 0.25025rem 0.25025rem 0.25025rem 0.499625rem;
-    display: flex;
-    align-items: center;
+    --button-color: var(--gray);
+    padding: 0 var(--spacing-2) 0 var(--spacing-3);
     width: 100%;
+    min-width: 0;
 
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -1px;
-    }
-
-    &[data-disabled] {
-      border-color: var(--border-color-disabled);
-      color: var(--text-color-disabled);
-      span[aria-hidden] {
-        background: var(--border-color-disabled);
-        color: var(--text-color-disabled);
-      }
-
-      .react-aria-SelectValue {
-        &[data-placeholder] {
-          color: var(--text-color-disabled);
-        }
-      }
+    &[data-pressed] {
+      scale: 1;
     }
   }
 
@@ -44,25 +24,13 @@
     white-space: nowrap;
 
     &[data-placeholder] {
-      font-style: italic;
       color: var(--text-color-placeholder);
+      font-weight: normal;
     }
   }
 
-  span[aria-hidden] {
-    width: 1.429rem;
-    height: 1.429rem;
-    line-height: 1.375rem;
-    margin-left: 1rem;
-    padding: 1px;
-    background: var(--highlight-background);
-    color: var(--highlight-foreground);
-    forced-color-adjust: none;
-    border-radius: 4px;
-    font-size: 0.857rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .lucide-chevron-down {
+    margin-inline-start: var(--spacing-2);
   }
 
   .react-aria-SelectValue {
@@ -70,14 +38,11 @@
       display: none;
     }
   }
-
-  [slot=description] {
-    font-size: 12px;
-  }
 }
 
 .react-aria-Popover[data-trigger=Select] {
-  min-width: var(--trigger-width);
+  width: var(--trigger-width);
+  padding: 0;
 
   .react-aria-ListBox {
     display: block;
@@ -87,51 +52,7 @@
     border: none;
 
     .react-aria-Header {
-      padding-left: 1.374625rem;
-    }
-  }
-
-  .react-aria-ListBoxItem {
-    padding: 0 0.499625rem 0 1.374625rem;
-
-    &[data-focus-visible] {
-      outline: none;
-    }
-
-    &[data-selected] {
-      font-weight: 600;
-      background: unset;
-      color: var(--text-color);
-
-      &::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        top: 4px;
-        left: 4px;
-      }
-    }
-
-    &[data-focused],
-    &[data-pressed] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-ListBoxItem[href] {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-@media (forced-colors: active) {
-  .react-aria-Select {
-    .react-aria-Button {
-      &[data-disabled] span[aria-hidden] {
-        background: 0 0;
-      }
+      padding-left: var(--spacing-7);
     }
   }
 }

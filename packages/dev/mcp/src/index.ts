@@ -15,8 +15,8 @@ type SectionInfo = {
 
 type PageInfo = {
   key: string,          // e.g. "s2/Button"
-  title: string,        // from top-level heading
-  description?: string, // first paragraph after title
+  name: string,         // from top-level heading
+  description?: string, // first paragraph after name
   filePath: string,     // absolute path to markdown file
   sections: SectionInfo[]
 };
@@ -42,7 +42,7 @@ const __dirname = path.dirname(__filename);
 
 // CDN base for docs. Can be overridden via env variable.
 const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE
-  ?? 'https://reactspectrum.blob.core.windows.net/reactspectrum/7d2883a56fb1a0554864b21324d405f758deb3ce/s2-docs';
+  ?? 'https://reactspectrum.blob.core.windows.net/reactspectrum/a22a0aed3e97d0a23b9883679798b85eed68413d/s2-docs';
 
 function libBaseUrl(library: Library) {
   return `${DEFAULT_CDN_BASE}/${library}`;
@@ -120,17 +120,18 @@ async function buildPageIndex(library: Library): Promise<PageInfo[]> {
   // Read llms.txt to enumerate available pages without downloading them all.
   const llmsUrl = `${libBaseUrl(library)}/llms.txt`;
   const txt = await fetchText(llmsUrl);
-  const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)\s*$/;
+  const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)(?:\s*:\s*(.*))?\s*$/;
   for (const line of txt.split(/\r?\n/)) {
     const m = line.match(re);
     if (!m) {continue;}
     const display = (m[1] || '').trim();
     const href = (m[2] || '').trim();
+    const description = (m[3] || '').trim() || undefined;
     if (!href || !/\.md$/i.test(href)) {continue;}
     const key = href.replace(/\.md$/i, '').replace(/\\/g, '/');
-    const title = display || path.basename(key);
-    const url = `${DEFAULT_CDN_BASE}/${key}.md`;
-    const info: PageInfo = {key, title, description: undefined, filePath: url, sections: []};
+    const name = display || path.basename(key);
+    const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
+    const info: PageInfo = {key, name, description, filePath, sections: []};
     pages.push(info);
     pageCache.set(info.key, info);
   }
@@ -157,15 +158,15 @@ function parseSectionsFromMarkdown(lines: string[]): SectionInfo[] {
   return sections;
 }
 
-function extractTitleAndDescription(lines: string[]): {title: string, description?: string} {
-  let title = '';
+function extractNameAndDescription(lines: string[]): {name: string, description?: string} {
+  let name = '';
   let description: string | undefined = undefined;
 
   let i = 0;
   for (; i < lines.length; i++) {
     const line = lines[i];
     if (line.startsWith('# ')) {
-      title = line.replace(/^#\s+/, '').trim();
+      name = line.replace(/^#\s+/, '').trim();
       i++;
       break;
     }
@@ -187,7 +188,7 @@ function extractTitleAndDescription(lines: string[]): {title: string, descriptio
     description = descLines.join('\n').trim();
   }
 
-  return {title, description};
+  return {name, description};
 }
 
 async function ensureParsedPage(info: PageInfo): Promise<PageInfo> {
@@ -197,9 +198,9 @@ async function ensureParsedPage(info: PageInfo): Promise<PageInfo> {
 
   const text = await fetchText(info.filePath);
   const lines = text.split(/\r?\n/);
-  const {title, description} = extractTitleAndDescription(lines);
+  const {name, description} = extractNameAndDescription(lines);
   const sections = parseSectionsFromMarkdown(lines);
-  const updated = {...info, title: title || info.title, description, sections};
+  const updated = {...info, name: name || info.name, description, sections};
   pageCache.set(updated.key, updated);
   return updated;
 }
@@ -221,7 +222,7 @@ async function resolvePageRef(library: Library, pageName: string): Promise<PageI
     const maybe = pageCache.get(normalized);
     if (maybe) {return maybe;}
     const filePath = `${DEFAULT_CDN_BASE}/${normalized}.md`;
-    const stub: PageInfo = {key: normalized, title: path.basename(normalized), description: undefined, filePath, sections: []};
+    const stub: PageInfo = {key: normalized, name: path.basename(normalized), description: undefined, filePath, sections: []};
     pageCache.set(stub.key, stub);
     return stub;
   }
@@ -230,7 +231,7 @@ async function resolvePageRef(library: Library, pageName: string): Promise<PageI
   const maybe = pageCache.get(key);
   if (maybe) {return maybe;}
   const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
-  const stub: PageInfo = {key, title: pageName, description: undefined, filePath, sections: []};
+  const stub: PageInfo = {key, name: pageName, description: undefined, filePath, sections: []};
   pageCache.set(stub.key, stub);
   return stub;
 }
@@ -249,8 +250,9 @@ async function startServer(library: Library) {
   }
 
   // list_pages tool
+  const toolPrefix = library === 's2' ? 's2' : 'react_aria';
   server.registerTool(
-    'list_pages',
+    `list_${toolPrefix}_pages`,
     {
       title: library === 's2' ? 'List React Spectrum (@react-spectrum/s2) docs pages' : 'List React Aria docs pages',
       description: `Returns a list of available pages in the ${library} docs.`,
@@ -260,7 +262,7 @@ async function startServer(library: Library) {
       const pages = await buildPageIndex(library);
       const items = pages
         .sort((a, b) => a.key.localeCompare(b.key))
-        .map(p => includeDescription ? {key: p.key, title: p.title, description: p.description ?? ''} : {key: p.key, title: p.title});
+        .map(p => includeDescription ? {name: p.name, description: p.description ?? ''} : {name: p.name});
       return {
         content: [{type: 'text', text: JSON.stringify(items, null, 2)}]
       };
@@ -269,7 +271,7 @@ async function startServer(library: Library) {
 
   // get_page_info tool
   server.registerTool(
-    'get_page_info',
+    `get_${toolPrefix}_page_info`,
     {
       title: 'Get page info',
       description: 'Returns page description and list of sections for a given page.',
@@ -279,8 +281,7 @@ async function startServer(library: Library) {
       const ref = await resolvePageRef(library, page_name);
       const info = await ensureParsedPage(ref);
       const out = {
-        key: info.key,
-        title: info.title,
+        name: info.name,
         description: info.description ?? '',
         sections: info.sections.map(s => s.name)
       };
@@ -290,7 +291,7 @@ async function startServer(library: Library) {
 
   // get_page tool
   server.registerTool(
-    'get_page',
+    `get_${toolPrefix}_page`,
     {
       title: 'Get page markdown',
       description: 'Returns the full markdown content for a page, or a specific section if provided.',
@@ -323,7 +324,7 @@ async function startServer(library: Library) {
   if (library === 's2') {
     // search_icons tool
     server.registerTool(
-      'search_icons',
+      'search_s2_icons',
       {
         title: 'Search S2 icons',
         description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
@@ -360,7 +361,7 @@ async function startServer(library: Library) {
 
     // search_illustrations tool
     server.registerTool(
-      'search_illustrations',
+      'search_s2_illustrations',
       {
         title: 'Search S2 illustrations',
         description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',

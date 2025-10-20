@@ -51,8 +51,8 @@ The following example shows a dynamic collection of items, grouped into sections
 
 ```tsx render
 "use client";
-import {Select} from 'vanilla-starter/Select';
-import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {ListBoxSection, Collection, Header} from 'react-aria-components';
 
 function Example() {
   /*- begin collapse -*/
@@ -86,7 +86,7 @@ function Example() {
         <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+            {item => <SelectItem id={item.name}>{item.name}</SelectItem>}
           </Collection>
         </ListBoxSection>
       )}
@@ -101,8 +101,13 @@ function Example() {
 
 ```tsx render
 "use client";
-import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem, Autocomplete, useFilter} from 'react-aria-components';
+import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {SelectItem} from 'vanilla-starter/Select';
+import {Popover} from 'vanilla-starter/Popover';
+import {ListBox} from 'vanilla-starter/ListBox';
 import {SearchField} from 'vanilla-starter/SearchField';
+import {ChevronDown} from 'lucide-react';
 
 function Example() {
   let {contains} = useFilter({sensitivity: 'base'});
@@ -112,23 +117,23 @@ function Example() {
       <Label>Add tag...</Label>
       <Button>
         <SelectValue />
-        <span aria-hidden="true">▼</span>
+        <ChevronDown size={18} />
       </Button>
-      <Popover>
+      <Popover hideArrow>
         {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
-          <SearchField label="Search tags" autoFocus />
+          <SearchField aria-label="Search tags" placeholder="Search tags" autoFocus style={{margin: 4}} />
           <ListBox>
             {/*- end highlight -*/}
-            <ListBoxItem>News</ListBoxItem>
-            <ListBoxItem>Travel</ListBoxItem>
-            <ListBoxItem>Shopping</ListBoxItem>
-            <ListBoxItem>Business</ListBoxItem>
-            <ListBoxItem>Entertainment</ListBoxItem>
-            <ListBoxItem>Food</ListBoxItem>
-            <ListBoxItem>Technology</ListBoxItem>
-            <ListBoxItem>Health</ListBoxItem>
-            <ListBoxItem>Science</ListBoxItem>
+            <SelectItem>News</SelectItem>
+            <SelectItem>Travel</SelectItem>
+            <SelectItem>Shopping</SelectItem>
+            <SelectItem>Business</SelectItem>
+            <SelectItem>Entertainment</SelectItem>
+            <SelectItem>Food</SelectItem>
+            <SelectItem>Technology</SelectItem>
+            <SelectItem>Health</SelectItem>
+            <SelectItem>Science</SelectItem>
           </ListBox>
         </Autocomplete>
       </Popover>
@@ -181,7 +186,7 @@ Use the `name` prop to submit the `id` of the selected item to the server. Set t
 "use client";
 import {Select, SelectItem} from 'vanilla-starter/Select';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';
 
 <Form>
   <Select

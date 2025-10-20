@@ -47,7 +47,7 @@ export const tags = ['hint', 'popup', 'info'];
   function Example(props) {
     return (
       <TooltipTrigger>
-        <Button aria-label="Edit" variant="icon">
+        <Button aria-label="Edit" variant="secondary">
           <Edit size={18} />
         </Button>
         {/*- begin highlight -*/}
@@ -134,7 +134,7 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
-[DialogTrigger](Dialog.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
+[DialogTrigger](Modal.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
 
 ## API
 

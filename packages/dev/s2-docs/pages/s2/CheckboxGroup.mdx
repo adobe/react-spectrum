@@ -57,6 +57,7 @@ Use the `name` prop to submit the selected checkboxes to the server. Set the `is
 ```tsx render
 "use client";
 import {CheckboxGroup, Checkbox, Button, Form} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>
   <CheckboxGroup
@@ -77,7 +78,7 @@ import {CheckboxGroup, Checkbox, Button, Form} from '@react-spectrum/s2';
     <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
     {/*- end highlight -*/}
   </CheckboxGroup>
-  <Button type="submit" style={{marginTop: 8}}>Submit</Button>
+  <Button type="submit" className={style({marginTop: 8})}>Submit</Button>
 </Form>
 ```
 
