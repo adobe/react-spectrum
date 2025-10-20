@@ -51,6 +51,11 @@
     min-height: unset;
     border: none;
 
+    &[data-empty] {
+      min-height: var(--spacing-8);
+      padding: var(--spacing-2);
+    }
+
     .react-aria-Header {
       padding-left: var(--spacing-7);
     }

@@ -38,7 +38,6 @@
   color: var(--text-color);
   margin-bottom: var(--spacing-2);
   font-weight: 500;
-  contain: inline-size;
 }
 
 .react-aria-FieldError {

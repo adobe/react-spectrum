@@ -13,6 +13,8 @@
   width: 250px;
   max-height: 300px;
   box-sizing: border-box;
+  --drag-button-width: 0px;
+  --checkbox-width: 0px;
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
@@ -27,11 +29,11 @@
   }
 
   &[data-selection-mode=multiple] {
-    --checkbox-width: 28px;
+    --checkbox-width: calc(var(--spacing) * 6.5);
   }
 
   &[data-allows-dragging] {
-    --drag-button-width: 23px;
+    --drag-button-width: var(--spacing-6);
   }
 
   &[data-drop-target] {
@@ -43,7 +45,7 @@
   .react-aria-DropIndicator {
     &[data-drop-target] {
       outline: 1px solid var(--highlight-background);
-      margin-left: calc(8px + var(--checkbox-width, 0px) + var(--drag-button-width, 0px) + 26px + (var(--tree-item-level) - 1) * 16px);
+      margin-left: calc(var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--spacing-5) + (var(--tree-item-level) - 1) * var(--spacing-4));
     }
   }
 }
@@ -65,32 +67,21 @@
   transition-property: background, color, border-radius;
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
+  --chevron-width: var(--spacing-5);
 
-  .react-aria-Button[slot=chevron] {
-    all: unset;
-    display: flex;
-    visibility: hidden;
-    align-items: center;
-    justify-content: center;
-    width: var(--spacing-4);
-    height: 100%;
-    padding-left: calc((var(--tree-item-level) - 1) * var(--padding));
-
-    svg {
-      rotate: 0deg;
-      transition: rotate 200ms;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 3px;
-    }
+  &[data-has-child-items] {
+    --chevron-width: 0px;
   }
 
-  &[data-has-child-items] .react-aria-Button[slot=chevron] {
-    visibility: visible;
-  }
-
-  &[data-expanded] .react-aria-Button[slot=chevron] svg {
-    rotate: 90deg;
+  --border-color: var(--gray-300);
+  &:not(:last-child)::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    inset-inline-start: calc(var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--chevron-width) + (var(--tree-item-level) - 1) * var(--padding));
+    inset-inline-end: var(--spacing-2);
+    border-bottom: 0.5px solid var(--border-color);
   }
 
   &[data-focus-visible] {
@@ -106,6 +97,7 @@
     background: var(--highlight-background);
     color: var(--highlight-foreground);
     --focus-ring-color: var(--highlight-foreground);
+    --border-color: transparent;
 
     &[data-focus-visible] {
       outline-color: var(--highlight-foreground);
@@ -116,6 +108,7 @@
     &:has(+ .react-aria-DropIndicator + [data-selected]) {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
+      --border-color: rgb(255 255 255 / 0.3);
     }
 
     + [data-selected],
@@ -150,12 +143,39 @@
     background: var(--highlight-overlay);
   }
 
+  .react-aria-Button[slot=chevron] {
+    all: unset;
+    display: flex;
+    visibility: hidden;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+    height: 100%;
+    padding-left: calc((var(--tree-item-level) - 1) * var(--padding));
+
+    svg {
+      rotate: 0deg;
+      transition: rotate 200ms;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3px;
+    }
+  }
+
+  &[data-has-child-items] .react-aria-Button[slot=chevron] {
+    visibility: visible;
+  }
+
+  &[data-expanded] .react-aria-Button[slot=chevron] svg {
+    rotate: 90deg;
+  }
+
   .react-aria-Button[slot=drag] {
     all: unset;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 15px;
+    width: var(--spacing-4);
     text-align: center;
 
     &[data-focus-visible] {

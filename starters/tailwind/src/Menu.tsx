@@ -23,7 +23,7 @@ import { Popover, PopoverProps } from './Popover';
 
 export function Menu<T extends object>(props: MenuProps<T>) {
   return (
-    <AriaMenu {...props} className="font-sans p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]" />
+    <AriaMenu {...props} className="font-sans p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)] empty:text-center empty:pb-2" />
   );
 }
 
