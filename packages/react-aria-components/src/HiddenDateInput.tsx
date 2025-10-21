@@ -66,7 +66,12 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
     inputStep = 3600; 
   }
 
-  let dateValue = state.value == null ? '' : state.value.toString();
+  let dateValue = '';
+  if (state.value != null && 'toAbsoluteString' in state.value) {
+    dateValue = state.value.toAbsoluteString().replace('Z', '');
+  } else if (state.value != null) {
+    dateValue = state.value.toString();
+  }
 
   let inputType = state.granularity === 'day' ? 'date' : 'datetime-local';
 
