@@ -2,7 +2,7 @@ const {chromium, firefox, webkit} = require('playwright');
 const {exec} = require('child_process');
 const http = require('http');
 const path = require('path');
-const glob = require('glob-promise');
+const glob = require('glob');
 
 function parseArgs() {
   const args = process.argv.slice(2);

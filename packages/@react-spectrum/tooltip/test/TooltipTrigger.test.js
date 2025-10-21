@@ -330,6 +330,48 @@ describe('TooltipTrigger', function () {
     expect(queryByRole('tooltip')).toBeNull();
   });
 
+  it('does not close if the trigger is clicked when closeOnPress is false',  async () => {
+    let {getByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <TooltipTrigger onOpenChange={onOpenChange} delay={0} closeOnPress={false}>
+          <ActionButton aria-label="trigger" />
+          <Tooltip>Helpful information.</Tooltip>
+        </TooltipTrigger>
+      </Provider>
+    );
+    await user.click(document.body);
+
+    let button = getByLabelText('trigger');
+    await user.hover(button);
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+    await user.click(button);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(tooltip).toBeVisible();
+  });
+
+  it('does not close if the trigger is clicked with the keyboard when closeOnPress is false',  async () => {
+    let {getByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <TooltipTrigger onOpenChange={onOpenChange} delay={0} closeOnPress={false}>
+          <ActionButton aria-label="trigger" />
+          <Tooltip>Helpful information.</Tooltip>
+        </TooltipTrigger>
+      </Provider>
+    );
+
+    let button = getByLabelText('trigger');
+    await user.tab();
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+    fireEvent.keyDown(button, {key: 'Enter'});
+    fireEvent.keyUp(button, {key: 'Enter'});
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(tooltip).toBeVisible();
+  });
+
   describe('delay', () => {
     it('opens immediately for focus',  () => {
       let {getByRole, getByLabelText} = render(

@@ -57,6 +57,7 @@ import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
+import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -66,12 +67,11 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -1115,6 +1115,18 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
   );
 });
 
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
 function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
   let {children, align, renderEditing, isSaving, onSubmit, onCancel, isFocusVisible, cellRef} = props;
   let [isOpen, setIsOpen] = useState(false);
@@ -1134,7 +1146,6 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     size = 'L';
   }
 
-
   // Popover positioning
   useLayoutEffect(() => {
     if (!isOpen) {
@@ -1150,6 +1161,24 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     setVerticalOffset(verticalOffset);
     setTableWidth(tableWidth);
   }, [cellRef, density, isOpen]);
+
+  // Auto select the entire text range of the autofocused input on overlay opening
+  // Maybe replace with FocusScope or one of those utilities
+  useEffect(() => {
+    if (isOpen) {
+      let activeElement = getActiveElement(getOwnerDocument(formRef.current));
+      if (activeElement
+        && formRef.current?.contains(activeElement)
+        // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
+        // seems like an edge case anyways
+        && (
+          (activeElement instanceof HTMLInputElement && !nonTextInputTypes.has(activeElement.type))
+          || activeElement instanceof HTMLTextAreaElement)
+        && typeof activeElement.select === 'function') {
+        activeElement.select();
+      }
+    }
+  }, [isOpen]);
 
   // Cancel, don't save the value
   let cancel = () => {
@@ -1178,7 +1207,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
                   isForcedVisible: 'visible',
                   ':is([role="row"]:hover *)': 'visible',
                   ':is([role="row"][data-focus-visible-within] *)': 'visible',
-                  '@media not (any-pointer: fine)': 'visible'
+                  '@media not ((hover: hover) and (pointer: fine))': 'visible'
                 }
               })({isForcedVisible: isOpen || !!isSaving})
             }
@@ -1225,7 +1254,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
                 onSubmit();
                 setIsOpen(false);
               }}
-              className={style({width: 'full', display: 'flex', alignItems: 'baseline', gap: 16})}
+              className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
               style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
               {renderEditing()}
               <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>

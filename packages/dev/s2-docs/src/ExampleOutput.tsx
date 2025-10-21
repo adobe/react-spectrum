@@ -34,7 +34,10 @@ export function ExampleOutput({component, props = {}, align = 'center', orientat
         gridArea: 'example',
         borderRadius: 'lg',
         font: 'ui',
-        padding: 24,
+        padding: {
+          default: 12,
+          lg: 24
+        },
         boxSizing: 'border-box'
       })({align, orientation})}
       style={{background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))}}>

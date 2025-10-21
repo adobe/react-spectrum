@@ -12,11 +12,13 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {
 
 export function Switch({ children, ...props }: SwitchProps) {
   return (
-    (
-      <AriaSwitch {...props}>
-        <div className="indicator" />
+    <AriaSwitch {...props}>
+      {({isSelected}) => (<>
+        <div className="track indicator">
+          <div className={isSelected ? 'handle' : 'handle indicator'} />
+        </div>
         {children}
-      </AriaSwitch>
-    )
+      </>)}
+    </AriaSwitch>
   );
 }
