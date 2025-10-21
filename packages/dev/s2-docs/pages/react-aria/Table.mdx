@@ -784,13 +784,13 @@ See below for the full definition of the `User` and the `Table` tester.
 
 ### Testing FAQ
 
-- When using the test utils, what if a certain interaction errors or doesn't seem to result in the expected state?
+> When using the test utils, what if a certain interaction errors or doesn't seem to result in the expected state?
 
 In cases like this, first double check your test setup and make sure that your test is rendering your table in its expected
 state before the test util interaction call. If everything looks correct, you can always fall back to simulating interactions manually,
 and using the test util to query your table's state post interaction.
 
-- The tester doesn't offer a specific interaction flow, what should I do?
+> The tester doesn't offer a specific interaction flow, what should I do?
 
 Whenever the table tester queries its rows/cells/etc or triggers a user flow, it does so against the current state of the table. Therefore the table test can be used alongside
 whatever simulated user flow you add.

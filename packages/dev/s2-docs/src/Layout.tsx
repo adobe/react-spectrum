@@ -46,6 +46,23 @@ const components = {
   p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,
   li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 0})}>{children}</li>,
+  blockquote: ({children, ...props}) => (
+    <blockquote
+      {...props}
+      className={style({
+        borderStartWidth: 4,
+        borderEndWidth: 0,
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        borderStyle: 'solid',
+        borderColor: 'gray-400',
+        paddingStart: 12,
+        font: {default: 'body', lg: 'body-lg'},
+        margin: 'unset'
+      })}>
+      {children}
+    </blockquote>
+  ),
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
