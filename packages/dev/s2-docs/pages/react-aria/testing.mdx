@@ -99,6 +99,86 @@ userEvent.tab();
 userEvent.click(document.activeElement);
 ```
 
+## Test setup and common gotchas
+
+### Timers
+
+If you are using fake timers in your test suite, be aware that you may need to advance your timers after various interactions. We have `requestAnimationFrame` calls in various underlying hooks that you will need to also handle by advancing your timers in the tests.
+This happens most prominently in our collection components after selection. In Jest, this can be handled by calling `act(() => jest.runAllTimers());` but you may require more precise control
+depending on the other time-sensitive behavior you are testing. Please see [Jest's timer docs](https://jestjs.io/docs/timer-mocks) or the equivalent docs of your test frameworks for more information on how to do so.
+It is also a good idea to run all timers to completion after each test case to avoid any left over transitions or timeouts that a component may have setup during its lifecycle.
+
+```tsx
+afterEach(() => {
+  act(() => jest.runAllTimers());
+});
+```
+
+Consider adding a `act(() => jest.runAllTimers());` after your simulated user interaction if you run into a test failure that looks like the following:
+
+```
+TestingLibraryElementError: Unable to find an accessible element with the role "listbox"
+```
+
+If you are using real timers instead, you can await a particular state of your app to be reached. If you are using React Testing Library, you can perform a `waitFor` query
+to wait for a dialog to appear:
+
+```tsx
+await waitFor(() => {
+  expect(getByRole('dialog')).toBeInTheDocument();
+});
+```
+
+### Simulating user long press
+
+Some components like Menu support long press operations. Unfortunately, the approach of using the userEvent library to simulate a press event and running timers to hit the
+long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Mock [PointerEvent](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L70-L103)
+globally and use `fireEvent` from `@testing-library/react` to properly simulate these long press events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installPointerEvent} /> utility to automatically set up and tear down this mock in your test.
+Additionally, if you are using fake timers and don't need to control the specific timings around the long press interaction, feel free to use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installPointerEvent, triggerLongPress} from '@react-aria/test-utils';
+installPointerEvent();
+
+// In test case
+let button = getByRole('button');
+
+// With fireEvent and specific timing control
+fireEvent.pointerDown(el, {pointerType: 'touch'});
+act(() => jest.advanceTimersByTime(800));
+fireEvent.up(el, {pointerType: 'touch'});
+
+// With triggerLongPress
+triggerLongPress(button);
+```
+
+### Simulating move event
+
+Components like ColorArea, ColorSlider, ColorWheel, and Slider each feature a draggable handle that a user can interact with to change the component's value. Similar to long press, the interactions offered by userEvent library aren't sufficient to trigger
+the underlying event handlers governing these drag/move operations. [Mock MouseEvent globally](https://github.com/adobe/react-spectrum/blob/f40b575e38837e1aa7cabf0431406e81275d118a/packages/%40react-aria/test-utils/src/testSetup.ts#L16-L36) and `fireEvent` from `@testing-library/react` to simulate these drag/move events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installMouseEvent} /> utility to automatically set up and tear down this mock in your test. Additionally, the track dimensions
+for the draggable handle should be mocked so that the move operation calculations can be properly computed.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installMouseEvent} from '@react-aria/test-utils';
+installMouseEvent();
+
+beforeAll(() => {
+  jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 10}));
+})
+
+// In test case
+let sliderThumb = getByRole('slider').parentElement;
+
+// With fireEvent, move thumb from 0 to 50
+fireEvent.mouseDown(thumb, {clientX: 0, pageX: 0});
+fireEvent.mouseMove(thumb, {pageX: 50});
+fireEvent.mouseUp(thumb, {pageX: 50});
+```
+
 ## React Aria test utils
 
 TODO can't place this next to the header here

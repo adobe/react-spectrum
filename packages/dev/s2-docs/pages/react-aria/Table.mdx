@@ -1,3 +1,4 @@
+import {InstallCommand} from '../../src/InstallCommand';
 import {Layout} from '../../src/Layout';
 export default Layout;
 
@@ -6,6 +7,7 @@ import vanillaDocs from 'docs:vanilla-starter/Table';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import testUtilDocs from 'docs:@react-aria/test-utils';
 
 export const tags = ['data', 'grid'];
 
@@ -89,7 +91,7 @@ export const tags = ['data', 'grid'];
 
 ## Content
 
-`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -707,3 +709,88 @@ function ReorderableTable() {
 ### TableLoadMoreItem
 
 <PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />
+
+
+## Testing
+
+TODO make this a subpage
+
+
+### General setup
+
+Table features long press interactions on its rows depending on the row actions provided and if the user is interacting with the table on
+a touch device. Please see the following sections in the general testing documentation for more information on how to handle these
+behaviors in your test suite.
+
+[Timers](testing.html#timers)
+
+[Long press](testing.html#simulating-user-long-press)
+
+### Test utils
+
+`@react-aria/test-utils` offers common table interaction utilities which you may find helpful when writing tests. To install, simply
+add it to your dev dependencies via your preferred package manager.
+
+<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+the `Table` tester in your test cases. This gives you access to `Table` specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
+The example test case below shows how you might go about setting up the `Table` tester, use it to simulate row selection, and verify the table's state after each interaction.
+
+```ts
+// Table.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('Table can toggle row selection', async function () {
+  // Render your test component/app and initialize the table tester
+  let {getByTestId} = render(
+    <Table data-testid="test-table" selectionMode="multiple">
+    ...
+    </Table>
+  );
+  let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
+  expect(tableTester.selectedRows).toHaveLength(0);
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+
+  await tableTester.toggleRowSelection({row: 2});
+  expect(tableTester.selectedRows).toHaveLength(9);
+  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(checkbox).not.toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(checkbox).toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(0);
+});
+```
+
+See below for the full definition of the `User` and the `Table` tester.
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TableTester} />
+
+### Testing FAQ
+
+- When using the test utils, what if a certain interaction errors or doesn't seem to result in the expected state?
+
+In cases like this, first double check your test setup and make sure that your test is rendering your table in its expected
+state before the test util interaction call. If everything looks correct, you can always fall back to simulating interactions manually,
+and using the test util to query your table's state post interaction.
+
+- The tester doesn't offer a specific interaction flow, what should I do?
+
+Whenever the table tester queries its rows/cells/etc or triggers a user flow, it does so against the current state of the table. Therefore the table test can be used alongside
+whatever simulated user flow you add.
