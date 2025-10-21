@@ -88,9 +88,9 @@ export class DialogTester {
       } else {
         let dialog;
         await waitFor(() => {
-          dialog = document.querySelector(`[role=dialog], [role=alertdialog]`);
+          dialog = document.querySelector('[role=dialog], [role=alertdialog]');
           if (dialog == null) {
-            throw new Error(`No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.`);
+            throw new Error('No dialog of type role="dialog" or role="alertdialog" found after pressing the trigger.');
           } else {
             return true;
           }
