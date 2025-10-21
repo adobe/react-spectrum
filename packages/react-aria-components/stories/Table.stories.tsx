@@ -11,15 +11,17 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, DateField, DateInput, DateSegment, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import React, {JSX, startTransition, Suspense, useState} from 'react';
 import {Selection, useAsyncList, useListData} from 'react-stately';
 import styles from '../example/index.css';
-import {TableLoadMoreItem} from '../src/Table';
+import {TableLoadMoreItem, useTableOptions} from '../src/Table';
 import './styles.css';
+import {CalendarDate, getLocalTimeZone, parseDate} from '@internationalized/date';
+import clsx from 'clsx';
 
 export default {
   title: 'React Aria Components/Table',
@@ -1530,4 +1532,199 @@ export const TableWithReactTransition: TableStory = () => {
       </Table>
     </div>
   );
+};
+
+const TableEditingExampleRender = (props) => {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '2020-06-07', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '2021-04-07', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '2010-11-20', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '2016-01-18', type: 'Text Document'}
+    ]
+  });
+
+  return (
+    <Table
+      {...props}
+      aria-label="Example table"
+      style={{width: '400px', tableLayout: 'fixed'}}>
+      <EditableMyTableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+        <Column>Actions</Column>
+      </EditableMyTableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <EditableMyRow>
+            <EditableCell value={item.name} onEdit={value => list.update(item.id, {...item, name: value})} />
+            <EditableCell value={item.type} onEdit={value => list.update(item.id, {...item, type: value})} />
+            <DateCell value={item.date} onEdit={value => list.update(item.id, {...item, date: value})} />
+            <Cell>
+              <DialogTrigger>
+                <Button>Delete</Button>
+                <ModalOverlay
+                  style={{
+                    position: 'fixed',
+                    zIndex: 100,
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                  <Modal
+                    style={{
+                      background: 'Canvas',
+                      color: 'CanvasText',
+                      border: '1px solid gray',
+                      padding: 30
+                    }}>
+                    <Dialog>
+                      {({close}) => (<>
+                        <Heading>Delete item</Heading>
+                        <p>Are you sure?</p>
+                        <Button onPress={close}>Cancel</Button>
+                        <Button
+                          onPress={() => {
+                            close();
+                            list.remove(item.id);
+                          }}>
+                          Delete
+                        </Button>
+                      </>)}
+                    </Dialog>
+                  </Modal>
+                </ModalOverlay>
+              </DialogTrigger>
+            </Cell>
+          </EditableMyRow>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+
+function EditableMyTableHeader(props) {
+  let {selectionBehavior} = useTableOptions();
+  return (
+    <TableHeader>
+      {selectionBehavior === 'toggle' && (
+        <Column><EditableMyCheckbox /></Column>
+      )}
+      {props.children}
+    </TableHeader>
+  );
+}
+
+function EditableMyRow(props) {
+  let {selectionBehavior} = useTableOptions();
+
+  return (
+    <Row id={props.id}>
+      {selectionBehavior === 'toggle' && (
+        <Cell><EditableMyCheckbox /></Cell>
+      )}
+      {props.children}
+    </Row>
+  );
+}
+
+function EditableMyCheckbox() {
+  return (
+    <Checkbox slot="selection" style={{border: '2px solid gray', borderRadius: 4, display: 'flex', width: 16, height: 16, alignItems: 'center', justifyContent: 'center'}}>
+      {({isIndeterminate, isSelected}) => (
+        <svg viewBox="0 0 18 18" aria-hidden="true" width={12} height={12} fill="none" stroke="currentColor" strokeWidth={3} style={{visibility: !isSelected && !isIndeterminate ? 'hidden' : 'visible'}}>
+          {isIndeterminate
+            ? <rect x={1} y={7.5} width={15} height={1} />
+            : <polyline points="1 9 7 14 15 4" />}
+        </svg>
+      )}
+    </Checkbox>
+  );
+}
+
+function EditableCell(props) {
+  return (
+    <Cell {...props} textValue={props.value} allowsEditing>
+      {({isEditing, endEditing}) => (
+        isEditing
+          ? <input
+              defaultValue={props.value}
+              onBlur={e => {
+                props.onEdit(e.currentTarget.value);
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  props.onEdit(e.currentTarget.value);
+                  endEditing();
+                }
+              }} />
+          : props.value
+      )}
+    </Cell>
+  );
+}
+
+function DateCell(props) {
+  let value = parseDate(props.value).toDate(getLocalTimeZone()).toLocaleDateString();
+  return (
+    <Cell {...props} textValue={value} allowsEditing>
+      {({isEditing, endEditing}) => (
+        isEditing
+          ? <SubmittableDateField
+              value={props.value}
+              onEdit={value => {
+                props.onEdit(value);
+                endEditing();
+              }} />
+          : value
+      )}
+    </Cell>
+  );
+}
+
+function SubmittableDateField(props) {
+  let [value, setValue] = React.useState<CalendarDate | null>(() => parseDate(props.value));
+  return (
+    <DateField
+      value={value}
+      onChange={setValue}
+      onKeyDown={e => {
+        if (e.key === 'Enter') {
+          props.onEdit(value?.toString());
+        }
+      }}>
+      <DateInput className={styles.field} style={{border: 'none', padding: '2px 0'}}>
+        {segment => <DateSegment segment={segment} style={{lineHeight: '1em'}} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      </DateInput>
+    </DateField>
+  );
+}
+
+export const TableEditingExample: StoryObj<typeof Table> = {
+  render: (args) => <TableEditingExampleRender {...args} />,
+  args: {
+    selectionBehavior: 'toggle',
+    selectionMode: 'multiple'
+  },
+  argTypes: {
+    selectionBehavior: {
+      control: {
+        type: 'inline-radio',
+        options: ['toggle', 'replace']
+      }
+    },
+    selectionMode: {
+      control: {
+        type: 'inline-radio',
+        options: ['none', 'single', 'multiple']
+      }
+    }
+  }
 };
