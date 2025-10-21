@@ -1,4 +1,4 @@
-import {Tabs, Tab, TabList, TabPanel} from '../src/Tabs';
+import {Tabs, Tab, TabList, TabPanel, TabPanels} from '../src/Tabs';
 import {fn} from '@storybook/test';
 
 import type {Meta, StoryFn} from '@storybook/react';
@@ -25,14 +25,16 @@ export const Example: Story = (args) => (
       <Tab id="MaR">Monarchy and Republic</Tab>
       <Tab id="Emp">Empire</Tab>
     </TabList>
-    <TabPanel id="FoR">
-      Arma virumque cano, Troiae qui primus ab oris.
-    </TabPanel>
-    <TabPanel id="MaR">
-      Senatus Populusque Romanus.
-    </TabPanel>
-    <TabPanel id="Emp">
-      Alea jacta est.
-    </TabPanel>
+    <TabPanels>
+      <TabPanel id="FoR">
+        Arma virumque cano, Troiae qui primus ab oris.
+      </TabPanel>
+      <TabPanel id="MaR">
+        Senatus Populusque Romanus.
+      </TabPanel>
+      <TabPanel id="Emp">
+        Alea jacta est.
+      </TabPanel>
+    </TabPanels>
   </Tabs>
 );
