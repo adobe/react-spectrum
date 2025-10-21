@@ -68,7 +68,7 @@ const ListViewRendererContext = createContext<ListViewRendererContextValue>({});
 
 export const ListViewContext = createContext<ContextValue<Partial<ListViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
-let InternalListViewContext = createContext<{isQuiet?: boolean, isEmphasized?: boolean, highlightMode?: 'normal' | 'inverse'}>({});
+let InternalListViewContext = createContext<{isQuiet?: boolean, isEmphasized?: boolean}>({});
 
 const listView = style<GridListRenderProps & {isQuiet?: boolean}>({
   ...focusRing(),
@@ -92,7 +92,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   ref: DOMRef<HTMLDivElement>
 ) {
   [props, ref] = useSpectrumContextProps(props, ref, ListViewContext);
-  let {children, isQuiet, isEmphasized, highlightMode} = props;
+  let {children, isQuiet, isEmphasized} = props;
   let scale = useScale();
 
   let renderer;
@@ -109,7 +109,7 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
         rowHeight: scale === 'large' ? 50 : 40
       }}>
       <ListViewRendererContext.Provider value={{renderer}}>
-        <InternalListViewContext.Provider value={{isQuiet, isEmphasized, highlightMode}}>
+        <InternalListViewContext.Provider value={{isQuiet, isEmphasized}}>
           <GridList
             ref={domRef}
             {...props}
@@ -126,38 +126,36 @@ export const ListView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Li
   );
 });
 
-const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: boolean, isQuiet?: boolean, isFirstItem?: boolean, isLastItem?: boolean, isEmphasized?: boolean, highlightMode?: 'normal' | 'inverse'}>({
+const listitem = style<GridListItemRenderProps & {
+  isFocused: boolean,
+  isLink?: boolean,
+  isQuiet?: boolean,
+  isFirstItem?: boolean,
+  isLastItem?: boolean,
+  isEmphasized?: boolean,
+  isSelected?: boolean,
+  isDisabled?: boolean,
+  isNextSelected?: boolean,
+  isPrevSelected?: boolean
+}>({
   ...focusRing(),
-  outlineOffset: 0,
+  boxSizing: 'border-box',
+  outlineOffset: -2,
   columnGap: 0,
   paddingX: 0,
   paddingBottom: '--labelPadding',
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-100',
-    isSelected: 'gray-100',
-    highlightMode: {
-      normal: {
-        isEmphasized: {
-          isSelected: 'blue-900/10'
-        }
-      },
-      inverse: {
-        isEmphasized: {
-          isSelected: 'blue-800'
-        }
-      }
+    isSelected: {
+      default: 'blue-900/10',
+      isHovered: 'blue-900/15'
     }
   },
   color: {
     default: baseColor('neutral-subdued'),
     isHovered: 'gray-800',
-    isSelected: {
-      highlightMode: {
-        normal: 'gray-900',
-        inverse: 'gray-25'
-      }
-    },
+    isSelected: 'gray-900',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -184,14 +182,48 @@ const listitem = style<GridListItemRenderProps & {isFocused: boolean, isLink?: b
     isLink: 'pointer'
   },
   transition: 'default',
-  borderColor: {
-    default: 'gray-300',
-    forcedColors: 'ButtonBorder'
+  '--borderColor': {
+    type: 'borderTopColor',
+    value: {
+      default: 'gray-300',
+      isSelected: 'blue-900',
+      forcedColors: 'ButtonBorder'
+    }
   },
-  borderBottomWidth: 1,
-  borderTopWidth: 0,
-  borderXWidth: 0,
-  borderStyle: 'solid'
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderTopStartRadius: {
+    isFirstItem: 'default'
+  },
+  borderTopEndRadius: {
+    isFirstItem: 'default'
+  },
+  borderBottomStartRadius: {
+    isLastItem: 'default'
+  },
+  borderBottomEndRadius: {
+    isLastItem: 'default'
+  },
+  borderTopColor: {
+    default: 'transparent',
+    isSelected: '--borderColor',
+    isPrevSelected: 'transparent'
+  },
+  borderBottomColor: {
+    default: '--borderColor',
+    isSelected: {
+      default: '--borderColor',
+      isNextSelected: 'transparent'
+    }
+  },
+  borderStartColor: {
+    default: 'transparent',
+    isSelected: '--borderColor'
+  },
+  borderEndColor: {
+    default: 'transparent',
+    isSelected: '--borderColor'
+  }
 }, getAllowedOverrides());
 
 export let label = style({
@@ -199,10 +231,6 @@ export let label = style({
   alignSelf: 'center',
   font: controlFont(),
   color: 'inherit',
-  fontWeight: {
-    default: 'normal',
-    isSelected: 'bold'
-  },
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding',
   truncate: true
@@ -263,9 +291,9 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   // let isLinkOut = isLink && props.target === '_blank';
-  let {isQuiet, isEmphasized, highlightMode} = useContext(InternalListViewContext);
+  let {isQuiet} = useContext(InternalListViewContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
-  // let {direction} = useLocale();
+
   return (
     <GridListItem
       {...props}
@@ -276,8 +304,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         ...renderProps,
         isLink,
         isQuiet,
-        isEmphasized,
-        highlightMode
+        isEmphasized: true
       }, props.styles)}>
       {(renderProps) => {
         let {children} = props;
@@ -300,8 +327,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
               [ActionButtonGroupContext, {
                 styles: actionButtonGroup,
                 size: 'S',
-                isQuiet: true,
-                staticColor: highlightMode === 'inverse' && renderProps.isSelected ? 'white' : undefined // how to invert this and react to color scheme? also, too bright/bold in dark mode unselected
+                isQuiet: true
               }]
             ]}>
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}

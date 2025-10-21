@@ -350,6 +350,8 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
       ...states,
       isFirstItem: item.key === state.collection.getFirstKey(),
       isLastItem: item.key === state.collection.getLastKey(),
+      isNextSelected: state.collection.getKeyAfter(item.key) !== null && state.selectionManager.isSelected(state.collection.getKeyAfter(item.key)!) || undefined,
+      isPrevSelected: state.collection.getKeyBefore(item.key) !== null && state.selectionManager.isSelected(state.collection.getKeyBefore(item.key)!) || undefined,
       isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,

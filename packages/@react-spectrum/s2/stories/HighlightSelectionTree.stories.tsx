@@ -148,7 +148,6 @@ export const LayersTree: StoryObj<typeof TreeExampleLayers> = {
     selectionMode: 'multiple',
     selectionStyle: 'highlight',
     selectionCornerStyle: 'round',
-    highlightMode: 'inverse',
     isEmphasized: true
   }
 };
@@ -267,7 +266,6 @@ export const FileTree: StoryObj<typeof TreeExampleFiles> = {
   args: {
     selectionMode: 'multiple',
     selectionStyle: 'highlight',
-    highlightMode: 'inverse',
     isEmphasized: true
   }
 };
