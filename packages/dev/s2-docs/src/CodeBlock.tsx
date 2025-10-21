@@ -3,6 +3,7 @@ import {CodePlatter, Pre} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExpandableCode} from './ExpandableCode';
 import fs from 'fs';
+import {highlight, Language} from 'tree-sitter-highlight';
 import path from 'path';
 import {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -96,6 +97,16 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
           : content}
       </div>
     </div>
+  );
+}
+
+export function CodeBlockBase({children, lang}: {children: string, lang: string}) {
+  // @ts-ignore
+  let highlighted = highlight(children, Language[lang.toUpperCase()]);
+  return (
+    <pre className="m-0">
+      <code className="source" dangerouslySetInnerHTML={{__html: highlighted}} />
+    </pre>
   );
 }
 
