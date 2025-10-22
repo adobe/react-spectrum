@@ -351,9 +351,11 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
               <div className={treeCheckbox}>
-                <Checkbox
-                  isEmphasized={isEmphasized}
-                  slot="selection" />
+                <div className={style({display: {isDisabled: 'none'}})({isDisabled})}>
+                  <Checkbox
+                    isEmphasized={isEmphasized}
+                    slot="selection" />
+                </div>
               </div>
             )}
             <div
