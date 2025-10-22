@@ -107,8 +107,7 @@ interface S2TableProps {
   /** Provides the ActionBar to display when rows are selected in the TableView. */
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement,
   selectionStyle?: 'highlight' | 'checkbox',
-  isEmphasized?: boolean,
-  highlightMode?: 'normal' | 'inverse'
+  isEmphasized?: boolean
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -288,7 +287,6 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onLoadMore,
     selectionStyle = 'checkbox',
     isEmphasized = false,
-    highlightMode = 'normal',
     ...otherProps
   } = props;
 
@@ -315,9 +313,8 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     isInResizeMode,
     setIsInResizeMode,
     selectionStyle,
-    isEmphasized,
-    highlightMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionStyle, isEmphasized, highlightMode]);
+    isEmphasized
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionStyle, isEmphasized]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
   let isCheckboxSelection = (props.selectionMode === 'multiple' || props.selectionMode === 'single') && selectionStyle === 'checkbox';
@@ -1014,26 +1011,9 @@ const cellContent = style({
     default: -4,
     isSticky: 0
   },
-  color: {
-    highlightMode: {
-      inverse: {
-        isSelected: 'gray-25'
-      }
-    }
-  },
   backgroundColor: {
     default: 'transparent',
     isSticky: '--rowBackgroundColor'
-  },
-  fontWeight: {
-    selectionStyle: {
-      highlight: {
-        default: 'normal',
-        isRowHeader: {
-          isSelected: 'bold'
-        }
-      }
-    }
   }
 });
 
@@ -1122,15 +1102,8 @@ const rowBackgroundColor = {
       isHovered: 'gray-100',
       isPressed: 'gray-100',
       isSelected: {
-        default: 'gray-100',
-        highlightMode: {
-          normal: {
-            isEmphasized: 'blue-900/10'
-          },
-          inverse: {
-            isEmphasized: 'blue-800'
-          }
-        }
+        default: 'blue-900/10',
+        isHovered: 'blue-900/15'
       },
       forcedColors: {
         default: 'Background'
@@ -1180,14 +1153,61 @@ const row = style<RowRenderProps & S2TableProps>({
   //   }
   // },
   outlineStyle: 'none',
-  borderTopWidth: 0,
-  borderBottomWidth: 1,
+  borderTopWidth: {
+    default: 0,
+    isSelected: 0
+  },
+  borderBottomWidth: {
+    default: 1,
+    isSelected: {
+      default: 0,
+      isNextSelected: 1
+    }
+  },
   borderStartWidth: 0,
   borderEndWidth: 0,
   borderStyle: 'solid',
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
+  },
+  '--rowSelectionIndicatorColor': {
+    type: 'borderTopColor',
+    value: {
+      default: 'gray-300',
+      isSelected: 'blue-900',
+      forcedColors: 'ButtonBorder'
+    }
+  },
+  '--rowSelectionIndicatorBorderTopWidth': {
+    type: 'borderTopWidth',
+    value: {
+      default: 0,
+      isSelected: 1,
+      isPreviousSelected: 0
+    }
+  },
+  '--rowSelectionIndicatorBorderBottomWidth': {
+    type: 'borderBottomWidth',
+    value: {
+      default: 0,
+      isSelected: 1,
+      isNextSelected: 0
+    }
+  },
+  '--rowSelectionIndicatorBorderStartWidth': {
+    type: 'borderStartWidth',
+    value: {
+      default: 0,
+      isSelected: 1
+    }
+  },
+  '--rowSelectionIndicatorBorderEndWidth': {
+    type: 'borderEndWidth',
+    value: {
+      default: 0,
+      isSelected: 1
+    }
   },
   forcedColorAdjust: 'none',
   color: {
@@ -1200,6 +1220,22 @@ const row = style<RowRenderProps & S2TableProps>({
     }
   }
 });
+
+let rowSelectionIndicator = raw(`
+  &:before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    inset: 0;
+    border-color: var(--rowSelectionIndicatorColor);
+    border-top-width: var(--rowSelectionIndicatorBorderTopWidth);
+    border-bottom-width: var(--rowSelectionIndicatorBorderBottomWidth);
+    border-inline-start-width: var(--rowSelectionIndicatorBorderStartWidth);
+    border-inline-end-width: var(--rowSelectionIndicatorBorderEndWidth);
+    border-style: solid;
+    z-index: 3;
+  }`);
+let rowFocusIndicator = raw('&:after { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)');
 
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>  {}
 
@@ -1220,7 +1256,9 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
+      })
+      + (renderProps.isSelected ? (' ' + rowSelectionIndicator) : '')
+      + (renderProps.isFocusVisible ? (' ' + rowFocusIndicator) : '')}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && tableVisualOptions.selectionStyle === 'checkbox' && (
         <Cell isSticky className={checkboxCellStyle}>

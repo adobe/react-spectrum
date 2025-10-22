@@ -116,7 +116,6 @@ export const DocumentsTable = {
     overflowMode: 'wrap',
     selectionStyle: 'highlight',
     selectionMode: 'multiple',
-    highlightMode: 'inverse',
     isEmphasized: true
   }
 };

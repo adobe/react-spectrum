@@ -1011,6 +1011,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
 });
 
 export interface RowRenderProps extends ItemRenderProps {
+  /** Whether the previous row is selected. */
+  isPreviousSelected: boolean,
+  /** Whether the next row is selected. */
+  isNextSelected: boolean,
   /** Whether the row's children have keyboard focus. */
   isFocusVisibleWithin: boolean,
   /** The unique id of the row. */
@@ -1113,6 +1117,16 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       }
     // eslint-disable-next-line
     }, []);
+    let isPreviousSelected = false;
+    let keyBefore = state.collection.getKeyBefore(item.key);
+    if (keyBefore != null) {
+      isPreviousSelected = state.selectionManager.isSelected(keyBefore);
+    }
+    let isNextSelected = false;
+    let keyAfter = state.collection.getKeyAfter(item.key);
+    if (keyAfter != null) {
+      isNextSelected = state.selectionManager.isSelected(keyAfter);
+    }
 
     let isDragging = dragState && dragState.isDragging(item.key);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1128,6 +1142,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         isFocusVisible,
         selectionMode: state.selectionManager.selectionMode,
         selectionBehavior: state.selectionManager.selectionBehavior,
+        isPreviousSelected,
+        isNextSelected,
         isDragging,
         isDropTarget: dropIndicator?.isDropTarget,
         isFocusVisibleWithin,
