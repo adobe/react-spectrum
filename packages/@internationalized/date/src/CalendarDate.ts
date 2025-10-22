@@ -64,14 +64,17 @@ export class CalendarDate {
   constructor(calendar: Calendar, year: number, month: number, day: number, constrainDay?: boolean);
   constructor(calendar: Calendar, era: string, year: number, month: number, day: number, constrainDay?: boolean);
   constructor(...args: any[]) {
-    let [calendar, era, year, month, day, constrainDay] = shiftArgs(args);
+    let [calendar, era, year, month, day] = shiftArgs(args);
+
     this.calendar = calendar;
     this.era = era;
     this.year = year;
     this.month = month;
     this.day = day;
+    // TODO: naive fix, ideally should just grab from shiftArgs
+    let shouldConstraint = typeof args.at(-1) === 'boolean' ? args.at(-1) : undefined;
 
-    constrain(this, constrainDay);
+    constrain(this, shouldConstraint);
   }
 
   /** Returns a copy of this date. */
@@ -373,14 +376,14 @@ export class ZonedDateTime {
   }
 
   /** Returns a new `ZonedDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: DateFields & TimeFields, value?: Disambiguation | boolean): ZonedDateTime { 
+  set(fields: DateFields & TimeFields, value?: Disambiguation | boolean): ZonedDateTime {
     let disambiguation, constrainDay = false;
     if (value && typeof value === 'string') {
       disambiguation = value;
     } else if (value && typeof value === 'boolean') {
       constrainDay = value;
     }
-    return setZoned(this, fields, disambiguation, constrainDay); 
+    return setZoned(this, fields, disambiguation, constrainDay);
   }
 
 
