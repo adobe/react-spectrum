@@ -35,11 +35,19 @@ export function ExampleOutput({component, props = {}, align = 'center', orientat
         borderRadius: 'lg',
         font: 'ui',
         padding: {
-          default: 12,
-          lg: 24
+          default: 4,
+          isOverBackground: {
+            default: 12,
+            lg: 24
+          }
+        },
+        margin: {
+          // Undo effect of padding, but keep so focus rings extend outside.
+          default: -4,
+          isOverBackground: 0
         },
         boxSizing: 'border-box'
-      })({align, orientation})}
+      })({align, orientation, isOverBackground: Boolean(props.staticColor || props.isOverBackground)})}
       style={{background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))}}>
       {isValidElement(component) ? cloneElement(component, props) : createElement(component, props)}
     </div>

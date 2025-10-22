@@ -3,7 +3,6 @@
 
 .react-aria-Calendar {
   width: fit-content;
-  max-width: 100%;
   color: var(--text-color);
   font: var(--font-size) system-ui;
 
@@ -25,7 +24,6 @@
     color: var(--invalid-color);
   }
 }
-
 
 .react-aria-CalendarHeaderCell {
   font-size: var(--font-size-sm);

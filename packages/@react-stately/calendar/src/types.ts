@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
+import {CalendarDate, DateDuration} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 import {RangeValue, ValidationState} from '@react-types/shared';
 
@@ -19,6 +19,8 @@ interface CalendarStateBase {
   readonly isDisabled: boolean,
   /** Whether the calendar is in a read only state. */
   readonly isReadOnly: boolean,
+  /** The duration of visible dates. */
+  readonly visibleDuration: DateDuration,
   /** The date range that is currently visible in the calendar. */
   readonly visibleRange: RangeValue<CalendarDate>,
   /** The minimum allowed date that a user may select. */
@@ -37,7 +39,7 @@ interface CalendarStateBase {
   /** The currently focused date. */
   readonly focusedDate: CalendarDate,
   /** Sets the focused date. */
-  setFocusedDate(value: CalendarDate): void,
+  setFocusedDate(value: CalendarDate, align?: 'start' | 'center' | 'end'): void,
   /** Moves focus to the next calendar date. */
   focusNextDay(): void,
   /** Moves focus to the previous calendar date. */

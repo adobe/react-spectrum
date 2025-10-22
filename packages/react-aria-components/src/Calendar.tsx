@@ -19,6 +19,7 @@ import {
   useCalendarGrid,
   useFocusRing,
   useHover,
+  useIsSSR,
   useLocale,
   useRangeCalendar,
   VisuallyHidden
@@ -26,6 +27,7 @@ import {
 import {ButtonContext} from './Button';
 import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
+import {chain, filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -39,9 +41,8 @@ import {
   useSlottedContext
 } from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, useContext, useMemo, useReducer, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -263,6 +264,150 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
   );
 });
 
+// Display a large number of pages on either side of the center date to
+// give the illusion of infinite scrolling. When the user stops scrolling,
+// reset the scroll position back to the center.
+const PAGES = 100;
+
+interface State {
+  centerDate: CalendarDate,
+  currentPage: number
+}
+
+type Action =
+  | {type: 'SCROLL', page: number}
+  | {type: 'SCROLL_END', visibleMonths: number}
+  | {type: 'SET_FOCUSED_DATE', date: CalendarDate};
+
+function reducer(state: State, action: Action) {
+  let {centerDate, currentPage} = state;
+  switch (action.type) {
+    case 'SCROLL':
+      if (action.page === currentPage) {
+        return state;
+      }
+      return {centerDate, currentPage: action.page};
+    case 'SCROLL_END':
+      if (currentPage === PAGES) {
+        return state;
+      }
+      return {
+        centerDate: centerDate.add({months: (currentPage - PAGES) * action.visibleMonths}),
+        currentPage: PAGES
+      };
+    case 'SET_FOCUSED_DATE':
+      return {centerDate: action.date, currentPage: PAGES};
+  }
+}
+
+export interface CalendarCarouselProps extends StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-CalendarCarousel'
+   */
+  className?: string,
+  /** One or more CalendarGrid elements representing a single page. */
+  children: ReactNode
+}
+
+/**
+ * A CalendarCarousel displays one or more CalendarGrids,
+ * and allows a user to swipe to navigate between pages.
+ */
+export function CalendarCarousel(props: CalendarCarouselProps) {
+  let calendarState = useContext(CalendarStateContext);
+  let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let state = calendarState ?? rangeCalendarState!;
+  let [{centerDate, currentPage}, dispatch] = useReducer(
+    reducer,
+    null,
+    () => ({centerDate: state.focusedDate, currentPage: PAGES})
+  );
+
+  // Whenever the center date changes, reset the scroll position.
+  let ref = useRef<HTMLDivElement | null>(null);
+  let isSSR = useIsSSR();
+  useLayoutEffect(() => {
+    if (!isSSR) {
+      ref.current!.scrollLeft = ref.current!.offsetWidth * PAGES;
+    }
+  }, [isSSR, centerDate, state.visibleDuration]);
+
+  // If the focused date changes, update the center date.
+  if (currentPage === PAGES && state.focusedDate.compare(centerDate) !== 0) {
+    dispatch({
+      type: 'SET_FOCUSED_DATE',
+      date: state.focusedDate
+    });
+  }
+
+  let timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  let onScroll = () => {
+    // Update the calendar's focused date when scrolling between pages,
+    // and adjust the current page within the visible range.
+    let el = ref.current!;
+    let index = Math.round(el.scrollLeft / el.offsetWidth);
+    if (currentPage !== index) {
+      // setFocusedDate also forces DOM focus, but we don't want to affect that.
+      let isFocused = state.isFocused;
+      state.setFocusedDate(centerDate.add({months: (index - PAGES) * state.visibleDuration.months!}), 'start');
+      state.setFocused(isFocused);
+      dispatch({
+        type: 'SCROLL',
+        page: index
+      });
+    }
+
+    // After scrolling stops, re-center the scroll position.
+    clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => {
+      let index = el.scrollLeft / el.offsetWidth;
+      if (Math.abs(Math.round(index) - index) < 0.01) {
+        dispatch({type: 'SCROLL_END', visibleMonths: state.visibleDuration.months!});
+      }
+    }, 500);
+  };
+
+  return (
+    <div
+      ref={ref}
+      {...filterDOMProps(props, {global: true})}
+      onScroll={chain(props.onScroll, onScroll)}
+      className={props.className || 'react-aria-CalendarCarousel'}
+      tabIndex={-1}
+      style={{
+        ...props.style,
+        display: 'flex',
+        overflow: 'auto',
+        scrollSnapType: 'x mandatory',
+        scrollbarWidth: 'none',
+        width: 'fit-content'
+      }}>
+      {/* If SSR, only display the current page. After hydration, display an extra page on either side plus placeholders. */}
+      {isSSR ? props.children : <>
+        {/* Placeholder to hold space in the scroll width for more pages. */}
+        <div style={{width: (currentPage - 1) * 100 + '%', flexShrink: 0, contain: 'strict'}} />
+        {/* contain: 'inline-size' makes these extra pages not affect the width of the parent */}
+        <div inert style={{width: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+          <CalendarGridContext.Provider value={{offset: {months: -state.visibleDuration.months!}}}>
+            {props.children}
+          </CalendarGridContext.Provider>
+        </div>
+        {/* Center (visible) page */}
+        <div style={{width: 'fit-content', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+          {props.children}
+        </div>
+        <div inert style={{width: '100%', flexShrink: 0, contain: 'inline-size', scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
+          <CalendarGridContext.Provider value={{offset: state.visibleDuration}}>
+            {props.children}
+          </CalendarGridContext.Provider>
+        </div>
+        <div style={{width: (PAGES * 2 - currentPage - 1) * 100 + '%', flexShrink: 0, contain: 'strict'}} />
+      </>}
+    </div>
+  );
+}
+
 export interface CalendarCellRenderProps {
   /** The date that the cell represents. */
   date: CalendarDate,
@@ -377,6 +522,7 @@ interface InternalCalendarGridContextValue {
   weeksInMonth: number
 }
 
+const CalendarGridContext = createContext<ContextValue<CalendarGridProps, HTMLTableElement>>(null);
 const InternalCalendarGridContext = createContext<InternalCalendarGridContextValue | null>(null);
 
 /**
@@ -384,14 +530,28 @@ const InternalCalendarGridContext = createContext<InternalCalendarGridContextVal
  * can be keyboard navigated and selected by the user.
  */
 export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
+  // Merge offset from context with props.
+  let ctx = useSlottedContext(CalendarGridContext);
+  let offset = useMemo(() => {
+    let offset = props.offset || ctx?.offset;
+    if (props.offset && ctx?.offset) {
+      offset = {...ctx.offset};
+      for (let key in offset) {
+        offset[key] += props.offset[key] ?? 0;
+      }
+    }
+    return offset;
+  }, [props.offset, ctx?.offset]);
+
+  [props, ref] = useContextProps(props, ref, CalendarGridContext);
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let calenderProps = useSlottedContext(CalendarContext)!;
   let rangeCalenderProps = useSlottedContext(RangeCalendarContext)!;
   let state = calendarState ?? rangeCalendarState!;
   let startDate = state.visibleRange.start;
-  if (props.offset) {
-    startDate = startDate.add(props.offset);
+  if (offset) {
+    startDate = startDate.add(offset);
   }
 
   let firstDayOfWeek = calenderProps?.firstDayOfWeek ?? rangeCalenderProps?.firstDayOfWeek;
