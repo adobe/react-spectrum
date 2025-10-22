@@ -21,6 +21,7 @@ import userEvent from '@testing-library/user-event';
 describe('Combobox', () => {
   let user;
   let testUtilUser = new User();
+
   function DynamicCombobox(props) {
     let {items, loadingState, onLoadMore, ...otherProps} = props;
     return (
@@ -64,7 +65,10 @@ describe('Combobox', () => {
     comboboxTester.setInteractionType('mouse');
     await comboboxTester.open();
 
-    expect(comboboxTester.options()).toHaveLength(1);
+    let options = comboboxTester.options();
+    expect(options).toHaveLength(1);
+    expect(comboboxTester.listbox).toBeTruthy();
+    expect(options[0]).toHaveTextContent('No results');
     expect(within(comboboxTester.listbox!).getByTestId('loadMoreSentinel')).toBeInTheDocument();
   });
 

@@ -11,10 +11,24 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DOMProps,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FieldInputContext} from './RSPContexts';
+import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -48,6 +62,11 @@ export interface TextFieldRenderProps {
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TextField'
+   */
+  className?: ClassNameOrFunction<TextFieldRenderProps>,
   /** Whether the value is invalid. */
   isInvalid?: boolean
 }
@@ -61,8 +80,8 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let inputRef = useRef(null);
-  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  let inputRef = useRef<HTMLInputElement>(null);
+  [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
@@ -72,16 +91,16 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
     inputElementType,
     label,
     validationBehavior
-  }, mergedInputRef);
+  }, inputRef);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.
   let inputOrTextAreaRef = useCallback((el) => {
-    mergedInputRef.current = el;
+    inputRef.current = el;
     if (el) {
       setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
     }
-  }, [mergedInputRef]);
+  }, [inputRef]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -110,7 +129,7 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: inputOrTextAreaRef}],
+          [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
           [GroupContext, {role: 'presentation', isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
           [TextContext, {

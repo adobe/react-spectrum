@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {centerBaselineBefore} from './CenterBaseline';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
@@ -37,6 +38,8 @@ export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
 }
 
 const imageStyles = style({
+  display: 'flex',
+  alignItems: 'center',
   borderRadius: 'full',
   size: 20,
   flexShrink: 0,
@@ -86,7 +89,7 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
         width: remSize,
         height: remSize
       }}
-      UNSAFE_className={UNSAFE_className}
+      UNSAFE_className={UNSAFE_className + ' ' +  centerBaselineBefore}
       styles={imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );

@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs from 'fs';
 import glob from 'fast-glob';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,6 +20,10 @@ let stringsToAllow = new Set([
   'button.pending',
   'menu.moreActions',
   'dialog.alert',
+  'datepicker.time',
+  'datepicker.startTime',
+  'datepicker.endTime',
+  'calendar.invalidSelection',
   'contextualhelp.info',
   'contextualhelp.help',
   'dialog.dismiss',
@@ -67,6 +71,14 @@ function filterKeys(obj) {
   return newObj;
 }
 
+function readJsonSync(filePath) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (error) {
+    throw new Error(`Failed to read JSON from ${filePath}: ${error.message}`);
+  }
+}
+
 let rspIntlPackages = glob.sync('../packages/**/intl/en-US.json', {cwd: __dirname, absolute: true});
 let dest = path.join(__dirname, '../packages/@react-spectrum/s2/intl')
 if (!fs.existsSync(dest)) {
@@ -84,7 +96,7 @@ for (let intlPkg of rspIntlPackages) {
   let locales = glob.sync(path.join(path.dirname(intlPkg), '*.json'));
   for (let locale of locales) {
     let localeName = path.basename(locale).split('.')[0];
-    let messages = fs.readJsonSync(locale);
+    let messages = readJsonSync(locale);
     if (!packs.has(localeName)) {
       packs.set(localeName, filterKeys(prefixKeys(messages, pkgName)));
     } else {
@@ -109,14 +121,14 @@ for (let intlPkg of rspIntlPackages) {
   // let dest = path.join(__dirname, '../packages/@react-spectrum/s2/messages', pkgName);
   // // make sure the destination directory exists
 
-  // fs.copySync(path.dirname(intlPkg), dest);
+  // fs.cpSync(path.dirname(intlPkg), dest);
 }
 console.log(packs)
 
 for (let [key, value] of packs) {
   let dest = path.join(__dirname, '../packages/@react-spectrum/s2/intl', `${key}.json`);
   if (fs.existsSync(dest)) {
-    let translations = fs.readJsonSync(dest);
+    let translations = readJsonSync(dest);
     for (let [name, message] of Object.entries(translations)) {
       if (!value[name]) {
         value[name] = message;

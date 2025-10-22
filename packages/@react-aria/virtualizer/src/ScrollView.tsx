@@ -57,6 +57,7 @@ React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
 interface ScrollViewAria {
+  isScrolling: boolean,
   scrollViewProps: HTMLAttributes<HTMLElement>,
   contentProps: HTMLAttributes<HTMLElement>
 }
@@ -84,6 +85,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
+
   let onScroll = useCallback((e) => {
     if (e.target !== e.currentTarget) {
       return;
@@ -140,7 +142,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
-
 
   useEffect(() => {
     return () => {
@@ -265,6 +266,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   };
 
   return {
+    isScrolling,
     scrollViewProps: {
       ...otherProps,
       style

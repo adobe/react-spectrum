@@ -1,0 +1,47 @@
+@import "./theme.css";
+
+.react-aria-Breadcrumbs {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--text-color);
+
+  .react-aria-Breadcrumb {
+    display: flex;
+    align-items: center;
+  }
+
+  .react-aria-Link {
+    font: var(--font-size) system-ui;
+    color: var(--link-color-secondary);
+    outline: none;
+    position: relative;
+    text-decoration: none;
+    cursor: pointer;
+
+    &[data-hovered],
+    &[data-focus-visible] {
+      text-decoration: underline;
+    }
+
+    &[data-current] {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    &[data-focus-visible] {
+      border-radius: var(--radius-sm);
+      outline: 2px solid var(--focus-ring-color);
+    }
+
+    &[data-disabled] {
+      cursor: default;
+
+      &:not([data-current]) {
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}

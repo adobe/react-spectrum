@@ -1,0 +1,130 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
+
+export const tags = ['toggle', 'btn'];
+
+# ToggleButtonGroup
+
+<PageDescription>{docs.exports.ToggleButtonGroup.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'orientation', 'isDisabled']} initialProps={{'aria-label': 'Text style'}} type="vanilla" files={["starters/docs/src/ToggleButtonGroup.tsx", "starters/docs/src/ToggleButtonGroup.css"]}
+  "use client";
+  import {ToggleButtonGroup} from 'vanilla-starter/ToggleButtonGroup';
+  import {ToggleButton} from 'vanilla-starter/ToggleButton';
+
+  <ToggleButtonGroup/* PROPS */>
+    <ToggleButton id="left">Bold</ToggleButton>
+    <ToggleButton id="center">Italic</ToggleButton>
+    <ToggleButton id="right">Underline</ToggleButton>
+  </ToggleButtonGroup>
+  ```
+
+  ```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'orientation', 'isDisabled']} initialProps={{'aria-label': 'Text style'}} type="tailwind" files={["starters/tailwind/src/ToggleButtonGroup.tsx", "starters/tailwind/src/index.css"]}
+  "use client";
+  import {ToggleButtonGroup} from 'tailwind-starter/ToggleButtonGroup';
+  import {ToggleButton} from 'tailwind-starter/ToggleButton';
+
+  <ToggleButtonGroup/* PROPS */>
+    <ToggleButton id="left">Bold</ToggleButton>
+    <ToggleButton id="center">Italic</ToggleButton>
+    <ToggleButton id="right">Underline</ToggleButton>
+  </ToggleButtonGroup>
+  ```
+</ExampleSwitcher>
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ToggleButtonGroup) for more details.
+
+```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import type {Key} from 'react-aria-components';
+import {useState} from 'react';
+import {ToggleButtonGroup} from 'vanilla-starter/ToggleButtonGroup';
+import {ToggleButton} from 'vanilla-starter/ToggleButton';
+import {Bold, Italic, Underline, Strikethrough} from 'lucide-react';
+
+function Example(props) {
+  let [selected, setSelected] = useState(new Set<Key>(['bold']));
+
+  return (
+    <>
+      <ToggleButtonGroup
+        {...props}
+        aria-label="Text style"
+        /*- begin highlight -*/
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        {/*- end highlight -*/}
+        <ToggleButton id="bold" aria-label="Bold">
+          <Bold size={18} />
+        </ToggleButton>
+        <ToggleButton id="italic" aria-label="Italic" isDisabled>
+          <Italic size={18} />
+        </ToggleButton>
+        <ToggleButton id="underline" aria-label="Underline">
+          <Underline size={18} />
+        </ToggleButton>
+        <ToggleButton id="strike" aria-label="Strikethrough">
+          <Strikethrough size={18} />
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <p>Current selection: {[...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+### Animation
+
+Render a [SelectionIndicator](selection.html#animated-selectionindicator) within each `ToggleButton` to animate selection changes.
+
+```tsx render files={['starters/docs/src/SegmentedControl.css']}
+"use client";
+import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator} from 'react-aria-components';
+import 'vanilla-starter/SegmentedControl.css';
+
+function SegmentedControlItem(props: ToggleButtonProps) {
+  return (
+    <ToggleButton {...props} className="segmented-control-item">
+      {/*- begin highlight -*/}
+      <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+      {/*- end highlight -*/}
+      <span>{props.children}</span>
+    </ToggleButton>
+  );
+}
+
+<ToggleButtonGroup
+  className="segmented-control button-base"
+  data-variant="secondary"
+  defaultSelectedKeys={['day']}
+  disallowEmptySelection>
+  <SegmentedControlItem id="day">Day</SegmentedControlItem>
+  <SegmentedControlItem id="week">Week</SegmentedControlItem>
+  <SegmentedControlItem id="month">Month</SegmentedControlItem>
+  <SegmentedControlItem id="year">Year</SegmentedControlItem>
+</ToggleButtonGroup>
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<ToggleButtonGroup>
+  <ToggleButton>
+    <SelectionIndicator />
+  </ToggleButton>
+</ToggleButtonGroup>
+```
+
+### ToggleButtonGroup
+
+<PropTable component={docs.exports.ToggleButtonGroup} links={docs.links} />

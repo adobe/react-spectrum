@@ -1,5 +1,4 @@
 const Octokit = require('@octokit/rest');
-const fs = require('fs');
 
 const octokit = new Octokit({
   auth: `token ${process.env.GITHUB_TOKEN}`
@@ -36,13 +35,14 @@ async function run() {
             repo: 'react-spectrum',
             pull_number
           });
+          // eslint-disable-next-line max-depth
           if (data && data.head.repo.full_name !== 'adobe/react-spectrum' && data.head.sha === forkHeadCommit) {
             pr = pull_number;
             break;
           }
         }
       } else if (process.env.CIRCLE_BRANCH === 'main') {
-        //If it isn't a PR commit, then we are on main. Create a comment for the test app and docs build
+        // If it isn't a PR commit, then we are on main. Create a comment for the test app and docs build
         await octokit.repos.createCommitComment({
           owner: 'adobe',
           repo: 'react-spectrum',
@@ -50,11 +50,11 @@ async function run() {
           body: `Verdaccio builds:
       [CRA Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/rsp-cra-18/index.html)
       [NextJS Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next/index.html)
-      [RAC Tailwind Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/rac-tailwind/index.html)
       [RAC Spectrum + Tailwind Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/rac-spectrum-tailwind/index.html)
       [S2 Parcel Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-parcel-example/index.html)
       [S2 Custom Icons](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/icon-builder-fixture/index.html)
       [S2 Webpack Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-webpack-5-example/index.html)
+      [S2 Next.js Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-next-macros/index.html)
       [CRA Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
       [NextJS App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/next-build-stats.txt)
       [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)
@@ -85,7 +85,7 @@ async function run() {
   * [View the S2 docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/s2-docs/index.html)`
       });
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
   }
 }

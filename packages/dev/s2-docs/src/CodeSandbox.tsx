@@ -37,7 +37,9 @@ const dependencies = {
   vanilla: {
     'react-aria-components': '^1.10.0',
     react: '^19',
-    'react-dom': '^19'
+    'react-dom': '^19',
+    'lucide-react': '^0.514.0',
+    'clsx': '^2.1.1'
   },
   tailwind: {
     'react-aria-components': '^1.10.0',

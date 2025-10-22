@@ -1,0 +1,85 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['file', 'drag', 'upload'];
+
+# DropZone
+
+<PageDescription>{docs.exports.DropZone.description}</PageDescription>
+
+```tsx render type="s2" docs={docs.exports.DropZone} links={docs.links} props={['size', 'replaceMessage']} wide
+"use client";
+import {DropZone, IllustratedMessage, Heading, Content, ButtonGroup, Button, FileTrigger} from '@react-spectrum/s2';
+import {useState} from 'react';
+import CloudUpload from '@react-spectrum/s2/illustrations/gradient/generic1/CloudUpload';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example(props) {
+  let [content, setContent] = useState(null);
+  return (
+    <DropZone
+      {...props}
+      styles={style({width: 320, maxWidth: '90%'})}
+      /* PROPS */
+      isFilled={!!content}
+      // Determine whether dragged content should be accepted.
+      getDropOperation={types => (
+        ['text/plain', 'image/jpeg', 'image/png', 'image/gif'].some(t => types.has(t))
+          ? 'copy'
+          : 'cancel'
+      )}
+      onDrop={async (event) => {
+        // Find the first accepted item.
+        let item = event.items.find(item => (
+          (item.kind === 'text' && item.types.has('text/plain')) ||
+          (item.kind === 'file' && item.type.startsWith('image/'))
+        ));
+
+        if (item?.kind === 'text') {
+          let text = await item.getText('text/plain');
+          setContent(text);
+        } else if (item?.kind === 'file') {
+          let file = await item.getFile();
+          let url = URL.createObjectURL(file);
+          setContent(<img src={url} alt={item.name} className={style({maxHeight: 'full', maxWidth: 'full'})} />);
+        }
+      }}>
+      {content || (
+        <IllustratedMessage>
+          <CloudUpload />
+          <Heading>
+            Drag and drop your file
+          </Heading>
+          <Content>
+            Or, select a file from your computer
+          </Content>
+          <ButtonGroup>
+            <FileTrigger
+              acceptedFileTypes={['image/jpeg', 'image/png', 'image/gif']}
+              onSelect={files => {
+                let url = URL.createObjectURL(files[0]);
+                setContent(<img src={url} alt={files[0].name} className={style({maxHeight: 'full', maxWidth: 'full'})} />);
+              }}>
+              <Button variant="accent">Browse files</Button>
+            </FileTrigger>
+          </ButtonGroup>
+        </IllustratedMessage>
+      )}
+    </DropZone>
+  );
+}
+```
+
+## API
+
+```tsx links={{DropZone: '#dropzone', IllustratedMessage: 'IllustratedMessage.html'}}
+<DropZone>
+  <IllustratedMessage />
+</DropZone>
+```
+
+### DropZone
+
+<PropTable component={docs.exports.DropZone} links={docs.links} />

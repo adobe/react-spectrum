@@ -43,10 +43,10 @@ import {
 import {isVirtualDragging} from '@react-aria/dnd';
 import {JSX, useMemo} from 'react';
 
-interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
+interface DraggableCollectionStateOpts<T = object> extends Omit<DraggableCollectionStateOptions<T>, 'getItems'> {}
 
-interface DragHooks {
-  useDraggableCollectionState?: (props: DraggableCollectionStateOpts) => DraggableCollectionState,
+interface DragHooks<T = object> {
+  useDraggableCollectionState?: (props: DraggableCollectionStateOpts<T>) => DraggableCollectionState,
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
@@ -59,24 +59,24 @@ interface DropHooks {
   useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableCollectionResult,
   useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DroppableItemResult,
   useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement | null>) => DropIndicatorAria,
-  renderDropIndicator?: (target: DropTarget, keys?: Set<Key>, draggedKey?: Key) => JSX.Element,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element,
   dropTargetDelegate?: DropTargetDelegate,
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
 
-export type DragAndDropHooks = DragHooks & DropHooks
+export type DragAndDropHooks<T = object> = DragHooks<T> & DropHooks
 
-export interface DragAndDrop {
+export interface DragAndDrop<T = object> {
   /** Drag and drop hooks for the collection element.  */
-  dragAndDropHooks: DragAndDropHooks
+  dragAndDropHooks: DragAndDropHooks<T>
 }
 
-export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
+export interface DragAndDropOptions<T = object> extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
   /**
    * A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.
    * @default () => []
    */
-  getItems?: (keys: Set<Key>) => DragItem[],
+  getItems?: (keys: Set<Key>, items: T[]) => DragItem[],
   /**
    * A function that renders a drag preview, which is shown under the user's cursor while dragging.
    * By default, a copy of the dragged element is rendered.
@@ -87,7 +87,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * This should render a `<DropIndicator>` element. If this function is not provided, a
    * default DropIndicator is provided.
    */
-  renderDropIndicator?: (target: DropTarget, keys?: Set<Key>, draggedKey?: Key) => JSX.Element,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate,
   /** Whether the drag and drop events should be disabled. */
@@ -97,7 +97,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
 /**
  * Provides the hooks required to enable drag and drop behavior for a drag and drop compatible collection component.
  */
-export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
+export function useDragAndDrop<T = object>(options: DragAndDropOptions<T>): DragAndDrop<T> {
   let dragAndDropHooks = useMemo(() => {
     let {
       onDrop,

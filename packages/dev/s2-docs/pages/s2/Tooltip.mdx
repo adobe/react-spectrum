@@ -1,0 +1,103 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['hint', 'popup', 'info'];
+
+# Tooltip
+
+<PageDescription>{docs.exports.Tooltip.description}</PageDescription>
+
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="s2"
+"use client";
+import {Tooltip, TooltipTrigger, ActionButton} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+
+<TooltipTrigger>
+  <ActionButton aria-label="Edit name"><Edit /></ActionButton>
+  <Tooltip/* PROPS */>Edit name</Tooltip>
+</TooltipTrigger>
+```
+
+## Interactions
+
+Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
+
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'isDisabled']} type="vanilla"
+"use client";
+import {TooltipTrigger, Tooltip, ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Save from '@react-spectrum/s2/icons/SaveFloppy';
+
+function Example(props) {
+  return (
+    <div className={style({display: 'flex', gap: 8})}>
+      {/*- begin highlight -*/}
+      <TooltipTrigger {...props}/* PROPS */>
+      {/*- end highlight -*/}
+        <ActionButton aria-label="Edit">
+          <Edit />
+        </ActionButton>
+        <Tooltip>
+          Edit
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props}/* PROPS */>
+        <ActionButton aria-label="Save">
+          <Save />
+        </ActionButton>
+        <Tooltip>
+          Save
+        </Tooltip>
+      </TooltipTrigger>
+    </div>
+  );
+}
+```
+
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
+  <Heading>Accessibility</Heading>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+</InlineAlert>
+
+## Non-interactive elements
+
+Tooltips must be placed on focusable elements so they are accessible to keyboard and screen reader users. Use [ContextualHelp](ContextualHelp.html) to provide context for non-interactive elements such as plain text or disabled buttons.
+
+```tsx render
+"use client";
+import {Tooltip, TooltipTrigger, Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
+  <Button isDisabled>Delete resource</Button>
+  {/*- begin highlight -*/}
+  <ContextualHelp variant="info">
+    <Heading>Permission required</Heading>
+    <Content>
+      Your admin must grant you permission before you can delete resources.
+    </Content>
+  </ContextualHelp>
+  {/*- end highlight -*/}
+</div>
+```
+
+## API
+
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', Button: 'Button.html'}}
+<TooltipTrigger>
+  <Button />
+  <Tooltip />
+</TooltipTrigger>
+```
+
+### TooltipTrigger
+
+<PropTable component={docs.exports.TooltipTrigger} links={docs.links} showDescription />
+
+### Tooltip
+
+<PropTable component={docs.exports.Tooltip} links={docs.links} showDescription />

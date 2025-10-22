@@ -21,7 +21,7 @@ export function NumberField(
   { label, description, errorMessage, ...props }: NumberFieldProps
 ) {
   return (
-    <AriaNumberField {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
+    <AriaNumberField {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
       <Label>{label}</Label>
       <FieldGroup>
         {renderProps => (<>
@@ -44,5 +44,5 @@ export function NumberField(
 }
 
 function StepperButton(props: ButtonProps) {
-  return <Button {...props} className="px-0.5 cursor-default text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200 dark:text-zinc-400 dark:pressed:bg-zinc-800 dark:group-disabled:text-zinc-600 forced-colors:group-disabled:text-[GrayText]" />
+  return <Button {...props} className="flex border-0 py-0 px-0.5 box-border cursor-default text-gray-500 bg-transparent pressed:bg-gray-100 group-disabled:text-gray-200 dark:text-zinc-400 dark:pressed:bg-zinc-800 dark:group-disabled:text-zinc-600 forced-colors:group-disabled:text-[GrayText]" />
 }

@@ -1,0 +1,41 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['profile', 'user'];
+
+# AvatarGroup
+
+<PageDescription>{docs.exports.AvatarGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.AvatarGroup} links={docs.links} props={['label', 'size']} initialProps={{'aria-label': 'Collaborators', label: '123 members'}} controlOptions={{size: {control: 'picker'}}} type="s2"
+import {AvatarGroup, Avatar} from '@react-spectrum/s2';
+
+<AvatarGroup/* PROPS */>
+  <Avatar
+    alt="Abraham Baker"
+    src="https://www.untitledui.com/images/avatars/abraham-baker" />
+  <Avatar
+    alt="Adriana Sullivan"
+    src="https://www.untitledui.com/images/avatars/adriana-sullivan" />
+  <Avatar
+    alt="Jonathan Kelly"
+    src="https://www.untitledui.com/images/avatars/jonathan-kelly" />
+  <Avatar
+    alt="Zara Bush"
+    src="https://www.untitledui.com/images/avatars/zara-bush" />
+</AvatarGroup>
+```
+
+## API
+
+```tsx links={{AvatarGroup: '#avatargroup', Avatar: 'Avatar.html'}}
+<AvatarGroup>
+  <Avatar />
+</AvatarGroup>
+```
+
+### AvatarGroup
+
+<PropTable component={docs.exports.AvatarGroup} links={docs.links} />

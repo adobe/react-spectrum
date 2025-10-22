@@ -1,0 +1,39 @@
+.animated-ListBoxItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 4px 4px 4px 12px;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 14px;
+  position: relative;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &[data-selected] {
+    font-weight: bold;
+  }
+
+  .react-aria-SelectionIndicator {
+    position: absolute;
+    left: 4px;
+    width: 3px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--highlight-background);
+    transition-property: translate, opacity;
+    transition-duration: 250ms;
+
+    &[data-entering],
+    &[data-exiting] {
+      opacity: 0;
+      translate: -20px 0;
+    }
+  }
+}

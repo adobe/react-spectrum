@@ -1,0 +1,42 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {IllustratedMessage, Heading, Content, Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['empty', 'placeholder', 'error'];
+
+# IllustratedMessage
+
+<PageDescription>{docs.exports.IllustratedMessage.description}</PageDescription>
+
+```tsx render docs={docs.exports.IllustratedMessage} links={docs.links} props={['size', 'orientation']} type="s2"
+"use client";
+import {IllustratedMessage, Heading, Content, Button, ButtonGroup} from '@react-spectrum/s2';
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
+
+<IllustratedMessage/* PROPS */>
+  <Image />
+  <Heading>Create your first asset.</Heading>
+  <Content>Get started by uploading or importing some assets.</Content>
+  <ButtonGroup>
+    <Button variant="secondary">Import</Button>
+    <Button variant="accent">Upload</Button>
+  </ButtonGroup>
+</IllustratedMessage>
+```
+
+## API
+
+```tsx links={{IllustratedMessage: '#illustratedmessage', ButtonGroup: 'ButtonGroup.html'}}
+<IllustratedMessage>
+  <Illustration />
+  <Heading />
+  <Content />
+  <ButtonGroup />
+</IllustratedMessage>
+```
+
+### IllustratedMessage
+
+<PropTable component={docs.exports.IllustratedMessage} links={docs.links} />

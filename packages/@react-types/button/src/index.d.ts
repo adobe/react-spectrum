@@ -47,6 +47,8 @@ export interface LinkButtonProps<T extends ElementType = 'button'> extends AriaB
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
+  /** Indicates whether the element is disabled to users of assistive technology. */
+  'aria-disabled'?: boolean | 'true' | 'false',
   /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
   'aria-expanded'?: boolean | 'true' | 'false',
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
@@ -95,7 +97,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
-export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, Omit<AriaBaseButtonProps, 'aria-current'>, AriaButtonElementTypeProps<T> {}
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, Omit<AriaBaseButtonProps, 'aria-current' | 'form' | 'formAction' | 'formEncType' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'name' | 'value' | 'type'>, AriaButtonElementTypeProps<T> {}
 export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id' | 'isSelected' | 'defaultSelected' | 'onChange'> {
   /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
   id: Key
@@ -133,7 +135,7 @@ export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, Omit<Butt
   variant: 'and' | 'or'
 }
 
-export interface SpectrumToggleButtonProps extends Omit<ToggleButtonProps, 'onClick'>, Omit<SpectrumActionButtonProps, 'aria-current'> {
+export interface SpectrumToggleButtonProps extends Omit<ToggleButtonProps, 'onClick'>, Omit<SpectrumActionButtonProps, 'aria-current' | 'type' | 'form' | 'formAction' | 'formEncType' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'name' | 'value'> {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }

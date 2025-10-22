@@ -1,0 +1,42 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/InputGroup';
+import '../../tailwind/tailwind.css';
+
+export const tags = [];
+
+# Group
+
+<PageDescription>{docs.exports.Group.description}</PageDescription>
+
+```tsx render  docs={vanillaDocs.exports.InputGroup} links={vanillaDocs.links} props={['label', 'isDisabled', 'isInvalid']} initialProps={{label: 'Serial number'}} type="vanilla" files={["starters/docs/src/InputGroup.tsx", "starters/docs/src/InputGroup.css"]}
+"use client";
+import {InputGroup} from 'vanilla-starter/InputGroup';
+import {Input} from 'react-aria-components';
+
+<InputGroup/* PROPS */>
+  <Input
+    style={{width: '3ch', boxSizing: 'content-box'}}
+    maxLength={3}
+    aria-label="First 3 digits"
+    placeholder="000" />
+  –
+  <Input
+    style={{width: '2ch', boxSizing: 'content-box'}}
+    maxLength={2}
+    aria-label="Middle 2 digits"
+    placeholder="00" />
+  –
+  <Input
+    style={{width: '4ch', boxSizing: 'content-box'}}
+    maxLength={4}
+    aria-label="Last 4 digits"
+    placeholder="0000" />
+</InputGroup>
+```
+
+## API
+
+<PropTable component={docs.exports.Group} links={docs.links} />

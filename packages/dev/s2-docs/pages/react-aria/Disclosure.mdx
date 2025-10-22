@@ -1,0 +1,109 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Disclosure';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/DisclosureAnatomy.svg';
+
+export const tags = ['accordion', 'collapsible', 'expandable', 'details'];
+
+# Disclosure
+
+<PageDescription>{docs.exports.Disclosure.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Disclosure} links={vanillaDocs.links} props={['isDisabled']} type="vanilla" files={["starters/docs/src/Disclosure.tsx", "starters/docs/src/Disclosure.css"]}
+  "use client";
+  import {Disclosure, DisclosureHeader, DisclosurePanel} from 'vanilla-starter/Disclosure';
+
+  <Disclosure/* PROPS */>
+    <DisclosureHeader>System Requirements</DisclosureHeader>
+    <DisclosurePanel>Details about system requirements here.</DisclosurePanel>
+  </Disclosure>
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Disclosure} links={vanillaDocs.links} props={['isDisabled']} type="tailwind" files={["starters/tailwind/src/Disclosure.tsx"]}
+  "use client";
+  import {Disclosure, DisclosureHeader, DisclosurePanel} from 'tailwind-starter/Disclosure';
+
+  <Disclosure/* PROPS */>
+    <DisclosureHeader>Files</DisclosureHeader>
+    <DisclosurePanel>Files content</DisclosurePanel>
+  </Disclosure>
+  ```
+</ExampleSwitcher>
+
+## Expanding
+
+Use the `isExpanded` or `defaultExpanded` prop to set the expanded state, and `onExpandedChange` to handle user interactions.
+
+```tsx render
+"use client";
+import {Disclosure, DisclosureHeader, DisclosurePanel} from 'vanilla-starter/Disclosure';
+import {useState} from 'react';
+
+function Example() {
+  let [isExpanded, setIsExpanded] = useState(true);
+
+  return (
+    <Disclosure
+      /*- begin highlight -*/
+      isExpanded={isExpanded}
+      onExpandedChange={setIsExpanded}>
+      {/*- end highlight -*/}
+      <DisclosureHeader>Download, Install, and Set Up</DisclosureHeader>
+      <DisclosurePanel>Instructions on how to download, install, and set up</DisclosurePanel>
+    </Disclosure>
+  );
+}
+```
+
+## Content
+
+Add interactive elements such as buttons adjacent to the disclosure heading by wrapping them in a `<div>`. `<Heading>` and `<Button>` must not have interactive children.
+
+```tsx render
+"use client";
+import {Disclosure, DisclosureHeader, DisclosurePanel} from 'vanilla-starter/Disclosure';
+import {Button} from 'vanilla-starter/Button';
+import {Settings} from 'lucide-react';
+
+<Disclosure style={{width: 200}}>
+  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+    {/*- begin highlight -*/}
+    <DisclosureHeader style={{flex: 1}}>Files</DisclosureHeader>
+    <Button aria-label="Settings"><Settings /></Button>
+    {/*- end highlight -*/}
+  </div>
+  <DisclosurePanel>Files content</DisclosurePanel>
+</Disclosure>
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{Disclosure: '#disclosure', Button: 'Button.html', DisclosurePanel: '#disclosurepanel'}}
+<Disclosure>
+  <Heading>
+    <Button slot="trigger" />
+  </Heading>
+  <DisclosurePanel />
+</Disclosure>
+```
+
+### Disclosure
+
+<PropTable component={docs.exports.Disclosure} links={docs.links} showDescription />
+
+### DisclosurePanel
+
+<PropTable
+  component={docs.exports.DisclosurePanel}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--disclosure-panel-width': "The disclosure panel's intrinsic width in pixels. Useful for animations.",
+    '--disclosure-panel-height': "The disclosure panel's intrinsic height in pixels. Useful for animations."
+  }} />

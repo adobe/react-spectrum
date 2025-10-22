@@ -8,6 +8,8 @@ import {DateField as TailwindDateField} from 'tailwind-starter/DateField';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/datefield-anatomy.svg';
 
+export const tags = ['calendar', 'input'];
+
 # DateField
 
 <PageDescription>{docs.exports.DateField.description}</PageDescription>
@@ -20,7 +22,7 @@ import Anatomy from '@react-aria/datepicker/docs/datefield-anatomy.svg';
     props={['label', 'granularity', 'isDisabled']}
     initialProps={{label: 'Date'}}
     type="vanilla"
-    files={["starters/docs/src/DateField.tsx", "starters/docs/src/DateField.css", "starters/docs/src/theme.css"]} />
+    files={["starters/docs/src/DateField.tsx", "starters/docs/src/DateField.css"]} />
   <VisualExample
     component={TailwindDateField}
     docs={vanillaDocs.exports.DateField}
@@ -31,32 +33,9 @@ import Anatomy from '@react-aria/datepicker/docs/datefield-anatomy.svg';
     files={["starters/tailwind/src/DateField.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A DateField consists of a label, and a [Group](Group.html) of segments for each unit of a date and time (e.g. years, months, days, etc.). Each segment is individually focusable and editable by the user, by typing or using the arrow keys to increment and decrement the value.
-
-`DateField` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-```tsx
-import {DateField, Label, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
-
-<DateField>
-  <Label />
-  <DateInput>
-    {segment => <DateSegment segment={segment} />}
-  </DateInput>
-  <Text slot="description" />
-  <FieldError />
-</DateField>
-```
-
-Most of this anatomy is shared with [TimeField](TimeField.html), so you can reuse many components between them.
-
 ## Value
 
-Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -88,12 +67,12 @@ The date format is automatically determined based on the user's locale. `DateFie
 
 ```tsx render docs={docs.exports.DateField} links={docs.links} props={['granularity', 'hourCycle', 'hideTimeZone', 'shouldForceLeadingZeros']} initialProps={{label: 'Date'}}
 "use client";
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseZonedDateTime} from '@internationalized/date';
 import {DateField} from 'vanilla-starter/DateField';
 
 <DateField
-  defaultValue={now(getLocalTimeZone())}
-  /* PROPS */ />
+  /* PROPS */
+  defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
 ```
 
 ### International calendars
@@ -103,11 +82,11 @@ By default, `DateField` displays the value using the calendar system for the use
 ```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}}
 "use client";
 import {I18nProvider} from 'react-aria-components';
-import {now, getLocalTimeZone} from '@internationalized/date';
+import {parseZonedDateTime} from '@internationalized/date';
 import {DateField} from 'vanilla-starter/DateField';
 
 <I18nProvider/* PROPS */>
-  <DateField defaultValue={now(getLocalTimeZone())} />
+  <DateField defaultValue={parseZonedDateTime('2025-02-03T08:45:00[America/Los_Angeles]')} />
 </I18nProvider>
 ```
 
@@ -120,7 +99,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 import {today, getLocalTimeZone} from '@internationalized/date';
 import {DateField} from 'vanilla-starter/DateField';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 <Form>
   <DateField
@@ -137,20 +116,27 @@ import {Form} from 'react-aria-components';
 
 ## API
 
+<Anatomy />
+
+```tsx links={{DateField: '#datefield', DateInput: '#dateinput', DateSegment: '#datesegment'}}
+<DateField>
+  <Label />
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  <Text slot="description" />
+  <FieldError />
+</DateField>
+```
+
 ### DateField
 
 <PropTable component={docs.exports.DateField} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-DateField" properties={docs.exports.DateFieldRenderProps.properties} />
 
 ### DateInput
 
 <PropTable component={docs.exports.DateInput} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-DateInput" properties={docs.exports.DateInputRenderProps.properties} />
-
 ### DateSegment
 
 <PropTable component={docs.exports.DateSegment} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-DateSegment" properties={docs.exports.DateSegmentRenderProps.properties} />

@@ -23,6 +23,8 @@ import {
   TreeItem,
   TreeItemContent,
   TreeItemContentProps,
+  TreeLoadMoreItem,
+  TreeLoadMoreItemProps,
   useContextProps,
   Virtualizer
 } from 'react-aria-components';
@@ -30,21 +32,27 @@ import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
-import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
+import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {TextContext} from './Content';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from 'react-aria';
+import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 import {useScale} from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
+  // See https://github.com/adobe/react-spectrum/pull/7343 for what remaining combinations are left
+  /** Whether the tree should be displayed with a [detached style](https://spectrum.adobe.com/page/tree-view/#Detached). */
   isDetached?: boolean,
+  /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
-  // not fully supported yet
+  /** Whether the tree should be displayed with a [emphasized style](https://spectrum.adobe.com/page/tree-view/#Emphasis). */
   isEmphasized?: boolean
 }
 
@@ -53,9 +61,14 @@ export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'class
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | keyof GlobalDOMAttributes> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style' | 'onClick' | keyof GlobalDOMAttributes> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean
+}
+
+export interface TreeViewLoadMoreItemProps extends Pick<TreeLoadMoreItemProps, 'onLoadMore'> {
+  /** The current loading state of the TreeView or TreeView row. */
+  loadingState?: LoadingState
 }
 
 interface TreeRendererContextValue {
@@ -91,7 +104,10 @@ const tree = style({
   }
 }, getAllowedOverrides({height: true}));
 
-const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A tree view provides users with a way to navigate nested hierarchical information.
+ */
+export const TreeView = /*#__PURE__*/ (forwardRef as forwardRefType)(function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
@@ -179,7 +195,6 @@ const treeRow = style({
     }
   }
 });
-
 
 const treeCellGrid = style({
   display: 'grid',
@@ -346,7 +361,6 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                 gridArea: 'level-padding',
                 width: 'calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))'
               })} />
-            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
             <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} scale={scale} isHidden={!(hasChildItems)} />
             <Provider
               values={[
@@ -358,13 +372,40 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                 [ActionButtonGroupContext, {styles: treeActions}],
                 [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
               ]}>
-              {children}
+              {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
             {isFocusVisible && isDetached && <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />}
           </div>
         );
       }}
     </TreeItemContent>
+  );
+};
+
+const centeredWrapper = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'full',
+  height: 'full'
+});
+
+export const TreeViewLoadMoreItem = (props: TreeViewLoadMoreItemProps): ReactNode => {
+  let {loadingState, onLoadMore} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  return (
+    <TreeLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore} className={style({width: 'full', marginY: 4})}>
+      {() => {
+        return (
+          <div className={centeredWrapper}>
+            <ProgressCircle
+              isIndeterminate
+              aria-label={stringFormatter.format('table.loadingMore')} />
+          </div>
+        );
+      }}
+    </TreeLoadMoreItem>
   );
 };
 
@@ -437,9 +478,3 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     </Button>
   );
 }
-
-/**
- * A tree view provides users with a way to navigate nested hierarchical information.
- */
-const _TreeView: <T extends object>(props: TreeViewProps<T> & React.RefAttributes<DOMRefValue<HTMLDivElement>>) => ReactElement | null = TreeView;
-export {_TreeView as TreeView};

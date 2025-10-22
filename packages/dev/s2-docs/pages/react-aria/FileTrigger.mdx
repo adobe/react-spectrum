@@ -1,0 +1,81 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['upload', 'input'];
+
+# FileTrigger
+
+<PageDescription>{docs.exports.FileTrigger.description}</PageDescription>
+
+```tsx render docs={docs.exports.FileTrigger} links={docs.links} props={['acceptedFileTypes', 'allowsMultiple', 'acceptDirectory', 'defaultCamera']} initialProps={{acceptedFileTypes: ['image/*']}} type="vanilla"
+"use client";
+import {FileTrigger} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+function Example(props) {
+  let [files, setFiles] = useState([]);
+
+  return (
+    <>
+      {/*- begin focus -*/}
+      <FileTrigger
+        {...props}
+        /* PROPS */
+        onSelect={(e) => {
+          let files = e ? Array.from(e) : [];
+          let filenames = files.map((file) => file.name);
+          setFiles(filenames);
+        }}>
+        <Button>Select a file</Button>
+      </FileTrigger>
+      {/*- end focus -*/}
+      {files.join(', ')}
+    </>
+  );
+}
+```
+
+## Custom trigger
+
+`FileTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+
+```tsx render
+"use client"
+import {Pressable, FileTrigger} from 'react-aria-components';
+
+<FileTrigger>
+  {/*- begin highlight -*/}
+  <Pressable>
+    <span role="button">Custom trigger</span>
+  </Pressable>
+  {/*- end highlight -*/}
+</FileTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Any `<Pressable>` child must have an [interactive ARIA role](https://www.w3.org/TR/wai-aria-1.2/#widget_roles) or use an appropriate semantic HTML element so that screen readers can announce the trigger. Trigger components must forward their `ref` and spread all props to a DOM element.</Content>
+</InlineAlert>
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <button {...props} ref={ref} />
+));
+```
+
+## API
+
+```tsx links={{FileTrigger: '#filetrigger', Button: 'Button.html'}}
+<FileTrigger>
+  <Button />
+</FileTrigger>
+```
+
+### FileTrigger
+
+<PropTable component={docs.exports.FileTrigger} links={docs.links} />

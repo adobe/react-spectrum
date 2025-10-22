@@ -12,13 +12,13 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent, RefObject} from '@react-types/shared';
-import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
+import {DragEvent, HTMLAttributes, version as ReactVersion, useEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
+import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DragOptions {
@@ -82,11 +82,11 @@ export function useDrag(options: DragOptions): DragResult {
     y: 0
   }).current;
   state.options = options;
-  let isDraggingRef = useRef(false);
+  let isDraggingRef = useRef<Element | null>(null);
   let [isDragging, setDraggingState] = useState(false);
-  let setDragging = (isDragging) => {
-    isDraggingRef.current = isDragging;
-    setDraggingState(isDragging);
+  let setDragging = (element: Element | null) => {
+    isDraggingRef.current = element;
+    setDraggingState(!!element);
   };
   let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
   let modalityOnPointerDown = useRef<string>(null);
@@ -116,6 +116,8 @@ export function useDrag(options: DragOptions): DragResult {
     }
 
     let items = options.getItems();
+    // Clear existing data (e.g. selected text on the page would be included in some browsers)
+    e.dataTransfer.clearData?.();
     writeToDataTransfer(e.dataTransfer, items);
 
     let allowed = DROP_OPERATION.all;
@@ -186,8 +188,9 @@ export function useDrag(options: DragOptions): DragResult {
 
     // Wait a frame before we set dragging to true so that the browser has time to
     // render the preview image before we update the element that has been dragged.
+    let target = e.target;
     requestAnimationFrame(() => {
-      setDragging(true);
+      setDragging(target as Element);
     });
   };
 
@@ -231,7 +234,7 @@ export function useDrag(options: DragOptions): DragResult {
       options.onDragEnd(event);
     }
 
-    setDragging(false);
+    setDragging(null);
     removeAllGlobalListeners();
     setGlobalAllowedDropOperations(DROP_OPERATION.none);
     setGlobalDropEffect(undefined);
@@ -240,9 +243,12 @@ export function useDrag(options: DragOptions): DragResult {
   // If the dragged element is removed from the DOM via onDrop, onDragEnd won't fire: https://bugzilla.mozilla.org/show_bug.cgi?id=460801
   // In this case, we need to manually call onDragEnd on cleanup
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     return () => {
-      if (isDraggingRef.current) {
+      // Check that the dragged element has actually unmounted from the DOM and not a React Strict Mode false positive.
+      // https://github.com/facebook/react/issues/29585
+      // React 16 ran effect cleanups before removing elements from the DOM but did not have this issue.
+      if (isDraggingRef.current && (!isDraggingRef.current.isConnected || parseInt(ReactVersion, 10) < 17)) {
         if (typeof state.options.onDragEnd === 'function') {
           let event: DragEndEvent = {
             type: 'dragend',
@@ -253,7 +259,7 @@ export function useDrag(options: DragOptions): DragResult {
           state.options.onDragEnd(event);
         }
 
-        setDragging(false);
+        setDragging(null);
         setGlobalAllowedDropOperations(DROP_OPERATION.none);
         setGlobalDropEffect(undefined);
       }
@@ -285,14 +291,14 @@ export function useDrag(options: DragOptions): DragResult {
         ? state.options.getAllowedDropOperations()
         : ['move', 'copy', 'link'],
       onDragEnd(e) {
-        setDragging(false);
+        setDragging(null);
         if (typeof state.options.onDragEnd === 'function') {
           state.options.onDragEnd(e);
         }
       }
     }, stringFormatter);
 
-    setDragging(true);
+    setDragging(target);
   };
 
   let modality = useDragModality();

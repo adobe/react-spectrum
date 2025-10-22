@@ -10,9 +10,18 @@
  * governing permissions and limitations under the License.
  */
 import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  StyleProps,
+  useContextProps,
+  useRenderProps,
+  useSlottedContext
+} from './utils';
+import {Collection, CollectionBuilder, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
-import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
@@ -20,6 +29,11 @@ import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLOListElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-Breadcrumbs'
+   */
+  className?: string,
   /** Whether the breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a breadcrumb is clicked. */
@@ -69,14 +83,23 @@ export interface BreadcrumbRenderProps {
 }
 
 export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, GlobalDOMAttributes<HTMLLIElement>  {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Breadcrumb'
+   */
+  className?: ClassNameOrFunction<BreadcrumbRenderProps>,
   /** A unique id for the breadcrumb, which will be passed to `onAction` when the breadcrumb is pressed. */
   id?: Key
+}
+
+class BreadcrumbNode extends CollectionNode<unknown> {
+  static readonly type = 'item';
 }
 
 /**
  * A Breadcrumb represents an individual item in a `<Breadcrumbs>` list.
  */
-export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
+export const Breadcrumb = /*#__PURE__*/ createLeafComponent(BreadcrumbNode, function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>, node: Node<unknown>) {
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let isCurrent = node.nextKey == null;
   let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;

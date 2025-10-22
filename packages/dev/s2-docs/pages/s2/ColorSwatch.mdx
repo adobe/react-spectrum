@@ -1,0 +1,69 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorSwatch} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# ColorSwatch
+
+<PageDescription>{docs.exports.ColorSwatch.description}</PageDescription>
+
+<VisualExample
+  component={ColorSwatch}
+  docs={docs.exports.ColorSwatch}
+  props={['size', 'rounding']}
+  initialProps={{color: 'rgb(255, 100, 50)'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+A ColorSwatch displays a color value passed via the `color` prop. The value can be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object. When no color is provided or the color is transparent, a red slash will be displayed.
+
+```tsx render
+"use client";
+import {ColorSwatch} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<div className={style({display: 'flex', gap: 12, alignItems: 'center'})}>
+  <ColorSwatch color="#ff6600" />
+  <ColorSwatch color="rgb(255, 0, 255)" />
+  <ColorSwatch color="hsl(120, 100%, 42%)" />
+  <ColorSwatch color="rgba(0, 150, 255, 0.5)" />
+  <ColorSwatch />
+</div>
+```
+
+## Custom sizing
+
+ColorSwatch can be resized using the `styles` prop.
+
+```tsx render
+"use client";
+import {ColorSwatch} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ColorSwatch
+  color="#10b981"
+  styles={style({width: 80, height: 40})} />
+```
+
+## Accessibility
+
+By default, ColorSwatch includes a localized color description for screen reader users (e.g. "dark vibrant blue"). Use the `colorName` prop to override this. Set an `aria-label` to provide additional context. In this example, a screen reader will announce "Fire truck red, Background color".
+
+```tsx render
+"use client";
+import {ColorSwatch} from '@react-spectrum/s2';
+
+<ColorSwatch
+  color="#f00"
+  aria-label="Background color"
+  colorName="Fire truck red" />
+```
+
+## API
+
+<PropTable component={docs.exports.ColorSwatch} links={docs.links} />

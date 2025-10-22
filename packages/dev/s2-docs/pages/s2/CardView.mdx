@@ -1,0 +1,965 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['grid', 'gallery'];
+
+# CardView
+
+<PageDescription>{docs.exports.CardView.description}</PageDescription>
+
+```tsx render docs={docs.exports.CardView} links={docs.links} props={['layout', 'selectionMode', 'selectionStyle', 'variant', 'size', 'density']} initialProps={{selectionMode: 'multiple'}} type="s2" wide
+"use client";
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<CardView
+  aria-label="Nature photos"
+  /* PROPS */
+  styles={style({width: 'full', height: 500})}>
+  {/*- begin collapse -*/}
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Desert Sunset</Text>
+      <Text slot="description">PNG • 2/3/2024</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Hiking Trail</Text>
+      <Text slot="description">JPEG • 1/10/2022</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Lion</Text>
+      <Text slot="description">JPEG • 8/28/2021</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Mountain Sunrise</Text>
+      <Text slot="description">PNG • 3/15/2015</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1574870111867-089730e5a72b?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Giraffe tongue</Text>
+      <Text slot="description">PNG • 11/27/2019</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={402} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Golden Hour</Text>
+      <Text slot="description">WEBP • 7/24/2024</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1721661657253-6621d52db753?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDYxfE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Architecture</Text>
+      <Text slot="description">PNG • 12/24/2016</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1456926631375-92c8ce872def?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Peeking leopard</Text>
+      <Text slot="description">JPEG • 3/2/2016</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1721598359121-363311b3b263?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDc0fE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Roofs</Text>
+      <Text slot="description">JPEG • 4/24/2025</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1472396961693-142e6e269027?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={990} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Half Dome Deer</Text>
+      <Text slot="description">DNG • 8/28/2018</Text>
+    </Content>
+  </AssetCard>
+  {/*- end collapse -*/}
+</CardView>
+```
+
+## Content
+
+`CardView` follows the [Collection Components API](collections.html?component=CardView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+
+```tsx render
+"use client";
+import {CardView, Collection, SkeletonCollection, AssetCard, CardPreview, Image, Content, Text, ActionMenu, MenuItem, Avatar} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+///- begin collapse -///
+let images = [
+  {
+    id: "8SXaMMWCTGc",
+    title: "A Ficus Lyrata Leaf in the sunlight (2/2) (IG: @clay.banks)",
+    user: "Clay Banks",
+    image: "https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "pYjCqqDEOFo",
+    title: "beach of Italy",
+    user: "alan bajura",
+    image: "https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "CF-2tl6MQj0",
+    title: "A winding road in the middle of a forest",
+    user: "Artem Stoliar",
+    image: "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "OW97sLU0cOw",
+    title: "A green and purple aurora over a snow covered forest",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "WfeLZ02IhkM",
+    title: "A blue and white firework is seen from above",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "w1GpST72Bg8",
+    title: "A snow covered mountain with a sky background",
+    user: "Daniil Silantev",
+    image: "https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "0iN0KIt6lYI",
+    title: "\"Pastel Sunset\"",
+    user: "Marek Piwnicki",
+    image: "https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 640
+  },
+  {
+    id: "-mFKPfXXUG0",
+    title: "Leave the weight behind! You must make yourself light to strive upwards — to reach the light. (A serene winter landscape featuring a dense collection of bare, white trees.)",
+    user: "Simon Berger",
+    image: "https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "MOk6URQ28R4",
+    title: "A snow covered tree with a sky background",
+    user: "Daniil Silantev",
+    image: "https://images.unsplash.com/photo-1738081359113-a7a33c509cf9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "y36Nj_edtRE",
+    title: "A lake surrounded by trees covered in snow",
+    user: "Daniel Seßler",
+    image: "https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "NvBV-YwlgBw",
+    title: "The night sky with stars above a rock formation",
+    user: "Dennis Haug",
+    image: "https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "UthQdrPFxt0",
+    title: "A pine tree covered in snow in a forest",
+    user: "Anita Austvika",
+    image: "https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "2k74xaf8dfc",
+    title: "The sun shines through the trees in the forest",
+    user: "Joyce G",
+    image: "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Yje5kgfvCm0",
+    title: "A blurry photo of a field of flowers",
+    user: "Eugene Golovesov",
+    image: "https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "G2bsj2LVttI",
+    title: "A foggy road lined with trees and grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "ppyNBOkfiuY",
+    title: "A close up of a green palm tree",
+    user: "Junel Mujar",
+    image: "https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "UcWUMqIsld8",
+    title: "A green leaf floating on top of a body of water",
+    user: "Allec Gomes",
+    image: "https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "xHqOVq9w8OI",
+    title: "green-leafed plant",
+    user: "Joshua Michaels",
+    image: "https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "uWx3_XEc-Jw",
+    title: "A view of a mountain covered in fog",
+    user: "iuliu illes",
+    image: "https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 298
+  },
+  {
+    id: "2_3lhGt8i-Y",
+    title: "A field with tall grass and fog in the background",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "FV-__IOxb08",
+    title: "A close up of a wave on a sandy beach",
+    user: "Jonathan Borba",
+    image: "https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "_BS-vK3boOU",
+    title: "Desert textures",
+    user: "Braden Jarvis",
+    image: "https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 561
+  },
+  {
+    id: "LjAcS9lJdBg",
+    title: "Tew Falls, waterfall, in Hamilton, Canada.",
+    user: "Andre Portolesi",
+    image: "https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 500
+  },
+  {
+    id: "hlj6xJG30FE",
+    title: "Find me on Instagram! @intricateexplorer",
+    user: "Intricate Explorer",
+    image: "https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "vMoZvKeZOhw",
+    title: "Salt Marshes, Isle of Harris, Scotland by Nils Leonhardt. Visit my website: https://nilsleonhardt.com/storytelling-harris/ Instagram: @am.basteir",
+    user: "Nils Leonhardt",
+    image: "https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "wCLCK9LDDjI",
+    title: "An aerial view of a snow covered forest",
+    user: "Lukas Hädrich",
+    image: "https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "OdDx3_NB-Wk",
+    title: "A close up of a tall grass with a sky in the background",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Gn-FOw1geFc",
+    title: "Larches on Maple Pass, Washington",
+    user: "noelle",
+    image: "https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "VhKJHOz2tJ8",
+    title: "IC 1805 La nébuleuse du coeur",
+    user: "arnaud girault",
+    image: "https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "w5QmH_uqB0U",
+    title: "A pile of shells sitting on top of a sandy beach",
+    user: "Toa Heftiba",
+    image: "https://images.unsplash.com/photo-1725366351350-a64a1be919ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  }
+];
+///- end collapse -///
+
+for (let i = 0; images.length < 200; i++) {
+  images.push({...images[i % 30], id: String(i)});
+}
+
+<CardView
+  aria-label="Nature photos"
+  styles={style({width: 'full', height: 500})}
+  layout="waterfall"
+  size="S"
+  /*- begin highlight -*/
+  items={images}>
+  {/*- end highlight -*/}
+  {image => (
+    <AssetCard>
+      <CardPreview>
+        <Image src={image.image} width={image.width} height={image.height} />
+      </CardPreview>
+      <Content>
+        <Text slot="title">{image.title}</Text>
+        <Text slot="description">{image.user}</Text>
+      </Content>
+    </AssetCard>
+  )}
+</CardView>
+```
+
+### Asynchronous loading
+
+Use the `loadingState` and `onLoadMore` props to enable async loading and infinite scrolling. When loading, render a `<SkeletonCollection>` to generate placeholder content to display as skeleton cards.
+
+```tsx render docs={docs.exports.CardView} links={docs.links} props={['loadingState']} initialProps={{selectionMode: 'multiple'}} type="s2" wide
+"use client";
+import {CardView, Collection, SkeletonCollection, Card, CardPreview, Image, Content, Text, Avatar} from '@react-spectrum/s2';
+import {useAsyncList} from 'react-stately';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+export default function Example(props) {
+  let list = useAsyncList<Item, number | null>({
+    async load({signal, cursor, items}) {
+      let page = cursor || 1;
+      let res = await fetch(
+        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        {signal}
+      );
+      let nextItems = await res.json();
+      // Filter duplicates which might be returned by the API.
+      let existingKeys = new Set(items.map(i => i.id));
+      nextItems = nextItems.filter(i => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
+    }
+  });
+
+  let loadingState = props.loadingState || list.loadingState;
+
+  return (
+    <CardView
+      aria-label="Nature photos"
+      size="S"
+      layout="waterfall"
+      ///- begin highlight -///
+      loadingState={loadingState}
+      onLoadMore={list.loadMore}
+      ///- end highlight -///
+      onLoadMore={props.loadingState ? undefined : list.loadMore}
+      styles={style({width: 'full', height: 500})}>
+      <Collection items={loadingState === 'loading' ? [] : list.items}>
+        {item => <PhotoCard item={item} />}
+      </Collection>
+      {(loadingState === 'loading' || loadingState === 'loadingMore') && (
+        /*- begin highlight -*/
+        <SkeletonCollection>
+        {/*- end highlight -*/}
+          {() => (
+            <PhotoCard
+              item={{
+                id: Math.random(),
+                user: {name: 'Placeholder name', profile_image: {small: ''}},
+                urls: {regular: ''},
+                description: 'This is a fake description. Kinda long so it wraps to a new line.',
+                alt_description: '',
+                width: 400,
+                height: 200 + Math.max(0, Math.round(Math.random() * 400))
+              }} />
+          )}
+        </SkeletonCollection>
+      )}
+    </CardView>
+  );
+}
+
+function PhotoCard({item, layout}: {item: Item, layout: string}) {
+  return (
+    <Card id={item.id} textValue={item.description || item.alt_description}>
+      {({size}) => (<>
+        <CardPreview>
+          <Image
+            src={item.urls.regular}
+            width={item.width}
+            height={item.height}
+            styles={style({
+              width: 'full',
+              pointerEvents: 'none',
+              objectFit: 'cover'
+            })} />
+        </CardPreview>
+        <Content>
+          <Text slot="title">{item.description || item.alt_description}</Text>
+          <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
+            <Avatar src={item.user.profile_image.small} size={size} />
+            <Text slot="description">{item.user.name}</Text>
+          </div>
+        </Content>
+      </>)}
+    </Card>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a Card to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle']} wide type="s2"
+"use client";
+import {CardView, Card, CollectionCardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Folder from '@react-spectrum/s2/icons/Folder';
+
+///- begin collapse -///
+let topics = [
+  {
+    "id": "bo8jQKTaE0Y",
+    "href": "https://unsplash.com/t/wallpapers",
+    "photos": [
+      {
+        "id": "pH6ff1GpUMo",
+        "src": "https://plus.unsplash.com/premium_photo-1700558685040-a75735b86bb7?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "CPjNU3ChRl4",
+        "src": "https://images.unsplash.com/photo-1756187793625-4a29fef1f4f8?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "G-5JCERzbE8",
+        "src": "https://images.unsplash.com/photo-1755838692094-49a97b9fb9ab?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "KAyZPC_Q5YM",
+        "src": "https://images.unsplash.com/photo-1755997234962-931d86bee287?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Wallpapers",
+    "count": 16689
+  },
+  {
+    "id": "6sMVjTLSkeQ",
+    "href": "https://unsplash.com/t/nature",
+    "photos": [
+      {
+        "id": "G-5JCERzbE8",
+        "src": "https://images.unsplash.com/photo-1755838692094-49a97b9fb9ab?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "I8vmQEZDhM0",
+        "src": "https://plus.unsplash.com/premium_photo-1678483692858-d9ca6e9c67f9?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "puQ8iqUvs9o",
+        "src": "https://images.unsplash.com/photo-1756129725795-127bef414c6c?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "KAyZPC_Q5YM",
+        "src": "https://images.unsplash.com/photo-1755997234962-931d86bee287?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Nature",
+    "count": 32010
+  },
+  {
+    "id": "Fzo3zuOHN6w",
+    "href": "https://unsplash.com/t/travel",
+    "photos": [
+      {
+        "id": "ghMslmoI6Sk",
+        "src": "https://plus.unsplash.com/premium_photo-1756175546675-f55b02bfa6e2?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "BQUtnTW8wVk",
+        "src": "https://images.unsplash.com/photo-1756155062023-524adfefb747?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "Ngj2u4PHjBY",
+        "src": "https://images.unsplash.com/photo-1755877379664-2f809909cbec?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "xWArdKbfrpw",
+        "src": "https://images.unsplash.com/photo-1755878008095-37b948fd2770?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Travel",
+    "count": 9434
+  },
+  {
+    "id": "hmenvQhUmxM",
+    "href": "https://unsplash.com/t/film",
+    "photos": [
+      {
+        "id": "2bdJqBj0MI8",
+        "src": "https://images.unsplash.com/photo-1691055712387-28587d0e7088?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "OOS7uVLLCk0",
+        "src": "https://images.unsplash.com/photo-1691055712477-7f4dea1c6faa?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "lQ2XoRRX9Q0",
+        "src": "https://plus.unsplash.com/premium_photo-1751921504814-6259b4fa5df7?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "znGu7rwagmk",
+        "src": "https://images.unsplash.com/photo-1755867395694-97a254aaa314?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Film",
+    "count": 12201
+  },
+  {
+    "id": "towJZFskpGg",
+    "href": "https://unsplash.com/t/people",
+    "photos": [
+      {
+        "id": "AcgICnidawU",
+        "src": "https://plus.unsplash.com/premium_photo-1755938644663-3d697c1b6eb0?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "qkkWjOHIgrk",
+        "src": "https://images.unsplash.com/photo-1755529905229-e0536cf889d7?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "BQUtnTW8wVk",
+        "src": "https://images.unsplash.com/photo-1756155062023-524adfefb747?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "9c8ymKQ6mRc",
+        "src": "https://images.unsplash.com/photo-1755542366683-282c366982a1?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "People",
+    "count": 13356
+  },
+  {
+    "id": "M8jVbLbTRws",
+    "href": "https://unsplash.com/t/architecture-interior",
+    "photos": [
+      {
+        "id": "gUDpShSl1qU",
+        "src": "https://plus.unsplash.com/premium_photo-1733054181243-d908a10d666e?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "x5UifGqA5NE",
+        "src": "https://images.unsplash.com/photo-1755669933959-377ab117bb8a?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "hGwY0X_afOw",
+        "src": "https://images.unsplash.com/photo-1755018237290-e2c1b65b3dd0?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "xgOabz-pz1k",
+        "src": "https://images.unsplash.com/photo-1753596109566-feccd5cd1ff8?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Architecture & Interiors",
+    "count": 18937
+  },
+  {
+    "id": "xHxYTMHLgOc",
+    "href": "https://unsplash.com/t/street-photography",
+    "photos": [
+      {
+        "id": "Wv-0I3ft3DQ",
+        "src": "https://plus.unsplash.com/premium_photo-1748783614194-ee4f9c017a7e?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "cOT7dI7Tt2k",
+        "src": "https://images.unsplash.com/photo-1756135886621-58fbd0c924fb?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "u84fzygfTlo",
+        "src": "https://images.unsplash.com/photo-1755977546165-1d4e955ff63e?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "6ht6ysje16U",
+        "src": "https://images.unsplash.com/photo-1736595628509-da51701804f6?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Street Photography",
+    "count": 13157
+  },
+  {
+    "id": "upmleWZC83Y",
+    "href": "https://unsplash.com/t/patterns",
+    "photos": [
+      {
+        "id": "ha0NjEvPq7g",
+        "src": "https://plus.unsplash.com/premium_vector-1752071909053-843cc5180171?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "geqxnWVZkpY",
+        "src": "https://images.unsplash.com/vector-1753790541089-1a7aba4523ce?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "eyhWE-fPPLY",
+        "src": "https://plus.unsplash.com/premium_vector-1734281622914-590e005ba22a?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "lhQmfqOtaOs",
+        "src": "https://images.unsplash.com/vector-1751865858655-a876e394d7a7?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Patterns",
+    "count": 570
+  },
+  {
+    "id": "S4MKLAsBB74",
+    "href": "https://unsplash.com/t/fashion-beauty",
+    "photos": [
+      {
+        "id": "YzoJ0OMY4HE",
+        "src": "https://plus.unsplash.com/premium_photo-1755004629206-20d15cea7aa4?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "Leh7iPE0bKY",
+        "src": "https://images.unsplash.com/photo-1629960414183-fba0e2e137e7?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "RWLTHuxCqYo",
+        "src": "https://images.unsplash.com/photo-1754555009599-9f0d848748e7?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "KPLjHKBoLqM",
+        "src": "https://images.unsplash.com/photo-1753549839629-2eb4f552e0e6?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Fashion & Beauty",
+    "count": 10413
+  },
+  {
+    "id": "aeu6rL-j6ew",
+    "href": "https://unsplash.com/t/business-work",
+    "photos": [
+      {
+        "id": "pQjoH4COskY",
+        "src": "https://images.unsplash.com/photo-1749880164389-e14710d2f397?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "CRuEm_IEC3I",
+        "src": "https://images.unsplash.com/photo-1650029609434-55bbbb38ab5c?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "nWb7Jxh5hxE",
+        "src": "https://images.unsplash.com/photo-1743343852416-e5eec987a627?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "xGklNeRfBK8",
+        "src": "https://images.unsplash.com/photo-1744686959591-eaaec00c999c?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Business & Work",
+    "count": 7071
+  },
+  {
+    "id": "xjPR4hlkBGA",
+    "href": "https://unsplash.com/t/food-drink",
+    "photos": [
+      {
+        "id": "yvEl8b1EIeA",
+        "src": "https://images.unsplash.com/photo-1755605983542-a525a0975a25?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "erJuRsCRB2E",
+        "src": "https://images.unsplash.com/photo-1755004609214-c252674df1ca?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "JJZrip9P_5k",
+        "src": "https://images.unsplash.com/photo-1754992599453-01e809722aa1?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "WZe2v04wiv0",
+        "src": "https://images.unsplash.com/photo-1754836717974-d43bd9c798ae?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Food & Drink",
+    "count": 10811
+  },
+  {
+    "id": "Bn-DjrcBrwo",
+    "href": "https://unsplash.com/t/sports",
+    "photos": [
+      {
+        "id": "0mERTWSD7po",
+        "src": "https://images.unsplash.com/photo-1755303238751-d04f190c96dd?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "2F3I5NuRZk4",
+        "src": "https://images.unsplash.com/photo-1755554857887-935f8a49f635?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "NkicHgUbtJQ",
+        "src": "https://plus.unsplash.com/premium_photo-1754258494576-f15dc2bb4d3f?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      },
+      {
+        "id": "dJt7EmomG78",
+        "src": "https://images.unsplash.com/photo-1755628931496-5b08b241567c?ixlib=rb-4.1.0&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max"
+      }
+    ],
+    "title": "Sports",
+    "count": 4005
+  }
+];
+///- end collapse -///
+
+<CardView
+  aria-label="Collections"
+  styles={style({width: 'full', height: 500})}
+  size="S"
+  /* PROPS */
+  items={topics}>
+  {topic => (
+    /*- begin highlight -*/
+    <Card href={topic.href} target="_blank" textValue={topic.title}>
+      {/*- end highlight -*/}
+      <CollectionCardPreview>
+        {topic.photos.map(photo => (
+          <Image key={photo.id} alt="" src={photo.src} />
+        ))}
+      </CollectionCardPreview>
+      <Content>
+        <Text slot="title">{topic.title}</Text>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+          <Folder />
+          <Text slot="description">{topic.count} photos</Text>
+        </div>
+      </Content>
+    </Card>
+  )}
+</CardView>
+```
+
+### Empty state
+
+Use `renderEmptyState` to render placeholder content when the CardView is empty.
+
+```tsx render
+"use client";
+import {CardView, IllustratedMessage, Heading, Content} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
+
+<CardView
+  aria-label="Assets"
+  styles={style({width: 'full', height: 300})}
+  /*- begin highlight -*/
+  renderEmptyState={() => (
+    <IllustratedMessage size="L">
+      <Image />
+      <Heading>Create your first asset.</Heading>
+      <Content>Get started by uploading or importing some assets.</Content>
+    </IllustratedMessage>
+  )}>
+  {/*- end highlight -*/}
+  {[]}
+</CardView>
+```
+
+## Selection and actions
+
+Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each card's `id`) to control the selected cards. Return an [ActionBar](ActionBar.html) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable cards with `isDisabled`. See the [selection guide](selection.html) for details.
+
+```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
+"use client";
+import {CardView, AssetCard, CardPreview, Image, Content, Text, ActionBar, ActionButton, type Selection} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <>
+      <CardView
+        aria-label="Nature photos"
+        styles={style({width: 'full', height: 500})}
+        {...props}
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Clicked ${key}`)}
+        renderActionBar={(selectedKeys) => {
+        ///- end highlight -///
+          let selection = selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ');
+          return (
+            <ActionBar>
+              <ActionButton onPress={() => alert(`Edit ${selection}`)}>
+                <Edit />
+                <Text>Edit</Text>
+              </ActionButton>
+              <ActionButton onPress={() => alert(`Copy ${selection}`)}>
+                <Copy />
+                <Text>Copy</Text>
+              </ActionButton>
+              <ActionButton onPress={() => alert(`Delete ${selection}`)}>
+                <Delete />
+                <Text>Delete</Text>
+              </ActionButton>
+            </ActionBar>
+          );
+        }}>
+        {/*- begin collapse -*/}
+        <AssetCard id={1}>
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Desert Sunset</Text>
+            <Text slot="description">PNG • 2/3/2024</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id={2} isDisabled>
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Hiking Trail</Text>
+            <Text slot="description">JPEG • 1/10/2022</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id={3}>
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Lion</Text>
+            <Text slot="description">JPEG • 8/28/2021</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id={4}>
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Mountain Sunrise</Text>
+            <Text slot="description">PNG • 3/15/2015</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id={5}>
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1574870111867-089730e5a72b?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Giraffe tongue</Text>
+            <Text slot="description">PNG • 11/27/2019</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id={6}>
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Golden Hour</Text>
+            <Text slot="description">WEBP • 7/24/2024</Text>
+          </Content>
+        </AssetCard>
+        {/*- end collapse -*/}
+      </CardView>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## API
+
+```tsx links={{CardView: '#cardview', Card: 'Card.html'}}
+<CardView>
+  <Card />
+  <SkeletonCollection />
+</CardView>
+```
+
+### CardView
+
+<PropTable component={docs.exports.CardView} links={docs.links} />

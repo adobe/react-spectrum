@@ -1,6 +1,7 @@
 {
   "name": "@parcel/transformer-storybook",
   "version": "0.0.2",
+  "private": true,
   "main": "dist/StoryTransformer.js",
   "source": "StoryTransformer.ts",
   "engines": {
@@ -12,7 +13,7 @@
   "dependencies": {
     "@babel/parser": "^7.23.0",
     "@babel/types": "^7.23.0",
-    "@parcel/plugin": "^2.13.1",
+    "@parcel/plugin": "^2.16.0",
     "@parcel/source-map": "^2.1.1",
     "@storybook/csf-tools": "^8",
     "@storybook/docs-tools": "^8",

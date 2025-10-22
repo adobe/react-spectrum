@@ -7,12 +7,14 @@ import vanillaDocs from 'docs:vanilla-starter/ComboBox';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
 
+export const tags = ['autocomplete', 'search', 'typeahead', 'input'];
+
 # ComboBox
 
 <PageDescription>{docs.exports.ComboBox.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css", "starters/docs/src/theme.css"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select a flavor'}} type="vanilla" files={["starters/docs/src/ComboBox.tsx", "starters/docs/src/ComboBox.css"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
@@ -26,7 +28,7 @@ import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
   </ComboBox>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['label', 'isDisabled']} initialProps={{label: 'Favorite Animal', placeholder: 'Select a flavor'}} type="tailwind" files={["starters/tailwind/src/ComboBox.tsx"]}
   "use client";
   import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 
@@ -42,52 +44,16 @@ import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
 
 </ExampleSwitcher>
 
-## Anatomy
-
-<Anatomy />
-
-A ComboBox consists of a label, an input which displays the current value, a [ListBox](ListBox.html) displayed in a [Popover](Popover.html), and an optional [Button](Button.html)
-to open the popover. Users can type within the input to filter the available options
-within the ListBox.
-
-`ComboBox` also supports optional description and `<FieldError>` slots. If there is no visible label, an `aria-label` or `aria-labelledby` must be provided to identify it to assistive technology.
-
-For more flexibility when building patterns such as command palettes, searchable menus, or filterable selects, see the [Autocomplete](Autocomplete.html) component.
-
-```tsx
-import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
-
-<ComboBox>
-  <Label />
-  <Input />
-  <Button />
-  <Text slot="description" />
-  <FieldError />
-  <Popover>
-    <ListBox>
-      <ListBoxItem>
-        <Text slot="label" />
-        <Text slot="description" />
-      </ListBoxItem>
-      <ListBoxSection>
-        <Header />
-        <ListBoxItem />
-      </ListBoxSection>
-    </ListBox>
-  </Popover>
-</ComboBox>
-```
-
 ## Content
 
-`ComboBox` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`ComboBox` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=ComboBox). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
 ```tsx render
 "use client";
-import {ComboBox} from 'vanilla-starter/ComboBox';
-import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {ListBoxSection, Collection, Header} from 'react-aria-components';
 
 function Example() {
   /*- begin collapse -*/
@@ -116,23 +82,28 @@ function Example() {
   /*- end collapse -*/
 
   return (
-    <ComboBox label="Preferred fruit or vegetable" items={options}>
+    /*- begin highlight -*/
+    <ComboBox
+      label="Preferred fruit or vegetable"
+      placeholder="Select an option"
+      defaultItems={options}>
       {section => (
         <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+            {item => <ComboBoxItem id={item.name}>{item.name}</ComboBoxItem>}
           </Collection>
         </ListBoxSection>
       )}
     </ComboBox>
+    /*- end highlight -*/
   );
 }
 ```
 
 ## Selection
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ComboBox#single-selection) for more details.
 
 ```tsx render
 "use client";
@@ -146,12 +117,12 @@ function Example() {
   return (
     <div>
       <ComboBox
-        label="Pick an animal"
-        ///- begin highlight -///
+        label="Favorite Animal"
+        placeholder="Select an animal"
+        /*- begin highlight -*/
         selectedKey={animal}
-        onSelectionChange={setAnimal}
-        ///- end highlight -///
-      >
+        onSelectionChange={setAnimal}>
+        {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
         <ComboBoxItem id="platypus" isDisabled>Platypus</ComboBoxItem>
@@ -176,20 +147,19 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {useState} from 'react';
 
 function Example(props) {
-  let [value, setValue] = useState("Kangaroo");
+  let [value, setValue] = useState<Key>('Kangaroo');
 
   return (
     <div>
-      <p>Current input value: {value}</p>
       <ComboBox
         {...props}
         label="Favorite Animal"
+        placeholder="Select an animal"
+        /*- begin highlight -*/
         /* PROPS */
-        ///- begin highlight -///
         inputValue={value}
-        onInputChange={setValue}
-        ///- end highlight -///
-      >
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
         <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
         <ComboBoxItem id="platypus">Platypus</ComboBoxItem>
@@ -197,6 +167,7 @@ function Example(props) {
         <ComboBoxItem id="bison">Bison</ComboBoxItem>
         <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
       </ComboBox>
+      <p>Current input value: {value}</p>
     </div>
   );
 }
@@ -250,10 +221,9 @@ function ControlledComboBox() {
 
   return (
     <div>
-      <p>Current selected major id: {fieldState.selectedKey}</p>
-      <p>Current input text: {fieldState.inputValue}</p>
        <ComboBox
-        label="Pick a engineering major"
+        label="Engineering major"
+        placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
         selectedKey={fieldState.selectedKey}
@@ -263,23 +233,71 @@ function ControlledComboBox() {
         {/*- end highlight -*/}
         {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
       </ComboBox>
+      <pre style={{fontSize: 12}}>
+        Current selected major id: {fieldState.selectedKey}{'\n'}
+        Current input text: {fieldState.inputValue}
+      </pre>
     </div>
+  );
+}
+```
+
+## Item actions
+
+Use the `onAction` prop on a `<ListBoxItem>` to perform a custom action when the item is pressed. This example adds a "Create" action for the current input value.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {useState} from 'react';
+
+function Example() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      placeholder="Select an animal"
+      allowsEmptyCollection
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {/*- begin highlight -*/}
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('Creating ' + inputValue)}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      {/*- end highlight -*/}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
   );
 }
 ```
 
 ## Forms
 
-Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects a value, or implement custom client or server-side validation. See the Forms guide to learn more.
 
 ```tsx render
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 <Form>
-  <ComboBox name="animal" isRequired description="Please select an animal.">
+  <ComboBox
+    label="Animal"
+    placeholder="e.g. Cat"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
     <ComboBoxItem id="aardvark">Aardvark</ComboBoxItem>
     <ComboBoxItem id="cat">Cat</ComboBoxItem>
     <ComboBoxItem id="dog">Dog</ComboBoxItem>
@@ -301,7 +319,7 @@ Use the `menuTrigger` prop to control when the popover opens:
 
 Use `allowsEmptyCollection` to keep the popover open when there are no items available in the list.
 
-```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['menuTrigger', 'allowsEmptyCollection']} initialProps={{label: 'Favorite Animal'}}
+```tsx render wide docs={vanillaDocs.exports.ComboBox} links={vanillaDocs.links} props={['menuTrigger', 'allowsEmptyCollection']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}}
 "use client";
 import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
@@ -317,6 +335,21 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
 ## API
 
-<PropTable component={docs.exports.ComboBox} links={docs.links} />
+<Anatomy />
 
-<StateTable defaultClassName="react-aria-ComboBox" properties={docs.exports.ComboBoxRenderProps.properties} />
+```tsx links={{ComboBox: '#combobox', Button: 'Button.html', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+<ComboBox>
+  <Label />
+  <Input />
+  <Button />
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</ComboBox>
+```
+
+### ComboBox
+
+<PropTable component={docs.exports.ComboBox} links={docs.links} />

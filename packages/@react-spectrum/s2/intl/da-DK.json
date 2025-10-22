@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "Alle valgt",
   "breadcrumbs.more": "Flere elementer",
   "button.pending": "afventende",
+  "calendar.invalidSelection": "Valgte {selectedCount, plural, one {dato} other {datoer}} ikke ledige.",
   "combobox.noResults": "Ingen resultater",
   "contextualhelp.help": "Hjælp",
   "contextualhelp.info": "Oplysninger",
+  "datepicker.endTime": "Sluttidspunkt",
+  "datepicker.startTime": "Starttidspunkt",
+  "datepicker.time": "Klokkeslæt",
   "dialog.alert": "Advarsel",
   "dialog.dismiss": "Luk",
   "dropzone.replaceMessage": "Drop fil for at erstatte",
@@ -22,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Ny aktivitet",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vælg…",
+  "picker.selectedCount": "{count, plural, =0 {Ingen elementer valgt} one {# element valgt} other {# elementer valgt}}",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
   "table.loading": "Indlæser...",
@@ -33,7 +38,7 @@
   "tag.hideButtonLabel": "Vis mindre",
   "tag.noTags": "Ingen",
   "tag.showAllButtonLabel": "Vis alle ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "Ryd alle",
+  "toast.collapse": "Skjul",
+  "toast.showAll": "Vis alle"
 }

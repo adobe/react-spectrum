@@ -33,7 +33,12 @@ export interface ImageProps {
   /**
    * Called when the image has successfully loaded, see [load event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
    */
-  onLoad?: ReactEventHandler<HTMLImageElement>
+  onLoad?: ReactEventHandler<HTMLImageElement>,
+  /**
+   * Indicates if the fetching of the image must be done using a CORS request.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin).
+   */
+  crossOrigin?: 'anonymous' | 'use-credentials'
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {

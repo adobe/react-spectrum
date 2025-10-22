@@ -11,17 +11,14 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {chain, filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
   LabelHTMLAttributes,
   RefObject,
-  useCallback,
-  useEffect,
-  useRef,
   useState
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -124,20 +121,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isRequired = false,
     isReadOnly = false,
     type = 'text',
-    validationBehavior = 'aria',
-    onChange: onChangeProp
+    validationBehavior = 'aria'
   } = props;
-
-  let isComposing = useRef(false);
-  let onChange = useCallback((val) => {
-    if (isComposing.current) {
-      return;
-    }
-
-    onChangeProp?.(val);
-  }, [onChangeProp]);
-
-  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', onChange);
+  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
   let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
   let validationState = useFormValidationState({
     ...props,
@@ -159,35 +145,6 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   let [initialValue] = useState(value);
   useFormReset(ref, props.defaultValue ?? initialValue, setValue);
   useFormValidation(props, validationState, ref);
-
-  useEffect(() => {
-    // This works around a React/Chrome bug that prevents textarea elements from validating when controlled.
-    // We prevent React from updating defaultValue (i.e. children) of textarea when `value` changes,
-    // which causes Chrome to skip validation. Only updating `value` is ok in our case since our
-    // textareas are always controlled. React is planning on removing this synchronization in a
-    // future major version.
-    // https://github.com/facebook/react/issues/19474
-    // https://github.com/facebook/react/issues/11896
-    if (ref.current instanceof getOwnerWindow(ref.current).HTMLTextAreaElement) {
-      let input = ref.current;
-      Object.defineProperty(input, 'defaultValue', {
-        get: () => input.value,
-        set: () => {},
-        configurable: true
-      });
-    }
-  }, [ref]);
-
-  let onCompositionStart = useCallback(() => {
-    isComposing.current = true;
-  }, []);
-
-  let onCompositionEnd = useCallback((e) => {
-    isComposing.current = false;
-    if (e.data !== '') {
-      onChangeProp?.(value);
-    }
-  }, [onChangeProp, value]);
 
   return {
     labelProps,
@@ -225,8 +182,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         onPaste: props.onPaste,
 
         // Composition events
-        onCompositionEnd: chain(onCompositionEnd, props.onCompositionEnd),
-        onCompositionStart: chain(onCompositionStart, props.onCompositionStart),
+        onCompositionEnd: props.onCompositionEnd,
+        onCompositionStart: props.onCompositionStart,
         onCompositionUpdate: props.onCompositionUpdate,
 
         // Selection events

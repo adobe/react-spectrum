@@ -13,15 +13,21 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useCallback, useState} from 'react';
+import React, {JSX, ReactNode, useCallback, useState} from 'react';
 import styles from '../example/index.css';
 import {TreeLoadMoreItem} from '../src/Tree';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components/Tree'
-};
+  title: 'React Aria Components/Tree',
+  component: Tree,
+  excludeStories: ['TreeExampleStaticRender']
+} as Meta<typeof Tree>;
+
+export type TreeStory = StoryFn<typeof Tree>;
 
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string,
@@ -138,54 +144,56 @@ const StaticTreeItemNoActions = (props: StaticTreeItemProps) => {
   );
 };
 
-const TreeExampleStaticRender = (args) => (
-  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-    <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-      <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-        <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-          Projects-1A
+export function TreeExampleStaticRender<T extends object>(props: TreeProps<T>) {
+  return (
+    <Tree className={styles.tree} {...props} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+            Projects-1A
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-2" textValue="Projects-2">
+          Projects-2
+        </StaticTreeItem>
+        <StaticTreeItem id="projects-3" textValue="Projects-3">
+          Projects-3
         </StaticTreeItem>
       </StaticTreeItem>
-      <StaticTreeItem id="projects-2" textValue="Projects-2">
-        Projects-2
-      </StaticTreeItem>
-      <StaticTreeItem id="projects-3" textValue="Projects-3">
-        Projects-3
-      </StaticTreeItem>
-    </StaticTreeItem>
-    <TreeItem
-      id="reports"
-      textValue="Reports"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        Reports
-      </TreeItemContent>
-    </TreeItem>
-    <TreeItem
-      id="Tests"
-      textValue="Tests"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        {({isFocused}) => (
-          <Text>{`${isFocused} Tests`}</Text>
-        )}
-      </TreeItemContent>
-    </TreeItem>
-  </Tree>
-);
+      <TreeItem
+        id="reports"
+        textValue="Reports"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          Reports
+        </TreeItemContent>
+      </TreeItem>
+      <TreeItem
+        id="Tests"
+        textValue="Tests"
+        className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+          focused: isFocused,
+          'focus-visible': isFocusVisible,
+          selected: isSelected,
+          hovered: isHovered
+        })}>
+        <TreeItemContent>
+          {({isFocused}) => (
+            <Text>{`${isFocused} Tests`}</Text>
+          )}
+        </TreeItemContent>
+      </TreeItem>
+    </Tree>
+  );
+}
 
-const TreeExampleStaticNoActionsRender = (args) => (
+const TreeExampleStaticNoActionsRender = <T extends object>(args: TreeProps<T>): JSX.Element => (
   <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItemNoActions id="Photos" textValue="Photos">Photos</StaticTreeItemNoActions>
     <StaticTreeItemNoActions id="projects" textValue="Projects" title="Projects">
@@ -232,13 +240,12 @@ const TreeExampleStaticNoActionsRender = (args) => (
   </Tree>
 );
 
-export const TreeExampleStatic = {
-  render: TreeExampleStaticRender,
+export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
+  render: (args) => <TreeExampleStaticRender {...args} />,
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disabledBehavior: 'selection',
-    disallowClearAll: false
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -261,13 +268,12 @@ export const TreeExampleStatic = {
   }
 };
 
-export const TreeExampleStaticNoActions = {
-  render: TreeExampleStaticNoActionsRender,
+export const TreeExampleStaticNoActions: StoryObj<typeof TreeExampleStaticNoActionsRender> = {
+  render: (args) => <TreeExampleStaticNoActionsRender {...args} />,
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disabledBehavior: 'selection',
-    disallowClearAll: false
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -418,9 +424,9 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 
 let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']);
 
-const TreeExampleDynamicRender = (args: TreeProps<unknown>) => {
+const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
-    initialItems: rows,
+    initialItems: args.items as any ?? rows,
     getKey: item => item.id,
     getChildren: item => item.childItems
   });
@@ -436,13 +442,13 @@ const TreeExampleDynamicRender = (args: TreeProps<unknown>) => {
   );
 };
 
-export const TreeExampleDynamic = {
+export const TreeExampleDynamic: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleStatic,
-  render: TreeExampleDynamicRender,
-  parameters: null
+  render: (args) => <TreeExampleDynamicRender {...args} />,
+  parameters: undefined
 };
 
-export const WithActions = {
+export const WithActions: StoryObj<typeof TreeExampleDynamicRender> = {
   ...TreeExampleDynamic,
   args: {
     onAction: action('onAction'),
@@ -451,7 +457,7 @@ export const WithActions = {
   name: 'Tree with actions'
 };
 
-const WithLinksRender = (args: TreeProps<unknown>) => {
+const WithLinksRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -468,9 +474,9 @@ const WithLinksRender = (args: TreeProps<unknown>) => {
   );
 };
 
-export const WithLinks = {
+export const WithLinks: StoryObj<typeof WithLinksRender> = {
   ...TreeExampleDynamic,
-  render: WithLinksRender,
+  render: (args) => <WithLinksRender {...args} />,
   name: 'Tree with links',
   parameters: {
     description: {
@@ -483,7 +489,7 @@ function renderEmptyLoader({isLoading}) {
   return isLoading ? 'Root level loading spinner' : 'Nothing in tree';
 }
 
-const EmptyTreeStatic = (args: {isLoading: boolean}) => (
+const EmptyTreeStatic = <T extends object>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element => (
   <Tree
     {...args}
     className={styles.tree}
@@ -499,15 +505,16 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
   </Tree>
 );
 
-export const EmptyTreeStaticStory = {
-  render: EmptyTreeStatic,
+export const EmptyTreeStaticStory: StoryObj<typeof EmptyTreeStatic> = {
+  render: (args) => <EmptyTreeStatic {...args} />,
   args: {
     isLoading: false
   },
   name: 'Empty/Loading Tree rendered with TreeLoader collection element'
 };
 
-function LoadingStoryDepOnCollection(args) {
+function LoadingStoryDepOnCollection<T extends object>(props: TreeProps<T> & {isLoading: boolean}): JSX.Element {
+  let {isLoading, ...args} = props;
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -516,20 +523,20 @@ function LoadingStoryDepOnCollection(args) {
 
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <Collection items={treeData.items} dependencies={[args.isLoading]}>
+      <Collection items={treeData.items} dependencies={[isLoading]}>
         {(item) => (
-          <DynamicTreeItem renderLoader={(id) => id === 'project-2'} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+          <DynamicTreeItem renderLoader={(id) => id === 'project-2'} isLoading={isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
             {item.value.name}
           </DynamicTreeItem>
         )}
       </Collection>
-      <MyTreeLoader isLoading={args.isLoading} />
+      <MyTreeLoader isLoading={isLoading} />
     </Tree>
   );
 }
 
-export const LoadingStoryDepOnCollectionStory = {
-  render: LoadingStoryDepOnCollection,
+export const LoadingStoryDepOnCollectionStory: StoryObj<typeof LoadingStoryDepOnCollection> = {
+  render: (args) => <LoadingStoryDepOnCollection {...args} />,
   args: {
     isLoading: false
   },
@@ -541,7 +548,7 @@ export const LoadingStoryDepOnCollectionStory = {
   }
 };
 
-function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
+function LoadingStoryDepOnTop<T extends object>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -559,8 +566,8 @@ function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
   );
 }
 
-export const LoadingStoryDepOnTopStory = {
-  render: LoadingStoryDepOnTop,
+export const LoadingStoryDepOnTopStory: StoryObj<typeof LoadingStoryDepOnTop> = {
+  render: (args) => <LoadingStoryDepOnTop {...args} />,
   args: {
     isLoading: false
   },
@@ -638,7 +645,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
   );
 };
 
-function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean}) {
+function ButtonLoadingIndicator<T extends object>(args: TreeProps<T> & {isLoading: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -655,8 +662,8 @@ function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean})
   );
 }
 
-export const ButtonLoadingIndicatorStory = {
-  render: ButtonLoadingIndicator,
+export const ButtonLoadingIndicatorStory: StoryObj<typeof ButtonLoadingIndicator> = {
+  render: (args) => <ButtonLoadingIndicator {...args} />,
   args: {
     isLoading: false
   },
@@ -667,7 +674,8 @@ export const ButtonLoadingIndicatorStory = {
     }
   }
 };
-function VirtualizedTreeRender(args) {
+
+function VirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
       <TreeExampleDynamicRender {...args} />
@@ -675,9 +683,9 @@ function VirtualizedTreeRender(args) {
   );
 }
 
-export const VirtualizedTree = {
+export const VirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
   ...TreeExampleDynamic,
-  render: VirtualizedTreeRender
+  render: (args) => <VirtualizedTreeRender {...args} />
 };
 
 let projects: {id: string, value: string}[] = [];
@@ -965,7 +973,7 @@ dependencies={[isRootLoading]}>
   );
 }} */}
 
-function TreeDragAndDropExample(args) {
+function TreeDragAndDropExample<T extends object>(args: TreeProps<T> & {shouldAcceptItemDrop: 'folders' | 'all', dropFunction: 'onMove' | 'onInsert' | 'onRootDrop', shouldAllowInsert: boolean}): JSX.Element {
   let treeData = useTreeData<any>({
     initialItems: rows,
     getKey: item => item.id,
@@ -1141,9 +1149,9 @@ function SecondTree(args) {
   );
 }
 
-export const TreeWithDragAndDrop = {
+export const TreeWithDragAndDrop: StoryObj<typeof TreeDragAndDropExample> = {
   ...TreeExampleDynamic,
-  render: function TreeDndExample(args) {
+  render: (args) => {
     return (
       <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
         <TreeDragAndDropExample {...args} />
@@ -1187,4 +1195,80 @@ export const TreeWithDragAndDropVirtualized = {
   ...TreeWithDragAndDrop,
   render: TreeDragAndDropVirtualizedRender,
   name: 'Tree with drag and drop (virtualized)'
+};
+
+
+interface ITreeItem {
+  id: string,
+  name: string,
+  childItems?: Iterable<ITreeItem>
+}
+
+let totalItems = 0;
+let itemKeys = new Set<any>();
+/**
+ * Generates a tree data structure with 10 items per level and 6 levels deep.
+ * @returns Array of tree items with the specified structure.
+ */
+function generateTreeData(): Array<ITreeItem> {
+  /**
+   * Recursively generates tree items for a given level.
+   * @param level - Current depth level (1-6).
+   * @param parentId - Parent item ID for generating unique child IDs.
+   * @returns Array of tree items for this level.
+   */
+  function generateLevel(level: number, parentId: string = ''): Array<ITreeItem> {
+    const items: ITreeItem[] = [];
+    const itemsPerLevel = 7;
+
+    for (let i = 1; i < itemsPerLevel; i++) {
+      const itemId = parentId ? `${parentId}-${i}` : `level-${level}-item-${i}`;
+      const itemName = `Level ${level} Item ${i}`;
+
+      const item: ITreeItem = {
+        id: itemId,
+        name: itemName
+      };
+
+      // Add child items if not at the deepest level (level 6)
+      if (level < 6) {
+        item.childItems = generateLevel(level + 1, itemId);
+      }
+
+      totalItems++;
+      items.push(item);
+      itemKeys.add(itemId);
+    }
+
+    return items;
+  }
+
+  return generateLevel(1);
+}
+
+const treeData = generateTreeData();
+
+function HugeVirtualizedTreeRender<T extends object>(args: TreeProps<T>): JSX.Element {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>());
+  let expandAll = () => {
+    setExpandedKeys(itemKeys);
+  };
+
+  return (
+    <>
+      <button onClick={expandAll}>Expand All {totalItems}</button>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
+        <TreeExampleDynamicRender {...args} expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys} />
+      </Virtualizer>
+    </>
+  );
+}
+
+export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
+  ...TreeExampleDynamic,
+  args: {
+    ...TreeExampleDynamic.args,
+    items: treeData
+  },
+  render: (args) => <HugeVirtualizedTreeRender {...args} />
 };

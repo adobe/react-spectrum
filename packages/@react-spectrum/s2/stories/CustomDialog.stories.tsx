@@ -101,7 +101,7 @@ export const SideImage: Story = {
           <div className={style({padding: {default: 24, sm: 32}, flexGrow: 1, display: 'flex', flexDirection: 'column', rowGap: 32})}>
             <div className={style({display: 'flex', flexDirection: 'column', rowGap: 32, flexGrow: 1})}>
               <Heading slot="title" styles={style({font: 'heading', marginY: 0})}>Add new</Heading>
-              <TextField label="Name" isRequired />
+              <TextField label="Name" isRequired placeholder="Enter your name" />
               <DropZone>
                 <IllustratedMessage orientation="horizontal" size="S">
                   <DropToUpload />
@@ -119,4 +119,21 @@ export const SideImage: Story = {
       </CustomDialog>
     </DialogTrigger>
   )
+};
+
+export const CustomWidth: Story = {
+  render: (args) => (
+    <DialogTrigger>
+      <ActionButton>Open dialog</ActionButton>
+      <CustomDialog {...args} styles={style({width: 900})}>
+        <div className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center'})}>
+          <Checkmark />
+          <Heading slot="title" styles={style({font: 'heading-lg', textAlign: 'center', marginY: 0})}>Thank you!</Heading>
+          <p className={style({font: 'body', textAlign: 'center', marginY: 0})}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <CloseButton styles={style({position: 'absolute', top: 12, insetEnd: 12})} />
+        </div>
+      </CustomDialog>
+    </DialogTrigger>
+  ),
+  tags: ['!autodocs']
 };

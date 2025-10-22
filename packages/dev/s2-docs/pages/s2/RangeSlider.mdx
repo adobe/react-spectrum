@@ -1,0 +1,77 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {RangeSlider} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['slider'];
+
+# RangeSlider
+
+<PageDescription>{docs.exports.RangeSlider.description}</PageDescription>
+
+<VisualExample
+  component={RangeSlider}
+  docs={docs.exports.RangeSlider}
+  links={docs.links}
+  props={['label', 'trackStyle', 'thumbStyle', 'size', 'labelPosition', 'formatOptions', 'contextualHelp', 'isEmphasized', 'isDisabled']}
+  initialProps={{
+    label: 'Range',
+    defaultValue: {start: 30, end: 60}
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the RangeSlider's value. The value is an object with `start` and `end` properties. The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released.
+
+```tsx render
+"use client";
+import {RangeSlider} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [currentValue, setCurrentValue] = useState({start: 25, end: 75});
+  let [finalValue, setFinalValue] = useState(currentValue);
+
+  return (
+    <>
+      <RangeSlider
+        label="Cookies to buy"
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre className={style({font: 'body'})}>
+        onChange value: {JSON.stringify(currentValue)}{'\n'}
+        onChangeEnd value: {JSON.stringify(finalValue)}
+      </pre>
+    </>
+  );
+}
+```
+
+### Value scale
+
+By default, slider values are percentages between 0 and 100. Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Steps are calculated starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+
+<VisualExample
+  component={RangeSlider}
+  docs={docs.exports.RangeSlider}
+  links={docs.links}
+  type="s2"
+  props={['minValue', 'maxValue', 'step']}
+  initialProps={{
+    label: 'Amount',
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: {start: 25, end: 125},
+    step: 5
+  }} />
+
+## API
+
+<PropTable component={docs.exports.RangeSlider} links={docs.links} />

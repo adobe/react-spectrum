@@ -13,22 +13,32 @@
 import {Button, Collection, FieldError, Form, Input, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, TextField, Virtualizer} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import React from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import styles from '../example/index.css';
+import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
 import {useAsyncList} from 'react-stately';
+import './styles.css';
 
 export default {
   title: 'React Aria Components/Select',
+  component: Select,
   argTypes: {
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['single', 'multiple']
     }
   }
-};
+} as Meta<typeof Select>;
 
-export const SelectExample = () => (
-  <Select data-testid="select-example" id="select-example-id" style={{position: 'relative'}}>
+export type SelectStory = StoryFn<typeof Select>;
+
+export const SelectExample: SelectStory = (args) => (
+  <Select {...args} data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -48,13 +58,17 @@ export const SelectExample = () => (
   </Select>
 );
 
-export const SelectRenderProps = () => (
-  <Select data-testid="select-render-props" style={{position: 'relative'}}>
+export const SelectRenderProps: SelectStory = (args) => (
+  <Select {...args} data-testid="select-render-props">
     {({isOpen}) => (
       <>
         <Label style={{display: 'block'}}>Test</Label>
         <Button>
-          <SelectValue />
+          <SelectValue>
+            {({selectedItems, defaultChildren}) => (
+              selectedItems.length <= 1 ? defaultChildren : `${selectedItems.length} selected items`
+            )}
+          </SelectValue>
           <span aria-hidden="true" style={{paddingLeft: 5}}>{isOpen ? '▲' : '▼'}</span>
         </Button>
         <Popover>
@@ -67,6 +81,35 @@ export const SelectRenderProps = () => (
         </Popover>
       </>
     )}
+  </Select>
+);
+
+export const SelectWithTagGroup: SelectStory = (args) => (
+  <Select {...args} data-testid="select-example" id="select-example-id">
+    <Label style={{display: 'block'}}>States</Label>
+    <div style={{display: 'flex', gap: 8, alignItems: 'start', maxWidth: 250}}>
+      <SelectValue>
+        {({selectedItems, state}) => (
+          <TagGroup
+            aria-label="Selected states"
+            items={selectedItems as {name: string}[]}
+            renderEmptyState={() => 'No selected items'}
+            onRemove={(keys) => {
+              for (let key of keys) {
+                state.selectionManager.toggleSelection(key);
+              }
+            }}>
+            {item => <Tag>{item.name}</Tag>}
+          </TagGroup>
+        )}
+      </SelectValue>
+      <Button>+</Button>
+    </div>
+    <Popover placement="bottom end">
+      <ListBox className={styles.menu} items={usStateOptions}>
+        {state => <MyListBoxItem>{state.name}</MyListBoxItem>}
+      </ListBox>
+    </Popover>
   </Select>
 );
 
@@ -138,8 +181,8 @@ const usStateOptions = [
   {id: 'WY', name: 'Wyoming'}
 ];
 
-export const SelectManyItems = () => (
-  <Select style={{position: 'relative'}}>
+export const SelectManyItems: SelectStory = (args) => (
+  <Select {...args}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -156,8 +199,8 @@ export const SelectManyItems = () => (
   </Select>
 );
 
-export const VirtualizedSelect = () => (
-  <Select style={{position: 'relative'}}>
+export const VirtualizedSelect: SelectStory = (args) => (
+  <Select {...args}>
     <Label style={{display: 'block'}}>Test</Label>
     <Button>
       <SelectValue />
@@ -191,7 +234,7 @@ const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncVirtualizedCollectionRenderSelect = (args) => {
+function AsyncVirtualizedCollectionRenderSelectRender(args: {delay: number}): JSX.Element {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -210,9 +253,9 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
   });
 
   return (
-    <Select style={{position: 'relative'}}>
+    <Select>
       <Label style={{display: 'block'}}>Async Virtualized Collection render Select</Label>
-      <Button style={{position: 'relative'}}>
+      <Button>
         <SelectValue />
         {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
         <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
@@ -241,13 +284,14 @@ export const AsyncVirtualizedCollectionRenderSelect = (args) => {
   );
 };
 
-AsyncVirtualizedCollectionRenderSelect.story = {
+export const AsyncVirtualizedCollectionRenderSelect: StoryObj<typeof AsyncVirtualizedCollectionRenderSelectRender> = {
+  render: (args) => <AsyncVirtualizedCollectionRenderSelectRender {...args} />,
   args: {
     delay: 50
   }
 };
 
-export const SelectSubmitExample = () => (
+export const SelectSubmitExample: SelectStory = (args) => (
   <Form>
     <TextField
       isRequired
@@ -258,7 +302,7 @@ export const SelectSubmitExample = () => (
       <Input />
       <FieldError className={styles.errorMessage} />
     </TextField>
-    <Select isRequired autoComplete="organization" name="company">
+    <Select {...args} isRequired autoComplete="organization" name="company">
       <Label style={{display: 'block'}}>Company</Label>
       <Button>
         <SelectValue />
@@ -297,6 +341,7 @@ export const RequiredSelectWithManyItems = (props) => (
         <SelectValue />
         <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
       </Button>
+      <FieldError />
       <Popover>
         <ListBox items={makeItems(301)} className={styles.menu}>
           {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
@@ -306,3 +351,103 @@ export const RequiredSelectWithManyItems = (props) => (
     <Button type="submit">Submit</Button>
   </form>
 );
+
+export const SelectScrollBug = () => {
+  return (
+    <div style={{display: 'flex', flexDirection: 'row', height: '100vh'}}>
+      <div style={{flex: 3}}>
+        Scrolling here should do nothing.
+      </div>
+
+      <div style={{flex: 1, overflowY: 'auto'}}>
+        Scrolling here should scroll the right side.
+        <br />
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
+        voluptatibus esse qui enim neque aliquam facere velit ipsa non,
+        voluptates aperiam odit minima dolorum harum! Facere eligendi officia
+        ipsam mollitia!
+        <br />
+        <br />
+        <br />
+        <Select>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+            <span aria-hidden="true">▼</span>
+          </Button>
+          <Popover>
+            <ListBox>
+              <MyListBoxItem>Cat</MyListBoxItem>
+              <MyListBoxItem>Dog</MyListBoxItem>
+              <MyListBoxItem>Kangaroo</MyListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      </div>
+    </div>
+  );
+};

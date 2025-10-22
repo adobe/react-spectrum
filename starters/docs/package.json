@@ -1,9 +1,19 @@
 {
+  "name": "react-aria-starter-docs",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "yarn@4.2.2",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.24.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^8.6.14",
-    "@storybook/addon-onboarding": "^1.0.8",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/blocks": "^8.6.14",
     "@storybook/react": "^8.6.14",
@@ -11,21 +21,20 @@
     "@storybook/test": "^8.6.14",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "clsx": "^2.1.1",
     "lightningcss-loader": "^2.1.0",
-    "prop-types": "^15.8.1",
-    "react": "^18.2.0",
+    "lucide-react": "^0.517.0",
+    "react": "^19.1.0",
     "react-aria-components": "latest",
-    "react-dom": "^18.2.0",
+    "react-dom": "^19.1.0",
     "storybook": "^8.6.14",
     "storybook-dark-mode": "^4.0.2",
     "typescript": "5.3.3"
   },
   "resolutions": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "@types/mime": "3.0.4",
     "jackspeak": "2.1.1"
-  },
-  "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
   }
 }

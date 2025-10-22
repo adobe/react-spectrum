@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, ButtonContext, ProgressBar, Text} from '../';
+import {Button, ButtonContext, Dialog, DialogTrigger, Heading, Modal, ProgressBar, Text} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -55,6 +55,18 @@ describe('Button', () => {
     let {getByRole} = render(<Button aria-current="page">Test</Button>);
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('should not have aria-disabled defined by default', () => {
+    let {getByRole} = render(<Button>Test</Button>);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('should support aria-disabled passthrough', () => {
+    let {getByRole} = render(<Button aria-disabled="true">Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('should support slot', () => {
@@ -112,7 +124,8 @@ describe('Button', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Button>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Button>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -128,6 +141,7 @@ describe('Button', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {
@@ -351,5 +365,36 @@ describe('Button', () => {
 
     await user.keyboard('{Enter}');
     expect(onSubmitSpy).not.toHaveBeenCalled();
+  });
+
+  it('disables press when in pending state for context', async function () {
+    let onFocusSpy = jest.fn();
+    let onBlurSpy = jest.fn();
+    let {getByRole, queryByRole} = render(
+      <DialogTrigger>
+        <Button isPending onFocus={onFocusSpy} onBlur={onBlurSpy}>Delete…</Button>
+        <Modal data-test="modal">
+          <Dialog role="alertdialog" data-test="dialog">
+            {({close}) => (
+              <>
+                <Heading slot="title">Alert</Heading>
+                <Button onPress={close}>Close</Button>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+    expect(onFocusSpy).toHaveBeenCalled();
+    expect(onBlurSpy).not.toHaveBeenCalled();
+
+    let dialog = queryByRole('alertdialog');
+    expect(dialog).toBeNull();
+
+    await user.click(document.body);
+    expect(onBlurSpy).toHaveBeenCalled();
   });
 });

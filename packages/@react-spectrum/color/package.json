@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/color",
-  "version": "3.0.9",
+  "version": "3.1.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,29 +40,29 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/color": "^3.0.9",
-    "@react-aria/focus": "^3.20.5",
-    "@react-aria/i18n": "^3.12.10",
-    "@react-aria/interactions": "^3.25.3",
-    "@react-aria/utils": "^3.29.1",
-    "@react-spectrum/dialog": "^3.8.23",
-    "@react-spectrum/form": "^3.7.16",
-    "@react-spectrum/label": "^3.16.16",
-    "@react-spectrum/overlays": "^5.7.7",
-    "@react-spectrum/picker": "^3.15.11",
-    "@react-spectrum/textfield": "^3.13.5",
-    "@react-spectrum/utils": "^3.12.6",
-    "@react-spectrum/view": "^3.6.20",
-    "@react-stately/color": "^3.8.6",
-    "@react-types/color": "^3.0.6",
-    "@react-types/shared": "^3.30.0",
-    "@react-types/textfield": "^3.12.3",
+    "@react-aria/color": "^3.1.2",
+    "@react-aria/focus": "^3.21.2",
+    "@react-aria/i18n": "^3.12.13",
+    "@react-aria/interactions": "^3.25.6",
+    "@react-aria/utils": "^3.31.0",
+    "@react-spectrum/dialog": "^3.9.4",
+    "@react-spectrum/form": "^3.7.19",
+    "@react-spectrum/label": "^3.16.19",
+    "@react-spectrum/overlays": "^5.9.0",
+    "@react-spectrum/picker": "^3.16.4",
+    "@react-spectrum/textfield": "^3.14.2",
+    "@react-spectrum/utils": "^3.12.9",
+    "@react-spectrum/view": "^3.6.23",
+    "@react-stately/color": "^3.9.2",
+    "@react-types/color": "^3.1.2",
+    "@react-types/shared": "^3.32.1",
+    "@react-types/textfield": "^3.12.6",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.10.1"
+    "react-aria-components": "^1.13.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@react-spectrum/style-macro-s1": "3.0.0-alpha.4"
+    "@react-spectrum/style-macro-s1": "3.0.0-alpha.5"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",

@@ -6,15 +6,21 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 interface ExampleOutputProps {
   component?: any,
   props?: Record<string, any>,
-  align?: 'start' | 'center' | 'end'
+  align?: 'start' | 'center' | 'end',
+  orientation?: 'horizontal' | 'vertical'
 }
 
-export function ExampleOutput({component, props = {}, align = 'center'}: ExampleOutputProps) {
+export function ExampleOutput({component, props = {}, align = 'center', orientation = 'horizontal'}: ExampleOutputProps) {
   return (
     <div 
       className={style({
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: {
+          orientation: {
+            horizontal: 'column',
+            vertical: 'row'
+          }
+        },
         justifyContent: {
           align: {
             center: 'center',
@@ -28,10 +34,13 @@ export function ExampleOutput({component, props = {}, align = 'center'}: Example
         gridArea: 'example',
         borderRadius: 'lg',
         font: 'ui',
-        padding: 24,
+        padding: {
+          default: 12,
+          lg: 24
+        },
         boxSizing: 'border-box'
-      })({align})}
-      style={{background: getBackgroundColor(props.staticColor)}}>
+      })({align, orientation})}
+      style={{background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))}}>
       {isValidElement(component) ? cloneElement(component, props) : createElement(component, props)}
     </div>
   );

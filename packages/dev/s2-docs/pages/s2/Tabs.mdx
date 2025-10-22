@@ -1,0 +1,278 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['navigation'];
+
+# Tabs
+
+<PageDescription>{docs.exports.Tabs.description}</PageDescription>
+```tsx render docs={docs.exports.Tabs} props={['density', 'orientation', 'keyboardActivation', 'isDisabled']} initialProps={{'aria-label': 'Tabs'}} links={docs.links} type="s2"
+"use client";
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
+import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
+import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
+import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSetting';
+
+<Tabs
+  /* PROPS */
+  styles={style({minWidth: 250})}>
+  <TabList aria-label="Tabs">
+    <Tab id="home">Home</Tab>
+    <Tab id="files">Files</Tab>
+    <Tab id="search">Search</Tab>
+    <Tab id="settings">Settings</Tab>
+  </TabList>
+  <TabPanel id="home">
+    <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+      <Home />
+    </div>
+  </TabPanel>
+  <TabPanel id="files">
+    <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+      <Folder />
+    </div>
+  </TabPanel>
+  <TabPanel id="search">
+    <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+      <Search />
+    </div>
+  </TabPanel>
+  <TabPanel id="settings">
+    <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+      <Settings />
+    </div>
+  </TabPanel>
+</Tabs>
+```
+
+## Content
+
+`TabList` follows the [Collection Components API](collections.html?component=Tabs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {ActionButton, ActionButtonGroup, Tabs, TabList, Tab, TabPanel, Collection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [tabs, setTabs] = useState([
+    {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+    {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}
+  ]);
+
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        content: `Tab body ${tabs.length + 1}`
+      }
+    ]);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+
+  return (
+    <Tabs aria-label="Tabs" styles={style({width: 'full'})}>
+      <div className={style({display: 'flex', alignItems: 'center'})}>
+        <TabList
+          ///- begin highlight -///
+          items={tabs}
+          ///- end highlight -///
+          styles={style({flexShrink: 1, flexGrow: 1, flexBasis: 'auto'})}>
+          {item => <Tab>{item.title}</Tab>}
+        </TabList>
+        <ActionButtonGroup density="compact" size="S">
+          <ActionButton onPress={addTab}>Add tab</ActionButton>
+          <ActionButton onPress={removeTab}>Remove tab</ActionButton>
+        </ActionButtonGroup>
+      </div>
+      {/*- begin highlight -*/}
+      <Collection items={tabs}>
+        {item => <TabPanel>{item.content}</TabPanel>}
+      </Collection>
+      {/*- end highlight -*/}
+    </Tabs>
+  )
+}
+```
+
+### Icons
+
+`Tag` supports icons and text as children. Text is always required, but can be hidden when the tabs are expanded using the `labelBehavior` prop.
+
+```tsx render docs={docs.exports.Tabs} links={docs.links} props={['labelBehavior']} initialProps={{'aria-label': 'Tabs'}} type="s2" wide
+"use client"
+import {Tabs, TabList, Tab, TabPanel, Text} from '@react-spectrum/s2';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Bell from '@react-spectrum/s2/icons/Bell';
+import Heart from '@react-spectrum/s2/icons/Heart';
+
+<Tabs/* PROPS */>
+  <TabList>
+    <Tab id="edit">
+      {/*- begin highlight -*/}
+      <Edit />
+      <Text>Edit</Text>
+      {/*- end highlight -*/}
+    </Tab>
+    <Tab id="bell">
+      <Bell />
+      <Text>Notifications</Text>
+    </Tab>
+    <Tab id="heart">
+      <Heart />
+      <Text>Likes</Text>
+    </Tab>
+  </TabList>
+  <TabPanel id="edit">
+    Review your edits
+  </TabPanel>
+  <TabPanel id="bell">
+    Check your notifications
+  </TabPanel>
+  <TabPanel id="heart">
+    See your likes
+  </TabPanel>
+</Tabs>
+```
+
+### Overflow behavior
+
+Horizontal tabs automatically collapse into a Picker when space is limited.
+
+```tsx render
+"use client";
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<div
+  className={style({
+    width: 320,
+    padding: 16,
+    borderWidth: 1,
+    borderStyle: 'solid', 
+    borderColor: 'gray-300',
+    borderRadius: 'default',
+    overflow: 'hidden',
+    resize: 'horizontal'
+  })}>
+  {/*- begin focus -*/}
+  <Tabs aria-label="Tabs">
+    <TabList>
+      <Tab id="home">Home</Tab>
+      <Tab id="profile">Profile</Tab>
+      <Tab id="contact">Contact</Tab>
+      <Tab id="about">About</Tab>
+    </TabList>
+    <TabPanel id="home">
+      Welcome home
+    </TabPanel>
+    <TabPanel id="profile">
+      View your profile
+    </TabPanel>
+    <TabPanel id="contact">
+      Find your contacts
+      </TabPanel>
+    <TabPanel id="about">
+      Learn more
+    </TabPanel>
+  </Tabs>
+  {/*- end focus -*/}
+</div>
+```
+
+## Selection
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The selected key corresponds to the `id` prop of a `<Tab>`. Tabs can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tabs#single-selection) for more details.
+
+```tsx render
+"use client";
+import {Tabs, TabList, Tab, TabPanel, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
+import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
+import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
+import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSetting';
+import {useState} from 'react';
+
+function Example() {
+  let [tab, setTab] = useState<Key>("files");
+  return (
+    <div>
+      <Tabs
+        aria-label="Tabs"
+        ///- begin highlight -///
+        selectedKey={tab}
+        onSelectionChange={setTab}
+        ///- end highlight -///
+      >
+        <TabList aria-label="Tabs">
+          <Tab id="home">Home</Tab>
+          <Tab id="files">Files</Tab>
+          <Tab id="search" isDisabled>Search</Tab>
+          <Tab id="settings">Settings</Tab>
+        </TabList>
+        <TabPanel id="home">
+          <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+            <Home />
+          </div>
+        </TabPanel>
+        <TabPanel id="files">
+          <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+            <Folder />
+          </div>
+        </TabPanel>
+        <TabPanel id="search">
+          <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+            <Search />
+          </div>
+        </TabPanel>
+        <TabPanel id="settings">
+          <div className={style({size: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+            <Settings />
+          </div>
+        </TabPanel>
+      </Tabs>
+      <p>Selected tab: {tab}</p>
+    </div>
+  );
+}
+```
+
+## API
+
+```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanel: '#tabpanel'}}
+<Tabs>
+  <TabList>
+    <Tab />
+  </TabList>
+  <TabPanel />
+</Tabs>
+```
+
+### Tabs
+
+<PropTable component={docs.exports.Tabs} links={docs.links} showDescription />
+
+### TabList
+
+<PropTable component={docs.exports.TabList} links={docs.links} showDescription />
+
+### Tab
+
+<PropTable component={docs.exports.Tab} links={docs.links} showDescription />
+
+### TabPanel
+
+<PropTable component={docs.exports.TabPanel} links={docs.links} showDescription />
