@@ -266,6 +266,7 @@ export const FileTree: StoryObj<typeof TreeExampleFiles> = {
   args: {
     selectionMode: 'multiple',
     selectionStyle: 'highlight',
+    selectionCornerStyle: 'square',
     isEmphasized: true
   }
 };

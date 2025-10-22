@@ -190,41 +190,80 @@ const listitem = style<GridListItemRenderProps & {
       forcedColors: 'ButtonBorder'
     }
   },
-  borderWidth: 1,
+  borderTopWidth: 0,
+  borderBottomWidth: {
+    default: 1,
+    isSelected: 0
+  },
+  borderStartWidth: 0,
+  borderEndWidth: 0,
   borderStyle: 'solid',
-  borderTopStartRadius: {
-    isFirstItem: 'default'
-  },
-  borderTopEndRadius: {
-    isFirstItem: 'default'
-  },
-  borderBottomStartRadius: {
-    isLastItem: 'default'
-  },
-  borderBottomEndRadius: {
-    isLastItem: 'default'
-  },
-  borderTopColor: {
-    default: 'transparent',
-    isSelected: '--borderColor',
-    isPrevSelected: 'transparent'
-  },
   borderBottomColor: {
     default: '--borderColor',
     isSelected: {
       default: '--borderColor',
       isNextSelected: 'transparent'
     }
+  }
+}, getAllowedOverrides());
+
+const listRowBackground = style({
+  position: 'absolute',
+  zIndex: -1,
+  inset: 0,
+  backgroundColor: {
+    default: '--rowBackgroundColor',
+    isHovered: 'gray-900/5',
+    isPressed: 'gray-900/10',
+    isSelected: {
+      default: 'blue-900/10',
+      isHovered: 'blue-900/15',
+      isPressed: 'blue-900/15'
+    },
+    forcedColors: {
+      default: 'Background'
+    }
   },
-  borderStartColor: {
-    default: 'transparent',
-    isSelected: '--borderColor'
+  borderTopStartRadius: {
+    isSelected: {
+      isPrevNotSelected: '[1px]'
+    },
+    isFirstItem: 'default'
   },
-  borderEndColor: {
+  borderTopEndRadius: {
+    isSelected: {
+      isPrevNotSelected: '[1px]'
+    },
+    isFirstItem: 'default'
+  },
+  borderBottomStartRadius: {
+    isSelected: {
+      isNextNotSelected: '[1px]'
+    },
+    isLastItem: 'default'
+  },
+  borderBottomEndRadius: {
+    isSelected: {
+      isNextNotSelected: '[1px]'
+    },
+    isLastItem: 'default'
+  },
+  borderTopWidth: {
+    default: 1,
+    isPrevSelected: 0
+  },
+  borderBottomWidth: {
+    default: 1,
+    isNextSelected: 0
+  },
+  borderStartWidth: 1,
+  borderEndWidth: 1,
+  borderStyle: 'solid',
+  borderColor: {
     default: 'transparent',
     isSelected: '--borderColor'
   }
-}, getAllowedOverrides());
+});
 
 export let label = style({
   gridArea: 'label',
@@ -330,6 +369,7 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
                 isQuiet: true
               }]
             ]}>
+            <div className={listRowBackground({...renderProps, isPrevNotSelected: !renderProps.isPrevSelected, isNextNotSelected: !renderProps.isNextSelected})} />
             {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
           </Provider>
         );
