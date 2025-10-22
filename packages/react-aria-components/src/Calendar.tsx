@@ -381,7 +381,9 @@ export function CalendarCarousel(props: CalendarCarouselProps) {
         overflow: 'auto',
         scrollSnapType: 'x mandatory',
         scrollbarWidth: 'none',
-        width: 'fit-content'
+        width: 'fit-content',
+        // Prevent auto-scrolling when trying to text select.
+        userSelect: 'none'
       }}>
       {/* If SSR, only display the current page. After hydration, display an extra page on either side plus placeholders. */}
       {isSSR ? props.children : <>
