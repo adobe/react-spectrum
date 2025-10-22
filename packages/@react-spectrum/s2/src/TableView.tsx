@@ -10,21 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton, ActionButtonContext} from './ActionButton';
 import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
+  ButtonContext,
   CellRenderProps,
   Collection,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
+  DEFAULT_SLOT,
+  Form,
   Key,
+  OverlayTriggerStateContext,
   Provider,
   Cell as RACCell,
   CellProps as RACCellProps,
   CheckboxContext as RACCheckboxContext,
   Column as RACColumn,
   ColumnProps as RACColumnProps,
+  Popover as RACPopover,
   Row as RACRow,
   RowProps as RACRowProps,
   Table as RACTable,
@@ -44,11 +50,14 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
+import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
+import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
+import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -58,7 +67,7 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
@@ -462,7 +471,7 @@ const cellFocus = {
 } as const;
 
 function CellFocusRing() {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({
@@ -1036,13 +1045,229 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
-          {isFocusVisible && <CellFocusRing />}
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
+          {isFocusVisible && <CellFocusRing />}
         </>
       )}
     </RACCell>
   );
 });
+
+let editPopover = style({
+  ...colorScheme(),
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: 'layer-2'
+  },
+  backgroundColor: '--s2-container-bg',
+  borderBottomRadius: 'default',
+  // Use box-shadow instead of filter when an arrow is not shown.
+  // This fixes the shadow stacking problem with submenus.
+  boxShadow: 'elevated',
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  boxSizing: 'content-box',
+  isolation: 'isolate',
+  pointerEvents: {
+    isExiting: 'none'
+  },
+  outlineStyle: 'none',
+  minWidth: '--trigger-width',
+  padding: 8,
+  display: 'flex',
+  alignItems: 'center'
+}, getAllowedOverrides());
+
+interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
+  renderEditing: () => ReactNode,
+  isSaving?: boolean,
+  onSubmit: () => void,
+  onCancel: () => void
+}
+
+/**
+ * An exditable cell within a table row.
+ */
+export const EditableCell = forwardRef(function EditableCell(props: EditableCellProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {children, showDivider = false, textValue, ...otherProps} = props;
+  let tableVisualOptions = useContext(InternalTableContext);
+  let domRef = useObjectRef(ref);
+  textValue ||= typeof children === 'string' ? children : undefined;
+
+  return (
+    <RACCell
+      ref={domRef}
+      className={renderProps => cell({
+        ...renderProps,
+        ...tableVisualOptions,
+        isDivider: showDivider
+      })}
+      textValue={textValue}
+      {...otherProps}>
+      {({isFocusVisible}) => (
+        <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+      )}
+    </RACCell>
+  );
+});
+
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
+function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
+  let {children, align, renderEditing, isSaving, onSubmit, onCancel, isFocusVisible, cellRef} = props;
+  let [isOpen, setIsOpen] = useState(false);
+  let popoverRef = useRef<HTMLDivElement>(null);
+  let formRef = useRef<HTMLFormElement>(null);
+  let [triggerWidth, setTriggerWidth] = useState(0);
+  let [tableWidth, setTableWidth] = useState(0);
+  let [verticalOffset, setVerticalOffset] = useState(0);
+  let tableVisualOptions = useContext(InternalTableContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+
+  let {density} = useContext(InternalTableContext);
+  let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
+  if (density === 'compact') {
+    size = 'S';
+  } else if (density === 'spacious') {
+    size = 'L';
+  }
+
+  // Popover positioning
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    let width = cellRef.current?.clientWidth || 0;
+    let cell = cellRef.current;
+    let boundingRect = cell?.parentElement?.getBoundingClientRect();
+    let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
+
+    let tableWidth = cellRef.current?.closest('[role="grid"]')?.clientWidth || 0;
+    setTriggerWidth(width);
+    setVerticalOffset(verticalOffset);
+    setTableWidth(tableWidth);
+  }, [cellRef, density, isOpen]);
+
+  // Auto select the entire text range of the autofocused input on overlay opening
+  // Maybe replace with FocusScope or one of those utilities
+  useEffect(() => {
+    if (isOpen) {
+      let activeElement = getActiveElement(getOwnerDocument(formRef.current));
+      if (activeElement
+        && formRef.current?.contains(activeElement)
+        // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
+        // seems like an edge case anyways
+        && (
+          (activeElement instanceof HTMLInputElement && !nonTextInputTypes.has(activeElement.type))
+          || activeElement instanceof HTMLTextAreaElement)
+        && typeof activeElement.select === 'function') {
+        activeElement.select();
+      }
+    }
+  }, [isOpen]);
+
+  // Cancel, don't save the value
+  let cancel = () => {
+    setIsOpen(false);
+    onCancel();
+  };
+
+  return (
+    <Provider
+      values={[
+        [ButtonContext, null],
+        [ActionButtonContext, {
+          slots: {
+            [DEFAULT_SLOT]: {},
+            edit: {
+              onPress: () => setIsOpen(true),
+              isPending: isSaving,
+              isQuiet: !isSaving,
+              size,
+              excludeFromTabOrder: true,
+              styles: style({
+                // TODO: really need access to display here instead, but not possible right now
+                // will be addressable with displayOuter
+                visibility: {
+                  default: 'hidden',
+                  isForcedVisible: 'visible',
+                  ':is([role="row"]:hover *)': 'visible',
+                  ':is([role="row"][data-focus-visible-within] *)': 'visible',
+                  '@media not ((hover: hover) and (pointer: fine))': 'visible'
+                }
+              })({isForcedVisible: isOpen || !!isSaving})
+            }
+          }
+        }]
+      ]}>
+      <span className={cellContent({...tableVisualOptions, align: align || 'start'})}>{children}</span>
+      {isFocusVisible && <CellFocusRing />}
+
+      <Provider
+        values={[
+          [ActionButtonContext, null]
+        ]}>
+        <RACPopover
+          isOpen={isOpen}
+          onOpenChange={setIsOpen}
+          ref={popoverRef}
+          shouldCloseOnInteractOutside={() => {
+            if (!popoverRef.current?.contains(document.activeElement)) {
+              return false;
+            }
+            formRef.current?.requestSubmit();
+            return false;
+          }}
+          triggerRef={cellRef}
+          aria-label={stringFormatter.format('table.editCell')}
+          offset={verticalOffset}
+          placement="bottom start"
+          style={{
+            minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
+            maxWidth: `${tableWidth}px`,
+            // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+            zIndex: undefined
+          }}
+          className={editPopover}>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null]
+            ]}>
+            <Form
+              ref={formRef}
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+                setIsOpen(false);
+              }}
+              className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
+              style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
+              {renderEditing()}
+              <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
+                <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
+                <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
+              </div>
+            </Form>
+          </Provider>
+        </RACPopover>
+      </Provider>
+    </Provider>
+  );
+}
 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));

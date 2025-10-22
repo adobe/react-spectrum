@@ -4,6 +4,8 @@ export default Layout;
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['hint', 'popup', 'info'];
+
 # Tooltip
 
 <PageDescription>{docs.exports.Tooltip.description}</PageDescription>
@@ -26,12 +28,13 @@ Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Onc
 ```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'isDisabled']} type="vanilla"
 "use client";
 import {TooltipTrigger, Tooltip, ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Save from '@react-spectrum/s2/icons/SaveFloppy';
 
 function Example(props) {
   return (
-    <div style={{display: 'flex', gap: 8}}>
+    <div className={style({display: 'flex', gap: 8})}>
       {/*- begin highlight -*/}
       <TooltipTrigger {...props}/* PROPS */>
       {/*- end highlight -*/}
@@ -67,8 +70,9 @@ Tooltips must be placed on focusable elements so they are accessible to keyboard
 ```tsx render
 "use client";
 import {Tooltip, TooltipTrigger, Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<div style={{display: 'flex', gap: '6px', alignItems: 'center'}}>
+<div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
   <Button isDisabled>Delete resource</Button>
   {/*- begin highlight -*/}
   <ContextualHelp variant="info">

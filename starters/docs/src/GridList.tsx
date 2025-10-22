@@ -4,18 +4,21 @@ import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
   GridListItemProps,
-  GridListProps
+  GridListProps,
+  GridListLoadMoreItem as AriaGridListLoadMoreItem,
+  GridListLoadMoreItemProps
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {GripVertical} from 'lucide-react';
+import {ProgressCircle} from './ProgressCircle';
 import './GridList.css';
 
 export function GridList<T extends object>(
-  { children, ...props }: GridListProps<T>
+  { children, layout = 'grid', ...props }: GridListProps<T>
 ) {
   return (
     (
-      <AriaGridList {...props}>
+      <AriaGridList {...props} layout={layout}>
         {children}
       </AriaGridList>
     )
@@ -43,5 +46,13 @@ export function GridListItem(
         )}
       </AriaGridListItem>
     )
+  );
+}
+
+export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
+  return (
+    <AriaGridListLoadMoreItem {...props}>
+      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+    </AriaGridListLoadMoreItem>
   );
 }

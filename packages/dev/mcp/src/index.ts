@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import fg from 'fast-glob';
-import {fileURLToPath, pathToFileURL} from 'url';
+/// <reference types="node" />
+import {fileURLToPath} from 'url';
 import fs from 'fs';
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import path from 'path';
@@ -15,8 +15,8 @@ type SectionInfo = {
 
 type PageInfo = {
   key: string,          // e.g. "s2/Button"
-  title: string,        // from top-level heading
-  description?: string, // first paragraph after title
+  name: string,         // from top-level heading
+  description?: string, // first paragraph after name
   filePath: string,     // absolute path to markdown file
   sections: SectionInfo[]
 };
@@ -37,140 +37,112 @@ function errorToString(err: unknown): string {
   }
 }
 
-// Resolve docs dist root based on this file location
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DOCS_DIST_ROOT = path.resolve(__dirname, '../../s2-docs/dist');
 
-function assertDocsExist() {
-  if (!fs.existsSync(DOCS_DIST_ROOT)) {
-    const hint = path.resolve(__dirname, '../../s2-docs/scripts/generateMarkdownDocs.mjs');
-    throw new Error(`S2 docs dist not found at ${DOCS_DIST_ROOT}. Build them first via: yarn workspace @react-spectrum/s2-docs generate:md (script: ${hint})`);
+// CDN base for docs. Can be overridden via env variable.
+const DEFAULT_CDN_BASE = process.env.DOCS_CDN_BASE
+  ?? 'https://reactspectrum.blob.core.windows.net/reactspectrum/a22a0aed3e97d0a23b9883679798b85eed68413d/s2-docs';
+
+function libBaseUrl(library: Library) {
+  return `${DEFAULT_CDN_BASE}/${library}`;
+}
+
+async function fetchText(url: string, timeoutMs = 15000): Promise<string> {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), timeoutMs).unref?.();
+  try {
+    const res = await fetch(url, {signal: ctrl.signal, cache: 'no-store'} as any);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} for ${url}`);
+    }
+    return await res.text();
+  } finally {
+    clearTimeout(id as any);
   }
 }
 
 // Cache of parsed pages
 const pageCache = new Map<string, PageInfo>();
 
-const ICONS_DIR = path.resolve(__dirname, '../../../@react-spectrum/s2/s2wf-icons');
 let iconIdCache: string[] | null = null;
-const ILLUSTRATIONS_DIR = path.resolve(__dirname, '../../../@react-spectrum/s2/spectrum-illustrations/linear');
 let illustrationIdCache: string[] | null = null;
 let iconAliasesCache: Record<string, string[]> | null = null;
 let illustrationAliasesCache: Record<string, string[]> | null = null;
 
-function ensureIconsExist() {
-  if (!fs.existsSync(ICONS_DIR)) {
-    throw new Error(`S2 icons directory not found at ${ICONS_DIR}`);
+function readBundledJson(filename: string): any | null {
+  try {
+    const p = path.resolve(__dirname, 'data', filename); // dist/data
+    if (!fs.existsSync(p)) {return null;}
+    const txt = fs.readFileSync(p, 'utf8');
+    return JSON.parse(txt);
+  } catch {
+    return null;
   }
 }
 
 function listIconNames(): string[] {
   if (iconIdCache) {return iconIdCache;}
-  ensureIconsExist();
-  const files = fg.sync('*.svg', {cwd: ICONS_DIR, absolute: false, suppressErrors: true});
-  const ids = Array.from(new Set(
-    files.map(f => f.replace(/\.svg$/i, '')
-      // Mirror IconPicker.tsx regex to derive the id from the filename
-      .replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'))
-  )).sort((a, b) => a.localeCompare(b));
-  iconIdCache = ids;
-  return ids;
-}
-
-function ensureIllustrationsExist() {
-  if (!fs.existsSync(ILLUSTRATIONS_DIR)) {
-    throw new Error(`S2 illustrations directory not found at ${ILLUSTRATIONS_DIR}`);
-  }
+  const bundled = readBundledJson('icons.json');
+  return (iconIdCache = Array.isArray(bundled) ? bundled.slice().sort((a, b) => a.localeCompare(b)) : []);
 }
 
 function listIllustrationNames(): string[] {
   if (illustrationIdCache) {return illustrationIdCache;}
-  ensureIllustrationsExist();
-  // linear directory may contain multiple sizes per illustration name
-  const files = fg.sync('**/*.svg', {cwd: ILLUSTRATIONS_DIR, absolute: false, suppressErrors: true});
-  const ids = Array.from(new Set(
-    files.map(f => {
-      const base = f.replace(/\.svg$/i, '')
-        // Pattern: S2_lin_<name>_<size>
-        .replace(/^S2_lin_(.*)_\d+$/, '$1');
-      return base ? (base.charAt(0).toUpperCase() + base.slice(1)) : base;
-    })
-  )).sort((a, b) => a.localeCompare(b));
-  illustrationIdCache = ids;
-  return ids;
+  const bundled = readBundledJson('illustrations.json');
+  return (illustrationIdCache = Array.isArray(bundled) ? bundled.slice().sort((a, b) => a.localeCompare(b)) : []);
 }
 
 async function loadIconAliases(): Promise<Record<string, string[]>> {
   if (iconAliasesCache) {return iconAliasesCache;}
-  const aliasesPath = path.resolve(__dirname, '../../s2-docs/src/iconAliases.js');
-  if (!fs.existsSync(aliasesPath)) {return iconAliasesCache = {};}
-  const mod = await import(pathToFileURL(aliasesPath).href);
-  return (iconAliasesCache = (mod.iconAliases ?? {}));
+  const bundled = readBundledJson('iconAliases.json');
+  return (iconAliasesCache = (bundled && typeof bundled === 'object') ? bundled : {});
 }
 
 async function loadIllustrationAliases(): Promise<Record<string, string[]>> {
   if (illustrationAliasesCache) {return illustrationAliasesCache;}
-  const aliasesPath = path.resolve(__dirname, '../../s2-docs/src/illustrationAliases.js');
-  if (!fs.existsSync(aliasesPath)) {return illustrationAliasesCache = {};}
-  const mod = await import(pathToFileURL(aliasesPath).href);
-  return (illustrationAliasesCache = (mod.illustrationAliases ?? {}));
+  const bundled = readBundledJson('illustrationAliases.json');
+  return (illustrationAliasesCache = (bundled && typeof bundled === 'object') ? bundled : {});
 }
 
-function readAllPagesFor(library: Library): PageInfo[] {
-  assertDocsExist();
-  const pattern = `${library}/**/*.md`;
-  const absFiles = fg.sync([pattern], {cwd: DOCS_DIST_ROOT, absolute: true, suppressErrors: true});
+// Whether we've loaded the page index for a library yet.
+const pageIndexLoaded = new Set<Library>();
+
+// Build a lightweight index of pages for the given library from the CDN's llms.txt.
+// Populates pageCache with stubs (title from filename; description/sections omitted).
+async function buildPageIndex(library: Library): Promise<PageInfo[]> {
+  if (pageIndexLoaded.has(library)) {
+    return Array.from(pageCache.values()).filter(p => p.key.startsWith(`${library}/`));
+  }
+
   const pages: PageInfo[] = [];
-  for (const absPath of absFiles) {
-    if (path.basename(absPath).toLowerCase() === 'llms.txt') {continue;}
-    const rel = path.relative(DOCS_DIST_ROOT, absPath);
-    const key = rel.replace(/\\/g, '/').replace(/\.md$/i, '');
-    const info = parsePage(absPath, key);
+
+  // Read llms.txt to enumerate available pages without downloading them all.
+  const llmsUrl = `${libBaseUrl(library)}/llms.txt`;
+  const txt = await fetchText(llmsUrl);
+  const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)(?:\s*:\s*(.*))?\s*$/;
+  for (const line of txt.split(/\r?\n/)) {
+    const m = line.match(re);
+    if (!m) {continue;}
+    const display = (m[1] || '').trim();
+    const href = (m[2] || '').trim();
+    const description = (m[3] || '').trim() || undefined;
+    if (!href || !/\.md$/i.test(href)) {continue;}
+    const key = href.replace(/\.md$/i, '').replace(/\\/g, '/');
+    const name = display || path.basename(key);
+    const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
+    const info: PageInfo = {key, name, description, filePath, sections: []};
     pages.push(info);
     pageCache.set(info.key, info);
   }
-  return pages;
+
+  pageIndexLoaded.add(library);
+  return pages.sort((a, b) => a.key.localeCompare(b.key));
 }
 
-function parsePage(absPath: string, keyFromPath?: string): PageInfo {
-  const raw = fs.readFileSync(absPath, 'utf8');
-  const lines = raw.split(/\r?\n/);
-
-  let title = '';
-  let description: string | undefined = undefined;
-  let i = 0;
-  // Find first H1 (title)
-  for (; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.startsWith('# ')) {
-      title = line.replace(/^#\s+/, '').trim();
-      i++;
-      break;
-    }
-  }
-
-  // Collect first paragraph as description (non-empty text until blank line)
-  let descLines: string[] = [];
-  let inCode = false;
-  for (; i < lines.length; i++) {
-    const line = lines[i];
-    if (/^```/.test(line.trim())) {inCode = !inCode;}
-    if (inCode) {continue;}
-    if (line.trim() === '') {
-      if (descLines.length > 0) {break;} else {continue;}
-    }
-    // ignore headings and HTML-like tags if they appear before paragraph
-    if (/^#{1,6}\s/.test(line) || /^</.test(line.trim())) {continue;}
-    descLines.push(line);
-  }
-  if (descLines.length > 0) {
-    description = descLines.join('\n').trim();
-  }
-
-  // Parse sections (## ...)
+function parseSectionsFromMarkdown(lines: string[]): SectionInfo[] {
   const sections: SectionInfo[] = [];
-  inCode = false;
+  let inCode = false;
   for (let idx = 0; idx < lines.length; idx++) {
     const line = lines[idx];
     if (/^```/.test(line.trim())) {inCode = !inCode;}
@@ -180,19 +152,62 @@ function parsePage(absPath: string, keyFromPath?: string): PageInfo {
       sections.push({name, startLine: idx, endLine: lines.length});
     }
   }
-  // Compute endLine for each section as start of next section
   for (let s = 0; s < sections.length - 1; s++) {
     sections[s].endLine = sections[s + 1].startLine;
   }
-
-  const rel = path.relative(DOCS_DIST_ROOT, absPath).replace(/\\/g, '/');
-  const key = keyFromPath ?? rel.replace(/\.md$/i, '');
-  return {key, title, description, filePath: absPath, sections};
+  return sections;
 }
 
-function resolvePagePathFor(library: Library, pageName: string): PageInfo {
-  // Accept keys like "s2/Button" or plain "Button" but restrict to the selected library
-  assertDocsExist();
+function extractNameAndDescription(lines: string[]): {name: string, description?: string} {
+  let name = '';
+  let description: string | undefined = undefined;
+
+  let i = 0;
+  for (; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('# ')) {
+      name = line.replace(/^#\s+/, '').trim();
+      i++;
+      break;
+    }
+  }
+
+  let descLines: string[] = [];
+  let inCode = false;
+  for (; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^```/.test(line.trim())) {inCode = !inCode;}
+    if (inCode) {continue;}
+    if (line.trim() === '') {
+      if (descLines.length > 0) {break;} else {continue;}
+    }
+    if (/^#{1,6}\s/.test(line) || /^</.test(line.trim())) {continue;}
+    descLines.push(line);
+  }
+  if (descLines.length > 0) {
+    description = descLines.join('\n').trim();
+  }
+
+  return {name, description};
+}
+
+async function ensureParsedPage(info: PageInfo): Promise<PageInfo> {
+  if (info.sections && info.sections.length > 0 && info.description !== undefined) {
+    return info;
+  }
+
+  const text = await fetchText(info.filePath);
+  const lines = text.split(/\r?\n/);
+  const {name, description} = extractNameAndDescription(lines);
+  const sections = parseSectionsFromMarkdown(lines);
+  const updated = {...info, name: name || info.name, description, sections};
+  pageCache.set(updated.key, updated);
+  return updated;
+}
+
+async function resolvePageRef(library: Library, pageName: string): Promise<PageInfo> {
+  // Ensure index is loaded
+  await buildPageIndex(library);
 
   if (pageCache.has(pageName)) {
     return pageCache.get(pageName)!;
@@ -204,27 +219,21 @@ function resolvePagePathFor(library: Library, pageName: string): PageInfo {
     if (prefix !== library) {
       throw new Error(`Page '${pageName}' is not in the '${library}' library.`);
     }
-    const abs = path.join(DOCS_DIST_ROOT, `${normalized}.md`);
-    if (!fs.existsSync(abs)) {
-      throw new Error(`Page not found: ${pageName}`);
-    }
-    const info = parsePage(abs, normalized);
-    pageCache.set(normalized, info);
-    return info;
+    const maybe = pageCache.get(normalized);
+    if (maybe) {return maybe;}
+    const filePath = `${DEFAULT_CDN_BASE}/${normalized}.md`;
+    const stub: PageInfo = {key: normalized, name: path.basename(normalized), description: undefined, filePath, sections: []};
+    pageCache.set(stub.key, stub);
+    return stub;
   }
 
-  const abs = path.join(DOCS_DIST_ROOT, library, `${pageName}.md`);
-  if (!fs.existsSync(abs)) {
-    throw new Error(`Page not found in '${library}': ${pageName}`);
-  }
   const key = `${library}/${pageName}`;
-  const info = parsePage(abs, key);
-  pageCache.set(info.key, info);
-  return info;
-}
-
-function readPageContent(filePath: string): string {
-  return fs.readFileSync(filePath, 'utf8');
+  const maybe = pageCache.get(key);
+  if (maybe) {return maybe;}
+  const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
+  const stub: PageInfo = {key, name: pageName, description: undefined, filePath, sections: []};
+  pageCache.set(stub.key, stub);
+  return stub;
 }
 
 async function startServer(library: Library) {
@@ -233,19 +242,27 @@ async function startServer(library: Library) {
     version: '0.1.0'
   });
 
+  // Build page index at startup.
+  try {
+    await buildPageIndex(library);
+  } catch (e) {
+    console.warn(`Warning: failed to load ${library} docs index (${errorToString(e)}).`);
+  }
+
   // list_pages tool
+  const toolPrefix = library === 's2' ? 's2' : 'react_aria';
   server.registerTool(
-    'list_pages',
+    `list_${toolPrefix}_pages`,
     {
       title: library === 's2' ? 'List React Spectrum (@react-spectrum/s2) docs pages' : 'List React Aria docs pages',
       description: `Returns a list of available pages in the ${library} docs.`,
       inputSchema: {includeDescription: z.boolean().optional()}
     },
     async ({includeDescription}) => {
-      const pages = readAllPagesFor(library);
+      const pages = await buildPageIndex(library);
       const items = pages
         .sort((a, b) => a.key.localeCompare(b.key))
-        .map(p => includeDescription ? {key: p.key, title: p.title, description: p.description ?? ''} : {key: p.key, title: p.title});
+        .map(p => includeDescription ? {name: p.name, description: p.description ?? ''} : {name: p.name});
       return {
         content: [{type: 'text', text: JSON.stringify(items, null, 2)}]
       };
@@ -254,17 +271,17 @@ async function startServer(library: Library) {
 
   // get_page_info tool
   server.registerTool(
-    'get_page_info',
+    `get_${toolPrefix}_page_info`,
     {
       title: 'Get page info',
       description: 'Returns page description and list of sections for a given page.',
       inputSchema: {page_name: z.string()}
     },
     async ({page_name}) => {
-      const info = resolvePagePathFor(library, page_name);
+      const ref = await resolvePageRef(library, page_name);
+      const info = await ensureParsedPage(ref);
       const out = {
-        key: info.key,
-        title: info.title,
+        name: info.name,
         description: info.description ?? '',
         sections: info.sections.map(s => s.name)
       };
@@ -274,38 +291,40 @@ async function startServer(library: Library) {
 
   // get_page tool
   server.registerTool(
-    'get_page',
+    `get_${toolPrefix}_page`,
     {
       title: 'Get page markdown',
       description: 'Returns the full markdown content for a page, or a specific section if provided.',
       inputSchema: {page_name: z.string(), section_name: z.string().optional()}
     },
     async ({page_name, section_name}) => {
-      const info = resolvePagePathFor(library, page_name);
+      const ref = await resolvePageRef(library, page_name);
       let text: string;
+      text = await fetchText(ref.filePath);
+
       if (!section_name) {
-        text = readPageContent(info.filePath);
-      } else {
-        // Find section by exact title match (case-sensitive first, then case-insensitive)
-        let section = info.sections.find(s => s.name === section_name);
-        if (!section) {
-          section = info.sections.find(s => s.name.toLowerCase() === section_name.toLowerCase());
-        }
-        if (!section) {
-          const available = info.sections.map(s => s.name).join(', ');
-          throw new Error(`Section '${section_name}' not found in ${info.key}. Available: ${available}`);
-        }
-        const lines = fs.readFileSync(info.filePath, 'utf8').split(/\r?\n/);
-        text = lines.slice(section.startLine, section.endLine).join('\n');
+        return {content: [{type: 'text', text}]} as const;
       }
-      return {content: [{type: 'text', text}]} as const;
+
+      const lines = text.split(/\r?\n/);
+      const sections = parseSectionsFromMarkdown(lines);
+      let section = sections.find(s => s.name === section_name);
+      if (!section) {
+        section = sections.find(s => s.name.toLowerCase() === section_name.toLowerCase());
+      }
+      if (!section) {
+        const available = sections.map(s => s.name).join(', ');
+        throw new Error(`Section '${section_name}' not found in ${ref.key}. Available: ${available}`);
+      }
+      const snippet = lines.slice(section.startLine, section.endLine).join('\n');
+      return {content: [{type: 'text', text: snippet}]} as const;
     }
   );
 
   if (library === 's2') {
     // search_icons tool
     server.registerTool(
-      'search_icons',
+      'search_s2_icons',
       {
         title: 'Search S2 icons',
         description: 'Searches the S2 workflow icon set by one or more terms; returns matching icon names.',
@@ -342,7 +361,7 @@ async function startServer(library: Library) {
 
     // search_illustrations tool
     server.registerTool(
-      'search_illustrations',
+      'search_s2_illustrations',
       {
         title: 'Search S2 illustrations',
         description: 'Searches the S2 illustrations set by one or more terms; returns matching illustration names.',
@@ -383,7 +402,7 @@ async function startServer(library: Library) {
 }
 
 function printUsage() {
-  const usage = 'Usage: mcp <subcommand>\n\nSubcommands:\n  s2           Start MCP server for React Spectrum S2 docs\n  react-aria   Start MCP server for React Aria docs\n\nExamples:\n  npx @react-spectrum/mcp s2\n  npx @react-spectrum/mcp react-aria';
+  const usage = 'Usage: mcp <subcommand>\n\nSubcommands:\n  s2           Start MCP server for React Spectrum S2 docs\n  react-aria   Start MCP server for React Aria docs\n\nEnvironment:\n\nExamples:\n  npx @react-spectrum/mcp s2\n  npx @react-spectrum/mcp react-aria';
   console.log(usage);
 }
 

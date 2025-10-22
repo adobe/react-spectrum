@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "新活动",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "选择...",
+  "picker.selectedCount": "{count, plural, =0 {未选择项目} one {已选择 # 个项目} other {已选择 # 个项目}}",
   "slider.maximum": "最大",
   "slider.minimum": "最小",
   "table.loading": "正在加载...",

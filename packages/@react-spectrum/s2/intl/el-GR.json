@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Νέα δραστηριότητα",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Επιλογή…",
+  "picker.selectedCount": "{count, plural, =0 {Δεν επιλέχθηκαν στοιχεία} one {Επιλέχθηκε # στοιχείο} other {Επιλέχθηκαν # στοιχεία}}",
   "slider.maximum": "Μέγιστο",
   "slider.minimum": "Ελάχιστο",
   "table.loading": "Φόρτωση...",

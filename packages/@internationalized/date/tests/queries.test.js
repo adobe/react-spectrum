@@ -273,6 +273,20 @@ describe('queries', function () {
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 1));
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'thu')).toEqual(new CalendarDate(2021, 7, 29));
     });
+
+    it('should return the start of the week in en-US-u-ca-iso8601', function () {
+      // start of week is monday
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR-u-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+
+      // override first day of week
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
+
+      // override applied if extension appears in the middle of other extensions
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-nu-thai-ca-iso8601')).toEqual(new CalendarDate(2021, 8, 2));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-nu-thai-ca-iso8601-fw-tue')).toEqual(new CalendarDate(2021, 8, 3));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US-u-ca-iso8601-fw-tue-nu-thai')).toEqual(new CalendarDate(2021, 8, 3));
+    });
   });
 
   describe('endOfWeek', function () {

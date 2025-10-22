@@ -5,3 +5,14 @@
 @source "../pages/**/*.mdx";
 @plugin 'tailwindcss-react-aria-components';
 @plugin 'tailwindcss-animate';
+
+@media (min-resolution: 200dpi) {
+  :root {
+    --spacing: calc(0.25rem * 1.25);
+    --text-xs: calc(0.75rem * 1.25);
+    --text-sm: calc(0.875rem * 1.25);
+    --text-base: calc(1rem * 1.25);
+    --text-lg: calc(1.125rem * 1.25);
+    --text-xl: calc(1.25rem * 1.25);
+  }
+}
