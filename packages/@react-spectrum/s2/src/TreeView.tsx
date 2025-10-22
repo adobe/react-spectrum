@@ -15,6 +15,7 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   Button,
   ButtonContext,
+  CheckboxContext,
   ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
@@ -26,6 +27,7 @@ import {
   TreeLoadMoreItem,
   TreeLoadMoreItemProps,
   useContextProps,
+  useSlottedContext,
   Virtualizer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
@@ -333,7 +335,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let {
     children
   } = props;
-  let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let {isDetached} = useContext(InternalTreeContext);
   let scale = useScale();
 
   return (
@@ -349,14 +351,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         return (
           <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused, isDetached})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-              // TODO: add transition?
-              <div className={treeCheckbox}>
-                <div className={style({display: {isDisabled: 'none'}})({isDisabled})}>
-                  <Checkbox
-                    isEmphasized={isEmphasized}
-                    slot="selection" />
-                </div>
-              </div>
+              <TreeCheckbox />
             )}
             <div
               className={style({
@@ -383,6 +378,22 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
     </TreeItemContent>
   );
 };
+
+function TreeCheckbox() {
+  let {isEmphasized} = useContext(InternalTreeContext);
+  let checkboxProps = useSlottedContext(CheckboxContext, 'selection');
+  let isDisabled = checkboxProps?.isDisabled ?? false;
+  return (
+    // TODO: add transition?
+    <div className={treeCheckbox}>
+      <div className={style({visibility: {isDisabled: 'hidden'}})({isDisabled})}>
+        <Checkbox
+          isEmphasized={isEmphasized}
+          slot="selection" />
+      </div>
+    </div>
+  );
+}
 
 const centeredWrapper = style({
   display: 'flex',
