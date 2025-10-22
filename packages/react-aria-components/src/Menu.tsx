@@ -61,11 +61,17 @@ export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | 
 const SelectionManagerContext = createContext<SelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
+  /**
+   * Whether the trigger remains pressed when the overlay is open.
+   * @default true
+   */
+  isPressedWhenOpen?: boolean,
   children: ReactNode
 }
 
 export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
   let state = useMenuTriggerState(props);
+  let {isPressedWhenOpen = true} = props;
   let ref = useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({
     ...props,
@@ -100,7 +106,7 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
           'aria-labelledby': menuProps['aria-labelledby']
         }]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
+      <PressResponder {...menuTriggerProps} ref={ref} isPressed={isPressedWhenOpen ? state.isOpen : undefined}>
         {props.children}
       </PressResponder>
     </Provider>
