@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, RefObject, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -92,7 +92,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
   let queuedActiveDescendant = useRef<string | null>(null);
-  let lastCollectionNode = useRef<HTMLElement>(null);
 
   // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
   // moving focus back to the subtriggers
@@ -106,7 +105,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     return () => clearTimeout(timeout.current);
   }, []);
 
-  let updateActiveDescendant = useCallback((e: Event) => {
+  let updateActiveDescendantEvent = useEffectEvent((e: Event) => {
     // Ensure input is focused if the user clicks on the collection directly.
     if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
       inputRef.current.focus();
@@ -138,29 +137,33 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     }
 
     delayNextActiveDescendant.current = false;
-  }, [shouldUseVirtualFocus, inputRef, collectionRef, state]);
+  });
 
-  let callbackRef = useCallback((collectionNode) => {
-    if (collectionNode != null) {
-      // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
-      // of the letter you just typed. If we recieve another focus event then we clear the queued update
-      // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
-      // React 19's extra call of the callback ref in strict mode
-      lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
-      lastCollectionNode.current = collectionNode;
-      collectionNode.addEventListener('focusin', updateActiveDescendant);
+  let [collectionNode, setCollectionNode] = useState<HTMLElement | null>(null);
+  let callbackRef = useCallback((node) => {
+    setCollectionNode(node);
+    if (node != null) {
       // If useSelectableCollection isn't passed shouldUseVirtualFocus even when useAutocomplete provides it
       // that means the collection doesn't support it (e.g. Table). If that is the case, we need to disable it here regardless
       // of what the user's provided so that the input doesn't recieve the onKeyDown and autocomplete props.
-      if (collectionNode.getAttribute('tabindex') != null) {
+      if (node.getAttribute('tabindex') != null) {
         setShouldUseVirtualFocus(false);
       }
       setHasCollection(true);
     } else {
-      lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
       setHasCollection(false);
     }
-  }, [updateActiveDescendant]);
+  }, []);
+  useLayoutEffect(() => {
+    if (collectionNode != null) {
+      // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
+      // of the letter you just typed. If we recieve another focus event then we clear the queued update
+      collectionNode.addEventListener('focusin', updateActiveDescendantEvent);
+    }
+    return () => {
+      collectionNode?.removeEventListener('focusin', updateActiveDescendantEvent);
+    };
+  }, [collectionNode]);
 
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));

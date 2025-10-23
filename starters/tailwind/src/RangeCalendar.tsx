@@ -11,7 +11,7 @@ import {
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { CalendarGridHeader, CalendarHeader } from './Calendar';
-import { focusRing } from './utils';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration'> {
   errorMessage?: string;
@@ -41,9 +41,9 @@ export function RangeCalendar<T extends DateValue>(
   { errorMessage, ...props }: RangeCalendarProps<T>
 ) {
   return (
-    <AriaRangeCalendar {...props}>
+    <AriaRangeCalendar {...props} className={composeTailwindRenderProps(props.className, 'font-sans')}>
       <CalendarHeader />
-      <CalendarGrid className="[&_td]:px-0 [&_td]:py-px">
+      <CalendarGrid className="[&_td]:px-0 [&_td]:py-px border-spacing-0">
         <CalendarGridHeader />
         <CalendarGridBody>
           {(date) => <CalendarCell date={date} className="group w-9 h-9 text-sm outline outline-0 cursor-default outside-month:text-gray-300 selected:bg-blue-100 dark:selected:bg-blue-700/30 forced-colors:selected:bg-[Highlight] invalid:selected:bg-red-100 dark:invalid:selected:bg-red-700/30 forced-colors:invalid:selected:bg-[Mark] [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full">

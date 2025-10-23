@@ -26,6 +26,7 @@ Use the `value` or `defaultValue` prop to set the slider's value. The `onChange`
 ```tsx render
 "use client";
 import {Slider} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -41,7 +42,7 @@ function Example() {
         onChange={setCurrentValue}
         onChangeEnd={setFinalValue} />
         {/*- end highlight -*/}
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         onChange value: {currentValue}{'\n'}
         onChangeEnd value: {finalValue}
       </pre>

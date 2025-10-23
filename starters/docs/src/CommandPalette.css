@@ -1,0 +1,19 @@
+@import "./theme.css";
+
+.command-palette-dialog {
+  width: min(90vw, 500px);
+  height: min(90vh, 356px);
+  padding: var(--spacing-2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+
+  > * {
+    zoom: 1.125;
+  }
+
+  .react-aria-Menu {
+    flex: 1;
+  }
+}

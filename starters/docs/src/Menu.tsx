@@ -1,6 +1,6 @@
 'use client';
 import {Button} from './Button';
-import {ChevronRight} from 'lucide-react';
+import {Check, ChevronRight, Dot} from 'lucide-react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -14,9 +14,9 @@ import {
   SubmenuTriggerProps,
 } from 'react-aria-components';
 import {Popover} from './Popover';
-
-import './Menu.css';
+import { Text } from './Content';
 import React from 'react';
+import './Menu.css';
 
 export interface MenuButtonProps<T extends object>
   extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
@@ -59,11 +59,13 @@ export function MenuItem(
   return (
     (
       <AriaMenuItem {...props} textValue={textValue}>
-        {({ hasSubmenu }) => (
+        {({ hasSubmenu, isSelected, selectionMode }) => (
           <>
-            {props.children}
+            {isSelected && selectionMode === 'multiple' ? <Check /> : null}
+            {isSelected && selectionMode === 'single' ? <Dot /> : null}
+            {typeof props.children === 'string' ? <Text slot="label">{props.children}</Text> : props.children}
             {hasSubmenu && (
-              <ChevronRight size={18} />
+              <ChevronRight />
             )}
           </>
         )}
@@ -83,7 +85,7 @@ export function SubmenuTrigger(
   return (
     <AriaSubmenuTrigger {...props}>
       {trigger}
-      <Popover hideArrow>
+      <Popover hideArrow offset={-2} crossOffset={-4}>
         {menu}
       </Popover>
     </AriaSubmenuTrigger>
