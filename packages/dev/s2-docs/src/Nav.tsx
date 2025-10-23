@@ -47,7 +47,7 @@ export function Nav({pages, currentPage}: PageProps) {
           lg: 'block'
         }
       })}>
-      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
+      {[...sections].sort((a, b) => a[0] === 'Getting started' ? -1 : a[0].localeCompare(b[0])).map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
           <SideNav>
             {pages
@@ -78,11 +78,11 @@ function title(page) {
 
 function isIntroduction(page) {
   let navTitle = page.exports?.navigationTitle;
-  if (typeof navTitle === 'string' && navTitle.trim().toLowerCase() === 'introduction') {
+  if (typeof navTitle === 'string' && /introduction|home/i.test(navTitle)) {
     return true;
   }
   let t = title(page);
-  return typeof t === 'string' && t.trim().toLowerCase() === 'introduction';
+  return typeof t === 'string' && /introduction|home/i.test(t);
 }
 
 function SideNavSection({title, children}) {
