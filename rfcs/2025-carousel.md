@@ -16,7 +16,7 @@ governing permissions and limitations under the License. -->
 #### A carousel presents a set of items, referred to as slides, by sequentially displaying one or more slides.
 
 ## Introduction
----
+
 This RFC proposes a three-part addition to the API of React Aria/Stately. 
 
 In the first part, we will introduce new `@react-stately/rotator` and `@react-aria/rotator` packages, which leverage ideas from the existing virtualizer and layout platform. Together, these packages will allow **any** React Aria/Stately Collection to be bidirectionally controlled in its scroll offset and snap target, especially when virtualized.
@@ -26,7 +26,7 @@ For the second part, we will build upon this new infrastructure in `@react-state
 Lastly, we will extend the `@react-stately/layout` package with a new `CarouselLayout`. This layout extends the existing `ListLayout` with capabilities for infinite scroll wrapping as well as support for Netflix-inspired hierarchical content displays.
 
 ## Motivation
----
+
 From streaming platforms to e-commerce storefronts, rotational presentation containers remain a ubiquitous pattern in modern web design. Unsurprisingly, a Carousel component for React Aria is one of the most frequently requested UI elements in developer communities and on social media. Libraries providing carousel functionality consistently rank among the most popular in the ecosystem, with some approaching 10+ million weekly downloads.
 
 Notably, this pattern is absent from most major component libraries, largely due to its controversial nature and the unique accessibility challenges it poses. Dedicated third-party implementations have opted to emulate scrolling through transforms and JavaScript-driven snapping. While effective, these approaches can significantly inflate bundle size - oftentimes exceeding 10KB minified+gzipped — and, more importantly, will neither feel fully native nor offer adequate accessibility.
@@ -34,7 +34,7 @@ Notably, this pattern is absent from most major component libraries, largely due
 We have a unique opportunity to leverage React Aria’s hook-based API and layout platform to deliver an accessible rotation controller that aligns with RAC's composition architecture and is extremely versatile. Unlike existing solutions, such an implementation could provide a truly native experience, with minimal bundle overhead, potentially achieving an order-of-magnitude improvement not only in bundle size but also in feature scope and accessibility.
 
 ## Example
----
+
 ```tsx
 import {Button, Carousel, Slide, SlidePicker, SlidePickerList, SlideShow} from 'react-aria-components';
 import {ChevronLeft, ChevronRight, Dot, Play} from 'lucide-react';
@@ -97,7 +97,7 @@ import {ChevronLeft, ChevronRight, Dot, Play} from 'lucide-react';
 </details>
 
 ## Features
----
+
 A carousel can be built using `<div role="tab">` and `<div role="tabpanel">` HTML elements, but this only supports one perceivable element at a time. Carousel helps you build accessible multi-view rotation components that can be styled as needed.
 
 - **Native** - Carousel is built on native CSS Overflow Module Level 3 and CSS Scroll Snap Module Level 1, delivering a mobile-equivalent experience with an extremely light bundle overhead.
@@ -109,14 +109,14 @@ A carousel can be built using `<div role="tab">` and `<div role="tabpanel">` HTM
 - **Accessible** – Follows the [ARIA Carousel Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/), with optional slide announcements via an ARIA live region. Extensively tested across many devices and assistive technologies to ensure announcements and behaviors are consistent.
 
 ## Anatomy
----
+
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/890770d2-4062-4c36-a3a6-77916c3a7a00/Markdown" alt="Carousel Anatomy" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/890770d2-4062-4c36-a3a6-77916c3a7a00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/890770d2-4062-4c36-a3a6-77916c3a7a00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 ## Detailed Design
----
+
 At their core, carousels allow users to navigate between slides of content while maintaining either spatial or temporal continuity. The way in which slides transition from one to another defines the **animation model** of the carousel and directly influences both the user experience and the underlying implementation. Broadly, two animation models are most common:
 
 - **Single-view transitions** — only one slide is visually emphasized at a time. This may be implemented with fading, crossfading, direct replacement, or even a scroll-based presentation where multiple slides are force-mounted, but only the currently selected slide is highlighted.
@@ -165,7 +165,7 @@ To wrap this section up, here is an explanatory diagram to recap the functionali
 
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/d2e333aa-e980-4996-b2f6-2208e647bf00/Markdown" alt="Rotator Design" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/d2e333aa-e980-4996-b2f6-2208e647bf00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/d2e333aa-e980-4996-b2f6-2208e647bf00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 
@@ -267,7 +267,7 @@ From a state perspective, both implementation strategies can be represented by t
 #### 4. Output
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/7ce4185a-814b-4547-95fa-c1b4d9619700/Markdown" alt="Carousel API Example" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/7ce4185a-814b-4547-95fa-c1b4d9619700/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/7ce4185a-814b-4547-95fa-c1b4d9619700/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 The final render result is a **tabbed** carousel within a **multi-view transition** animation model. Rotation controls render four pickers, with the previous button disabled since the first key is currently selected. The slide collection itself contains five items and is fully independent from the rotation state.
@@ -316,11 +316,11 @@ To recap, here are two diagrams which capture the ARIA semantics applied to a **
 
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/9f7953ec-45b1-4f77-dc58-704e7c473200/Markdown" alt="Tabbed Single-View Carousel Accessibility Anatomy" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/9f7953ec-45b1-4f77-dc58-704e7c473200/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/9f7953ec-45b1-4f77-dc58-704e7c473200/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/f7f422e6-cc19-46f2-235d-bac79e1a9a00/Markdown" alt="Tabbed Multi-View Carousel Accessibility Anatomy" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/f7f422e6-cc19-46f2-235d-bac79e1a9a00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/f7f422e6-cc19-46f2-235d-bac79e1a9a00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 With the **tabbed** style covered, what remains is how to meaningfully convey a **presentational** style carousel to screen readers. As a reminder, the **presentational** is used when rendering a `ListBox` or `GridList` instead of a `SlideShow`, resulting in multiple slides being fully perceivable and interactive at the same time. To detect usage of this style in our hook layer, we can leverage our existing slot utilities.
@@ -333,7 +333,7 @@ All remaining accessibility success criteria, such as the ones for automatic rot
 
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/6e2fa095-8a91-4111-3eb6-5bde76475a00/Markdown" alt="Presentational Multi-View Carousel Accessibility Anatomy" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/6e2fa095-8a91-4111-3eb6-5bde76475a00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/6e2fa095-8a91-4111-3eb6-5bde76475a00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 ### Infinite Layouts
@@ -386,14 +386,14 @@ let items = [
 
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/f91decc0-00e5-41c5-6eaf-7fca7b4d3800/Markdown" alt="Hierarchical Infinite Mode Example" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/f91decc0-00e5-41c5-6eaf-7fca7b4d3800/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/f91decc0-00e5-41c5-6eaf-7fca7b4d3800/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 
 
 <div style="width: 100%; background: #F5F6FC; display: flex; justify-content: center; align-items: center; padding: 2rem 0px 1rem 0px; position: relative; margin-bottom: 12px;">
   <img src="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/a6c0d2d3-8466-4b67-8ed6-711fc7483b00/Markdown" alt="Unordered Infinite Mode Example" />
-  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/a6c0d2d3-8466-4b67-8ed6-711fc7483b00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶</a>
+  <a href="https://imagedelivery.net/yBU8mJlXW3rs0IX3KL3zRA/a6c0d2d3-8466-4b67-8ed6-711fc7483b00/Markdown" style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">⛶ Fullscreen</a>
 </div>
 
 Within infinite mode, the [Scrollport](https://developer.mozilla.org/en-US/docs/Glossary/Scroll_container#scrollport) is expanded to a large finite area sized to `contentSize * 3` with a minimum of `100,000px`. On first load, the scroll offset is moved to the center of the scrollport, providing a large surface for continuous scrolling in both directions, even when `scroll-snap-stop: always` is not active.
@@ -401,15 +401,15 @@ Within infinite mode, the [Scrollport](https://developer.mozilla.org/en-US/docs/
 To determine which items to render in the virtual visible rect, `CarouselLayout` simply offsets the `LayoutInfo` of each item. When idle, e.g. on `scrollend`, the scroll offset is reset to the middle, creating the illusion of an endless surface.
 
 ## Documentation
----
+
 This is a moderate addition to the API that only requires updates to the existing documentation. Most of this RFC should be able to provide a good guideline for documentation.
 
 ## Drawbacks
----
+
 This is a moderate addition to the API that will need to be maintained. However, it is a relatively lightweight layer, with similar semantics to the existing layout implementation.
 
 ## Backwards Compatibility Analysis
----
+
 This is a backwards compatible change. It mostly introduces new APIs, and only requires small, albeit critical, modifications to the API or implementation of our existing hooks. The migration path primarily consists of three adjustments:
 
 - Extending support for `DOMLayoutDelegate` to be able to query **all** collection elements, not limited to ones that leverage selection hooks. This is the most difficult out of all migrations to implement without breaking backwards compatibility or introducing code duplication.
@@ -419,13 +419,13 @@ This is a backwards compatible change. It mostly introduces new APIs, and only r
 - Migrating `useScrollView()` and its associated `RTL` offset utils from `@react-aria/virtualizer` into general purpose `useScrollObserver()` and `useScrollView()` hooks, placed in `@react-aria/utils`.
 
 ## Alternatives
----
+
 As highlighted in the motivation for this RFC, there are currently no carousel libraries in the ecosystem that provide native scroll-based rotation — or any comparable interaction for that matter — while remaining fully accessible. Existing solutions often compromise on keyboard navigation, slide interactivity, or focus management, leaving critical gaps in compliance with accessibility standards.
 
 Introducing large third-party libraries into an application already built on React Aria adds further strain to Time to Interactive (TTI) metrics, which are already impacted by the considerable footprint of the React Aria compatibility layer.
 
 ## Open/Frequently asked questions
----
+
 #### Should auto-rotation be resumable while focus is inside the carousel?
 While auto-rotation stops when focus enters the carousel, the [APG Tabbed Carousel Example](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/examples/carousel-2-tablist/) does resume when manually instructed. This may cause challenges when auto-rotations triggers `inert` to be set on slides with active focus, and frankly looks weird when focus remains on clipped elements. I'm wondering whether this behavior is even desirable in the first place.
 
@@ -452,7 +452,7 @@ N/A
 
 
 ## Roadmap
----
+
   - [ ] https://github.com/adobe/react-spectrum/pull/8523 (<span style="color: rgba(206, 127, 127, 1)">*</span>)
   - [X] https://github.com/adobe/react-spectrum/pull/8715 (<span style="color: rgba(206, 127, 127, 1)">*</span>)
   - [X] https://github.com/adobe/react-spectrum/pull/8696 (<span style="color: rgba(206, 127, 127, 1)">*</span>)
@@ -468,13 +468,13 @@ N/A
   - [ ] Feat: Add CarouselLayout to @react-stately/virtualizer (<span style="color: rgba(206, 127, 127, 1)">*</span>)
 
 ## Help Needed
----
+
 I consider every proposed change to `@react-stately`, `@react-aria` and `react-aria-components` packages as scope of work for what I am willing to contribute. Parts of the proposed changes unfortunately require support of specific Adobe teams - namely the localization, accessibility and React Spectrum team(s) - to review, test and document these changes. 
 
 Furthermore, if a carousel component is to be added to `React Spectrum (v2)`, a design sheet and implementation assistance from the core maintainers is required.
 
 ## Related Discussions
----
+
 - https://github.com/adobe/react-spectrum/issues/8699
 - https://github.com/adobe/react-spectrum/pull/8630
 - https://github.com/adobe/react-spectrum/pull/8553
