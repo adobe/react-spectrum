@@ -559,7 +559,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
     level,
     selectionMode,
     selectionBehavior,
-    isSelectionDisabled: checkboxProps.isDisabled,
+    isSelectionDisabled: !!checkboxProps.isDisabled,
     isFocusVisibleWithin,
     state,
     id: item.key,
