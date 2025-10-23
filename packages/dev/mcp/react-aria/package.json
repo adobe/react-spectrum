@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "description": "MCP server for React Aria documentation",
   "type": "module",
-  "bin": "dist/index.js",
+  "bin": "dist/react-aria/src/index.js",
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
-    "dev": "node --enable-source-maps dist/index.js"
+    "start": "node dist/react-aria/src/index.js",
+    "dev": "node --enable-source-maps dist/react-aria/src/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.3",

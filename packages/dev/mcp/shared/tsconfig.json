@@ -1,17 +1,19 @@
 {
-  "extends": "../../..//tsconfig.json",
+  "extends": "../../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
     "noEmit": false,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "target": "es2018",
+    "target": "es2020",
     "types": ["node"],
     "declaration": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "s2/src/s2-data.ts"],
+  "include": ["src/**/*"],
   "exclude": [
     "dist",
     "node_modules",

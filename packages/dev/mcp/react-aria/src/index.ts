@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /// <reference types="node" />
-import {errorToString} from '../../src/common/utils.js';
-import {startServer} from '../../src/common/server.js';
+import {errorToString} from '../../shared/src/utils.js';
+import {startServer} from '../../shared/src/server.js';
 
 // CLI entry for React Aria
 (async () => {

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /// <reference types="node" />
-import {errorToString} from '../../src/common/utils.js';
+import {errorToString} from '../../shared/src/utils.js';
 import {listIconNames, listIllustrationNames, loadIconAliases, loadIllustrationAliases} from './s2-data.js';
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
-import {startServer} from '../../src/common/server.js';
+import {startServer} from '../../shared/src/server.js';
 import {z} from 'zod';
 
 // CLI entry for S2
