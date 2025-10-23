@@ -200,8 +200,8 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
-      onPointerUp={e => {
-        if (e.pointerType !== 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+      onTouchEnd={e => {
+        if (!(e.target as Element).closest('button,input,textarea')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }

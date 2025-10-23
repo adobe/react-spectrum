@@ -30,9 +30,11 @@ export const tags = ['popup', 'overlay'];
         </Button>
         {/*- begin focus -*/}
         <Popover {...props}/* PROPS */>
-          <Switch defaultSelected>Wi-Fi</Switch>
-          <Switch defaultSelected>Bluetooth</Switch>
-          <Switch>Mute</Switch>
+          <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+            <Switch defaultSelected>Wi-Fi</Switch>
+            <Switch defaultSelected>Bluetooth</Switch>
+            <Switch>Mute</Switch>
+          </div>
         </Popover>
         {/*- end focus -*/}
       </DialogTrigger>
@@ -51,11 +53,15 @@ export const tags = ['popup', 'overlay'];
   function Example(props) {
     return (
       <DialogTrigger>
-        <Button aria-label="Settings" variant="icon">
+        <Button aria-label="Settings" variant="secondary">
           <Settings2 size={20} />
         </Button>
         {/*- begin focus -*/}
-        <Popover/* PROPS */ className="p-4" {...props}>
+        <Popover
+          /* PROPS */
+          className="flex flex-col gap-2 p-4"
+          showArrow
+          {...props}>
           <Switch defaultSelected>Wi-Fi</Switch>
           <Switch defaultSelected>Bluetooth</Switch>
           <Switch>Mute</Switch>
@@ -82,8 +88,8 @@ import {Popover} from 'vanilla-starter/Popover';
     <span role="button">Custom trigger</span>
   </Pressable>
   {/*- end highlight -*/}
-  <Popover>
-    <p>This popover was triggered by a custom button.</p>
+  <Popover style={{padding: 16}}>
+    This popover was triggered by a custom button.
   </Popover>
 </DialogTrigger>
 ```
@@ -119,12 +125,13 @@ function Example() {
       <Button onPress={() => setOpen(true)}>Trigger</Button>
       <span ref={triggerRef} style={{paddingLeft: 12}}>Popover will be positioned relative to me</span>
       <Popover
+        style={{padding: 16}}
         /*- begin highlight -*/
         triggerRef={triggerRef}
         isOpen={isOpen}
         onOpenChange={setOpen}>
         {/*- end highlight -*/}
-        <div>I'm over here!</div>
+        I'm over here!
       </Popover>
     </div>
   );

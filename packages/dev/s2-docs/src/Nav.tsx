@@ -249,7 +249,7 @@ export function MobileOnPageNav({children, currentPage}) {
   }, [currentPage]);
 
   return (
-    <Picker aria-label="Table of contents" selectedKey={selected} isQuiet size="L">
+    <Picker aria-label="Table of contents" value={selected} isQuiet size="L">
       {children}
     </Picker>
   );

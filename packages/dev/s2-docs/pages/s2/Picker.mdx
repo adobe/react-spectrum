@@ -209,6 +209,7 @@ Use the `defaultValue` or `value` prop to set the selected item. The value corre
 ```tsx render docs={docs.exports.Picker} links={docs.links} props={['selectionMode']} wide
 "use client";
 import {Picker, PickerItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example(props) {
@@ -232,7 +233,7 @@ function Example(props) {
         <PickerItem id="bison">Bison</PickerItem>
         <PickerItem id="skunk">Skunk</PickerItem>
       </Picker>
-      <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
+      <pre className={style({font: 'body'})}>Current selection: {JSON.stringify(animal)}</pre>
     </div>
   );
 }
