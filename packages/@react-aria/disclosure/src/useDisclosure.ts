@@ -73,7 +73,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     if (raf.current) {
       cancelAnimationFrame(raf.current);
     }
-    if (ref.current && !isDisabled && !isSSR) {
+    if (ref.current && !isSSR) {
       let panel = ref.current;
 
       if (isExpandedRef.current == null || typeof panel.getAnimations !== 'function') {
@@ -155,7 +155,7 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
       role: 'group',
       'aria-labelledby': triggerId,
       'aria-hidden': !state.isExpanded,
-      hidden: !state.isExpanded || undefined
+      hidden: isSSR ? !state.isExpanded : undefined
     }
   };
 }

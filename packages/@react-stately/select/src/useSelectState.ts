@@ -162,13 +162,13 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
-      if (listState.collection.size !== 0) {
+      if (listState.collection.size !== 0 || props.allowsEmptyCollection) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
     toggle(focusStrategy: FocusStrategy | null = null) {
-      if (listState.collection.size !== 0) {
+      if (listState.collection.size !== 0 || props.allowsEmptyCollection) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();
       }

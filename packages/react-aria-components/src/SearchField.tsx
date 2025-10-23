@@ -55,6 +55,16 @@ export interface SearchFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the search field is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the search field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
+  /**
    * State of the search field.
    */
   state: SearchFieldState
@@ -99,6 +109,8 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       isEmpty: state.value === '',
       isDisabled: props.isDisabled || false,
       isInvalid: validation.isInvalid || false,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false,
       state
     },
     defaultClassName: 'react-aria-SearchField'
@@ -115,7 +127,9 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       slot={props.slot || undefined}
       data-empty={state.value === '' || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-invalid={validation.isInvalid || undefined}>
+      data-invalid={validation.isInvalid || undefined}
+      data-readonly={props.isReadOnly || undefined}
+      data-required={props.isRequired || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

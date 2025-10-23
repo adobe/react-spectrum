@@ -43,7 +43,7 @@ function Example(props) {
         } else if (item?.kind === 'file') {
           let file = await item.getFile();
           let url = URL.createObjectURL(file);
-          setContent(<img src={url} alt={item.name} style={{maxHeight: '100%', maxWidth: '100%'}} />);
+          setContent(<img src={url} alt={item.name} className={style({maxHeight: 'full', maxWidth: 'full'})} />);
         }
       }}>
       {content || (
@@ -60,7 +60,7 @@ function Example(props) {
               acceptedFileTypes={['image/jpeg', 'image/png', 'image/gif']}
               onSelect={files => {
                 let url = URL.createObjectURL(files[0]);
-                setContent(<img src={url} alt={files[0].name} style={{maxHeight: '100%', maxWidth: '100%'}} />);
+                setContent(<img src={url} alt={files[0].name} className={style({maxHeight: 'full', maxWidth: 'full'})} />);
               }}>
               <Button variant="accent">Browse files</Button>
             </FileTrigger>

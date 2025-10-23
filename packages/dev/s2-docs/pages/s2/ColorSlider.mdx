@@ -28,6 +28,7 @@ The `onChange` event is called as the user drags, and `onChangeEnd` is called wh
 ```tsx render
 "use client";
 import {ColorSlider, parseColor} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -43,7 +44,7 @@ function Example() {
         onChange={setCurrentValue}
         onChangeEnd={setFinalValue} />
         {/*- end highlight -*/}
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         onChange value: {currentValue.toString('hex')}{'\n'}
         onChangeEnd value: {finalValue.toString('hex')}
       </pre>

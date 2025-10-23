@@ -337,7 +337,7 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   selectionBehavior?: SelectionBehavior,
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default "selection"
+   * @default "all"
    */
   disabledBehavior?: DisabledBehavior,
   /** Handler that is called when a user performs an action on the row. */
@@ -678,17 +678,22 @@ function TableHeaderRow({item}: {item: GridNode<any>}) {
 
 export interface ColumnRenderProps {
   /**
-   * Whether the item is currently hovered with a mouse.
+   * Whether the column is currently hovered with a mouse.
    * @selector [data-hovered]
    */
   isHovered: boolean,
   /**
-   * Whether the item is currently focused.
+   * Whether the column is currently in a pressed state.
+   * @selector [data-pressed]
+   */
+  isPressed: boolean,
+  /**
+   * Whether the column is currently focused.
    * @selector [data-focused]
    */
   isFocused: boolean,
   /**
-   * Whether the item is currently keyboard focused.
+   * Whether the column is currently keyboard focused.
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean,
@@ -760,7 +765,7 @@ export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props:
   let ref = useObjectRef<HTMLTableCellElement | HTMLDivElement>(forwardedRef);
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
-  let {columnHeaderProps} = useTableColumnHeader(
+  let {columnHeaderProps, isPressed} = useTableColumnHeader(
     {node: column, isVirtualized},
     state,
     ref
@@ -787,6 +792,7 @@ export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props:
     defaultClassName: 'react-aria-Column',
     values: {
       isHovered,
+      isPressed,
       isFocused,
       isFocusVisible,
       allowsSorting: column.props.allowsSorting,
@@ -823,6 +829,7 @@ export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props:
       style={style}
       ref={ref as any}
       data-hovered={isHovered || undefined}
+      data-pressed={isPressed || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
