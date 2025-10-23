@@ -258,6 +258,14 @@ const treeCellGrid = style({
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
+    },
+    selectionStyle: {
+      highlight: {
+        isSelectionDisabled: {
+          default: 'gray-400',
+          forcedColors: 'GrayText'
+        }
+      }
     }
   },
   '--thumbnailBorderColor': {
@@ -306,12 +314,15 @@ const treeRowBackground = style({
   inset: 0,
   backgroundColor: {
     default: '--rowBackgroundColor',
-    isHovered: 'gray-900/5',
-    isPressed: 'gray-900/10',
+    isHovered: 'gray-100',
+    isPressed: 'gray-100',
     isSelected: {
       default: 'blue-900/10',
       isHovered: 'blue-900/15',
       isPressed: 'blue-900/15'
+    },
+    isDisabled: {
+      default: 'gray-100'
     },
     forcedColors: {
       default: 'Background'
@@ -476,12 +487,13 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
   let {
     children
   } = props;
-  let {isDetached, isEmphasized, selectionCornerStyle} = useContext(InternalTreeContext);
+  let {isDetached, isEmphasized, selectionCornerStyle, selectionStyle} = useContext(InternalTreeContext);
   let scale = useScale();
 
   return (
     <TreeItemContent>
-      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state, isHovered}) => {
+      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state, isHovered, isSelectionDisabled}) => {
+        console.log('isSelectionDisabled', isSelectionDisabled);
         let isNextSelected = false;
         let isNextFocused = false;
         let isPreviousSelected = false;
@@ -497,8 +509,8 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
         let isRound = selectionCornerStyle === 'round';
 
         return (
-          <div className={treeCellGrid({isDisabled, isPreviousSelected, isNextSelected, isSelected, isFirst, isNextFocused, isHovered, isDetached, isEmphasized, isRound})}>
-            <div className={treeRowBackground({isPreviousSelected, isNextSelected, isSelected, isEmphasized, isHovered, isRound})} />
+          <div className={treeCellGrid({selectionStyle, isDisabled, isPreviousSelected, isNextSelected, isSelected, isFirst, isNextFocused, isHovered, isDetached, isEmphasized, isRound, isSelectionDisabled})}>
+            <div className={treeRowBackground({isPreviousSelected, isNextSelected, isSelected, isEmphasized, isHovered, isRound, isFocusVisible})} />
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
               <div className={treeCheckbox}>

@@ -76,7 +76,7 @@ let items: Item[] = [
 
 export const DocumentsTable = {
   render: (args: TableViewProps): ReactElement => (
-    <TableView aria-label="Dynamic table" {...args} styles={style({width: 700, height: 400})}>
+    <TableView aria-label="Dynamic table" disabledKeys={[3]} {...args} styles={style({width: 700, height: 400})}>
       <TableHeader columns={columns}>
         {(column) => (
           <Column {...column}>{column.name}</Column>

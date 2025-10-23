@@ -64,7 +64,7 @@ let items: Item[] = [
 
 export const AttributesList: StoryObj<typeof ListView> = {
   render: (args) => (
-    <ListView aria-label="Dynamic list" {...args} items={items} styles={style({width: 220, height: 350})}>
+    <ListView aria-label="Dynamic list" disabledKeys={[3]} {...args} items={items} styles={style({width: 220, height: 350})}>
       {item => (
         <ListViewItem textValue={item.name}>
           {item.type === 'number' ? <TextNumbers /> : <ABC />}

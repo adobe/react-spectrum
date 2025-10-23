@@ -133,7 +133,7 @@ const TreeExampleLayersItem = (props: Omit<TreeViewItemProps, 'children'> & Tree
 
 const TreeExampleLayers = (args: TreeViewProps<TreeViewLayersItemType>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
-    <TreeView aria-label="test dynamic tree" items={layersRows} {...args}>
+    <TreeView aria-label="test dynamic tree" items={layersRows} disabledKeys={['layer-group-1-3']} {...args}>
       {(item) => (
         <TreeExampleLayersItem textValue={item.id || item.name} {...item} />
       )}
@@ -246,7 +246,7 @@ const TreeExampleFiles = (args: TreeViewProps<TreeViewFileItemType>): ReactEleme
   };
   return (
     <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
-      <TreeView selectionCornerStyle="square" aria-label="test dynamic tree" items={items} onExpandedChange={onExpandedChange} expandedKeys={expandedKeys} {...args}>
+      <TreeView selectionCornerStyle="square" aria-label="test dynamic tree" items={items} onExpandedChange={onExpandedChange} expandedKeys={expandedKeys} disabledKeys={['explorations']} {...args}>
         {(item) => (
           <TreeExampleFileItem
             id={item.id}

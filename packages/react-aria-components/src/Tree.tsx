@@ -439,7 +439,9 @@ export interface TreeItemRenderProps extends ItemRenderProps {
   /** The state of the tree. */
   state: TreeState<unknown>,
   /** The unique id of the tree row. */
-  id: Key
+  id: Key,
+  /** Whether the tree item has its selection disabled. */
+  isSelectionDisabled: boolean
 }
 
 export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
@@ -557,13 +559,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
     level,
     selectionMode,
     selectionBehavior,
+    isSelectionDisabled: checkboxProps.isDisabled,
     isFocusVisibleWithin,
     state,
     id: item.key,
     allowsDragging: !!dragState,
     isDragging,
     isDropTarget
-  }), [states, isHovered, isFocusVisible, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key, dragState, isDragging, isDropTarget, selectionBehavior, selectionMode]);
+  }), [states, isHovered, isFocusVisible, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key, dragState, isDragging, isDropTarget, selectionBehavior, selectionMode, checkboxProps.isDisabled]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -661,6 +664,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
         data-has-child-items={hasChildItems || undefined}
         data-level={level}
         data-selected={states.isSelected || undefined}
+        data-selection-disabled={checkboxProps.isDisabled || undefined}
         data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
         data-focused={states.isFocused || undefined}
