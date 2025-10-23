@@ -32,5 +32,5 @@ export function useFormReset<T>(
     return () => {
       form?.removeEventListener('reset', handleReset);
     };
-  }, [ref, handleReset]);
+  }, [ref]);
 }
