@@ -34,10 +34,9 @@ If every tab you have open (or many of them) reload when you make local changes 
 - [ ] Work with RSC
 - [ ] Would be pretty cool if we could match a style condition to trigger it, like hover
 - [ ] Eventually add to https://github.com/astahmer/atomic-css-devtools ??
-- [ ] Our own UI
+- [ ] Our own UI ??
 - [ ] Filtering
 - [ ] Resolve css variables inline
 - [ ] Link to file on the side instead of grouping by filename?
 - [ ] Add classname that is applying style?
 - [ ] Work in MFE's
-- [ ] Don't memory leak the global object
