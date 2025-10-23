@@ -335,9 +335,36 @@ const childStyle = style({
 });
 ```
 
-## Creating custom components with style macros
+## Creating custom components
 
-TODO: I want to add the usuage of mergeStyles here from that one thread. Maybe an example with RAC + style macros as well
+In-depth examples are coming soon!
+
+`mergeStyles` can be used to merge the style strings from multiple macros together, with the latter styles taking precedence similar to object spreading.
+This behavior can be leveraged to create a component API that allows an end user to only override specific styles conditionally.
+
+```tsx
+// User can override the component's background color ONLY if it isn't "quiet"
+const baselineStyles = style({backgroundColor: 'gray-100'}, ['backgroundColor']);
+const quietStyles = style({backgroundColor: 'transparent'});
+const userStyles = style({backgroundColor: 'celery-600'});
+
+function MyComponent({isQuiet, styles}: {isQuiet?: boolean, styles?: StyleString}) {
+  let result = mergeStyles(
+    baselineStyles(null, styles),
+    isQuiet ? quietStyles : null
+  );
+
+  return <div className={result}>My component</div>
+}
+
+// Displays quiet styles
+<MyComponent isQuiet styles={userStyles} />
+
+// Displays user overrides
+<MyComponent styles={userStyles} />
+```
+
+The `iconStyle` macro should be used when styling Icons, see the [docs]((icons.html#iconstyle)) for more information.
 
 ## CSS optimization
 
@@ -395,7 +422,7 @@ CSS resets are strongly discouraged. Global CSS selectors can unintentionally af
 @import "reset.css" layer(reset);
 ```
 
-### Developing with style macros
+## Developing with style macros
 
 Since `style` macros are quite different from using `className`/`style` directly, many may find it initially challenging to debug and develop against.
 Below are some useful tools that may benefit your developer experience:
@@ -409,18 +436,13 @@ the `style` macros for quick prototyping.
 - If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
 we have MCP servers for [React Aria](#TODO) and [React Spectrum](https://www.npmjs.com/package/@react-spectrum/mcp) respectively that interface with the docs.
 
-
-- TODO: link to the dev tool Rob is making, perhaps replacing the atomic css dev tool. Any others we wanna call out
-
-
 ## FAQ
 
 > I'm getting a "Could not statically evaluate macro argument" error.
 
-This happens if your `style` macro has a condition that isn't evaluable at build time. This can happen for a variety of reasons such
+This indicates that your `style` macro has a condition that isn't evaluable at build time. This can happen for a variety of reasons such
 as if you've referenced non-constant variables within your `style` macro or if you've called non-macro functions within your `style` macro.
 If you are using Typescript, it can be as simple as forgetting to add `as const` to your own defined reusable macro.
-TODO: create an example here, should I link to the sections above like "reusing styles"?
 
 > I'm seeing a ton of duplicate rules being generated and/or my dev tools are very slow.
 
@@ -430,8 +452,6 @@ Please make sure you've followed the [best practices listed above](#css-optimiza
 
 The `style` macro is not meant to be used with `UNSAFE_className`. Overrides to the Spectrum styles is highly discouraged,
 consider styling an equivalent React Aria Component instead.
-TODO: we already touch on this via the UNSAFE Style Overrides section
-TODO: example of RAC + style macros? maybe later
 
 > I'm coming from S1, but where are Flex/Grid/etc?
 
