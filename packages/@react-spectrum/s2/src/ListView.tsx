@@ -136,7 +136,9 @@ const listitem = style<GridListItemRenderProps & {
   isSelected?: boolean,
   isDisabled?: boolean,
   isNextSelected?: boolean,
-  isPrevSelected?: boolean
+  isPrevSelected?: boolean,
+  isPrevNotSelected?: boolean,
+  isNextNotSelected?: boolean
 }>({
   ...focusRing(),
   boxSizing: 'border-box',
@@ -204,6 +206,18 @@ const listitem = style<GridListItemRenderProps & {
       default: '--borderColor',
       isNextSelected: 'transparent'
     }
+  },
+  borderTopStartRadius: {
+    isFirstItem: 'default'
+  },
+  borderTopEndRadius: {
+    isFirstItem: 'default'
+  },
+  borderBottomStartRadius: {
+    isLastItem: 'default'
+  },
+  borderBottomEndRadius: {
+    isLastItem: 'default'
   }
 }, getAllowedOverrides());
 
@@ -225,27 +239,15 @@ const listRowBackground = style({
     }
   },
   borderTopStartRadius: {
-    isSelected: {
-      isPrevNotSelected: '[1px]'
-    },
     isFirstItem: 'default'
   },
   borderTopEndRadius: {
-    isSelected: {
-      isPrevNotSelected: '[1px]'
-    },
     isFirstItem: 'default'
   },
   borderBottomStartRadius: {
-    isSelected: {
-      isNextNotSelected: '[1px]'
-    },
     isLastItem: 'default'
   },
   borderBottomEndRadius: {
-    isSelected: {
-      isNextNotSelected: '[1px]'
-    },
     isLastItem: 'default'
   },
   borderTopWidth: {
@@ -343,6 +345,8 @@ export function ListViewItem(props: ListViewItemProps): ReactNode {
         ...renderProps,
         isLink,
         isQuiet,
+        isPrevNotSelected: !renderProps.isPrevSelected,
+        isNextNotSelected: !renderProps.isNextSelected,
         isEmphasized: true
       }, props.styles)}>
       {(renderProps) => {

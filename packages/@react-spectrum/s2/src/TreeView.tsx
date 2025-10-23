@@ -98,7 +98,6 @@ const tree = style({
   height: 'full',
   overflow: 'auto',
   boxSizing: 'border-box',
-  padding: 4,
   justifyContent: {
     isEmpty: 'center'
   },
@@ -187,11 +186,11 @@ const rowBackgroundColor = {
 
 const treeRow = style({
   ...focusRing(),
-  outlineOffset: 2,
+  outlineOffset: -2,
   position: 'relative',
   display: 'flex',
   height: 40,
-  width: 'calc(100% - 24px)',
+  width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
   color: 'body',
