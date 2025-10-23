@@ -11,7 +11,7 @@ export const description = 'Styling in React Spectrum';
 
 # Styling
 
-React Spectrum includes a build-time style macro that generates atomic CSS and lets you apply Spectrum tokens directly in your components with type-safe autocompletion.
+React Spectrum includes a build-time `style` macro that generates atomic CSS and lets you apply Spectrum tokens directly in your components with type-safe autocompletion.
 
 ## Style macro
 
@@ -36,6 +36,14 @@ Colocating styles with your component code means:
 
 - Develop more efficiently – no switching files or writing selectors.
 - Refactor with confidence – changes are isolated; deleting a component removes its styles.
+
+<InlineAlert variant="informative">
+  <Heading>Important Note</Heading>
+  <Content>
+    Due to the atomic nature of the generated CSS rules, it is strongly recommended that you follow the best practices listed [below](#css-optimization).
+    Failure to do so can result in large number of duplicate rules and obtuse styling bugs.
+  </Content>
+</InlineAlert>
 
 ## Spectrum components
 
@@ -88,7 +96,7 @@ import {Button} from '@react-spectrum/s2';
 
 ### UNSAFE Style Overrides
 
-We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using [React Aria Components](https://react-spectrum.adobe.com/react-aria/) with our style macro to build a custom component with Spectrum styles instead.
+We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using [React Aria Components](https://react-spectrum.adobe.com/react-aria/) with our `style` macro to build a custom component with Spectrum styles instead.
 
 With that being said, the `UNSAFE_className` and `UNSAFE_style` props are supported on Spectrum 2 components as last-resort escape hatches.
 
@@ -153,7 +161,7 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
 <InlineAlert variant="notice">
   <Heading>Important Note</Heading>
   <Content>
-    Only use `<Heading>` and `<Text>` inside Spectrum components with predefined styles (e.g., `<Dialog>`, `<MenuItem>`). They are unstyled by default and should not be used standalone. Use HTML elements with the style macro instead.
+    Only use `<Heading>` and `<Text>` inside Spectrum components with predefined styles (e.g., `<Dialog>`, `<MenuItem>`). They are unstyled by default and should not be used standalone. Use HTML elements with the `style` macro instead.
   </Content>
 </InlineAlert>
 
@@ -195,13 +203,14 @@ function MyComponent({variant}: {variant: 'primary' | 'secondary'}) {
 }
 ```
 
-Boolean conditions starting with `is` can be used directly without nesting:
+Boolean conditions starting with `is` or `allows` can be used directly without nesting:
 
 ```tsx
 const styles = style({
   backgroundColor: {
     default: 'gray-100',
-    isSelected: 'gray-900'
+    isSelected: 'gray-900',
+    allowsRemoving: 'gray-400'
   }
 });
 
@@ -222,7 +231,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       isSelected: 'gray-900'
     }
   })}
-/> 
+/>
 ```
 
 ### Nesting conditions
@@ -308,9 +317,31 @@ const buttonStyle = style({
 <Button styles={buttonStyle}>Press me</Button>
 ```
 
+## Setting CSS variables
+
+CSS variables can be directly defined in a `style` macro, allowing child elements to then access them in their own styles.
+A `type` should be provided to specify the CSS property type the `value` represents.
+
+```tsx
+const parentStyle = style({
+  '--rowBackgroundColor': {
+    type: 'backgroundColor',
+    value: 'gray-400'
+  }
+});
+
+const childStyle = style({
+  backgroundColor: '--rowBackgroundColor'
+});
+```
+
+## Creating custom components with style macros
+
+TODO: I want to add the usuage of mergeStyles here from that one thread. Maybe an example with RAC + style macros as well
+
 ## CSS optimization
 
-The style macro relies on CSS bundling and minification for optimal output. Follow these best practices:
+The `style` macro relies on CSS bundling and minification for optimal output. Follow these best practices:
 
 - Ensure styles are extracted into a CSS bundle; do not inject at runtime with `<style>` tags.
 - Use a CSS minifier like `lightningcss` to deduplicate common rules (consider in dev for easier debugging).
@@ -363,3 +394,45 @@ CSS resets are strongly discouraged. Global CSS selectors can unintentionally af
 @layer reset, _;
 @import "reset.css" layer(reset);
 ```
+
+### Developing with style macros
+
+Since `style` macros are quite different from using `className`/`style` directly, many may find it initially challenging to debug and develop against.
+Below are some useful tools that may benefit your developer experience:
+
+- The [atomic-css-devtools](https://github.com/astahmer/atomic-css-devtools) extension presents an inspected element's atomic CSS rules
+in a non-atomic format, making it easier to scan.
+
+- This [sandbox](https://codesandbox.io/p/devbox/react-spectrum-s2-style-macro-template-h6fpsq) is preconfigured to support React Spectrum S2, React Aria Components, and
+the `style` macros for quick prototyping.
+
+- If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
+we have MCP servers for [React Aria](#TODO) and [React Spectrum](https://www.npmjs.com/package/@react-spectrum/mcp) respectively that interface with the docs.
+
+
+- TODO: link to the dev tool Rob is making, perhaps replacing the atomic css dev tool. Any others we wanna call out
+
+
+## FAQ
+
+> I'm getting a "Could not statically evaluate macro argument" error.
+
+This happens if your `style` macro has a condition that isn't evaluable at build time. This can happen for a variety of reasons such
+as if you've referenced non-constant variables within your `style` macro or if you've called non-macro functions within your `style` macro.
+If you are using Typescript, it can be as simple as forgetting to add `as const` to your own defined reusable macro.
+TODO: create an example here, should I link to the sections above like "reusing styles"?
+
+> I'm seeing a ton of duplicate rules being generated and/or my dev tools are very slow.
+
+Please make sure you've followed the [best practices listed above](#css-optimization).
+
+> I tried to pass my `style` macro to `UNSAFE_className` but it doesn't work.
+
+The `style` macro is not meant to be used with `UNSAFE_className`. Overrides to the Spectrum styles is highly discouraged,
+consider styling an equivalent React Aria Component instead.
+TODO: we already touch on this via the UNSAFE Style Overrides section
+TODO: example of RAC + style macros? maybe later
+
+> I'm coming from S1, but where are Flex/Grid/etc?
+
+These no longer exist. Please style `<div>`, `<span>`, and other standard HTML elements with the `style` macro instead.
