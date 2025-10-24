@@ -29,7 +29,10 @@ const standaloneCode = style({
     value: 32
   },
   padding: '--code-padding-x',
-  marginY: 32,
+  marginY: {
+    default: 32,
+    isInSwitcher: 0
+  },
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
   font: {
@@ -44,10 +47,12 @@ interface CodeBlockProps extends VisualExampleProps {
   children: string,
   files?: string[],
   expanded?: boolean,
-  hidden?: boolean
+  hidden?: boolean,
+  // TODO: if we are fine with this overall approach, perhaps make this a client component isntead and read from context
+  isInSwitcher?: boolean
 }
 
-export function CodeBlock({render, children, files, expanded, hidden, ...props}: CodeBlockProps) {
+export function CodeBlock({render, children, files, expanded, hidden, isInSwitcher, ...props}: CodeBlockProps) {
   if (hidden) {
     return null;
   }
@@ -56,7 +61,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
 
   if (!render) {
     return (
-      <pre className={standaloneCode}>
+      <pre className={standaloneCode({isInSwitcher})}>
         <Code {...props}>{children}</Code>
       </pre>
     );
@@ -92,7 +97,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
         component={render}
         align={props.align} />
       <div>
-        {files 
+        {files
           ? <Files files={files}>{content}</Files>
           : content}
       </div>
@@ -184,6 +189,6 @@ export function getFiles(files: string[]) {
       }
     }
   }
-  
+
   return fileContents;
 }
