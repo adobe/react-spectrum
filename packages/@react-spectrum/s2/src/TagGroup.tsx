@@ -147,7 +147,7 @@ function TagGroupInner<T>({
     [collection, tagState.visibleTagCount, isCollapsed]
   );
 
-  let updateVisibleTagCount = useEffectEvent(() => {
+  let updateVisibleTagCount = () => {
     if (maxRows == null) {
       setTagState({visibleTagCount: collection.size, showCollapseButton: false});
     }
@@ -217,20 +217,21 @@ function TagGroupInner<T>({
         setTagState(result);
       });
     }
-  });
+  };
+
+  let updateVisibleTagCountEffect = useEffectEvent(updateVisibleTagCount);
 
   useResizeObserver({ref: maxRows != null ? containerRef : undefined, onResize: updateVisibleTagCount});
 
   useLayoutEffect(() => {
     if (collection.size > 0 && (maxRows != null && maxRows > 0)) {
-      queueMicrotask(updateVisibleTagCount);
+      queueMicrotask(updateVisibleTagCountEffect);
     }
-  }, [collection.size, updateVisibleTagCount, maxRows]);
+  }, [collection.size, maxRows]);
 
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
-    document.fonts?.ready.then(() => updateVisibleTagCount());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    document.fonts?.ready.then(() => updateVisibleTagCountEffect());
   }, []);
 
   let handlePressCollapse = () => {
