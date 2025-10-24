@@ -388,7 +388,6 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       });
     }
 
-    console.log('this', this?.loc);
     let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
     if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className));
