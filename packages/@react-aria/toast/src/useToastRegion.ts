@@ -186,7 +186,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       //   - allows focus even outside a containing focus scope
       //   - doesn’t dismiss overlays when clicking on it, even though it is outside
       // @ts-ignore
-      'data-react-aria-top-layer': true,
+      // 'data-react-aria-top-layer': true,
       // listen to focus events separate from focuswithin because that will only fire once
       // and we need to follow all focus changes
       onFocus: (e) => {
