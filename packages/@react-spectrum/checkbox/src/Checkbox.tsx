@@ -31,7 +31,94 @@ import {useToggleState} from '@react-stately/toggle';
  * or to mark one individual item as selected.
  */
 export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+  let groupState = useContext(CheckboxGroupContext);
+  return groupState ? <CheckboxInGroup {...props} ref={ref} /> : <CheckboxStandalone {...props} ref={ref} />;
+});
+
+let CheckboxInGroup = forwardRef(function CheckboxInGroup(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let originalProps = props;
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+  let groupState = useContext(CheckboxGroupContext);
+
+  [props, domRef] = useContextProps(props, domRef, CheckboxContext);
+  props = useProviderProps(props);
+  props = useFormProps(props);
+  let {
+    isIndeterminate = false,
+    isEmphasized = false,
+    autoFocus,
+    children,
+    ...otherProps
+  } = props;
+  let {styleProps} = useStyleProps(otherProps);
+  let {inputProps, isInvalid, isDisabled} = useCheckboxGroupItem({
+    ...props,
+    // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
+    // it's passed explicitly here to avoid typescript error (requires ignore).
+    // @ts-ignore
+    value: props.value,
+    // Only pass isRequired and validationState to react-aria if they came from
+    // the props for this individual checkbox, and not from the group via context.
+    isRequired: originalProps.isRequired,
+    validationState: originalProps.validationState,
+    isInvalid: originalProps.isInvalid
+  }, groupState, inputRef);
+
+  let {hoverProps, isHovered} = useHover({isDisabled});
+
+  let markIcon = isIndeterminate
+    ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
+    : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
+
+  if (process.env.NODE_ENV !== 'production') {
+    for (let key of ['isSelected', 'defaultSelected', 'isEmphasized']) {
+      if (originalProps[key] != null) {
+        console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
+      }
+    }
+    if (props.value == null) {
+      console.warn('A <Checkbox> element within a <CheckboxGroup> requires a `value` property.');
+    }
+  }
+
+  return (
+    <label
+      {...styleProps}
+      {...hoverProps}
+      ref={domRef}
+      className={
+        classNames(
+          styles,
+          'spectrum-Checkbox',
+          {
+            'is-checked': inputProps.checked,
+            'is-indeterminate': isIndeterminate,
+            'spectrum-Checkbox--quiet': !isEmphasized,
+            'is-invalid': isInvalid,
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
+          },
+          styleProps.className
+        )
+      }>
+      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+        <input
+          {...inputProps}
+          ref={inputRef}
+          className={classNames(styles, 'spectrum-Checkbox-input')} />
+      </FocusRing>
+      <span className={classNames(styles, 'spectrum-Checkbox-box')}>{markIcon}</span>
+      {children && (
+        <span className={classNames(styles, 'spectrum-Checkbox-label')}>
+          {children}
+        </span>
+      )}
+    </label>
+  );
+});
+
+let CheckboxStandalone = forwardRef(function CheckboxStandalone(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
 
@@ -47,43 +134,13 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  // Swap hooks depending on whether this checkbox is inside a CheckboxGroup.
-  // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
-  // but since the checkbox won't move in and out of a group, it should be safe.
-  let groupState = useContext(CheckboxGroupContext);
-  let {inputProps, isInvalid, isDisabled} = groupState
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    ? useCheckboxGroupItem({
-      ...props,
-      // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
-      // it's passed explicitly here to avoid typescript error (requires ignore).
-      // @ts-ignore
-      value: props.value,
-      // Only pass isRequired and validationState to react-aria if they came from
-      // the props for this individual checkbox, and not from the group via context.
-      isRequired: originalProps.isRequired,
-      validationState: originalProps.validationState,
-      isInvalid: originalProps.isInvalid
-    }, groupState, inputRef)
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    : useCheckbox(props, useToggleState(props), inputRef);
+  let {inputProps, isInvalid, isDisabled} = useCheckbox(props, useToggleState(props), inputRef);
 
   let {hoverProps, isHovered} = useHover({isDisabled});
 
   let markIcon = isIndeterminate
     ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
     : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
-
-  if (groupState && process.env.NODE_ENV !== 'production') {
-    for (let key of ['isSelected', 'defaultSelected', 'isEmphasized']) {
-      if (originalProps[key] != null) {
-        console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
-      }
-    }
-    if (props.value == null) {
-      console.warn('A <Checkbox> element within a <CheckboxGroup> requires a `value` property.');
-    }
-  }
 
   return (
     <label

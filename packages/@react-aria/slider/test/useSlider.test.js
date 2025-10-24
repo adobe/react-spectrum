@@ -64,7 +64,9 @@ describe('useSlider', () => {
     function Example(props) {
       let trackRef = useRef(null);
       let state = useSliderState({...props, numberFormatter});
-      stateRef.current = state;
+      React.useEffect(() => {
+        stateRef.current = state;
+      }, [state]);
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
     }
@@ -182,7 +184,9 @@ describe('useSlider', () => {
     function Example(props) {
       let trackRef = useRef(null);
       let state = useSliderState({...props, numberFormatter});
-      stateRef.current = state;
+      React.useEffect(() => {
+        stateRef.current = state;
+      }, [state]);
       let {trackProps} = useSlider(props, state, trackRef);
       return <div data-testid="track" ref={trackRef} {...trackProps} />;
     }

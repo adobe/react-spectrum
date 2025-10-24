@@ -82,8 +82,7 @@ export const Dialog = React.forwardRef(function Dialog(props: SpectrumDialogProp
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter}), align: 'end'}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [hasFooter, hasHeader, titleProps]);
+  }), [hasFooter, hasHeader, titleProps, hasTypeIcon, hasHeading]);
 
   return (
     <section

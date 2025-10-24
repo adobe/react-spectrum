@@ -59,8 +59,9 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
+  let newDescriptionProps = {...descriptionProps};
   if (description && !props.description) {
-    descriptionProps.id = undefined;
+    newDescriptionProps.id = undefined;
   }
 
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
@@ -74,7 +75,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
       elementType="span"
       description={description}
       labelProps={labelProps}
-      descriptionProps={descriptionProps}
+      descriptionProps={newDescriptionProps}
       errorMessageProps={errorMessageProps}
       validationState={validationState ?? undefined}
       isInvalid={isInvalid}

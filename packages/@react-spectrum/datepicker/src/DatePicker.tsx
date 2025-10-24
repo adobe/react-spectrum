@@ -100,8 +100,9 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
+  let newDescriptionProps = {...descriptionProps};
   if (description && !props.description) {
-    descriptionProps.id = undefined;
+    newDescriptionProps.id = undefined;
   }
 
   let placeholder: DateValue | null | undefined = placeholderValue;
@@ -123,7 +124,7 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
       elementType="span"
       description={description}
       labelProps={labelProps}
-      descriptionProps={descriptionProps}
+      descriptionProps={newDescriptionProps}
       errorMessageProps={errorMessageProps}
       validationState={validationState}
       isInvalid={isInvalid}
