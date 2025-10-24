@@ -52,6 +52,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    -webkit-tap-highlight-color: transparent;
 
     &[data-pressed] {
       background: var(--gray-800);

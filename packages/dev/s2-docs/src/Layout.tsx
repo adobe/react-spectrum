@@ -126,20 +126,51 @@ let articleStyles = style({
   height: 'fit'
 });
 
-
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let library = getLibraryLabel(getLibraryFromPage(currentPage));
+  let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
+  let ogImage = getOgImageUrl(currentPage);
+  let title = getTitle(currentPage);
+  let description = getDescription(currentPage);
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
         <meta charSet="utf-8" />
+        <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
         <link rel="icon" href={getFaviconUrl(currentPage)} />
-        <meta name="description" content={getDescription(currentPage)} />
-        <meta property="og:image" content={getOgImageUrl(currentPage)} />
-        <title>{getTitle(currentPage)}</title>
+        <meta name="description" content={description} />
+        {keywords.length > 0 ? <meta name="keywords" content={keywords.join(',')} /> : null}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={ogImage} />
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentPage.url} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:description" content={description} />
+        <meta property="og:locale" content="en_US" />
+        <link rel="canonical" href={currentPage.url} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(
+            {
+              '@context': 'http://schema.org',
+              '@type': 'Article',
+              author: 'Adobe Inc',
+              headline: title,
+              description: description,
+              image: ogImage,
+              publisher: {
+                '@type': 'Organization',
+                url: 'https://www.adobe.com',
+                name: 'Adobe',
+                logo: 'https://www.adobe.com/favicon.ico'
+              }
+            }
+          )}} />
       </head>
       <body
         className={style({
