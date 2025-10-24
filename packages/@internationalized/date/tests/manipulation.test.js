@@ -524,12 +524,12 @@ describe('CalendarDate manipulation', function () {
 
     it('should constrain month', function () {
       let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({month: 13})).toEqual(new CalendarDate(2020, 12, 3));
+      expect(date.set({month: 13}, true)).toEqual(new CalendarDate(2020, 12, 3));
     });
 
     it('should set month and constrain day', function () {
       let date = new CalendarDate(2020, 8, 31);
-      expect(date.set({month: 9})).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.set({month: 9}, true)).toEqual(new CalendarDate(2020, 9, 30));
     });
 
     it('should set day', function () {
@@ -539,12 +539,12 @@ describe('CalendarDate manipulation', function () {
 
     it('should constrain day', function () {
       let date = new CalendarDate(2020, 9, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 9, 30));
+      expect(date.set({day: 31}, true)).toEqual(new CalendarDate(2020, 9, 30));
     });
 
     it('should constrain day on leap years', function () {
       let date = new CalendarDate(2020, 2, 3);
-      expect(date.set({day: 31})).toEqual(new CalendarDate(2020, 2, 29));
+      expect(date.set({day: 31}, true)).toEqual(new CalendarDate(2020, 2, 29));
 
       date = new CalendarDate(2019, 2, 3);
       expect(date.set({day: 31})).toEqual(new CalendarDate(2019, 2, 28));
@@ -553,7 +553,7 @@ describe('CalendarDate manipulation', function () {
     describe('Japanese calendar', function () {
       it('should constrain date in era', function () {
         let date = new CalendarDate(new JapaneseCalendar(), 'heisei', 30, 4, 30);
-        expect(date.set({year: 35})).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
+        expect(date.set({year: 35}, true)).toEqual(new CalendarDate(new JapaneseCalendar(), 'heisei', 31, 4, 30));
 
         date = new CalendarDate(new JapaneseCalendar(), 'showa', 63, 1, 6);
         expect(date.set({year: 72})).toEqual(new CalendarDate(new JapaneseCalendar(), 'showa', 64, 1, 6));
@@ -578,7 +578,7 @@ describe('CalendarDate manipulation', function () {
     describe('Taiwan calendar', function () {
       it('should constrain year in era', function () {
         let date = new CalendarDate(new TaiwanCalendar(), 'before_minguo', 5, 4, 30);
-        expect(date.set({year: -2})).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1, 4, 30));
+        expect(date.set({year: -2}, true)).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1, 4, 30));
       });
     });
   });
