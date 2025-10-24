@@ -4325,7 +4325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/config-default@npm:2.16.0, @parcel/config-default@npm:^2.16.0":
+"@parcel/config-default@npm:2.16.0, @parcel/config-default@npm:^2.15.4, @parcel/config-default@npm:^2.16.0":
   version: 2.16.0
   resolution: "@parcel/config-default@npm:2.16.0"
   dependencies:
@@ -4374,13 +4374,28 @@ __metadata:
     "@parcel/config-default": "npm:^2.16.0"
     "@parcel/core": "npm:^2.16.0"
     "@parcel/resolver-storybook": "npm:>=0.0.0"
-    "@parcel/transformer-js": "npm:^2.16.0"
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.16.0"
     "@parcel/transformer-storybook": "npm:>=0.0.2"
   languageName: unknown
   linkType: soft
 
-"@parcel/core@npm:2.16.0, @parcel/core@npm:^2.16.0":
+"@parcel/config-webextension@npm:^2.15.4":
+  version: 2.16.0
+  resolution: "@parcel/config-webextension@npm:2.16.0"
+  dependencies:
+    "@parcel/config-default": "npm:2.16.0"
+    "@parcel/packager-webextension": "npm:2.16.0"
+    "@parcel/runtime-webextension": "npm:2.16.0"
+    "@parcel/transformer-raw": "npm:2.16.0"
+    "@parcel/transformer-webextension": "npm:2.16.0"
+  peerDependencies:
+    "@parcel/core": ^2.16.0
+  checksum: 10c0/f00c3bac7487cb7dcfe5cd0564464daec09dc20b4aae225bc3868377a1aa1f6ade7763593380bd078e4d6711fb7d7163542945671ea914129387e176bb8b3af9
+  languageName: node
+  linkType: hard
+
+"@parcel/core@npm:2.16.0, @parcel/core@npm:^2.15.4, @parcel/core@npm:^2.16.0":
   version: 2.16.0
   resolution: "@parcel/core@npm:2.16.0"
   dependencies:
@@ -4729,6 +4744,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/packager-webextension@npm:2.16.0":
+  version: 2.16.0
+  resolution: "@parcel/packager-webextension@npm:2.16.0"
+  dependencies:
+    "@parcel/plugin": "npm:2.16.0"
+    "@parcel/utils": "npm:2.16.0"
+    nullthrows: "npm:^1.1.1"
+  checksum: 10c0/654c917752e661cdf0cb14cb9a3ebdbd8105a46e203f6f0c0ee516f875f9492b24b7d34962f0961c1ba419557e3db06a6333d6de4990a254008bd96b108ea6e8
+  languageName: node
+  linkType: hard
+
 "@parcel/plugin@npm:2.16.0, @parcel/plugin@npm:^2.0.0, @parcel/plugin@npm:^2.16.0":
   version: 2.16.0
   resolution: "@parcel/plugin@npm:2.16.0"
@@ -4887,6 +4913,17 @@ __metadata:
     "@parcel/utils": "npm:2.16.0"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/a98efa18510ef4845c76ce38877480f40153db51704f0d88920391003a54db5e53f218ceaf3725509b98fb9bfd495a6b4d264b23e4e4c3aa6fb717ceb741e99f
+  languageName: node
+  linkType: hard
+
+"@parcel/runtime-webextension@npm:2.16.0":
+  version: 2.16.0
+  resolution: "@parcel/runtime-webextension@npm:2.16.0"
+  dependencies:
+    "@parcel/plugin": "npm:2.16.0"
+    "@parcel/utils": "npm:2.16.0"
+    nullthrows: "npm:^1.1.1"
+  checksum: 10c0/69d29e3b4b415222c0ef4816a018d65470c623e6cb72a3e9c3d0882bd0c022c89b0c9dd641509a2326792d2d69472839a529c259cb61da97ea546d262fca3130
   languageName: node
   linkType: hard
 
@@ -5067,7 +5104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-js@npm:2.16.0, @parcel/transformer-js@npm:^2.16.0":
+"@parcel/transformer-js@npm:2.16.0":
   version: 2.16.0
   resolution: "@parcel/transformer-js@npm:2.16.0"
   dependencies:
@@ -5085,6 +5122,27 @@ __metadata:
   peerDependencies:
     "@parcel/core": ^2.16.0
   checksum: 10c0/151e6560e3f30a21884197fefc4e7a996a88517781e23a0e86a69da0beaa290422e0e701951da001456e613cd4b538e360d8ac1478a0d6c6f596c47ab0138714
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch":
+  version: 2.16.0
+  resolution: "@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch::version=2.16.0&hash=6257d2"
+  dependencies:
+    "@parcel/diagnostic": "npm:2.16.0"
+    "@parcel/plugin": "npm:2.16.0"
+    "@parcel/rust": "npm:2.16.0"
+    "@parcel/source-map": "npm:^2.1.1"
+    "@parcel/utils": "npm:2.16.0"
+    "@parcel/workers": "npm:2.16.0"
+    "@swc/helpers": "npm:^0.5.0"
+    browserslist: "npm:^4.24.5"
+    nullthrows: "npm:^1.1.1"
+    regenerator-runtime: "npm:^0.14.1"
+    semver: "npm:^7.7.1"
+  peerDependencies:
+    "@parcel/core": ^2.16.0
+  checksum: 10c0/71ab8284ce896b33e3fbfb54bd8da3c16c50a0692c26b24e1a70cfc748751ee9a608910015e86dc61bc023cf910f72426ba131035c5c022dda0c6c3ad866cbab
   languageName: node
   linkType: hard
 
@@ -5216,6 +5274,19 @@ __metadata:
   peerDependencies:
     typescript: ">=3.0.0"
   checksum: 10c0/3e634a61876dd20198c12d7a11737af916b9fbdddca5aecf42737bbd511c29db3b0f20337a211b097827fc7ba3112492a9e55d71af2d281f2c0bd874dea9ecda
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-webextension@npm:2.16.0":
+  version: 2.16.0
+  resolution: "@parcel/transformer-webextension@npm:2.16.0"
+  dependencies:
+    "@mischnic/json-sourcemap": "npm:^0.1.1"
+    "@parcel/diagnostic": "npm:2.16.0"
+    "@parcel/plugin": "npm:2.16.0"
+    "@parcel/utils": "npm:2.16.0"
+    content-security-policy-parser: "npm:^0.6.0"
+  checksum: 10c0/d0df12b746354d887f0fdf45924efb4155c839b85cdcb08ffc7ef56c569d8c119bbe7d1783f2a9d83ae748b5d34f4263ae0fa51aa2a1978af0a6f2a5da85571f
   languageName: node
   linkType: hard
 
@@ -7502,7 +7573,7 @@ __metadata:
     "@parcel/plugin": "npm:^2.16.0"
     "@parcel/reporter-cli": "npm:^2.16.0"
     "@parcel/resolver-default": "npm:^2.16.0"
-    "@parcel/transformer-js": "npm:^2.16.0"
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch"
     "@parcel/transformer-raw": "npm:^2.16.0"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.16.0"
     "@react-spectrum/parcel-namer-s2": "npm:^0.3.2"
@@ -13660,6 +13731,13 @@ __metadata:
   dependencies:
     safe-buffer: "npm:5.2.1"
   checksum: 10c0/c7b1ba0cea2829da0352ebc1b7f14787c73884bc707c8bc2271d9e3bf447b372270d09f5d3980dc5037c749ceef56b9a13fccd0b0001c87c3f12579967e4dd27
+  languageName: node
+  linkType: hard
+
+"content-security-policy-parser@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "content-security-policy-parser@npm:0.6.0"
+  checksum: 10c0/f494e69020e2320179eab47ad2cdafb09752ed63ca4fb5445071381e392d19edd110c0c3ec43f135d27c34b49dbab851b7fcf188dd2ba30cacd6e1107b15b674
   languageName: node
   linkType: hard
 
@@ -23353,7 +23431,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel@npm:^2.16.0":
+"parcel@npm:^2.15.4, parcel@npm:^2.16.0":
   version: 2.16.0
   resolution: "parcel@npm:2.16.0"
   dependencies:
@@ -27060,6 +27138,18 @@ __metadata:
   checksum: 10c0/3c3b8aa8f34d661910563ff996412e2f527fc814e699a376854b554d4a4294ab7e285b4e2c08a080a7b19c5600a9b93a98798d3ac600fe3de545ca6605c07829
   languageName: node
   linkType: hard
+
+"style-macro-chrome-plugin@workspace:packages/dev/style-macro-chrome-plugin":
+  version: 0.0.0-use.local
+  resolution: "style-macro-chrome-plugin@workspace:packages/dev/style-macro-chrome-plugin"
+  dependencies:
+    "@parcel/config-default": "npm:^2.15.4"
+    "@parcel/config-webextension": "npm:^2.15.4"
+    "@parcel/core": "npm:^2.15.4"
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch"
+    parcel: "npm:^2.15.4"
+  languageName: unknown
+  linkType: soft
 
 "style-to-object@npm:^0.3.0":
   version: 0.3.0
