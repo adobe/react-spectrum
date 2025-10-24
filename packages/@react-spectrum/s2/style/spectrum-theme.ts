@@ -330,7 +330,7 @@ const padding = {
   ...relativeSpacing
 };
 
-export function size(this: MacroContext | void, px: number): string {
+export function size(this: MacroContext | void, px: number): `calc(${string})` {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
