@@ -32,7 +32,10 @@ async function navigate(pathname: string, push = false) {
       } else if (newPathAnchor) {
         let element = document.getElementById(newPathAnchor);
         if (element) {
-          element.scrollIntoView();
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
         }
       }
     });
