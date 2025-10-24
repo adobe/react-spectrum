@@ -394,7 +394,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       let id = toBase62(hash(className));
       className += ` -macro$${id}`;
       return {toString: new Function(`
-        window.postMessage({action: 'update-macros', hash: ${JSON.stringify(id)}, loc: ${JSON.stringify(loc)}, style: ${JSON.stringify(style)}}, "*");
+        window?.postMessage?.({action: 'update-macros', hash: ${JSON.stringify(id)}, loc: ${JSON.stringify(loc)}, style: ${JSON.stringify(style)}}, "*");
         return ${JSON.stringify(className)};
       `)};
     }
@@ -403,7 +403,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (process.env.NODE_ENV !== 'production') {
       js += 'let hash = 5381;for (let i = 0; i < rules.length; i++) { hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0; }\n';
       js += 'rules += " -macro$" + hash.toString(36);\n';
-      js += `window.postMessage({action: 'update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
+      js += `window?.postMessage?.({action: 'update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
     }
     js += 'return rules;';
     if (allowedOverrides) {
