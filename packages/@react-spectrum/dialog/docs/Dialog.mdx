@@ -12,7 +12,8 @@ export default Layout;
 
 import DialogAnatomy from './images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
-import {Image, HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import dialogUtil from 'docs:@react-aria/test-utils/src/dialog.ts';
+import {Image, HeaderInfo, PropTable, PageDescription, VersionBadge, ClassAPI} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/dialog/package.json';
 import styles from '@react-spectrum/docs/src/docs.css';
 
@@ -398,3 +399,43 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
   )}
 </DialogTrigger>
 ```
+
+## Testing
+
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-spectrum/test-utils` offers common dialog interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-spectrum-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the dialog tester and a sample of how you could use it in your test suite.
+
+```ts
+// Dialog.test.ts
+import {render, within} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('Dialog can be opened and closed', async function () {
+  // Render your test component/app and initialize the dialog tester
+  let {getByTestId, getByRole} = render(
+    <Provider theme={defaultTheme}>
+      <DialogTrigger>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          ...
+        </Dialog>
+      </DialogTrigger>
+    </Provider>
+  );
+  let button = getByRole('button');
+  let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+  await dialogTester.open();
+  let dialog = dialogTester.dialog;
+  expect(dialog).toBeVisible();
+  await dialogTester.close();
+  expect(dialog).not.toBeInTheDocument();
+});
+```
+
+<ClassAPI links={dialogUtil.links} class={dialogUtil.exports.DialogTester} />

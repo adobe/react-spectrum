@@ -16,10 +16,13 @@ export {pointerMap} from './userEventMaps';
 export {User} from './user';
 // TODO: had to export these for the docs, but not sure why I didn't have to do
 // so for the v3 docs?
+export {CheckboxGroupTester} from './checkboxgroup';
 export {ComboBoxTester} from './combobox';
+export {DialogTester} from './dialog';
 export {GridListTester} from './gridlist';
 export {ListBoxTester} from './listbox';
 export {MenuTester} from './menu';
+export {RadioGroupTester} from './radiogroup';
 export {SelectTester} from './select';
 export {TableTester} from './table';
 export {TabsTester} from './tabs';
