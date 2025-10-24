@@ -3,6 +3,16 @@
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import type {ReactElement} from 'react';
 
+function scrollToElement(elementId: string) {
+  let element = document.getElementById(elementId);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest'
+    });
+  }
+}
+
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({
   // Intercept HMR window reloads, and do it with RSC instead.
@@ -10,6 +20,13 @@ let updateRoot = hydrate({
     navigate(location.pathname + location.search + location.hash);
   }
 });
+
+// Handle initial page load
+if (location.hash) {
+  requestAnimationFrame(() => {
+    scrollToElement(location.hash.substring(1));
+  });
+}
 
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
@@ -30,13 +47,7 @@ async function navigate(pathname: string, push = false) {
       if (currentPath !== newBasePath && !newPathAnchor) {
         window.scrollTo(0, 0);
       } else if (newPathAnchor) {
-        let element = document.getElementById(newPathAnchor);
-        if (element) {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest'
-          });
-        }
+        scrollToElement(newPathAnchor);
       }
     });
   } catch {
