@@ -15,7 +15,7 @@ index c2a45a9665b4b88836d720669b997872082bb143..f46b0edf814e398ed2a2584efeb040c4
 -                  column: loc.end_col
 -                }
 +                line: loc.line,
-+                column: loc.col
++                col: loc.col
                },
                invalidateOnFileChange(filePath) {
                  asset.invalidateOnFileChange(filePath);

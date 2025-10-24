@@ -5127,7 +5127,7 @@ __metadata:
 
 "@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch":
   version: 2.16.0
-  resolution: "@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch::version=2.16.0&hash=648105"
+  resolution: "@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch::version=2.16.0&hash=6257d2"
   dependencies:
     "@parcel/diagnostic": "npm:2.16.0"
     "@parcel/plugin": "npm:2.16.0"
@@ -5142,7 +5142,7 @@ __metadata:
     semver: "npm:^7.7.1"
   peerDependencies:
     "@parcel/core": ^2.16.0
-  checksum: 10c0/372a80ba0d3b2ceb38c805e1eaac5dc6198de865c7adb37c58f30d8aa9dcfc95370f605c4a362f4687f337da62b7b269bfebe6d52226fc8dfb1c3337d0e9d60b
+  checksum: 10c0/71ab8284ce896b33e3fbfb54bd8da3c16c50a0692c26b24e1a70cfc748751ee9a608910015e86dc61bc023cf910f72426ba131035c5c022dda0c6c3ad866cbab
   languageName: node
   linkType: hard
 
