@@ -15,7 +15,7 @@ import {Inset, fontRelative as internalFontRelative, size as internalSize, space
 import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
-export {baseColor, color, edgeToText, lightDark, linearGradient, colorMix, style} from './spectrum-theme';
+export {baseColor, color, edgeToText, lightDark, linearGradient, colorMix, style, themeConfig} from './spectrum-theme';
 export type {StyleString} from './types';
 
 // Wrap these functions in arbitrary value syntax when called from the outside.
@@ -81,7 +81,7 @@ const iconSizes = {
 
 export function iconStyle(this: MacroContext | void, options: IconStyle): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
   let {size = 'M', color, ...styles} = options;
-  
+
   if (color) {
     styles['--iconPrimary'] = {
       type: 'fill',

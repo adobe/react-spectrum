@@ -47,7 +47,7 @@ export type TKeyof = {type: 'keyof', keyof: TType};
 export type TLink = {type: 'link', id: string};
 export type TReference =  {type: 'reference', local: string, imported: string, specifier: string};
 export type TMapped = {type: 'mapped', readonly: boolean | '+' | '-', typeParameter: TTypeParameter, typeAnnotation: TType};
-export type TType = 
+export type TType =
   | TKeyword
   | TIdentifier
   | TString
@@ -692,5 +692,73 @@ function TemplateLiteral({elements}: TTemplate) {
       })}
       <span className={codeStyles.string}>{'`'}</span>
     </>
+  );
+}
+
+interface StyleMacroPropertyDefinition {
+  type: 'mapped' | 'percentage' | 'sizing' | 'arbitrary',
+  values: string[],
+  additionalTypes?: string[]
+}
+
+interface StyleMacroPropertiesProps {
+  properties: {[propertyName: string]: StyleMacroPropertyDefinition}
+}
+
+export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
+  let propertyNames = Object.keys(properties);
+
+  return (
+    <Table>
+      <TableHeader>
+        <tr>
+          <TableColumn>Property</TableColumn>
+          <TableColumn>Values</TableColumn>
+        </tr>
+      </TableHeader>
+      <TableBody>
+        {propertyNames.map((propertyName, index) => {
+          let propDef = properties[propertyName];
+          let values = propDef.values;
+
+          return (
+            <TableRow key={index}>
+              <TableCell role="rowheader">
+                <code className={codeStyle}>
+                  <span className={codeStyles.attribute}>{propertyName}</span>
+                </code>
+              </TableCell>
+              <TableCell>
+                <code className={codeStyle}>
+                  {values.map((value, i) => (
+                    <React.Fragment key={i}>
+                      {i > 0 && <Punctuation>{' | '}</Punctuation>}
+                      <span className={codeStyles.string}>'{value}'</span>
+                    </React.Fragment>
+                  ))}
+                  {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => (
+                    <React.Fragment key={`type-${i}`}>
+                      <Punctuation>{' | '}</Punctuation>
+                      <TypePopover name={typeName}>
+                        {typeName === 'LengthPercentage' && (
+                          <p className={style({font: 'body'})}>
+                            A CSS length value with percentage or viewport units. Examples: <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code>
+                          </p>
+                        )}
+                        {typeName === 'number' && (
+                          <p className={style({font: 'body'})}>
+                            A numeric value in pixels. Will be converted to rem and scaled on touch devices.
+                          </p>
+                        )}
+                      </TypePopover>
+                    </React.Fragment>
+                  ))}
+                </code>
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
   );
 }
