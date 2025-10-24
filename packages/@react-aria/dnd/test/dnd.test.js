@@ -17,7 +17,7 @@ import {CUSTOM_DRAG_TYPE} from '../src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from './mocks';
 import {Draggable, Droppable} from './examples';
 import {DragTypes} from '../src/utils';
-import React from 'react';
+import React, {useEffect} from 'react';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -195,13 +195,13 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
-      
+
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(droppable).toHaveAttribute('data-droptarget', 'false');
-      
+
       expect(onDragStart).toHaveBeenCalledTimes(1);
       expect(onDragMove).not.toHaveBeenCalled();
       expect(onDragEnd).not.toHaveBeenCalled();
@@ -2574,7 +2574,9 @@ describe('useDrag and useDrop', function () {
       let setShowTarget2;
       let Test = () => {
         let [showTarget2, _setShowTarget2] = React.useState(false);
-        setShowTarget2 = _setShowTarget2;
+        useEffect(() => {
+          setShowTarget2 = _setShowTarget2;
+        }, [_setShowTarget2]);
         return (<>
           <Draggable />
           <Droppable />
@@ -2635,7 +2637,9 @@ describe('useDrag and useDrop', function () {
       let setShowTarget2;
       let Test = () => {
         let [showTarget2, _setShowTarget2] = React.useState(true);
-        setShowTarget2 = _setShowTarget2;
+        useEffect(() => {
+          setShowTarget2 = _setShowTarget2;
+        }, [_setShowTarget2]);
         return (<>
           <Draggable />
           <Droppable />

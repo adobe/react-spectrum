@@ -48,10 +48,12 @@ export const Default: ColorSwatchPickerStory = (args) => (
   </ColorSwatchPicker>
 );
 
+let randomColors = Array.from(Array(24)).map(() => {
+  return `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+});
 export const ManySwatches: ColorSwatchPickerStory = (args) => (
   <ColorSwatchPicker {...args} maxWidth="size-3000">
-    {Array.from(Array(24)).map(() => {
-      let color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+    {randomColors.map((color) => {
       return <ColorSwatch key={color} color={color} />;
     })}
   </ColorSwatchPicker>
