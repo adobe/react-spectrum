@@ -7,13 +7,13 @@ import {
   DateValue,
   ValidationResult
 } from 'react-aria-components';
-import { Button } from './Button';
 import { Calendar } from './Calendar';
 import { DateInput } from './DateField';
 import { Dialog } from './Dialog';
 import { Description, FieldError, FieldGroup, Label } from './Field';
 import { Popover } from './Popover';
 import { composeTailwindRenderProps } from './utils';
+import { FieldButton } from './FieldButton';
 
 export interface DatePickerProps<T extends DateValue>
   extends AriaDatePickerProps<T> {
@@ -26,13 +26,13 @@ export function DatePicker<T extends DateValue>(
   { label, description, errorMessage, ...props }: DatePickerProps<T>
 ) {
   return (
-    <AriaDatePicker {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
+    <AriaDatePicker {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
       {label && <Label>{label}</Label>}
       <FieldGroup className="min-w-[208px] w-auto">
         <DateInput className="flex-1 min-w-[150px] px-2 py-1.5 text-sm" />
-        <Button variant="icon" className="w-6 mr-1 rounded-xs outline-offset-0">
+        <FieldButton className="w-6 mr-1 rounded-sm outline-offset-0">
           <CalendarIcon aria-hidden className="w-4 h-4" />
-        </Button>
+        </FieldButton>
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

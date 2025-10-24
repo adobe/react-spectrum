@@ -1,11 +1,19 @@
 import {AriaColorSliderProps, Orientation, useColorSlider, useLocale} from 'react-aria';
+import {
+  ClassNameOrFunction,
+  Provider,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
 import {ColorSliderContext} from './RSPContexts';
 import {ColorSliderState, useColorSliderState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {InternalColorThumbContext} from './ColorThumb';
 import {LabelContext} from './Label';
-import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {SliderOutputContext, SliderStateContext, SliderTrackContext} from './Slider';
 
@@ -26,7 +34,13 @@ export interface ColorSliderRenderProps {
   state: ColorSliderState
 }
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColorSlider'
+   */
+  className?: ClassNameOrFunction<ColorSliderRenderProps>
+}
 
 export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);
 

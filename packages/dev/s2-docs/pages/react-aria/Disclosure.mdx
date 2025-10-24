@@ -6,6 +6,8 @@ import vanillaDocs from 'docs:vanilla-starter/Disclosure';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/DisclosureAnatomy.svg';
 
+export const tags = ['accordion', 'collapsible', 'expandable', 'details'];
+
 # Disclosure
 
 <PageDescription>{docs.exports.Disclosure.description}</PageDescription>
@@ -68,10 +70,10 @@ import {Button} from 'vanilla-starter/Button';
 import {Settings} from 'lucide-react';
 
 <Disclosure style={{width: 200}}>
-  <div style={{display: 'flex', alignItems: 'center'}}>
+  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
     {/*- begin highlight -*/}
     <DisclosureHeader style={{flex: 1}}>Files</DisclosureHeader>
-    <Button aria-label="Settings"><Settings size={16} /></Button>
+    <Button aria-label="Settings"><Settings /></Button>
     {/*- end highlight -*/}
   </div>
   <DisclosurePanel>Files content</DisclosurePanel>
@@ -95,10 +97,13 @@ import {Settings} from 'lucide-react';
 
 <PropTable component={docs.exports.Disclosure} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Disclosure" properties={docs.exports.DisclosureRenderProps.properties} />
-
 ### DisclosurePanel
 
-<PropTable component={docs.exports.DisclosurePanel} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-DisclosurePanel" properties={docs.exports.DisclosurePanelRenderProps.properties} />
+<PropTable
+  component={docs.exports.DisclosurePanel}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--disclosure-panel-width': "The disclosure panel's intrinsic width in pixels. Useful for animations.",
+    '--disclosure-panel-height': "The disclosure panel's intrinsic height in pixels. Useful for animations."
+  }} />

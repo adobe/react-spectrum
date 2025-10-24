@@ -1,21 +1,25 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-DateField {
-  color: var(--text-color);
   display: flex;
   flex-direction: column;
 }
 
 .react-aria-DateInput {
   display: inline;
-  padding: 4px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--field-background);
+  padding: 0 var(--spacing-3);
+  box-sizing: border-box;
+  border-radius: var(--radius);
+  font: var(--font-size) system-ui;
+  color: var(--field-text-color);
+  height: var(--spacing-8);
+  line-height: var(--spacing-8);
   width: fit-content;
   min-width: 150px;
   white-space: nowrap;
   forced-color-adjust: none;
+  cursor: text;
 
   &[data-focus-within] {
     outline: 2px solid var(--focus-ring-color);
@@ -23,22 +27,17 @@
   }
 
   &[data-disabled] {
-    border-color: var(--border-color-disabled);
-    color: var(--text-color-disabled);
-  }
-}
-
-.react-aria-DateField[data-disabled] {
-  .react-aria-DateSegment {
     color: var(--text-color-disabled);
   }
 }
 
 .react-aria-DateSegment {
-  padding: 0 2px;
+  padding: 2px;
+  font-size: var(--font-size);
   font-variant-numeric: tabular-nums;
   text-align: end;
-  color: var(--text-color);
+  color: var(--field-text-color);
+  -webkit-tap-highlight-color: transparent;
 
   &[data-type=literal] {
     padding: 0;
@@ -46,7 +45,6 @@
 
   &[data-placeholder] {
     color: var(--text-color-placeholder);
-    font-style: italic;
   }
 
   &:focus {
@@ -65,15 +63,9 @@
       color: var(--highlight-foreground);
     }
   }
-}
 
-.react-aria-DateField {
-  .react-aria-FieldError {
-    font-size: 12px;
-    color: var(--invalid-color);
-  }
-
-  [slot=description] {
-    font-size: 12px;
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    cursor: default;
   }
 }

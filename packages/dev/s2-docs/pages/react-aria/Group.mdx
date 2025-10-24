@@ -5,6 +5,8 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/InputGroup';
 import '../../tailwind/tailwind.css';
 
+export const tags = [];
+
 # Group
 
 <PageDescription>{docs.exports.Group.description}</PageDescription>
@@ -16,19 +18,19 @@ import {Input} from 'react-aria-components';
 
 <InputGroup/* PROPS */>
   <Input
-    size={3}
+    style={{width: '3ch', boxSizing: 'content-box'}}
     maxLength={3}
     aria-label="First 3 digits"
     placeholder="000" />
   –
   <Input
-    size={2}
+    style={{width: '2ch', boxSizing: 'content-box'}}
     maxLength={2}
     aria-label="Middle 2 digits"
     placeholder="00" />
   –
   <Input
-    size={4}
+    style={{width: '4ch', boxSizing: 'content-box'}}
     maxLength={4}
     aria-label="Last 4 digits"
     placeholder="0000" />
@@ -38,5 +40,3 @@ import {Input} from 'react-aria-components';
 ## API
 
 <PropTable component={docs.exports.Group} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-Group" properties={docs.exports.GroupRenderProps.properties} />

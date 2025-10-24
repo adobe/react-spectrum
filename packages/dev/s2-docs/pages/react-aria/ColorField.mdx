@@ -8,6 +8,8 @@ import vanillaDocs from 'docs:vanilla-starter/ColorField';
 import docs from 'docs:react-aria-components';
 import Anatomy from '@react-aria/color/docs/ColorFieldAnatomy.svg';
 
+export const tags = ['input'];
+
 # ColorField
 
 <PageDescription>{docs.exports.ColorField.description}</PageDescription>
@@ -18,7 +20,7 @@ import Anatomy from '@react-aria/color/docs/ColorFieldAnatomy.svg';
     docs={vanillaDocs.exports.ColorField}
     links={vanillaDocs.links}
     props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
-    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
     type="vanilla"
     files={["starters/docs/src/ColorField.tsx", "starters/docs/src/ColorField.css"]} />
   <VisualExample
@@ -26,7 +28,7 @@ import Anatomy from '@react-aria/color/docs/ColorFieldAnatomy.svg';
     docs={vanillaDocs.exports.ColorField}
     links={vanillaDocs.links}
     props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
-    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
     type="tailwind"
     files={["starters/tailwind/src/ColorField.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
@@ -48,9 +50,10 @@ function Example() {
     <div>
       <ColorField
         label="Primary color"
+        placeholder="Enter a color"
         value={value}
         onChange={setValue} />
-      <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
+      <pre style={{fontSize: 12}}>Current value: {value?.toString('hex')}</pre>
     </div>
   );
 }
@@ -73,6 +76,7 @@ function Example() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <ColorField
         label="Hue"
+        
         value={color}
         onChange={setColor}
         /*- begin highlight -*/
@@ -113,6 +117,7 @@ function Example(props) {
       <ColorField
         {...props}
         label="Brand color"
+        placeholder="Enter a color"
         ///- begin highlight -///
         name="brandColor"
         isRequired />

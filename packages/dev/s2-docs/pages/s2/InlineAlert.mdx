@@ -4,6 +4,8 @@ export default Layout;
 import {InlineAlert} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['alert', 'notification', 'banner', 'message'];
+
 # InlineAlert
 
 <PageDescription>{docs.exports.InlineAlert.description}</PageDescription>
@@ -24,13 +26,14 @@ Use the `autoFocus` prop to focus the alert when it first renders. This is usefu
 ```tsx render hideImports
 "use client";
 import {InlineAlert, Heading, Content, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
   let [shown, setShown] = useState(false);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'}}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'})}>
       <Button variant="primary" onPress={() => setShown(!shown)}>
         {shown ? 'Hide Alert' : 'Show Alert'}
       </Button>
