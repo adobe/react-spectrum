@@ -56,14 +56,14 @@ const getTitle = (currentPage: Page): string => {
   if (explicitTitle && explicitTitle !== currentPage.tableOfContents?.[0]?.title && explicitTitle !== currentPage.name) {
     return explicitTitle as string;
   }
-  
+
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
-  
+
   if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
     return library || 'React Spectrum';
   }
-  
+
   return library ? `${pageTitle} | ${library}` : pageTitle;
 };
 
@@ -111,6 +111,7 @@ let articleStyles = style({
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
+  console.log(pages.filter(page => page.name.includes('releases')));
   let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
@@ -225,7 +226,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               })}>
               <article
                 className={articleStyles({isWithToC: hasToC})}>
-                {React.cloneElement(children, {components})}
+                {React.cloneElement(children, {components, pages})}
               </article>
               <aside
                 className={style({
