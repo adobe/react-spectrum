@@ -41,7 +41,7 @@ async function run() {
             break;
           }
         }
-      } else if (true) {
+      } else if (process.env.CIRCLE_BRANCH === 'main') {
         // If it isn't a PR commit, then we are on main. Create a comment for the test app and docs build
         await octokit.repos.createCommitComment({
           owner: 'adobe',
