@@ -224,7 +224,38 @@ See below for the full definition of the `User` object.
 
 ### Patterns
 
-<ExampleSwitcher type={null} examples={['ComboBox', 'Menu', 'Picker', 'TableView', 'Tabs', 'TreeView']}>
+<ExampleSwitcher type={null} examples={['CheckboxGroup', 'ComboBox', 'Dialog', 'Menu', 'Picker', 'RadioGroup', 'TableView', 'Tabs', 'TreeView']}>
+
+<>
+  ```ts isInSwitcher
+  // CheckboxGroup.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-spectrum/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+  // ...
+
+  it('CheckboxGroup can select multiple checkboxes', async function () {
+    // Render your test component/app and initialize the checkbox group tester
+    let {getByTestId} = render(
+      <CheckboxGroup data-testid="test-checkboxgroup">
+      ...
+      </CheckboxGroup>
+    );
+    let checkboxGroupTester = testUtilUser.createTester('CheckboxGroup', {root: getByTestId('test-checkboxgroup')});
+    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(0);
+
+    await checkboxGroupTester.toggleCheckbox({checkbox: 0});
+    expect(checkboxGroupTester.checkboxes[0]).toBeChecked();
+    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(1);
+
+    await checkboxGroupTester.toggleCheckbox({checkbox: 4});
+    expect(checkboxGroupTester.checkboxes[4]).toBeChecked();
+    expect(checkboxGroupTester.selectedCheckboxes).toHaveLength(2);
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.CheckboxGroupTester} isInSwitcher />
+</>
 
 <>
   ```ts isInSwitcher
@@ -254,6 +285,37 @@ See below for the full definition of the `User` object.
   });
   ```
   <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.ComboBoxTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // Dialog.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-spectrum/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+  // ...
+
+  it('Dialog can be opened and closed', async function () {
+    // Render your test component/app and initialize the dialog tester
+    let {getByTestId, getByRole} = render(
+      <DialogTrigger>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          ...
+        </Dialog>
+      </DialogTrigger>
+    );
+    let button = getByRole('button');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
+    expect(dialog).toBeVisible();
+    await dialogTester.close();
+    expect(dialog).not.toBeInTheDocument();
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.DialogTester} isInSwitcher />
 </>
 
 <>
@@ -316,6 +378,37 @@ See below for the full definition of the `User` object.
   });
   ```
   <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.SelectTester} isInSwitcher />
+</>
+
+<>
+  ```ts isInSwitcher
+  // RadioGroup.test.ts
+  import {render} from '@testing-library/react';
+  import {User} from '@react-spectrum/test-utils';
+
+  let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+  // ...
+
+  it('RadioGroup can switch the selected radio', async function () {
+    // Render your test component/app and initialize the radiogroup tester
+    let {getByRole} = render(
+      <RadioGroup>
+        ...
+      </RadioGroup>
+    );
+
+    let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
+    let radios = radioGroupTester.radios;
+    expect(radioGroupTester.selectedRadio).toBeFalsy();
+
+    await radioGroupTester.triggerRadio({radio: radios[0]});
+    expect(radioGroupTester.selectedRadio).toBe(radios[0]);
+
+    await radioGroupTester.triggerRadio({radio: radios[1]});
+    expect(radioGroupTester.selectedRadio).toBe(radios[1]);
+  });
+  ```
+  <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.RadioGroupTester} isInSwitcher />
 </>
 
 <>
