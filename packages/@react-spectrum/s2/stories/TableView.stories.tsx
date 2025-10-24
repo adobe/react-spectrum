@@ -1497,7 +1497,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -1522,7 +1521,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
@@ -1628,7 +1626,6 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -1649,7 +1646,6 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker

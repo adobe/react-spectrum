@@ -1,0 +1,473 @@
+/*
+ * Copyright 2023 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+@utility focus-ring {
+  @apply outline outline-0 outline-blue-600 dark:outline-blue-500 focus-visible:outline-2;
+}
+
+body {
+  background: var(--page-bg);
+  color-scheme: dark light;
+  @apply [--page-bg:var(--color-zinc-50)] dark:[--page-bg:var(--color-zinc-900)];
+}
+
+.header-background {
+  @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
+  background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
+    radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
+    conic-gradient(from 30deg at 50% 60%,
+      oklch(var(--l) var(--c) 220),
+      oklch(min(var(--l), 86%) var(--c) 260),
+      oklch(var(--l) var(--c) 300),
+      oklch(var(--l) var(--c) 340),
+      oklch(var(--l) var(--c) 0),
+      oklch(var(--l) var(--c) 40),
+      oklch(var(--l) var(--c) 60),
+      oklch(max(var(--l), 44%) var(--c) 100),
+      oklch(max(var(--l), 38%) var(--c) 140),
+      oklch(var(--l) var(--c) 180),
+      oklch(var(--l) var(--c) 220)
+    );
+  background-repeat: no-repeat;
+}
+
+main > section > h2 {
+  @apply text-4xl md:text-5xl font-semibold m-0 mb-4 pb-2 text-transparent;
+
+  + p {
+    @apply text-lg md:text-2xl max-w-5xl text-slate-700 dark:text-slate-400;
+    text-wrap: pretty;
+  }
+}
+
+pre {
+  margin: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+:root {
+  --hljs-color: theme(colors.gray.800);
+  --hljs-background: transparent;
+  --hljs-keyword-color: theme(colors.fuchsia.700);
+  --hljs-section-color: theme(colors.red.600);
+  --hljs-string-color: theme(colors.green.700);
+  --hljs-literal-color: theme(colors.purple.700);
+  --hljs-attribute-color: theme(colors.indigo.700);
+  --hljs-class-color: theme(colors.cyan.600);
+  --hljs-function-color: theme(colors.blue.600);
+  --hljs-variable-color: theme(colors.purple.700);
+  --hljs-title-color: theme(colors.indigo.700);
+  --hljs-comment-color:  theme(colors.gray.700);
+  --mark-background: theme(colors.blue.400/10%);
+  --mark-border: theme(colors.blue.500);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hljs-color: theme(colors.gray.300);
+    --hljs-keyword-color: theme(colors.fuchsia.300);
+    --hljs-section-color: theme(colors.red.400);
+    --hljs-string-color: theme(colors.green.400);
+    --hljs-literal-color: theme(colors.purple.400);
+    --hljs-attribute-color: theme(colors.indigo.400);
+    --hljs-class-color: theme(colors.cyan.400);
+    --hljs-function-color: theme(colors.blue.400);
+    --hljs-variable-color: theme(colors.purple.400);
+    --hljs-title-color: theme(colors.indigo.400);
+    --hljs-comment-color:  theme(colors.gray.400);
+    --mark-border: theme(colors.blue.400);
+  }
+}
+
+pre .source {
+  @apply p-5 text-xs sm:text-sm min-h-[250px] h-full min-w-fit;
+  font-family: source-code-pro, 'Source Code Pro', Monaco, monospace;
+}
+
+pre.large {
+  @apply hidden lg:block;
+}
+
+pre.medium {
+  @apply hidden sm:block lg:hidden;
+}
+
+pre.small {
+  @apply sm:hidden
+}
+
+.card-shadow {
+  box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
+  outline: 1px solid transparent; /* WHCM */
+  @apply dark:border dark:border-zinc-200/10 dark:bg-clip-padding;
+}
+
+.card-shadow-hover:hover {
+  box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 8px rgb(0 0 0 / 6%), 0 4px 16px 0 rgba(0 0 0 / 10%);
+}
+
+.card-shadow-hover:focus-visible {
+  @apply focus-ring;
+}
+
+.edge-mask {
+  mask-image: linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent);
+}
+
+@keyframes touch-animation {
+  0% {
+    opacity: var(--hover-opacity);
+    transform: translate(10px, 135px);
+  }
+
+  15%, 16% {
+    opacity: var(--hover-opacity);
+    transform: translate(7px, 0);
+  }
+
+  17.2%, 19% {
+    opacity: var(--pressed-opacity);
+    transform: translate(7px, 0);
+  }
+
+  25%, 27% {
+    opacity: var(--pressed-opacity);
+    transform: translate(7px, 48px);
+  }
+
+  35%, 36% {
+    opacity: var(--pressed-opacity);
+    transform: translate(7px, 7px);
+  }
+
+  37.2% {
+    opacity: var(--hover-opacity);
+    transform: translate(7px, 7px);
+  }
+
+  50%, 55% {
+    opacity: var(--hover-opacity);
+    transform: translate(4px, 52px);
+  }
+
+  65%, 66% {
+    opacity: var(--hover-opacity);
+    transform: translate(7px, 0);
+  }
+
+  67.2%, 69% {
+    opacity: var(--pressed-opacity);
+    transform: translate(7px, 0);
+  }
+
+  75%, 77% {
+    opacity: var(--pressed-opacity);
+    transform: translate(7px, 48px);
+  }
+
+  85%, 86% {
+    opacity: var(--pressed-opacity);
+    transform: translate(7px, 7px);
+  }
+
+  87.2% {
+    opacity: var(--hover-opacity);
+    transform: translate(7px, 7px);
+  }
+
+  100% {
+    opacity: var(--hover-opacity);
+    transform: translate(10px, 135px);
+  }
+}
+
+@keyframes switch-animation {
+  0%, 16% {
+    margin-left: --spacing(6);
+    width: --spacing(8);
+  }
+
+  18.5%, 22% {
+    margin-left: --spacing(4);
+    width: --spacing(10);
+  }
+
+  25%, 30% {
+    margin-left: --spacing(6);
+    width: --spacing(8);
+  }
+
+  33%, 36.5% {
+    margin-left: --spacing(4);
+    width: --spacing(10);
+  }
+
+  38.5%, 66% {
+    margin-left: 0;
+    width: --spacing(8);
+  }
+
+  68.5%, 72% {
+    margin-left: 0;
+    width: --spacing(10);
+  }
+
+  75%, 80% {
+    margin-left: 0;
+    width: --spacing(8);
+  }
+
+  83%, 86.5% {
+    margin-left: 0;
+    width: --spacing(10);
+  }
+
+  88.5%, 100% {
+    margin-left: --spacing(6);
+    width: --spacing(8);
+  }
+}
+
+@keyframes switch-background-animation {
+  0%, 36.5% {
+    background: var(--bg-selected);
+  }
+
+  38.5%, 86.5% {
+    background: var(--bg);
+  }
+
+  88.5%, 100% {
+    background: var(--bg-selected);
+  }
+}
+
+.iphone-frame {
+  background-image: url(../../assets/iphone-frame.webp);
+  background-size: contain;
+}
+
+.iphone-mask {
+  mask-image: url(../../assets/iphone-mask.webp), linear-gradient(#fff 0 0);
+  mask-size: contain;
+  mask-composite: exclude;
+}
+
+@keyframes cross-fade {
+  0%, 40% {
+    opacity: var(--fade-from, 0);
+  }
+
+  50%, 90% {
+    opacity: var(--fade-to, 1);
+  }
+
+  100% {
+    opacity: var(--fade-from, 0);
+  }
+}
+
+@keyframes highlight {
+  0%, 30% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  70%, 100% {
+    opacity: 0;
+  }
+}
+
+.cross-fade {
+  animation: cross-fade 5s infinite;
+  mix-blend-mode: plus-lighter;
+}
+
+.highlight-tags {
+  .tag:nth-child(1 of .tag),
+  .tag:nth-child(n+4 of .tag):nth-child(-n+8 of .tag),
+  .tag:nth-last-child(1 of .tag) {
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 0.99lh;
+      opacity: 0;
+      @apply rounded-sm bg-red-600/[15%] dark:bg-red-600/20;
+      animation: highlight 5s infinite var(--delay, 0s);
+    }
+  }
+}
+
+.code-mask {
+  mask: linear-gradient(to bottom, white 0% 70%, transparent);
+}
+
+.cyan-gradient-background {
+  --a: oklch(90% 0.05 200);
+  --a-shape: ellipse 30% 23% at 30% 56%;
+  --b: oklch(94% 0.09 175);
+  --b-shape: ellipse 30% 30% at 71% 42%;
+  --c: oklch(96% 0.06 218);
+  --c-shape: ellipse 40% 25% at 50% 72%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .cyan-gradient-background {
+    --a-shape: circle 250px at 26% 65%;
+    --b-shape: circle 250px at 73% 64%;
+    --c-shape: circle 250px at 50% 70%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .cyan-gradient-background {
+    --a: oklch(25% 0.1 200);
+    --b: oklch(27% 0.1 175);
+    --c: oklch(26% 0.08 218);
+  }
+}
+
+.blue-gradient-background {
+  --a: oklch(94% 0.08 250);
+  --b: oklch(94% 0.12 275);
+  --c: oklch(91% 0.15 290);
+  background: radial-gradient(circle farthest-side at 28% 54%, var(--a), transparent 36%),
+    radial-gradient(circle farthest-side at 65% 45%, var(--b), transparent 50%),
+    radial-gradient(circle farthest-side at 60% 65%, var(--c), transparent 50%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .blue-gradient-background {
+    --a: oklch(25% 0.08 250);
+    --b: oklch(25% 0.07 275);
+    --c: oklch(28% 0.1 280);
+  }
+}
+
+.orange-gradient-background {
+  --color: oklch(96% 0.1 75);
+  --shape: ellipse 50% 35% at 50% 58%;
+  background: radial-gradient(var(--shape), var(--color), transparent);
+}
+
+@media (width < 1080px) {
+  .orange-gradient-background {
+    --shape: ellipse 60% 40% at 50% 63%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .orange-gradient-background {
+    --color: oklch(27% 0.09 71);
+  }
+}
+
+.red-gradient-background {
+  --a: oklch(96% 0.1 350);
+  --a-shape: ellipse 30% 30% at 29% 54%;
+  --b: oklch(96% 0.11 6);
+  --b-shape: ellipse 35% 30% at 66% 50%;
+  --c: oklch(96% 0.15 20);
+  --c-shape: ellipse 40% 25% at 50% 70%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .red-gradient-background {
+    --a-shape: circle 300px at 20% 72%;
+    --b-shape: circle 300px at 50% 72%;
+    --c-shape: circle 300px at 80% 72%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .red-gradient-background {
+    --a: oklch(27% 0.11 350);
+    --b: oklch(26% 0.11 6);
+    --c: oklch(26% 0.1 20);
+  }
+}
+
+.pink-gradient-background {
+  --a: oklch(92% 0.11 300);
+  --a-shape: ellipse 30% 30% at 29% 57%;
+  --b: oklch(96% 0.11 320);
+  --b-shape: ellipse 35% 30% at 66% 47%;
+  --c: oklch(96% 0.14 340);
+  --c-shape: ellipse 40% 25% at 50% 70%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .pink-gradient-background {
+    --a-shape: circle 400px at 50% 40%;
+    --b-shape: circle 400px at 50% 60%;
+    --c-shape: circle 400px at 50% 80%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .pink-gradient-background {
+    --a: oklch(30% 0.11 300);
+    --b: oklch(30% 0.11 320);
+    --c: oklch(27% 0.1 340);
+  }
+}
+
+
+.green-gradient-background {
+  --a: oklch(96% 0.1 120);
+  --a-shape: ellipse 30% 30% at 29% 54%;
+  --b: oklch(91% 0.12 140);
+  --b-shape: ellipse 35% 30% at 66% 41%;
+  --c: oklch(94% 0.06 150);
+  --c-shape: ellipse 40% 25% at 50% 74%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .green-gradient-background {
+    --a-shape: circle 400px at 20% 63%;
+    --b-shape: circle 400px at 50% 63%;
+    --c-shape: circle 400px at 80% 63%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .green-gradient-background {
+    --a: oklch(28% 0.1 130);
+    --b: oklch(28% 0.12 145);
+    --c: oklch(26% 0.06 150);
+  }
+}

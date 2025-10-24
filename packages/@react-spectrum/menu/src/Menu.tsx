@@ -62,7 +62,7 @@ export const Menu = React.forwardRef(function Menu<T extends object>(props: Spec
       let {left} = popoverContainer.getBoundingClientRect();
       setLeftOffset({left: -1 * left});
     }
-  }, [leftOffset]);
+  }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
   let nextMenuLevelKey = rootMenuTriggerState?.expandedKeysStack[menuLevel + 1];
