@@ -189,4 +189,19 @@ describe('NumberField', () => {
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
+
+  it('should not type the grouping characters when useGrouping is false', async () => {
+    let {getByRole} = render(<TestNumberField formatOptions={{useGrouping: false}} />);
+    let input = getByRole('textbox');
+
+    await user.keyboard('102,4');
+    expect(input).toHaveAttribute('value', '1024');
+
+    await user.clear(input);
+    expect(input).toHaveAttribute('value', '');
+
+    await user.paste('102,4');
+    await user.tab();
+    expect(input).toHaveAttribute('value', '1024');
+  });
 });

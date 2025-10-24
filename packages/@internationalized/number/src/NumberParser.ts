@@ -282,7 +282,8 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
     maximumSignificantDigits: 21,
     roundingIncrement: 1,
     roundingPriority: 'auto',
-    roundingMode: 'halfExpand'
+    roundingMode: 'halfExpand',
+    useGrouping: true
   });
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = symbolFormatter.formatToParts(-10000.111);

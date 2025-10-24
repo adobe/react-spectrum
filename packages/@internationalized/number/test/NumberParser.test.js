@@ -56,6 +56,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('1abc')).toBe(NaN);
     });
 
+    it('should return NaN for invalid grouping', function () {
+      expect(new NumberParser('en-US', {useGrouping: false}).parse('1234,7')).toBe(12347);
+      expect(new NumberParser('de-DE', {useGrouping: false}).parse('1234.7')).toBe(12347);
+    });
+
     describe('currency', function () {
       it('should parse without the currency symbol', function () {
         expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('10.50')).toBe(10.5);
