@@ -73,10 +73,10 @@ import SearchFieldSvg from '@react-spectrum/docs/pages/assets/component-illustra
 import SegmentedControlSvg from '@react-spectrum/docs/pages/assets/component-illustrations/SegmentedControl.svg';
 import SelectBoxGroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/SelectBoxGroup.svg';
 import SelectionSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
-import {size, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import SkeletonSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Skeleton.svg';
 import SliderSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Slider.svg';
 import StatusLightSvg from '@react-spectrum/docs/pages/assets/component-illustrations/StatusLight.svg';
+import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import SwitchSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Switch.svg';
 import TableSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Table.svg';
 import TabsSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Tabs.svg';

@@ -211,7 +211,7 @@ function findAllFiles(files: string[]) {
     return res;
   });
 
-  let addedFiles = [...allFiles.values()].sort()
+  let addedFiles = [...allFiles.values()].sort();
 
   return [...providedFiles, ...addedFiles];
 }

@@ -1,6 +1,6 @@
+import {Files} from './CodeBlock';
 import fs from 'fs/promises';
 import path from 'path';
-import {Files} from './CodeBlock';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export async function ExampleApp({dir, defaultSelected}: {dir: string, defaultSelected?: string}) {

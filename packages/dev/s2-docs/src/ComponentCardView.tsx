@@ -3,9 +3,9 @@
 'use client';
 
 import {CardView, Collection} from '@react-spectrum/s2';
+import {ComponentCard} from './ComponentCard';
 import {Key} from 'react-aria-components';
 import React from 'react';
-import {ComponentCard} from './ComponentCard';
 
 export interface ComponentCardItem {
   id: string,
