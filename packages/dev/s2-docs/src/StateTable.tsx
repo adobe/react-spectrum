@@ -61,32 +61,38 @@ export function StateTable({properties, links, showOptional, hideSelector, cssVa
     table = (
       <>
         {table}
-        <Table style={{marginTop: 16}}>
-          <TableHeader>
-            <TableRow>
-              <TableColumn role="columnheader">CSS Variable</TableColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {Object.entries(cssVariables).map(([name, description]) => (
-              <Fragment key={name}>
-                <TableRow>
-                  <TableCell role="rowheader" hideBorder>
-                    <code className={codeStyle}>
-                      <span className={codeStyles.property}>{name}</span>
-                    </code>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>{renderHTMLfromMarkdown(description, {forceInline: true})}</TableCell>
-                </TableRow>
-              </Fragment>
-            ))}
-          </TableBody>
-        </Table>
+        <CSSVariables cssVariables={cssVariables} />
       </>
     );
   }
 
   return table;
+}
+
+export function CSSVariables({cssVariables}: {cssVariables: {[name: string]: string}}) {
+  return (
+    <Table style={{marginTop: 16}}>
+      <TableHeader>
+        <TableRow>
+          <TableColumn role="columnheader">CSS Variable</TableColumn>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {Object.entries(cssVariables).map(([name, description]) => (
+          <Fragment key={name}>
+            <TableRow>
+              <TableCell role="rowheader" hideBorder>
+                <code className={codeStyle}>
+                  <span className={codeStyles.property}>{name}</span>
+                </code>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>{renderHTMLfromMarkdown(description, {forceInline: true})}</TableCell>
+            </TableRow>
+          </Fragment>
+        ))}
+      </TableBody>
+    </Table>
+  );
 }
