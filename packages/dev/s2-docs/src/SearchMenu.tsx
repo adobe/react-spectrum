@@ -76,7 +76,7 @@ export function SearchMenu(props: SearchMenuProps) {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = page.tableOfContents?.[0]?.title || name;
         const section: string = (page.exports?.section as string) || 'Components';
-        const tags: string[] = (page.exports?.tags as string[]) || [];
+        const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
 
         return {
           id: name,

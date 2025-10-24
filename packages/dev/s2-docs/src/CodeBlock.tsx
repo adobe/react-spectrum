@@ -44,10 +44,12 @@ interface CodeBlockProps extends VisualExampleProps {
   children: string,
   files?: string[],
   expanded?: boolean,
-  hidden?: boolean
+  hidden?: boolean,
+  hideExampleCode?: boolean,
+  includeAllImports?: boolean
 }
 
-export function CodeBlock({render, children, files, expanded, hidden, ...props}: CodeBlockProps) {
+export function CodeBlock({render, children, files, expanded, hidden, hideExampleCode, includeAllImports, ...props}: CodeBlockProps) {
   if (hidden) {
     return null;
   }
@@ -78,7 +80,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
     );
   }
 
-  let content = (
+  let content = hideExampleCode ? null : (
     <CodePlatter
       files={files ? getFiles(files) : undefined}
       type={props.type}>
@@ -93,7 +95,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
         align={props.align} />
       <div>
         {files 
-          ? <Files files={files}>{content}</Files>
+          ? <Files files={includeAllImports ? findAllFiles(files) : files} maxLines={expanded ? Infinity : 6}>{content}</Files>
           : content}
       </div>
     </div>
@@ -132,32 +134,49 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   );
 }
 
-export function Files({children, files}: {children?: ReactNode, files: string[]}) {
+export function Files({children, files, defaultSelected, maxLines}: {children?: ReactNode, files: string[], defaultSelected?: string, maxLines?: number}) {
+  let allFiles = getFiles(files);
   return (
-    <Tabs key={files.join('|')} aria-label="Files" defaultSelectedKey="example" density="compact">
+    <Tabs
+      key={files.join('|')}
+      aria-label="Files"
+      defaultSelectedKey={defaultSelected || (children ? 'example' : undefined)}
+      density="compact">
       <TabList styles={style({marginBottom: 20})}>
         {children && <Tab id="example">Example</Tab>}
         {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
       </TabList>
       {children && <TabPanel id="example">{children}</TabPanel>}
-      {files.map(file => <TabPanel key={file} id={file}><File filename={file} /></TabPanel>)}
+      {files.map(file => <TabPanel key={file} id={file}><File filename={file} maxLines={maxLines} files={allFiles} /></TabPanel>)}
     </Tabs>
   );
 }
 
-export function File({filename}: {filename: string}) {
-  let contents = fs.readFileSync('../../../' + filename, 'utf8');
+export function File({filename, maxLines, files}: {filename: string, maxLines?: number, files?: {[name: string]: string}}) {
+  let contents = fs.readFileSync(path.isAbsolute(filename) ? filename : '../../../' + filename, 'utf8').replace(/(vanilla-starter|tailwind-starter)\//g, './');
   return (
-    <CodePlatter>
-      <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false}>{contents}</TruncatedCode>
+    <CodePlatter files={files}>
+      <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>{contents}</TruncatedCode>
     </CodePlatter>
   );
 }
 
 // Reads files, parses imports, and loads recursively.
 export function getFiles(files: string[]) {
-  let queue: string[] = [...files];
+  files = findAllFiles(files);
   let fileContents = {};
+  for (let file of files) {
+    let name = path.basename(file);
+    let contents = fs.readFileSync(file, 'utf8');
+    fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+  }
+  
+  return fileContents;
+}
+
+function findAllFiles(files: string[]) {
+  let queue: string[] = [...files];
+  let allFiles = new Map();
   for (let i = 0; i < queue.length; i++) {
     let file = path.isAbsolute(queue[i]) ? queue[i] : path.resolve('../../../' + queue[i]);
     if (path.extname(file) === '') {
@@ -170,7 +189,7 @@ export function getFiles(files: string[]) {
 
     let name = path.basename(file);
     let contents = fs.readFileSync(file, 'utf8');
-    fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+    allFiles.set(name, file);
 
     for (let [, specifier] of contents.matchAll(/import(?:.|\n)+?['"](.+)['"]/g)) {
       specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
@@ -179,11 +198,20 @@ export function getFiles(files: string[]) {
       }
 
       let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : specifier;
-      if (!fileContents[path.basename(resolved)]) {
+      if (!allFiles.has(path.basename(resolved))) {
         queue.push(resolved);
       }
     }
   }
-  
-  return fileContents;
+
+  let providedFiles = files.map(f => {
+    let name = path.basename(f);
+    let res = allFiles.get(name)!;
+    allFiles.delete(name);
+    return res;
+  });
+
+  let addedFiles = [...allFiles.values()].sort()
+
+  return [...providedFiles, ...addedFiles];
 }
