@@ -77,13 +77,15 @@ export function SearchMenu(props: SearchMenuProps) {
         const title = page.tableOfContents?.[0]?.title || name;
         const section: string = (page.exports?.section as string) || 'Components';
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
+        const description: string = page.exports?.description;
 
         return {
           id: name,
           name: title,
           href: page.url,
           section,
-          tags
+          tags,
+          description
         };
       });
 
@@ -314,7 +316,8 @@ export function SearchMenu(props: SearchMenuProps) {
                   items={selectedItems.map(item => ({
                     id: item.id,
                     name: item.name,
-                    href: item.href ?? `/${tab.id}/${item.name}.html`
+                    href: item.href ?? `/${tab.id}/${item.name}.html`,
+                    description: item.description
                   }))}
                   ariaLabel={selectedSectionName}
                   renderEmptyState={() => (

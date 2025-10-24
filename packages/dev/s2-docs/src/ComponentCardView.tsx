@@ -10,7 +10,8 @@ import {ComponentCard} from './ComponentCard';
 export interface ComponentCardItem {
   id: string,
   name: string,
-  href: string
+  href: string,
+  description?: string
 }
 
 interface ComponentCardGridProps {
@@ -26,7 +27,7 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
   return (
     <CardView aria-label={ariaLabel} onAction={onAction} styles={styles} renderEmptyState={renderEmptyState}>
       <Collection items={items}>
-        {(item) => <ComponentCard id={item.id} name={item.name.trim()} href={item.href} />}
+        {(item) => <ComponentCard id={item.id} name={item.name.trim()} href={item.href} description={item.description} />}
       </Collection>
     </CardView>
   );

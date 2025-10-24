@@ -267,14 +267,15 @@ function getDefaultIllustration(href: string) {
 
 interface ComponentCardProps extends Omit<CardProps, 'children'> {
   name: string,
-  href: string
+  href: string,
+  description?: string
 }
 
-export function ComponentCard({id, name, href, size, ...otherProps}: ComponentCardProps) {
+export function ComponentCard({id, name, href, description, size, ...otherProps}: ComponentCardProps) {
   let IllustrationComponent = componentIllustrations[name] || getDefaultIllustration(href);
   let overrides = propOverrides[name] || {};
   let preview;
-  if (href.startsWith('/react-aria/examples/')) {
+  if (href.startsWith('/react-aria/examples/') && !href.endsWith('index.html')) {
     preview = <ExampleImage name={href} />;
   } else {
     preview = (
@@ -299,6 +300,7 @@ export function ComponentCard({id, name, href, size, ...otherProps}: ComponentCa
       </CardPreview>
       <Content>
         <Text slot="title">{name}</Text>
+        {description && <Text slot="description">{description}</Text>}
       </Content>
     </Card>
   );
