@@ -110,17 +110,15 @@ export function SearchMenu(props: SearchMenuProps) {
     });
   }, [transformedComponents]);
 
-  const [selectedSectionId, setSelectedSectionId] = useState<string>('components');
+  const [selectedSectionId, setSelectedSectionId] = useState<string>(() => currentPage.exports?.section?.toLowerCase() || 'components');
   const prevSearchWasEmptyRef = useRef<boolean>(true);
 
   // Ensure selected section is valid for the current library
-  useEffect(() => {
-    const baseIds = sections.map(s => s.id);
-    const sectionIds = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
-    if (!selectedSectionId || !sectionIds.includes(selectedSectionId)) {
-      setSelectedSectionId(sectionIds[0] || 'components');
-    }
-  }, [selectedLibrary, sections, selectedSectionId, searchValue]);
+  const baseIds = sections.map(s => s.id);
+  const sectionIds = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
+  if (!selectedSectionId || !sectionIds.includes(selectedSectionId)) {
+    setSelectedSectionId(sectionIds[0] || 'components');
+  }
 
   // When search starts, auto-select the All tag.
   useEffect(() => {

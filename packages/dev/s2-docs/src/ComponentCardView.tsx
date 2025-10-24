@@ -27,7 +27,7 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
   return (
     <CardView aria-label={ariaLabel} onAction={onAction} styles={styles} renderEmptyState={renderEmptyState}>
       <Collection items={items}>
-        {(item) => <ComponentCard id={item.id} name={item.name.trim()} href={item.href} description={item.description} />}
+        {(item) => <ComponentCard id={item.id} name={item.name.trim()} href={item.href} description={item.description} size={size} />}
       </Collection>
     </CardView>
   );
