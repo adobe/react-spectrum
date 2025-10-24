@@ -4374,7 +4374,7 @@ __metadata:
     "@parcel/config-default": "npm:^2.16.0"
     "@parcel/core": "npm:^2.16.0"
     "@parcel/resolver-storybook": "npm:>=0.0.0"
-    "@parcel/transformer-js": "npm:^2.16.0"
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.16.0"
     "@parcel/transformer-storybook": "npm:>=0.0.2"
   languageName: unknown
@@ -5104,7 +5104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-js@npm:2.16.0, @parcel/transformer-js@npm:^2.15.4, @parcel/transformer-js@npm:^2.16.0":
+"@parcel/transformer-js@npm:2.16.0":
   version: 2.16.0
   resolution: "@parcel/transformer-js@npm:2.16.0"
   dependencies:
@@ -5122,6 +5122,27 @@ __metadata:
   peerDependencies:
     "@parcel/core": ^2.16.0
   checksum: 10c0/151e6560e3f30a21884197fefc4e7a996a88517781e23a0e86a69da0beaa290422e0e701951da001456e613cd4b538e360d8ac1478a0d6c6f596c47ab0138714
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch":
+  version: 2.16.0
+  resolution: "@parcel/transformer-js@patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch::version=2.16.0&hash=648105"
+  dependencies:
+    "@parcel/diagnostic": "npm:2.16.0"
+    "@parcel/plugin": "npm:2.16.0"
+    "@parcel/rust": "npm:2.16.0"
+    "@parcel/source-map": "npm:^2.1.1"
+    "@parcel/utils": "npm:2.16.0"
+    "@parcel/workers": "npm:2.16.0"
+    "@swc/helpers": "npm:^0.5.0"
+    browserslist: "npm:^4.24.5"
+    nullthrows: "npm:^1.1.1"
+    regenerator-runtime: "npm:^0.14.1"
+    semver: "npm:^7.7.1"
+  peerDependencies:
+    "@parcel/core": ^2.16.0
+  checksum: 10c0/372a80ba0d3b2ceb38c805e1eaac5dc6198de865c7adb37c58f30d8aa9dcfc95370f605c4a362f4687f337da62b7b269bfebe6d52226fc8dfb1c3337d0e9d60b
   languageName: node
   linkType: hard
 
@@ -7552,7 +7573,7 @@ __metadata:
     "@parcel/plugin": "npm:^2.16.0"
     "@parcel/reporter-cli": "npm:^2.16.0"
     "@parcel/resolver-default": "npm:^2.16.0"
-    "@parcel/transformer-js": "npm:^2.16.0"
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch"
     "@parcel/transformer-raw": "npm:^2.16.0"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.16.0"
     "@react-spectrum/parcel-namer-s2": "npm:^0.3.2"
@@ -27103,7 +27124,7 @@ __metadata:
     "@parcel/config-default": "npm:^2.15.4"
     "@parcel/config-webextension": "npm:^2.15.4"
     "@parcel/core": "npm:^2.15.4"
-    "@parcel/transformer-js": "npm:^2.15.4"
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch"
     parcel: "npm:^2.15.4"
   languageName: unknown
   linkType: soft
