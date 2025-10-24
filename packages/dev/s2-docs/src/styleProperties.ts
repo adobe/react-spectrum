@@ -31,22 +31,12 @@ const sizingProperties = new Set([
   'flexBasis', 'containIntrinsicWidth', 'containIntrinsicHeight'
 ]);
 
-// Manually defined property values from spectrum-theme.ts
-// These are extracted from the theme definition
+// manually defined
 const propertyValues: {[key: string]: string[]} = {
   display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'],
+  // TODO: this doesn't actually seem to reflect the actual usage?
   top: ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96', '-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96', 'auto', 'full'],
-  position: ['absolute', 'fixed', 'relative', 'sticky', 'static'],
-  width: ['auto', 'full', 'min', 'max', 'fit', 'screen'],
-  height: ['auto', 'full', 'min', 'max', 'fit', 'screen'],
-  minWidth: ['auto', 'full', 'min', 'max', 'fit', 'screen'],
-  minHeight: ['auto', 'full', 'min', 'max', 'fit', 'screen'],
-  maxWidth: ['auto', 'full', 'min', 'max', 'fit', 'screen', 'none'],
-  maxHeight: ['auto', 'full', 'min', 'max', 'fit', 'screen', 'none'],
-  flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'],
-  justifyContent: ['normal', 'start', 'end', 'center', 'space-between', 'space-around', 'space-evenly', 'stretch'],
-  alignItems: ['start', 'end', 'center', 'baseline', 'stretch'],
-  gap: ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96', 'text-to-control', 'text-to-visual', 'edge-to-text', 'pill']
+  height: ['auto', 'full', 'min', 'max', 'fit', 'screen']
 };
 
 export function getPropertyDefinition(propertyName: string): StyleMacroPropertyDefinition {
