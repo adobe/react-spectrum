@@ -259,7 +259,7 @@ export function toTime(dateTime: CalendarDateTime | ZonedDateTime): Time {
 }
 
 /** Converts a date from one calendar system to another. */
-export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
+export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar, constrainDay?: boolean): T {
   if (isEqualCalendar(date.calendar, calendar)) {
     return date;
   }
@@ -271,7 +271,7 @@ export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calenda
   copy.year = calendarDate.year;
   copy.month = calendarDate.month;
   copy.day = calendarDate.day;
-  constrain(copy);
+  constrain(copy, constrainDay);
   return copy;
 }
 
