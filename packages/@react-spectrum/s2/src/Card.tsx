@@ -95,11 +95,11 @@ let card = style({
     variant: {
       tertiary: {
         // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 1px ${color('gray-100')}]`,
-        isHovered: `[0 0 0 1px ${color('gray-200')}]`,
-        isFocusVisible: `[0 0 0 1px ${color('gray-200')}]`,
+        default: `[0 0 0 2px ${color('gray-100')}]`,
+        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
+        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
         isSelected: 'none',
-        forcedColors: '[0 0 0 1px ButtonBorder]'
+        forcedColors: '[0 0 0 2px ButtonBorder]'
       },
       quiet: 'none'
     }
