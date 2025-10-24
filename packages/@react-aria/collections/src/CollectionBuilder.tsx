@@ -228,7 +228,7 @@ const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(n
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   let dependencies = (ctx?.dependencies || []).concat(props.dependencies);
-  let idScope = props.idScope || ctx?.idScope;
+  let idScope = props.idScope ?? ctx?.idScope;
   let children = useCollectionChildren({
     ...props,
     idScope,

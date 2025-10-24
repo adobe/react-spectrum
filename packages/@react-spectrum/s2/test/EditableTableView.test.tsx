@@ -179,7 +179,6 @@ describe('TableView', () => {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -199,7 +198,6 @@ describe('TableView', () => {
                         align={column.align}
                         showDivider={column.showDivider}
                         onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
@@ -250,12 +248,13 @@ describe('TableView', () => {
       let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
       await user.tab();
       await user.keyboard('{ArrowRight}');
-      await user.keyboard('{Enter}');
-
-      let dialog = getByRole('dialog');
+      let dialogTrigger = document.activeElement! as HTMLElement;
+      let dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
+      await dialogTester.open();
+      let dialog = dialogTester.dialog;
       expect(dialog).toBeVisible();
 
-      let input = within(dialog).getByRole('textbox');
+      let input = within(dialog!).getByRole('textbox');
       expect(input).toHaveFocus();
 
       await user.keyboard('Apples Crisp');
@@ -271,18 +270,20 @@ describe('TableView', () => {
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{ArrowRight}');
-      await user.keyboard('{Enter}');
-
-      dialog = getByRole('dialog');
+      dialogTrigger = document.activeElement!  as HTMLElement;
+      dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
+      await dialogTester.open();
+      dialog = dialogTester.dialog;
+      // TODO: also weird that it is dialog.dialog?
       expect(dialog).toBeVisible();
 
-      let selectTester = testUtilUser.createTester('Select', {root: dialog});
+      let selectTester = testUtilUser.createTester('Select', {root: dialog!});
       expect(selectTester.trigger).toHaveFocus();
       await selectTester.selectOption({option: 'Steven'});
       act(() => {jest.runAllTimers();});
       await user.tab();
       await user.tab();
-      expect(within(dialog).getByRole('button', {name: 'Save'})).toHaveFocus();
+      expect(within(dialog!).getByRole('button', {name: 'Save'})).toHaveFocus();
       await user.keyboard('{Enter}');
 
       act(() => {jest.runAllTimers();});

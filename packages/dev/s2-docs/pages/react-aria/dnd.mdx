@@ -112,20 +112,21 @@ function DraggableCOMPONENT() {
 /* TODO: move into starter */
 .drag-preview {
   width: 150px;
-  padding: 4px 8px;
+  padding: var(--spacing-2);
+  padding-inline-start: var(--spacing-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: var(--spacing-1);
   background: var(--highlight-background);
   color: var(--highlight-foreground);
-  border-radius: 4px;
+  border-radius: var(--radius);
 
   .badge {
     background: var(--highlight-foreground);
     color: var(--highlight-background);
-    padding: 0 8px;
-    border-radius: 4px;
+    padding: 0 var(--spacing-2);
+    border-radius: var(--radius-sm);
   }
 }
 ```

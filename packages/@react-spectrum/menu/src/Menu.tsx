@@ -54,12 +54,15 @@ export const Menu = React.forwardRef(function Menu<T extends object>(props: Spec
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps.ref, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
-  let [prevPopoverContainer, setPrevPopoverContainer] = useState<HTMLElement | null>(null);
-  if (popoverContainer && prevPopoverContainer !== popoverContainer && leftOffset.left === 0) {
-    let {left} = popoverContainer.getBoundingClientRect();
-    setLeftOffset({left: -1 * left});
-    setPrevPopoverContainer(popoverContainer);
-  }
+  let prevPopoverContainer = useRef<HTMLElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
+      prevPopoverContainer.current = popoverContainer;
+      let {left} = popoverContainer.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
+  }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
   let nextMenuLevelKey = rootMenuTriggerState?.expandedKeysStack[menuLevel + 1];
