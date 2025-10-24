@@ -13,7 +13,7 @@
     "@parcel/config-default": "^2.16.0",
     "@parcel/core": "^2.16.0",
     "@parcel/resolver-storybook": ">=0.0.0",
-    "@parcel/transformer-js": "^2.16.0",
+    "@parcel/transformer-js": "patch:@parcel/transformer-js@npm%3A2.16.0#~/.yarn/patches/@parcel-transformer-js-npm-2.16.0-ae71b060cb.patch",
     "@parcel/transformer-react-refresh-wrap": "^2.16.0",
     "@parcel/transformer-storybook": ">=0.0.2"
   },
