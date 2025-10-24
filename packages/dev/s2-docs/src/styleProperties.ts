@@ -34,7 +34,6 @@ const sizingProperties = new Set([
 // manually defined
 const propertyValues: {[key: string]: string[]} = {
   display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'],
-  // TODO: this doesn't actually seem to reflect the actual usage?
   top: ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96', '-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96', 'auto', 'full'],
   height: ['auto', 'full', 'min', 'max', 'fit', 'screen']
 };

@@ -535,7 +535,7 @@ const minFontSize = 10;
 const maxFontSize = 32;
 const lineHeightCalc = `round(1em * (${minFontScale} + (1 - ((min(${maxFontSize}, ${fontSizeCalc}) - ${minFontSize})) / ${maxFontSize - minFontSize}) * ${(maxFontScale - minFontScale).toFixed(2)}), 2px)`;
 
-export const themeConfig = {
+export const style = createTheme({
   properties: {
     // colors
     color: new SpectrumColorProperty('color', {
@@ -1044,6 +1044,4 @@ export const themeConfig = {
     xl: `@media (min-width: ${pxToRem(1280)})`,
     '2xl': `@media (min-width: ${pxToRem(1536)})`
   }
-} as const;
-
-export const style = createTheme(themeConfig);
+});
