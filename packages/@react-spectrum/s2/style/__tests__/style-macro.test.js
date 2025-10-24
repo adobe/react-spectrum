@@ -142,13 +142,13 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gw12 pg12 -macro$1xxglvk"`);
+    expect(js()).toMatchInlineSnapshot('"  gw12 pg12 -macro$1xxglvk"');
     expect(overrides).toMatchInlineSnapshot(`
 {
   "toString": [Function],
 }
 `);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb12 -macro$Su6dhb pg12 -macro$15fuj6j"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 -macro$Su6dhb pg12 -macro$15fuj6j"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -163,13 +163,13 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B12 __Ya12 -macro$1nf427l"`);
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12 -macro$1nf427l"');
     expect(overrides).toMatchInlineSnapshot(`
 {
   "toString": [Function],
 }
 `);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_7PloMd-D12 __Ya12 -macro$ZCkud -macro$1q3as53"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12 -macro$ZCkud -macro$1q3as53"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -184,13 +184,13 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  Tk12 Qk12 Sk12 Rk12 -macro$1w5dwn"`);
+    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12 -macro$1w5dwn"');
     expect(overrides).toMatchInlineSnapshot(`
 {
   "toString": [Function],
 }
 `);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Tm12 Qm12 Sm12 Rm12 -macro$FQziuc -macro$1nq030k"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12 -macro$FQziuc -macro$1nq030k"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -205,13 +205,13 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot(`"  gE12 -macro$nl2mms"`);
+    expect(js()).toMatchInlineSnapshot('"  gE12 -macro$nl2mms"');
     expect(overrides).toMatchInlineSnapshot(`
 {
   "toString": [Function],
 }
 `);
-    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk12 -macro$pDx0l gE12 -macro$v8n95n"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 -macro$pDx0l gE12 -macro$v8n95n"');
   });
 
   it('should support runtime conditions', () => {
@@ -265,9 +265,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  gH12 pt12 -macro$179ovcu"`);
-    expect(js({ isHovered: true })).toMatchInlineSnapshot(`"  gF12 po12 -macro$1i83kjb"`);
-    expect(js({ isPressed: true })).toMatchInlineSnapshot(`"  gE12 pm12 -macro$1npaxjo"`);
+    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12 -macro$179ovcu"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12 -macro$1i83kjb"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12 -macro$1npaxjo"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -308,10 +308,10 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot(`"  gH12 -macro$nl2p5j"`);
-    expect(js({ isHovered: true })).toMatchInlineSnapshot(`"  gF12 -macro$nl2nh1"`);
-    expect(js({ isSelected: true })).toMatchInlineSnapshot(`"  g_h12 -macro$1w0viba"`);
-    expect(js({ isSelected: true, isHovered: true })).toMatchInlineSnapshot(`"  g312 -macro$nl27ia"`);
+    expect(js({})).toMatchInlineSnapshot('"  gH12 -macro$nl2p5j"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 -macro$nl2nh1"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12 -macro$1w0viba"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312 -macro$nl27ia"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -325,9 +325,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({ variant: 'accent' })).toMatchInlineSnapshot(`"  gY12 -macro$nl33fs"`);
-    expect(js({ variant: 'primary' })).toMatchInlineSnapshot(`"  gjQquMe12 -macro$enz676"`);
-    expect(js({ variant: 'secondary' })).toMatchInlineSnapshot(`"  gw12 -macro$nl3sna"`);
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12 -macro$nl33fs"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12 -macro$enz676"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12 -macro$nl3sna"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -361,8 +361,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot(`"  plb12 -macro$1w7i5ba"`);
-    expect(js({ isSelected: true })).toMatchInlineSnapshot(`"  ple12 -macro$1w7i7u1"`);
+    expect(js({})).toMatchInlineSnapshot('"  plb12 -macro$1w7i5ba"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro$1w7i7u1"');
   });
 
   it('should expand shorthand properties to longhands', () => {

@@ -25,7 +25,7 @@ Inspect an element on the page to open dev tools and go to the Style Macro panel
 
 If the panel isn't updating with styles, try closing the dev tools and reopening it.
 
-If the extension doesn't appear to have the latest code, try closing the dev tools and reopening it.
+If the extension doesn't appear to have the latest code, try closing the dev tools and reopening it. You may also want to go to the extensions page and either "refresh" or remove and re-add the extension.
 
 If every tab you have open (or many of them) reload when you make local changes to the extension, then go into the extension settings and limit it to `localhost` or something appropriate.
 
