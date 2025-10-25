@@ -330,7 +330,7 @@ const padding = {
   ...relativeSpacing
 };
 
-export function size(this: MacroContext | void, px: number): string {
+export function size(this: MacroContext | void, px: number): `calc(${string})` {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
@@ -767,9 +767,6 @@ export const style = createTheme({
     }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
       return {
-        // Set font-variation-settings in addition to font-weight to work around typekit issue.
-        // (This was fixed, but leaving for backward compatibility for now.)
-        fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
         fontWeight: value as any,
         fontSynthesisWeight: 'none'
       };

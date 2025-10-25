@@ -212,7 +212,6 @@ function MobileNav({pages, currentPage}: PageProps) {
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
-  let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
   let prevSearchWasEmptyRef = useRef<boolean>(true);
   let scrollContainerRef = useRef<HTMLDivElement>(null);
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(getLibraryFromPage(currentPage));
@@ -245,20 +244,13 @@ function MobileNav({pages, currentPage}: PageProps) {
     return sectionArray;
   }, [getSectionsForLibrary, selectedLibrary]);
 
+  let [selectedSection, setSelectedSection] = useState<string | undefined>(() => currentPage.exports?.section || currentLibrarySectionArray[0]);
 
-  useEffect(() => {
-    // Auto-select first section initially or when library changes
-    if (currentLibrarySectionArray.length > 0 && !selectedSection) {
-      setSelectedSection(currentLibrarySectionArray[0]);
-    }
-  }, [currentLibrarySectionArray, selectedSection]);
-
-  // Auto-select first section when switching libraries (if not focused on search field)
-  useEffect(() => {
-    if (currentLibrarySectionArray.length > 0 && !searchFocused) {
-      setSelectedSection(currentLibrarySectionArray[0]);
-    }
-  }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
+  // Ensure selected section is valid for the current library
+  const sectionIds = searchValue.trim().length > 0 ? ['all', ...currentLibrarySectionArray] : currentLibrarySectionArray;
+  if (!selectedSection || !sectionIds.includes(selectedSection)) {
+    setSelectedSection(currentLibrarySectionArray[0] || 'Components');
+  }
 
   let getOrderedLibraries = () => {
     let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label, icon: TAB_DEFS[id].icon}));
@@ -334,7 +326,7 @@ function MobileNav({pages, currentPage}: PageProps) {
 
     return filteredPages
       .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -343,7 +335,7 @@ function MobileNav({pages, currentPage}: PageProps) {
     let filteredPages = filterPages(allPages, searchValue);
     return filteredPages
       .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
   };
 
   let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -403,14 +395,6 @@ function MobileNav({pages, currentPage}: PageProps) {
     }
     return base;
   }, [currentLibrarySections, searchValue]);
-
-  useEffect(() => {
-    let baseIds = currentLibrarySections;
-    let ids = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
-    if (!selectedSection || !ids.includes(selectedSection)) {
-      setSelectedSection(ids[0]);
-    }
-  }, [currentLibrarySections, searchValue, selectedSection]);
 
   // Auto-select All when search starts
   useEffect(() => {
@@ -477,6 +461,7 @@ function MobileNav({pages, currentPage}: PageProps) {
                     aria-label="Navigation sections"
                     selectionMode="single"
                     selectedKeys={selectedSection ? [selectedSection] : []}
+                    disallowEmptySelection
                     onSelectionChange={handleTagSelection}
                     UNSAFE_style={{whiteSpace: 'nowrap'}}
                     items={tags}>

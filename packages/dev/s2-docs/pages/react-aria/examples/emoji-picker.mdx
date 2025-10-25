@@ -1,0 +1,32 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {ComponentList} from '../../../src/ComponentCard';
+
+export const hideNav = true;
+export const section = 'Examples';
+export const keywords = ['react-aria', 'example', 'select', 'popover', 'autocomplete', 'search', 'searchfield', 'virtualizer', 'listbox'];
+export const description = 'With autocomplete, virtualized scrolling, and keyboard navigation.';
+
+# Emoji Picker
+
+<PageDescription>An emoji picker with autocomplete, virtualized scrolling, and arrow key navigation.</PageDescription>
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/examples/EmojiPicker/EmojiPicker.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/EmojiPicker/EmojiPicker.css']} type="vanilla" hideExampleCode expanded includeAllImports
+"use client";
+import {EmojiPicker} from './EmojiPicker/EmojiPicker';
+
+<EmojiPicker />
+```
+
+## Components
+
+<ComponentList
+  pages={props.pages}
+  components={[
+    'react-aria/ListBox.html',
+    'react-aria/Popover.html',
+    'react-aria/SearchField.html',
+    'react-aria/Select.html',
+    'react-aria/Virtualizer.html'
+  ]} />

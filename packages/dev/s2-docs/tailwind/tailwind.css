@@ -3,6 +3,8 @@
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source "../../../../starters/tailwind/src/*.{ts,tsx}";
 @source "../pages/**/*.mdx";
+@source "../pages/react-aria/examples/plants/*.tsx";
+@source "../pages/react-aria/examples/tabs/*.tsx";
 @plugin 'tailwindcss-react-aria-components';
 @plugin 'tailwindcss-animate';
 

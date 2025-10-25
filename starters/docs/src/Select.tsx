@@ -5,10 +5,10 @@ import {
   SelectProps as AriaSelectProps,
   SelectValue,
   ValidationResult,
-  composeRenderProps
+  ListBoxProps
 } from 'react-aria-components';
 import {Button} from './Button';
-import {DropdownItem, ListBox} from './ListBox';
+import {DropdownItem, DropdownListBox} from './ListBox';
 import {ChevronDown} from 'lucide-react';
 import {Popover} from './Popover';
 import {Label, FieldError, Description} from './Form';
@@ -38,14 +38,18 @@ export function Select<T extends object>(
         </Button>
         {description && <Description>{description}</Description>}
         <FieldError>{errorMessage}</FieldError>
-        <Popover hideArrow>
-          <ListBox items={items}>
+        <Popover hideArrow className="select-popover">
+          <SelectListBox items={items}>
             {children}
-          </ListBox>
+          </SelectListBox>
         </Popover>
       </AriaSelect>
     )
   );
+}
+
+export function SelectListBox<T extends object>(props: ListBoxProps<T>) {
+  return <DropdownListBox {...props} />;
 }
 
 export function SelectItem(props: ListBoxItemProps) {

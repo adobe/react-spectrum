@@ -18,19 +18,7 @@
   }
 }
 
-.react-aria-Popover[data-trigger=ComboBox] {
+.combobox-popover[data-trigger=ComboBox] {
   width: var(--trigger-width);
   padding: 0;
-
-  .react-aria-ListBox {
-    display: block;
-    width: unset;
-    max-height: inherit;
-    min-height: unset;
-    border: none;
-
-    .react-aria-Header {
-      padding-left: 1.374625rem;
-    }
-  }
 }

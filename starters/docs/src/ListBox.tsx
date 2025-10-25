@@ -42,6 +42,19 @@ export function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>) 
   return <AriaListBoxSection {...props} />;
 }
 
+
+export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
+  return (
+    <AriaListBoxLoadMoreItem {...props}>
+      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+    </AriaListBoxLoadMoreItem>
+  );
+}
+
+export function DropdownListBox<T extends object>(props: ListBoxProps<T>) {
+  return <AriaListBox {...props} className="dropdown-listbox" />
+}
+
 export function DropdownItem(props: ListBoxItemProps) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
@@ -51,13 +64,5 @@ export function DropdownItem(props: ListBoxItemProps) {
         {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
       </>))}
     </ListBoxItem>
-  );
-}
-
-export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
-  return (
-    <AriaListBoxLoadMoreItem {...props}>
-      <ProgressCircle isIndeterminate aria-label="Loading more..." />
-    </AriaListBoxLoadMoreItem>
   );
 }

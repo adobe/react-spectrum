@@ -7,6 +7,7 @@ import {
   Row as AriaRow,
   Table as AriaTable,
   TableHeader as AriaTableHeader,
+  TableBody as AriaTableBody,
   Button,
   CellProps,
   Collection,
@@ -18,7 +19,8 @@ import {
   TableHeaderProps,
   TableProps as AriaTableProps,
   composeRenderProps,
-  useTableOptions
+  useTableOptions,
+  TableBodyProps
 } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
@@ -32,7 +34,7 @@ interface TableProps extends Omit<AriaTableProps, 'className'> {
 export function Table(props: TableProps) {
   return (
     <ResizableTableContainer onScroll={props.onScroll} className={twMerge('w-full max-h-[320px] overflow-auto scroll-pt-[2.281rem] relative bg-white dark:bg-zinc-900 box-border border border-gray-300 dark:border-zinc-600 rounded-lg font-sans', props.className)}>
-      <AriaTable {...props} className="border-separate border-spacing-0 box-border overflow-hidden" />
+      <AriaTable {...props} className="border-separate border-spacing-0 box-border overflow-hidden has-[>[data-empty]]:h-full" />
     </ResizableTableContainer>
   );
 }
@@ -91,6 +93,14 @@ export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
         {props.children}
       </Collection>
     </AriaTableHeader>
+  );
+}
+
+export function TableBody<T extends object>(props: TableBodyProps<T>) {
+  return (
+    <AriaTableBody
+      {...props}
+      className="empty:italic empty:text-center empty:text-sm" />
   );
 }
 

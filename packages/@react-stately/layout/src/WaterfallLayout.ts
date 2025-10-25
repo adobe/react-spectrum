@@ -48,10 +48,12 @@ export interface WaterfallLayoutOptions {
 
 class WaterfallLayoutInfo extends LayoutInfo {
   column = 0;
+  index = 0;
 
   copy(): WaterfallLayoutInfo {
     let res = super.copy() as WaterfallLayoutInfo;
     res.column = this.column;
+    res.index = this.index;
     return res;
   }
 }
@@ -123,18 +125,19 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     // Setup an array of column heights
     let columnHeights = Array(numColumns).fill(minSpace.height);
     let newLayoutInfos = new Map();
+    let index = 0;
     let addNode = (key: Key, node: Node<T>) => {
       let oldLayoutInfo = this.layoutInfos.get(key);
       let height = itemHeight;
       let estimatedSize = true;
       if (oldLayoutInfo) {
-        height = oldLayoutInfo.rect.height;
+        height = oldLayoutInfo.rect.height / oldLayoutInfo.rect.width * itemWidth;
         estimatedSize = invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize || oldLayoutInfo.content !== node;
       }
 
       // Figure out which column to place the item in, and compute its position.
       // Preserve the previous column index so items don't jump around during resizing unless the number of columns changed.
-      let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
+      let prevColumn = numColumns === this.numColumns && oldLayoutInfo && oldLayoutInfo.index === index && oldLayoutInfo.rect.y < this.virtualizer!.visibleRect.maxY ? oldLayoutInfo.column : undefined;
       let column = prevColumn ?? columnHeights.reduce((minIndex, h, i) => h < columnHeights[minIndex] ? i : minIndex, 0);
       let x = horizontalSpacing + column * (itemWidth + horizontalSpacing) + this.margin;
       let y = columnHeights[column];
@@ -145,6 +148,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       layoutInfo.allowOverflow = true;
       layoutInfo.content = node;
       layoutInfo.column = column;
+      layoutInfo.index = index++;
       newLayoutInfos.set(key, layoutInfo);
 
       columnHeights[column] += layoutInfo.rect.height + minSpace.height;
