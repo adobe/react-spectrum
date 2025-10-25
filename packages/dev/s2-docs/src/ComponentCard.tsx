@@ -275,7 +275,7 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
   let IllustrationComponent = componentIllustrations[name] || getDefaultIllustration(href);
   let overrides = propOverrides[name] || {};
   let preview;
-  if (href.startsWith('/react-aria/examples/') && !href.endsWith('index.html')) {
+  if (href.includes('react-aria/examples/') && !href.endsWith('index.html')) {
     preview = <ExampleImage name={href} />;
   } else {
     preview = (
