@@ -124,7 +124,7 @@ export default function SwipableList() {
   };
 
   return (
-    <div className="flex flex-col h-full max-h-[500px] sm:w-[400px] -mx-[14px] sm:mx-0">
+    <div className="flex flex-col h-full max-h-[500px] sm:w-[400px]">
       {/* Toolbar */}
       <div className="flex pb-4 justify-between">
         <Button
@@ -227,7 +227,7 @@ function ListItem({ id, children, textValue, onRemove }) {
             layout
             layoutDependency={selectionMode}
             transition={{ duration: 0.25 }}
-            className="relative flex items-center px-4 py-2 z-10">
+            className="relative flex items-center border-box px-4 py-2 z-10">
             {children}
           </motion.div>
           {selectionMode === "none" && (

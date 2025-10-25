@@ -5,7 +5,7 @@ import {CSSProperties} from 'react';
 
 const tabProps = tv({
   extend: focusRing,
-  base: 'relative flex items-center cursor-default rounded-full px-4 py-1.5 text-sm text-gray-900 dark:text-zinc-100 font-medium transition forced-color-adjust-none',
+  base: 'relative flex items-center cursor-default rounded-full px-3 py-1.5 text-sm text-gray-900 dark:text-zinc-100 font-medium transition forced-color-adjust-none',
   variants: {
     isDisabled: {
       true: 'text-gray-200 dark:text-zinc-600 forced-colors:text-[GrayText] selected:text-gray-300 dark:selected:text-zinc-500 forced-colors:selected:text-[HighlightText] selected:bg-gray-200 dark:selected:bg-zinc-600 forced-colors:selected:bg-[GrayText]'

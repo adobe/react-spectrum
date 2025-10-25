@@ -16,23 +16,21 @@ export function EmojiPicker() {
       <Button variant="secondary">
         <SelectValue />
       </Button>
-      <Popover placement="bottom">
+      <Popover placement="bottom" className="emoji-picker-popover">
         <Autocomplete filter={contains}>
-          <div className="emoji-picker-popover">
-            <SearchField aria-label="Search" placeholder="Search emoji" autoFocus />
-            <Virtualizer
-              layout={GridLayout}
-              layoutOptions={{
-                minItemSize: new Size(32, 32),
-                maxItemSize: new Size(32, 32),
-                minSpace: new Size(4, 4),
-                preserveAspectRatio: true,
-              }}>
-              <ListBox className="emoji-list" items={emojis} aria-label="Emoji list" layout="grid">
-                {(item) => <EmojiItem id={item.unicode} item={item} />}
-              </ListBox>
-            </Virtualizer>
-          </div>
+          <SearchField aria-label="Search" placeholder="Search emoji" autoFocus />
+          <Virtualizer
+            layout={GridLayout}
+            layoutOptions={{
+              minItemSize: new Size(32, 32),
+              maxItemSize: new Size(32, 32),
+              minSpace: new Size(4, 4),
+              preserveAspectRatio: true,
+            }}>
+            <ListBox className="emoji-list" items={emojis} aria-label="Emoji list" layout="grid">
+              {(item) => <EmojiItem id={item.unicode} item={item} />}
+            </ListBox>
+          </Virtualizer>
         </Autocomplete>
       </Popover>
     </Select>

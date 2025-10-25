@@ -13,7 +13,6 @@
   gap: 8px;
   width: 280px;
   height: 350px;
-  max-height: inherit;
   box-sizing: border-box;
 
   .react-aria-SearchField {

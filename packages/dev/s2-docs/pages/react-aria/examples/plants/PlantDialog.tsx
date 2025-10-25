@@ -15,7 +15,7 @@ import {useState} from 'react';
 export function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
   let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
   return (
-    <Dialog className="outline outline-0 relative">
+    <Dialog>
       {({close}) => (
         <>
           <Heading

@@ -28,8 +28,8 @@ function RippleButton(props) {
         setCoords({x: e.x, y: e.y});
       }}
       className={`
-        relative overflow-hidden
-        inline-flex items-center justify-center rounded-md bg-black/50 bg-clip-padding border border-white/20 px-6 py-4 text-white text-lg
+        relative overflow-hidden [-webkit-tap-highlight-color:transparent]
+        inline-flex items-center justify-center rounded-md bg-black/50 bg-clip-padding border border-white/20 px-6 py-4 font-sans text-white text-base
         hover:bg-black/60 pressed:bg-black/70 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75
       `}>
       {coords && (
@@ -48,7 +48,7 @@ function RippleButton(props) {
 }
 
 <div className="bg-linear-to-r from-teal-300 to-cyan-500 box-border p-12 w-full rounded-lg flex justify-center">
-  <RippleButton><Plane className="w-6 h-6" /> Book flight</RippleButton>
+  <RippleButton><Plane size={24} /> Book flight</RippleButton>
 </div>
 ```
 
