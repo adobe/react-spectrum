@@ -61,6 +61,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('1abc')).toBe(NaN);
     });
 
+    it('should return NaN for invalid grouping', function () {
+      expect(new NumberParser('en-US', {useGrouping: false}).parse('1234,7')).toBeNaN();
+      expect(new NumberParser('de-DE', {useGrouping: false}).parse('1234.7')).toBeNaN();
+    });
+
     describe('currency', function () {
       it('should parse without the currency symbol', function () {
         expect(new NumberParser('en-US', {currency: 'USD', style: 'currency'}).parse('10.50')).toBe(10.5);
@@ -370,6 +375,19 @@ describe('NumberParser', function () {
         const formattedOnce = formatter.format(0.0095);
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
+      it('should handle non-grouping in russian locale', () => {
+        let locale = 'ru-RU';
+        let options = {
+          style: 'percent',
+          useGrouping: false,
+          minimumFractionDigits: undefined,
+          maximumFractionDigits: undefined
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+        const formattedOnce = formatter.format(2.220446049250313e-16);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
     });
   });
 
@@ -404,6 +422,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('1,000,000')).toBe(true);
       expect(new NumberParser('en-US', {style: 'decimal'}).isValidPartialNumber('-1,000,000')).toBe(true);
+    });
+
+    it('should return false for invalid grouping', function () {
+      expect(new NumberParser('en-US', {useGrouping: false}).isValidPartialNumber('1234,7')).toBe(false);
+      expect(new NumberParser('de-DE', {useGrouping: false}).isValidPartialNumber('1234.7')).toBe(false);
     });
 
     it('should reject random characters', function () {
