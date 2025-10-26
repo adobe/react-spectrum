@@ -70,7 +70,7 @@ export class CalendarDate {
     this.year = year;
     this.month = month;
     this.day = day;
-    const constrainDay = args.shift() || 0;
+    const constrainDay = args.shift() || true;
 
     constrain(this, constrainDay);
   }
@@ -232,7 +232,7 @@ export class CalendarDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
-    const constrainDay = args.shift() || 0;
+    const constrainDay = args.shift() || true;
 
     constrain(this, constrainDay);
   }
@@ -349,7 +349,7 @@ export class ZonedDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
-    const constrainDay = args.shift() || 0;
+    const constrainDay = args.shift() || true;
 
     constrain(this, constrainDay);
   }
