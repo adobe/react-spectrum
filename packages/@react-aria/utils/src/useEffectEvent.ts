@@ -32,7 +32,6 @@ function useLegacyEffectEvent<T extends Function>(fn?: T): T {
   }, []);
 }
 
-export function useEffectEvent<T extends Function>(fn?: T): T {
-  let noop = useCallback(() => {}, []);
-  return useModernEffectEvent(fn ?? noop);
+export function useEffectEvent<T extends Function>(fn: T): T {
+  return useModernEffectEvent(fn);
 }
