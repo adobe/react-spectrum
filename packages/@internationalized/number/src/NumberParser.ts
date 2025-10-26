@@ -132,17 +132,13 @@ class NumberParserImpl {
   }
 
   parse(value: string) {
-    let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
     let fullySanitizedValue = this.sanitize(value);
 
-    // Return NaN if there is a group symbol but useGrouping is false
-    if (!isGroupSymbolAllowed && this.symbols.group && fullySanitizedValue.includes(this.symbols.group)) {
-      return NaN;
-    } else if (this.symbols.group) {
-      fullySanitizedValue = fullySanitizedValue.replaceAll(this.symbols.group!, '');
+    if (this.symbols.group) {
+      // Remove group characters, and replace decimal points and numerals with ASCII values.
+      fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '');
     }
-
     if (this.symbols.decimal) {
       fullySanitizedValue = fullySanitizedValue.replace(this.symbols.decimal!, '.');
     }
@@ -195,11 +191,11 @@ class NumberParserImpl {
     if (this.options.currencySign === 'accounting' && CURRENCY_SIGN_REGEX.test(value)) {
       newValue = -1 * newValue;
     }
+
     return newValue;
   }
 
   sanitize(value: string) {
-    let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     // If the value is only a unit and it matches one of the formatted numbers where the value is part of the unit and doesn't have any numerals, then
     // return the known value for that case.
     if (this.symbols.noNumeralUnits.length > 0 && this.symbols.noNumeralUnits.find(obj => obj.unit === value)) {
@@ -224,6 +220,7 @@ class NumberParserImpl {
       value = value.replace(this.symbols.literals, '');
     }
 
+
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
     if (this.symbols.minusSign) {
@@ -237,27 +234,27 @@ class NumberParserImpl {
         value = replaceAll(value, ',', this.symbols.decimal);
         value = replaceAll(value, String.fromCharCode(1548), this.symbols.decimal);
       }
-      if (this.symbols.group && isGroupSymbolAllowed) {
+      if (this.symbols.group) {
         value = replaceAll(value, '.', this.symbols.group);
       }
     }
 
     // In some locale styles, such as swiss currency, the group character can be a special single quote
     // that keyboards don't typically have. This expands the character to include the easier to type single quote.
-    if (this.symbols.group === '’' && value.includes("'") && isGroupSymbolAllowed) {
+    if (this.symbols.group === '’' && value.includes("'")) {
       value = replaceAll(value, "'", this.symbols.group);
     }
 
     // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
     // so allow space and non-breaking space as a group char as well
-    if (this.options.locale === 'fr-FR' && this.symbols.group && isGroupSymbolAllowed) {
+    if (this.options.locale === 'fr-FR' && this.symbols.group) {
       value = replaceAll(value, ' ', this.symbols.group);
       value = replaceAll(value, /\u00A0/g, this.symbols.group);
     }
 
     // If there are multiple decimal separators and only one group separator, swap them
     if (this.symbols.decimal
-      && (this.symbols.group && isGroupSymbolAllowed)
+      && this.symbols.group
       && [...value.matchAll(new RegExp(escapeRegex(this.symbols.decimal), 'g'))].length > 1
       && [...value.matchAll(new RegExp(escapeRegex(this.symbols.group), 'g'))].length <= 1) {
       value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
@@ -266,7 +263,7 @@ class NumberParserImpl {
     // If the decimal separator is before the group separator, swap them
     let decimalIndex = value.indexOf(this.symbols.decimal!);
     let groupIndex = value.indexOf(this.symbols.group!);
-    if (this.symbols.decimal && (this.symbols.group && isGroupSymbolAllowed) && decimalIndex > -1 && groupIndex > -1 && decimalIndex < groupIndex) {
+    if (this.symbols.decimal && this.symbols.group && decimalIndex > -1 && groupIndex > -1 && decimalIndex < groupIndex) {
       value = swapCharacters(value, this.symbols.decimal, this.symbols.group);
     }
 
@@ -289,13 +286,13 @@ class NumberParserImpl {
     let areOnlyGroupAndDecimalSymbols = [...nonDigits].every(char => allPossibleGroupAndDecimalSymbols.has(char));
     let oneSymbolNotMatching = (
       nonDigits.size === 2
-      && (this.symbols.group && isGroupSymbolAllowed)
+      && this.symbols.group
       && this.symbols.decimal
       && (!nonDigits.has(this.symbols.group!) || !nonDigits.has(this.symbols.decimal!))
     );
     let bothSymbolsNotMatching = (
       nonDigits.size === 2
-      && (this.symbols.group && isGroupSymbolAllowed)
+      && this.symbols.group
       && this.symbols.decimal
       && !nonDigits.has(this.symbols.group!) && !nonDigits.has(this.symbols.decimal!)
     );
@@ -321,7 +318,6 @@ class NumberParserImpl {
   }
 
   isValidPartialNumber(value: string, minValue: number = -Infinity, maxValue: number = Infinity): boolean {
-    let isGroupSymbolAllowed = this.formatter.resolvedOptions().useGrouping;
     value = this.sanitize(value);
 
     // Remove minus or plus sign, which must be at the start of the string.
@@ -337,7 +333,7 @@ class NumberParserImpl {
     }
 
     // Remove numerals, groups, and decimals
-    if (this.symbols.group && isGroupSymbolAllowed) {
+    if (this.symbols.group) {
       value = replaceAll(value, this.symbols.group, '');
     }
     value = value.replace(this.symbols.numeral, '');
@@ -370,8 +366,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
     maximumSignificantDigits: 21,
     roundingIncrement: 1,
     roundingPriority: 'auto',
-    roundingMode: 'halfExpand',
-    useGrouping: true
+    roundingMode: 'halfExpand'
   });
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = symbolFormatter.formatToParts(-10000.111);
