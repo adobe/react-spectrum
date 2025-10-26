@@ -14,7 +14,7 @@ const exampleStyle = style({
   },
   marginTop: {
     default: 20,
-    ':is([data-example-switcher] > *)': 0
+    ':is([data-example-switcher] *)': 0
   },
   borderRadius: 'xl',
   display: 'grid',
@@ -56,7 +56,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    default: 'repeat(auto-fit, minmax(200px, 1fr))',
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',

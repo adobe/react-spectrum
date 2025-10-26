@@ -297,20 +297,23 @@ export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'cla
 
 const panelStyles = style({
   font: 'body',
-  paddingTop: {
-    isExpanded: 8
-  },
-  paddingBottom: {
-    isExpanded: 16
-  },
+  height: '--disclosure-panel-height',
+  overflow: 'clip',
+  transition: {
+    default: '[height]',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  }
+});
+
+const panelInner = style({
+  paddingTop: 8,
+  paddingBottom: 16,
   paddingX: {
-    isExpanded: {
-      size: {
-        S: 8,
-        M: space(9),
-        L: 12,
-        XL: space(15)
-      }
+    size: {
+      S: 8,
+      M: space(9),
+      L: 12,
+      XL: space(15)
     }
   }
 });
@@ -326,15 +329,16 @@ export const DisclosurePanel = forwardRef(function DisclosurePanel(props: Disclo
   } = props;
   const domProps = filterDOMProps(otherProps);
   let {size} = useSlottedContext(DisclosureContext)!;
-  let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
       style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + panelStyles({size, isExpanded})}>
-      {props.children}
+      className={(UNSAFE_className ?? '') + panelStyles}>
+      <div className={panelInner({size})}>
+        {props.children}
+      </div>
     </RACDisclosurePanel>
   );
 });

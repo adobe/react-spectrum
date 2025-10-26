@@ -7,6 +7,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['data', 'grid'];
+
 # Table
 
 <PageDescription>{docs.exports.Table.description}</PageDescription>
@@ -14,8 +16,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 <ExampleSwitcher>
   ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
   "use client";
-  import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-  import {TableBody, Cell} from 'react-aria-components';
+  import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 
   <Table/* PROPS */>
     <TableHeader>
@@ -93,8 +94,7 @@ In this example, both the columns and the rows are provided to the table via a r
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
 import {Checkbox} from 'vanilla-starter/Checkbox';
 import {Button} from 'vanilla-starter/Button';
@@ -132,7 +132,7 @@ function FileTable() {
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: '100%'}}>
-      <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} style={{flexDirection: 'row'}}>
+      <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
         <Checkbox value="type">Type</Checkbox>
         <Checkbox value="date">Date Modified</Checkbox>
       </CheckboxGroup>
@@ -172,8 +172,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {Collection, TableLoadMoreItem} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
+import {Collection} from 'react-aria-components';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from 'react-stately';
 
@@ -209,8 +209,8 @@ function AsyncSortTable() {
       style={{
         height: 150,
         overflow: 'auto',
-        border: '1px solid var(--border-color)',
-        borderRadius: 6
+        border: '0.5px solid var(--border-color)',
+        borderRadius: 'var(--radius)'
       }}>
       <Table
         aria-label="Star Wars characters"
@@ -222,10 +222,10 @@ function AsyncSortTable() {
             background: 'var(--overlay-background)',
             zIndex: 1
           }}>
-          <Column id="name" isRowHeader allowsSorting>Name</Column>
-          <Column id="height" allowsSorting>Height</Column>
-          <Column id="mass" allowsSorting>Mass</Column>
-          <Column id="birth_year" allowsSorting>Birth Year</Column>
+          <Column id="name" isRowHeader>Name</Column>
+          <Column id="height">Height</Column>
+          <Column id="mass">Mass</Column>
+          <Column id="birth_year">Birth Year</Column>
         </TableHeader>
         <TableBody
           renderEmptyState={() => (
@@ -244,9 +244,7 @@ function AsyncSortTable() {
           {/*- begin highlight -*/}
           <TableLoadMoreItem
             onLoadMore={list.loadMore}
-            isLoading={list.loadingState === 'loadingMore'}>
-            <ProgressCircle isIndeterminate aria-label="Loading more..." />
-          </TableLoadMoreItem>
+            isLoading={list.loadingState === 'loadingMore'} />
           {/*- end highlight -*/}
         </TableBody>
       </Table>
@@ -261,8 +259,7 @@ Use the `href` prop on a `<Row>` to create a link. See the **client side routing
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 
 <Table/* PROPS */>
   <TableHeader>
@@ -296,8 +293,7 @@ import {TableBody, Cell} from 'react-aria-components';
 
 ```tsx render hideImports
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 
 <Table aria-label="Search results">
   <TableHeader>
@@ -320,15 +316,14 @@ Use the `selectionMode` prop to enable single or multiple selection. The selecte
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
 import type {Selection} from 'react-aria-components';
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
 function Example(props) {
   let [selected, setSelected] = useState<Selection>(new Set());
 
   return (
-    <div>
+    <>
       <Table
         {...props}
         aria-label="Favorite pokemon"
@@ -368,7 +363,7 @@ function Example(props) {
         </TableBody>
       </Table>
       <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -379,8 +374,8 @@ Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the colum
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell, type SortDescriptor} from 'react-aria-components';
+import {type SortDescriptor} from 'react-aria-components';
+import {Table, TableHeader, Column, TableBody, Row, Cell} from 'vanilla-starter/Table';
 import {useState} from 'react';
 
 ///- begin collapse -///
@@ -393,7 +388,11 @@ const rows = [
 ///- end collapse -///
 
 function SortableTable() {
-  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | null>(null);
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'name',
+    direction: 'ascending'
+  });
+
   let sortedRows = rows;
   if (sortDescriptor) {
     sortedRows = rows.toSorted((a, b) => {
@@ -440,8 +439,8 @@ Wrap the `<Table>` with a `<ResizableTableContainer>`, and add a `<ColumnResizer
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {ResizableTableContainer, ColumnResizer, TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {ResizableTableContainer} from 'react-aria-components';
 
 ///- begin collapse -///
 const rows = [
@@ -456,19 +455,9 @@ const rows = [
   <Table aria-label="Table with resizable columns">
     <TableHeader>
       {/*- begin highlight -*/}
-      <Column id="file" isRowHeader maxWidth={500}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <span tabIndex={-1} className="column-name">File Name</span>
-          <ColumnResizer />
-        </div>
-      </Column>
-      <Column id="size" width={80}>Size</Column>
-      <Column id="date" minWidth={100}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-          <span tabIndex={-1} className="column-name">Date Modified</span>
-          <ColumnResizer />
-        </div>
-      </Column>
+      <Column id="file" isRowHeader allowsResizing maxWidth={500}>File Name</Column>
+      <Column id="size" allowsResizing defaultWidth={80}>Size</Column>
+      <Column id="date" minWidth={100}>Date Modified</Column>
       {/*- end highlight -*/}
     </TableHeader>
     <TableBody items={rows}>
@@ -490,8 +479,8 @@ The ResizableTableContainer's `onResize` event is called when a column resizer i
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {ResizableTableContainer, ColumnResizer, TableBody, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {ResizableTableContainer} from 'react-aria-components';
 import {useSyncExternalStore} from 'react';
 
 ///- begin collapse -///
@@ -531,14 +520,12 @@ export default function ResizableTable() {
           {column => (
             <Column
               isRowHeader={column.id === 'file'}
+              allowsResizing
               ///- begin highlight -///
               width={columnWidths.get(column.id)}
               ///- end highlight -///
             >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <span tabIndex={-1} className="column-name">{column.name}</span>
-                <ColumnResizer />
-              </div>
+              {column.name}
             </Column>
           )}
         </TableHeader>
@@ -657,7 +644,7 @@ function ReorderableTable() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem'}}
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <ResizableTableContainer>
   <Table>
     <TableHeader>
@@ -669,7 +656,9 @@ function ReorderableTable() {
     <TableBody>
       <Row>
         <Cell><Button slot="drag" /></Cell>
-        <Cell><Checkbox slot="selection" /></Cell>
+        <Cell>
+          <Checkbox slot="selection" /> or <SelectionIndicator />
+        </Cell>
         <Cell />
         <Cell />
       </Row>
@@ -683,37 +672,25 @@ function ReorderableTable() {
 
 <PropTable component={docs.exports.Table} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Table" properties={docs.exports.TableRenderProps.properties} />
-
 ### TableHeader
 
 <PropTable component={docs.exports.TableHeader} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TableHeader" properties={docs.exports.TableHeaderRenderProps.properties} /> */}
 
 ### Column
 
 <PropTable component={docs.exports.Column} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Column" properties={docs.exports.ColumnRenderProps.properties} />
-
 ### TableBody
 
 <PropTable component={docs.exports.TableBody} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TableBody" properties={docs.exports.TableBodyRenderProps.properties} /> */}
 
 ### Row
 
 <PropTable component={docs.exports.Row} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Row" properties={docs.exports.RowRenderProps.properties} />
-
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Cell" properties={docs.exports.CellRenderProps.properties} />
 
 ### ResizableTableContainer
 
@@ -723,10 +700,6 @@ function ReorderableTable() {
 
 <PropTable component={docs.exports.ColumnResizer} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-ColumnResizer" properties={docs.exports.ColumnResizerRenderProps.properties} />
-
 ### TableLoadMoreItem
 
 <PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />
-
-{/* <StateTable defaultClassName="react-aria-TableLoadMoreItem" properties={docs.exports.TableLoadMoreItemRenderProps.properties} /> */}

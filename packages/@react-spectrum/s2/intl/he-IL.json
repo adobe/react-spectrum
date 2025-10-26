@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "פעילות חדשה",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "בחר…",
+  "picker.selectedCount": "{count, plural, =0 {לא נבחרו פריטים} one {פריט # נבחר} other {# פריטים נבחרו}}",
   "slider.maximum": "מקסימום",
   "slider.minimum": "מינימום",
   "table.loading": "טוען...",

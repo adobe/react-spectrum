@@ -7,6 +7,8 @@ import {Checkbox as TailwindCheckbox} from 'tailwind-starter/Checkbox';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/checkbox/docs/checkbox-anatomy.svg';
 
+export const tags = ['input'];
+
 # Checkbox
 
 <PageDescription>{docs.exports.Checkbox.description}</PageDescription>
@@ -68,7 +70,7 @@ Use the `name` and `value` props to submit the checkbox to the server. Set the `
 "use client";
 import {Checkbox} from 'vanilla-starter/Checkbox';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 <Form>
   <Checkbox
@@ -94,5 +96,3 @@ import {Form} from 'react-aria-components';
 ### Checkbox
 
 <PropTable component={docs.exports.Checkbox} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-Checkbox" properties={docs.exports.CheckboxRenderProps.properties} />

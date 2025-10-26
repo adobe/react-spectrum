@@ -7,6 +7,8 @@ import {Switch as TailwindSwitch} from 'tailwind-starter/Switch';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/switch/docs/anatomy.svg';
 
+export const tags = ['toggle', 'input'];
+
 # Switch
 
 <PageDescription>{docs.exports.Switch.description}</PageDescription>
@@ -67,7 +69,7 @@ Use the `name` and `value` props to submit the switch to the server. See the For
 "use client";
 import {Switch} from 'vanilla-starter/Switch';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';
 
 <Form>
   {/*- begin highlight -*/}
@@ -88,5 +90,3 @@ import {Form} from 'react-aria-components';
 ### Switch
 
 <PropTable component={docs.exports.Switch} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-Switch" properties={docs.exports.SwitchRenderProps.properties} />

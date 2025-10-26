@@ -1253,6 +1253,7 @@ function useMountEffect(fn: () => void, deps: Array<unknown>): void {
     } else {
       mounted.current = true;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 
@@ -1631,12 +1632,12 @@ function TableWithBreadcrumbs(props) {
     {key: 'd', name: 'File D', value: '10 MB', parent: 'a'}
   ];
 
-  const [loadingState, setLoadingState] = useState<LoadingState>('idle' as 'idle');
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle' as const);
   const [selection, setSelection] = useState<'all' | Iterable<Key>>(new Set([]));
   const [items, setItems] = useState(() => fs.filter(item => !item.parent));
   const changeFolder = (folder) => {
     setItems([]);
-    setLoadingState('loading' as 'loading');
+    setLoadingState('loading' as const);
 
     // mimic loading behavior
     setTimeout(() => {
@@ -2175,7 +2176,7 @@ function LoadingTable(): JSX.Element {
     setItems([]);
     setLoadingState('loading');
     setTimeout(() => {
-      setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
+      setItems(items.length > 1 ? items.slice(0, 1) : []);
       setLoadingState('idle');
     }, 1000);
   };
