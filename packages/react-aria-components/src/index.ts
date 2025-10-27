@@ -67,7 +67,7 @@ export {Slider, SliderOutput, SliderTrack, SliderThumb, SliderContext, SliderOut
 export {Switch, SwitchContext} from './Switch';
 export {TableLoadMoreItem, Table, Row, Cell, Column, ColumnResizer, TableHeader, TableBody, TableContext, ResizableTableContainer, useTableOptions, TableStateContext, TableColumnResizeStateContext} from './Table';
 export {TableLayout} from './TableLayout';
-export {Tabs, TabList, TabPanel, Tab, TabsContext, TabListStateContext} from './Tabs';
+export {Tabs, TabList, TabPanels, TabPanel, Tab, TabsContext, TabListStateContext} from './Tabs';
 export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGroup';
 export {Text, TextContext} from './Text';
 export {TextArea, TextAreaContext} from './TextArea';
@@ -133,7 +133,7 @@ export type {SeparatorProps} from './Separator';
 export type {SliderOutputProps, SliderProps, SliderRenderProps, SliderThumbProps, SliderTrackProps, SliderTrackRenderProps, SliderThumbRenderProps} from './Slider';
 export type {SwitchProps, SwitchRenderProps} from './Switch';
 export type {TableProps, TableRenderProps, TableHeaderProps, TableBodyProps, TableBodyRenderProps, ResizableTableContainerProps, ColumnProps, ColumnRenderProps, ColumnResizerProps, ColumnResizerRenderProps, RowProps, RowRenderProps, CellProps, CellRenderProps, TableLoadMoreItemProps} from './Table';
-export type {TabListProps, TabListRenderProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
+export type {TabListProps, TabListRenderProps, TabPanelsProps, TabPanelProps, TabPanelRenderProps, TabProps, TabsProps, TabRenderProps, TabsRenderProps} from './Tabs';
 export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRenderProps} from './TagGroup';
 export type {TextAreaProps} from './TextArea';
 export type {TextFieldProps, TextFieldRenderProps} from './TextField';
