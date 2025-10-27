@@ -11,14 +11,17 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
 
 export const section = '';
 export const tags = ['release', 'React Aria'];
 export const date = 'September 30, 2024';
-export const title = 'v1.4.0 - September 30, 2024';
+export const title = 'v1.4.0';
 export const description = 'Happy fall! 🍁 We\'re excited to announce that our color picker components are now generally available! We\'ve also added a pending state for buttons in React Aria Components, advanced TreeView to beta, and added new Disclosure and DisclosureGroup components in alpha for building accordions and collapsible panels.';
 
-# September 30, 2024 Release
+# v1.4.0
+<Time date={date} />
+
 Happy fall! 🍁 We're excited to announce that our color picker components are now generally available! This includes [ColorPicker](../ColorPicker.html), [ColorArea](../ColorArea.html), [ColorField](../ColorField.html), [ColorSlider](../ColorSlider.html), [ColorSwatch](../ColorSwatch.html), [ColorSwatchPicker](../ColorSwatchPicker.html), and [ColorWheel](../ColorWheel.html). These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
 
 In addition, we've introduced a new [pending state](../Button.html#pending) for buttons in React Aria Components, allowing you to display a progress spinner to indicate that an action is in progress. It also handles screen reader announcements and disables other interactions, except for focus, during the pending state.

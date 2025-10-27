@@ -11,14 +11,16 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
 
 export const section = '';
 export const tags = ['release', 'React Aria'];
 export const date = 'July 22, 2024';
-export const title = 'v1.3.0 - July 22, 2024';
+export const title = 'v1.3.0';
 export const description = 'For this summer release, we have been busy working on improving virtualization in many of our Spectrum components including TableView, ListView, and ListBox. Our Color components are moving to RC, Toast focus management has been improved, we have been preparing for React 19 release along with many bug fixes and improvements.';
 
-# July 22, 2024 Release
+# v1.3.0
+<Time date={date} />
 
 For this summer release, we have been busy working on improving virtualization in many of our Spectrum components including TableView, ListView, and ListBox. We have significantly reduced the complexity of our implementation, resulting in smaller bundle size, better performance, and improved stability. In our testing, this resulted in 14x faster per-frame render times on large tables due to better reuse of DOM nodes as you scroll. We are also working on bringing virtualization support to React Aria Components, which is available as an unstable API in this version.
 

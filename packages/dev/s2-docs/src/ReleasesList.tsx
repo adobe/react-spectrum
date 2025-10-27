@@ -13,11 +13,15 @@ export function ReleasesList({pages}: {pages: Page[]}) {
         <div key={release.name}>
           <header className={style({marginBottom: 12})}>
             <h2 className={style({font: 'heading-lg', margin: 0})}><Link href={release.url}>{release.exports?.title}</Link></h2>
-            <time dateTime={release.exports?.date} className={style({font: 'detail'})}>{release.exports?.date}</time>
+            <Time date={release.exports?.date} />
           </header>
           <p className={style({font: 'body', margin: 0})}>{release.exports?.description}</p>
         </div>
       ))}
     </article>
   );
+}
+
+export function Time({date}: {date: string}) {
+  return <time dateTime={date} className={style({font: 'detail'})}>{new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</time>;
 }
