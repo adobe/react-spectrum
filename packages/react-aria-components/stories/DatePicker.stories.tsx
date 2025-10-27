@@ -46,6 +46,9 @@ export default {
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']
+    },
+    isTriggerPressedWhenOpen: {
+      control: 'boolean'
     }
   }
 } as Meta<typeof DatePicker>;
