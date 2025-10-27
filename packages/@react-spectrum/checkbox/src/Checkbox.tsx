@@ -32,7 +32,10 @@ import {useToggleState} from '@react-stately/toggle';
  */
 export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let groupState = useContext(CheckboxGroupContext);
-  return groupState ? <CheckboxInGroup {...props} ref={ref} /> : <CheckboxStandalone {...props} ref={ref} />;
+  if (groupState) {
+    return <CheckboxInGroup {...props} ref={ref} />;
+  }
+  return <CheckboxStandalone {...props} ref={ref} />;
 });
 
 let CheckboxInGroup = forwardRef(function CheckboxInGroup(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
