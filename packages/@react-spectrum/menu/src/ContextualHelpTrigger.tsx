@@ -104,9 +104,10 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     }, 220); // Matches transition duration
   };
 
+  let newSubmenuTriggerProps = {...submenuTriggerProps};
   if (isMobile) {
-    delete submenuTriggerProps.onBlur;
-    delete submenuTriggerProps.onHoverChange;
+    delete newSubmenuTriggerProps.onBlur;
+    delete newSubmenuTriggerProps.onHoverChange;
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
       let subDialogKeyDown: KeyboardEventHandler = (e) => {
         switch (e.key) {
@@ -160,7 +161,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...submenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...newSubmenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
         {submenuTriggerState.isOpen && overlay}
       </SlotProvider>

@@ -78,11 +78,13 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   let id = useId(props.id);
   gridIds.set(state, id);
 
-  let {gridProps} = useGrid({
+  let {gridProps: gridPropsBase} = useGrid({
     ...props,
     id,
     keyboardDelegate: delegate
   }, state, ref);
+
+  let gridProps = {...gridPropsBase};
 
   // Override to include header rows
   if (isVirtualized) {
@@ -98,8 +100,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortDirection, column, state.collection.columns]);
+  }, [sortDirection, column, state.collection.columns, stringFormatter]);
 
   let descriptionProps = useDescription(sortDescription);
 

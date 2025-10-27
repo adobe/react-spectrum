@@ -65,6 +65,20 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     }
   });
 
+  let lastFocused = useRef<FocusableElement | null>(null);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithin: (e) => {
+      isFocused.current = true;
+      lastFocused.current = e.relatedTarget as FocusableElement;
+      updateTimers();
+    },
+    onBlurWithin: () => {
+      isFocused.current = false;
+      lastFocused.current = null;
+      updateTimers();
+    }
+  });
+
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
   let toasts = useRef<FocusableElement[]>([]);
@@ -134,20 +148,6 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
 
     prevVisibleToasts.current = state.visibleToasts;
   }, [state.visibleToasts, ref]);
-
-  let lastFocused = useRef<FocusableElement | null>(null);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithin: (e) => {
-      isFocused.current = true;
-      lastFocused.current = e.relatedTarget as FocusableElement;
-      updateTimers();
-    },
-    onBlurWithin: () => {
-      isFocused.current = false;
-      lastFocused.current = null;
-      updateTimers();
-    }
-  });
 
   // When the number of visible toasts becomes 0 or the region unmounts,
   // restore focus to the last element that had focus before the user moved focus

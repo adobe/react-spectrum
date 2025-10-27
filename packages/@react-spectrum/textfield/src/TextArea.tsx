@@ -25,8 +25,8 @@ import {useTextField} from '@react-aria/textfield';
  * are available to text fields.
  */
 export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+  let propsWithProvider = useProviderProps(props);
+  let allProps = useFormProps(propsWithProvider);
   let {
     isDisabled = false,
     isQuiet = false,
@@ -34,16 +34,16 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
     isRequired = false,
     onChange,
     ...otherProps
-  } = props;
+  } = allProps;
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
-  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue ?? '', () => {});
+  let [inputValue, setInputValue] = useControlledState(allProps.value, allProps.defaultValue ?? '', () => {});
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let onHeightChange = useCallback(() => {
     // Quiet textareas always grow based on their text content.
     // Standard textareas also grow by default, unless an explicit height is set.
-    if ((isQuiet || !props.height) && inputRef.current) {
+    if ((isQuiet || !allProps.height) && inputRef.current) {
       let input = inputRef.current;
       let prevAlignment = input.style.alignSelf;
       let prevOverflow = input.style.overflow;
@@ -61,7 +61,7 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
-  }, [isQuiet, inputRef, props.height]);
+  }, [isQuiet, inputRef, allProps.height]);
 
   useLayoutEffect(() => {
     if (inputRef.current) {
@@ -71,14 +71,14 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+    if (allProps.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
       console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
       hasWarned.current = true;
     }
-  }, [props.placeholder]);
+  }, [allProps.placeholder]);
 
   let result = useTextField({
-    ...props,
+    ...allProps,
     onChange: chain(onChange, setInputValue),
     inputElementType: 'textarea'
   }, inputRef);

@@ -377,9 +377,10 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
   // Use the key of the first item within the menu as the key of the button.
   // The key must actually exist in the collection for focus to work correctly.
   let key = items[0].key;
-  let {buttonProps} = useActionGroupItem({key}, state);
+  let {buttonProps: actionGroupItemButtonProps} = useActionGroupItem({key}, state);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actiongroup');
 
+  let buttonProps = {...actionGroupItemButtonProps};
   // The menu button shouldn't act like an actual action group item.
   delete buttonProps.onPress;
   delete buttonProps.role;

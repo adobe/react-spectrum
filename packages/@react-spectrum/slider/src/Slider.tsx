@@ -54,7 +54,7 @@ export const Slider = React.forwardRef(function Slider(props: SpectrumSliderProp
         {'--spectrum-slider-track-gradient': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
       }>
       {({trackRef, inputRef, state}: SliderBaseChildArguments) => {
-        fillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
+        let newFillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
         let cssDirection = direction === 'rtl' ? 'right' : 'left';
 
         let lowerTrack = (
@@ -84,10 +84,10 @@ export const Slider = React.forwardRef(function Slider(props: SpectrumSliderProp
         );
 
         let filledTrack: ReactNode = null;
-        if (isFilled && fillOffset != null) {
-          let width = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
+        if (isFilled && newFillOffset != null) {
+          let width = state.getThumbPercent(0) - state.getValuePercent(newFillOffset);
           let isRightOfOffset = width > 0;
-          let offset = isRightOfOffset ? state.getValuePercent(fillOffset) : state.getThumbPercent(0);
+          let offset = isRightOfOffset ? state.getValuePercent(newFillOffset) : state.getThumbPercent(0);
           filledTrack = (
             <div
               className={classNames(styles, 'spectrum-Slider-fill', {'spectrum-Slider-fill--right': isRightOfOffset})}
