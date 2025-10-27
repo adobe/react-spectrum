@@ -64,12 +64,13 @@ export class CalendarDate {
   constructor(calendar: Calendar, year: number, month: number, day: number, constrainDay?: boolean);
   constructor(calendar: Calendar, era: string, year: number, month: number, day: number, constrainDay?: boolean);
   constructor(...args: any[]) {
-    let [calendar, era, year, month, day, constrainDay] = shiftArgs(args);
+    let [calendar, era, year, month, day] = shiftArgs(args);
     this.calendar = calendar;
     this.era = era;
     this.year = year;
     this.month = month;
     this.day = day;
+    const constrainDay = args.shift();
 
     constrain(this, constrainDay);
   }
@@ -231,7 +232,7 @@ export class CalendarDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
-    const constrainDay = args.shift() || 0;
+    const constrainDay = args.shift();
 
     constrain(this, constrainDay);
   }
@@ -348,7 +349,7 @@ export class ZonedDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
-    const constrainDay = args.shift() || 0;
+    const constrainDay = args.shift();
 
     constrain(this, constrainDay);
   }

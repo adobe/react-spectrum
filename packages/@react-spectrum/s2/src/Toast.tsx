@@ -68,10 +68,7 @@ function startViewTransition(fn: () => void, type: string) {
   if ('startViewTransition' in document) {
     // Safari doesn't support :active-view-transition-type() yet, so we fall back to a class on the html element.
     document.documentElement.classList.add(toastCss[type]);
-    let viewTransition = document.startViewTransition({
-      update: () => flushSync(fn),
-      types: [toastCss[type]]
-    });
+    let viewTransition = document.startViewTransition(() => flushSync(fn));
 
     viewTransition.ready.catch(() => {});
     viewTransition.finished.then(() => {
