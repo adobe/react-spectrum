@@ -28,8 +28,10 @@ const mark = style({
   borderWidth: 0,
   borderStartWidth: 2,
   borderStyle: 'solid',
-  marginX: 'calc(var(--code-padding-x) * -1)',
-  paddingX: 'calc(var(--code-padding-x) - self(borderStartWidth))',
+  marginStart: 'calc(var(--code-padding-start) * -1)',
+  marginEnd: 'calc(var(--code-padding-end) * -1)',
+  paddingStart: 'calc(var(--code-padding-start) - self(borderStartWidth))',
+  paddingEnd: '--code-padding-end',
   color: 'inherit'
 });
 

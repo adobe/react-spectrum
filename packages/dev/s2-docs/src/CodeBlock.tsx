@@ -24,11 +24,15 @@ const example = style({
 });
 
 const standaloneCode = style({
-  '--code-padding-x': {
-    type: 'paddingTop',
+  '--code-padding-start': {
+    type: 'paddingStart',
     value: 32
   },
-  padding: '--code-padding-x',
+  '--code-padding-end': {
+    type: 'paddingEnd',
+    value: 32
+  },
+  padding: '--code-padding-start',
   marginY: 32,
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
@@ -126,9 +130,11 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
     </ExpandableCode>
   )
   : (
+    <div className={style({overflow: 'auto'})}>
     <Pre>
       <Code {...props}>{children}</Code>
     </Pre>
+    </div>
   );
 }
 

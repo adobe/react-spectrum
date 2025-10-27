@@ -17,17 +17,19 @@ import {zip} from './zip';
 const platterStyle = style({
   backgroundColor: 'layer-2',
   borderRadius: 'lg',
-  '--code-padding-x': {
-    type: 'paddingTop',
+  '--code-padding-start': {
+    type: 'paddingStart',
+    value: 16
+  },
+  '--code-padding-end': {
+    type: 'paddingEnd',
     value: 16
   },
   '--code-padding-y': {
     type: 'paddingTop',
     value: 16
   },
-  position: 'relative',
-  maxHeight: 600,
-  overflow: 'auto'
+  position: 'relative'
 });
 
 interface CodePlatterProps {
@@ -45,14 +47,14 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
 
   return (
     <div className={platterStyle}>
-      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', padding: 16, position: 'relative', zIndex: 1})}>
+      <div className={style({display: 'flex', justifyContent: 'end', padding: 4, position: 'absolute', top: 8, insetEnd: 8, backgroundColor: 'layer-2', boxShadow: 'elevated', borderRadius: 'default', zIndex: 1})}>
         <ActionButtonGroup
           orientation="vertical"
           isQuiet
           density="regular"
           size="S">
           <CopyButton ariaLabel="Copy code" tooltip="Copy code" getText={getText} />
-          {(shareUrl || files || type || registryUrl) && <MenuTrigger>
+          {(shareUrl || files || type || registryUrl) && <MenuTrigger align="end">
             <TooltipTrigger placement="end">
               <ActionButton aria-label="Open in…">
                 <OpenIn />
@@ -167,9 +169,23 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
   );
 }
 
+const pre = style({
+  borderRadius: 'lg',
+  font: {
+    default: 'code-xs',
+    lg: 'code-sm'
+  },
+  margin: 0,
+  paddingStart: '--code-padding-start',
+  paddingEnd: '--code-padding-end',
+  paddingY: '--code-padding-y',
+  width: 'fit',
+  minWidth: 'full'
+});
+
 export function Pre({children}) {
   return (
-    <pre className={style({borderRadius: 'lg', font: {default: 'code-xs', lg: 'code-sm'}, whiteSpace: 'pre-wrap', margin: 0, paddingX: '--code-padding-x', paddingY: '--code-padding-y'})} style={{overflowWrap: 'break-word'}}>
+    <pre className={pre}>
       {children}
     </pre>
   );
