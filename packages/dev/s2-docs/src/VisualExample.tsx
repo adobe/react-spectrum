@@ -166,9 +166,9 @@ export function VisualExample({component, docs, links, importSource, props, init
   // Render the corresponding client component to make the controls interactive.
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
-      <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
+      <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output align={align} acceptOrientation={acceptOrientation} />
-        <div className={controlsStyle}>
+        <div role="group" aria-label="Controls" className={controlsStyle}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>
         <div style={{gridArea: 'files', overflow: 'hidden'}}>
