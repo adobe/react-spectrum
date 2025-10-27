@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 import datepickerImage from 'url:../assets/datepicker-rtl.png';
 
-export const sections = [''];
+export const section = '';
 export const tags = ['release', 'React Aria'];
 export const date = 'March 5, 2025';
 export const title = 'v1.7.0 - March 5, 2025';
@@ -25,13 +25,13 @@ Buckle in because this is a big one! In this React Aria release, we’re excited
 
 This release would not be possible without the fantastic contributions we received from the community. A special shoutout to [@oyvinmar](https://github.com/oyvinmar) and [@nwidynski](https://github.com/nwidynski) for contributing features like `colSpan` and nested collection support. Huge thanks to everyone else who contributed as well. ❤️
 
-### Date and Time Formatting in RTL Languages
+**Date and Time Formatting in RTL Languages:**
 
 In this release, we've improved support for right-to-left languages in our date picker components to correct the order of the segments. To account for this, you must update your styles for DateInput to use normal [CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout), e.g. `display: block` instead of `display: flex`. If you are using the `useDateSegment` hook, ensure that you render spans instead of divs. These changes allow the browser to correctly order the segments according to the [Unicode Bidirectional Algorithm](https://unicode.org/reports/tr9/). If you choose to not make these style changes, your component will look the same as before, but will not format correctly in RTL languages.
 
 <image src={datepickerImage} alt="Screenshot showing difference between DatePicker before and after in Hebrew locale" style={{maxWidth: 'min(100%, 586px)', display: 'block', margin: '20px auto'}} />
 
-### usePress update
+**usePress update:**
 
 [usePress](../usePress.html) was heavily refactored to improve focus management and compatibility with third party libraries. Prior to this refactor, we used `preventDefault` and manually managed focus due to [differences in focus behavior](https://react-spectrum.adobe.com/blog/building-a-button-part-3.html#ensuring-consistent-focus-behavior) between Safari and other browsers. Unfortunately, this resulted in many unintended side effects, such as canceling compatibility mouse events, breaking the `:active` and `:focus-visible` pseudo classes, causing issues with the mobile virtual keyboard, etc.
 
@@ -39,7 +39,7 @@ Thanks to an update in Safari 17, all elements with an explicit `tabIndex` can n
 
 Note that this refactor changes the order that focus occurs. Previously, focus always occurred before `onPressStart`. Now focus occurs after `onPressStart` on mouse and keyboard interactions, and after `onPressEnd` on touch screens, matching native browser behavior. Additionally, unit tests may need to simulate different events than before. We recommend the [user-event](https://testing-library.com/docs/user-event/intro/) library to simulate events matching browser behavior.
 
-### TreeView changes
+**TreeView changes:**
 
 With the GA release of TreeView, be sure to update any usages of [TreeViewItem](../react-spectrum/TreeView.html#treeviewitem-props) so that its contents are wrapped in the new [TreeViewItemContent](../react-spectrum/TreeView.html#treeviewitemcontent-props).
 
