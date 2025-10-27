@@ -91,7 +91,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
   );
 
   return (
-    <div className={example}>
+    <div role="group" aria-label="Example" className={example}>
       <ExampleOutput
         component={render}
         align={props.align} />
@@ -131,9 +131,9 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   )
   : (
     <div className={style({overflow: 'auto'})}>
-    <Pre>
-      <Code {...props}>{children}</Code>
-    </Pre>
+      <Pre>
+        <Code {...props}>{children}</Code>
+      </Pre>
     </div>
   );
 }
@@ -187,9 +187,9 @@ export function getFiles(files: string[]) {
       let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : specifier;
       if (!fileContents[path.basename(resolved)]) {
         queue.push(resolved);
+        }
       }
     }
-  }
   
   return fileContents;
 }

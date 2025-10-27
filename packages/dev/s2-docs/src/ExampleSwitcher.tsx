@@ -2,7 +2,7 @@
 
 import {createContext, useEffect, useState} from 'react';
 import {Key} from 'react-aria-components';
-import {Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const exampleStyle = style({
@@ -123,7 +123,7 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
   return (
     <div className={exampleStyle} data-example-switcher>
       <div className={switcher}>
-        <SegmentedControl selectedKey={selected} onSelectionChange={onSelectionChange}>
+        <SegmentedControl aria-label={type || 'example'} selectedKey={selected} onSelectionChange={onSelectionChange}>
           {examples.map(example => <SegmentedControlItem key={example} id={example}>{example}</SegmentedControlItem>)}
         </SegmentedControl>
       </div>
@@ -133,7 +133,13 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
           labelPosition="side"
           value={theme}
           onChange={onThemeChange}
-          styles={themePicker}>
+          styles={themePicker}
+          contextualHelp={
+            <ContextualHelp>
+              <Heading>Vanilla CSS theme</Heading>
+              <Content>This sets the <code className={style({font: 'code-sm'})}>--tint</code> CSS variable used by the Vanilla CSS examples.</Content>
+            </ContextualHelp>
+          }>
           <PickerItem id="indigo">Indigo</PickerItem>
           <PickerItem id="blue">Blue</PickerItem>
           <PickerItem id="cyan">Cyan</PickerItem>

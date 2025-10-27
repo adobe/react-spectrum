@@ -284,7 +284,7 @@ function ShadcnDialog({registryUrl}) {
               flexDirection: 'column',
               gap: 16
             })}>
-            <SegmentedControl selectedKey={packageManager} onSelectionChange={onSelectionChange}>
+            <SegmentedControl aria-label="Package manager" selectedKey={packageManager} onSelectionChange={onSelectionChange}>
               <SegmentedControlItem id="npm">npm</SegmentedControlItem>
               <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
               <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
