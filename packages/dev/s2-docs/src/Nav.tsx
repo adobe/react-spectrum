@@ -14,13 +14,16 @@ export function Nav({pages, currentPage}: PageProps) {
     if (page.exports?.hideNav || page.exports?.hideFromSearch) {
       continue;
     }
-    
+
     let library = getLibraryFromPage(page);
     if (library !== currentLibrary) {
       continue;
     }
 
     let section = page.exports?.section ?? 'Components';
+    if (section === '') {
+      continue;
+    }
     let sectionPages = sections.get(section) ?? [];
     sectionPages.push(page);
     sections.set(section, sectionPages);
