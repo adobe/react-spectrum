@@ -9,11 +9,11 @@ const example = style({
   font: 'code-lg',
   maxHeight: {
     default: '[6lh]',
-    isExpanded: 'unset'
+    isExpanded: 800
   },
   overflow: {
     default: 'clip',
-    isExpanded: 'visible'
+    isExpanded: 'auto'
   },
   position: 'relative',
   width: 'full',
@@ -23,6 +23,13 @@ const example = style({
     value: {
       default: 'none',
       isExpanded: 'inline'
+    }
+  },
+  '--code-padding-end': {
+    type: 'paddingEnd',
+    value: {
+      default: 16,
+      isExpanded: 64 // Extra space for the toolbar
     }
   }
 });
@@ -50,8 +57,8 @@ export function ExpandableCode({children, hasHighlightedLine}: {children: ReactN
       mask = 'linear-gradient(transparent, white 25% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
       padding = '0px';
     } else {
-      // only mask the bottom
-      mask = 'linear-gradient(white 0% 50%, transparent)';
+      // only mask the bottom and right
+      mask = 'linear-gradient(white 0% 50%, transparent), linear-gradient(to right, white 0% 85%, transparent)';
     }
   }
 
