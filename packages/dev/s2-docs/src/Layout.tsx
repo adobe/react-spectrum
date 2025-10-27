@@ -1,6 +1,8 @@
+import {ExampleList} from './ExampleList';
 import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
 import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
+// @ts-ignore
 import '../src/client';
 // @ts-ignore
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
@@ -44,7 +46,8 @@ const components = {
   StateTable,
   ClassAPI,
   ExampleSwitcher,
-  TypeLink
+  TypeLink,
+  ExampleList
 };
 
 function anchorId(children) {
@@ -227,7 +230,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 className={articleStyles({isWithToC: hasToC})}>
                 {React.cloneElement(children, {components})}
               </article>
-              <aside
+              {hasToC && <aside
                 className={style({
                   position: 'sticky',
                   top: 0,
@@ -241,11 +244,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                {hasToC && (
-                  <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                )}
+                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
                 <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-              </aside>
+              </aside>}
             </main>
           </div>
         </div>
