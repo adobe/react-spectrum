@@ -1283,7 +1283,20 @@ export interface CellRenderProps {
   /**
    * The unique id of the cell.
    **/
-  id?: Key
+  id?: Key,
+  /**
+   * Whether the cell is currently in edit mode.
+   * @selector [data-editing]
+   */
+  isEditing: boolean,
+  /**
+   * Starts editing the cell.
+   */
+  startEditing: () => void,
+  /**
+   * Ends editing the cell.
+   */
+  endEditing: () => void
 }
 
 export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttributes<HTMLTableCellElement> {
@@ -1297,7 +1310,9 @@ export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttrib
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string,
   /** Indicates how many columns the data cell spans. */
-  colSpan?: number
+  colSpan?: number,
+  /** Whether the cell allows inline editing. */
+  allowsEditing?: boolean
 }
 
 class TableCellNode extends CollectionNode<unknown> {
@@ -1315,7 +1330,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
 
   cell.column = state.collection.columns[cell.index];
 
-  let {gridCellProps, isPressed} = useTableCell({
+  let {gridCellProps, isPressed, isEditing} = useTableCell({
     node: cell,
     shouldSelectOnPressUp: !!dragState,
     isVirtualized
@@ -1332,7 +1347,14 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       isFocusVisible,
       isPressed,
       isHovered,
-      id: cell.key
+      id: cell.key,
+      isEditing,
+      startEditing() {
+        state.startEditing(cell.key);
+      },
+      endEditing() {
+        state.endEditing();
+      }
     }
   });
 
@@ -1346,7 +1368,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       ref={ref as any}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}>
+      data-pressed={isPressed || undefined}
+      data-editing={isEditing || undefined}>
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
         {renderProps.children}
       </CollectionRendererContext.Provider>
