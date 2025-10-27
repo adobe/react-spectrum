@@ -1,6 +1,8 @@
+import {ExampleList} from './ExampleList';
 import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
 import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
+// @ts-ignore
 import '../src/client';
 // @ts-ignore
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
@@ -57,7 +59,8 @@ const components = {
   StateTable,
   ClassAPI,
   ExampleSwitcher,
-  TypeLink
+  TypeLink,
+  ExampleList
 };
 
 function anchorId(children) {

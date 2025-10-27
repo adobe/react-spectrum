@@ -56,7 +56,7 @@ export interface ICodeProps {
 export function Code({children, lang, hideImports = true, links}: ICodeProps) {
   if (lang) {
     // @ts-ignore
-    let highlighted = highlightHast(children, Language[lang.toUpperCase()]);
+    let highlighted = highlightHast(children, Language[lang === 'json' ? 'JS' : lang.toUpperCase()]);
     let lineNodes = lines(highlighted);
     let idx = lineNodes.findIndex(line => !/^(["']use client["']|(\s*$))/.test(text(line)));
     if (idx > 0) {
