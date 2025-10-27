@@ -12,6 +12,7 @@ import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryLabel} from './library';
+import {getTextWidth} from './textWidth';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
@@ -21,10 +22,21 @@ import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
+import {VersionBadge} from './VersionBadge';
 import {VisualExample} from './VisualExample';
 
+const h1 = style({
+  font: 'heading-3xl',
+  fontSize: {
+    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
+    lg: 'heading-3xl'
+  },
+  marginY: 0
+});
+
 const components = {
-  h1: ({children, ...props}) => <h1 {...props} id="top" className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
+  h1: ({children, ...props}) => <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>,
   h2: H2,
   h3: H3,
   h4: H4,
@@ -225,6 +237,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               })}>
               <article
                 className={articleStyles({isWithToC: hasToC})}>
+                  {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
                 {React.cloneElement(children, {components})}
               </article>
               <aside

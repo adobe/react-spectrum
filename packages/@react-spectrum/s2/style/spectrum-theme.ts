@@ -760,10 +760,14 @@ export const style = createTheme({
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
     fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
-      return {
-        '--fs': `pow(1.125, ${value})`,
-        fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
-      };
+      if (typeof value === 'number') {
+        return {
+          '--fs': `pow(1.125, ${value})`,
+          fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
+        };
+      }
+
+      return {fontSize: value};
     }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
       return {
