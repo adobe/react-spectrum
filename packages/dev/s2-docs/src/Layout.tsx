@@ -10,8 +10,9 @@ import './anatomy.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
+import {CodePlatterProvider} from './CodePlatter';
 import {ExampleSwitcher} from './ExampleSwitcher';
-import {getLibraryFromPage, getLibraryLabel} from './library';
+import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {getTextWidth} from './textWidth';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
@@ -235,12 +236,14 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   lg: 'auto'
                 }
               })}>
-              <article
-                className={articleStyles({isWithToC: hasToC})}>
+              <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                <article
+                  className={articleStyles({isWithToC: hasToC})}>
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                {React.cloneElement(children, {components})}
-              </article>
-              <aside
+                  {React.cloneElement(children, {components})}
+                </article>
+              </CodePlatterProvider>
+              {hasToC && <aside
                 className={style({
                   position: 'sticky',
                   top: 0,
@@ -254,11 +257,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                {hasToC && (
-                  <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                )}
+                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
                 <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-              </aside>
+              </aside>}
             </main>
           </div>
         </div>

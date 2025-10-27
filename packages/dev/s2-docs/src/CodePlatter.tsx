@@ -7,11 +7,12 @@ import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria';
+import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import React, {ReactNode, useEffect, useRef, useState} from 'react';
+import React, {createContext, ReactNode, useContext, useEffect, useRef, useState} from 'react';
 import {zip} from './zip';
 
 const platterStyle = style({
@@ -40,10 +41,27 @@ interface CodePlatterProps {
   registryUrl?: string
 }
 
+interface CodePlatterContextValue {
+  library: Library
+}
+
+const CodePlatterContext = createContext<CodePlatterContextValue>({library: 'react-spectrum'});
+export function CodePlatterProvider(props: CodePlatterContextValue & {children: any}) {
+  return <CodePlatterContext.Provider value={props}>{props.children}</CodePlatterContext.Provider>;
+}
+
 export function CodePlatter({children, shareUrl, files, type, registryUrl}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
   let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
+  let {library} = useContext(CodePlatterContext);
+  if (!type) {
+    if (library === 'react-aria') {
+      type = 'vanilla';
+    } else if (library === 'react-spectrum') {
+      type = 's2';
+    }
+  }
 
   return (
     <div className={platterStyle}>
