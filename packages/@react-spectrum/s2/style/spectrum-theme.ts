@@ -764,7 +764,7 @@ export const style = createTheme({
         return {
           '--fs': `pow(1.125, ${value})`,
           fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
-        };
+        } as CSSProperties;
       }
 
       return {fontSize: value};

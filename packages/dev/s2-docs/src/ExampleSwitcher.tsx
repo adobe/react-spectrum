@@ -1,8 +1,8 @@
 'use client';
 
+import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {createContext, useEffect, useState} from 'react';
 import {Key} from 'react-aria-components';
-import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const exampleStyle = style({

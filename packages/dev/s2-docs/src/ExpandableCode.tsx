@@ -31,7 +31,7 @@ const example = style({
       default: 16,
       isExpanded: 64 // Extra space for the toolbar
     }
-  },
+  }
 });
 
 const expandWrapper = style({

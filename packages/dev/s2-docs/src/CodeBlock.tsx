@@ -187,9 +187,9 @@ export function getFiles(files: string[]) {
       let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : specifier;
       if (!fileContents[path.basename(resolved)]) {
         queue.push(resolved);
-        }
       }
     }
+  }
   
   return fileContents;
 }
