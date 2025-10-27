@@ -7,6 +7,7 @@ interface ClassAPIProps {
 }
 
 export function ClassAPI({class: c, links}: ClassAPIProps) {
+  console.log('c', c);
   setLinks(links);
   return (
     <InterfaceType {...c} />
