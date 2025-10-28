@@ -726,22 +726,16 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
 export default function EditableTable(props) {
   let columns = editableColumns;
   let [editableItems, setEditableItems] = useState(defaultItems);
-  let intermediateValue = useRef<any>(null);
 
-  let onChange = useCallback((id: Key, columnId: Key) => {
-    let value = intermediateValue.current;
+  let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+    let value = values[columnId];
     if (value === null) {
       return;
     }
-    intermediateValue.current = null;
     setEditableItems(prev => {
       let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value} : i);
       return newItems;
     });
-  }, []);
-
-  let onIntermediateChange = useCallback((value: any) => {
-    intermediateValue.current = value;
   }, []);
 
   return (
@@ -759,17 +753,18 @@ export default function EditableTable(props) {
                 ///- begin highlight -///
                 return (
                   <EditableCell
+                    aria-label={`Edit ${item[column.id]} in ${column.name}`}
                     align={column.align}
                     showDivider={column.showDivider}
-                    onSubmit={() => onChange(item.id, column.id!)}
+                    onSubmit={(values) => onChange(item.id, column.id!, values)}
                     renderEditing={() => (
                       <TextField
-                        aria-label="Edit fruit"
+                        aria-label="Fruit name edit field"
                         autoFocus
                         validate={value => value.length > 0 ? null : 'Fruit name is required'}
                         styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                         defaultValue={item[column.id!]}
-                        onChange={value => onIntermediateChange(value)} />
+                        name={column.id! as string} />
                     )}>
                     <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
                       {item[column.id]}
@@ -786,14 +781,14 @@ export default function EditableTable(props) {
                   <EditableCell
                     align={column.align}
                     showDivider={column.showDivider}
-                    onSubmit={() => onChange(item.id, column.id!)}
+                    onSubmit={(values) => onChange(item.id, column.id!, values)}
                     renderEditing={() => (
                       <Picker
                         aria-label="Edit farmer"
                         autoFocus
                         styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                         defaultValue={item[column.id!]}
-                        onChange={value => onIntermediateChange(value)}>
+                        name={column.id! as string}>
                         <PickerItem textValue="Eva" id="Eva">
                           <User />
                           <Text>Eva</Text>

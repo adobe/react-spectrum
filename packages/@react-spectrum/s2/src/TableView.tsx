@@ -50,12 +50,14 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
+import {ButtonGroup} from './ButtonGroup';
 import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
+import {CustomDialog, DialogContainer} from '..';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
 import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
@@ -70,8 +72,9 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -1081,17 +1084,6 @@ const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean,
   borderColor: {
     default: 'gray-300',
     forcedColors: 'ButtonBorder'
-  },
-  backgroundColor: {
-    default: 'transparent',
-    ':is([role="rowheader"]:hover, [role="gridcell"]:hover)': {
-      selectionMode: {
-        none: colorMix('gray-25', 'gray-900', 7),
-        single: 'gray-25',
-        multiple: 'gray-25'
-      }
-    },
-    ':is([role="row"][data-focus-visible-within] [role="rowheader"]:focus-within, [role="row"][data-focus-visible-within] [role="gridcell"]:focus-within)': 'gray-25'
   }
 });
 
@@ -1130,7 +1122,7 @@ interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
   /** Whether the cell is currently being saved. */
   isSaving?: boolean,
   /** Handler that is called when the value has been changed and is ready to be saved. */
-  onSubmit: () => void
+  onSubmit: (values: Record<string, any>) => void
 }
 
 /**
@@ -1229,6 +1221,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     setIsOpen(false);
   };
 
+  let isMobile = !useMediaQuery('(any-pointer: fine)');
+
   return (
     <Provider
       values={[
@@ -1265,53 +1259,81 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
         values={[
           [ActionButtonContext, null]
         ]}>
-        <RACPopover
-          isOpen={isOpen}
-          onOpenChange={setIsOpen}
-          ref={popoverRef}
-          shouldCloseOnInteractOutside={() => {
-            if (!popoverRef.current?.contains(document.activeElement)) {
+        {!isMobile && (
+          <RACPopover
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+            ref={popoverRef}
+            shouldCloseOnInteractOutside={() => {
+              if (!popoverRef.current?.contains(document.activeElement)) {
+                return false;
+              }
+              formRef.current?.requestSubmit();
               return false;
-            }
-            formRef.current?.requestSubmit();
-            return false;
-          }}
-          triggerRef={cellRef}
-          aria-label={stringFormatter.format('table.editCell')}
-          offset={verticalOffset}
-          placement="bottom start"
-          style={{
-            minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
-            maxWidth: `${tableWidth}px`,
-            // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
-            zIndex: undefined
-          }}
-          className={editPopover}>
-          <Provider
-            values={[
-              [OverlayTriggerStateContext, null]
-            ]}>
-            <Form
-              ref={formRef}
-              onSubmit={(e) => {
-                e.preventDefault();
-                onSubmit();
-                setIsOpen(false);
-              }}
-              className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
-              style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
-              {renderEditing()}
-              <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
-                <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
-                <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
-              </div>
-            </Form>
-          </Provider>
-        </RACPopover>
+            }}
+            triggerRef={cellRef}
+            aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}
+            offset={verticalOffset}
+            placement="bottom start"
+            style={{
+              minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
+              maxWidth: `${tableWidth}px`,
+              // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+              zIndex: undefined
+            }}
+            className={editPopover}>
+            <Provider
+              values={[
+                [OverlayTriggerStateContext, null]
+              ]}>
+              <Form
+                ref={formRef}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  let formData = new FormData(formRef.current as HTMLFormElement);
+                  let values = Object.fromEntries(formData.entries());
+                  onSubmit(values);
+                  setIsOpen(false);
+                }}
+                className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
+                style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
+                {renderEditing()}
+                <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
+                  <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
+                  <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
+                </div>
+              </Form>
+            </Provider>
+          </RACPopover>
+        )}
+        {isMobile && (
+          <DialogContainer onDismiss={() => setIsOpen(false)}>
+            {isOpen && (
+              <CustomDialog isDismissible aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}>
+                <Form
+                  ref={formRef}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    let formData = new FormData(formRef.current as HTMLFormElement);
+                    let values = Object.fromEntries(formData.entries());
+                    onSubmit(values);
+                    setIsOpen(false);
+                  }}
+                  className={style({width: 'full', display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16})}>
+                  {renderEditing()}
+                  <ButtonGroup align="end" styles={style({alignSelf: 'end'})}>
+                    <SpectrumButton onPress={cancel} variant="secondary" fillStyle="outline">Cancel</SpectrumButton>
+                    <SpectrumButton type="submit" variant="accent">Save</SpectrumButton>
+                  </ButtonGroup>
+                </Form>
+              </CustomDialog>
+            )}
+          </DialogContainer>
+        )}
       </Provider>
     </Provider>
   );
-}
+};
 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));

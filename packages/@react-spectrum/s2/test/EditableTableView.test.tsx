@@ -128,19 +128,17 @@ describe('TableView', () => {
     let {delay = 0} = props;
     let columns = editableColumns;
     let [editableItems, setEditableItems] = useState(defaultItems);
-    let intermediateValue = useRef<any>(null);
 
     let saveItem = useCallback((id: Key, columnId: Key) => {
       setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: {...i.isSaving, [columnId]: false}} : i));
       currentRequests.current.delete(id);
     }, []);
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
-    let onChange = useCallback((id: Key, columnId: Key) => {
-      let value = intermediateValue.current;
+    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+      let value = values[columnId];
       if (value === null) {
         return;
       }
-      intermediateValue.current = null;
       let alreadySaving = currentRequests.current.get(id);
       if (alreadySaving) {
         // remove and cancel the previous request
@@ -156,10 +154,6 @@ describe('TableView', () => {
         return newItems;
       });
     }, [saveItem, delay]);
-
-    let onIntermediateChange = useCallback((value: any) => {
-      intermediateValue.current = value;
-    }, []);
 
     return (
       <div>
@@ -178,7 +172,7 @@ describe('TableView', () => {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={() => onChange(item.id, column.id!)}
+                        onSubmit={(values) => onChange(item.id, column.id!, values)}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -186,7 +180,7 @@ describe('TableView', () => {
                             autoFocus
                             validate={value => value.length > 0 ? null : 'Fruit name is required'}
                             defaultValue={item[column.id!]}
-                            onChange={value => onIntermediateChange(value)} />
+                            name={column.id! as string} />
                         )}>
                         <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
                       </EditableCell>
@@ -197,14 +191,14 @@ describe('TableView', () => {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={() => onChange(item.id, column.id!)}
+                        onSubmit={(values) => onChange(item.id, column.id!, values)}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
                             aria-label="Edit farmer"
                             autoFocus
                             defaultValue={item[column.id!]}
-                            onChange={value => onIntermediateChange(value)}>
+                            name={column.id! as string}>
                             <PickerItem textValue="Eva" id="Eva"><Text>Eva</Text></PickerItem>
                             <PickerItem textValue="Steven" id="Steven"><Text>Steven</Text></PickerItem>
                             <PickerItem textValue="Michael" id="Michael"><Text>Michael</Text></PickerItem>
