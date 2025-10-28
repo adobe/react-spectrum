@@ -12,23 +12,17 @@ export const description = 'Reference table for the `style` macro';
 
 # Style Macro Reference
 
-Reference table for the properties and values supported by React Spectrum `style` macro.
+Reference for the properties and values supported by React Spectrum `style` macro.
 
 ## Colors
-
-TODO: do we just want the table or preserve the same formatting as the styling guide?
 
 All Spectrum 2 color tokens are available across color properties (e.g., `backgroundColor`, `color`, `borderColor`).
 
 <S2Colors />
 
-Below are the rest of the `style` macro supported color properties.
-
 <StyleMacroProperties properties={getPropertyDefinitions('color')} />
 
-## Spacing
-
-TODO: decide what to do with Spacing/Sizing since they are pretty much rolled up into Dimensions?
+## Dimensions
 
 Spacing props like `margin` and `padding` accept values on a **4px grid**. These are specified in `px` and get converted to `rem`. In addition to numbers, these named options are available:
 
@@ -36,8 +30,6 @@ Spacing props like `margin` and `padding` accept values on a **4px grid**. These
 - `pill` – default spacing between the edge of a pill-shaped control and its text. Relative to control height.
 - `text-to-control` – default spacing between text and a control (e.g., label and input). Scales with font size.
 - `text-to-visual` – default spacing between text and a visual element (e.g., icon). Scales with font size.
-
-## Sizing
 
 Size props like `width` and `height` accept arbitrary pixel values. Values are converted to `rem` and multiplied by 1.25x on touch devices to increase hit targets.
 
@@ -47,7 +39,7 @@ Size props like `width` and `height` accept arbitrary pixel values. Values are c
 
 // TODO: edit copy
 
-Spectrum 2 typography is applied via the `font` shorthand, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+Spectrum 2 typography can be applied via the `font` [shorthand](#shorthand), which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
 
 ```tsx
 <main>
@@ -74,7 +66,6 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
 ## Layout
 
 <StyleMacroProperties properties={getPropertyDefinitions('layout')} />
-
 
 ## Misc
 

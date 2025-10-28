@@ -16,6 +16,7 @@ import {ColorLink, Link as SpectrumLink} from './Link';
 import {getDoc} from 'globals-docs';
 import Markdown from 'markdown-to-jsx';
 import React, {ReactNode} from 'react';
+import {spacingTypeValues} from './styleProperties';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 import {TypePopover} from './TypePopover';
@@ -695,6 +696,64 @@ function TemplateLiteral({elements}: TTemplate) {
   );
 }
 
+const styleMacroTypeLinks = {
+  'baseColors': {
+    // TODO: will need to have this link work somehow
+    description: 'A base set of colors defined by Spectrum. Contains a various global and semantic colors as well as high contrast color values for accessibility high contrast mode. See [above](#colors) for more info.'
+  },
+  'baseSpacing': {
+    description: 'Base spacing values in pixels, following a 4px grid. Will be converted to rem.',
+    body: (
+      <code className={codeStyle}>
+        {spacingTypeValues['baseSpacing'].map((val, idx) => (
+          <React.Fragment key={idx}>
+            {idx > 0 && <Punctuation>{' | '}</Punctuation>}
+            <span className={codeStyles.string}>'{val}'</span>
+          </React.Fragment>
+        ))}
+      </code>
+    )
+  },
+  'negativeSpacing': {
+    description: 'Negative spacing values in pixels, following a 4px grid. Will be converted to rem.',
+    body: (
+      <code className={codeStyle}>
+        {spacingTypeValues['negativeSpacing'].map((val, idx) => (
+          <React.Fragment key={idx}>
+            {idx > 0 && <Punctuation>{' | '}</Punctuation>}
+            <span className={codeStyles.string}>'{val}'</span>
+          </React.Fragment>
+        ))}
+      </code>
+    )
+  },
+  'LengthPercentage': {
+    description: <>A CSS length value with percentage or viewport units. e.g. <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code></>
+  },
+  'number': {
+    description: <>A numeric value in pixels e.g. <code className={codeStyle}>20</code>. Will be converted to rem and scaled on touch devices.</>
+  }
+}
+
+interface StyleMacroTypePopoverProps {
+  typeName: string,
+  description: ReactNode,
+  body?: ReactNode
+}
+
+function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopoverProps) {
+  return (
+    <TypePopover name={typeName}>
+      <>
+        <p className={style({font: 'body'})}>
+          {description}
+        </p>
+        {body}
+      </>
+    </TypePopover>
+  )
+}
+
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[]
@@ -738,24 +797,11 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                   ))}
                   {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => (
                     <React.Fragment key={`type-${i}`}>
-                      <Punctuation>{' | '}</Punctuation>
-                      <TypePopover name={typeName}>
-                        {typeName === 'baseColors' && (
-                          <p className={style({font: 'body'})}>
-                            A base set of colors defined by Spectrum. See the global and semantic colors in the color reference above.
-                          </p>
-                        )}
-                        {typeName === 'LengthPercentage' && (
-                          <p className={style({font: 'body'})}>
-                            A CSS length value with percentage or viewport units. Examples: <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code>
-                          </p>
-                        )}
-                        {typeName === 'number' && (
-                          <p className={style({font: 'body'})}>
-                            A numeric value in pixels. Will be converted to rem and scaled on touch devices.
-                          </p>
-                        )}
-                      </TypePopover>
+                      {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
+                      {styleMacroTypeLinks[typeName] ?
+                        <StyleMacroTypePopover typeName={typeName} description={styleMacroTypeLinks[typeName].description} body={styleMacroTypeLinks[typeName].body} /> :
+                        undefined
+                      }
                     </React.Fragment>
                   ))}
                 </code>
@@ -767,3 +813,13 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
     </Table>
   );
 }
+
+
+// TODO: for the below, will need to figure out how to get the same kind of mdx styling in the popover
+// TODO: for the baseColors, either link up or expose a type that displays the visual colors in the popover
+// for some reason trying to render the S2 colors example into the popover crashes the build?
+//  same for spacing, perhaps do the type that contains the same explaination, and remove the text blob
+// TODO: add to the table a description col span 2 to describe what things like aspectRatio and such accept (aka This takes a). this exists in the Prop table so look there
+
+// TODO: For the Shorthands, have a column for Name, value (what values it accepts), and mapping where mapping is what properties it maps to
+//

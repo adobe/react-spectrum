@@ -30,15 +30,32 @@ const sizingProperties = new Set([
   'flexBasis', 'containIntrinsicWidth', 'containIntrinsicHeight'
 ]);
 
+// Properties that accept baseSpacing values
+const baseSpacingProperties = new Set([
+  'borderSpacing', 'rowGap', 'columnGap',
+  'paddingStart', 'paddingEnd', 'paddingTop', 'paddingBottom',
+  'scrollMarginStart', 'scrollMarginEnd', 'scrollMarginTop', 'scrollMarginBottom',
+  'scrollPaddingStart', 'scrollPaddingEnd', 'scrollPaddingTop', 'scrollPaddingBottom',
+  'textIndent', 'gridAutoRows', 'gridAutoColumns', 'gridTemplateColumns', 'gridTemplateRows',
+  'marginStart', 'marginEnd', 'marginTop', 'marginBottom', 'translateX', 'translateY',
+  'insetStart', 'insetEnd', 'top', 'left', 'bottom', 'right'
+]);
+
+// Properties that accept negative spacing values
+const negativeSpacingProperties = new Set([
+  'marginStart', 'marginEnd', 'marginTop', 'marginBottom',
+  'translateX', 'translateY',
+  'insetStart', 'insetEnd', 'top', 'left', 'bottom', 'right'
+]);
+
 // Spacing values used across multiple properties
-// TODO: double check these values, and maybe add them as additional types so we get a type link instead since they are quite long
 const baseSpacingValues = ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96',];
 const negativeBaseSpacingValues = ['-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96'];
 const relativeSpacingValues = [ 'text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
-const spacingValues = [...baseSpacingValues, ...relativeSpacingValues];
-const marginValues = [...spacingValues, ...negativeBaseSpacingValues, 'auto'];
-const insetValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'auto', 'full'];
-const translateValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'full'];
+// const spacingValues = [...baseSpacingValues, ...relativeSpacingValues];
+// const marginValues = [...spacingValues, ...negativeBaseSpacingValues, 'auto'];
+// const insetValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'auto', 'full'];
+// const translateValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'full'];
 const heightBaseValues = ['auto', 'full', 'min', 'max', 'fit', 'screen'];
 const fontSize = [
   'ui-xs', 'ui-sm', 'ui', 'ui-lg', 'ui-xl', 'ui-2xl', 'ui-3xl',
@@ -79,10 +96,10 @@ const colorPropertyValues: {[key: string]: string[]} = {
 };
 
 const dimensionsPropertyValues: {[key: string]: string[]} = {
-  borderSpacing: baseSpacingValues,
+  borderSpacing: [],
   flexBasis: ['auto', 'full'],
-  rowGap: spacingValues,
-  columnGap: spacingValues,
+  rowGap: relativeSpacingValues,
+  columnGap: relativeSpacingValues,
   height: heightBaseValues,
   width: heightBaseValues,
   containIntrinsicWidth: heightBaseValues,
@@ -97,39 +114,44 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   borderBottomWidth: ['0', '1', '2', '4'],
   borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'],
   strokeWidth: ['0', '1', '2'],
-  marginStart: marginValues,
-  marginEnd: marginValues,
-  marginTop: marginValues,
-  marginBottom: marginValues,
-  paddingStart: spacingValues,
-  paddingEnd: spacingValues,
-  paddingTop: spacingValues,
-  paddingBottom: spacingValues,
-  scrollMarginStart: baseSpacingValues,
-  scrollMarginEnd: baseSpacingValues,
-  scrollMarginTop: baseSpacingValues,
-  scrollMarginBottom: baseSpacingValues,
-  scrollPaddingStart: baseSpacingValues,
-  scrollPaddingEnd: baseSpacingValues,
-  scrollPaddingTop: baseSpacingValues,
-  scrollPaddingBottom: baseSpacingValues,
-  textIndent: baseSpacingValues,
-  translateX: translateValues,
-  translateY: translateValues,
-  // TODO would be good if these numbers/strings were types links instead
+  marginStart: ['auto'],
+  marginEnd: ['auto'],
+  marginTop: ['auto'],
+  marginBottom: ['auto'],
+  paddingStart: relativeSpacingValues,
+  paddingEnd: relativeSpacingValues,
+  paddingTop: relativeSpacingValues,
+  paddingBottom: relativeSpacingValues,
+  scrollMarginStart: [],
+  scrollMarginEnd: [],
+  scrollMarginTop: [],
+  scrollMarginBottom: [],
+  scrollPaddingStart: [],
+  scrollPaddingEnd: [],
+  scrollPaddingTop: [],
+  scrollPaddingBottom: [],
+  textIndent: [],
+  translateX: ['full'],
+  translateY: ['full'],
+
+
+  // TODO These ones should have a description for the supported values, make a type link for number however
   rotate: ['number', '${number}deg', '${number}rad', '${number}grad', '${number}turn'],
   scaleX: ['number', '${number}%'],
   scaleY: ['number', '${number}%'],
+
+
   transform: ['string'],
   position: ['absolute', 'fixed', 'relative', 'sticky', 'static'],
-  insetStart: insetValues,
-  insetEnd: insetValues,
-  top: insetValues,
-  left: insetValues,
-  bottom: insetValues,
-  right: insetValues,
+  insetStart: ['auto', 'full'],
+  insetEnd: ['auto', 'full'],
+  top: ['auto', 'full'],
+  left: ['auto', 'full'],
+  bottom: ['auto', 'full'],
+  right: ['auto', 'full'],
+
   // TODO: also would like this number/number to be code formatted, not a string? Maybe make it a type link as well
-  aspectRatio: ['auto', 'square', 'video', 'number/number (e.g. 4/3)']
+  aspectRatio: ['auto', 'square', 'video', 'number / number']
 };
 
 const textPropertyValues: {[key: string]: string[]} = {
@@ -144,7 +166,7 @@ const textPropertyValues: {[key: string]: string[]} = {
   verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'],
   textDecoration: ['none', 'underline', 'overline', 'line-through'],
   textOverflow: ['ellipsis', 'clip'],
-  // TODO: how to get this as an actual type link like boolean
+  // TODO: make common type link for number, link to mdn
   lineClamp: ['number'],
   hyphens: ['none', 'manual', 'auto'],
   whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'],
@@ -154,7 +176,7 @@ const textPropertyValues: {[key: string]: string[]} = {
   boxDecorationBreak: ['slice', 'clone']
 };
 
-// TODO: also missing values that are ArbitraryProperties/ExpandedProperties, etc
+
 const effectsPropertyValues: {[key: string]: string[]} = {
   boxShadow: ['emphasized', 'elevated', 'dragged', 'none'],
   filter: ['emphasized', 'elevated', 'dragged', 'none'],
@@ -164,7 +186,7 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   borderBottomEndRadius: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
   forcedColorAdjust: ['auto', 'none'],
   colorScheme: ['light', 'dark', 'light dark'],
-  // TODO: ideally would be type links for string and LinearGradient
+  // TODO: ideally would be type links for string and LinearGradient, will need to decide if we wanna export LinearGradient
   backgroundImage: ['string', 'LinearGradient'],
   backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'],
   backgroundSize: ['auto', 'cover', 'contain'],
@@ -206,7 +228,6 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   animationPlayState: ['paused', 'running']
 };
 
-// TODO this is missing the values that are ArbitraryProperties, will need to add them
 const layoutPropertyValues: {[key: string]: string[]} = {
   display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'],
   alignContent: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'baseline', 'stretch'],
@@ -231,10 +252,10 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'],
 
   // TODO: make these link to MDN and also have baseSpacingValue type link
-  gridAutoRows:[...baseSpacingValues, 'auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
-  gridAutoColumns: [...baseSpacingValues, 'auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
-  gridTemplateColumns: [...baseSpacingValues, 'auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string',],
-  gridTemplateRows: [...baseSpacingValues, 'auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string'],
+  gridAutoRows:['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
+  gridAutoColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
+  gridTemplateColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string',],
+  gridTemplateRows: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string'],
   gridTemplateAreas: ['string[]'],
 
 
@@ -258,8 +279,6 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   order: ['number'],
 };
 
-// TODO: some of these aren't interactions really? Will need to classify them later
-// Add this to the docs, the table is called misc
 const miscPropertyValues: {[key: string]: string[]} = {
   pointerEvents: ['none', 'auto'],
   touchAction: ['auto', 'none', 'pan-x', 'pan-y', 'manipulation', 'pinch-zoom'],
@@ -380,20 +399,36 @@ const properties: {[key: string]: {[key: string]: string[]}} = {
 // TODO: see if there are any others that we will need to add additional shared types for
 // this is less additional types and more that we want to represent the below as a type link
 export function getAdditionalTypes(propertyName: string): string[] {
+  let types: string[] = [];
+
   if (baseColorProperties.has(propertyName)) {
-    return ['baseColors'];
+    types.push('baseColors');
+  }
+
+  if (baseSpacingProperties.has(propertyName)) {
+    types.push('baseSpacing');
+  }
+
+  if (negativeSpacingProperties.has(propertyName)) {
+    types.push('negativeSpacing');
   }
 
   if (sizingProperties.has(propertyName)) {
-    return ['number', 'LengthPercentage'];
+    types.push('number', 'LengthPercentage');
   }
 
   if (percentageProperties.has(propertyName)) {
-    return ['LengthPercentage'];
+    types.push('LengthPercentage');
   }
 
-  return [];
+  return types;
 }
+
+// Export spacing values for use in TypePopover
+export const spacingTypeValues = {
+  baseSpacing: baseSpacingValues,
+  negativeSpacing: negativeBaseSpacingValues
+};
 
 interface StyleMacroPropertyDefinition {
   values: string[],
