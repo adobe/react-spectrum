@@ -10,16 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-interface StyleMacroPropertyDefinition {
-  // TODO: unneeded for now
-  type: 'color' | 'mapped' | 'percentage' | 'sizing' | 'arbitrary',
-  // Values tied to the property, usually manually defined for now
-  values: string[],
-  // Additional value types to append, usually used to add type links to generalize a type that
-  // the property extends aka a css length percentage or a number that needs more explaination
-  additionalTypes?: string[]
-}
-
 // properties that extend from baseColors
 const baseColorProperties = new Set([
   'color', 'backgroundColor', 'borderColor', 'outlineColor', 'fill', 'stroke'
@@ -40,23 +30,21 @@ const sizingProperties = new Set([
   'flexBasis', 'containIntrinsicWidth', 'containIntrinsicHeight'
 ]);
 
-// manually defined
-// TODO: maybe spit these up into groups, and have getPropertyDefinitions grab via category name instead
-const propertyValues: {[key: string]: string[]} = {
-  // Color
+
+const colorPropertyValues: {[key: string]: string[]} = {
   // This should append baseColors in getPropertyDefinition
   outlineColor: ['focus-ring'],
   // This should append what seems to be a combination of semantic colors and background/global colors
   fill: ['none', 'currentColor'],
   stroke: ['none', 'currentColor'],
+};
 
-
-  display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'],
+const dimensionsPropertyValues: {[key: string]: string[]} = {
   top: ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96', '-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96', 'auto', 'full'],
   height: ['auto', 'full', 'min', 'max', 'fit', 'screen'],
+};
 
-
-  // text
+const textPropertyValues: {[key: string]: string[]} = {
   fontFamily: ['sans', 'serif', 'code'],
   // todo: skipped font-size, font-weight, line height though these will also just be manually defined here
   listStyleType: ['none', 'disc', 'decimal'],
@@ -65,7 +53,6 @@ const propertyValues: {[key: string]: string[]} = {
   textAlign: ['start', 'center', 'end', 'justify'],
   verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'],
   textDecoration: ['none' , 'underline' , 'overline' , 'line-through'],
-
   textOverflow: ['ellipsis', 'clip'],
   lineClamp: ['number'],
   hyphens: ['none', 'manual', 'auto'],
@@ -74,52 +61,72 @@ const propertyValues: {[key: string]: string[]} = {
   wordBreak: ['normal', 'break-all', 'keep-all', 'break-word'],
   overflowWrap: ['normal', 'anywhere', 'break-word'],
   boxDecorationBreak: ['slice', 'clone'],
+};
 
-  // effects
+const effectsPropertyValues: {[key: string]: string[]} = {
   // TODO: should the below have a typelink explaining more details
   boxShadow: ['emphasized', 'elevated', 'dragged', 'none'],
   filter: ['emphasized', 'elevated', 'dragged', 'none'],
+};
+
+const layoutPropertyValues: {[key: string]: string[]} = {
+
+  display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'],
+};
+
+const miscPropertyValues: {[key: string]: string[]} = {
 
 };
 
-// TODO: will we need something specific for short hand?
-export function getPropertyDefinition(propertyName: string): StyleMacroPropertyDefinition {
-  const values = propertyValues[propertyName] || [];
+const shorthandMapping: {[key: string]: string[]} = {
 
+};
+
+const conditionMapping: {[key: string]: string[]} = {
+
+};
+
+const properties: {[key: string]: {[key: string]: string[]}} = {
+  color: colorPropertyValues,
+  dimensions: dimensionsPropertyValues,
+  text: textPropertyValues,
+  effects: effectsPropertyValues,
+  layout: layoutPropertyValues,
+  misc: miscPropertyValues
+};
+
+// TODO: will we need something specific for short hand?
+// TODO: see if there are any others that we will need to add additional shared types for
+export function getAdditionalTypes(propertyName: string): string[] {
   if (baseColorProperties.has(propertyName)) {
-    return {
-      type: 'color',
-      values,
-      additionalTypes: ['baseColors']
-    }
+    return ['baseColors']
   }
 
   if (sizingProperties.has(propertyName)) {
-    return {
-      type: 'sizing',
-      values,
-      additionalTypes: ['number', 'LengthPercentage']
-    };
+    return ['number', 'LengthPercentage']
   }
 
   if (percentageProperties.has(propertyName)) {
-    return {
-      type: 'percentage',
-      values,
-      additionalTypes: ['LengthPercentage']
-    };
+    return ['LengthPercentage']
   }
 
-  return {
-    type: 'mapped',
-    values
-  };
+  return [];
 }
 
-export function getPropertyDefinitions(propertyNames: string[]): {[key: string]: StyleMacroPropertyDefinition} {
-  const result: {[key: string]: StyleMacroPropertyDefinition} = {};
-  for (const name of propertyNames) {
-    result[name] = getPropertyDefinition(name);
+interface StyleMacroPropertyDefinition {
+  values: string[],
+  additionalTypes?: string[]
+}
+
+export function getPropertyDefinitions(propertyCategory: string): {[key: string]: StyleMacroPropertyDefinition} {
+  let result: {[key: string]: StyleMacroPropertyDefinition} = {};
+  let propertiesMapping = properties[propertyCategory] || {};
+
+  for (let [name, values] of Object.entries(propertiesMapping)) {
+    result[name] = {
+      values,
+      additionalTypes: getAdditionalTypes(name)
+    }
   }
   return result;
 }

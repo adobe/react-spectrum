@@ -24,7 +24,7 @@ All Spectrum 2 color tokens are available across color properties (e.g., `backgr
 
 Below are the rest of the `style` macro supported color properties.
 
-<StyleMacroProperties properties={getPropertyDefinitions(['outlineColor', 'fill', 'stroke'])} />
+<StyleMacroProperties properties={getPropertyDefinitions('color')} />
 
 ## Spacing
 
@@ -41,7 +41,7 @@ Spacing props like `margin` and `padding` accept values on a **4px grid**. These
 
 Size props like `width` and `height` accept arbitrary pixel values. Values are converted to `rem` and multiplied by 1.25x on touch devices to increase hit targets.
 
-<StyleMacroProperties properties={getPropertyDefinitions(['top', 'height'])} />
+<StyleMacroProperties properties={getPropertyDefinitions('dimensions')} />
 
 ## Text
 
@@ -64,20 +64,21 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
 <S2Typography />
 
 
-<StyleMacroProperties properties={getPropertyDefinitions(['fontFamily', 'listStyleType', 'listStylePosition'])} />
+<StyleMacroProperties properties={getPropertyDefinitions('text')} />
 
 
 ## Effects
 
-<StyleMacroProperties properties={getPropertyDefinitions(['boxShadow', 'filter'])} />
+<StyleMacroProperties properties={getPropertyDefinitions('effects')} />
 
 ## Layout
 
-<StyleMacroProperties properties={getPropertyDefinitions(['display'])} />
+<StyleMacroProperties properties={getPropertyDefinitions('layout')} />
 
 
 ## Misc
 
+<StyleMacroProperties properties={getPropertyDefinitions('misc')} />
 
 ## Shorthands
 

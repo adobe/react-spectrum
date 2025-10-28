@@ -696,7 +696,6 @@ function TemplateLiteral({elements}: TTemplate) {
 }
 
 interface StyleMacroPropertyDefinition {
-  type: 'color' | 'mapped' | 'percentage' | 'sizing' | 'arbitrary',
   values: string[],
   additionalTypes?: string[]
 }
