@@ -696,7 +696,7 @@ function TemplateLiteral({elements}: TTemplate) {
 }
 
 interface StyleMacroPropertyDefinition {
-  type: 'mapped' | 'percentage' | 'sizing' | 'arbitrary',
+  type: 'color' | 'mapped' | 'percentage' | 'sizing' | 'arbitrary',
   values: string[],
   additionalTypes?: string[]
 }
@@ -705,6 +705,7 @@ interface StyleMacroPropertiesProps {
   properties: {[propertyName: string]: StyleMacroPropertyDefinition}
 }
 
+// TODO: fix the width of the columns so that they are consistent
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   let propertyNames = Object.keys(properties);
 
@@ -740,6 +741,11 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                     <React.Fragment key={`type-${i}`}>
                       <Punctuation>{' | '}</Punctuation>
                       <TypePopover name={typeName}>
+                        {typeName === 'baseColors' && (
+                          <p className={style({font: 'body'})}>
+                            A base set of colors defined by Spectrum. See the global and semantic colors in the color reference above.
+                          </p>
+                        )}
                         {typeName === 'LengthPercentage' && (
                           <p className={style({font: 'body'})}>
                             A CSS length value with percentage or viewport units. Examples: <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code>

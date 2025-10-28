@@ -16,11 +16,19 @@ Reference table for the properties and values supported by React Spectrum `style
 
 ## Colors
 
+TODO: do we just want the table or preserve the same formatting as the styling guide?
+
 All Spectrum 2 color tokens are available across color properties (e.g., `backgroundColor`, `color`, `borderColor`).
 
 <S2Colors />
 
+Below are the rest of the `style` macro supported color properties.
+
+<StyleMacroProperties properties={getPropertyDefinitions(['outlineColor', 'fill', 'stroke'])} />
+
 ## Spacing
+
+TODO: decide what to do with Spacing/Sizing since they are pretty much rolled up into Dimensions?
 
 Spacing props like `margin` and `padding` accept values on a **4px grid**. These are specified in `px` and get converted to `rem`. In addition to numbers, these named options are available:
 
@@ -38,6 +46,7 @@ Size props like `width` and `height` accept arbitrary pixel values. Values are c
 ## Text
 
 // TODO: edit copy
+
 Spectrum 2 typography is applied via the `font` shorthand, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
 
 ```tsx
@@ -55,8 +64,12 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
 <S2Typography />
 
 
+<StyleMacroProperties properties={getPropertyDefinitions(['fontFamily', 'listStyleType', 'listStylePosition'])} />
+
+
 ## Effects
 
+<StyleMacroProperties properties={getPropertyDefinitions(['boxShadow', 'filter'])} />
 
 ## Layout
 
