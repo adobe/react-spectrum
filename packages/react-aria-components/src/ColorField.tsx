@@ -222,7 +222,9 @@ function useChildren(
         slot={props.slot || undefined}
         data-channel={props.channel || 'hex'}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={validation.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined}
+        data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
     </Provider>
   );
 }
