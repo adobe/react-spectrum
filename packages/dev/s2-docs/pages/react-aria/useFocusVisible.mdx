@@ -10,13 +10,14 @@ governing permissions and limitations under the License. */}
 import {Layout} from '../../src/Layout';
 export default Layout;
 import {GroupedPropTable} from '../../src/PropTable';
+import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
-export const section = 'Hooks';
-export const description = 'Implementing collections in React Aria';
-
+export const section = 'Interactions';
 
 # useFocusVisible
+
+<PageDescription>{docs.exports.useFocusVisible.description}</PageDescription>
 
 ## API
 
@@ -38,11 +39,11 @@ globally, see [useFocusRing](useFocusRing.html).
 
 `useFocusVisible` returns props that you should spread onto the target element:
 
-<GroupedPropTable {...docs.exports.FocusVisibleResult} links={docs.links} />
+<InterfaceType {...docs.exports.FocusVisibleResult} />
 
-`useFocusVisible` supports the following props and event handlers:
+`useFocusVisible` supports the following options:
 
-<GroupedPropTable {...docs.exports.FocusVisibleProps} links={docs.links} />
+<InterfaceType {...docs.exports.FocusVisibleProps} />
 
 
 ## Example

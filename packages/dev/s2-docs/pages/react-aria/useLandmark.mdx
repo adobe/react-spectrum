@@ -9,13 +9,14 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {GroupedPropTable} from '../../src/PropTable';
+import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/landmark';
-export const section = 'Hooks';
-export const description = 'Implementing collections in React Aria';
+export const section = 'Interactions';
 
 # useLandmark
+
+<PageDescription>{docs.exports.useLandmark.description}</PageDescription>
 
 ## API
 
@@ -41,18 +42,18 @@ If an element within a landmark was previously focused before leaving that landm
 
 If multiple landmarks are registered with the same role, they should have unique labels, which can be provided by aria-label or aria-labelledby.
 
-{/* Not implemented yet */}
+{/* TODO: Not implemented yet */}
 {/* For an example of landmarks in use, see the [useToastRegion](useToast.html#anatomy) documentation. */}
 
 ## Usage
 
 `useLandmark` returns props that you should spread onto the target element:
 
-<GroupedPropTable {...docs.exports.LandmarkAria} links={docs.links} />
+<InterfaceType {...docs.exports.LandmarkAria} />
 
-`useLandmark` supports the following props:
+`useLandmark` supports the following options:
 
-<GroupedPropTable {...docs.exports.AriaLandmarkProps} links={docs.links} />
+<InterfaceType {...docs.exports.AriaLandmarkProps} />
 
 ## Example
 

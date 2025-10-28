@@ -9,14 +9,15 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {GroupedPropTable} from '../../src/PropTable';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-export const section = 'Hooks';
-export const description = 'Implementing collections in React Aria';
+import {InterfaceType} from '../../src/types';
+export const section = 'Interactions';
 
 # useLongPress
+
+<PageDescription>{docs.exports.useLongPress.description}</PageDescription>
 
 ## API
 
@@ -41,16 +42,16 @@ such as `usePress` and `useMove` will be canceled so that only the long press is
 
 `useLongPress` returns props that you should spread onto the target element:
 
-<GroupedPropTable {...docs.exports.LongPressResult} links={docs.links} />
+<InterfaceType {...docs.exports.LongPressResult} />
 
 `useLongPress` supports the following event handlers and options:
 
-<GroupedPropTable {...docs.exports.LongPressProps} links={docs.links} defaultExpanded={new Set(['Events'])}/>
+<InterfaceType {...docs.exports.LongPressProps} />
 
 Each of these handlers is fired with a `LongPressEvent`, which exposes information about the target and the
 type of event that triggered the interaction.
 
-<GroupedPropTable {...typesDocs.exports.LongPressEvent} links={typesDocs.links} />
+<InterfaceType {...typesDocs.exports.LongPressEvent} />
 
 ## Example
 

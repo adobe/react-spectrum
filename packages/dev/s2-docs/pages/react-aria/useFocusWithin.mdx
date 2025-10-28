@@ -9,13 +9,14 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {GroupedPropTable} from '../../src/PropTable';
+import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
-export const section = 'Hooks';
-export const description = 'Implementing collections in React Aria';
+export const section = 'Interactions';
 
 # useFocusWithin
+
+<PageDescription>{docs.exports.useFocusWithin.description}</PageDescription>
 
 ## API
 
@@ -34,12 +35,11 @@ To handle focus events on only the target element, and not descendants, see [use
 
 `useFocusWithin` returns props that you should spread onto the target element:
 
-<GroupedPropTable {...docs.exports.FocusWithinResult} links={docs.links} />
+<InterfaceType {...docs.exports.FocusWithinResult} />
 
-`useFocusWithin` supports the following event handlers:
+`useFocusWithin` supports the following event handlers and options:
 
-<GroupedPropTable {...docs.exports.FocusWithinProps} links={docs.links} defaultExpanded={new Set(['Events'])}/>
-
+<InterfaceType {...docs.exports.FocusWithinProps} />
 
 ## Example
 
