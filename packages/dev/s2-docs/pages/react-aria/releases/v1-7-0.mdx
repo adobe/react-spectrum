@@ -31,7 +31,7 @@ This release would not be possible without the fantastic contributions we receiv
 
 In this release, we've improved support for right-to-left languages in our date picker components to correct the order of the segments. To account for this, you must update your styles for DateInput to use normal [CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout), e.g. `display: block` instead of `display: flex`. If you are using the `useDateSegment` hook, ensure that you render spans instead of divs. These changes allow the browser to correctly order the segments according to the [Unicode Bidirectional Algorithm](https://unicode.org/reports/tr9/). If you choose to not make these style changes, your component will look the same as before, but will not format correctly in RTL languages.
 
-<image src={datepickerImage} alt="Screenshot showing difference between DatePicker before and after in Hebrew locale" style={{maxWidth: 'min(100%, 586px)', display: 'block', margin: '20px auto'}} />
+<img src={datepickerImage} alt="Screenshot showing difference between DatePicker before and after in Hebrew locale" style={{maxWidth: 'min(100%, 586px)', display: 'block', margin: '20px auto'}} />
 
 **usePress update:**
 
@@ -265,4 +265,7 @@ Autocomplete
  - @react-aria/optimize-locales-plugin@1.1.4
  - tailwindcss-react-aria-components@2.0.0
 ```
+
+## Github release tag
+[Release](https://github.com/adobe/react-spectrum/releases/tag/%40adobe%2Freact-spectrum%403.39.0)
 
