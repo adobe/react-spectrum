@@ -1,7 +1,8 @@
 'use client';
 
-import {ActionButton, Menu, MenuItem, MenuTrigger} from '@react-spectrum/s2';
+import {ActionButton, Menu, MenuItem, MenuTrigger, Text} from '@react-spectrum/s2';
 import Copy from '@react-spectrum/s2/icons/Copy';
+import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import React, {useCallback} from 'react';
 
 interface MarkdownMenuProps {
@@ -46,8 +47,14 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
         <Copy />
       </ActionButton>
       <Menu onAction={onAction}>
-        <MenuItem id="copy">Copy Page as Markdown</MenuItem>
-        <MenuItem id="view">View Page as Markdown</MenuItem>
+        <MenuItem id="copy">
+          <Copy />
+          <Text>Copy Page as Markdown</Text>
+        </MenuItem>
+        <MenuItem id="view">
+          <OpenIn />
+          <Text>View Page as Markdown</Text>
+        </MenuItem>
       </Menu>
     </MenuTrigger>
   );

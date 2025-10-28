@@ -14,7 +14,7 @@ const exampleStyle = style({
   },
   marginTop: {
     default: 20,
-    ':is([data-example-switcher] > *)': 0
+    ':is([data-example-switcher] *)': 0
   },
   borderRadius: 'xl',
   display: 'grid',
@@ -56,7 +56,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    default: 'repeat(auto-fit, minmax(200px, 1fr))',
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',
@@ -166,9 +166,9 @@ export function VisualExample({component, docs, links, importSource, props, init
   // Render the corresponding client component to make the controls interactive.
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
-      <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
+      <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output align={align} acceptOrientation={acceptOrientation} />
-        <div className={controlsStyle}>
+        <div role="group" aria-label="Controls" className={controlsStyle}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>
         <div style={{gridArea: 'files', overflow: 'hidden'}}>

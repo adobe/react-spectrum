@@ -331,3 +331,61 @@ const MyListBoxLoaderIndicator = (props) => {
     </ListBoxLoadMoreItem>
   );
 };
+
+export function WithCreateOption() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      allowsEmptyCollection
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      <Label style={{display: 'block'}}>Favorite Animal</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <Popover placement="bottom end">
+        <ListBox
+          data-testid="combo-box-list-box"
+          className={styles.menu}>
+          {inputValue.length > 0 && (
+            <MyListBoxItem onAction={() => alert('hi')}>
+              {`Create "${inputValue}"`}
+            </MyListBoxItem>
+          )}
+          <MyListBoxItem>Aardvark</MyListBoxItem>
+          <MyListBoxItem>Cat</MyListBoxItem>
+          <MyListBoxItem>Dog</MyListBoxItem>
+          <MyListBoxItem>Kangaroo</MyListBoxItem>
+          <MyListBoxItem>Panda</MyListBoxItem>
+          <MyListBoxItem>Snake</MyListBoxItem>
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+}
+
+export const ComboBoxListBoxItemWithAriaLabel: ComboBoxStory = () => (
+  <ComboBox name="combo-box-example" data-testid="combo-box-example" allowsEmptyCollection>
+    <Label style={{display: 'block'}}>Test</Label>
+    <div style={{display: 'flex'}}>
+      <Input />
+      <Button>
+        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+      </Button>
+    </div>
+    <Popover placement="bottom end">
+      <ListBox
+        renderEmptyState={renderEmptyState}
+        data-testid="combo-box-list-box"
+        className={styles.menu}>
+        <MyListBoxItem aria-label="Item Foo" textValue="Foo">Item <b>Foo</b></MyListBoxItem>
+        <MyListBoxItem aria-label="Item Bar" textValue="Bar">Item <b>Bar</b></MyListBoxItem>
+        <MyListBoxItem aria-label="Item Baz" textValue="Baz">Item <b>Baz</b></MyListBoxItem>
+      </ListBox>
+    </Popover>
+  </ComboBox>
+);

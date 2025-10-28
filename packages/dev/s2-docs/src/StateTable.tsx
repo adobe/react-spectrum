@@ -1,6 +1,6 @@
 import {Code, styles as codeStyles} from './Code';
-import {Fragment} from 'react';
-import {renderHTMLfromMarkdown, TInterface} from './types';
+import {CSSProperties, Fragment} from 'react';
+import {renderHTMLfromMarkdown, setLinks, TInterface} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
@@ -8,12 +8,18 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 interface StateTableProps {
   properties: TInterface['properties'],
+  links?: any,
   showOptional?: boolean,
   hideSelector?: boolean,
-  defaultClassName?: string
+  cssVariables?: {[name: string]: string},
+  style?: CSSProperties
 }
 
-export function StateTable({properties, showOptional, hideSelector, defaultClassName}: StateTableProps) {
+export function StateTable({properties, links, showOptional, hideSelector, cssVariables, style: styleProp}: StateTableProps) {
+  if (links) {
+    setLinks(links);
+  }
+
   let props = Object.values(properties);
   if (!showOptional) {
     props = props.filter(prop => !prop.optional);
@@ -21,7 +27,7 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
   let showSelector = !hideSelector && props.some(prop => prop.type === 'property' && prop.selector);
 
   let table =  (
-    <Table>
+    <Table style={styleProp}>
       <TableHeader>
         <TableRow>
           <TableColumn role="columnheader">Render Prop</TableColumn>
@@ -51,11 +57,11 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
     </Table>
   );
 
-  if (defaultClassName) {
+  if (cssVariables) {
     table = (
       <>
-        <DefaultClassName defaultClassName={defaultClassName} />
         {table}
+        <CSSVariables cssVariables={cssVariables} />
       </>
     );
   }
@@ -63,11 +69,30 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
   return table;
 }
 
-export function DefaultClassName({defaultClassName}: {defaultClassName: string}) {
+export function CSSVariables({cssVariables}: {cssVariables: {[name: string]: string}}) {
   return (
-    <p className={style({font: 'ui'})}>
-      <span className={style({fontWeight: 'bold'})}>Default className: </span>
-      <span className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{defaultClassName}</span>
-    </p>
+    <Table style={{marginTop: 16}}>
+      <TableHeader>
+        <TableRow>
+          <TableColumn role="columnheader">CSS Variable</TableColumn>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {Object.entries(cssVariables).map(([name, description]) => (
+          <Fragment key={name}>
+            <TableRow>
+              <TableCell role="rowheader" hideBorder>
+                <code className={codeStyle}>
+                  <span className={codeStyles.property}>{name}</span>
+                </code>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>{renderHTMLfromMarkdown(description, {forceInline: true})}</TableCell>
+            </TableRow>
+          </Fragment>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

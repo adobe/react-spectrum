@@ -5,6 +5,8 @@ import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
 
+export const tags = ['toggle', 'btn'];
+
 # ToggleButtonGroup
 
 <PageDescription>{docs.exports.ToggleButtonGroup.description}</PageDescription>
@@ -79,18 +81,50 @@ function Example(props) {
 }
 ```
 
+### Animation
+
+Render a [SelectionIndicator](selection.html#animated-selectionindicator) within each `ToggleButton` to animate selection changes.
+
+```tsx render files={['starters/docs/src/SegmentedControl.css']}
+"use client";
+import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator} from 'react-aria-components';
+import 'vanilla-starter/SegmentedControl.css';
+
+function SegmentedControlItem(props: ToggleButtonProps) {
+  return (
+    <ToggleButton {...props} className="segmented-control-item">
+      {/*- begin highlight -*/}
+      <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+      {/*- end highlight -*/}
+      <span>{props.children}</span>
+    </ToggleButton>
+  );
+}
+
+<ToggleButtonGroup
+  className="segmented-control button-base"
+  data-variant="secondary"
+  defaultSelectedKeys={['day']}
+  disallowEmptySelection>
+  <SegmentedControlItem id="day">Day</SegmentedControlItem>
+  <SegmentedControlItem id="week">Week</SegmentedControlItem>
+  <SegmentedControlItem id="month">Month</SegmentedControlItem>
+  <SegmentedControlItem id="year">Year</SegmentedControlItem>
+</ToggleButtonGroup>
+```
+
 ## API
 
 <Anatomy />
 
-```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html'}}
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
 <ToggleButtonGroup>
-  <ToggleButton />
+  <ToggleButton>
+    <SelectionIndicator />
+  </ToggleButton>
 </ToggleButtonGroup>
 ```
 
 ### ToggleButtonGroup
 
 <PropTable component={docs.exports.ToggleButtonGroup} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-ToggleButtonGroup" properties={docs.exports.ToggleButtonGroupRenderProps.properties} />

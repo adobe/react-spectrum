@@ -8,6 +8,8 @@ import {SearchField as TailwindSearchField} from 'tailwind-starter/SearchField';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
 
+export const tags = ['input'];
+
 # SearchField
 
 <PageDescription>{docs.exports.SearchField.description}</PageDescription>
@@ -18,7 +20,7 @@ import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
     docs={vanillaDocs.exports.SearchField}
     links={vanillaDocs.links}
     props={['label', 'description', 'isDisabled']}
-    initialProps={{label: 'Search'}}
+    initialProps={{label: 'Search', placeholder: 'Search documents'}}
     type="vanilla"
     files={["starters/docs/src/SearchField.tsx", "starters/docs/src/SearchField.css"]} />
   <VisualExample
@@ -26,7 +28,7 @@ import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
     docs={vanillaDocs.exports.SearchField}
     links={vanillaDocs.links}
     props={['label', 'description', 'isDisabled']}
-    initialProps={{label: 'Search'}}
+    initialProps={{label: 'Search', placeholder: 'Search documents'}}
     type="tailwind"
     files={["starters/tailwind/src/SearchField.tsx", "starters/tailwind/src/index.css"]} />
 </ExampleSwitcher>
@@ -48,6 +50,7 @@ function Example() {
     <div>
       <SearchField
         label="Search"
+        placeholder="Search documents"
         ///- begin highlight -///
         value={search}
         onChange={setSearch}
@@ -70,7 +73,7 @@ Use the `name` prop to submit the text value to the server. Set the `isRequired`
 "use client";
 import {SearchField} from 'vanilla-starter/SearchField';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 function Example(props) {
   return (
@@ -78,6 +81,7 @@ function Example(props) {
       <SearchField
         {...props}
         label="Search"
+        placeholder="Search documents"
         ///- begin highlight -///
         name="search"
         /* PROPS */
@@ -88,6 +92,10 @@ function Example(props) {
   );
 }
 ```
+
+## Examples
+
+<ExampleList tag="searchfield" pages={props.pages} />
 
 ## API
 
@@ -106,5 +114,3 @@ function Example(props) {
 ### SearchField
 
 <PropTable component={docs.exports.SearchField} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-SearchField" properties={docs.exports.SearchFieldRenderProps.properties} />

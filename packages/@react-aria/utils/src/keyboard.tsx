@@ -25,3 +25,24 @@ export function isCtrlKeyPressed(e: Event): boolean {
 
   return e.ctrlKey;
 }
+
+// HTML input types that do not cause the software keyboard to appear.
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
+export function willOpenKeyboard(target: Element) {
+  return (
+    (target instanceof HTMLInputElement && !nonTextInputTypes.has(target.type)) ||
+    target instanceof HTMLTextAreaElement ||
+    (target instanceof HTMLElement && target.isContentEditable)
+  );
+}

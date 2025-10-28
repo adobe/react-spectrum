@@ -4,6 +4,8 @@ export default Layout;
 import {Image} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['img', 'picture', 'photo'];
+
 # Image
 
 <PageDescription>{docs.exports.Image.description}</PageDescription>
@@ -54,7 +56,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   <div
     className={style({
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr 1fr 1fr',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
       gridTemplateRows: [180],
       gap: 8
     })}>

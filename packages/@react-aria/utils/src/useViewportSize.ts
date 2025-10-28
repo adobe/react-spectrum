@@ -12,6 +12,7 @@
 
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
+import {willOpenKeyboard} from './keyboard';
 
 interface ViewportSize {
   width: number,
@@ -27,6 +28,11 @@ export function useViewportSize(): ViewportSize {
   useEffect(() => {
     // Use visualViewport api to track available height even on iOS virtual keyboard opening
     let onResize = () => {
+      // Ignore updates when zoomed.
+      if (visualViewport && visualViewport.scale > 1) {
+        return;
+      }
+
       setSize(size => {
         let newSize = getViewportSize();
         if (newSize.width === size.width && newSize.height === size.height) {
@@ -36,6 +42,32 @@ export function useViewportSize(): ViewportSize {
       });
     };
 
+    // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
+    // We can anticipate this and resize early by handling the blur event and using the layout size.
+    let frame: number;
+    let onBlur = (e: FocusEvent) => {
+      if (visualViewport && visualViewport.scale > 1) {
+        return;
+      }
+
+      if (willOpenKeyboard(e.target as Element)) {
+        // Wait one frame to see if a new element gets focused.
+        frame = requestAnimationFrame(() => {
+          if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
+            setSize(size => {
+              let newSize = {width: window.innerWidth, height: window.innerHeight};
+              if (newSize.width === size.width && newSize.height === size.height) {
+                return size;
+              }
+              return newSize;
+            });
+          }
+        });
+      }
+    };
+
+    window.addEventListener('blur', onBlur, true);
+
     if (!visualViewport) {
       window.addEventListener('resize', onResize);
     } else {
@@ -43,6 +75,8 @@ export function useViewportSize(): ViewportSize {
     }
 
     return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('blur', onBlur, true);
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
@@ -56,7 +90,8 @@ export function useViewportSize(): ViewportSize {
 
 function getViewportSize(): ViewportSize {
   return {
-    width: (visualViewport && visualViewport?.width) || window.innerWidth,
-    height: (visualViewport && visualViewport?.height) || window.innerHeight
+    // Multiply by the visualViewport scale to get the "natural" size, unaffected by pinch zooming.
+    width: visualViewport ? visualViewport.width * visualViewport.scale : window.innerWidth,
+    height: visualViewport ? visualViewport.height * visualViewport.scale : window.innerHeight
   };
 }

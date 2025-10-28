@@ -195,7 +195,7 @@ export function renderAfterDropIndicators(collection: ICollection<Node<unknown>>
   let afterIndicators: ReactNode[] = [];
   if (nextItemInSameLevel == null) {
     let current: Node<unknown> | null = node;
-    while (current && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
+    while (current?.type === 'item' && (!nextItemInFlattenedCollection || (current.parentKey !== nextItemInFlattenedCollection.parentKey && nextItemInFlattenedCollection.level < current.level))) {
       let indicator = renderDropIndicator({
         type: 'item',
         key: current.key,

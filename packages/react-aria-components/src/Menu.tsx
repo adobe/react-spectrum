@@ -13,9 +13,21 @@
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './context';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
@@ -38,7 +50,9 @@ import React, {
   useRef,
   useState
 } from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SeparatorContext} from './Separator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
@@ -174,6 +188,11 @@ export interface MenuRenderProps {
 }
 
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Menu'
+   */
+  className?: ClassNameOrFunction<MenuRenderProps>,
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: () => ReactNode
 }
@@ -257,10 +276,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             /* eslint-disable-next-line react-hooks/rules-of-hooks */
             [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
-          <CollectionRoot
-            collection={state.collection}
-            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
-            scrollRef={ref} />
+          <SharedElementTransition>
+            <CollectionRoot
+              collection={state.collection}
+              persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+              scrollRef={ref} />
+          </SharedElementTransition>
         </Provider>
         {emptyState}
       </div>
@@ -268,7 +289,13 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   );
 }
 
-export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {}
+export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-MenuSection'
+   */
+  className?: string
+}
 
 // A subclass of SelectionManager that forwards focus-related properties to the parent,
 // but has its own local selection state.
@@ -359,6 +386,11 @@ export interface MenuItemRenderProps extends ItemRenderProps {
 }
 
 export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-MenuItem'
+   */
+  className?: ClassNameOrFunction<MenuItemRenderProps>,
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -438,7 +470,8 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
               description: descriptionProps
             }
           }],
-          [KeyboardContext, keyboardShortcutProps]
+          [KeyboardContext, keyboardShortcutProps],
+          [SelectionIndicatorContext, {isSelected: states.isSelected}]
         ]}>
         {renderProps.children}
       </Provider>

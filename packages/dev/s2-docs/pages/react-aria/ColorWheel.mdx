@@ -7,6 +7,8 @@ import {ColorWheel as TailwindColorWheel} from 'tailwind-starter/ColorWheel';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/color/docs/ColorWheelAnatomy.svg';
 
+export const tags = ['input'];
+
 # ColorWheel
 
 <PageDescription>{docs.exports.ColorWheel.description}</PageDescription>
@@ -78,16 +80,10 @@ function Example() {
 
 <PropTable component={docs.exports.ColorWheel} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-ColorWheel" properties={docs.exports.ColorWheelRenderProps.properties} />
-
 ### ColorWheelTrack
 
 <PropTable component={docs.exports.ColorWheelTrack} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-ColorWheelTrack" properties={docs.exports.ColorWheelTrackRenderProps.properties} />
-
 ### ColorThumb
 
 <PropTable component={docs.exports.ColorThumb} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-ColorThumb" properties={docs.exports.ColorThumbRenderProps.properties} />

@@ -4,6 +4,8 @@ export default Layout;
 import {TextField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['input'];
+
 # TextField
 
 <PageDescription>{docs.exports.TextField.description}</PageDescription>
@@ -12,9 +14,10 @@ import docs from 'docs:@react-spectrum/s2';
   component={TextField}
   docs={docs.exports.TextField}
   links={docs.links}
-  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your full name'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -30,11 +33,12 @@ import {useState} from 'react';
 
 function Example() {
   let [name, setName] = useState('');
-  
+
   return (
     <>
       <TextField
         label="Name"
+        placeholder="Enter your full name"
         ///- begin highlight -///
         value={name}
         onChange={setName} />
@@ -59,6 +63,7 @@ function Example(props) {
       <TextField
         {...props}
         label="Email"
+        placeholder="Enter your email"
         ///- begin highlight -///
         name="email"
         /* PROPS */
