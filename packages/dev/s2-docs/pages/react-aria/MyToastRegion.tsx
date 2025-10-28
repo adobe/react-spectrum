@@ -8,7 +8,7 @@ interface MyToastContent {
   description?: string
 }
 
-export function MyToastRegion({queue}) {
+export function MyToastRegion({queue}: {queue: ToastQueue<MyToastContent>}) {
   return (
     <ToastRegion queue={queue}>
       {({toast}) => (
