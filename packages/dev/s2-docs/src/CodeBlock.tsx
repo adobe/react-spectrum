@@ -57,7 +57,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
   if (!render) {
     return (
       <pre className={standaloneCode}>
-        <Code {...props}>{children}</Code>
+        <Code {...props} isBlock>{children}</Code>
       </pre>
     );
   }
@@ -92,7 +92,7 @@ export function CodeBlock({render, children, files, expanded, hidden, ...props}:
         component={render}
         align={props.align} />
       <div>
-        {files 
+        {files
           ? <Files files={files}>{content}</Files>
           : content}
       </div>
@@ -184,6 +184,6 @@ export function getFiles(files: string[]) {
       }
     }
   }
-  
+
   return fileContents;
 }
