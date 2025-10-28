@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {styles as codeStyles} from './Code';
 import {Indent, JoinList, setLinks, Type, TypeParameters} from './types';
 import React from 'react';
-import {styles as codeStyles} from './Code';
 
 export function FunctionAPI({function: func, links}) {
   let {name, parameters, return: returnType, typeParameters} = func;
