@@ -7466,6 +7466,7 @@ __metadata:
     "@react-spectrum/utils": "npm:^3.12.6"
     "@react-types/shared": "npm:^3.30.0"
     "@react-types/textfield": "npm:^3.12.3"
+    emojibase-data: "npm:^16.0.3"
     fast-glob: "npm:^3.3.3"
     globals-docs: "npm:^2.4.1"
     gray-matter: "npm:^4.0.3"
@@ -15026,6 +15027,15 @@ __metadata:
   version: 9.2.2
   resolution: "emoji-regex@npm:9.2.2"
   checksum: 10c0/af014e759a72064cf66e6e694a7fc6b0ed3d8db680427b021a89727689671cefe9d04151b2cad51dbaf85d5ba790d061cd167f1cf32eb7b281f6368b3c181639
+  languageName: node
+  linkType: hard
+
+"emojibase-data@npm:^16.0.3":
+  version: 16.0.3
+  resolution: "emojibase-data@npm:16.0.3"
+  peerDependencies:
+    emojibase: "*"
+  checksum: 10c0/d82520917c2ec326e737da9c5a57472e41a719777fa4770b52b75f0568791613fc94829898831c7b3fff1528134de01019cdf34e571d214fee19e40950d68b7f
   languageName: node
   linkType: hard
 

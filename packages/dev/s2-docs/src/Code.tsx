@@ -28,8 +28,10 @@ const mark = style({
   borderWidth: 0,
   borderStartWidth: 2,
   borderStyle: 'solid',
-  marginX: 'calc(var(--code-padding-x) * -1)',
-  paddingX: 'calc(var(--code-padding-x) - self(borderStartWidth))',
+  marginStart: 'calc(var(--code-padding-start) * -1)',
+  marginEnd: 'calc(var(--code-padding-end) * -1)',
+  paddingStart: 'calc(var(--code-padding-start) - self(borderStartWidth))',
+  paddingEnd: '--code-padding-end',
   color: 'inherit'
 });
 
@@ -55,7 +57,7 @@ export interface ICodeProps {
 export function Code({children, lang, hideImports = true, links, isBlock = false}: ICodeProps) {
   if (lang) {
     // @ts-ignore
-    let highlighted = highlightHast(children, Language[lang.toUpperCase()]);
+    let highlighted = highlightHast(children, Language[lang === 'json' ? 'JS' : lang.toUpperCase()]);
     let lineNodes = lines(highlighted);
     let idx = lineNodes.findIndex(line => !/^(["']use client["']|(\s*$))/.test(text(line)));
     if (idx > 0) {
