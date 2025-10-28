@@ -10,25 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Indent, JoinList, Type, TypeParameters, setLinks} from './types';
-import {styles as codeStyles} from './Code';
+import {Indent, JoinList, setLinks, Type, TypeParameters} from './types';
 import React from 'react';
+import {styles as codeStyles} from './Code';
 
 export function FunctionAPI({function: func, links}) {
   let {name, parameters, return: returnType, typeParameters} = func;
-
   if (links) {
-    setLinks(links)
+    setLinks(links);
   }
   return (
-      <code className={codeStyles.function}>
-        <span className={codeStyles.attribute}>{name}</span>
-        <TypeParameters typeParameters={typeParameters} />
-        <Indent params={parameters} open="(" close=")">
-          <JoinList elements={parameters} joiner=", " />
-        </Indent>
-        <span className={codeStyles.string}>{': '}</span>
-        <Type type={returnType} />
-      </code>
+    <code className={codeStyles.function}>
+      <span className={codeStyles.attribute}>{name}</span>
+      <TypeParameters typeParameters={typeParameters} />
+      <Indent params={parameters} open="(" close=")">
+        <JoinList elements={parameters} joiner=", " />
+      </Indent>
+      <span className={codeStyles.string}>{': '}</span>
+      <Type type={returnType} />
+    </code>
   );
 }
