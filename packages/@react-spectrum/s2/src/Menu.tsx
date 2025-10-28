@@ -409,7 +409,12 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'className' | keyof GlobalDOMAttributes> {
+  /**
+   * The children of the menu section.
+   */
+  children?: ReactNode
+}
 export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
