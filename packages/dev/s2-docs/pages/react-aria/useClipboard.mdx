@@ -9,7 +9,6 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {GroupedPropTable} from '../../src/PropTable';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
@@ -33,7 +32,7 @@ The <TypeLink links={docs.links} type={docs.exports.useClipboard} /> hook provid
 This example shows a simple focusable element which supports copying a string when focused, and another element which supports pasting plain text.
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/useClipboardExample.css"]}
-"use client";
+'use client';
 import React from 'react';
 import type {TextDropItem} from '@react-aria/dnd';
 import {useClipboard} from '@react-aria/dnd';
@@ -96,7 +95,7 @@ In addition to providing items in multiple formats, you can also return multiple
 This example copies two items, each of which contains representations as plain text, HTML, and a custom app-specific data format. Pasting on the target will use the custom data format to render formatted items. If you paste in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
 
 ```tsx render
-"use client"
+'use client';
 import React from 'react';
 import {useClipboard} from '@react-aria/dnd';
 
@@ -195,7 +194,7 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.exports.TextDropItem} /> r
 The example below works with the above `Copyable` example using a custom app-specific data format to transfer rich data. If no such data is available, it falls back to pasting plain text data.
 
 ```tsx render
-"use client";
+'use client';
 import React from 'react';
 import {useClipboard} from '@react-aria/dnd';
 
@@ -231,8 +230,8 @@ function Copyable() {
     </div>
   );
 }
-///- end collapse -///
 
+///- end collapse -///
 function Pasteable() {
   let [pasted, setPasted] = React.useState(null);
   let {clipboardProps} = useClipboard({
@@ -272,6 +271,7 @@ function Pasteable() {
     </div>
   );
 }
+
 ///- begin collapse -///
 <div>
   <Copyable />
@@ -283,7 +283,7 @@ function Pasteable() {
 A <TypeLink links={sharedDocs.links} type={sharedDocs.exports.FileDropItem} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 ```tsx render
-"use client";
+'use client';
 import React from 'react';
 import {useClipboard} from '@react-aria/dnd';
 import type {FileDropItem} from '@react-aria/dnd';
@@ -310,7 +310,7 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.exports.DirectoryDropItem}
 The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a <TypeLink links={sharedDocs.links} type={sharedDocs.exports.FileDropItem} /> or <TypeLink links={sharedDocs.links} type={sharedDocs.exports.DirectoryDropItem} />, and you can access the contents of each file as discussed above.
 This example renders the file names within a dropped directory in a grid.
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/useClipboardGrid.css"]}
-"use client";
+'use client';
 import React from 'react';
 import {useClipboard} from '@react-aria/dnd'
 import type {DirectoryDropItem} from '@react-aria/dnd';
@@ -360,7 +360,7 @@ function Pasteable() {
 ## Disabling copy and paste
 If you need to temporarily disable copying and pasting, you can pass the `isDisabled` option to `useClipboard`. This will prevent copying and pasting on the element until it is re-enabled.
 ```tsx render
-"use client";
+'use client';
 import React from 'react';
 import type {TextDropItem} from '@react-aria/dnd';
 import {useClipboard} from '@react-aria/dnd';
@@ -407,6 +407,7 @@ function Pasteable() {
     </div>
   );
 }
+
 <div>
   <Copyable />
   <Pasteable />

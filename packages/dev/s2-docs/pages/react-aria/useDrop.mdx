@@ -9,7 +9,7 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '../../src/Layout';
 export default Layout;
-import {GroupedPropTable} from '../../src/PropTable';
+import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
@@ -35,7 +35,7 @@ See the [drag and drop introduction](dnd.html) to learn more.
 
 This example shows how to make a simple drop target that accepts plain text data. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While a drag is hovered over it, a blue outline is rendered by applying an additional CSS class.
 
-```tsx render files={["packages/dev/s2-docs/pages/react-aria/useDragExample.css", "packages/dev/s2-docs/pages/react-aria/Draggable.tsx"]}
+```tsx render files={["packages/dev/s2-docs/pages/react-aria/Draggable.tsx", "packages/dev/s2-docs/pages/react-aria/useDragExample.css"]}
 'use client';
 import React from 'react';
 import type {TextDropItem} from '@react-aria/dnd';
@@ -218,6 +218,7 @@ The drag source can specify which drop operations are allowed for the dragged da
 
 The `getDropOperation` function passed to `useDrop` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement `getDropOperation` and return `'cancel'` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true.
 When the data is supported, either return one of the drop operations in `allowedOperation` or a specific drop operation if only that drop operation is supported. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
 In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
 
 ```tsx render
@@ -285,7 +286,8 @@ function DropTarget(props) {
 ## Events
 
 Drop targets receive a number of events during a drag session. These are:
-<GroupedPropTable {...docs.exports.DropEvent} links={docs.links} />
+<InterfaceType {...docs.exports.DropEvent} />
+
 This example logs all events that occur within the drop target:
 
 ```tsx render
