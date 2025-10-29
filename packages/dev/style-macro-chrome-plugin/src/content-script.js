@@ -49,23 +49,52 @@ window.addEventListener('message', function (event) {
 });
 
 // Listen for requests from DevTools (via background script)
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
   debugLog('Received message:', message);
 
   if (message.action === 'get-macro') {
-    const macroData = window.__macros?.[message.hash];
-    debugLog('get-macro request for hash:', message.hash, 'Found:', !!macroData);
-    debugLog('Available macros:', window.__macros ? Object.keys(window.__macros) : 'none');
+    const sendMacroResponse = (data, attempt = 1) => {
+      debugLog(`Sending macro-response for hash: ${message.hash}, attempt: ${attempt}, has data: ${!!data}`);
+      try {
+        chrome.runtime.sendMessage({
+          action: 'macro-response',
+          hash: message.hash,
+          data: data || null
+        });
+      } catch (err) {
+        debugLog('Failed to send macro-response message:', err);
+      }
+    };
 
-    // Send response back through background script
-    try {
-      chrome.runtime.sendMessage({
-        action: 'macro-response',
-        hash: message.hash,
-        data: macroData || null
-      });
-    } catch (err) {
-      debugLog('Failed to send macro-response message:', err);
+    // Check if data is immediately available
+    let macroData = window.__macros?.[message.hash];
+
+    if (macroData) {
+      debugLog('get-macro request for hash:', message.hash, 'Found immediately');
+      sendMacroResponse(macroData, 1);
+    } else {
+      // Data not available yet, wait a bit for it to arrive via window.postMessage
+      debugLog('get-macro request for hash:', message.hash, 'Not found, waiting...');
+      debugLog('Available macros:', window.__macros ? Object.keys(window.__macros) : 'none');
+
+      let attempts = 0;
+      const maxAttempts = 10;
+      const checkInterval = 50; // Check every 50ms
+
+      const intervalId = setInterval(() => {
+        attempts++;
+        macroData = window.__macros?.[message.hash];
+
+        if (macroData) {
+          clearInterval(intervalId);
+          debugLog(`get-macro hash: ${message.hash} found after ${attempts} attempts (${attempts * checkInterval}ms)`);
+          sendMacroResponse(macroData, attempts + 1);
+        } else if (attempts >= maxAttempts) {
+          clearInterval(intervalId);
+          debugLog(`get-macro hash: ${message.hash} not found after ${maxAttempts} attempts, giving up`);
+          sendMacroResponse(null, attempts + 1);
+        }
+      }, checkInterval);
     }
   }
 });

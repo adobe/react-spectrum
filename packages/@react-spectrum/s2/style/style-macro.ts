@@ -380,6 +380,14 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       css += rules.join('\n\n');
       css += '}\n\n';
     }
+    // @ts-expect-error
+    let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
+    let staticId = toBase62(hash(className));
+    if (isStatic) {
+      css += `.-macro-static-${staticId} {
+        --macro-data: ${JSON.stringify({style, loc})};
+      }\n\n`;
+    }
 
     if (this && typeof this.addAsset === 'function') {
       this.addAsset({
@@ -388,20 +396,14 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       });
     }
 
-    // @ts-expect-error
-    let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
-    if (isStatic && process.env.NODE_ENV !== 'production') {
-      let id = toBase62(hash(className));
-      className += ` -macro$${id}`;
-      return {toString: new Function(`
-        typeof window !== 'undefined' && window?.postMessage?.({action: 'update-macros', hash: ${JSON.stringify(id)}, loc: ${JSON.stringify(loc)}, style: ${JSON.stringify(style)}}, "*");
-        return ${JSON.stringify(className)};
-      `)};
+    if (isStatic) {
+      className += ` -macro-static-${staticId}`;
+      return className;
     }
 
     if (process.env.NODE_ENV !== 'production') {
       js += 'let hash = 5381;for (let i = 0; i < rules.length; i++) { hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0; }\n';
-      js += 'rules += " -macro$" + hash.toString(36);\n';
+      js += 'rules += " -macro-dynamic-" + hash.toString(36);\n';
       js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
     }
     js += 'return rules;';

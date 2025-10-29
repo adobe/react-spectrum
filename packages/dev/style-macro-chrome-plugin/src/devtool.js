@@ -34,11 +34,15 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     debugLog('Message from background:', message);
 
     if (message.action === 'macro-response') {
-      debugLog('Received macro-response for hash:', message.hash);
+      debugLog('Received macro-response for hash:', message.hash, 'Has data:', !!message.data);
+      debugLog('Pending queries has hash:', pendingQueries.has(message.hash), 'Total pending:', pendingQueries.size);
       const resolve = pendingQueries.get(message.hash);
       if (resolve) {
+        debugLog('Resolving promise for hash:', message.hash, 'with data:', message.data);
         resolve(message.data);
         pendingQueries.delete(message.hash);
+      } else {
+        debugLog('WARNING: No pending query found for hash:', message.hash);
       }
     } else if (message.action === 'update-macros') {
       debugLog('Received update-macros, refreshing...');
@@ -51,6 +55,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     debugLog('Querying macro with hash:', hash);
     return new Promise((resolve) => {
       pendingQueries.set(hash, resolve);
+      debugLog('Added to pendingQueries, total pending:', pendingQueries.size);
 
       try {
         backgroundPageConnection.postMessage({
@@ -68,13 +73,26 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
       // Timeout after 1 second
       setTimeout(() => {
         if (pendingQueries.has(hash)) {
-          debugLog('Query timeout for hash:', hash);
+          debugLog('TIMEOUT: Query timeout for hash:', hash, 'Resolving to null');
           pendingQueries.delete(hash);
           resolve(null);
+        } else {
+          debugLog('Timeout fired for hash:', hash, 'but query already resolved');
         }
       }, 1000);
     });
   };
+
+  function getMacroData(className) {
+    let promise = new Promise((resolve) => {
+      debugLog('Getting macro data for:', className);
+      chrome.devtools.inspectedWindow.eval('window.getComputedStyle($0).getPropertyValue("--macro-data")', (style) => {
+        debugLog('Got style:', style);
+        resolve(style ? JSON.parse(style) : null);
+      });
+    });
+    return promise;
+  }
 
   let update = () => {
     debugLog('Starting update...');
@@ -88,30 +106,28 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
           return;
         }
 
-        let macros = className.matchAll(/-macro\$([^\s]+)/g);
-        let matches = [];
+        let staticMacroHashes = [...className.matchAll(/-macro-static-([^\s]+)/g)].map(m => m[1]);
+        let dynamicMacroHashes = [...className.matchAll(/-macro-dynamic-([^\s]+)/g)].map(m => m[1]);
+        debugLog('Static macro hashes:', staticMacroHashes);
+        debugLog('Dynamic macro hashes:', dynamicMacroHashes);
 
-        for (let macro of macros) {
-          debugLog('Processing macro:', macro[1]);
-          const result = await queryMacro(macro[1]);
-          debugLog('Got result for macro:', macro[1], result ? 'found' : 'not found');
-          if (result) {
-            matches.push(result);
-          }
-        }
+        let staticMacros = staticMacroHashes.map(macro => getMacroData(macro));
+        let dynamicMacros = dynamicMacroHashes.map(macro => queryMacro(macro));
 
-        debugLog('Total matches:', matches.length);
+        debugLog('Waiting for', staticMacros.length, 'static and', dynamicMacros.length, 'dynamic macros...');
+        let results = await Promise.all([...staticMacros, ...dynamicMacros]);
+        debugLog('Results:', results);
 
-        if (matches.length === 0) {
+        if (results.length === 0) {
           sidebar.setObject({});
-        } else if (matches.length === 1) {
-          sidebar.setObject(matches[0].style ?? {}, matches[0].loc);
+        } else if (results.length === 1) {
+          sidebar.setObject(results[0].style ?? {}, results[0].loc);
         } else {
           let seenProperties = new Set();
-          for (let i = matches.length - 1; i >= 0; i--) {
-            for (let key in matches[i].style) {
+          for (let i = results.length - 1; i >= 0; i--) {
+            for (let key in results[i].style) {
               if (seenProperties.has(key)) {
-                delete matches[i].style[key];
+                delete results[i].style[key];
               } else {
                 seenProperties.add(key);
               }
@@ -119,8 +135,8 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
           }
 
           let res = {};
-          for (let match of matches) {
-            res[match.loc] = match.style;
+          for (let result of results) {
+            res[result.loc] = result.style;
           }
           sidebar.setObject(res);
         }
