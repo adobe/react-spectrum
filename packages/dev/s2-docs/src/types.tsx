@@ -697,10 +697,6 @@ function TemplateLiteral({elements}: TTemplate) {
 }
 
 const styleMacroTypeLinks = {
-  'baseColors': {
-    // TODO: will need to have this link work somehow
-    description: 'A base set of colors defined by Spectrum. Contains a various global and semantic colors as well as high contrast color values for accessibility high contrast mode. See [above](#colors) for more info.'
-  },
   'baseSpacing': {
     description: 'Base spacing values in pixels, following a 4px grid. Will be converted to rem.',
     body: (
@@ -738,7 +734,8 @@ const styleMacroTypeLinks = {
 interface StyleMacroTypePopoverProps {
   typeName: string,
   description: ReactNode,
-  body?: ReactNode
+  body?: ReactNode,
+  link?: string
 }
 
 function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopoverProps) {
@@ -757,7 +754,7 @@ function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopo
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
-  links?: {[value: string]: string}
+  links?: {[value: string]: {href: string, isRelative?: boolean}}
 }
 
 interface StyleMacroPropertiesProps {
@@ -795,21 +792,38 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                     <React.Fragment key={i}>
                       {i > 0 && <Punctuation>{' | '}</Punctuation>}
                       {links[value] ? (
-                        <ColorLink href={links[value]} type="variable" rel="noreferrer" target="_blank">{value}</ColorLink>
+                        <ColorLink
+                          href={links[value].href}
+                          type="variable"
+                          rel={links[value].isRelative ? undefined : "noreferrer"}
+                          target={links[value].isRelative ? undefined : "_blank"}>
+                          {value}
+                        </ColorLink>
                       ) : (
                         <span className={codeStyles.string}>'{value}'</span>
                       )}
                     </React.Fragment>
                   ))}
-                  {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => (
-                    <React.Fragment key={`type-${i}`}>
-                      {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
-                      {styleMacroTypeLinks[typeName] ?
-                        <StyleMacroTypePopover typeName={typeName} description={styleMacroTypeLinks[typeName].description} body={styleMacroTypeLinks[typeName].body} /> :
-                        undefined
-                      }
-                    </React.Fragment>
-                  ))}
+                  {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
+                    let typeLink = styleMacroTypeLinks[typeName];
+                    return (
+                      <React.Fragment key={`type-${i}`}>
+                        {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
+                        {typeLink ? (
+                          // only if the type link has a description and/or body do we want to render the type popover
+                          // this is to make things like baseColor
+                          typeLink.link && !typeLink.description && !typeLink.body ? (
+                            <ColorLink href={typeLink.link} type="variable">{typeName}</ColorLink>
+                          ) : (
+                            <StyleMacroTypePopover
+                              typeName={typeName}
+                              description={typeLink.description}
+                              body={typeLink.body} />
+                          )
+                        ) : undefined}
+                      </React.Fragment>
+                    );
+                  })}
                 </code>
               </TableCell>
             </TableRow>
@@ -820,10 +834,6 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   );
 }
 
-
-// TODO: for the below, will need to figure out how to get the same kind of mdx styling in the popover
-// TODO: for the baseColors, either link up or expose a type that displays the visual colors in the popover
-// for some reason trying to render the S2 colors example into the popover crashes the build?
 //  same for spacing, perhaps do the type that contains the same explaination, and remove the text blob
 // TODO: add to the table a description col span 2 to describe what things like aspectRatio and such accept (aka This takes a). this exists in the Prop table so look there
 

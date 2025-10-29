@@ -10,11 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// Properties that extend from baseColors
-const baseColorProperties = new Set([
-  'color', 'backgroundColor', 'borderColor', 'outlineColor', 'fill', 'stroke'
-]);
-
 // Properties that use PercentageProperty (accept LengthPercentage in addition to mapped values)
 const percentageProperties = new Set([
   'top', 'left', 'bottom', 'right',
@@ -67,7 +62,7 @@ const fontSize = [
 ];
 
 const colorPropertyValues: {[key: string]: string[]} = {
-  color: ['accent', 'neutral', 'neutral-subdued', 'negative', 'disabled', 'heading', 'title', 'body', 'detail', 'code', 'auto'],
+  color: ['accent', 'neutral', 'neutral-subdued', 'negative', 'disabled', 'heading', 'title', 'body', 'detail', 'code', 'auto', 'baseColors'],
   backgroundColor: [
     'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
     'negative', 'negative-subtle', 'informative', 'informative-subtle',
@@ -81,18 +76,18 @@ const colorPropertyValues: {[key: string]: string[]} = {
     'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
     'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
     'brown', 'brown-subtle', 'silver', 'silver-subtle',
-    'disabled', 'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated'
+    'disabled', 'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated', 'baseColors'
   ],
-  borderColor: ['negative', 'disabled'],
-  outlineColor: ['focus-ring'],
+  borderColor: ['negative', 'disabled', 'baseColors'],
+  outlineColor: ['focus-ring', 'baseColors'],
   fill: [
     'none', 'currentColor',
     'accent', 'neutral', 'negative', 'informative', 'positive', 'notice',
     'gray', 'red', 'orange', 'yellow', 'chartreuse', 'celery', 'green',
     'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta',
-    'pink', 'turquoise', 'cinnamon', 'brown', 'silver'
+    'pink', 'turquoise', 'cinnamon', 'brown', 'silver', 'baseColors'
   ],
-  stroke: ['none', 'currentColor']
+  stroke: ['none', 'currentColor', 'baseColors']
 };
 
 const dimensionsPropertyValues: {[key: string]: string[]} = {
@@ -169,7 +164,6 @@ const textPropertyValues: {[key: string]: string[]} = {
   overflowWrap: ['normal', 'anywhere', 'break-word'],
   boxDecorationBreak: ['slice', 'clone']
 };
-
 
 const effectsPropertyValues: {[key: string]: string[]} = {
   boxShadow: ['emphasized', 'elevated', 'dragged', 'none'],
@@ -370,12 +364,9 @@ const properties: {[key: string]: {[key: string]: string[]}} = {
 // TODO: will we need something specific for short hand?
 // TODO: see if there are any others that we will need to add additional shared types for
 // this is less additional types and more that we want to represent the below as a type link
+// special custom types that should be appended to the property but need special handling (render a type popover)
 export function getAdditionalTypes(propertyName: string): string[] {
   let types: string[] = [];
-
-  if (baseColorProperties.has(propertyName)) {
-    types.push('baseColors');
-  }
 
   if (baseSpacingProperties.has(propertyName)) {
     types.push('baseSpacing');
@@ -401,36 +392,58 @@ export const spacingTypeValues = {
   negativeSpacing: negativeBaseSpacingValues
 };
 
+// opted NOT to link to Fonts from 'ui', 'code', etc since the visual example
+// is so close to the area in the table where those are rendered
+const relativeLinks: {[key: string]: string} = {
+  'text-to-control': '#dimensions',
+  'text-to-visual': '#dimensions',
+  'edge-to-text': '#dimensions',
+  'pill': '#dimensions',
+  'baseColors': '#colors'
+}
+
 const mdnTypeLinks: {[key: string]: string} = {
   'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
-  'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
+  'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number'
 };
 
-const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
+const mdnPropertyLinks: {[key: string]: {[value: string]: {href: string, isRelative?: boolean}}} = {
   'flexShrink': {
-    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink'
+    'number': {
+      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink',
+    }
   },
   'flexGrow': {
-    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow'
+    'number': {
+      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow'
+    }
   },
   'gridColumnStart': {
-    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start'
+    'string': {
+      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start'
+    }
   },
   'gridColumnEnd': {
-    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end'
+    'string': {
+      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end'
+    }
   },
   'gridRowStart': {
-    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start'
+    'string': {
+      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start'
+    }
   },
   'gridRowEnd': {
-    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end'
+    'string': {
+      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end'
+    }
   }
 };
 
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
-  links?: {[value: string]: string}
+  links?: {[value: string]: {href: string, isRelative?: boolean}}
 }
 
 export function getPropertyDefinitions(propertyCategory: string): {[key: string]: StyleMacroPropertyDefinition} {
@@ -438,7 +451,7 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
   let propertiesMapping = properties[propertyCategory] || {};
 
   for (let [name, values] of Object.entries(propertiesMapping)) {
-    let links: {[value: string]: string} = {};
+    let links: {[value: string]: {href: string, isRelative?: boolean}} = {};
 
     if (mdnPropertyLinks[name]) {
       links = {...mdnPropertyLinks[name]};
@@ -446,12 +459,15 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
     } else {
       // see if the property has any common types that should link to MDN instead
       for (let value of values) {
+        // make sure not to overwrite number in sizing properties and pill in other sections aka effects
+        if ((value === 'number' && sizingProperties.has(name)) || (value === 'pill' && propertyCategory !== 'dimensions') ) {
+          continue;
+        }
+
         if (mdnTypeLinks[value]) {
-          // make sure not to overwrite number in sizing properties
-          if (value === 'number' && sizingProperties.has(name)) {
-            continue;
-          }
-          links[value] = mdnTypeLinks[value];
+          links[value] = {href: mdnTypeLinks[value]};
+        } else if (relativeLinks[value]) {
+          links[value] = {href: relativeLinks[value], isRelative: true};
         }
       }
     }
