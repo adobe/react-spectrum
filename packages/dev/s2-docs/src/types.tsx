@@ -756,7 +756,8 @@ function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopo
 
 interface StyleMacroPropertyDefinition {
   values: string[],
-  additionalTypes?: string[]
+  additionalTypes?: string[],
+  links?: {[value: string]: string}
 }
 
 interface StyleMacroPropertiesProps {
@@ -779,6 +780,7 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
         {propertyNames.map((propertyName, index) => {
           let propDef = properties[propertyName];
           let values = propDef.values;
+          let links = propDef.links || {};
 
           return (
             <TableRow key={index}>
@@ -792,7 +794,11 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                   {values.map((value, i) => (
                     <React.Fragment key={i}>
                       {i > 0 && <Punctuation>{' | '}</Punctuation>}
-                      <span className={codeStyles.string}>'{value}'</span>
+                      {links[value] ? (
+                        <ColorLink href={links[value]} type="variable" rel="noreferrer" target="_blank">{value}</ColorLink>
+                      ) : (
+                        <span className={codeStyles.string}>'{value}'</span>
+                      )}
                     </React.Fragment>
                   ))}
                   {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => (

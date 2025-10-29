@@ -133,14 +133,10 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   textIndent: [],
   translateX: ['full'],
   translateY: ['full'],
-
-
-  // TODO These ones should have a description for the supported values, make a type link for number however
+  // TODO These ones should have a description for the supported values
   rotate: ['number', '${number}deg', '${number}rad', '${number}grad', '${number}turn'],
   scaleX: ['number', '${number}%'],
   scaleY: ['number', '${number}%'],
-
-
   transform: ['string'],
   position: ['absolute', 'fixed', 'relative', 'sticky', 'static'],
   insetStart: ['auto', 'full'],
@@ -149,8 +145,7 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   left: ['auto', 'full'],
   bottom: ['auto', 'full'],
   right: ['auto', 'full'],
-
-  // TODO: also would like this number/number to be code formatted, not a string? Maybe make it a type link as well
+  // TODO: add description for this one
   aspectRatio: ['auto', 'square', 'video', 'number / number']
 };
 
@@ -166,7 +161,6 @@ const textPropertyValues: {[key: string]: string[]} = {
   verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'],
   textDecoration: ['none', 'underline', 'overline', 'line-through'],
   textOverflow: ['ellipsis', 'clip'],
-  // TODO: make common type link for number, link to mdn
   lineClamp: ['number'],
   hyphens: ['none', 'manual', 'auto'],
   whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'],
@@ -186,7 +180,7 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   borderBottomEndRadius: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
   forcedColorAdjust: ['auto', 'none'],
   colorScheme: ['light', 'dark', 'light dark'],
-  // TODO: ideally would be type links for string and LinearGradient, will need to decide if we wanna export LinearGradient
+  // TODO: ideally would be type for LinearGradient, will need to decide if we wanna export LinearGradient
   backgroundImage: ['string', 'LinearGradient'],
   backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'],
   backgroundSize: ['auto', 'cover', 'contain'],
@@ -196,34 +190,20 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   backgroundOrigin: ['border-box', 'padding-box', 'content-box'],
   backgroundBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'],
   mixBlendMode: ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity', 'plus-darker', 'plus-lighter'],
-  // TODO: ideally would be a type link
   opacity: ['number'],
   outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'inset'],
   outlineOffset: ['number'],
   outlineWidth: ['0', '1', '2', '4'],
   transition: ['default', 'colors', 'opacity', 'shadow', 'transform', 'all', 'none'],
-
-  // TODO: type link
   transitionDelay: ['string', 'number'],
   transitionDuration: ['string', 'number'],
-
   transitionTimingFunction: ['default', 'linear', 'in', 'out', 'in-out'],
-
-  // TODO: type link, maybe some of these type links should just be links to MDN?
-  // Could make it similar to getAdditionalTypes and have a links object that has the type (aka string | number) and then links it to MDN
   animation: ['string', 'number'],
   animationDuration: ['string', 'number'],
   animationDelay: ['string', 'number'],
-
-
-
   animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'],
   animationFillMode: ['none', 'forwards', 'backwards', 'both'],
-
-  // TODO: type link, see above
   animationIterationCount: ['string', 'number'],
-
-
   animationTimingFunction: ['default', 'linear', 'in', 'out', 'in-out'],
   animationPlayState: ['paused', 'running']
 };
@@ -238,17 +218,13 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   justifySelf: ['auto', 'start', 'end', 'center', 'stretch'],
   flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'],
   flexWrap: ['wrap', 'wrap-reverse', 'nowrap'],
-
-
-  // TODO: the below definitely link to MDN
-  // flexShrink: new ArbitraryProperty<CSS.Property.FlexShrink>('flexShrink'),
-  // flexGrow: new ArbitraryProperty<CSS.Property.FlexGrow>('flexGrow'),
-  // gridColumnStart: new ArbitraryProperty<CSS.Property.GridColumnStart>('gridColumnStart'),
-  // gridColumnEnd: new ArbitraryProperty<CSS.Property.GridColumnEnd>('gridColumnEnd'),
-  // gridRowStart: new ArbitraryProperty<CSS.Property.GridRowStart>('gridRowStart'),
-  // gridRowEnd: new ArbitraryProperty<CSS.Property.GridRowEnd>('gridRowEnd'),
-
-
+  // these will be handled via specific links
+  flexShrink: [],
+  flexGrow: [],
+  gridColumnStart: [],
+  gridColumnEnd: [],
+  gridRowStart: [],
+  gridRowEnd: [],
   gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'],
 
   // TODO: make these link to MDN and also have baseSpacingValue type link
@@ -257,7 +233,6 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   gridTemplateColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string',],
   gridTemplateRows: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string'],
   gridTemplateAreas: ['string[]'],
-
 
   float: ['inline-start', 'inline-end', 'right', 'left', 'none'],
   clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'],
@@ -274,8 +249,6 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   overscrollBehaviorX: ['auto', 'contain', 'none'],
   overscrollBehaviorY: ['auto', 'contain', 'none'],
   scrollBehavior: ['auto', 'smooth'],
-
-  // TODO: make type link
   order: ['number'],
 };
 
@@ -295,7 +268,6 @@ const miscPropertyValues: {[key: string]: string[]} = {
   objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'],
   objectPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'],
   willChange: ['auto', 'scroll-position', 'contents', 'transform'],
-  // TODO: need type link
   zIndex: ['number'],
   disableTapHighlight: ['true'],
   unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'],
@@ -424,15 +396,41 @@ export function getAdditionalTypes(propertyName: string): string[] {
   return types;
 }
 
-// Export spacing values for use in TypePopover
 export const spacingTypeValues = {
   baseSpacing: baseSpacingValues,
   negativeSpacing: negativeBaseSpacingValues
 };
 
+const mdnTypeLinks: {[key: string]: string} = {
+  'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
+  'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
+};
+
+const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
+  'flexShrink': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink'
+  },
+  'flexGrow': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow'
+  },
+  'gridColumnStart': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start'
+  },
+  'gridColumnEnd': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end'
+  },
+  'gridRowStart': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start'
+  },
+  'gridRowEnd': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end'
+  }
+};
+
 interface StyleMacroPropertyDefinition {
   values: string[],
-  additionalTypes?: string[]
+  additionalTypes?: string[],
+  links?: {[value: string]: string}
 }
 
 export function getPropertyDefinitions(propertyCategory: string): {[key: string]: StyleMacroPropertyDefinition} {
@@ -440,9 +438,28 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
   let propertiesMapping = properties[propertyCategory] || {};
 
   for (let [name, values] of Object.entries(propertiesMapping)) {
+    let links: {[value: string]: string} = {};
+
+    if (mdnPropertyLinks[name]) {
+      links = {...mdnPropertyLinks[name]};
+      values = [Object.keys(links)[0]];
+    } else {
+      // see if the property has any common types that should link to MDN instead
+      for (let value of values) {
+        if (mdnTypeLinks[value]) {
+          // make sure not to overwrite number in sizing properties
+          if (value === 'number' && sizingProperties.has(name)) {
+            continue;
+          }
+          links[value] = mdnTypeLinks[value];
+        }
+      }
+    }
+
     result[name] = {
       values,
-      additionalTypes: getAdditionalTypes(name)
+      additionalTypes: getAdditionalTypes(name),
+      links: Object.keys(links).length > 0 ? links : undefined
     };
   }
   return result;
