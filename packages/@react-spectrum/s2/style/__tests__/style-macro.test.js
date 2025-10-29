@@ -53,13 +53,13 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-EVNQL {
+        --macro-data: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
-    expect(js).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
+    expect(js).toMatchInlineSnapshot(`" Jbs12 Jbpv12 -macro-static-EVNQL"`);
   });
 
   it('should support self references', () => {
@@ -118,14 +118,14 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-qHi23 {
+        --macro-data: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
 
-    expect(js).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
+    expect(js).toMatchInlineSnapshot(`" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12 -macro-static-qHi23"`);
   });
 
   it('should support allowed overrides', () => {
@@ -142,13 +142,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw12 pg12 -macro$1xxglvk"');
-    expect(overrides).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 -macro$Su6dhb pg12 -macro$15fuj6j"');
+    expect(js()).toMatchInlineSnapshot(`"  gw12 pg12 -macro-dynamic-1xxglvk"`);
+    expect(overrides).toMatchInlineSnapshot(`" g8tmWqb12 pHJ3AUd12 -macro-static-Su6dhb"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  g8tmWqb12 pg12 -macro-dynamic-jk90zw"`);
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -163,13 +159,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12 -macro$1nf427l"');
-    expect(overrides).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12 -macro$ZCkud -macro$1q3as53"');
+    expect(js()).toMatchInlineSnapshot(`"  -_7PloMd-B12 __Ya12 -macro-dynamic-1nf427l"`);
+    expect(overrides).toMatchInlineSnapshot(`" -_7PloMd-D12 __Ya12 -macro-static-ZCkud"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  -_7PloMd-D12 __Ya12 -macro-dynamic-1pnuhyr"`);
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -184,13 +176,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12 -macro$1w5dwn"');
-    expect(overrides).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12 -macro$FQziuc -macro$1nq030k"');
+    expect(js()).toMatchInlineSnapshot(`"  Tk12 Qk12 Sk12 Rk12 -macro-dynamic-1w5dwn"`);
+    expect(overrides).toMatchInlineSnapshot(`" Tm12 Qm12 Sm12 Rm12 -macro-static-FQziuc"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Tm12 Qm12 Sm12 Rm12 -macro-dynamic-p1i90v"`);
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -205,13 +193,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE12 -macro$nl2mms"');
-    expect(overrides).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 -macro$pDx0l gE12 -macro$v8n95n"');
+    expect(js()).toMatchInlineSnapshot(`"  gE12 -macro-dynamic-nl2mms"`);
+    expect(overrides).toMatchInlineSnapshot(`" Nk12 -macro-static-pDx0l"`);
+    expect(js({}, overrides)).toMatchInlineSnapshot(`"  Nk12 gE12 -macro-dynamic-11y5vdc"`);
   });
 
   it('should support runtime conditions', () => {
@@ -265,9 +249,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12 -macro$179ovcu"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12 -macro$1i83kjb"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12 -macro$1npaxjo"');
+    expect(js({})).toMatchInlineSnapshot(`"  gH12 pt12 -macro-dynamic-179ovcu"`);
+    expect(js({ isHovered: true })).toMatchInlineSnapshot(`"  gF12 po12 -macro-dynamic-1i83kjb"`);
+    expect(js({ isPressed: true })).toMatchInlineSnapshot(`"  gE12 pm12 -macro-dynamic-1npaxjo"`);
   });
 
   it('should support nested runtime conditions', () => {
@@ -308,10 +292,10 @@ describe('style-macro', () => {
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH12 -macro$nl2p5j"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 -macro$nl2nh1"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12 -macro$1w0viba"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312 -macro$nl27ia"');
+    expect(js({})).toMatchInlineSnapshot(`"  gH12 -macro-dynamic-nl2p5j"`);
+    expect(js({ isHovered: true })).toMatchInlineSnapshot(`"  gF12 -macro-dynamic-nl2nh1"`);
+    expect(js({ isSelected: true })).toMatchInlineSnapshot(`"  g_h12 -macro-dynamic-1w0viba"`);
+    expect(js({ isSelected: true, isHovered: true })).toMatchInlineSnapshot(`"  g312 -macro-dynamic-nl27ia"`);
   });
 
   it('should support variant runtime conditions', () => {
@@ -325,9 +309,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12 -macro$nl33fs"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12 -macro$enz676"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12 -macro$nl3sna"');
+    expect(js({ variant: 'accent' })).toMatchInlineSnapshot(`"  gY12 -macro-dynamic-nl33fs"`);
+    expect(js({ variant: 'primary' })).toMatchInlineSnapshot(`"  gjQquMe12 -macro-dynamic-enz676"`);
+    expect(js({ variant: 'secondary' })).toMatchInlineSnapshot(`"  gw12 -macro-dynamic-nl3sna"`);
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -361,8 +345,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb12 -macro$1w7i5ba"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro$1w7i7u1"');
+    expect(js({})).toMatchInlineSnapshot(`"  plb12 -macro-dynamic-1w7i5ba"`);
+    expect(js({ isSelected: true })).toMatchInlineSnapshot(`"  ple12 -macro-dynamic-1w7i7u1"`);
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -370,11 +354,7 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot(`
-{
-  "toString": [Function],
-}
-`);
+    expect(js).toMatchInlineSnapshot(`" Th12 Qh12 Sh12 Rh12 -macro-static-V268ld"`);
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
@@ -399,6 +379,10 @@ describe('style-macro', () => {
   }
 }
 
+.-macro-static-V268ld {
+        --macro-data: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+      }
+
 "
 `);
   });
@@ -416,6 +400,10 @@ describe('style-macro', () => {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
+
+.-macro-static-MvZuec {
+        --macro-data: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);
@@ -437,6 +425,10 @@ describe('style-macro', () => {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
+
+.-macro-static-2pvxid {
+        --macro-data: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+      }
 
 "
 `);

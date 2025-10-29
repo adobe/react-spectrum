@@ -382,11 +382,12 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
     // @ts-expect-error
     let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
-    let staticId = toBase62(hash(className));
     if (isStatic) {
-      css += `.-macro-static-${staticId} {
+      let id = toBase62(hash(className));
+      css += `.-macro-static-${id} {
         --macro-data: ${JSON.stringify({style, loc})};
       }\n\n`;
+      className += ` -macro-static-${id}`;
     }
 
     if (this && typeof this.addAsset === 'function') {
@@ -397,7 +398,6 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
 
     if (isStatic) {
-      className += ` -macro-static-${staticId}`;
       return className;
     }
 

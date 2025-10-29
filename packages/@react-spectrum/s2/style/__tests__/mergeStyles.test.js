@@ -14,7 +14,7 @@ import {mergeStyles} from '../runtime';
 import {style} from '../spectrum-theme';
 
 function stripMacro(css) {
-  return css.replaceAll(/-macro\$[0-9a-zA-Z]{6}[ ]?/gi, '');
+  return css.replaceAll(/ -macro-static-[0-9a-zA-Z]+/gi, '').replaceAll(/ -macro-dynamic-[0-9a-zA-Z]+/gi, '');
 }
 
 describe('mergeStyles', () => {
