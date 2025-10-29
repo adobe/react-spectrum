@@ -382,7 +382,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
     // @ts-expect-error
     let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
-    if (isStatic) {
+    if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className));
       css += `.-macro-static-${id} {
         --macro-data: ${JSON.stringify({style, loc})};
