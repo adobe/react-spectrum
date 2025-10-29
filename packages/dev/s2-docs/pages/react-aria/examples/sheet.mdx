@@ -11,7 +11,7 @@ export const description = 'An iOS-style gesture driven modal sheet built with F
 
 # Gesture Driven Sheet
 
-<PageDescription>An iOS-style gesture driven sheet built with React Aria Components, [Framer Motion](https://www.framer.com/motion/), and [Tailwind CSS](https://tailwindcss.com/).</PageDescription>
+<PageDescription>An iOS-style gesture driven sheet built with React Aria Components, [Motion](https://motion.dev/), and [Tailwind CSS](https://tailwindcss.com/).</PageDescription>
 
 ```tsx render type="tailwind" expanded
 "use client";
@@ -126,7 +126,7 @@ function Sheet() {
           background: black;
         }
 
-        body > :first-child {
+        body > div:first-of-type {
           background: var(--s2-container-bg);
           translate: 0;
           transform-origin: center 0;
