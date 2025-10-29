@@ -9,6 +9,8 @@ From the root of our monopackage, run
 ```
 yarn
 yarn workspace style-macro-chrome-plugin start
+// or build to avoid refresh bugs in HMR
+yarn workspace style-macro-chrome-plugin build
 ```
 
 This will create a dist directory in the directory `packages/dev/style-macro-chrome-plugin` which will update anytime the code changes and results in a rebuild.
