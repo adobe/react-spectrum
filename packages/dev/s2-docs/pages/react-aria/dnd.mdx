@@ -112,20 +112,21 @@ function DraggableCOMPONENT() {
 /* TODO: move into starter */
 .drag-preview {
   width: 150px;
-  padding: 4px 8px;
+  padding: var(--spacing-2);
+  padding-inline-start: var(--spacing-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: var(--spacing-1);
   background: var(--highlight-background);
   color: var(--highlight-foreground);
-  border-radius: 4px;
+  border-radius: var(--radius);
 
   .badge {
     background: var(--highlight-foreground);
     color: var(--highlight-background);
-    padding: 0 8px;
-    border-radius: 4px;
+    padding: 0 var(--spacing-2);
+    border-radius: var(--radius-sm);
   }
 }
 ```
@@ -886,6 +887,10 @@ Draggable elements can sometimes have conflicting keyboard interactions, such as
 </Figure>
 
 Note that because mouse and touch drag and drop interactions utilize the native browser APIs, they work both within the browser window and with external applications on the user's device. Keyboard and screen reader drag and drop is implemented from scratch, and therefore can only be supported within the browser window. Alternative interactions for operations involving external applications, such as file uploading or copy and paste, should be implemented in addition to drag and drop.
+
+## Examples
+
+<ExampleList tag="drag and drop" pages={props.pages} />
 
 ## API
 

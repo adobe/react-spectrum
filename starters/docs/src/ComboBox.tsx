@@ -4,10 +4,11 @@ import {
   ComboBoxProps as AriaComboBoxProps,
   Input,
   ListBoxItemProps,
+  ListBoxProps,
   ValidationResult
 } from 'react-aria-components';
 import {Label, FieldError, FieldButton, Description} from './Form';
-import {DropdownItem, ListBox} from './ListBox';
+import {DropdownItem, DropdownListBox} from './ListBox';
 import {Popover} from './Popover';
 import {ChevronDown} from 'lucide-react';
 
@@ -33,13 +34,17 @@ export function ComboBox<T extends object>(
       </div>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <Popover hideArrow>
-        <ListBox>
+      <Popover hideArrow className="combobox-popover">
+        <ComboBoxListBox>
           {children}
-        </ListBox>
+        </ComboBoxListBox>
       </Popover>
     </AriaComboBox>
   );
+}
+
+export function ComboBoxListBox<T extends object>(props: ListBoxProps<T>) {
+  return <DropdownListBox {...props} />;
 }
 
 export function ComboBoxItem(props: ListBoxItemProps) {

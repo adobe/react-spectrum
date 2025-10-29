@@ -1,8 +1,8 @@
 import {Code, styles as codeStyles} from './Code';
+import {CSSVariables, StateTable} from './StateTable';
 import {DisclosureRow} from './DisclosureRow';
 import React from 'react';
 import {renderHTMLfromMarkdown, setLinks, TComponent, TInterface, TType, Type} from './types';
-import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
@@ -104,9 +104,9 @@ export function PropTable({component, links, showDescription, hideRenderProps, s
           style={!defaultClassName ? {marginTop: 16} : undefined}
           properties={renderProps.properties}
           showOptional={showOptionalRenderProps}
-          hideSelector={hideSelector}
-          cssVariables={cssVariables} />
-       ) : null}
+          hideSelector={hideSelector} />
+      ) : null}
+      {cssVariables && <CSSVariables cssVariables={cssVariables} />}
     </>
   );
 }

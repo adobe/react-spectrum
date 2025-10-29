@@ -160,9 +160,8 @@ function Example(props) {
 "use client";
 import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
 import {Button} from 'vanilla-starter/Button';
-import {SelectItem} from 'vanilla-starter/Select';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {Popover} from 'vanilla-starter/Popover';
-import {ListBox} from 'vanilla-starter/ListBox';
 import {SearchField} from 'vanilla-starter/SearchField';
 import {ChevronDown} from 'lucide-react';
 
@@ -232,7 +231,7 @@ function Example(props) {
         <SelectValue />
         <ChevronDown size={18} />
       </Button>
-      <Popover hideArrow style={{display: 'flex', flexDirection: 'column'}}>
+      <Popover hideArrow className="select-popover" style={{display: 'flex', flexDirection: 'column'}}>
         {/*- begin highlight -*/}
         <Autocomplete {...props}/* PROPS */ filter={contains}>
           {/*- end highlight -*/}
@@ -241,12 +240,12 @@ function Example(props) {
             aria-label="Search states"
             placeholder="Search states"
             style={{margin: 4}} />
-          <ListBox
+          <SelectListBox
             items={states}
             renderEmptyState={() => 'No results.'}
             style={{flex: 1}}>
             {state => <SelectItem>{state.name}</SelectItem>}
-          </ListBox>
+          </SelectListBox>
         </Autocomplete>
       </Popover>
     </Select>
@@ -1100,6 +1099,10 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+## Examples
+
+<ExampleList tag="autocomplete" pages={props.pages} />
 
 ## API
 
