@@ -3,7 +3,7 @@ import {CodeLink} from './Link';
 import {CodeProps} from './VisualExampleClient';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
 import React, {ReactNode} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const property = style({color: 'indigo-1000'});
 const fn = style({color: 'red-1000'});
@@ -51,10 +51,10 @@ export interface ICodeProps {
   lang?: string,
   hideImports?: boolean,
   links?: Links,
-  isBlock?: boolean
+  styles?: StyleString
 }
-
-export function Code({children, lang, hideImports = true, links, isBlock = false}: ICodeProps) {
+ 
+export function Code({children, lang, hideImports = true, links, styles}: ICodeProps) {
   if (lang) {
     // @ts-ignore
     let highlighted = highlightHast(children, Language[lang === 'json' ? 'JS' : lang.toUpperCase()]);
@@ -108,7 +108,7 @@ export function Code({children, lang, hideImports = true, links, isBlock = false
       }
     }
 
-    return <code>{renderChildren(lineNodes, '0', links)}</code>;
+    return <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>{renderChildren(lineNodes, '0', links)}</code>;
   }
 
   return (

@@ -20,7 +20,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'w-9 h-9 m-px text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none',
+  base: 'w-9 h-9 text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none',
   variants: {
     isSelected: {
       false: 'text-zinc-900 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700 pressed:bg-gray-200 dark:pressed:bg-zinc-600',
@@ -42,7 +42,7 @@ export function Calendar<T extends DateValue>(
   return (
     <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans')}>
       <CalendarHeader />
-      <CalendarGrid>
+      <CalendarGrid className="border-spacing-0">
         <CalendarGridHeader />
         <CalendarGridBody>
           {(date) => <CalendarCell date={date} className={cellStyles} />}

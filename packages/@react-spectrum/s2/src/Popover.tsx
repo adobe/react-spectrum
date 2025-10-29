@@ -22,7 +22,7 @@ import {
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {mergeRefs} from '@react-aria/utils';
@@ -31,7 +31,20 @@ import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | keyof GlobalDOMAttributes> {
+export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
+  'arrowSize' |
+  'isNonModal' |
+  'arrowBoundaryOffset' |
+  'isKeyboardDismissDisabled' |
+  'shouldCloseOnInteractOutside' |
+  'shouldUpdatePosition' |
+  'style' |
+  'className' |
+  keyof GlobalDOMAttributes
+> {
+  /**
+   * The styles of the popover.
+   */
   styles?: StyleString,
   /**
    * Whether a popover's arrow should be hidden.
@@ -228,7 +241,22 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
 });
 
 type PopoverStylesProp = StyleString<((typeof widthProperties)[number] | (typeof heightProperties)[number])>;
-export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface PopoverDialogProps extends Pick<PopoverProps,
+'size' |
+'hideArrow'|
+'placement' |
+'shouldFlip' |
+'containerPadding' |
+'offset' |
+'crossOffset' |
+'triggerRef' |
+'isOpen' |
+'onOpenChange'
+>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+  /**
+   * The children of the popover.
+   */
+  children?: ReactNode,
   /**
    * The amount of padding around the contents of the dialog.
    * @default 'default'

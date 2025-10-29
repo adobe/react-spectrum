@@ -13,10 +13,10 @@
 import {AlertDialog} from 'tailwind-starter/AlertDialog';
 import {Arrow} from './components';
 import {Button} from 'tailwind-starter/Button';
-import {Cell, Column, Row, Table, TableHeader} from 'tailwind-starter/Table';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from 'tailwind-starter/Table';
 import {Checkbox} from 'tailwind-starter/Checkbox';
 import {CloudSun, Dessert, Droplet, Droplets, FilterIcon, Mail, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon, Twitter} from 'lucide-react';
-import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, ModalOverlay, ModalOverlayProps, Modal as RACModal, Selection, SortDescriptor, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
+import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, ModalOverlay, ModalOverlayProps, Modal as RACModal, Selection, SortDescriptor, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
 import {focusRing} from 'tailwind-starter/utils';
@@ -177,7 +177,7 @@ export function ExampleApp(): React.ReactNode {
         <SearchField aria-label="Search" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
-            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 shrink-0 p-0 relative">
+            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 shrink-0 p-0 px-2 relative">
               <FilterIcon aria-hidden className="block w-5 h-5" />
               {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
@@ -239,7 +239,7 @@ export function ExampleApp(): React.ReactNode {
                 <span className="truncate capitalize">{item.common_name}</span>
                 <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
                 <MenuTrigger placement="bottom end" >
-                  <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
+                  <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center bg-transparent dark:bg-transparent border-transparent dark:border-transparent !p-1"><MoreHorizontal className="w-5 h-5" /></Button>
                   <Menu onAction={action => onAction(item, action)}>
                     <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                     <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
@@ -266,7 +266,7 @@ export function ExampleApp(): React.ReactNode {
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
           </TableHeader>
-          <TableBody items={items} dependencies={[columns]}>
+          <TableBody items={items} dependencies={[columns]} renderEmptyState={() => 'No results. Try changing the filters.'}>
             {item => (
               <Row columns={columns}>
                 {column => {

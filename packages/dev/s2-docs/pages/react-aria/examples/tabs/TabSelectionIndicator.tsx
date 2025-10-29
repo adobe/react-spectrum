@@ -25,7 +25,7 @@ export function TabSelectionIndicator() {
         `}
       </style>
       <div
-        className="absolute z-10 bg-white rounded-full mix-blend-difference contain-strict transition-[inset]"
+        className="absolute z-10 bg-white forced-color-adjust-none rounded-full mix-blend-difference contain-strict transition-[inset]"
         style={{
           animationName: animationId,
           animationTimingFunction: 'linear',

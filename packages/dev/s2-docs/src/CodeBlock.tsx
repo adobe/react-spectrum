@@ -26,11 +26,14 @@ const example = style({
 const standaloneCode = style({
   '--code-padding-start': {
     type: 'paddingStart',
-    value: 32
+    value: {
+      default: 12,
+      lg: 32
+    }
   },
   '--code-padding-end': {
     type: 'paddingEnd',
-    value: 32
+    value: '--code-padding-start'
   },
   padding: '--code-padding-start',
   marginY: 32,
@@ -40,7 +43,7 @@ const standaloneCode = style({
     default: 'code-xs',
     lg: 'code-sm'
   },
-  whiteSpace: 'pre-wrap'
+  overflow: 'auto'
 });
 
 interface CodeBlockProps extends VisualExampleProps {
@@ -63,7 +66,7 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
   if (!render) {
     return (
       <pre className={standaloneCode}>
-        <Code {...props} isBlock>{children}</Code>
+        <Code {...props} styles={style({display: 'block', width: 'fit', minWidth: 'full'})}>{children}</Code>
       </pre>
     );
   }
