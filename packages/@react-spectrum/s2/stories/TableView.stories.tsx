@@ -1463,7 +1463,6 @@ export const EditableTable: StoryObj<EditableTableProps> = {
     let [editableItems, setEditableItems] = useState(defaultItems);
 
     let onChange = useCallback((id: Key, columnId: Key, values: any) => {
-      // console.log(values);
       let value = values[columnId];
       if (value === null) {
         return;
