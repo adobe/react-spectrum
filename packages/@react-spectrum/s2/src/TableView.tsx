@@ -1174,6 +1174,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
   let [verticalOffset, setVerticalOffset] = useState(0);
   let tableVisualOptions = useContext(InternalTableContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
   let {density} = useContext(InternalTableContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
@@ -1221,7 +1222,24 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     setIsOpen(false);
   };
 
+  // Can't differentiate between Dialog click outside dismissal and Escape key dismissal
   let isMobile = !useMediaQuery('(any-pointer: fine)');
+  useEffect(() => {
+    let dialog = dialogRef.current?.UNSAFE_getDOMNode();
+    if (isOpen && dialog) {
+      let handler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsOpen(false);
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      };
+      dialog.addEventListener('keydown', handler);
+      return () => {
+        dialog.removeEventListener('keydown', handler);
+      };
+    }
+  }, [isOpen]);
 
   return (
     <Provider
@@ -1307,9 +1325,13 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
           </RACPopover>
         )}
         {isMobile && (
-          <DialogContainer onDismiss={() => setIsOpen(false)}>
+          <DialogContainer onDismiss={() => formRef.current?.requestSubmit()}>
             {isOpen && (
-              <CustomDialog isDismissible aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}>
+              <CustomDialog
+                ref={dialogRef}
+                isDismissible
+                isKeyboardDismissDisabled
+                aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}>
                 <Form
                   ref={formRef}
                   onSubmit={(e) => {
