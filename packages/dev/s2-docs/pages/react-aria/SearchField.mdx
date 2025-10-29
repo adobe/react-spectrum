@@ -1,0 +1,116 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/SearchField';
+import {SearchField as VanillaSearchField} from 'vanilla-starter/SearchField';
+import {SearchField as TailwindSearchField} from 'tailwind-starter/SearchField';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
+
+export const tags = ['input'];
+
+# SearchField
+
+<PageDescription>{docs.exports.SearchField.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaSearchField}
+    docs={vanillaDocs.exports.SearchField}
+    links={vanillaDocs.links}
+    props={['label', 'description', 'isDisabled']}
+    initialProps={{label: 'Search', placeholder: 'Search documents'}}
+    type="vanilla"
+    files={["starters/docs/src/SearchField.tsx", "starters/docs/src/SearchField.css"]} />
+  <VisualExample
+    component={TailwindSearchField}
+    docs={vanillaDocs.exports.SearchField}
+    links={vanillaDocs.links}
+    props={['label', 'description', 'isDisabled']}
+    initialProps={{label: 'Search', placeholder: 'Search documents'}}
+    type="tailwind"
+    files={["starters/tailwind/src/SearchField.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the text value, and `onChange` to handle user input. `onSubmit` is called when the user presses <Keyboard>Enter</Keyboard>.
+
+```tsx render
+"use client";
+import {SearchField} from 'vanilla-starter/SearchField';
+import {useState} from 'react';
+
+function Example() {
+  let [search, setSearch] = useState('');
+  let [submittedSearch, setSubmittedSearch] = useState('');
+  
+  return (
+    <div>
+      <SearchField
+        label="Search"
+        placeholder="Search documents"
+        ///- begin highlight -///
+        value={search}
+        onChange={setSearch}
+        onSubmit={setSubmittedSearch} />
+      {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>
+        Value: {search}{'\n'}
+        Submitted value: {submittedSearch}
+      </pre>
+    </div>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.SearchField} links={docs.links} props={['isRequired', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true}}
+"use client";
+import {SearchField} from 'vanilla-starter/SearchField';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';;
+
+function Example(props) {
+  return (
+    <Form>
+      <SearchField
+        {...props}
+        label="Search"
+        placeholder="Search documents"
+        ///- begin highlight -///
+        name="search"
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="searchfield" pages={props.pages} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{SearchField: '#searchfield', Button: 'Button.html'}}
+<SearchField>
+  <Label />
+  <Input />
+  <Button />
+  <Text slot="description" />
+  <FieldError />
+</SearchField>
+```
+
+### SearchField
+
+<PropTable component={docs.exports.SearchField} links={docs.links} />

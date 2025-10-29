@@ -1,3 +1,4 @@
+'use client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from 'react';
 import {
@@ -15,7 +16,7 @@ import {
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { Button } from './Button';
-import { focusRing } from './utils';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
@@ -39,7 +40,7 @@ export function Calendar<T extends DateValue>(
   { errorMessage, ...props }: CalendarProps<T>
 ) {
   return (
-    <AriaCalendar {...props}>
+    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans')}>
       <CalendarHeader />
       <CalendarGrid>
         <CalendarGridHeader />
@@ -56,13 +57,13 @@ export function CalendarHeader() {
   let {direction} = useLocale();
 
   return (
-    <header className="flex items-center gap-1 pb-4 px-1 w-full">
-      <Button variant="icon" slot="previous">
-        {direction === 'rtl' ? <ChevronRight aria-hidden /> : <ChevronLeft aria-hidden />}
+    <header className="flex items-center gap-1 pb-4 px-1 border-box">
+      <Button variant="secondary" slot="previous">
+        {direction === 'rtl' ? <ChevronRight aria-hidden size={18} /> : <ChevronLeft aria-hidden size={18} />}
       </Button>
-      <Heading className="flex-1 font-semibold text-xl text-center mx-2 text-zinc-900 dark:text-zinc-200" />
-      <Button variant="icon" slot="next">
-        {direction === 'rtl' ? <ChevronLeft aria-hidden /> : <ChevronRight aria-hidden />}
+      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-lg text-center mx-2 text-zinc-900 dark:text-zinc-200" />
+      <Button variant="secondary" slot="next">
+        {direction === 'rtl' ? <ChevronLeft aria-hidden size={18} /> : <ChevronRight aria-hidden size={18} />}
       </Button>
     </header>
   );

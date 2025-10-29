@@ -1,0 +1,85 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['btn'];
+
+# Button
+
+<PageDescription>{docs.exports.Button.description}</PageDescription>
+
+<VisualExample
+  component={Button}
+  docs={docs.exports.Button}
+  props={['children', 'variant', 'staticColor', 'fillStyle', 'size', 'isDisabled', 'isPending']}
+  initialProps={{children: 'Save'}}
+  slots={{icon: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Events
+
+Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button.
+
+```tsx render hideImports
+"use client";
+import {Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [count, setCount] = useState(0);
+
+  return (
+    /*- begin highlight -*/
+    <Button onPress={() => setCount(c => c + 1)}>
+    {/*- end highlight -*/}
+      {`${count} Edits`}
+    </Button>
+  );
+}
+```
+
+## Pending
+
+Use the `isPending` prop to display a pending state. Pending buttons remain focusable, but are otherwise disabled. After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon.
+
+```tsx render
+"use client";
+import {Button} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function PendingButton() {
+  let [isPending, setPending] = useState(false);
+
+  return (
+    <Button
+      variant="primary"
+      ///- begin highlight -///
+      isPending={isPending}
+      ///- end highlight -///
+      onPress={() => {
+        setPending(true);
+        setTimeout(() => {
+          setPending(false);
+        }, 5000);
+      }}>
+      Save
+    </Button>
+  );
+}
+```
+
+## API
+
+```tsx links={{Button: '#button'}}
+<Button>
+  <Icon />
+  <Text />
+</Button>
+```
+
+### Button
+
+<PropTable component={docs.exports.Button} links={docs.links} />

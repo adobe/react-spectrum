@@ -13,10 +13,11 @@
 import Conversationbubbles_L from 'illustration:./S2_lin_conversationbubbles_160.svg';
 import Conversationbubbles_M from 'illustration:./S2_lin_conversationbubbles_96.svg';
 import Conversationbubbles_S from 'illustration:./S2_lin_conversationbubbles_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Conversationbubbles(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Conversationbubbles(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

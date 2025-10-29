@@ -1,0 +1,92 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ToggleButtonGroup, ToggleButton, Text} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['toggle', 'btn'];
+
+# ToggleButtonGroup
+
+<PageDescription>{docs.exports.ToggleButtonGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'orientation', 'size', 'density', 'staticColor', 'isQuiet', 'isJustified', 'isDisabled']} type="s2"
+"use client";
+import {ToggleButtonGroup, ToggleButton, Text} from '@react-spectrum/s2';
+import TextBold from '@react-spectrum/s2/icons/TextBold';
+import TextItalic from '@react-spectrum/s2/icons/TextItalic';
+import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
+
+<ToggleButtonGroup/* PROPS */>
+  <ToggleButton id="bold">
+    <TextBold />
+    <Text>Bold</Text>
+  </ToggleButton>
+  <ToggleButton id="italic">
+    <TextItalic />
+    <Text>Italic</Text>
+  </ToggleButton>
+  <ToggleButton id="underline">
+    <TextUnderline />
+    <Text>Underline</Text>
+  </ToggleButton>
+</ToggleButtonGroup>
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected toggle buttons can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Toggle buttons can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ToggleButtonGroup) for more details.
+
+```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {ToggleButtonGroup, ToggleButton, type Key} from '@react-spectrum/s2';
+import {useState} from 'react';
+import TextBold from '@react-spectrum/s2/icons/TextBold';
+import TextItalic from '@react-spectrum/s2/icons/TextItalic';
+import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
+import TextStrikeThrough from '@react-spectrum/s2/icons/TextStrikeThrough';
+
+function Example(props) {
+  let [selected, setSelected] = useState(new Set<Key>(['bold']));
+
+  return (
+    <>
+      <ToggleButtonGroup
+        {...props}
+        aria-label="Text style"
+        density="compact"
+        /*- begin highlight -*/
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
+        {/*- end highlight -*/}
+        <ToggleButton id="bold" aria-label="Bold">
+          <TextBold />
+        </ToggleButton>
+        <ToggleButton id="italic" aria-label="Italic" isDisabled>
+          <TextItalic />
+        </ToggleButton>
+        <ToggleButton id="underline" aria-label="Underline">
+          <TextUnderline />
+        </ToggleButton>
+        <ToggleButton id="strike" aria-label="Strikethrough">
+          <TextStrikeThrough />
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <p>Current selection: {[...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## API
+
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html'}}
+<ToggleButtonGroup>
+  <ToggleButton />
+</ToggleButtonGroup>
+```
+
+### ToggleButtonGroup
+
+<PropTable component={docs.exports.ToggleButtonGroup} links={docs.links} />

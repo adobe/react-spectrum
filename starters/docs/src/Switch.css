@@ -1,0 +1,69 @@
+@import "./theme.css";
+@import "./utilities.css";
+
+.react-aria-Switch {
+  display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
+  align-items: center;
+  gap: var(--spacing-2);
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+  forced-color-adjust: none;
+  -webkit-tap-highlight-color: transparent;
+
+  .track {
+    --height: calc(var(--spacing) * 5.5);
+    height: var(--height);
+    width: calc(var(--spacing) * 9.5);
+    border-radius: var(--height);
+    transition: all 200ms;
+    scale: 1;
+
+    .handle {
+      display: block;
+      height: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--height);
+      transition: all 200ms;
+      transform-origin: 0 50%;
+      will-change: transform;
+      --indicator-color: var(--tint);
+    }
+  }
+
+  &[data-pressed] .handle {
+    scale: 1.2 1;
+    border-radius: var(--height) / calc(var(--height) * 1.2);
+    background: var(--button-background-pressed);
+  }
+
+  &[data-selected] {
+    --border-color: var(--highlight-background-pressed);
+    .handle {
+      transform: translateX(var(--spacing-4));
+      transform-origin: var(--spacing-9) 50%;
+      background: white;
+      box-shadow: inset 0 0 0 1px var(--border-color), inset 0 -4px 4px oklch(from var(--tint) 85% c h / 0.3);
+
+      @media (forced-colors: active) {
+        background: HighlightText;
+        box-shadow: inset 0 0 0 1px Highlight;
+      }
+    }
+  }
+
+  &[data-focus-visible] .track {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    --border-color: var(--border-color-disabled);
+
+    .track {
+      box-shadow: 0 0 0 1px var(--border-color);
+    }
+  }
+}

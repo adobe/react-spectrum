@@ -13,19 +13,20 @@
 import {
   ColorField as AriaColorField,
   ColorFieldProps as AriaColorFieldProps,
-  ContextValue
+  ContextValue,
+  InputProps
 } from 'react-aria-components';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the color field.
    *
@@ -92,7 +93,7 @@ export const ColorField = forwardRef(function ColorField(props: ColorFieldProps,
           contextualHelp={props.contextualHelp}>
           {label}
         </FieldLabel>
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size}>
+        <FieldGroup size={props.size}>
           <Input ref={inputRef} />
           {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
         </FieldGroup>

@@ -11,13 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, ButtonGroup, UNSTABLE_ToastContainer as ToastContainer, UNSTABLE_ToastQueue as ToastQueue} from '../src';
-import type {Meta} from '@storybook/react';
-import {SpectrumToast} from '../src/Toast';
+import {Button, ButtonGroup, UNSTABLE_ToastContainer, UNSTABLE_ToastQueue} from '../src';
+import type {Meta, StoryObj} from '@storybook/react';
+import {SpectrumToast, SpectrumToastValue, ToastOptions, ToastPlacement} from '../src/Toast';
 import {UNSTABLE_ToastStateContext} from 'react-aria-components';
 import {useToastState} from 'react-stately';
 
-const meta: Meta<typeof Example> = {
+const meta: Meta<ToastStoryProps> = {
   parameters: {
     layout: 'centered'
   },
@@ -35,64 +35,80 @@ const meta: Meta<typeof Example> = {
   args: {
     actionLabel: 'Action!',
     shouldCloseOnAction: false,
-    timeout: null,
+    timeout: undefined,
     placement: 'bottom'
   }
 };
 
 export default meta;
 
-export const Example = (args: any) => (
-  <>
-    <ToastContainer placement={args.placement} />
-    <ButtonGroup>
-      <Button
-        onPress={() => ToastQueue.neutral('Toast available', {...args, onAction: action('onAction'), onClose: action('onClose')})}
-        variant="secondary">
-        Show Neutral Toast
-      </Button>
-      <Button
-        onPress={() => ToastQueue.positive('Toast is done!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
-        variant="primary">
-        Show Positive Toast
-      </Button>
-      <Button
-        onPress={() => ToastQueue.negative('Toast is burned!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
-        variant="negative">
-        Show Negative Toast
-      </Button>
-      <Button
-        onPress={() => ToastQueue.info('Toasting…', {...args, onAction: action('onAction'), onClose: action('onClose')})}
-        variant="accent">
-        Show Info Toast
-      </Button>
-      <Button
-        onPress={() => ToastQueue.info('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', {...args, onClose: action('onClose')})}
-        variant="accent">
-        Show Long Toast
-      </Button>
-    </ButtonGroup>
-  </>
-);
+interface ToastStoryProps extends ToastOptions {
+  placement?: ToastPlacement,
+  actionLabel: string
+}
 
-export const Toast = (args: any) => (
-  <UNSTABLE_ToastStateContext.Provider value={useToastState()}>
-    <SpectrumToast
-      toast={{
-        key: 'x',
-        content: args
-      }} />
-  </UNSTABLE_ToastStateContext.Provider>
-);
+type Story = StoryObj<ToastStoryProps>;
 
-Toast.args = {
-  variant: 'info',
-  children: 'Toasting…'
+export const Example: Story = {
+  render: (args) => (
+    <>
+      <UNSTABLE_ToastContainer placement={args.placement} />
+      <ButtonGroup>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.neutral('Toast available', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          variant="secondary">
+          Show Neutral Toast
+        </Button>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.positive('Toast is done!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          variant="primary">
+          Show Positive Toast
+        </Button>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.negative('Toast is burned!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          variant="negative">
+          Show Negative Toast
+        </Button>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.info('Toasting…', {...args, onAction: action('onAction'), onClose: action('onClose')})}
+          variant="accent">
+          Show Info Toast
+        </Button>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.info('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', {...args, onClose: action('onClose')})}
+          variant="accent">
+          Show Long Toast
+        </Button>
+        <Button
+          onPress={() => UNSTABLE_ToastQueue.info('LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimaminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipeacommodoconsequat.', {...args, onClose: action('onClose')})}
+          variant="accent">
+          Show Long Word Toast
+        </Button>
+      </ButtonGroup>
+    </>
+  )
 };
 
-Toast.argTypes = {
-  variant: {
-    control: 'radio',
-    options: ['neutral', 'info', 'positive', 'negative']
+export const Toast: StoryObj<SpectrumToastValue> = {
+  render: function Example(args) {
+    return (
+      <UNSTABLE_ToastStateContext.Provider value={useToastState()}>
+        <SpectrumToast
+          toast={{
+            key: 'x',
+            content: args
+          }} />
+      </UNSTABLE_ToastStateContext.Provider>
+    );
+  },
+  args: {
+    variant: 'info',
+    children: 'Toasting…'
+  },
+  argTypes: {
+    variant: {
+      control: 'radio',
+      options: ['neutral', 'info', 'positive', 'negative']
+    }
   }
 };

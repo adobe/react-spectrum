@@ -1,0 +1,133 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Button, ButtonGroup, UNSTABLE_ToastContainer as ToastContainer, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+import {InterfaceType} from '../../src/types';
+import {VersionBadge} from '../../src/VersionBadge';
+
+export const tags = ['snackbar', 'notification', 'alert'];
+export const version = 'alpha';
+
+# Toast
+
+<PageDescription>{docs.exports.UNSTABLE_ToastContainer.description}</PageDescription>
+
+```tsx render docs={docs.exports.UNSTABLE_ToastContainer} links={docs.links} props={['placement']} initialProps={{placement: 'bottom'}} type="s2" wide
+"use client";
+import {UNSTABLE_ToastContainer as ToastContainer, ButtonGroup, Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+
+function App(props) {
+  return (
+    <>
+      <ToastContainer {...props}/* PROPS */ />
+      <ButtonGroup>
+        <Button
+          onPress={() => ToastQueue.neutral('Toast available')}
+          variant="secondary">
+          Show Neutral Toast
+        </Button>
+        <Button
+          onPress={() => ToastQueue.positive('Toast is done!')}
+          variant="primary">
+          Show Positive Toast
+        </Button>
+        <Button
+          onPress={() => ToastQueue.negative('Toast is burned!')}
+          variant="negative">
+          Show Negative Toast
+        </Button>
+        <Button
+          onPress={() => ToastQueue.info('Toasting…')}
+          variant="accent">
+          Show Info Toast
+        </Button>
+      </ButtonGroup>
+    </>
+  );
+}
+```
+
+## Actions
+
+Use the `actionLabel` and `onAction` options to add an action button to the toast. Set `shouldCloseOnAction` to true to close the toast when the user presses the button.
+
+```tsx render
+"use client";
+import {Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+
+<Button
+  onPress={() => ToastQueue.info('An update is available', {
+    /*- begin highlight -*/
+    actionLabel: 'Update',
+    onAction: () => alert('Updating!'),
+    shouldCloseOnAction: true
+    /*- end highlight -*/
+  })}>
+  Show actionable toast
+</Button>
+```
+
+## Dismissal
+
+Use the `timeout` option to automatically hide a toast after a delay. For accessibility, toasts have a minimum timeout of 5 seconds, and actionable toasts will not auto dismiss. Timers will pause when the user focuses or hovers over a toast.
+
+```tsx render
+"use client";
+import {Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+
+<Button
+  onPress={() => ToastQueue.positive('Toast is done!', {
+    /*- begin highlight -*/
+    timeout: 5000
+    /*- end highlight -*/
+  })}>
+  Show auto-dismissing toast
+</Button>
+```
+
+### Programmatic dismissal
+
+Use the close function returned by `ToastQueue` to programmatically dismiss a toast that is no longer relevant. The `onClose` event is triggered when a toast is dismissed, either by user action or programmatically.
+
+```tsx render
+"use client";
+import {Button, UNSTABLE_ToastQueue as ToastQueue, Text} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [close, setClose] = useState(null);
+
+  return (
+    <Button
+      onPress={() => {
+        /*- begin highlight -*/
+        if (!close) {
+          let close = ToastQueue.negative('Unable to save', {
+            onClose: () => setClose(null)
+          });
+          setClose(() => close);
+        } else {
+          close();
+        }
+        /*- end highlight -*/
+      }}>
+      <Text>{close ? 'Hide Toast' : 'Show Toast'}</Text>
+    </Button>
+  );
+}
+```
+
+## API
+
+### ToastContainer
+
+<PropTable component={docs.exports.UNSTABLE_ToastContainer} links={docs.links} />
+
+### ToastQueue
+
+<InterfaceType {...docs.exports.UNSTABLE_ToastQueue} />
+
+#### Toast Options
+
+<InterfaceType {...docs.exports.ToastOptions} />

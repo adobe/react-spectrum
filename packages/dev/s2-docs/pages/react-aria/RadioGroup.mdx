@@ -1,0 +1,115 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/RadioGroup';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/radio/docs/anatomy.svg';
+
+export const tags = ['input'];
+
+# RadioGroup
+
+<PageDescription>{docs.exports.RadioGroup.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.RadioGroup} links={vanillaDocs.links} props={['label', 'orientation', 'description', 'isDisabled']} initialProps={{label: 'Favorite pet'}} type="vanilla" files={["starters/docs/src/RadioGroup.tsx", "starters/docs/src/RadioGroup.css"]}
+  "use client";
+  import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
+
+  <RadioGroup/* PROPS */>
+    <Radio value="cat">Cat</Radio>
+    <Radio value="dog">Dog</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.RadioGroup} links={vanillaDocs.links} props={['label', 'orientation', 'description', 'isDisabled']} initialProps={{label: 'Favorite pet'}} type="tailwind" files={["starters/tailwind/src/RadioGroup.tsx"]}
+  "use client";
+  import {RadioGroup, Radio} from 'tailwind-starter/RadioGroup';
+
+  <RadioGroup/* PROPS */>
+    <Radio value="cat">Cat</Radio>
+    <Radio value="dog">Dog</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  ```
+</ExampleSwitcher>
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the selected item, and `onChange` to handle selection changes.
+
+```tsx render
+"use client";
+import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(null);
+
+  return (
+    <>
+      <RadioGroup
+        label="Favorite sport"
+        /*- begin highlight -*/
+        value={selected}
+        onChange={setSelected}>
+        {/*- end highlight -*/}
+        <Radio value="soccer">Soccer</Radio>
+        <Radio value="baseball">Baseball</Radio>
+        <Radio value="basketball">Basketball</Radio>
+      </RadioGroup>
+      <p>Current selection: {selected || 'None'}</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';;
+
+<Form>
+  <RadioGroup
+    label="Favorite pet"
+    /*- begin highlight -*/
+    name="pet"
+    isRequired>
+    {/*- end highlight -*/}
+    <Radio value="dog">Dog</Radio>
+    <Radio value="cat">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  <Button type="submit" style={{marginTop: 8}}>Submit</Button>
+</Form>
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{RadioGroup: '#radiogroup', Radio: '#radio', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<RadioGroup>
+  <Label />
+  <Radio>
+    <SelectionIndicator />
+  </Radio>
+  <Text slot="description" />
+  <FieldError />
+</RadioGroup>
+```
+
+### RadioGroup
+
+<PropTable component={docs.exports.RadioGroup} links={docs.links} />
+
+### Radio
+
+<PropTable component={docs.exports.Radio} links={docs.links} />

@@ -1,0 +1,74 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['collapsible', 'expandable', 'disclosure'];
+
+# Accordion
+
+<PageDescription>{docs.exports.Accordion.description}</PageDescription>
+
+```tsx render docs={docs.exports.Accordion} links={docs.links} props={['size', 'density', 'isQuiet', 'isDisabled', 'allowsMultipleExpanded']} type="s2"
+"use client";
+import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Accordion styles={style({width: 220})}/* PROPS */>
+  <Disclosure id="personal">
+    <DisclosureTitle>Personal Information</DisclosureTitle>
+    <DisclosurePanel>Personal information form here.</DisclosurePanel>
+  </Disclosure>
+  <Disclosure id="billing">
+    <DisclosureTitle>Billing Address</DisclosureTitle>
+    <DisclosurePanel>Billing address form here.</DisclosurePanel>
+  </Disclosure>
+</Accordion>
+```
+
+## Expanding
+
+Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, and `onExpandedChange` to handle user interactions. The expanded keys correspond to the `id` prop of each `<Disclosure>`.
+
+```tsx render
+"use client";
+import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, type Key} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['settings']));
+
+  return (
+    <Accordion
+      /*- begin highlight -*/
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}>
+      {/*- end highlight -*/}
+      <Disclosure id="settings">
+        <DisclosureTitle>Settings</DisclosureTitle>
+        <DisclosurePanel>Application settings content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="preferences">
+        <DisclosureTitle>Preferences</DisclosureTitle>
+        <DisclosurePanel>User preferences content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="advanced">
+        <DisclosureTitle>Advanced</DisclosureTitle>
+        <DisclosurePanel>Advanced configuration options</DisclosurePanel>
+      </Disclosure>
+    </Accordion>
+  );
+}
+```
+
+## API
+
+```tsx links={{Accordion: '#accordion', Disclosure: 'Disclosure.html'}}
+<Accordion>
+  <Disclosure />
+</Accordion>
+```
+
+### Accordion
+
+<PropTable component={docs.exports.Accordion} links={docs.links} />

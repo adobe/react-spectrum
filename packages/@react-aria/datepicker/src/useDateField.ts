@@ -51,12 +51,12 @@ interface HookData {
   focusManager: FocusManager
 }
 
-export const hookData = new WeakMap<DateFieldState, HookData>();
+export const hookData: WeakMap<DateFieldState, HookData> = new WeakMap<DateFieldState, HookData>();
 
 // Private props that we pass from useDatePicker/useDateRangePicker.
 // Ideally we'd use a Symbol for this, but React doesn't support them: https://github.com/facebook/react/issues/7552
-export const roleSymbol = '__role_' + Date.now();
-export const focusManagerSymbol = '__focusManager_' + Date.now();
+export const roleSymbol: string = '__role_' + Date.now();
+export const focusManagerSymbol: string = '__focusManager_' + Date.now();
 
 /**
  * Provides the behavior and accessibility implementation for a date field component.
@@ -138,7 +138,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     autoFocusRef.current = false;
   }, [focusManager]);
 
-  useFormReset(props.inputRef, state.value, state.setValue);
+  useFormReset(props.inputRef, state.defaultValue, state.setValue);
   useFormValidation({
     ...props,
     focus() {
@@ -149,6 +149,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name: props.name,
+    form: props.form,
     value: state.value?.toString() || '',
     disabled: props.isDisabled
   };

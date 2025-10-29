@@ -1,0 +1,62 @@
+@import "./theme.css";
+@import "./utilities.css";
+
+.react-aria-Calendar {
+  width: fit-content;
+  max-width: 100%;
+  color: var(--text-color);
+  font: var(--font-size) system-ui;
+
+  header {
+    display: flex;
+    align-items: center;
+    margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
+
+    .react-aria-Heading {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      font-size: var(--font-size-lg);
+    }
+  }
+
+  [slot=errorMessage] {
+    font: var(--font-size-sm) system-ui;
+    color: var(--invalid-color);
+  }
+}
+
+
+.react-aria-CalendarHeaderCell {
+  font-size: var(--font-size-sm);
+}
+
+.react-aria-CalendarCell {
+  width: var(--spacing-8);
+  line-height: var(--spacing-8);
+  margin: calc(var(--spacing-1) / 2);
+  font-size: var(--font-size);
+  text-align: center;
+  border-radius: 9999px;
+  cursor: default;
+  forced-color-adjust: none;
+  transition: scale 200ms;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-outside-month] {
+    display: none;
+  }
+
+  &[data-pressed] {
+    scale: 0.9;
+  }
+
+  &[data-unavailable] {
+    text-decoration: line-through;
+    color: var(--invalid-color);
+  }
+
+  &[data-invalid] {
+    --button-color: var(--invalid-color);
+  }
+}

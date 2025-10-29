@@ -1,0 +1,1118 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/CommandPalette';
+import '../../tailwind/tailwind.css';
+
+export const tags = ['combobox', 'typeahead', 'input'];
+
+# Autocomplete
+
+<PageDescription>{docs.exports.Autocomplete.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.CommandPalette} links={vanillaDocs.links} props={['disableAutoFocusFirst']} type="vanilla" files={["starters/docs/src/CommandPalette.tsx", "starters/docs/src/CommandPalette.css"]}
+  "use client";
+  import {CommandPalette} from 'vanilla-starter/CommandPalette';
+  import {MenuItem} from 'vanilla-starter/Menu';
+  import {Button} from 'vanilla-starter/Button';
+  import {FilePlus2, FolderPlus, User, UserPen, CircleDotDashed, ChartPie, Tag} from 'lucide-react';
+  import {DialogTrigger, Text} from 'react-aria-components';
+  import {useState} from 'react';
+
+  function Example(props) {
+    let [isOpen, setOpen] = useState(false);
+    return (
+      <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button>Open Command Palette <kbd>⌘ J</kbd></Button>
+        {/*- begin focus -*/}
+        <CommandPalette
+          {...props}
+          /* PROPS */
+          isOpen={isOpen}
+          onOpenChange={setOpen}>
+          <MenuItem textValue="Create new file...">
+            <FilePlus2 />
+            <Text>Create new file...</Text>
+          </MenuItem>
+          <MenuItem textValue="Create new folder...">
+            <FolderPlus />
+            <Text>Create new folder...</Text>
+          </MenuItem>
+          <MenuItem textValue="Assign to...">
+            <UserPen />
+            <Text>Assign to...</Text>
+          </MenuItem>
+          <MenuItem textValue="Assign to me">
+            <User />
+            <Text>Assign to me</Text>
+          </MenuItem>
+          <MenuItem textValue="Change status...">
+            <CircleDotDashed />
+            <Text>Change status...</Text>
+          </MenuItem>
+          <MenuItem textValue="Change priority...">
+            <ChartPie />
+            <Text>Change priority...</Text>
+          </MenuItem>
+          <MenuItem textValue="Add label...">
+            <Tag />
+            <Text>Add label...</Text>
+          </MenuItem>
+          <MenuItem textValue="Remove label...">
+            <Tag />
+            <Text>Remove label...</Text>
+          </MenuItem>
+        </CommandPalette>
+        {/*- end focus -*/}
+      </DialogTrigger>
+    );
+  }
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.CommandPalette} links={vanillaDocs.links} props={['disableAutoFocusFirst']} initialProps={{label: 'Commands'}} type="tailwind" files={["starters/tailwind/src/CommandPalette.tsx"]}
+  "use client";
+  import {CommandPalette} from 'tailwind-starter/CommandPalette';
+  import {MenuItem} from 'tailwind-starter/Menu';
+  import {Button} from 'tailwind-starter/Button';
+  import {DialogTrigger} from 'react-aria-components';
+  import {useState} from 'react';
+
+  function Example(props) {
+    let [isOpen, setOpen] = useState(false);
+    return (
+      <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button>Open Command Palette <kbd className="font-sans text-xs ml-4 px-1 rounded-sm border border-white/20 bg-white/10">⌘ J</kbd></Button>
+        {/*- begin focus -*/}
+        <CommandPalette
+          {...props}
+          /* PROPS */
+          isOpen={isOpen}
+          onOpenChange={setOpen}>
+          <MenuItem>Create new file...</MenuItem>
+          <MenuItem>Create new folder...</MenuItem>
+          <MenuItem>Assign to...</MenuItem>
+          <MenuItem>Assign to me</MenuItem>
+          <MenuItem>Change status...</MenuItem>
+          <MenuItem>Change priority...</MenuItem>
+          <MenuItem>Add label...</MenuItem>
+          <MenuItem>Remove label...</MenuItem>
+        </CommandPalette>
+        {/*- end focus -*/}
+      </DialogTrigger>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+Autocomplete filters a collection component using a [TextField](TextField.html) or [SearchField](SearchField.html). It can be used to build UI patterns such as command palettes, searchable menus, filterable selects, and more.
+
+[Menu](Menu.html) and [ListBox](ListBox.html) support **virtual focus**, which allows arrow key navigation within the list while the text input is focused. Use `disableVirtualFocus` to require the user to tab between the input and list.
+
+<ExampleSwitcher type="component" examples={['Menu', 'Select', 'ListBox', 'TagGroup', 'GridList', 'Table']}>
+
+```tsx render docs={docs.exports.Autocomplete} links={docs.links} props={['disableVirtualFocus', 'disableAutoFocusFirst']} type="vanilla" wide
+"use client";
+import {Autocomplete, useFilter} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {SearchField} from 'vanilla-starter/SearchField';
+
+function Example(props) {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <MenuTrigger>
+      <Button>Add tag...</Button>
+      <Popover style={{display: 'flex', flexDirection: 'column'}}>
+        {/*- begin highlight -*/}
+        <Autocomplete {...props}/* PROPS */ filter={contains}>
+          <SearchField
+            autoFocus
+            aria-label="Search tags"
+            placeholder="Search tags"
+            style={{margin: 4}} />
+          <Menu style={{flex: 1}} renderEmptyState={() => 'No results.'}>
+            {/*- end highlight -*/}
+            <MenuItem>News</MenuItem>
+            <MenuItem>Travel</MenuItem>
+            <MenuItem>Shopping</MenuItem>
+            <MenuItem>Business</MenuItem>
+            <MenuItem>Entertainment</MenuItem>
+            <MenuItem>Food</MenuItem>
+            <MenuItem>Technology</MenuItem>
+            <MenuItem>Health</MenuItem>
+            <MenuItem>Science</MenuItem>
+          </Menu>
+        </Autocomplete>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+```tsx render docs={docs.exports.Autocomplete} links={docs.links} props={['disableVirtualFocus', 'disableAutoFocusFirst']} type="vanilla" wide
+"use client";
+import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
+import {Popover} from 'vanilla-starter/Popover';
+import {SearchField} from 'vanilla-starter/SearchField';
+import {ChevronDown} from 'lucide-react';
+
+/*- begin collapse -*/
+const states = [
+  {id: 'AL', name: 'Alabama'},
+  {id: 'AK', name: 'Alaska'},
+  {id: 'AZ', name: 'Arizona'},
+  {id: 'AR', name: 'Arkansas'},
+  {id: 'CA', name: 'California'},
+  {id: 'CO', name: 'Colorado'},
+  {id: 'CT', name: 'Connecticut'},
+  {id: 'DE', name: 'Delaware'},
+  {id: 'DC', name: 'District of Columbia'},
+  {id: 'FL', name: 'Florida'},
+  {id: 'GA', name: 'Georgia'},
+  {id: 'HI', name: 'Hawaii'},
+  {id: 'ID', name: 'Idaho'},
+  {id: 'IL', name: 'Illinois'},
+  {id: 'IN', name: 'Indiana'},
+  {id: 'IA', name: 'Iowa'},
+  {id: 'KS', name: 'Kansas'},
+  {id: 'KY', name: 'Kentucky'},
+  {id: 'LA', name: 'Louisiana'},
+  {id: 'ME', name: 'Maine'},
+  {id: 'MD', name: 'Maryland'},
+  {id: 'MA', name: 'Massachusetts'},
+  {id: 'MI', name: 'Michigan'},
+  {id: 'MN', name: 'Minnesota'},
+  {id: 'MS', name: 'Mississippi'},
+  {id: 'MO', name: 'Missouri'},
+  {id: 'MT', name: 'Montana'},
+  {id: 'NE', name: 'Nebraska'},
+  {id: 'NV', name: 'Nevada'},
+  {id: 'NH', name: 'New Hampshire'},
+  {id: 'NJ', name: 'New Jersey'},
+  {id: 'NM', name: 'New Mexico'},
+  {id: 'NY', name: 'New York'},
+  {id: 'NC', name: 'North Carolina'},
+  {id: 'ND', name: 'North Dakota'},
+  {id: 'OH', name: 'Ohio'},
+  {id: 'OK', name: 'Oklahoma'},
+  {id: 'OR', name: 'Oregon'},
+  {id: 'PA', name: 'Pennsylvania'},
+  {id: 'RI', name: 'Rhode Island'},
+  {id: 'SC', name: 'South Carolina'},
+  {id: 'SD', name: 'South Dakota'},
+  {id: 'TN', name: 'Tennessee'},
+  {id: 'TX', name: 'Texas'},
+  {id: 'UT', name: 'Utah'},
+  {id: 'VT', name: 'Vermont'},
+  {id: 'VA', name: 'Virginia'},
+  {id: 'WA', name: 'Washington'},
+  {id: 'WV', name: 'West Virginia'},
+  {id: 'WI', name: 'Wisconsin'},
+  {id: 'WY', name: 'Wyoming'}
+];
+/*- end collapse -*/
+
+function Example(props) {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <Select>
+      <Label>State</Label>
+      <Button>
+        <SelectValue />
+        <ChevronDown size={18} />
+      </Button>
+      <Popover hideArrow className="select-popover" style={{display: 'flex', flexDirection: 'column'}}>
+        {/*- begin highlight -*/}
+        <Autocomplete {...props}/* PROPS */ filter={contains}>
+          {/*- end highlight -*/}
+          <SearchField
+            autoFocus
+            aria-label="Search states"
+            placeholder="Search states"
+            style={{margin: 4}} />
+          <SelectListBox
+            items={states}
+            renderEmptyState={() => 'No results.'}
+            style={{flex: 1}}>
+            {state => <SelectItem>{state.name}</SelectItem>}
+          </SelectListBox>
+        </Autocomplete>
+      </Popover>
+    </Select>
+  );
+}
+```
+
+```tsx render docs={docs.exports.Autocomplete} links={docs.links} props={['disableVirtualFocus', 'disableAutoFocusFirst']} type="vanilla" wide
+"use client";
+import {Autocomplete, useFilter} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {SearchField} from 'vanilla-starter/SearchField';
+
+function Example(props) {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    /*- begin highlight -*/
+    <Autocomplete {...props}/* PROPS */ filter={contains}>
+      {/*- end highlight -*/}
+      <SearchField
+        aria-label="Search tags"
+        placeholder="Search tags"
+        style={{width: 250, marginBottom: 8}} />
+      <ListBox
+        aria-label="Tags"
+        selectionMode="multiple"
+        renderEmptyState={() => 'No results.'}
+        style={{height: 200}}>
+        <ListBoxItem>News</ListBoxItem>
+        <ListBoxItem>Travel</ListBoxItem>
+        <ListBoxItem>Shopping</ListBoxItem>
+        <ListBoxItem>Business</ListBoxItem>
+        <ListBoxItem>Entertainment</ListBoxItem>
+        <ListBoxItem>Food</ListBoxItem>
+        <ListBoxItem>Technology</ListBoxItem>
+        <ListBoxItem>Health</ListBoxItem>
+        <ListBoxItem>Science</ListBoxItem>
+      </ListBox>
+    </Autocomplete>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {Autocomplete, useFilter} from 'react-aria-components';
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+import {SearchField} from 'vanilla-starter/SearchField';
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    /*- begin highlight -*/
+    <Autocomplete filter={contains}>
+      {/*- end highlight -*/}
+      <SearchField
+        label="Interests"
+        placeholder="Filter tags"
+        style={{width: 250, marginBottom: 16}} />
+      <TagGroup
+        aria-label="Interest tags"
+        selectionMode="multiple"
+        renderEmptyState={() => 'No results.'}
+        style={{width: 250}}>
+        <Tag>News</Tag>
+        <Tag>Travel</Tag>
+        <Tag>Shopping</Tag>
+        <Tag>Business</Tag>
+        <Tag>Entertainment</Tag>
+        <Tag>Food</Tag>
+        <Tag>Technology</Tag>
+        <Tag>Health</Tag>
+        <Tag>Science</Tag>
+      </TagGroup>
+    </Autocomplete>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {Autocomplete, Text, useFilter} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {SearchField} from 'vanilla-starter/SearchField';
+
+///- begin collapse -///
+let images = [
+  {
+    id: "8SXaMMWCTGc",
+    title: "A Ficus Lyrata Leaf",
+    user: "Clay Banks",
+    image: "https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "pYjCqqDEOFo",
+    title: "Italian beach",
+    user: "Alan Bajura",
+    image: "https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "CF-2tl6MQj0",
+    title: "Forest road",
+    user: "Artem Stoliar",
+    image: "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "OW97sLU0cOw",
+    title: "Snowy Aurora",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "WfeLZ02IhkM",
+    title: "A blue and white firework is seen from above",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "w1GpST72Bg8",
+    title: "Snowy Mountain",
+    user: "Daniil Silantev",
+    image: "https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "0iN0KIt6lYI",
+    title: "Pastel Sunset",
+    user: "Marek Piwnicki",
+    image: "https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 640
+  },
+  {
+    id: "-mFKPfXXUG0",
+    title: "Snowy Birches",
+    user: "Simon Berger",
+    image: "https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "y36Nj_edtRE",
+    title: "Snowy Lake Reflections",
+    user: "Daniel Seßler",
+    image: "https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "NvBV-YwlgBw",
+    title: "Rocky night sky",
+    user: "Dennis Haug",
+    image: "https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "UthQdrPFxt0",
+    title: "A pine tree covered in snow in a forest",
+    user: "Anita Austvika",
+    image: "https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "2k74xaf8dfc",
+    title: "The sun shines through the trees in the forest",
+    user: "Joyce G",
+    image: "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Yje5kgfvCm0",
+    title: "A blurry photo of a field of flowers",
+    user: "Eugene Golovesov",
+    image: "https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "G2bsj2LVttI",
+    title: "A foggy road lined with trees and grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "ppyNBOkfiuY",
+    title: "A close up of a green palm tree",
+    user: "Junel Mujar",
+    image: "https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "UcWUMqIsld8",
+    title: "A green leaf floating on top of a body of water",
+    user: "Allec Gomes",
+    image: "https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "xHqOVq9w8OI",
+    title: "Leafy plants",
+    user: "Joshua Michaels",
+    image: "https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "uWx3_XEc-Jw",
+    title: "A view of a mountain covered in fog",
+    user: "iuliu illes",
+    image: "https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 298
+  },
+  {
+    id: "2_3lhGt8i-Y",
+    title: "A field with tall grass and fog in the background",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "FV-__IOxb08",
+    title: "A close up of a wave on a sandy beach",
+    user: "Jonathan Borba",
+    image: "https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "_BS-vK3boOU",
+    title: "Desert textures",
+    user: "Braden Jarvis",
+    image: "https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 561
+  },
+  {
+    id: "LjAcS9lJdBg",
+    title: "Tew Falls, waterfall, in Hamilton, Canada.",
+    user: "Andre Portolesi",
+    image: "https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 500
+  },
+  {
+    id: "hlj6xJG30FE",
+    title: "Cave light rays",
+    user: "Intricate Explorer",
+    image: "https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "vMoZvKeZOhw",
+    title: "Salt Marshes, Isle of Harris, Scotland",
+    user: "Nils Leonhardt",
+    image: "https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "wCLCK9LDDjI",
+    title: "An aerial view of a snow covered forest",
+    user: "Lukas Hädrich",
+    image: "https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "OdDx3_NB-Wk",
+    title: "Tall grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Gn-FOw1geFc",
+    title: "Larches on Maple Pass, Washington",
+    user: "Noelle",
+    image: "https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "VhKJHOz2tJ8",
+    title: "Heart Nebula",
+    user: "Arnaud Girault",
+    image: "https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  }
+];
+///- end collapse -///
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    /*- begin highlight -*/
+    <Autocomplete filter={contains}>
+      {/*- end highlight -*/}
+      <SearchField
+        aria-label="Search photos"
+        placeholder="Search photos"
+        style={{marginBottom: 8, marginInlineStart: 12, marginInlineEnd: 'auto'}} />
+      <GridList
+        aria-label="Nature photos"
+        data-size="small"
+        selectionMode="multiple"
+        renderEmptyState={() => 'No results.'}
+        items={images}>
+        {(image) => (
+          <GridListItem textValue={image.title}>
+            <img src={image.image} width={image.width} height={image.height} />
+            <Text>{image.title}</Text>
+            <Text slot="description">By {image.user}</Text>
+          </GridListItem>
+        )}
+      </GridList>
+    </Autocomplete>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {Autocomplete, ResizableTableContainer, useFilter} from 'react-aria-components';
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
+import {SearchField} from 'vanilla-starter/SearchField';
+
+/*- begin collapse -*/
+const stocks = [
+  {
+    id: 1,
+    symbol: 'PAACR',
+    name: 'Pacific Special Acquisition Corp.',
+    sector: 'Finance',
+    marketCap: 'n/a',
+    industry: 'Business Services',
+  },
+  {
+    id: 2,
+    symbol: 'DCM',
+    name: 'NTT DOCOMO, Inc',
+    sector: 'Technology',
+    marketCap: '$96.67B',
+    industry: 'Radio And Television Broadcasting And Communications Equipment',
+  },
+  {
+    id: 3,
+    symbol: 'RFEU',
+    name: 'First Trust RiverFront Dynamic Europe ETF',
+    sector: 'n/a',
+    marketCap: '$52.66M',
+    industry: 'n/a',
+  },
+  {
+    id: 4,
+    symbol: 'SODA',
+    name: 'SodaStream International Ltd.',
+    sector: 'Consumer Durables',
+    marketCap: '$1.13B',
+    industry: 'Consumer Electronics/Appliances',
+  },
+  {
+    id: 5,
+    symbol: 'KRA',
+    name: 'Kraton Corporation',
+    sector: 'Basic Industries',
+    marketCap: '$979.78M',
+    industry: 'Major Chemicals',
+  },
+  {
+    id: 6,
+    symbol: 'VRTS',
+    name: 'Virtus Investment Partners, Inc.',
+    sector: 'Finance',
+    marketCap: '$785.49M',
+    industry: 'Investment Managers',
+  },
+  {
+    id: 7,
+    symbol: 'PAH',
+    name: 'Platform Specialty Products Corporation',
+    sector: 'Basic Industries',
+    marketCap: '$3.52B',
+    industry: 'Major Chemicals',
+  },
+  {
+    id: 8,
+    symbol: 'MANH',
+    name: 'Manhattan Associates, Inc.',
+    sector: 'Technology',
+    marketCap: '$3.27B',
+    industry: 'Computer Software: Prepackaged Software',
+  },
+  {
+    id: 9,
+    symbol: 'SAB',
+    name: 'Saratoga Investment Corp',
+    sector: 'n/a',
+    marketCap: 'n/a',
+    industry: 'n/a',
+  },
+  {
+    id: 10,
+    symbol: 'THQ',
+    name: 'Tekla Healthcare Opportunies Fund',
+    sector: 'n/a',
+    marketCap: '$772.41M',
+    industry: 'n/a',
+  },
+  {
+    id: 11,
+    symbol: 'MERC',
+    name: 'Mercer International Inc.',
+    sector: 'Basic Industries',
+    marketCap: '$769.94M',
+    industry: 'Paper',
+  },
+  {
+    id: 12,
+    symbol: 'DNI',
+    name: 'Dividend and Income Fund',
+    sector: 'n/a',
+    marketCap: '$130.45M',
+    industry: 'n/a',
+  },
+  {
+    id: 13,
+    symbol: 'NVTR',
+    name: 'Nuvectra Corporation',
+    sector: 'Health Care',
+    marketCap: '$132.49M',
+    industry: 'Medical/Dental Instruments',
+  },
+  {
+    id: 14,
+    symbol: 'NNN',
+    name: 'National Retail Properties',
+    sector: 'Consumer Services',
+    marketCap: '$5.87B',
+    industry: 'Real Estate Investment Trusts',
+  },
+  {
+    id: 15,
+    symbol: 'ZF',
+    name: 'Virtus Total Return Fund Inc.',
+    sector: 'n/a',
+    marketCap: '$277.82M',
+    industry: 'n/a',
+  },
+  {
+    id: 16,
+    symbol: 'WF',
+    name: 'Woori Bank',
+    sector: 'Finance',
+    marketCap: '$10.29B',
+    industry: 'Commercial Banks',
+  },
+  {
+    id: 17,
+    symbol: 'VNQI',
+    name: 'Vanguard Global ex-U.S. Real Estate ETF',
+    sector: 'n/a',
+    marketCap: '$4.39B',
+    industry: 'n/a',
+  },
+  {
+    id: 18,
+    symbol: 'BIOC',
+    name: 'Biocept, Inc.',
+    sector: 'Health Care',
+    marketCap: '$32.98M',
+    industry: 'Medical Specialities',
+  },
+  {
+    id: 19,
+    symbol: 'FTRPR',
+    name: 'Frontier Communications Corporation',
+    sector: 'Public Utilities',
+    marketCap: 'n/a',
+    industry: 'Telecommunications Equipment',
+  },
+  {
+    id: 20,
+    symbol: 'EPE',
+    name: 'EP Energy Corporation',
+    sector: 'Energy',
+    marketCap: '$1.02B',
+    industry: 'Oil & Gas Production',
+  },
+  {
+    id: 21,
+    symbol: 'TEO',
+    name: 'Telecom Argentina Stet - France Telecom S.A.',
+    sector: 'Public Utilities',
+    marketCap: '$4.83B',
+    industry: 'Telecommunications Equipment',
+  },
+  {
+    id: 22,
+    symbol: 'FENX',
+    name: 'Fenix Parts, Inc.',
+    sector: 'Consumer Services',
+    marketCap: '$29.61M',
+    industry: 'Motor Vehicles',
+  },
+  {
+    id: 23,
+    symbol: 'KAP',
+    name: 'KCAP Financial, Inc.',
+    sector: 'n/a',
+    marketCap: 'n/a',
+    industry: 'n/a',
+  },
+  {
+    id: 24,
+    symbol: 'WING',
+    name: 'Wingstop Inc.',
+    sector: 'Consumer Services',
+    marketCap: '$875.69M',
+    industry: 'Restaurants',
+  },
+  {
+    id: 25,
+    symbol: 'JNP',
+    name: 'Juniper Pharmaceuticals, Inc.',
+    sector: 'Health Care',
+    marketCap: '$55.3M',
+    industry: 'Major Pharmaceuticals',
+  },
+  {
+    id: 26,
+    symbol: 'KNL',
+    name: 'Knoll, Inc.',
+    sector: 'Consumer Durables',
+    marketCap: '$1.04B',
+    industry: 'Office Equipment / Supplies / Services',
+  },
+  {
+    id: 27,
+    symbol: 'GNW',
+    name: 'Genworth Financial Inc',
+    sector: 'Finance',
+    marketCap: '$1.82B',
+    industry: 'Life Insurance',
+  },
+  {
+    id: 28,
+    symbol: 'PBI',
+    name: 'Pitney Bowes Inc.',
+    sector: 'Miscellaneous',
+    marketCap: '$2.84B',
+    industry: 'Office Equipment / Supplies / Services',
+  },
+  {
+    id: 29,
+    symbol: 'USDP',
+    name: 'USD Partners LP',
+    sector: 'Transportation',
+    marketCap: '$300.48M',
+    industry: 'Railroads',
+  },
+  {
+    id: 30,
+    symbol: 'MOFG',
+    name: 'MidWestOne Financial Group, Inc.',
+    sector: 'Finance',
+    marketCap: '$437.4M',
+    industry: 'Major Banks',
+  },
+  {
+    id: 31,
+    symbol: 'DPG',
+    name: 'Duff & Phelps Global Utility Income Fund Inc.',
+    sector: 'n/a',
+    marketCap: '$626.98M',
+    industry: 'n/a',
+  },
+  {
+    id: 32,
+    symbol: 'ATNX',
+    name: 'Athenex, Inc.',
+    sector: 'n/a',
+    marketCap: '$767.4M',
+    industry: 'n/a',
+  },
+  {
+    id: 33,
+    symbol: 'PSA^Y',
+    name: 'Public Storage',
+    sector: 'n/a',
+    marketCap: 'n/a',
+    industry: 'n/a',
+  },
+  {
+    id: 34,
+    symbol: 'GPIAU',
+    name: 'GP Investments Acquisition Corp.',
+    sector: 'Consumer Durables',
+    marketCap: 'n/a',
+    industry: 'Home Furnishings',
+  },
+  {
+    id: 35,
+    symbol: 'TNP^C',
+    name: 'Tsakos Energy Navigation Ltd',
+    sector: 'n/a',
+    marketCap: 'n/a',
+    industry: 'n/a',
+  },
+  {
+    id: 36,
+    symbol: 'EFSC',
+    name: 'Enterprise Financial Services Corporation',
+    sector: 'Finance',
+    marketCap: '$965.1M',
+    industry: 'Major Banks',
+  },
+  {
+    id: 37,
+    symbol: 'HIIQ',
+    name: 'Health Insurance Innovations, Inc.',
+    sector: 'Finance',
+    marketCap: '$392.38M',
+    industry: 'Specialty Insurers',
+  },
+  {
+    id: 38,
+    symbol: 'NMK^B',
+    name: 'Niagara Mohawk Holdings, Inc.',
+    sector: 'Public Utilities',
+    marketCap: 'n/a',
+    industry: 'Power Generation',
+  },
+  {
+    id: 39,
+    symbol: 'ETH',
+    name: 'Ethan Allen Interiors Inc.',
+    sector: 'Consumer Durables',
+    marketCap: '$822.58M',
+    industry: 'Home Furnishings',
+  },
+  {
+    id: 40,
+    symbol: 'TBPH',
+    name: 'Theravance Biopharma, Inc.',
+    sector: 'Health Care',
+    marketCap: '$1.97B',
+    industry: 'Major Pharmaceuticals',
+  },
+  {
+    id: 41,
+    symbol: 'PNF',
+    name: 'PIMCO New York Municipal Income Fund',
+    sector: 'n/a',
+    marketCap: '$99.42M',
+    industry: 'n/a',
+  },
+  {
+    id: 42,
+    symbol: 'KOP',
+    name: 'Koppers Holdings Inc.',
+    sector: 'Basic Industries',
+    marketCap: '$716.78M',
+    industry: 'Forest Products',
+  },
+  {
+    id: 43,
+    symbol: 'SSB',
+    name: 'South State Corporation',
+    sector: 'Finance',
+    marketCap: '$2.55B',
+    industry: 'Major Banks',
+  },
+  {
+    id: 44,
+    symbol: 'AUY',
+    name: 'Yamana Gold Inc.',
+    sector: 'Basic Industries',
+    marketCap: '$2.32B',
+    industry: 'Precious Metals',
+  },
+  {
+    id: 45,
+    symbol: 'TWNK',
+    name: 'Hostess Brands, Inc.',
+    sector: 'Consumer Non-Durables',
+    marketCap: '$2.09B',
+    industry: 'Packaged Foods',
+  },
+  {
+    id: 46,
+    symbol: 'RGLS',
+    name: 'Regulus Therapeutics Inc.',
+    sector: 'Health Care',
+    marketCap: '$50.52M',
+    industry: 'Major Pharmaceuticals',
+  },
+  {
+    id: 47,
+    symbol: 'ULBI',
+    name: 'Ultralife Corporation',
+    sector: 'Miscellaneous',
+    marketCap: '$102.3M',
+    industry: 'Industrial Machinery/Components',
+  },
+  {
+    id: 48,
+    symbol: 'NFJ',
+    name: 'AllianzGI NFJ Dividend, Interest & Premium Strategy Fund',
+    sector: 'Finance',
+    marketCap: '$1.24B',
+    industry: 'Finance: Consumer Services',
+  },
+  {
+    id: 49,
+    symbol: 'EQC',
+    name: 'Equity Commonwealth',
+    sector: 'Consumer Services',
+    marketCap: '$3.93B',
+    industry: 'Real Estate Investment Trusts',
+  },
+  {
+    id: 50,
+    symbol: 'MARK',
+    name: 'Remark Holdings, Inc.',
+    sector: 'Consumer Services',
+    marketCap: '$57.31M',
+    industry: 'Telecommunications Equipment',
+  },
+];
+/*- end collapse -*/
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    /*- begin highlight -*/
+    <Autocomplete filter={contains}>
+      {/*- end highlight -*/}
+      <SearchField
+        aria-label="Search stocks"
+        placeholder="Search stocks"
+        style={{marginBottom: 16, marginInlineEnd: 'auto'}} />
+      <ResizableTableContainer style={{height: 400}}>
+        <Table aria-label="Stocks" selectionMode="multiple">
+          <TableHeader>
+            <Column id="symbol" defaultWidth={85} allowsResizing>
+              Symbol
+            </Column>
+            <Column id="name" isRowHeader defaultWidth="2fr" allowsResizing>
+              Name
+            </Column>
+            <Column id="marketCap" allowsResizing>Market Cap</Column>
+            <Column id="industry">Industry</Column>
+          </TableHeader>
+          <TableBody items={stocks} renderEmptyState={() => 'No results.'}>
+            {(item) => (
+              <Row>
+                <Cell><code>${item.symbol}</code></Cell>
+                <Cell textValue={item.name}>
+                  {item.name}
+                </Cell>
+                <Cell textValue={item.marketCap}>
+                  {item.marketCap}
+                </Cell>
+                <Cell textValue={item.industry}>
+                  {item.industry}
+                </Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </Autocomplete>
+  );
+}
+```
+
+</ExampleSwitcher>
+
+### Asynchronous loading
+
+When the `filter` prop is not set, the items are controlled. This example uses a backend API to perform searching instead of filtering a static list on the client.
+
+```tsx render
+"use client";
+import {Autocomplete} from 'react-aria-components';
+import {SearchField} from 'vanilla-starter/SearchField';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {useAsyncList} from 'react-stately';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<{name: string}>({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        {signal}
+      );
+
+      let json = await res.json();
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <Autocomplete
+      /*- begin highlight -*/
+      filter={null}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}>
+      {/*- end highlight -*/}
+      <SearchField
+        label="Search Star Wars Characters"
+        placeholder="Search"
+        style={{width: 250, margin: 8}} />
+      <ListBox
+        items={list.items}
+        selectionMode="multiple"
+        renderEmptyState={() => 'No results found.'}
+        style={{height: 300}}>
+        {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </ListBox>
+    </Autocomplete>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="autocomplete" pages={props.pages} />
+
+## API
+
+```tsx links={{Autocomplete: '#autocomplete', SearchField: 'SearchField.html', TextField: 'TextField.html', Menu: 'Menu.html', ListBox: 'ListBox.html', TagGroup: 'TagGroup.html', GridList: 'GridList.html', Table: 'Table.html'}}
+<Autocomplete>
+  <SearchField /> or <TextField />
+  <Menu />, <ListBox />, <TagGroup />, <GridList />, or <Table />
+</Autocomplete>
+```
+
+### Autocomplete
+
+<PropTable component={docs.exports.Autocomplete} links={docs.links} />

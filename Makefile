@@ -100,6 +100,7 @@ build:
 	done
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
+	node scripts/fixUseClient.js
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -108,17 +109,18 @@ website:
 website-production:
 	node scripts/buildWebsite.js $$PUBLIC_URL
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	# Uncomment this when we are ready to release.
+	# $(MAKE) s2-docs-production
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
-	$(MAKE) s2-docs
+	$(MAKE) s2-storybook-docs
 
 check-examples:
 	node scripts/extractExamples.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
-	node scripts/extractStarter.mjs
-	cd starters/docs && yarn --no-immutable && yarn tsc
+	cd starters/docs && yarn --no-immutable && yarn up react-aria-components && yarn tsc
 
 starter-zip: starter
 	cp LICENSE starters/docs/.
@@ -129,15 +131,33 @@ starter-zip: starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
-	cd starters/tailwind && yarn --no-immutable && yarn tsc
+	cd starters/tailwind && yarn --no-immutable && yarn up react-aria-components && yarn up tailwindcss-react-aria-components && yarn tsc
+
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
 	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
 
-s2-docs:
-	yarn build:s2-docs -o dist/production/docs/s2
+s2-storybook-docs:
+	yarn build:s2-storybook-docs -o dist/production/docs/s2
 
 s2-api-diff:
 	node scripts/buildBranchAPI.js
 	node scripts/api-diff.js --skip-same --skip-style-props
+
+s2-docs:
+	PUBLIC_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs DIST_DIR=dist/$$(git rev-parse HEAD)/s2-docs $(MAKE) build-s2-docs
+
+s2-docs-production:
+	PUBLIC_URL=https://react-spectrum.adobe.com/beta DIST_DIR=dist/production/docs/beta $(MAKE) build-s2-docs
+
+build-s2-docs:
+	yarn workspace @react-spectrum/s2-docs generate:md
+	yarn workspace @react-spectrum/s2-docs generate:og
+	REGISTRY_URL=$(PUBLIC_URL)/registry node scripts/buildRegistry.mjs
+	REGISTRY_URL=$(PUBLIC_URL)/registry yarn build:s2-docs --public-url $(PUBLIC_URL)
+	mkdir -p $(DIST_DIR)
+	mv packages/dev/s2-docs/dist/* $(DIST_DIR)
+	mkdir -p $(DIST_DIR)/registry
+	mv starters/docs/registry $(DIST_DIR)/registry/vanilla
+	mv starters/tailwind/registry $(DIST_DIR)/registry/tailwind

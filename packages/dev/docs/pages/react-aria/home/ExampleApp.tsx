@@ -9,21 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+'use client';
 import {AlertDialog} from 'tailwind-starter/AlertDialog';
 import {Arrow} from './components';
 import {Button} from 'tailwind-starter/Button';
-import {Cell, Column, Row, TableHeader} from 'tailwind-starter/Table';
+import {Cell, Column, Row, Table, TableHeader} from 'tailwind-starter/Table';
 import {Checkbox} from 'tailwind-starter/Checkbox';
 import {CloudSun, Dessert, Droplet, Droplets, FilterIcon, Mail, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon, Twitter} from 'lucide-react';
-import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, SubmenuTrigger, Table, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
+import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, ModalOverlay, ModalOverlayProps, Modal as RACModal, Selection, SortDescriptor, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
 import {focusRing} from 'tailwind-starter/utils';
 import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
-import {Menu, MenuItem} from 'tailwind-starter/Menu';
+import {Menu, MenuItem, MenuTrigger, SubmenuTrigger} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
-import plants from './plants';
+import plants, {Plant} from './plants';
 import {Popover} from 'tailwind-starter/Popover';
 import React, {ReactElement, UIEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchField} from 'tailwind-starter/SearchField';
@@ -35,26 +36,24 @@ import {tv} from 'tailwind-variants';
 import {useCollator, useFilter, VisuallyHidden} from 'react-aria';
 import {useMediaQuery} from '@react-spectrum/utils';
 
-type Plant = typeof plants[0] & {isFavorite: boolean};
-
 const allColumns: ColumnProps[] = [
   {id: 'favorite', children: <VisuallyHidden>Favorite</VisuallyHidden>, width: 40, minWidth: 40},
   {id: 'common_name', children: 'Name', minWidth: 150, allowsSorting: true},
   {id: 'cycle', children: 'Cycle', defaultWidth: 120, allowsSorting: true},
   {id: 'sunlight', children: 'Sunlight', defaultWidth: 120, allowsSorting: true},
   {id: 'watering', children: 'Watering', defaultWidth: 120, allowsSorting: true},
-  {id: 'actions', children: <VisuallyHidden>Actions</VisuallyHidden>, width: 44, minWidth: 44}
+  {id: 'actions', children: <VisuallyHidden>Actions</VisuallyHidden>, width: 48, minWidth: 48}
 ];
 
-let hideOnScroll = document.getElementById('hideOnScroll');
+let hideOnScroll = typeof document !== 'undefined' ? document.getElementById('hideOnScroll') : null;
 
-export function ExampleApp() {
+export function ExampleApp(): React.ReactNode {
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'common_name',
     direction: 'ascending'
   });
 
-  let [allItems, setAllItems] = useState(() => plants.map(p => ({...p, isFavorite: false})));
+  let [allItems, setAllItems] = useState<Plant[]>(() => plants.map(p => ({...p, isFavorite: false})));
   let [search, setSearch] = useState('');
   let [favorite, setFavorite] = useState(false);
   let [cycles, setCycles] = useState<Selection>(new Set());
@@ -173,33 +172,33 @@ export function ExampleApp() {
   let isSmall = useMediaQuery('(max-width: 640px)');
 
   return (
-    <div className="h-full flex flex-col gap-4 p-4">
+    <div className="h-full flex flex-col gap-4 p-4 box-border">
       <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1.1fr_auto_auto_1fr_auto] gap-2 items-end">
         <SearchField aria-label="Search" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
             <Button aria-label="Filters" variant="secondary" className="w-9 h-9 shrink-0 p-0 relative">
-              <FilterIcon aria-hidden className="inline w-5 h-5" />
+              <FilterIcon aria-hidden className="block w-5 h-5" />
               {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
             <Tooltip>Filters</Tooltip>
           </TooltipTrigger>
           <Popover showArrow>
-            <Dialog className="outline outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
-              <Heading slot="title" className="text-lg font-semibold mb-2">Filters</Heading>
+            <Dialog className="outline outline-0 p-4 box-border max-h-[inherit] overflow-auto w-[350px]">
+              <Heading slot="title" className="text-lg font-semibold m-0 mb-2">Filters</Heading>
               {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
-                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
+                <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles} escapeKeyBehavior="none">
                   <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 shrink-0" /> Annual</Tag>
                   <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 shrink-0" /> Perennial</Tag>
                 </TagGroup>
-                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight}>
+                <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight} escapeKeyBehavior="none">
                   <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
                   <Tag id="part sun" color="yellow" textValue="Part Sun">{sunIcons['part sun']} Part Sun</Tag>
                   <Tag id="part shade" color="yellow" textValue="Part Shade">{sunIcons['part shade']} Part Shade</Tag>
                 </TagGroup>
-                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering}>
+                <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering} escapeKeyBehavior="none">
                   <Tag id="Frequent" color="blue" textValue="Frequent">{wateringIcons['Frequent']} Frequent</Tag>
                   <Tag id="Average" color="blue" textValue="Average">{wateringIcons['Average']} Average</Tag>
                   <Tag id="Minimum" color="blue" textValue="Minimum">{wateringIcons['Minimum']} Minimum</Tag>
@@ -211,7 +210,7 @@ export function ExampleApp() {
         <MenuTrigger>
           <TooltipTrigger>
             <Button aria-label="Columns" variant="secondary" className="w-9 h-9 shrink-0 p-0 hidden sm:block">
-              <SlidersIcon aria-hidden className="inline w-5 h-5" />
+              <SlidersIcon aria-hidden className="block w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
           </TooltipTrigger>
@@ -224,7 +223,7 @@ export function ExampleApp() {
         </MenuTrigger>
         <DialogTrigger>
           <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 shrink-0 p-0 col-start-5">
-            <PlusIcon aria-hidden className="inline w-5 h-5" />
+            <PlusIcon aria-hidden className="block w-5 h-5" />
           </Button>
           <PlantModal>
             <PlantDialog onSave={addItem} />
@@ -239,9 +238,9 @@ export function ExampleApp() {
                 <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-3 object-contain h-[40px]" />
                 <span className="truncate capitalize">{item.common_name}</span>
                 <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
-                <MenuTrigger>
-                  <Button aria-label="Actions" variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
-                  <Menu placement="bottom end" onAction={action => onAction(item, action)}>
+                <MenuTrigger placement="bottom end" >
+                  <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
+                  <Menu onAction={action => onAction(item, action)}>
                     <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                     <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
                     <MenuItem id="delete"><TrashIcon aria-hidden className="w-4 h-4" /> Delete…</MenuItem>
@@ -262,8 +261,8 @@ export function ExampleApp() {
           )}
         </GridList>
       }
-      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto scroll-pt-[2.281rem] relative border border-gray-200 dark:border-zinc-700 rounded-lg" onScroll={onScroll}>
-        <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
+      {!isSmall &&
+        <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} onScroll={onScroll} className="flex-1">
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
           </TableHeader>
@@ -282,7 +281,7 @@ export function ExampleApp() {
                       return (
                         <Cell textValue={item.common_name}>
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
-                            <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-2 object-contain h-[40px]" />
+                            <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-2 object-contain h-[40px] w-[40px]" />
                             <span className="truncate capitalize">{item.common_name}</span>
                             <span className="truncate text-xs text-gray-600 dark:text-zinc-400">{item.scientific_name}</span>
                           </div>
@@ -298,7 +297,7 @@ export function ExampleApp() {
                       return (
                         <Cell>
                           <MenuTrigger>
-                            <Button aria-label="Actions" variant="icon">
+                            <Button aria-label="Actions" variant="secondary" className="bg-transparent dark:bg-transparent border-transparent dark:border-transparent !p-1">
                               <MoreHorizontal aria-hidden className="w-5 h-5" />
                             </Button>
                             <Menu onAction={action => onAction(item, action)}>
@@ -327,7 +326,7 @@ export function ExampleApp() {
             )}
           </TableBody>
         </Table>
-      </ResizableTableContainer>}
+      }
       <Modal isOpen={dialog === 'delete'} onOpenChange={onDialogClose}>
         <AlertDialog title="Delete Plant" variant="destructive" actionLabel="Delete" onAction={deleteItem}>
           Are you sure you want to delete "{actionItem?.common_name}"?
@@ -425,7 +424,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
-                className="w-24 sm:w-32 p-2 flex items-center justify-center shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:text-blue-600 dark:drop-target:text-blue-300">
+                className="w-24 sm:w-32 p-2 box-border flex items-center justify-center shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:text-blue-600 dark:drop-target:text-blue-300">
                 {droppedImage
                   ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
@@ -504,38 +503,47 @@ function PlantModal(props: ModalOverlayProps) {
   return (
     <ModalOverlay
       {...props}
+      // Use position: absolute instead of fixed to avoid
+      // being clipped to the "inner" viewport in iOS 26
       className={({isEntering, isExiting}) => `
-      fixed top-0 left-0 w-full h-(--visual-viewport-height) isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
+      absolute top-0 left-0 w-full h-(--page-height) isolate z-20 bg-black/[15%] backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
       {({isEntering, isExiting}) => (<>
-        {!isResized &&
-          <div
-            data-react-aria-top-layer="true"
-            className={`fixed top-0 left-0 w-full h-(--visual-viewport-height) z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
-              ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
-              ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
-            `}>
-            <svg viewBox="0 0 700 620" width={700} height={620}>
-              <Arrow textX={52} x1={88} x2={130} y={50} href="Dialog.html">Dialog</Arrow>
-              <Arrow textX={34} x1={88} x2={150} y={150} href="DropZone.html">DropZone</Arrow>
-              <Arrow textX={54} x1={88} x2={150} y={272} href="Select.html">Select</Arrow>
-              <Arrow textX={32} x1={88} x2={150} y={492} href="DatePicker.html">DatePicker</Arrow>
-              <Arrow textX={616} x1={550} x2={612} y={126} marker="markerStart" href="ComboBox.html">ComboBox</Arrow>
-              <Arrow textX={616} x1={550} x2={612} y={198} marker="markerStart" href="TextField.html">TextField</Arrow>
-              <Arrow points="560,90 590,90 590,338 612,338 590,338 590,585 560,585" textX={616} y={338} marker="none" href="Form.html">Form</Arrow>
-            </svg>
-          </div>
-        }
-        <RACModal
-          {...props}
-          ref={ref}
-          className={({isEntering, isExiting}) => `
-          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
-          ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
-          ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
-        `} />
+        {/* Inner position: sticky div sized to the visual viewport
+            height so the modal appears in view.
+            Note that position: fixed will not work here because this
+            is positioned relative to the containing block, which is
+            the ModalOverlay in this case due to backdrop-blur. */}
+        <div className="sticky top-0 left-0 w-full h-(--visual-viewport-height) flex items-center justify-center box-border p-4 text-center">
+          {!isResized &&
+            <div
+              data-react-aria-top-layer="true"
+              className={`absolute top-0 left-0 w-full h-(--visual-viewport-height) z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
+                ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+                ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+              `}>
+              <svg viewBox="0 0 700 620" width={700} height={620}>
+                <Arrow textX={52} x1={88} x2={130} y={50} href="Dialog.html">Dialog</Arrow>
+                <Arrow textX={34} x1={88} x2={150} y={150} href="DropZone.html">DropZone</Arrow>
+                <Arrow textX={54} x1={88} x2={150} y={272} href="Select.html">Select</Arrow>
+                <Arrow textX={32} x1={88} x2={150} y={492} href="DatePicker.html">DatePicker</Arrow>
+                <Arrow textX={616} x1={550} x2={612} y={126} marker="markerStart" href="ComboBox.html">ComboBox</Arrow>
+                <Arrow textX={616} x1={550} x2={612} y={198} marker="markerStart" href="TextField.html">TextField</Arrow>
+                <Arrow points="560,90 590,90 590,338 612,338 590,338 590,585 560,585" textX={616} y={338} marker="none" href="Form.html">Form</Arrow>
+              </svg>
+            </div>
+          }
+          <RACModal
+            {...props}
+            ref={ref}
+            className={({isEntering, isExiting}) => `
+            w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] box-border p-6 border-box text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
+            ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+          `} />
+        </div>
       </>)}
     </ModalOverlay>
   );
@@ -543,7 +551,7 @@ function PlantModal(props: ModalOverlayProps) {
 
 const favoriteButtonStyles = tv({
   extend: focusRing,
-  base: 'group cursor-default align-middle rounded-sm',
+  base: 'group cursor-default align-middle rounded-sm border-0 bg-transparent p-0',
   variants: {
     isSelected: {
       false: 'text-gray-500 dark:text-zinc-400 pressed:text-gray-600 dark:pressed:text-zinc-300',
@@ -555,7 +563,7 @@ const favoriteButtonStyles = tv({
 function FavoriteButton(props: ToggleButtonProps) {
   return (
     <ToggleButton aria-label="Favorite" {...props} className={favoriteButtonStyles}>
-      <StarIcon className="w-5 h-5 fill-white dark:fill-zinc-900 group-selected:fill-current" />
+      <StarIcon className="block w-5 h-5 fill-white dark:fill-zinc-900 group-selected:fill-current" />
     </ToggleButton>
   );
 }

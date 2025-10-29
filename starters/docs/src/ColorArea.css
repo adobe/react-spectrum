@@ -1,0 +1,13 @@
+
+.react-aria-ColorArea {
+  width: 192px;
+  height: 192px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.react-aria-ColorArea {
+  &[data-disabled] {
+    background: gray !important;
+  }
+}

@@ -13,7 +13,7 @@
 import {ColorSwatch} from '../src/ColorSwatch';
 import {ColorSwatchPicker} from '../src/ColorSwatchPicker';
 import {Example} from '../stories/ColorSwatchPicker.stories';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 
@@ -56,10 +56,12 @@ let colors = [
   '#bb6b41'
 ];
 
-export const ManySwatches = (args: any) => (
-  <ColorSwatchPicker {...args} styles={style({maxWidth: 192})}>
-    {colors.map((color) => {
-      return <ColorSwatch key={color} color={color} />;
-    })}
-  </ColorSwatchPicker>
-);
+export const ManySwatches: StoryObj<typeof ColorSwatchPicker> = {
+  render: (args) => (
+    <ColorSwatchPicker {...args} styles={style({maxWidth: 192})}>
+      {colors.map((color) => {
+        return <ColorSwatch key={color} color={color} />;
+      })}
+    </ColorSwatchPicker>
+  )
+};

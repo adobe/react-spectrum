@@ -1,0 +1,164 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {TagGroup as VanillaTagGroup, Tag} from 'vanilla-starter/TagGroup';
+import vanillaDocs from 'docs:vanilla-starter/TagGroup';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/tag/docs/anatomy.svg';
+
+export const tags = ['chips', 'pills'];
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.TagGroup} links={docs.links} props={['label', 'selectionMode', 'description', 'errorMessage']} initialProps={{label: 'Categories', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/TagGroup.tsx", "starters/docs/src/TagGroup.css"]}
+  "use client";
+  import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+
+  <TagGroup/* PROPS */>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagGroup>
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.TagGroup} links={docs.links} props={['label', 'selectionMode', 'description', 'errorMessage']} initialProps={{label: 'Categories', selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/TagGroup.tsx"]}
+  "use client";
+  import {TagGroup, Tag} from 'tailwind-starter/TagGroup';
+
+  <TagGroup/* PROPS */>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagGroup>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`TagGroup` follows the [Collection Components API](collections.html?component=TagGroup), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
+
+```tsx render
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+import {useListData} from 'react-stately';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      { id: 1, name: 'News' },
+      { id: 2, name: 'Travel' },
+      { id: 3, name: 'Gaming' },
+      { id: 4, name: 'Shopping' }
+    ]
+  });
+
+  return (
+    <TagGroup
+      label="Categories"
+      /*- begin highlight -*/
+      items={list.items}
+      onRemove={(keys) => list.remove(...keys)}
+      renderEmptyState={() => <div>No categories</div>}>
+      {/*- end highlight -*/}
+      {(item) => <Tag>{item.name}</Tag>}
+    </TagGroup>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<Tag>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+```tsx render
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+
+<TagGroup label="Photo categories">
+  {/*- begin highlight -*/}
+  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography" target="_blank">Landscape</Tag>
+  {/*- end highlight -*/}
+  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography" target="_blank">Portrait</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Macro_photography" target="_blank">Macro</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Dualphotography" target="_blank">Dual</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
+</TagGroup>
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=TagGroup) for more details.
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import type {Selection} from 'react-aria-components';
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <TagGroup
+        {...props}
+        label="Amenities"
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        ///- end highlight -///
+      >
+        <Tag id="laundry">Laundry</Tag>
+        <Tag id="fitness">Fitness center</Tag>
+        <Tag id="parking" isDisabled>Parking</Tag>
+        <Tag id="pool">Swimming pool</Tag>
+        <Tag id="breakfast">Breakfast</Tag>
+      </TagGroup>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="taggroup" pages={props.pages} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{TagGroup: '#taggroup', TagList: '#taglist', Tag: '#tag', Button: 'Button.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<TagGroup>
+  <Label />
+  <TagList>
+    <Tag>
+      <SelectionIndicator />
+      <Button slot="remove" />
+    </Tag>
+  </TagList>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TagGroup>
+```
+
+### TagGroup
+
+<PropTable component={docs.exports.TagGroup} links={docs.links} showDescription />
+
+### TagList
+
+<PropTable component={docs.exports.TagList} links={docs.links} showDescription />
+
+### Tag
+
+<PropTable component={docs.exports.Tag} links={docs.links} showDescription />

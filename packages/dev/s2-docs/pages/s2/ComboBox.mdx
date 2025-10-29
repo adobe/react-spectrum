@@ -1,0 +1,469 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['autocomplete', 'search', 'typeahead'];
+
+# ComboBox
+
+<PageDescription>{docs.exports.ComboBox.description}</PageDescription>
+
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']} initialProps={{label: 'Ice cream flavor', placeholder: 'Select a flavor'}} type="s2"
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+
+<ComboBox/* PROPS */>
+  <ComboBoxItem>Chocolate</ComboBoxItem>
+  <ComboBoxItem>Mint</ComboBoxItem>
+  <ComboBoxItem>Strawberry</ComboBoxItem>
+  <ComboBoxItem>Vanilla</ComboBoxItem>
+  <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+</ComboBox>
+```
+
+## Content
+
+`ComboBox` follows the [Collection Components API](collections.html?component=ComboBox), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+
+function Example() {
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+
+  return (
+    /*- begin highlight -*/
+    <ComboBox label="Animals" defaultItems={options} selectionMode="single" placeholder="Select an animal">
+      {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
+    </ComboBox>
+    /*- end highlight -*/
+  );
+}
+```
+
+### Slots
+
+`ComboBoxItem` supports icons, avatars, and `label` and `description` text slots.
+
+```tsx render
+"use client";
+import {Avatar, ComboBox, ComboBoxItem, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Comment from '@react-spectrum/s2/icons/Comment';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import UserSettings from '@react-spectrum/s2/icons/UserSettings';
+
+const users = Array.from({length: 5}, (_, i) => ({
+  id: `user${i + 1}`,
+  name: `User ${i + 1}`,
+  email: `user${i + 1}@example.com`,
+  avatar: 'https://i.imgur.com/kJOwAdv.png'
+}));
+
+<div className={style({display: 'flex', gap: 12, flexWrap: 'wrap'})}>
+  <ComboBox label="Permissions" defaultSelectedKey="read" placeholder="Select a permission level">
+    <ComboBoxItem id="read" textValue="Read">
+      {/*- begin highlight -*/}
+      <Comment />
+      <Text slot="label">Read</Text>
+      <Text slot="description">Comment only</Text>
+      {/*- end highlight -*/}
+    </ComboBoxItem>
+    <ComboBoxItem id="write" textValue="Write">
+      <Edit />
+      <Text slot="label">Write</Text>
+      <Text slot="description">Read and write only</Text>
+    </ComboBoxItem>
+    <ComboBoxItem id="admin" textValue="Admin">
+      <UserSettings />
+      <Text slot="label">Admin</Text>
+      <Text slot="description">Full access</Text>
+    </ComboBoxItem>
+  </ComboBox>
+  <ComboBox label="Share" defaultItems={users} defaultSelectedKey="user1" placeholder="Select a user">
+    {(item) => (
+      <ComboBoxItem id={item.id} textValue={item.name}>
+        {/*- begin highlight -*/}
+        <Avatar slot="avatar" src={item.avatar} />
+        {/*- end highlight -*/}
+        <Text slot="label">{item.name}</Text>
+        <Text slot="description">{item.email}</Text>
+      </ComboBoxItem>
+    )}
+  </ComboBox>
+</div>
+
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Interactive elements (e.g. buttons) within picker items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons) as children.</Content>
+</InlineAlert>
+
+### Sections
+
+Use the `<ComboBoxSection>` component to group options. A `<Header>` element, with a `<Heading>` and optional `description` slot can be included to label a section. Sections without a header must have an `aria-label`.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem, ComboBoxSection, Header, Heading, Text} from '@react-spectrum/s2';
+
+<ComboBox label="Preferred fruit or vegetable" placeholder="Select an option">
+  {/*- begin highlight -*/}
+  <ComboBoxSection>
+    <Header>
+      <Heading>Fruit</Heading>
+      <Text slot="description">Sweet and nutritious</Text>
+    </Header>
+    {/*- end highlight -*/}
+    <ComboBoxItem id="apple">Apple</ComboBoxItem>
+    <ComboBoxItem id="banana">Banana</ComboBoxItem>
+    <ComboBoxItem id="orange">Orange</ComboBoxItem>
+    <ComboBoxItem id="grapes">Grapes</ComboBoxItem>
+  </ComboBoxSection>
+  <ComboBoxSection>
+    <Header>
+      <Heading>Vegetable</Heading>
+      <Text slot="description">Healthy and savory</Text>
+    </Header>
+    <ComboBoxItem id="broccoli">Broccoli</ComboBoxItem>
+    <ComboBoxItem id="carrots">Carrots</ComboBoxItem>
+    <ComboBoxItem id="spinach">Spinach</ComboBoxItem>
+    <ComboBoxItem id="lettuce">Lettuce</ComboBoxItem>
+  </ComboBoxSection>
+</ComboBox>
+```
+
+### Asynchronous loading
+
+Use the `loadingState` and `onLoadMore` props to enable async loading and infinite scrolling.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {useAsyncList} from 'react-stately';
+
+function Example() {
+  let list = useAsyncList({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      label="Star Wars Character Lookup"
+      placeholder="Select a character"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      /*- begin highlight -*/
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {/*- end highlight -*/}
+      {item => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+    </ComboBox>
+  );
+}
+```
+
+### Actions
+
+Use the `onAction` prop on a `<ComboBoxItem>` to perform a custom action when the item is pressed. This example adds a "Create" action for the current input value.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      placeholder="Select an animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {/*- begin highlight -*/}
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('Creating ' + inputValue)}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      {/*- end highlight -*/}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<ComboBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+
+<ComboBox label="Bookmarks" placeholder="Select a bookmark">
+  <ComboBoxItem href="https://adobe.com/" target="_blank">Adobe</ComboBoxItem>
+  <ComboBoxItem href="https://apple.com/" target="_blank">Apple</ComboBoxItem>
+  <ComboBoxItem href="https://google.com/" target="_blank">Google</ComboBoxItem>
+  <ComboBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ComboBoxItem>
+</ComboBox>
+```
+
+## Selection
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ComboBox#single-selection) for more details.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [animal, setAnimal] = useState<Key>("bison");
+
+  return (
+    <div>
+      <ComboBox
+        label="Pick an animal"
+        placeholder="Select an animal"
+        /*- begin highlight -*/
+        selectedKey={animal}
+        onSelectionChange={setAnimal}>
+        {/*- end highlight -*/}
+        <ComboBoxItem id="koala">Koala</ComboBoxItem>
+        <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
+        <ComboBoxItem id="platypus" isDisabled>Platypus</ComboBoxItem>
+        <ComboBoxItem id="eagle">Bald Eagle</ComboBoxItem>
+        <ComboBoxItem id="bison">Bison</ComboBoxItem>
+        <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
+      </ComboBox>
+      <p>Current selection: {animal}</p>
+    </div>
+  );
+}
+```
+
+### Input value
+
+Use the `inputValue` or `defaultInputValue` prop to set the value of the input field. By default, the value will be reverted to the selected item on blur. Set the `allowsCustomValue` prop to enable entering values that are not in the list.
+
+```tsx render wide docs={docs.exports.ComboBox} links={docs.links} props={['allowsCustomValue']} initialProps={{defaultSelectedKey: 'kangaroo'}} type="s2"
+"use client";
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let [value, setValue] = useState<Key>('Kangaroo');
+
+  return (
+    <div>
+      <ComboBox
+        {...props}
+        label="Favorite Animal"
+        placeholder="Select an animal"
+        /*- begin highlight -*/
+        /* PROPS */
+        inputValue={value}
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
+        <ComboBoxItem id="koala">Koala</ComboBoxItem>
+        <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
+        <ComboBoxItem id="platypus">Platypus</ComboBoxItem>
+        <ComboBoxItem id="eagle">Bald Eagle</ComboBoxItem>
+        <ComboBoxItem id="bison">Bison</ComboBoxItem>
+        <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
+      </ComboBox>
+      <p>Current input value: {value}</p>
+    </div>
+  );
+}
+```
+
+### Fully controlled
+
+Both `inputValue` and `selectedKey` can be controlled simultaneously. However, each interaction will only trigger either `onInputChange` or `onSelectionChange`, not both. When controlling both props, you must update both values accordingly.
+
+```tsx render
+"use client";
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function ControlledComboBox() {
+  /*- begin collapse -*/
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+  /*- end collapse -*/
+
+  let [fieldState, setFieldState] = useState({
+    selectedKey: null,
+    inputValue: ''
+  });
+
+  let onSelectionChange = (id: Key) => {
+    // Update inputValue when selectedKey changes.
+    setFieldState({
+      inputValue: options.find(o => o.id === id)?.name ?? '',
+      selectedKey: id
+    });
+  };
+
+  let onInputChange = (value: string) => {
+    // Reset selectedKey to null if the input is cleared.
+    setFieldState(prevState => ({
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
+  return (
+    <div>
+      <ComboBox
+        label="Pick a engineering major"
+        placeholder="Select a major"
+        /*- begin highlight -*/
+        defaultItems={options}
+        selectedKey={fieldState.selectedKey}
+        inputValue={fieldState.inputValue}
+        onSelectionChange={onSelectionChange}
+        onInputChange={onInputChange}>
+        {/*- end highlight -*/}
+        {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
+      </ComboBox>
+      <pre className={style({font: 'body'})}>
+        Current selected major id: {fieldState.selectedKey}{'\n'}
+        Current input text: {fieldState.inputValue}
+      </pre>
+    </div>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+"use client";
+import {ComboBox, ComboBoxItem, Form, Button} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <ComboBox
+        {...props}
+        label="Animal"
+        placeholder="e.g. Cat"
+        /*- begin highlight -*/
+        name="animal"
+        /* PROPS */
+        /*- end highlight -*/
+        description="Please select an animal.">
+        <ComboBoxItem id="aardvark">Aardvark</ComboBoxItem>
+        <ComboBoxItem id="cat">Cat</ComboBoxItem>
+        <ComboBoxItem id="dog">Dog</ComboBoxItem>
+        <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
+        <ComboBoxItem id="panda">Panda</ComboBoxItem>
+        <ComboBoxItem id="snake">Snake</ComboBoxItem>
+      </ComboBox>
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## Popover options
+
+Use the `menuTrigger` prop to control when the popover opens:
+
+* `input` (default): popover opens when the user edits the input text.
+* `focus`: popover opens when the user focuses the input.
+* `manual`: popover only opens when the user presses the trigger button or uses the arrow keys.
+
+The `align`, `direction`, `shouldFlip` and `menuWidth` props control the behavior of the popover.
+
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['menuTrigger', 'align', 'direction', 'shouldFlip', 'menuWidth']} initialProps={{label: 'Favorite Animal', placeholder: 'Select an animal'}} type="s2"
+"use client";
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+
+<ComboBox/* PROPS */>
+  <ComboBoxItem id="red panda">Red Panda</ComboBoxItem>
+  <ComboBoxItem id="cat">Cat</ComboBoxItem>
+  <ComboBoxItem id="dog">Dog</ComboBoxItem>
+  <ComboBoxItem id="aardvark">Aardvark</ComboBoxItem>
+  <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
+  <ComboBoxItem id="snake">Snake</ComboBoxItem>
+</ComboBox>
+```
+
+## API
+
+```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection'}}
+<ComboBox>
+  <ComboBoxItem>
+    <Icon />
+    <Text slot="label" />
+    <Text slot="description" />
+  </ComboBoxItem>
+  <ComboBoxSection>
+    <Header>
+      <Heading />
+      <Text slot="description" />
+    </Header>
+    <ComboBoxItem />
+  </ComboBoxSection>
+</ComboBox>
+```
+
+### ComboBox
+
+<PropTable component={docs.exports.ComboBox} links={docs.links} />
+
+### ComboBoxItem
+
+<PropTable component={docs.exports.ComboBoxItem} links={docs.links} />
+
+### ComboBoxSection
+
+<PropTable component={docs.exports.ComboBoxSection} links={docs.links} />

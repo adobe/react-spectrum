@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/dialog",
-  "version": "3.5.25",
+  "version": "3.5.31",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -30,11 +30,11 @@
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.25.1",
-    "@react-aria/overlays": "^3.27.1",
-    "@react-aria/utils": "^3.29.0",
-    "@react-types/dialog": "^3.5.18",
-    "@react-types/shared": "^3.29.1",
+    "@react-aria/interactions": "^3.25.6",
+    "@react-aria/overlays": "^3.30.0",
+    "@react-aria/utils": "^3.31.0",
+    "@react-types/dialog": "^3.5.22",
+    "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
   },
   "publishConfig": {

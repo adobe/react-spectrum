@@ -388,17 +388,6 @@ describe('usePress', function () {
           pressed: true
         },
         {
-          type: 'pressup',
-          target: el.parentElement,
-          pointerType: 'mouse',
-          ctrlKey: false,
-          metaKey: false,
-          shiftKey: false,
-          altKey: false,
-          x: 0,
-          y: 0
-        },
-        {
           type: 'pressend',
           target: el.parentElement,
           pointerType: 'mouse',
@@ -1060,7 +1049,7 @@ describe('usePress', function () {
       ]);
     });
 
-    it('should not fire press events for disabled elements', function () {
+    it('should not fire press/click events for disabled elements', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let res = render(
@@ -1077,6 +1066,7 @@ describe('usePress', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.click(el);
 
       expect(events).toEqual([]);
     });
@@ -4564,12 +4554,13 @@ describe('usePress', function () {
       ]);
     });
 
-    it('should not fire press events for disabled elements', function () {
-      const shadowRoot = setupShadowDOMTest({isDisabled: true});
+    it('should not fire press/click events for disabled elements', function () {
+      const shadowRoot = setupShadowDOMTest({isDisabled: true, onClick: e => addEvent({type: e.type, target: e.target})});
 
       const el = shadowRoot.getElementById('testElement');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.click(el);
 
       expect(events).toEqual([]);
     });

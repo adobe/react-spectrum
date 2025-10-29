@@ -13,7 +13,7 @@
 import {ButtonGroupContext} from './ButtonGroup';
 import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ContentContext, HeaderContext, HeadingContext} from './Content';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
@@ -21,7 +21,7 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: what style overrides should be allowed?
-export interface FullscreenDialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
+export interface FullscreenDialogProps extends Omit<RACDialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The variant of fullscreen dialog to display.
    * @default "fullscreen"
@@ -52,7 +52,7 @@ const content =  style({
   overflowY: {
     default: 'auto',
     // Make the whole dialog scroll rather than only the content when the height it small.
-    [`@media (height < ${400 / 16}rem)`]: 'visible'
+    [`@container (height < ${400 / 16}rem)`]: 'visible'
   },
   font: 'body'
 });

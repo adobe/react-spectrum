@@ -1,0 +1,172 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Form, TextField, Checkbox, Button, RadioGroup, Radio, InlineAlert, Heading, Content, ButtonGroup} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['input', 'field'];
+
+# Form
+
+<PageDescription>{docs.exports.Form.description}</PageDescription>
+
+
+```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} type="s2"
+import {Form, TextField, Checkbox, ButtonGroup, Button} from '@react-spectrum/s2';
+
+<Form/* PROPS */>
+  <TextField label="Name" placeholder="Enter your full name" />
+  <TextField label="Email" type="email" placeholder="Enter your email" />
+  <Checkbox>I agree to the terms</Checkbox>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Submitting data
+
+When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms.html) guide details about integrating with frameworks.
+
+<ExampleSwitcher type={null} examples={['React 19', 'React 18']}>
+
+```tsx render
+"use client";
+import {Form, TextField, Button} from '@react-spectrum/s2';
+
+<Form
+  /*- begin highlight -*/
+  action={formData => {
+    let name = formData.get('name');
+    alert(`Hello, ${name}!`);
+  }}>
+  {/*- end highlight -*/}
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+```tsx render
+"use client";
+import {Form, TextField, Button} from '@react-spectrum/s2';
+
+<Form
+  /*- begin highlight -*/
+  onSubmit={event => {
+    // Prevent default browser page refresh.
+    event.preventDefault();
+
+    // Get data from form.
+    let formData = new FormData(event.target);
+    let name = formData.get('name');
+    alert(`Hello, ${name}!`);
+
+    // Reset form after submission.
+    event.target.reset();
+  }}>
+  {/*- end highlight -*/}
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+</ExampleSwitcher>
+
+## Validation
+
+Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms.html) guide for more details.
+
+```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="s2"
+"use client";
+import {Form, TextField, Button} from '@react-spectrum/s2';
+
+<Form/* PROPS */>
+  <TextField
+    label="Username"
+    placeholder="Choose a username"
+    isRequired
+    validate={value => value === 'admin' ? 'Nice try.' : null}
+    name="username"
+    defaultValue="admin" />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+### Server validation
+
+Use the `validationErrors` prop to provide server validation errors to the fields within a `<Form>`.
+
+```tsx render
+"use client";
+import {Form, TextField} from '@react-spectrum/s2';
+
+<Form
+  /*- begin highlight -*/
+  validationErrors={{
+    username: 'This username is not available.'
+  }}>
+  {/*- end highlight -*/}
+  <TextField
+    name="username"
+    label="Username"
+    placeholder="Choose a username"
+    defaultValue="admin" />
+</Form>
+```
+
+### Focus management
+
+By default, after a user submits a form with validation errors, the first invalid field will be focused. To prevent this, call `preventDefault()` in the `onInvalid` event. This example moves focus to an [alert](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role) at the top of the form.
+
+```tsx render
+"use client";
+import {Form, TextField, Button, InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'}
+import {useState} from 'react';
+
+function Example() {
+  let [isInvalid, setInvalid] = useState(false);
+
+  return (
+    <Form
+      styles={style({width: 300})}
+      /*- begin highlight -*/
+      onInvalid={e => {
+        e.preventDefault();
+        setInvalid(true);
+      }}
+      /*- end highlight -*/
+      onSubmit={e => {
+        e.preventDefault();
+        setInvalid(false);
+      }}
+      onReset={() => setInvalid(false)}>
+      {isInvalid &&
+        <InlineAlert variant="negative" autoFocus>
+          <Heading>Unable to submit</Heading>
+          <Content>Please fix the validation errors below, and re-submit the form.</Content>
+        </InlineAlert>
+      }
+      <TextField
+        name="firstName"
+        isRequired
+        label="First name"
+        placeholder="Enter your first name" />
+      <TextField
+        name="lastName"
+        isRequired
+        label="Last name"
+        placeholder="Enter your last name" />
+      <div className={style({display: 'flex', gap: 8})}>
+        <Button type="submit" variant="accent">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </div>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.Form} links={docs.links} />

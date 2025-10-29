@@ -1,0 +1,40 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ProgressCircle} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['spinner', 'circular', 'loading'];
+
+# ProgressCircle
+
+<PageDescription>{docs.exports.ProgressCircle.description}</PageDescription>
+
+<VisualExample
+  component={ProgressCircle}
+  docs={docs.exports.ProgressCircle}
+  props={['value', 'isIndeterminate', 'size', 'staticColor']}
+  initialProps={{'aria-label': "Loading…", value: 50}}
+  controlOptions={{value: {control: 'slider'}}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+By default, the `value` prop is a percentage between 0 and 100. Use the `minValue`, and `maxValue` props to set a custom value scale.
+
+<VisualExample
+  component={ProgressCircle}
+  docs={docs.exports.ProgressCircle}
+  links={docs.links}
+  props={['minValue', 'maxValue']}
+  initialProps={{
+    label: 'Progress',
+    minValue: 0,
+    maxValue: 150,
+    value: 50
+  }} />
+
+## API
+
+<PropTable component={docs.exports.ProgressCircle} links={docs.links} />

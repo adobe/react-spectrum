@@ -1,0 +1,92 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorWheel} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# ColorWheel
+
+<PageDescription>{docs.exports.ColorWheel.description}</PageDescription>
+
+<VisualExample
+  component={ColorWheel}
+  docs={docs.exports.ColorWheel}
+  links={docs.links}
+  props={['size', 'isDisabled']}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the color value. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
+
+The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released. These are always called with a `Color` object.
+
+```tsx render
+"use client";
+import {ColorWheel} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {parseColor} from '@react-stately/color';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example() {
+  let [currentValue, setCurrentValue] = useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = useState(currentValue);
+
+  return (
+    <>
+      <ColorWheel
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre className={style({font: 'body'})}>
+        onChange value: {currentValue.toString('hex')}{'\n'}
+        onChangeEnd value: {finalValue.toString('hex')}
+      </pre>
+    </>
+  );
+}
+```
+
+{/* ## Integration
+
+ColorWheel works well alongside other color components to create complete color picking experiences.
+
+```tsx render hideImports
+"use client";
+import {ColorWheel, ColorSlider, ColorSwatch} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [color, setColor] = useState('hsl(30, 80%, 60%)');
+
+  return (
+    <div style={{display: 'flex', gap: 20, alignItems: 'center'}}>
+      <ColorWheel
+        value={color}
+        onChange={setColor} />
+      <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+        <ColorSlider
+          label="Saturation"
+          channel="saturation"
+          value={color}
+          onChange={setColor} />
+        <ColorSlider
+          label="Lightness"
+          channel="lightness"
+          value={color}
+          onChange={setColor} />
+        <ColorSwatch color={color} size="L" />
+      </div>
+    </div>
+  );
+}
+``` */}
+
+## API
+
+<PropTable component={docs.exports.ColorWheel} links={docs.links} />

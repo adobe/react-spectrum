@@ -1,0 +1,105 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['popup', 'overlay'];
+
+# Popover
+
+<PageDescription>{docs.exports.Popover.description}</PageDescription>
+
+```tsx render docs={docs.exports.Popover} links={docs.links} props={['placement', 'size', 'offset', 'crossOffset', 'shouldFlip', 'hideArrow']} type="s2" initialProps={{size: 'S'}}
+"use client";
+import {Popover, DialogTrigger, ActionButton, Form, TextField, Switch, Button} from '@react-spectrum/s2';
+import Feedback from '@react-spectrum/s2/icons/Feedback';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example(props) {
+  return (
+    <DialogTrigger>
+      <ActionButton aria-label="Feedback">
+        <Feedback />
+      </ActionButton>
+      {/*- begin focus -*/}
+      <Popover {...props}/* PROPS */>
+        <div className={style({padding: 12})}>
+          <p className={style({font: 'body', marginTop: 0})}>How are we doing? Share your feedback here.</p>
+          <Form>
+            <TextField label="Subject" placeholder="Enter a summary" />
+            <TextField label="Description" isRequired placeholder="Enter your feedback" />
+            <Switch>Adobe can contact me for further questions concerning this feedback</Switch>
+            <Button styles={style({marginStart: 'auto'})}>Submit</Button>
+          </Form>
+        </div>
+      </Popover>
+      {/*- end focus -*/}
+    </DialogTrigger>
+  );
+}
+```
+
+## Custom anchor
+
+To position a popover relative to a different element than its trigger, use the `triggerRef` and `isOpen` props instead of `<DialogTrigger>`. `onOpenChange` will be called when the user closes the popover.
+
+```tsx render
+"use client";
+import {Popover, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState, useRef} from 'react';
+
+function Example() {
+  let [isOpen, setOpen] = useState(false);
+  let triggerRef = useRef(null);
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 64, alignItems: 'center'})}>
+      <Button onPress={() => setOpen(!isOpen)}>
+        Open popover
+      </Button>
+      <div
+        ref={triggerRef}
+        className={style({
+          padding: 8,
+          backgroundColor: 'gray-100',
+          borderRadius: 'default',
+          font: 'ui'
+        })}>
+        Popover appears here
+      </div>
+      <Popover
+        /*- begin highlight -*/
+        triggerRef={triggerRef}
+        isOpen={isOpen}
+        onOpenChange={setOpen}>
+        {/*- end highlight -*/}
+        <div className={style({font: 'ui'})}>
+          Popover with custom trigger reference
+        </div>
+      </Popover>
+    </div>
+  );
+}
+
+<Example />
+```
+
+## API
+
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', Popover: '#popover'}}
+<DialogTrigger>
+  <Button />
+  <Popover>
+    {/* ... */}
+  </Popover>
+</DialogTrigger>
+```
+
+### DialogTrigger
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} />
+
+### Popover
+
+<PropTable component={docs.exports.Popover} links={docs.links} />

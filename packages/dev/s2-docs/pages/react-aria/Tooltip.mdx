@@ -1,0 +1,168 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Tooltip';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/tooltip/docs/anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['hint', 'popup', 'info'];
+
+# Tooltip
+
+<PageDescription>{docs.exports.Tooltip.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Tooltip} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']}  type="vanilla" files={["starters/docs/src/Tooltip.tsx", "starters/docs/src/Tooltip.css"]}
+  "use client";
+  import {TooltipTrigger} from 'react-aria-components';
+  import {Tooltip} from 'vanilla-starter/Tooltip';
+  import {Button} from 'vanilla-starter/Button';
+  import {Edit} from 'lucide-react';
+
+  function Example(props) {
+    return (
+      <TooltipTrigger>
+        <Button aria-label="Edit">
+          <Edit size={18} />
+        </Button>
+        {/*- begin highlight -*/}
+        <Tooltip {...props}/* PROPS */>
+          Edit
+        </Tooltip>
+        {/*- end highlight -*/}
+      </TooltipTrigger>
+    );
+  }
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Tooltip} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="tailwind" files={["starters/docs/src/Tooltip.tsx"]}
+  "use client";
+  import {TooltipTrigger} from 'react-aria-components';
+  import {Tooltip} from 'tailwind-starter/Tooltip';
+  import {Button} from 'tailwind-starter/Button';
+  import {Edit} from 'lucide-react';
+
+  function Example(props) {
+    return (
+      <TooltipTrigger>
+        <Button aria-label="Edit" variant="secondary">
+          <Edit size={18} />
+        </Button>
+        {/*- begin highlight -*/}
+        <Tooltip/* PROPS */ {...props}>
+          Edit
+        </Tooltip>
+        {/*- end highlight -*/}
+      </TooltipTrigger>
+    );
+  }
+  ```
+</ExampleSwitcher>
+
+## Interactions
+
+Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
+
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'closeDelay', 'isDisabled']} type="vanilla"
+"use client";
+import {TooltipTrigger} from 'react-aria-components';
+import {Tooltip} from 'vanilla-starter/Tooltip';
+import {Button} from 'vanilla-starter/Button';
+import {Edit} from 'lucide-react';
+import {Save} from 'lucide-react';
+
+function Example(props) {
+  return (
+    <div style={{display: 'flex', gap: 8}}>
+      {/*- begin highlight -*/}
+      <TooltipTrigger {...props}/* PROPS */>
+      {/*- end highlight -*/}
+        <Button aria-label="Edit">
+          <Edit size={18} />
+        </Button>
+        <Tooltip>
+          Edit
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props}/* PROPS */>
+        <Button aria-label="Save">
+          <Save size={18} />
+        </Button>
+        <Tooltip>
+          Save
+        </Tooltip>
+      </TooltipTrigger>
+    </div>
+  );
+}
+```
+
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
+  <Heading>Accessibility</Heading>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+</InlineAlert>
+
+## Custom trigger
+
+`DialogTrigger` works with any focusable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
+
+```tsx render
+"use client"
+import {Focusable, TooltipTrigger} from 'react-aria-components';
+import {Tooltip} from 'vanilla-starter/Tooltip';
+
+<TooltipTrigger>
+  {/*- begin highlight -*/}
+  <Focusable>
+    <span role="button">Custom trigger</span>
+  </Focusable>
+  {/*- end highlight -*/}
+  <Tooltip>Tooltip</Tooltip>
+</TooltipTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Any `<Focusable>` child must have an ARIA role or use an appropriate semantic HTML element so that screen readers can announce the tooltip. Trigger components must forward their `ref` and spread all props to a DOM element.</Content>
+</InlineAlert>
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <button {...props} ref={ref} />
+));
+```
+
+[DialogTrigger](Modal.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
+
+## API
+
+<Anatomy />
+
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', OverlayArrow: '#overlayarrow', Button: 'Button.html'}}
+<TooltipTrigger>
+  <Button />
+  <Tooltip>
+    <OverlayArrow />
+  </Tooltip>
+</TooltipTrigger>
+```
+
+### TooltipTrigger
+
+<PropTable component={docs.exports.TooltipTrigger} links={docs.links} showDescription />
+
+### Tooltip
+
+<PropTable
+  component={docs.exports.Tooltip}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--trigger-anchor-point': 'The position of the trigger relative to the tooltip. Use with `transform-origin` when applying scale transitions.'
+  }} />
+
+### OverlayArrow
+
+<PropTable component={docs.exports.OverlayArrow} links={docs.links} showDescription />

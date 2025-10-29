@@ -1,0 +1,62 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ButtonGroup, Button} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# ButtonGroup
+
+<PageDescription>{docs.exports.ButtonGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.ButtonGroup} links={docs.links} props={['orientation', 'align', 'size', 'isDisabled']} type="s2"
+import {ButtonGroup, Button} from '@react-spectrum/s2';
+
+<ButtonGroup/* PROPS */>
+  <Button variant="primary">Rate Now</Button>
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+</ButtonGroup>
+```
+
+## Overflow
+
+When horizontal space is limited, ButtonGroup switches to a vertical layout.
+
+```tsx render
+"use client";
+import {ButtonGroup, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<div
+  className={style({
+    width: 300,
+    padding: 16,
+    borderWidth: 1,
+    borderStyle: 'solid', 
+    borderColor: 'gray-300',
+    borderRadius: 'default',
+    resize: 'horizontal',
+    overflow: 'hidden'
+  })}>
+  {/*- begin focus -*/}
+  <ButtonGroup>
+    <Button variant="primary">Rate Now</Button>
+    <Button variant="secondary">No, thanks</Button>
+    <Button variant="secondary">Remind me later</Button>
+  </ButtonGroup>
+  {/*- end focus -*/}
+</div>
+```
+
+## API
+
+```tsx links={{ButtonGroup: '#buttongroup', Button: 'Button.html', LinkButton: 'LinkButton.html'}}
+<ButtonGroup>
+  <Button />
+  <LinkButton />
+</ButtonGroup>
+```
+
+<PropTable component={docs.exports.ButtonGroup} links={docs.links} />

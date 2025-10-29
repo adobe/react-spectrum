@@ -15,7 +15,7 @@ import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateCon
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -51,12 +51,12 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
@@ -116,13 +116,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
             default: lightDark('accent-900', 'accent-700'),
             isHovered: lightDark('accent-1000', 'accent-600'),
             isPressed: lightDark('accent-1000', 'accent-600'),
-            isFocused: lightDark('accent-1000', 'accent-600')
+            isFocusVisible: lightDark('accent-1000', 'accent-600')
           },
           negative: {
             default: lightDark('negative-900', 'negative-700'),
             isHovered: lightDark('negative-1000', 'negative-600'),
             isPressed: lightDark('negative-1000', 'negative-600'),
-            isFocused: lightDark('negative-1000', 'negative-600')
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
           },
           premium: 'gray-100',
           genai: 'gray-100'
@@ -292,6 +292,24 @@ const gradient = style({
   }
 });
 
+export function usePendingState(isPending: boolean) {
+  let [isProgressVisible, setIsProgressVisible] = useState(false);
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+    if (isPending) {
+      timeout = setTimeout(() => {
+        setIsProgressVisible(true);
+      }, 1000);
+    } else {
+      setIsProgressVisible(false);
+    }
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [isPending]);
+  return {isProgressVisible};
+}
+
 /**
  * Buttons allow users to perform an action.
  * They have multiple styles for various needs, and are ideal for calling attention to
@@ -302,7 +320,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
-    isPending,
+    isPending = false,
     variant = 'primary',
     fillStyle = 'fill',
     size = 'M',
@@ -311,24 +329,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
-  let [isProgressVisible, setIsProgressVisible] = useState(false);
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (isPending) {
-      // Start timer when isPending is set to true.
-      timeout = setTimeout(() => {
-        setIsProgressVisible(true);
-      }, 1000);
-    } else {
-      // Exit loading state when isPending is set to false. */
-      setIsProgressVisible(false);
-    }
-    return () => {
-      // Clean up on unmount or when user removes isPending prop before entering loading state.
-      clearTimeout(timeout);
-    };
-  }, [isPending]);
+  let {isProgressVisible} = usePendingState(isPending);
 
   return (
     <RACButton
@@ -347,7 +348,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' 
+        {variant === 'genai' || variant === 'premium'
           ? (
             <span
               className={gradient({
@@ -366,9 +367,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
               styles: style({
                 paddingY: '--labelPadding',
                 order: 1,
-                opacity: {
-                  default: 1,
-                  isProgressVisible: 0
+                visibility: {
+                  isProgressVisible: 'hidden'
                 }
               })({isProgressVisible}),
               // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
@@ -380,9 +380,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
                 size: fontRelative(20),
                 marginStart: '--iconMargin',
                 flexShrink: 0,
-                opacity: {
-                  default: 1,
-                  isProgressVisible: 0
+                visibility: {
+                  isProgressVisible: 'hidden'
                 }
               })({isProgressVisible})
             }]
@@ -395,9 +394,9 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                opacity: {
-                  default: 0,
-                  isProgressVisible: 1
+                visibility: {
+                  default: 'hidden',
+                  isProgressVisible: 'visible'
                 }
               })({isProgressVisible, isPending})}>
               <ProgressCircle

@@ -1,0 +1,139 @@
+@import "./theme.css";
+
+.react-aria-Tabs {
+  display: flex;
+  gap: var(--spacing-2);
+  color: var(--text-color);
+
+  &[data-orientation=horizontal] {
+    flex-direction: column;
+  }
+
+  &[data-orientation=vertical] {
+    flex-direction: row;
+    width: 100%;
+    .react-aria-TabPanels {
+      flex: 1;
+    }
+  }
+}
+
+.react-aria-TabList {
+  display: flex;
+
+  .react-aria-SelectionIndicator {
+    background: var(--border-color);
+  }
+
+  &[data-orientation=horizontal] {
+    border-bottom: 0.5px solid var(--border-color);
+
+    .react-aria-SelectionIndicator {
+      left: 0;
+      bottom: -1.5px;
+      width: 100%;
+      height: 3px;
+      transition-property: translate, width;
+    }
+  }
+
+  &[data-orientation=vertical] {
+    flex-direction: column;
+    border-inline-end: 1px solid var(--border-color);
+
+    .react-aria-SelectionIndicator {
+      top: 0;
+      right: -1.5px;
+      height: 100%;
+      width: 3px;
+      transition-property: translate, height;
+    }
+  }
+}
+
+.react-aria-Tab {
+  padding: 10px;
+  cursor: default;
+  outline: none;
+  position: relative;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+  transition: color 200ms;
+  --border-color: transparent;
+  forced-color-adjust: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-hovered],
+  &[data-focus-visible] {
+    color: var(--text-color-hover);
+  }
+
+  .react-aria-SelectionIndicator {
+    position: absolute;
+    transition-duration: 200ms;
+    border-radius: 3px;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &[data-selected] {
+    --border-color: var(--highlight-background);
+    color: var(--text-color-hover);
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    &[data-selected] {
+      --border-color: var(--text-color-disabled);
+    }
+  }
+
+  &[data-focus-visible] {
+    border-radius: calc(var(--radius-sm) + 8px);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -8px;
+  }
+
+  &[href] {
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+.react-aria-TabPanels {
+  position: relative;
+  height: var(--tab-panel-height);
+  width: var(--tab-panel-width);
+  transition: height 400ms;
+  overflow: clip;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.react-aria-TabPanel {
+  padding: var(--spacing-3);
+  border-radius: var(--radius);
+  outline: none;
+  box-sizing: border-box;
+  transition: opacity 400ms;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+  }
+
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+  }
+
+  &[data-exiting] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}

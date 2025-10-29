@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, UNSTABLE_TableLoadingSentinel, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, TableLoadMoreItem, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
@@ -224,6 +224,7 @@ let renderTable = (props) => render(<TestTable {...props} />);
 describe('Table', () => {
   let user;
   let testUtilUser = new User();
+  let onSelectionChange = jest.fn();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -1309,6 +1310,56 @@ describe('Table', () => {
         expect(checkbox).toBeChecked();
       }
     });
+
+    it('support drop target keyboard navigation', async () => {
+      const DndTableExample = stories.DndTableExample;
+      render(<DndTableExample />);
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Adobe Photoshop and Adobe XD');
+      await user.tab();
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+    
+      const labels = ['Pictures', 'Adobe Fresco', 'Apps', 'Adobe Illustrator', 'Adobe Lightroom', 'Adobe Dreamweaver'];
+    
+      for (let i = 0; i <= labels.length; i++) {
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+    
+        if (i === 0) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+        } else if (i === labels.length) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i - 1]}`);
+        } else {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+        }
+      }
+    
+      await user.keyboard('{Home}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+    
+      for (let i = labels.length; i >= 0; i--) {
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+    
+        if (i === 0) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert before ${labels[i]}`);
+        } else if (i === labels.length) {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert after ${labels[i - 1]}`);
+        } else {
+          expect(document.activeElement).toHaveAttribute('aria-label', `Insert between ${labels[i - 1]} and ${labels[i]}`);
+        }
+      }
+    
+      await user.keyboard('{End}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Adobe Dreamweaver');
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+    });
   });
 
   describe('column resizing', () => {
@@ -1632,7 +1683,7 @@ describe('Table', () => {
   });
 
   describe('load more spinner', () => {
-    let offsetHeight, scrollHeight;
+    let clientHeight, scrollHeight;
     let DndTable = stories.DndTable;
     let initialItems = [
       {id: '1', type: 'file', name: 'Adobe Photoshop'},
@@ -1640,7 +1691,7 @@ describe('Table', () => {
     ];
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 200);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
+      clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(function () {
         if (this.getAttribute('role') === 'grid') {
           return 200;
         }
@@ -1650,7 +1701,7 @@ describe('Table', () => {
     });
 
     afterAll(function () {
-      offsetHeight.mockReset();
+      clientHeight.mockReset();
       scrollHeight.mockReset();
     });
 
@@ -1872,9 +1923,9 @@ describe('Table', () => {
                   </MyRow>
                 )}
               </Collection>
-              <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <TableLoadMoreItem isLoading={isLoading} onLoadMore={onLoadMore}>
                 <div>spinner</div>
-              </UNSTABLE_TableLoadingSentinel>
+              </TableLoadMoreItem>
             </TableBody>
           </Table>
         </ResizableTableContainer>
@@ -2073,9 +2124,9 @@ describe('Table', () => {
                     </Row>
                   )}
                 </Collection>
-                <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
+                <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                   <div>spinner</div>
-                </UNSTABLE_TableLoadingSentinel>
+                </TableLoadMoreItem>
               </TableBody>
             </Table>
           </Virtualizer>
@@ -2089,7 +2140,7 @@ describe('Table', () => {
         expect(rows).toHaveLength(7);
         let loaderRow = rows[6];
         expect(loaderRow).toHaveTextContent('spinner');
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         let loaderParentStyles = loaderRow.parentElement.style;
 
         // 50 items * 25px = 1250
@@ -2143,12 +2194,9 @@ describe('Table', () => {
         expect(rows).toHaveLength(1);
 
         let loaderRow = rows[0];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '2');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         expect(loaderRow).toHaveTextContent('loading');
-        for (let [index, row] of rows.entries()) {
-          // the header row is the first row but isn't included in "rows" so add +2
-          expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
-        }
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
 
         tree.rerender(<VirtualizedTableLoad items={items} />);
         rows = tableTester.rows;
@@ -2162,7 +2210,7 @@ describe('Table', () => {
         rows = tableTester.rows;
         expect(rows).toHaveLength(7);
         loaderRow = rows[6];
-        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        expect(loaderRow).not.toHaveAttribute('aria-rowindex');
         for (let [index, row] of rows.entries()) {
           if (index === 6) {
             continue;
@@ -2347,6 +2395,231 @@ describe('Table', () => {
     });
   });
 
+  describe('selectionBehavior="replace"', () => {
+    // Required for proper touch detection
+    installPointerEvent();
+
+    describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+      it('should perform selection with single selection', async () => {
+        let {getByRole} = renderTable({
+          tableProps: {
+            selectionMode: 'single',
+            selectionBehavior: 'replace',
+            onSelectionChange
+          }
+        });
+        let tableTester = testUtilUser.createTester('Table', {user, root: getByRole('grid'), interactionType: type});
+        let rows = tableTester.rows;
+
+        for (let row of tableTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'single');
+        }
+
+        let row2 = rows[2];
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
+        await tableTester.toggleRowSelection({row: row2, selectionBehavior: 'replace'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          // Called twice because initial focus will select the first keyboard focused row
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['3']));
+        expect(tableTester.selectedRows).toHaveLength(1);
+        expect(tableTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await tableTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'true');
+        expect(row1).toHaveAttribute('data-selected', 'true');
+        expect(row2).toHaveAttribute('aria-selected', 'false');
+        expect(row2).not.toHaveAttribute('data-selected');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['2']));
+        expect(tableTester.selectedRows).toHaveLength(1);
+        expect(tableTester.selectedRows[0]).toBe(row1);
+
+        await tableTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'false');
+        expect(row1).not.toHaveAttribute('data-selected');
+        expect(row2).toHaveAttribute('aria-selected', 'false');
+        expect(row2).not.toHaveAttribute('data-selected');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(4);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set([]));
+        expect(tableTester.selectedRows).toHaveLength(0);
+      });
+
+      it('should perform toggle selection in highlight mode when using modifier keys', async () => {
+        let {getByRole} = renderTable({
+          tableProps: {
+            selectionMode: 'multiple',
+            selectionBehavior: 'replace',
+            onSelectionChange
+          }
+        });
+        let tableTester = testUtilUser.createTester('Table', {user, root: getByRole('grid'), interactionType: type});
+        let rows = tableTester.rows;
+
+        for (let row of tableTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+        }
+
+        let row2 = rows[2];
+        await tableTester.toggleRowSelection({row: row2, selectionBehavior: 'replace'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          // Called twice because initial focus will select the first keyboard focused row, meaning we have two items selected
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['1', '3']));
+          expect(tableTester.selectedRows).toHaveLength(2);
+          expect(tableTester.selectedRows[1]).toBe(row2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['3']));
+          expect(tableTester.selectedRows).toHaveLength(1);
+          expect(tableTester.selectedRows[0]).toBe(row2);
+        }
+
+        let row1 = rows[1];
+        await tableTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'true');
+        expect(row1).toHaveAttribute('data-selected', 'true');
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['1', '2', '3']));
+          expect(tableTester.selectedRows).toHaveLength(3);
+          expect(tableTester.selectedRows[1]).toBe(row1);
+          expect(tableTester.selectedRows[2]).toBe(row2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['2', '3']));
+          expect(tableTester.selectedRows).toHaveLength(2);
+          expect(tableTester.selectedRows[0]).toBe(row1);
+          expect(tableTester.selectedRows[1]).toBe(row2);
+        }
+
+        // With modifier key, you should be able to deselect on press of the same row
+        await tableTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'false');
+        expect(row1).not.toHaveAttribute('data-selected');
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['1', '3']));
+          expect(tableTester.selectedRows).toHaveLength(2);
+          expect(tableTester.selectedRows[1]).toBe(row2);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['3']));
+          expect(tableTester.selectedRows).toHaveLength(1);
+          expect(tableTester.selectedRows[0]).toBe(row2);
+        }
+      });
+
+      it('should perform replace selection in highlight mode when not using modifier keys', async () => {
+        let {getByRole} = renderTable({
+          tableProps: {
+            selectionMode: 'multiple',
+            selectionBehavior: 'replace',
+            onSelectionChange
+          }
+        });
+        let tableTester = testUtilUser.createTester('Table', {user, root: getByRole('grid'), interactionType: type});
+        let rows = tableTester.rows;
+
+        for (let row of tableTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+        }
+
+        let row2 = rows[2];
+        await tableTester.toggleRowSelection({row: row2});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        if (type === 'keyboard') {
+          // Called multiple times since selection changes on option focus as we arrow down to the target option
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        } else {
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        }
+        expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['3']));
+        expect(tableTester.selectedRows).toHaveLength(1);
+        expect(tableTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await tableTester.toggleRowSelection({row: row1});
+        if (type !== 'touch') {
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          }
+          expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['2']));
+          expect(tableTester.selectedRows).toHaveLength(1);
+          expect(tableTester.selectedRows[0]).toBe(row1);
+
+          // pressing without modifier keys won't deselect the row
+          await tableTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          if (type === 'keyboard') {
+            expect(onSelectionChange).toHaveBeenCalledTimes(4);
+          } else {
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          }
+          expect(tableTester.selectedRows).toHaveLength(1);
+        } else {
+          // touch always behaves as toggle
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['2', '3']));
+          expect(tableTester.selectedRows).toHaveLength(2);
+          expect(tableTester.selectedRows[0]).toBe(row1);
+
+          await tableTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['3']));
+          expect(tableTester.selectedRows).toHaveLength(1);
+          expect(tableTester.selectedRows[0]).toBe(row2);
+        }
+      });
+    });
+  });
+
   describe('shouldSelectOnPressUp', () => {
     it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
       let onSelectionChange = jest.fn();
@@ -2407,6 +2680,29 @@ describe('Table', () => {
 
     await user.click(button);
     expect(button).toHaveTextContent('Hide Columns');
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onAction = jest.fn();
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTable({rowProps: {onAction, onPressStart, onPressEnd, onPress, onClick}});
+      let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+      await tableTester.triggerRowAction({row: 1, interactionType});
+  
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
   });
 });
 

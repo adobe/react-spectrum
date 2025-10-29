@@ -1,5 +1,6 @@
+'use client';
 import React, { ReactNode } from 'react';
-import { Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
+import { composeRenderProps, Radio as RACRadio, RadioGroup as RACRadioGroup, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';
@@ -13,7 +14,7 @@ export interface RadioGroupProps extends Omit<RACRadioGroupProps, 'children'> {
 
 export function RadioGroup(props: RadioGroupProps) {
   return (
-    <RACRadioGroup {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-2')}>
+    <RACRadioGroup {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-2 font-sans')}>
       <Label>{props.label}</Label>
       <div className="flex group-orientation-vertical:flex-col gap-2 group-orientation-horizontal:gap-4">
         {props.children}
@@ -26,7 +27,7 @@ export function RadioGroup(props: RadioGroupProps) {
 
 const styles = tv({
   extend: focusRing,
-  base: 'w-5 h-5 rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
+  base: 'w-5 h-5 box-border rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
   variants: {
     isSelected: {
       false: 'border-gray-400 dark:border-zinc-400 group-pressed:border-gray-500 dark:group-pressed:border-zinc-300',
@@ -44,10 +45,10 @@ const styles = tv({
 export function Radio(props: RadioProps) {
   return (
     <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
-      {renderProps => <>
+      {composeRenderProps(props.children, (children, renderProps) => <>
         <div className={styles(renderProps)} />
-        {props.children}
-      </>}
+        {children}
+      </>)}
     </RACRadio>
   );
 }

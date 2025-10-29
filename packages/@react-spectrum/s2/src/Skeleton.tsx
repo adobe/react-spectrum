@@ -41,7 +41,7 @@ export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement
       animationRef.current.cancel();
       animationRef.current = null;
     }
-  }, [isAnimating]);
+  }, [isAnimating, reduceMotion]);
 }
 
 export type SkeletonElement = ReactElement<{
@@ -120,13 +120,14 @@ export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactN
     return children;
   }
 
-  let childRef = 'ref' in children ? children.ref as any : children.props.ref;
+  let childRef = 'ref' in children && !Object.getOwnPropertyDescriptor(children, 'ref')?.get ? children.ref as any : children.props.ref;
   return (
     <SkeletonContext.Provider value={null}>
       {isLoading ? cloneElement(children, {
         ref: mergeRefs(childRef, animation),
         className: (children.props.className || '') + ' ' + loadingStyle,
-        inert: 'true'
+        // @ts-ignore - compatibility with React < 19
+        inert: inertValue(true)
       }) : children}
     </SkeletonContext.Provider>
   );

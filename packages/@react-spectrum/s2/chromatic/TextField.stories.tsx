@@ -14,7 +14,7 @@ import {Button, Form, TextArea, TextField} from '../src';
 import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof TextField> = {
@@ -29,16 +29,18 @@ const meta: Meta<typeof TextField> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof TextField>;
 
-export const Example = {
-  render: (args: any) => <TextField {...args} />,
+export const Example: Story = {
+  render: (args) => <TextField {...args} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   }
 };
 
-export const Validation = {
-  render: (args: any) => (
+export const Validation: Story = {
+  render: (args) => (
     <Form>
       <TextField {...args} />
       <Button type="submit" variant="primary">Submit</Button>
@@ -50,12 +52,13 @@ export const Validation = {
   }
 };
 
-export const ContextualHelpExample = {
-  render: (args: any) => (
+export const ContextualHelpExample: Story = {
+  render: (args) => (
     <TextField {...args} />
   ),
   args: {
     label: 'Segment',
+    placeholder: 'Enter your name',
     contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
@@ -76,17 +79,19 @@ export const ContextualHelpExample = {
   }
 };
 
-export const TextAreaExample = {
-  render: (args: any) => <TextArea {...args} />,
+export const TextAreaExample: StoryObj<typeof TextArea> = {
+  render: (args) => <TextArea {...args} />,
   args: {
-    label: 'Comment'
+    label: 'Comment',
+    placeholder: 'Enter your name'
   }
 };
 
-export const CustomWidth = {
-  render: (args: any) => <TextField {...args} styles={style({width: 384})} />,
+export const CustomWidth: Story = {
+  render: (args) => <TextField {...args} styles={style({width: 384})} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   },
   parameters: {
     docs: {
@@ -95,10 +100,11 @@ export const CustomWidth = {
   }
 };
 
-export const SmallWidth = {
-  render: (args: any) => <TextField {...args} styles={style({width: 48})} />,
+export const SmallWidth: Story = {
+  render: (args) => <TextField {...args} styles={style({width: 48})} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   },
   parameters: {
     docs: {
@@ -107,10 +113,11 @@ export const SmallWidth = {
   }
 };
 
-export const UNSAFEWidth = {
-  render: (args: any) => <TextField {...args} UNSAFE_style={{width: 384}} />,
+export const UNSAFEWidth: Story = {
+  render: (args) => <TextField {...args} UNSAFE_style={{width: 384}} />,
   args: {
-    label: 'Name'
+    label: 'Name',
+    placeholder: 'Enter your name'
   },
   parameters: {
     docs: {
@@ -119,8 +126,8 @@ export const UNSAFEWidth = {
   }
 };
 
-export const InForm = {
-  render: (args: any) => (
+export const InForm: Story = {
+  render: (args) => (
     <Form>
       <TextField {...args} />
       <Button type="submit" variant="primary">Submit</Button>
@@ -137,8 +144,8 @@ export const InForm = {
   }
 };
 
-export const FormCustomWidth = {
-  render: (args: any) => (
+export const FormCustomWidth: Story = {
+  render: (args) => (
     <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
       <TextField {...args} />
       <Button type="submit" variant="primary">Submit</Button>

@@ -21,18 +21,21 @@ import {
   ComboBoxStateContext,
   ContextValue,
   InputContext,
+  InputProps,
   ListBox,
   ListBoxItem,
   ListBoxItemProps,
+  ListBoxLoadMoreItem,
   ListBoxProps,
   ListLayout,
   ListStateContext,
   Provider,
   SectionProps,
-  UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AvatarContext} from './Avatar';
+import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -48,7 +51,6 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
-import {createLeafComponent} from '@react-aria/collections';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -59,7 +61,7 @@ import intlMessages from '../intl/*.json';
 import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {Node} from 'react-stately';
 import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from '@react-types/textfield';
@@ -76,14 +78,15 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection'>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,
-  Pick<ListBoxProps<T>, 'items'>,
+  Pick<ListBoxProps<T>, 'items' | 'dependencies'>,
   Pick<AriaPopoverProps, 'shouldFlip'>,
-  Pick<AsyncLoadable, 'onLoadMore'>  {
+  Pick<AsyncLoadable, 'onLoadMore'>,
+  Pick<InputProps, 'placeholder'>  {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -209,7 +212,8 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   overflowY: 'auto',
   overflowX: 'hidden',
   fontFamily: 'sans',
-  fontSize: controlFont()
+  fontSize: controlFont(),
+  outlineStyle: 'none'
 });
 
 export let listboxItem = style({
@@ -303,6 +307,11 @@ const dividerStyle = style({
   width: 'full'
 });
 
+const avatar = style({
+  gridArea: 'icon',
+  marginEnd: 'text-to-visual'
+});
+
 // Not from any design, just following the sizing of the existing rows
 export const LOADER_ROW_HEIGHTS = {
   S: {
@@ -338,14 +347,13 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
     labelPosition = 'top',
     UNSAFE_className = '',
     UNSAFE_style,
-    loadingState,
     ...comboBoxProps
   } = props;
 
   return (
     <AriaComboBox
       {...comboBoxProps}
-      allowsEmptyCollection={loadingState != null}
+      allowsEmptyCollection
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
@@ -359,9 +367,16 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   );
 });
 
-export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
+
+const avatarSize = {
+  S: 16,
+  M: 20,
+  L: 22,
+  XL: 26
+} as const;
 
 const checkmarkIconSize = {
   S: 'XS',
@@ -392,6 +407,11 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                     icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
                   }
                 }],
+                [AvatarContext, {
+                  slots: {
+                    avatar: {size: avatarSize[size], styles: avatar}
+                  }
+                }],
                 [TextContext, {
                   slots: {
                     label: {styles: label({size})},
@@ -399,7 +419,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
                   }
                 }]
               ]}>
-              {!isLink && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {!isLink && !props.onAction && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
             </Provider>
           </>
@@ -409,7 +429,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
-export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
+export interface ComboBoxSectionProps<T extends object> extends Omit<SectionProps<T>, keyof GlobalDOMAttributes> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
@@ -478,7 +498,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   }
 
   let triggerRef = useRef<HTMLDivElement>(null);
-    // Make menu width match input + button
+  // Make menu width match input + button
   let [triggerWidth, setTriggerWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (triggerRef.current) {
@@ -542,7 +562,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
 
   let renderer;
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingSentinel
+    <ListBoxLoadMoreItem
       // Only show the spinner in the list when loading more
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
@@ -553,13 +573,13 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         styles={progressCircleStyles({size})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingSentinel>
+    </ListBoxLoadMoreItem>
   );
 
   if (typeof children === 'function') {
     renderer = (
       <>
-        <Collection items={items ?? defaultItems}>
+        <Collection items={items ?? defaultItems} dependencies={props.dependencies}>
           {children}
         </Collection>
         {listBoxLoadingCircle}
@@ -643,62 +663,83 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           description={descriptionMessage}>
           {errorMessage}
         </HelpText>
-        <PopoverBase
+        <Popover
           hideArrow
           triggerRef={triggerRef}
           offset={menuOffset}
           placement={`${direction} ${align}` as Placement}
           shouldFlip={shouldFlip}
           UNSAFE_style={{
-            width: menuWidth ? `${menuWidth}px` : undefined,
-            // manually subtract border as we can't set Popover to border-box, it causes the contents to spill out
-            '--trigger-width': `calc(${triggerWidth} - 2px)`
+            '--trigger-width': (menuWidth ? menuWidth + 'px' : triggerWidth)
           } as CSSProperties}
+          padding="none"
           styles={style({
             minWidth: '--trigger-width',
             width: '--trigger-width'
           })}>
-          <Provider
-            values={[
-              [HeaderContext, {styles: listboxHeader({size})}],
-              [HeadingContext, {
-                // @ts-ignore
-                role: 'presentation',
-                styles: sectionHeading
-              }],
-              [TextContext, {
-                slots: {
-                  'description': {styles: description({size})}
-                }
-              }]
-            ]}>
-            <Virtualizer
-              layout={ListLayout}
-              layoutOptions={{
-                estimatedRowHeight: 32,
-                padding: 8,
-                estimatedHeadingHeight: 50,
-                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
-              }}>
-              <ListBox
-                renderEmptyState={() => (
-                  <span className={emptyStateText({size})}>
-                    {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
-                  </span>
-                )}
-                items={items}
-                className={listbox({size})}>
-                {renderer}
-              </ListBox>
-            </Virtualizer>
-          </Provider>
-        </PopoverBase>
+          <div
+            className={style({
+              display: 'flex',
+              size: 'full'
+            })}>
+            <Provider
+              values={[
+                [HeaderContext, {styles: listboxHeader({size})}],
+                [HeadingContext, {
+                  // @ts-ignore
+                  role: 'presentation',
+                  styles: sectionHeading
+                }],
+                [TextContext, {
+                  slots: {
+                    'description': {styles: description({size})}
+                  }
+                }]
+              ]}>
+              <Virtualizer
+                layout={ListLayout}
+                layoutOptions={{
+                  estimatedRowHeight: 32,
+                  padding: 8,
+                  estimatedHeadingHeight: 50,
+                  loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
+                }}>
+                <ListBox
+                  dependencies={props.dependencies}
+                  renderEmptyState={() => (
+                    <span className={emptyStateText({size})}>
+                      {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
+                    </span>
+                  )}
+                  items={items}
+                  className={listbox({size})}>
+                  {renderer}
+                </ListBox>
+              </Virtualizer>
+            </Provider>
+          </div>
+        </Popover>
       </InternalComboboxContext.Provider>
     </>
   );
 });
 
-export const Divider = /*#__PURE__*/ createLeafComponent('separator', function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
+class SeparatorNode extends CollectionNode<any> {
+  static readonly type = 'separator';
+
+  filter(collection: BaseCollection<any>, newCollection: BaseCollection<any>): CollectionNode<any> | null {
+    let prevItem = newCollection.getItem(this.prevKey!);
+    if (prevItem && prevItem.type !== 'separator') {
+      let clone = this.clone();
+      newCollection.addDescendants(clone, collection);
+      return clone;
+    }
+
+    return null;
+  }
+}
+
+export const Divider = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Divider({size}: {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLDivElement>, node: Node<unknown>) {
   let listState = useContext(ListStateContext)!;
 
   let nextNode = node.nextKey != null && listState.collection.getItem(node.nextKey);

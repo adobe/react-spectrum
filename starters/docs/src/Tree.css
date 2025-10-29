@@ -1,0 +1,201 @@
+@import "./theme.css";
+
+.react-aria-Tree {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: var(--spacing-1);
+  border: 0.5px solid var(--border-color);
+  border-radius: calc(var(--radius) + var(--spacing-1));
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  box-sizing: border-box;
+  --drag-button-width: 0px;
+  --checkbox-width: 0px;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    min-height: 100px;
+  }
+
+  &[data-selection-mode=multiple] {
+    --checkbox-width: calc(var(--spacing) * 6.5);
+  }
+
+  &[data-allows-dragging] {
+    --drag-button-width: var(--spacing-6);
+  }
+
+  &[data-drop-target] {
+    outline: 2px solid var(--highlight-background);
+    outline-offset: -1px;
+    background: var(--highlight-overlay);
+  }
+
+  .react-aria-DropIndicator {
+    &[data-drop-target] {
+      outline: 1px solid var(--highlight-background);
+      margin-left: calc(var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--spacing-5) + (var(--tree-item-level) - 1) * var(--spacing-4));
+    }
+  }
+}
+
+.react-aria-TreeItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: 28px;
+  padding: 0.25025rem 0.25025rem 0.25025rem 0.499625rem;
+  --padding: var(--spacing-4);
+  border-radius: var(--radius);
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font: var(--font-size) system-ui;
+  position: relative;
+  transform: translateZ(0);
+  transition-property: background, color, border-radius;
+  transition-duration: 200ms;
+  -webkit-tap-highlight-color: transparent;
+  --chevron-width: var(--spacing-5);
+
+  &[data-has-child-items] {
+    --chevron-width: 0px;
+  }
+
+  --border-color: var(--gray-300);
+  &:not(:last-child)::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    inset-inline-start: calc(var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--chevron-width) + (var(--tree-item-level) - 1) * var(--padding));
+    inset-inline-end: var(--spacing-2);
+    border-bottom: 0.5px solid var(--border-color);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &[data-pressed] {
+    background: var(--highlight-hover);
+  }
+
+  &[data-selected] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    --focus-ring-color: var(--highlight-foreground);
+    --border-color: transparent;
+
+    &[data-focus-visible] {
+      outline-color: var(--highlight-foreground);
+      outline-offset: -4px;
+    }
+
+    &:has(+ [data-selected]),
+    &:has(+ .react-aria-DropIndicator + [data-selected]) {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+      --border-color: rgb(255 255 255 / 0.3);
+    }
+
+    + [data-selected],
+    + .react-aria-DropIndicator + [data-selected] {
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
+  }
+
+  &[data-href] {
+    cursor: pointer;
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  .react-aria-Button:not([slot]) {
+    margin-left: auto;
+  }
+
+  &[data-allows-dragging] {
+    padding-left: 4px;
+  }
+
+  &[data-dragging] {
+    opacity: 0.6;
+  }
+
+  &[data-drop-target] {
+    outline: 2px solid var(--highlight-background);
+    background: var(--highlight-overlay);
+  }
+
+  .react-aria-Button[slot=chevron] {
+    all: unset;
+    display: flex;
+    visibility: hidden;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+    height: 100%;
+    padding-left: calc((var(--tree-item-level) - 1) * var(--padding));
+
+    svg {
+      rotate: 0deg;
+      transition: rotate 200ms;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3px;
+    }
+  }
+
+  &[data-has-child-items] .react-aria-Button[slot=chevron] {
+    visibility: visible;
+  }
+
+  &[data-expanded] .react-aria-Button[slot=chevron] svg {
+    rotate: 90deg;
+  }
+
+  .react-aria-Button[slot=drag] {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+    text-align: center;
+
+    &[data-focus-visible] {
+      border-radius: 4px;
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+}
+
+:where(.react-aria-TreeItem) .react-aria-Checkbox {
+  --checkmark-color: var(--highlight-background);
+  &[data-selected] .indicator {
+    --indicator-color: var(--highlight-foreground);
+    --indicator-shadow: transparent;
+  }
+}
+
+.react-aria-TreeLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+}

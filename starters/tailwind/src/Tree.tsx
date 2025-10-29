@@ -1,10 +1,11 @@
+'use client';
 import React from 'react';
 import {
   Tree as AriaTree,
   TreeItem as AriaTreeItem,
   TreeItemContent as AriaTreeItemContent,
   Button,
-  TreeItemProps,
+  TreeItemProps as AriaTreeItemProps,
   TreeItemContentProps as AriaTreeItemContentProps,
   TreeProps
 } from 'react-aria-components';
@@ -15,7 +16,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative flex group gap-3 cursor-default select-none py-2 px-3 text-sm text-gray-900 dark:text-zinc-200 border-y dark:border-y-zinc-700 border-transparent first:border-t-0 last:border-b-0 -mb-px last:mb-0 -outline-offset-2',
+  base: 'relative font-sans w-48 flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-gray-900 dark:text-zinc-200 bg-white dark:bg-zinc-900 border-y dark:border-y-zinc-700 border-transparent first:border-t-0 last:border-b-0 -mb-px last:mb-0 -outline-offset-2',
   variants: {
     isSelected: {
       false: 'hover:bg-gray-100 dark:hover:bg-zinc-700/60',
@@ -37,18 +38,9 @@ export function Tree<T extends object>(
   );
 }
 
-export function TreeItem(props: TreeItemProps) {
-  return (
-    <AriaTreeItem className={itemStyles} {...props} />
-  )
-}
-interface TreeItemContentProps extends Omit<AriaTreeItemContentProps, 'children'> {
-  children: React.ReactNode;
-}
-
 const expandButton = tv({
   extend: focusRing,
-  base: "shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-start cursor-default",
+  base: "border-0 p-0 bg-transparent shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-start cursor-default",
   variants: {
     isDisabled: {
       true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
@@ -68,23 +60,30 @@ const chevron = tv({
   }
 });
 
-export function TreeItemContent({ children, ...props }: TreeItemContentProps) {
+export interface TreeItemProps extends Partial<AriaTreeItemProps> {
+  title: string;
+}
+
+export function TreeItem(props: TreeItemProps) {
   return (
-    <AriaTreeItemContent {...props}>
-      {({ selectionMode, selectionBehavior, hasChildItems, isExpanded, isDisabled }) => (
-        <div className={`flex items-center`}>
-          {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-            <Checkbox slot="selection" />
-          )}
-          <div className='shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]' />
-          {hasChildItems ? (
-            <Button slot="chevron" className={expandButton({ isDisabled })}>
-            <ChevronRight aria-hidden className={chevron({ isExpanded, isDisabled })} />
-          </Button>
-          ) : <div className='shrink-0 w-8 h-8' />}
-          {children}
-        </div>
-      )}
-    </AriaTreeItemContent>
-  );
+    <AriaTreeItem className={itemStyles}  textValue={props.title} {...props}>
+      <AriaTreeItemContent {...props}>
+        {({ selectionMode, selectionBehavior, hasChildItems, isExpanded, isDisabled }) => (
+          <div className={`flex items-center`}>
+            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+              <Checkbox slot="selection" />
+            )}
+            <div className='shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]' />
+            {hasChildItems ? (
+              <Button slot="chevron" className={expandButton({ isDisabled })}>
+              <ChevronRight aria-hidden className={chevron({ isExpanded, isDisabled })} />
+            </Button>
+            ) : <div className='shrink-0 w-8 h-8' />}
+            {props.title}
+          </div>
+        )}
+      </AriaTreeItemContent>
+      {props.children}
+    </AriaTreeItem>
+  )
 }

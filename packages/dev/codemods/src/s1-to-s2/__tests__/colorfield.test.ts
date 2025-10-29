@@ -12,12 +12,6 @@ import {ColorField} from '@adobe/react-spectrum';
 <ColorField label="Primary Color" isQuiet />
 `);
 
-test('Removes placeholder', `
-import {ColorField} from '@adobe/react-spectrum';
-
-<ColorField label="Primary Color" placeholder="Color" />
-`);
-
 test('changes validationState to isInvalid or nothing', `
 import {ColorField} from '@adobe/react-spectrum';
 let validationState = 'invalid';

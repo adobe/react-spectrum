@@ -1,0 +1,67 @@
+@import "./theme.css";
+@import "./utilities.css";
+
+.react-aria-RadioGroup {
+  display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+
+  .radio-items {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  &[data-orientation=vertical] .radio-items {
+    flex-direction: column;
+  }
+
+  &[data-orientation=horizontal] .radio-items {
+    flex-direction: row;
+  }
+}
+
+.react-aria-Radio {
+  display: flex;
+  /* This is needed so the HiddenInput is positioned correctly */
+  position: relative;
+  align-items: center;
+  gap: var(--spacing-2);
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+  forced-color-adjust: none;
+  -webkit-tap-highlight-color: transparent;
+
+  .indicator {
+    position: relative;
+    width: calc(var(--spacing) * 4.5);
+    height: calc(var(--spacing) * 4.5);
+    box-sizing: border-box;
+    border-radius: 50%;
+    transition: all 200ms;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      background: transparent;
+      transition: scale 200ms;
+      scale: 0;
+    }
+  }
+
+  &[data-selected] {
+    .indicator::after {
+      background: white;
+      scale: 0.37;
+
+      @media (forced-colors: active) {
+        background: HighlightText;
+      }
+    }
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}

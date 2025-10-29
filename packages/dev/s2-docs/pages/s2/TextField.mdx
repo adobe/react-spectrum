@@ -1,0 +1,80 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {TextField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['input'];
+
+# TextField
+
+<PageDescription>{docs.exports.TextField.description}</PageDescription>
+
+<VisualExample
+  component={TextField}
+  docs={docs.exports.TextField}
+  links={docs.links}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  initialProps={{
+    label: 'Name',
+    placeholder: 'Enter your full name'
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the text value, and `onChange` to handle user input.
+
+```tsx render
+"use client";
+import {TextField} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [name, setName] = useState('');
+
+  return (
+    <>
+      <TextField
+        label="Name"
+        placeholder="Enter your full name"
+        ///- begin highlight -///
+        value={name}
+        onChange={setName} />
+      {/*- end highlight -*/}
+      <p>Your name: {name}</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true, type: 'email'}}
+"use client";
+import {TextField, Button, Form} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <TextField
+        {...props}
+        label="Email"
+        placeholder="Enter your email"
+        ///- begin highlight -///
+        name="email"
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.TextField} links={docs.links} />

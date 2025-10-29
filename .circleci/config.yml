@@ -37,6 +37,14 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+  rsp-2xlarge:
+    docker:
+      - image: cimg/node:22.13.1
+    resource_class: 2xlarge
+    environment:
+      CACHE_VERSION: v1
+    working_directory: ~/react-spectrum
+
 jobs:
   install:
     executor: rsp-large
@@ -325,7 +333,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge
+    executor: rsp-2xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -470,6 +478,36 @@ jobs:
           paths:
             - '*/docs/'
 
+  docs-beta:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build docs
+          command: make s2-docs-production
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/docs/'
+
+  s2-docs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/s2-docs/'
+
   verdaccio:
     executor: rsp-xlarge
     steps:
@@ -493,7 +531,7 @@ jobs:
             - storage
 
   v-docs:
-    executor: rsp-xlarge
+    executor: rsp-2xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -508,6 +546,15 @@ jobs:
             ./scripts/verdaccio-build.sh
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - run:
+          name: build docs off verdaccio retry
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+          when: on_fail
 
       - persist_to_workspace:
           root: verdaccio_dist
@@ -580,28 +627,6 @@ jobs:
           paths:
             - '*/verdaccio/next'
 
-  v-rac-tailwind:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - attach_workspace:
-          at: /tmp/verdaccio-workspace
-
-      - run:
-          name: build rac-tailwind off verdaccio
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build-rac-tailwind.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-
-      - persist_to_workspace:
-          root: verdaccio_dist
-          paths:
-            - '*/verdaccio/rac-tailwind'
-
   v-rac-rsp-tailwind:
     executor: rsp-xlarge
     steps:
@@ -668,6 +693,28 @@ jobs:
           paths:
             - '*/verdaccio/s2-webpack-5-example'
 
+  v-s2-next:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-next.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-next-macros'
+
   v-icon-builder:
     executor: rsp-xlarge
     steps:
@@ -684,6 +731,11 @@ jobs:
             ./scripts/verdaccio-build-icon-builder.sh
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/icon-builder-fixture'
 
   v-publish-stats:
     executor: rsp
@@ -720,7 +772,9 @@ jobs:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
             fi
 
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
@@ -741,7 +795,9 @@ jobs:
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
               for dir in /tmp/verdaccio_dist/*/verdaccio; do
-                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
               done
             fi
 
@@ -759,7 +815,11 @@ jobs:
             mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
-          command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
+          command: |
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt;*.html;*.rsc"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8" --cache-control "max-age=300"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8" --cache-control "max-age=300"
+            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.html;*.rsc" --cache-control "max-age=300"
 
   comment:
     executor: rsp
@@ -869,6 +929,9 @@ workflows:
       - docs:
           requires:
             - install
+      - s2-docs:
+          requires:
+            - install
       - verdaccio:
           filters:
             branches:
@@ -887,9 +950,6 @@ workflows:
       - v-nextjs:
           requires:
             - verdaccio
-      - v-rac-tailwind:
-          requires:
-            - verdaccio
       - v-rac-rsp-tailwind:
           requires:
             - verdaccio
@@ -897,6 +957,9 @@ workflows:
           requires:
             - verdaccio
       - v-s2-webpack:
+          requires:
+            - verdaccio
+      - v-s2-next:
           requires:
             - verdaccio
       - v-icon-builder:
@@ -923,16 +986,17 @@ workflows:
             - storybook
             - storybook-s2
             - docs
+            - s2-docs
       - deploy-verdaccio:
           requires:
             - v-docs
             - v-rsp-cra-18
             - v-webpack-4
             - v-nextjs
-            - v-rac-tailwind
             - v-rac-rsp-tailwind
             - v-s2-parcel
             - v-s2-webpack
+            - v-s2-next
             - v-icon-builder
             - v-publish-stats
       - comment:
@@ -969,6 +1033,26 @@ workflows:
               only: main
           requires:
             - docs-production
+
+
+  beta-docs:
+    when:
+      and:
+        - equal: [ "beta-docs", << pipeline.parameters.GHA_Action >> ]
+    jobs:
+      - install
+      - docs-beta:
+          filters:
+            branches:
+              only: beta-docs
+          requires:
+            - install
+      - deploy-production:
+          filters:
+            branches:
+              only: beta-docs
+          requires:
+            - docs-beta
 
   nightly:
     triggers:

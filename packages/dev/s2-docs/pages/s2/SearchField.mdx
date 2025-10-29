@@ -1,0 +1,86 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {SearchField} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['input'];
+
+# SearchField
+
+<PageDescription>{docs.exports.SearchField.description}</PageDescription>
+
+<VisualExample
+  component={SearchField}
+  docs={docs.exports.SearchField}
+  links={docs.links}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  initialProps={{
+    label: 'Search',
+    placeholder: 'Search documents'
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the text value, and `onChange` to handle user input. `onSubmit` is called when the user presses <Keyboard>Enter</Keyboard>.
+
+```tsx render
+"use client";
+import {SearchField} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [search, setSearch] = useState('');
+  let [submittedSearch, setSubmittedSearch] = useState('');
+
+  return (
+    <div>
+      <SearchField
+        label="Search"
+        placeholder="Search documents"
+        ///- begin highlight -///
+        value={search}
+        onChange={setSearch}
+        onSubmit={setSubmittedSearch} />
+      {/*- end highlight -*/}
+      <pre className={style({font: 'body'})}>
+        Value: {search}{'\n'}
+        Submitted value: {submittedSearch}
+      </pre>
+    </div>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.SearchField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true}}
+"use client";
+import {SearchField, Button, Form} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <SearchField
+        {...props}
+        label="Search"
+        placeholder="Search documents"
+        ///- begin highlight -///
+        name="search"
+        /* PROPS */
+        ///- end highlight -///
+      />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.SearchField} links={docs.links} />

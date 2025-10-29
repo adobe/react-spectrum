@@ -12,11 +12,11 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import SaveTo from '@spectrum-icons/workflow/SaveTo';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
@@ -32,7 +32,7 @@ interface MultipleTriggersProps extends SpectrumTooltipTriggerProps {
    isControlled?: boolean
  }
 
-type TooltipTriggerStory = ComponentStoryObj<typeof TooltipTrigger>;
+type TooltipTriggerStory = StoryObj<typeof TooltipTrigger>;
 
 const argTypes = {
   placement: {
@@ -72,6 +72,9 @@ const argTypes = {
   },
   children: {
     control: {disable: true}
+  },
+  closeOnPress: {
+    control: 'boolean'
   }
 };
 
@@ -113,10 +116,11 @@ export default {
       <ActionButton aria-label="Edit Name"><Edit /></ActionButton>,
       <Tooltip>Change Name</Tooltip>
     ],
-    onOpenChange: action('openChange')
+    onOpenChange: action('openChange'),
+    closeOnPress: true
   },
   argTypes: argTypes
-} as ComponentMeta<typeof TooltipTrigger>;
+} as Meta<typeof TooltipTrigger>;
 
 export const Default: TooltipTriggerStory = {};
 

@@ -186,4 +186,10 @@ describe('ColorSlider', () => {
     expect(wrapper).toHaveClass('vertical');
     expect(slider).toHaveAttribute('aria-orientation', 'vertical');
   });
+
+  it('should support form prop', () => {
+    let {getByRole} = renderSlider({form: 'test'});
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('form', 'test');
+  });
 });

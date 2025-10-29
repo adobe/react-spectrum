@@ -37,25 +37,25 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a, _.b, _.c;
+"@layer _.a, _.b, _.c;
 
-      @layer _.b {
-        .Jbs9:first-child {
-          margin-top: 0.25rem;
-        }
-      }
+@layer _.b {
+  .Jbs12:first-child {
+    margin-top: 0.25rem;
+  }
+}
 
-      @layer _.c.p {
-        @media (min-width: 64rem) {
-          .Jbpv9:first-child {
-            margin-top: 0.5rem;
-          }
-        }
-      }
+@layer _.c.p {
+  @media (min-width: 64rem) {
+    .Jbpv12:first-child {
+      margin-top: 0.5rem;
+    }
+  }
+}
 
-      "
-    `);
-    expect(js).toMatchInlineSnapshot('" Jbs9 Jbpv9"');
+"
+`);
+    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12"');
   });
 
   it('should support self references', () => {
@@ -66,60 +66,58 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a;
+"@layer _.a;
 
-      @layer _.a {
-        ._kc9 {
-          border-top-width: 2px;
-        }
-
-
-        .hc9 {
-          border-bottom-width: 2px;
-        }
+@layer _.a {
+  ._kc12 {
+    border-top-width: 2px;
+  }
 
 
-        .mCPFGYc9 {
-          border-inline-start-width: var(--m);
-        }
+  .hc12 {
+    border-bottom-width: 2px;
+  }
 
 
-        .lc9 {
-          border-inline-end-width: 2px;
-        }
+  .mCPFGYc12 {
+    border-inline-start-width: var(--m);
+  }
 
 
-        .SMBFGYc9 {
-          padding-inline-start: var(--S);
-        }
+  .lc12 {
+    border-inline-end-width: 2px;
+  }
 
 
-        .Rv9 {
-          padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
-        }
+  .SMBFGYc12 {
+    padding-inline-start: var(--S);
+  }
 
 
-        .ZjUQgKd9 {
-          width: calc(200px - var(--m) - var(--S));
-        }
+  .Rv12 {
+    padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
+  }
 
 
-        .-m_-mc9 {
-          --m: 2px;
-        }
+  .ZjUQgKd12 {
+    width: calc(200px - var(--m) - var(--S));
+  }
 
 
-        .-S_-Sv9 {
-          --S: calc(var(--F, var(--M)) * 3 / 8);
-        }
-      }
+  .-m_-mc12 {
+    --m: 2px;
+  }
 
-      "
-    `);
 
-    expect(js).toMatchInlineSnapshot(
-      '" _kc9 hc9 mCPFGYc9 lc9 SMBFGYc9 Rv9 ZjUQgKd9 -m_-mc9 -S_-Sv9"'
-    );
+  .-S_-Sv12 {
+    --S: calc(var(--F, var(--M)) * 3 / 8);
+  }
+}
+
+"
+`);
+
+    expect(js).toMatchInlineSnapshot('" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12"');
   });
 
   it('should support allowed overrides', () => {
@@ -136,9 +134,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw9 pg9"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb9 pHJ3AUd9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb9 pg9"');
+    expect(js()).toMatchInlineSnapshot('"  gw12 pg12"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb12 pHJ3AUd12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 pg12"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -153,9 +151,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B9 __Ya9"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D9 __Ya9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D9 __Ya9"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D12 __Ya12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -170,9 +168,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk9 Qk9 Sk9 Rk9"');
-    expect(overrides).toMatchInlineSnapshot('" Tm9 Qm9 Sm9 Rm9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm9 Qm9 Sm9 Rm9"');
+    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12"');
+    expect(overrides).toMatchInlineSnapshot('" Tm12 Qm12 Sm12 Rm12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -187,9 +185,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE9"');
-    expect(overrides).toMatchInlineSnapshot('" Nk9"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk9 gE9"');
+    expect(js()).toMatchInlineSnapshot('"  gE12"');
+    expect(overrides).toMatchInlineSnapshot('" Nk12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12"');
   });
 
   it('should support runtime conditions', () => {
@@ -207,45 +205,45 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a;
+"@layer _.a;
 
-      @layer _.a {
-        .gH9 {
-          background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
-        }
-
-
-        .gF9 {
-          background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
-        }
+@layer _.a {
+  .gH12 {
+    background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
+  }
 
 
-        .gE9 {
-          background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
-        }
+  .gF12 {
+    background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
+  }
 
 
-        .pt9 {
-          color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
-        }
+  .gE12 {
+    background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
+  }
 
 
-        .po9 {
-          color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
-        }
+  .pt12 {
+    color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
+  }
 
 
-        .pm9 {
-          color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
-        }
-      }
+  .po12 {
+    color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
+  }
 
-      "
-    `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH9 pt9"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF9 po9"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE9 pm9"');
+  .pm12 {
+    color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
+  }
+}
+
+"
+`);
+
+    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -261,37 +259,35 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a;
+"@layer _.a;
 
-      @layer _.a {
-        .gH9 {
-          background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
-        }
-
-
-        .gF9 {
-          background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
-        }
+@layer _.a {
+  .gH12 {
+    background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
+  }
 
 
-        .g_h9 {
-          background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
-        }
+  .gF12 {
+    background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
+  }
 
 
-        .g39 {
-          background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
-        }
-      }
+  .g_h12 {
+    background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
+  }
 
-      "
-    `);
-    expect(js({})).toMatchInlineSnapshot('"  gH9"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF9"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h9"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot(
-      '"  g39"'
-    );
+
+  .g312 {
+    background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
+  }
+}
+
+"
+`);
+    expect(js({})).toMatchInlineSnapshot('"  gH12"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -305,9 +301,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY9"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe9"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw9"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -321,28 +317,28 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a, _.b;
+"@layer _.a, _.b;
 
-      @layer _.b.l {
-        @media (forced-colors: active) {
-          .plb9 {
-            color: ButtonText;
-          }
-        }
+@layer _.b.l {
+  @media (forced-colors: active) {
+    .plb12 {
+      color: ButtonText;
+    }
+  }
 
 
-        @media (forced-colors: active) {
-          .ple9 {
-            color: HighlightText;
-          }
-        }
-      }
+  @media (forced-colors: active) {
+    .ple12 {
+      color: HighlightText;
+    }
+  }
+}
 
-      "
-    `);
+"
+`);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb9"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple9"');
+    expect(js({})).toMatchInlineSnapshot('"  plb12"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -350,33 +346,33 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th9 Qh9 Sh9 Rh9"');
+    expect(js).toMatchInlineSnapshot('" Th12 Qh12 Sh12 Rh12"');
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a;
+"@layer _.a;
 
-      @layer _.a {
-        .Th9 {
-          padding-top: 24px;
-        }
-
-
-        .Qh9 {
-          padding-bottom: 24px;
-        }
+@layer _.a {
+  .Th12 {
+    padding-top: 24px;
+  }
 
 
-        .Sh9 {
-          padding-inline-start: 24px;
-        }
+  .Qh12 {
+    padding-bottom: 24px;
+  }
 
 
-        .Rh9 {
-          padding-inline-end: 24px;
-        }
-      }
+  .Sh12 {
+    padding-inline-start: 24px;
+  }
 
-      "
-    `);
+
+  .Rh12 {
+    padding-inline-end: 24px;
+  }
+}
+
+"
+`);
   });
 
   it('should support colors with opacity', () => {
@@ -385,16 +381,16 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a;
+"@layer _.a;
 
-      @layer _.a {
-        .gpQzfVb9 {
-          background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
-        }
-      }
+@layer _.a {
+  .gpQzfVb12 {
+    background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
+  }
+}
 
-      "
-    `);
+"
+`);
   });
 
   it('should support setting css variables', () => {
@@ -406,15 +402,15 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      "@layer _.a;
+"@layer _.a;
 
-      @layer _.a {
-        .-FUeYm-gE9 {
-          --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
-        }
-      }
+@layer _.a {
+  .-FUeYm-gE12 {
+    --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
+  }
+}
 
-      "
-    `);
+"
+`);
   });
 });

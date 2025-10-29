@@ -1,3 +1,4 @@
+'use client';
 import {
   OverlayArrow,
   Popover as AriaPopover,
@@ -15,7 +16,7 @@ export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
 }
 
 const styles = tv({
-  base: 'bg-white dark:bg-zinc-900/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:bg-[Canvas] shadow-2xl rounded-xl bg-clip-padding border border-black/10 dark:border-white/[15%] text-slate-700 dark:text-zinc-300',
+  base: 'font-sans bg-white dark:bg-zinc-900/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:bg-[Canvas] shadow-2xl rounded-xl bg-clip-padding border border-black/10 dark:border-white/[15%] text-slate-700 dark:text-zinc-300 outline-0',
   variants: {
     isEntering: {
       true: 'animate-in fade-in placement-bottom:slide-in-from-top-1 placement-top:slide-in-from-bottom-1 placement-left:slide-in-from-right-1 placement-right:slide-in-from-left-1 ease-out duration-200'
@@ -27,10 +28,7 @@ const styles = tv({
 });
 
 export function Popover({ children, showArrow, className, ...props }: PopoverProps) {
-  let popoverContext = useSlottedContext(PopoverContext)!;
-  let isSubmenu = popoverContext?.trigger === 'SubmenuTrigger';
   let offset = showArrow ? 12 : 8;
-  offset = isSubmenu ? offset - 6 : offset;
   return (
     <AriaPopover
       offset={offset}

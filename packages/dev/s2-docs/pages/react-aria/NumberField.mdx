@@ -1,0 +1,146 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/NumberField';
+import {NumberField as VanillaNumberField} from 'vanilla-starter/NumberField';
+import {NumberField as TailwindNumberField} from 'tailwind-starter/NumberField';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/numberfield/docs/anatomy.svg';
+
+export const tags = ['input'];
+
+# NumberField
+
+<PageDescription>{docs.exports.NumberField.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaNumberField}
+    docs={vanillaDocs.exports.NumberField}
+    links={vanillaDocs.links}
+    props={['label', 'formatOptions', 'isDisabled']}
+    initialProps={{label: 'Width', defaultValue: 1024, minValue: 0}}
+    type="vanilla"
+    files={["starters/docs/src/NumberField.tsx", "starters/docs/src/NumberField.css"]} />
+  <VisualExample
+    component={TailwindNumberField}
+    docs={vanillaDocs.exports.NumberField}
+    links={vanillaDocs.links}
+    props={['label', 'formatOptions', 'isDisabled']}
+    initialProps={{label: 'Width', defaultValue: 1024, minValue: 0}}
+    type="tailwind"
+    files={["starters/tailwind/src/NumberField.tsx"]} />
+</ExampleSwitcher>
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the number value. The `onChange` event is called when the user finishes editing the value (e.g. on blur, incrementing, or decrementing).
+
+```tsx render
+"use client";
+import {NumberField} from 'vanilla-starter/NumberField';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(25);
+  return (
+    <div>
+      <NumberField
+        label="Cookies to buy"
+        ///- begin highlight -///
+        value={value}
+        onChange={setValue}
+        ///- end highlight -///
+      />
+      <p>Current value: {value}</p>
+    </div>
+  );
+}
+```
+
+### Format options
+
+Use the `formatOptions` prop to control how the value is formatted (according to the user's locale). This is compatible with the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat) API.
+
+<VisualExample
+  component={VanillaNumberField}
+  docs={docs.exports.NumberField}
+  links={docs.links}
+  props={['formatOptions']}
+  initialProps={{
+    label: 'Value',
+    defaultValue: 5,
+    formatOptions: {style: 'decimal'}
+  }}
+  controlOptions={{
+    formatOptions: {showDetails: true}
+  }} />
+
+### Value scale
+
+Use the `minValue`, `maxValue`, and `step` props to set the allowed values. Steps are calculated starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+
+<VisualExample
+  component={VanillaNumberField}
+  docs={docs.exports.NumberField}
+  links={docs.links}
+  props={['minValue', 'maxValue', 'step']}
+  initialProps={{
+    label: 'Amount',
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: 50,
+    step: 5
+  }} />
+
+### Numbering system
+
+By default, `NumberField` displays the value using the numbering system for the user's locale. Use `<I18nProvider>` to override the numbering system by setting the [Unicode numbering system locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem#adding_a_numbering_system_via_the_locale_string). The Latin, Arabic, Devanagari, Bengali, and Han positional decimal numbering systems are currently supported.
+
+```tsx render wide docs={docs.exports.I18nProvider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-nu-deva'}} controlOptions={{locale: 'numberingSystem'}}
+"use client";
+import {I18nProvider} from 'react-aria-components';
+import {NumberField} from 'vanilla-starter/NumberField';
+
+<I18nProvider/* PROPS */>
+  <NumberField label="Value" defaultValue={1024} />
+</I18nProvider>
+```
+
+## Forms
+
+Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {NumberField} from 'vanilla-starter/NumberField';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';;
+
+<Form>
+  <NumberField label="Width" name="width" isRequired />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{NumberField: '#numberfield', Group: 'Group.html', Button: 'Button.html'}}
+<NumberField>
+  <Label />
+  <Group>
+    <Input />
+    <Button slot="increment" />
+    <Button slot="decrement" />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+</NumberField>
+```
+
+### NumberField
+
+<PropTable component={docs.exports.NumberField} links={docs.links} />

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;"  viewBox="0 0 310 120">
+  <g id="Text_field" data-name="Text field" transform="translate(9 38)">
+    <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+      <rect width="124" height="56" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="55" fill="none"/>
+    </g>
+    <text id="Label" transform="translate(101 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Date</tspan></text>
+    <g id="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+      <rect width="124" height="32" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="31" rx="3.5" fill="none"/>
+    </g>
+    <text id="Text" transform="translate(11 44)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0"> </tspan><tspan y="0" font-family="var(--anatomy-font)">۸</tspan><tspan y="0">:</tspan><tspan y="0" font-family="var(--anatomy-font)">۴۵</tspan><tspan y="0" xml:space="preserve"> , </tspan><tspan y="0" font-family="var(--anatomy-font)">۱۳۹۹</tspan><tspan y="0">/</tspan><tspan y="0" font-family="var(--anatomy-font)">۱۲</tspan><tspan y="0">/</tspan><tspan y="0" font-family="var(--anatomy-font)">۲۴</tspan></text>
+  </g>
+  <text id="Hover_Text_area_" data-name="Hover (Text area)" transform="translate(11 17)" fill="var(--anatomy-gray-900)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">With actual values (fa-AF)</tspan></text>
+  <rect id="Rule" width="309" height="4" rx="2" transform="translate(0 27)" fill="var(--anatomy-gray-800)"/>
+  <rect id="Rule-2" data-name="Rule" width="116" height="1" rx="0.5" transform="translate(148) rotate(90)" fill="var(--anatomy-gray-800)"/>
+  <text id="Hover_Text_area_2" data-name="Hover (Text area)" transform="translate(154 17)" fill="var(--anatomy-gray-900)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">With placeholder values (fa-AF)</tspan></text>
+  <g id="Text_field-2" data-name="Text field" transform="translate(165 38)">
+    <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+      <rect width="124" height="56" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="55" fill="none"/>
+    </g>
+    <text id="Label-2" data-name="Label" transform="translate(101 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Date</tspan></text>
+    <g id="Field-2" data-name="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-500)" stroke-width="1">
+      <rect width="124" height="32" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="31" rx="3.5" fill="none"/>
+    </g>
+    <text id="Text-2" data-name="Text" transform="translate(15 44)" fill="var(--anatomy-gray-900)" font-size="14" font-family="var(--anatomy-font)"><tspan x="0" y="0" xml:space="preserve">—:— , </tspan><tspan y="0" font-family="var(--anatomy-font)">روز</tspan><tspan y="0">/</tspan><tspan y="0" font-family="var(--anatomy-font)">ماه</tspan><tspan y="0">/</tspan><tspan y="0" font-family="var(--anatomy-font)">سال</tspan><tspan y="0"> </tspan></text>
+  </g>
+  <text id="Hover_Text_area_3" data-name="Hover (Text area)" transform="translate(2 113)" fill="var(--anatomy-gray-900)" font-size="11" font-family="var(--anatomy-font)"><tspan x="0" y="0">Hour:Minute Year/Month/Day</tspan></text>
+  <text id="Hover_Text_area_4" data-name="Hover (Text area)" transform="translate(162 113)" fill="var(--anatomy-gray-900)" font-size="11" font-family="var(--anatomy-font)"><tspan x="0" y="0">Minute:Hour Day/Month/Year</tspan></text>
+</svg>

@@ -12,17 +12,40 @@
 import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
 import {CheckboxContext} from './RSPContexts';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-CheckboxGroup'
+   */
+  className?: ClassNameOrFunction<CheckboxGroupRenderProps>
+}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Checkbox'
+   */
+  className?: ClassNameOrFunction<CheckboxRenderProps>,
   /**
    * A ref for the HTML input element.
    */
@@ -144,10 +167,11 @@ export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
     defaultClassName: 'react-aria-CheckboxGroup'
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...groupProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-readonly={state.isReadOnly || undefined}
@@ -185,7 +209,7 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let groupState = useContext(CheckboxGroupStateContext);
-  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
+  let inputRef = useObjectRef(useMemo(() => mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null), [userProvidedInputRef, props.inputRef]));
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
@@ -229,8 +253,9 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <label

@@ -117,6 +117,9 @@ export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollI
     } else {
       let scrollParents = getScrollParents(targetElement);
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
+      if (!isScrollPrevented) {
+        scrollParents.push(root);
+      }
       for (let scrollParent of scrollParents) {
         scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
       }

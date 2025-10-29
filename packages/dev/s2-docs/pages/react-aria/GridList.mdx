@@ -1,0 +1,925 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {GridList as VanillaGridList, GridListItem} from 'vanilla-starter/GridList';
+import vanillaDocs from 'docs:vanilla-starter/GridList';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/GridListAnatomy.svg';
+
+export const tags = ['list view'];
+
+# GridList
+
+<PageDescription>{docs.exports.GridList.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.GridList} links={docs.links} props={['layout', 'selectionMode']} initialProps={{'aria-label': 'Photos', selectionMode: 'multiple', layout: 'grid'}} type="vanilla" files={["starters/docs/src/GridList.tsx", "starters/docs/src/GridList.css"]}
+  "use client";
+  import {Text} from 'react-aria-components';
+  import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+  <GridList/* PROPS */>
+    <GridListItem textValue="Desert Sunset">
+      <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+      <Text>Desert Sunset</Text>
+      <Text slot="description">PNG • 2/3/2024</Text>
+    </GridListItem>
+    <GridListItem textValue="Hiking Trail">
+      <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+      <Text>Hiking Trail</Text>
+      <Text slot="description">JPEG • 1/10/2022</Text>
+    </GridListItem>
+    <GridListItem textValue="Lion">
+      <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+      <Text>Lion</Text>
+      <Text slot="description">JPEG • 8/28/2021</Text>
+    </GridListItem>
+    <GridListItem textValue="Mountain Sunrise">
+      <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+      <Text>Mountain Sunrise</Text>
+      <Text slot="description">PNG • 3/15/2015</Text>
+    </GridListItem>
+    <GridListItem textValue="Giraffe tongue">
+      <img src="https://images.unsplash.com/photo-1574870111867-089730e5a72b?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+      <Text>Giraffe tongue</Text>
+      <Text slot="description">PNG • 11/27/2019</Text>
+    </GridListItem>
+    <GridListItem textValue="Golden Hour">
+      <img src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={402} />
+      <Text>Golden Hour</Text>
+      <Text slot="description">WEBP • 7/24/2024</Text>
+    </GridListItem>
+    <GridListItem textValue="Architecture">
+      <img src="https://images.unsplash.com/photo-1721661657253-6621d52db753?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDYxfE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+      <Text>Architecture</Text>
+      <Text slot="description">PNG • 12/24/2016</Text>
+    </GridListItem>
+    <GridListItem textValue="Peeking leopard">
+      <img src="https://images.unsplash.com/photo-1456926631375-92c8ce872def?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+      <Text>Peeking leopard</Text>
+      <Text slot="description">JPEG • 3/2/2016</Text>
+    </GridListItem>
+    <GridListItem textValue="Roofs">
+      <img src="https://images.unsplash.com/photo-1721598359121-363311b3b263?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDc0fE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+      <Text>Roofs</Text>
+      <Text slot="description">JPEG • 4/24/2025</Text>
+    </GridListItem>
+    <GridListItem textValue="Half Dome Deer">
+      <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={990} />
+      <Text>Half Dome Deer</Text>
+      <Text slot="description">DNG • 8/28/2018</Text>
+    </GridListItem>
+  </GridList>
+  ```
+
+  ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Favorite animal', selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/GridList.tsx"]}
+  "use client";
+  import {GridList, GridListItem} from 'tailwind-starter/GridList';
+
+  <GridList/* PROPS */>
+    <GridListItem>Aardvark</GridListItem>
+    <GridListItem>Cat</GridListItem>
+    <GridListItem>Dog</GridListItem>
+    <GridListItem>Kangaroo</GridListItem>
+    <GridListItem>Panda</GridListItem>
+    <GridListItem>Snake</GridListItem>
+  </GridList>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`GridList` follows the [Collection Components API](collections.html?component=GridList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+
+///- begin collapse -///
+let images = [
+  {
+    id: "8SXaMMWCTGc",
+    title: "A Ficus Lyrata Leaf",
+    user: "Clay Banks",
+    image: "https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "pYjCqqDEOFo",
+    title: "Italian beach",
+    user: "Alan Bajura",
+    image: "https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "CF-2tl6MQj0",
+    title: "Forest road",
+    user: "Artem Stoliar",
+    image: "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "OW97sLU0cOw",
+    title: "Snowy Aurora",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "WfeLZ02IhkM",
+    title: "A blue and white firework is seen from above",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "w1GpST72Bg8",
+    title: "Snowy Mountain",
+    user: "Daniil Silantev",
+    image: "https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "0iN0KIt6lYI",
+    title: "Pastel Sunset",
+    user: "Marek Piwnicki",
+    image: "https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 640
+  },
+  {
+    id: "-mFKPfXXUG0",
+    title: "Snowy Birches",
+    user: "Simon Berger",
+    image: "https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "y36Nj_edtRE",
+    title: "Snowy Lake Reflections",
+    user: "Daniel Seßler",
+    image: "https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "NvBV-YwlgBw",
+    title: "Rocky night sky",
+    user: "Dennis Haug",
+    image: "https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "UthQdrPFxt0",
+    title: "A pine tree covered in snow in a forest",
+    user: "Anita Austvika",
+    image: "https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "2k74xaf8dfc",
+    title: "The sun shines through the trees in the forest",
+    user: "Joyce G",
+    image: "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Yje5kgfvCm0",
+    title: "A blurry photo of a field of flowers",
+    user: "Eugene Golovesov",
+    image: "https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "G2bsj2LVttI",
+    title: "A foggy road lined with trees and grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "ppyNBOkfiuY",
+    title: "A close up of a green palm tree",
+    user: "Junel Mujar",
+    image: "https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "UcWUMqIsld8",
+    title: "A green leaf floating on top of a body of water",
+    user: "Allec Gomes",
+    image: "https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "xHqOVq9w8OI",
+    title: "Leafy plants",
+    user: "Joshua Michaels",
+    image: "https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "uWx3_XEc-Jw",
+    title: "A view of a mountain covered in fog",
+    user: "iuliu illes",
+    image: "https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 298
+  },
+  {
+    id: "2_3lhGt8i-Y",
+    title: "A field with tall grass and fog in the background",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "FV-__IOxb08",
+    title: "A close up of a wave on a sandy beach",
+    user: "Jonathan Borba",
+    image: "https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "_BS-vK3boOU",
+    title: "Desert textures",
+    user: "Braden Jarvis",
+    image: "https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 561
+  },
+  {
+    id: "LjAcS9lJdBg",
+    title: "Tew Falls, waterfall, in Hamilton, Canada.",
+    user: "Andre Portolesi",
+    image: "https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 500
+  },
+  {
+    id: "hlj6xJG30FE",
+    title: "Cave light rays",
+    user: "Intricate Explorer",
+    image: "https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "vMoZvKeZOhw",
+    title: "Salt Marshes, Isle of Harris, Scotland",
+    user: "Nils Leonhardt",
+    image: "https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "wCLCK9LDDjI",
+    title: "An aerial view of a snow covered forest",
+    user: "Lukas Hädrich",
+    image: "https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "OdDx3_NB-Wk",
+    title: "Tall grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Gn-FOw1geFc",
+    title: "Larches on Maple Pass, Washington",
+    user: "Noelle",
+    image: "https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "VhKJHOz2tJ8",
+    title: "Heart Nebula",
+    user: "Arnaud Girault",
+    image: "https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "w5QmH_uqB0U",
+    title: "A pile of shells sitting on top of a sandy beach",
+    user: "Toa Heftiba",
+    image: "https://images.unsplash.com/photo-1725366351350-a64a1be919ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  }
+];
+///- end collapse -///
+
+function Example() {
+  return (
+    <GridList
+      aria-label="Nature photos"
+      selectionMode="multiple"
+      layout="grid"
+      /*- begin highlight -*/
+      items={images}>
+      {/*- end highlight -*/}
+      {(image) => (
+        <GridListItem textValue={image.title}>
+          <img src={image.image} width={image.width} height={image.height} />
+          <Text>{image.title}</Text>
+          <Text slot="description">By {image.user}</Text>
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
+```
+
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<GridListLoadMoreItem>` at the end of the list. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
+
+```tsx render
+"use client";
+import {GridList, GridListItem, GridListLoadMoreItem} from 'vanilla-starter/GridList';
+import {Collection, Text} from 'react-aria-components';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Item, number | null>({
+    async load({signal, cursor, items}) {
+      let page = cursor || 1;
+      let res = await fetch(
+        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
+        {signal}
+      );
+      let nextItems = await res.json();
+      // Filter duplicates which might be returned by the API.
+      let existingKeys = new Set(items.map(i => i.id));
+      nextItems = nextItems.filter(i => !existingKeys.has(i.id) && (i.description || i.alt_description));
+      return {items: nextItems, cursor: nextItems.length ? page + 1 : null};
+    }
+  });
+
+  return (
+    <GridList
+      aria-label="Nature photos"
+      layout="grid"
+      selectionMode="multiple"
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
+      <Collection items={list.items}>
+        {(item) => (
+          <GridListItem textValue={item.description || item.alt_description}>
+            <img src={item.urls.regular} width={item.width} height={item.height} />
+            <Text>{item.description || item.alt_description}</Text>
+            <Text slot="description">By {item.user.name}</Text>
+          </GridListItem>
+        )}
+      </Collection>
+      {/*- begin highlight -*/}
+      <GridListLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'} />
+      {/*- end highlight -*/}
+    </GridList>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<GridListItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=GridList#selection-behavior) for more details.
+
+```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+
+///- begin collapse -///
+let images = [
+  {
+    id: "dxylfBs2Xzc",
+    title: "Tropical island",
+    image: "https://images.unsplash.com/photo-1757258632083-e9b8a5345047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 5464,
+    height: 3640,
+    href: "https://unsplash.com/photos/aerial-view-of-a-tropical-island-coastline-with-clear-blue-water-dxylfBs2Xzc"
+  },
+  {
+    id: "xloDEfz0X7g",
+    title: "Bryce Canyon",
+    image: "https://images.unsplash.com/photo-1759872409669-05565abbb575?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 4032,
+    height: 3024,
+    href: "https://unsplash.com/photos/orange-rock-formations-with-green-trees-and-blue-sky-xloDEfz0X7g"
+  },
+  {
+    id: "oTBY78rZcEU",
+    title: "Snowy river",
+    image: "https://images.unsplash.com/photo-1735577561802-380c3afb0146?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 3264,
+    height: 4896,
+    href: "https://unsplash.com/photos/a-river-surrounded-by-snow-covered-trees-and-mountains-oTBY78rZcEU"
+  },
+  {
+    id: "Go811IU9a2g",
+    title: "Ocean waves",
+    image: "https://images.unsplash.com/photo-1759997604062-c31f20012ac1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 5250,
+    height: 3500,
+    href: "https://unsplash.com/photos/a-large-wave-crashes-on-a-sandy-beach-Go811IU9a2g"
+  },
+  {
+    id: "B0mydNIV-sI",
+    title: "Mount Kazbek at Dawn",
+    image: "https://images.unsplash.com/photo-1760464864365-2188cd2afcde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 3947,
+    height: 5920,
+    href: "https://unsplash.com/photos/snow-capped-mountain-peak-illuminated-by-sunrise-B0mydNIV-sI"
+  },
+  {
+    id: "IHfbPJYsnsI",
+    title: "Snowy mountain sunrise",
+    image: "https://images.unsplash.com/photo-1759675795062-a657fcb278b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 5794,
+    height: 3360,
+    href: "https://unsplash.com/photos/snowy-mountains-rise-from-the-ocean-at-sunrise-IHfbPJYsnsI"
+  },
+  {
+    id: "mmcSaJrRuCM",
+    title: "Mount Blum",
+    image: "https://images.unsplash.com/photo-1760301269447-fbc82b5a8d14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 5862,
+    height: 4000,
+    href: "https://unsplash.com/photos/majestic-mountain-peak-illuminated-by-sunrise-light-mmcSaJrRuCM"
+  },
+  {
+    id: "SSpEIUBRG9s",
+    title: "Sunset",
+    image: "https://images.unsplash.com/photo-1760199025509-2ecc68d39acd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTc2MDYyMjY4NHw&ixlib=rb-4.1.0&q=80&w=1080",
+    width: 6000,
+    height: 4000,
+    href: "https://unsplash.com/photos/silhouette-of-trees-and-plants-against-a-sunset-sky-SSpEIUBRG9s"
+  }
+];
+///- end collapse -///
+
+<GridList layout="grid" items={images}/* PROPS */>
+  {image => (
+    <GridListItem
+      /*- begin highlight -*/
+      href={image.href}
+      target="_blank"
+      /*- end highlight -*/
+      textValue={image.title}>
+      <img src={image.image} width={image.width} height={image.height} />
+      <Text>{image.title}</Text>
+    </GridListItem>
+  )}
+</GridList>
+```
+
+### Empty state
+
+```tsx render hideImports
+"use client";
+import {GridList} from 'vanilla-starter/GridList';
+
+<GridList
+  aria-label="Search results"
+  renderEmptyState={() => 'No results found.'}>
+  {[]}
+</GridList>
+```
+
+## Selection and actions
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=GridList) for more details.
+
+```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {type Selection, Text} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <>
+      <GridList
+        {...props}
+        aria-label="Nature photos"
+        layout="grid"
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Clicked ${key}`)}
+        ///- end highlight -///
+      >
+        <GridListItem id={1} textValue="Desert Sunset">
+          <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+          <Text>Desert Sunset</Text>
+          <Text slot="description">PNG • 2/3/2024</Text>
+        </GridListItem>
+        <GridListItem id={2} isDisabled textValue="Hiking Trail">
+          <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          <Text>Hiking Trail</Text>
+          <Text slot="description">JPEG • 1/10/2022</Text>
+        </GridListItem>
+        <GridListItem id={3} textValue="Lion">
+          <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+          <Text>Lion</Text>
+          <Text slot="description">JPEG • 8/28/2021</Text>
+        </GridListItem>
+        <GridListItem id={4} textValue="Mountain Sunrise">
+          <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          <Text>Mountain Sunrise</Text>
+          <Text slot="description">PNG • 3/15/2015</Text>
+        </GridListItem>
+        <GridListItem id={5} textValue="Giraffe tongue">
+          <img src="https://images.unsplash.com/photo-1574870111867-089730e5a72b?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          <Text>Giraffe tongue</Text>
+          <Text slot="description">PNG • 11/27/2019</Text>
+        </GridListItem>
+        <GridListItem id={6} textValue="Golden Hour">
+          <img src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={402} />
+          <Text>Golden Hour</Text>
+          <Text slot="description">WEBP • 7/24/2024</Text>
+        </GridListItem>
+        <GridListItem id={7} textValue="Architecture">
+          <img src="https://images.unsplash.com/photo-1721661657253-6621d52db753?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDYxfE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+          <Text>Architecture</Text>
+          <Text slot="description">PNG • 12/24/2016</Text>
+        </GridListItem>
+        <GridListItem id={8} textValue="Peeking leopard">
+          <img src="https://images.unsplash.com/photo-1456926631375-92c8ce872def?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+          <Text>Peeking leopard</Text>
+          <Text slot="description">JPEG • 3/2/2016</Text>
+        </GridListItem>
+        <GridListItem id={9} textValue="Roofs">
+          <img src="https://images.unsplash.com/photo-1721598359121-363311b3b263?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDc0fE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+          <Text>Roofs</Text>
+          <Text slot="description">JPEG • 4/24/2025</Text>
+        </GridListItem>
+        <GridListItem id={10} textValue="Half Dome Deer">
+          <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={990} />
+          <Text>Half Dome Deer</Text>
+          <Text slot="description">DNG • 8/28/2018</Text>
+        </GridListItem>
+      </GridList>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Drag and drop
+
+GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=GridList) to learn more.
+
+```tsx render
+"use client";
+import {useListData} from 'react-stately';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop, Text} from 'react-aria-components';
+
+///- begin collapse -///
+let images = [
+  {
+    id: "8SXaMMWCTGc",
+    title: "A Ficus Lyrata Leaf in the sunlight (2/2) (IG: @clay.banks)",
+    user: "Clay Banks",
+    image: "https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "pYjCqqDEOFo",
+    title: "beach of Italy",
+    user: "alan bajura",
+    image: "https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "CF-2tl6MQj0",
+    title: "A winding road in the middle of a forest",
+    user: "Artem Stoliar",
+    image: "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "OW97sLU0cOw",
+    title: "A green and purple aurora over a snow covered forest",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "WfeLZ02IhkM",
+    title: "A blue and white firework is seen from above",
+    user: "Janosch Diggelmann",
+    image: "https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  },
+  {
+    id: "w1GpST72Bg8",
+    title: "A snow covered mountain with a sky background",
+    user: "Daniil Silantev",
+    image: "https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "0iN0KIt6lYI",
+    title: "\"Pastel Sunset\"",
+    user: "Marek Piwnicki",
+    image: "https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 640
+  },
+  {
+    id: "-mFKPfXXUG0",
+    title: "Leave the weight behind! You must make yourself light to strive upwards — to reach the light. (A serene winter landscape featuring a dense collection of bare, white trees.)",
+    user: "Simon Berger",
+    image: "https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "MOk6URQ28R4",
+    title: "A snow covered tree with a sky background",
+    user: "Daniil Silantev",
+    image: "https://images.unsplash.com/photo-1738081359113-a7a33c509cf9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "y36Nj_edtRE",
+    title: "A lake surrounded by trees covered in snow",
+    user: "Daniel Seßler",
+    image: "https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "NvBV-YwlgBw",
+    title: "The night sky with stars above a rock formation",
+    user: "Dennis Haug",
+    image: "https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 400
+  },
+  {
+    id: "UthQdrPFxt0",
+    title: "A pine tree covered in snow in a forest",
+    user: "Anita Austvika",
+    image: "https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "2k74xaf8dfc",
+    title: "The sun shines through the trees in the forest",
+    user: "Joyce G",
+    image: "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Yje5kgfvCm0",
+    title: "A blurry photo of a field of flowers",
+    user: "Eugene Golovesov",
+    image: "https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "G2bsj2LVttI",
+    title: "A foggy road lined with trees and grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "ppyNBOkfiuY",
+    title: "A close up of a green palm tree",
+    user: "Junel Mujar",
+    image: "https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 533
+  },
+  {
+    id: "UcWUMqIsld8",
+    title: "A green leaf floating on top of a body of water",
+    user: "Allec Gomes",
+    image: "https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "xHqOVq9w8OI",
+    title: "green-leafed plant",
+    user: "Joshua Michaels",
+    image: "https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "uWx3_XEc-Jw",
+    title: "A view of a mountain covered in fog",
+    user: "iuliu illes",
+    image: "https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 298
+  },
+  {
+    id: "2_3lhGt8i-Y",
+    title: "A field with tall grass and fog in the background",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "FV-__IOxb08",
+    title: "A close up of a wave on a sandy beach",
+    user: "Jonathan Borba",
+    image: "https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "_BS-vK3boOU",
+    title: "Desert textures",
+    user: "Braden Jarvis",
+    image: "https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 561
+  },
+  {
+    id: "LjAcS9lJdBg",
+    title: "Tew Falls, waterfall, in Hamilton, Canada.",
+    user: "Andre Portolesi",
+    image: "https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 500
+  },
+  {
+    id: "hlj6xJG30FE",
+    title: "Find me on Instagram! @intricateexplorer",
+    user: "Intricate Explorer",
+    image: "https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "vMoZvKeZOhw",
+    title: "Salt Marshes, Isle of Harris, Scotland by Nils Leonhardt. Visit my website: https://nilsleonhardt.com/storytelling-harris/ Instagram: @am.basteir",
+    user: "Nils Leonhardt",
+    image: "https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "wCLCK9LDDjI",
+    title: "An aerial view of a snow covered forest",
+    user: "Lukas Hädrich",
+    image: "https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 267
+  },
+  {
+    id: "OdDx3_NB-Wk",
+    title: "A close up of a tall grass with a sky in the background",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "Gn-FOw1geFc",
+    title: "Larches on Maple Pass, Washington",
+    user: "noelle",
+    image: "https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    id: "VhKJHOz2tJ8",
+    title: "IC 1805 La nébuleuse du coeur",
+    user: "arnaud girault",
+    image: "https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 266
+  },
+  {
+    id: "w5QmH_uqB0U",
+    title: "A pile of shells sitting on top of a sandy beach",
+    user: "Toa Heftiba",
+    image: "https://images.unsplash.com/photo-1725366351350-a64a1be919ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  }
+];
+///- end collapse -///
+
+function Example() {
+  let list = useListData({
+    initialItems: images
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <GridList
+      aria-label="Reorderable list"
+      layout="grid"
+      selectionMode="multiple"
+      items={list.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {image => (
+        <GridListItem textValue={image.title}>
+          <img src={image.image} width={image.width} height={image.height} />
+          <Text>{image.title}</Text>
+          <Text slot="description">{image.user}</Text>
+        </GridListItem>
+      )}
+    </GridList>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="gridlist" pages={props.pages} />
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
+
+```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button.html', Checkbox: 'Checkbox.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<GridList>
+  <GridListItem>
+    <Button slot="drag" />
+    <Checkbox slot="selection" /> or <SelectionIndicator />
+  </GridListItem>
+  <GridListLoadMoreItem />
+</GridList>
+```
+
+### GridList
+
+<PropTable component={docs.exports.GridList} links={docs.links} showDescription />
+
+### GridListItem
+
+<PropTable component={docs.exports.GridListItem} links={docs.links} showDescription />
+
+### GridListLoadMoreItem
+
+<PropTable component={docs.exports.GridListLoadMoreItem} links={docs.links} showDescription />

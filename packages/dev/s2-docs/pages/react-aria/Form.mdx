@@ -1,0 +1,203 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+
+export const tags = ['input', 'field'];
+
+# Form
+
+<PageDescription>{docs.exports.Form.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Form} links={docs.links} props={[]} type="vanilla" files={["starters/docs/src/Form.tsx", "starters/docs/src/Form.css"]}
+  "use client";
+  import {Form} from 'vanilla-starter/Form';
+  import {TextField} from 'vanilla-starter/TextField';
+  import {Button} from 'vanilla-starter/Button';
+
+  <Form/* PROPS */>
+    <TextField label="Name" name="name" isRequired placeholder="Enter your full name" />
+    <TextField label="Email" name="email" type="email" isRequired placeholder="Enter your email" />
+    <div style={{display: 'flex', gap: 8}}>
+      <Button type="submit">Submit</Button>
+      <Button type="reset" variant="secondary">Reset</Button>
+    </div>
+  </Form>
+  ```
+
+  ```tsx render docs={docs.exports.Form} links={docs.links} props={[]} type="tailwind" files={["starters/tailwind/src/Form.tsx"]}
+  "use client";
+  import {Form} from 'tailwind-starter/Form';
+  import {TextField} from 'tailwind-starter/TextField';
+  import {Button} from 'tailwind-starter/Button';
+
+  <Form/* PROPS */>
+    <TextField label="Name" name="name" isRequired placeholder="Enter your full name" />
+    <TextField label="Email" name="email" type="email" isRequired placeholder="Enter your email" />
+    <div style={{display: 'flex', gap: 8}}>
+      <Button type="submit">Submit</Button>
+      <Button type="reset" variant="secondary">Reset</Button>
+    </div>
+  </Form>
+  ```
+
+</ExampleSwitcher>
+
+## Submitting data
+
+When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms.html) guide details about integrating with frameworks.
+
+<ExampleSwitcher type={null} examples={['React 19', 'React 18']}>
+
+```tsx render
+"use client";
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
+
+<Form
+  /*- begin highlight -*/
+  action={formData => {
+    let name = formData.get('name');
+    alert(`Hello, ${name}!`);
+  }}>
+  {/*- end highlight -*/}
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+```tsx render
+"use client";
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
+
+<Form
+  /*- begin highlight -*/
+  onSubmit={event => {
+    // Prevent default browser page refresh.
+    event.preventDefault();
+
+    // Get data from form.
+    let formData = new FormData(event.target);
+    let name = formData.get('name');
+    alert(`Hello, ${name}!`);
+
+    // Reset form after submission.
+    event.target.reset();
+  }}>
+  {/*- end highlight -*/}
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+</ExampleSwitcher>
+
+## Validation
+
+Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms.html) guide for more details.
+
+```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="vanilla" files={["starters/docs/src/Form.tsx", "starters/docs/src/Form.css"]}
+"use client";
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
+
+<Form/* PROPS */>
+  <TextField
+    label="Username"
+    placeholder="Choose a username"
+    isRequired
+    validate={value => value === 'admin' ? 'Nice try.' : null}
+    name="username"
+    defaultValue="admin" />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+### Server validation
+
+Use the `validationErrors` prop to provide server validation errors to the fields within a `<Form>`.
+
+```tsx render
+"use client";
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+
+<Form
+  /*- begin highlight -*/
+  validationErrors={{
+    username: 'This username is not available.'
+  }}>
+  {/*- end highlight -*/}
+  <TextField
+    name="username"
+    label="Username"
+    placeholder="Choose a username"
+    defaultValue="admin" />
+</Form>
+```
+
+### Focus management
+
+By default, after a user submits a form with validation errors, the first invalid field will be focused. To prevent this, call `preventDefault()` in the `onInvalid` event. This example moves focus to an [alert](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role) at the top of the form.
+
+```tsx render
+"use client";
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+function Example() {
+  let [isInvalid, setInvalid] = useState(false);
+
+  return (
+    <Form
+      /*- begin highlight -*/
+      onInvalid={e => {
+        e.preventDefault();
+        setInvalid(true);
+      }}
+      /*- end highlight -*/
+      onSubmit={e => {
+        e.preventDefault();
+        setInvalid(false);
+      }}
+      onReset={() => setInvalid(false)}>
+      {isInvalid &&
+        <div role="alert" tabIndex={-1} ref={e => e?.focus()}>
+          <h3>Unable to submit</h3>
+          <p>Please fix the validation errors below, and re-submit the form.</p>
+        </div>
+      }
+      <TextField
+        name="firstName"
+        isRequired
+        label="First Name"
+        placeholder="Enter your first name" />
+      <TextField
+        name="lastName"
+        isRequired
+        label="Last Name"
+        placeholder="Enter your last name" />
+      <div style={{display: 'flex', gap: 8}}>
+        <Button type="submit">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </div>
+    </Form>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="form" pages={props.pages} />
+
+## API
+
+<PropTable component={docs.exports.Form} links={docs.links} />

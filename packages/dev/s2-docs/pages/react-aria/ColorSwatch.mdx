@@ -1,0 +1,51 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/ColorSwatch';
+import {ColorSwatch as VanillaColorSwatch} from 'vanilla-starter/ColorSwatch';
+import {ColorSwatch as TailwindColorSwatch} from 'tailwind-starter/ColorSwatch';
+import '../../tailwind/tailwind.css';
+
+export const tags = [];
+
+# ColorSwatch
+
+<PageDescription>{docs.exports.ColorSwatch.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaColorSwatch}
+    docs={vanillaDocs.exports.ColorSwatch}
+    links={vanillaDocs.links}
+    props={[]}
+    initialProps={{color: '#f00'}}
+    type="vanilla"
+    files={["starters/docs/src/ColorSwatch.tsx", "starters/docs/src/ColorSwatch.css"]} />
+  <VisualExample
+    component={TailwindColorSwatch}
+    docs={vanillaDocs.exports.ColorSwatch}
+    links={vanillaDocs.links}
+    props={[]}
+    initialProps={{color: '#f00'}}
+    type="tailwind"
+    files={["starters/tailwind/src/ColorSwatch.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Accessibility
+
+By default, ColorSwatch includes a localized color description for screen reader users (e.g. "dark vibrant blue"). Use the `colorName` prop to override this. Set an `aria-label` to provide additional context. In this example, a screen reader will announce "Fire truck red, Background color".
+
+```tsx render expanded
+"use client";
+import {ColorSwatch} from 'vanilla-starter/ColorSwatch';
+
+<ColorSwatch
+  color="#f00"
+  aria-label="Background color"
+  colorName="Fire truck red" />
+```
+
+## API
+
+<PropTable component={docs.exports.ColorSwatch} links={docs.links} />

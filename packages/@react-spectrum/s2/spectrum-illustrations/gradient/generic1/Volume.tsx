@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 import Volume_L from 'illustration:./S2_fill_volume_generic1_160.svg';
 import Volume_M from 'illustration:./S2_fill_volume_generic1_96.svg';
 import Volume_S from 'illustration:./S2_fill_volume_generic1_48.svg';
 
-export default function Volume(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Volume(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

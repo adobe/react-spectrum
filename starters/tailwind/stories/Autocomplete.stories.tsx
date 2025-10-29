@@ -1,28 +1,36 @@
-import type { Meta } from '@storybook/react';
-import React from 'react';
-import { Autocomplete, AutocompleteItem, AutocompleteSection } from '../src/Autocomplete';
+import {Meta} from "@storybook/react";
+import React from "react";
+import {CommandPalette} from "../src/CommandPalette";
+import {Button} from "../src/Button";
+import {DialogTrigger} from "react-aria-components";
+import {MenuItem, MenuSection} from "../src/Menu";
 
-const meta: Meta<typeof Autocomplete> = {
-  component: Autocomplete,
+const meta: Meta<typeof CommandPalette> = {
+  component: CommandPalette,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs'],
-  args: {
-    label: 'Ice cream flavor'
-  }
+  tags: ['autodocs']
 };
 
 export default meta;
 
 export const Example = (args: any) => (
-  <Autocomplete {...args}>
-    <AutocompleteItem>Chocolate</AutocompleteItem>
-    <AutocompleteItem id="mint">Mint</AutocompleteItem>
-    <AutocompleteItem>Strawberry</AutocompleteItem>
-    <AutocompleteItem>Vanilla</AutocompleteItem>
-    <AutocompleteItem>Cookies and Cream</AutocompleteItem>
-  </Autocomplete>
+  <DialogTrigger>
+    <Button>
+      Open Command Palette{' '}
+      <kbd className="px-1 ml-4 font-sans text-xs rounded-sm border border-white/20 bg-white/10">
+        ⌘ J
+      </kbd>
+    </Button>
+    <CommandPalette {...args}>
+      <MenuItem>Chocolate</MenuItem>
+      <MenuItem id="mint">Mint</MenuItem>
+      <MenuItem>Strawberry</MenuItem>
+      <MenuItem>Vanilla</MenuItem>
+      <MenuItem>Cookies and Cream</MenuItem>
+    </CommandPalette>
+  </DialogTrigger>
 );
 
 export const DisabledItems = (args: any) => <Example {...args} />;
@@ -31,30 +39,38 @@ DisabledItems.args = {
 };
 
 export const Sections = (args: any) => (
-  <Autocomplete {...args}>
-    <AutocompleteSection title="Fruit">
-      <AutocompleteItem id="Apple">Apple</AutocompleteItem>
-      <AutocompleteItem id="Banana">Banana</AutocompleteItem>
-      <AutocompleteItem id="Orange">Orange</AutocompleteItem>
-      <AutocompleteItem id="Honeydew">Honeydew</AutocompleteItem>
-      <AutocompleteItem id="Grapes">Grapes</AutocompleteItem>
-      <AutocompleteItem id="Watermelon">Watermelon</AutocompleteItem>
-      <AutocompleteItem id="Cantaloupe">Cantaloupe</AutocompleteItem>
-      <AutocompleteItem id="Pear">Pear</AutocompleteItem>
-    </AutocompleteSection>
-    <AutocompleteSection title="Vegetable">
-      <AutocompleteItem id="Cabbage">Cabbage</AutocompleteItem>
-      <AutocompleteItem id="Broccoli">Broccoli</AutocompleteItem>
-      <AutocompleteItem id="Carrots">Carrots</AutocompleteItem>
-      <AutocompleteItem id="Lettuce">Lettuce</AutocompleteItem>
-      <AutocompleteItem id="Spinach">Spinach</AutocompleteItem>
-      <AutocompleteItem id="Bok Choy">Bok Choy</AutocompleteItem>
-      <AutocompleteItem id="Cauliflower">Cauliflower</AutocompleteItem>
-      <AutocompleteItem id="Potatoes">Potatoes</AutocompleteItem>
-    </AutocompleteSection>
-  </Autocomplete>
+  <DialogTrigger>
+    <Button>
+      Open Command Palette{' '}
+      <kbd className="px-1 ml-4 font-sans text-xs rounded-sm border border-white/20 bg-white/10">
+        ⌘ J
+      </kbd>
+    </Button>
+    <CommandPalette {...args}>
+      <MenuSection title="Fruit">
+        <MenuItem id="Apple">Apple</MenuItem>
+        <MenuItem id="Banana">Banana</MenuItem>
+        <MenuItem id="Orange">Orange</MenuItem>
+        <MenuItem id="Honeydew">Honeydew</MenuItem>
+        <MenuItem id="Grapes">Grapes</MenuItem>
+        <MenuItem id="Watermelon">Watermelon</MenuItem>
+        <MenuItem id="Cantaloupe">Cantaloupe</MenuItem>
+        <MenuItem id="Pear">Pear</MenuItem>
+      </MenuSection>
+      <MenuSection title="Vegetable">
+        <MenuItem id="Cabbage">Cabbage</MenuItem>
+        <MenuItem id="Broccoli">Broccoli</MenuItem>
+        <MenuItem id="Carrots">Carrots</MenuItem>
+        <MenuItem id="Lettuce">Lettuce</MenuItem>
+        <MenuItem id="Spinach">Spinach</MenuItem>
+        <MenuItem id="Bok Choy">Bok Choy</MenuItem>
+        <MenuItem id="Cauliflower">Cauliflower</MenuItem>
+        <MenuItem id="Potatoes">Potatoes</MenuItem>
+      </MenuSection>
+    </CommandPalette>
+  </DialogTrigger>
 );
 
 Sections.args = {
-  label: 'Preferred fruit or vegetable'
+  label: 'Preferred fruit or vegetable',
 };

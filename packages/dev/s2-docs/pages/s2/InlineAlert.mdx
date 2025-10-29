@@ -1,0 +1,60 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {InlineAlert} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['alert', 'notification', 'banner', 'message'];
+
+# InlineAlert
+
+<PageDescription>{docs.exports.InlineAlert.description}</PageDescription>
+
+```tsx render docs={docs.exports.InlineAlert} links={docs.links} props={['variant', 'fillStyle']} initialProps={{variant: 'neutral'}} type="s2"
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+<InlineAlert/* PROPS */>
+  <Heading>Payment Information</Heading>
+  <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
+</InlineAlert>
+```
+
+## Auto focus
+
+Use the `autoFocus` prop to focus the alert when it first renders. This is useful for displaying alerts that need immediate attention, such as form submission errors.
+
+```tsx render hideImports
+"use client";
+import {InlineAlert, Heading, Content, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [shown, setShown] = useState(false);
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center'})}>
+      <Button variant="primary" onPress={() => setShown(!shown)}>
+        {shown ? 'Hide Alert' : 'Show Alert'}
+      </Button>
+      {shown &&
+        <InlineAlert variant="negative" autoFocus>
+          <Heading>Error</Heading>
+          <Content>There was an error processing your request. Please try again.</Content>
+        </InlineAlert>
+      }
+    </div>
+  );
+}
+```
+
+## API
+
+```tsx links={{InlineAlert: '#inlinealert'}}
+<InlineAlert>
+  <Heading />
+  <Content />
+</InlineAlert>
+```
+
+<PropTable component={docs.exports.InlineAlert} links={docs.links} />

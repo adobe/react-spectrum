@@ -15,14 +15,14 @@ import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import AnnotatePen from '@spectrum-icons/workflow/AnnotatePen';
-import {ComponentStoryObj, Meta} from '@storybook/react';
 import {Item, Menu, MenuTrigger, Section, SubmenuTrigger} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
-import React from 'react';
+import {Meta, StoryObj} from '@storybook/react';
+import React, {JSX} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import TextIndentIncrease from '@spectrum-icons/workflow/TextIndentIncrease';
 import TextItalics from '@spectrum-icons/workflow/TextItalic';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<SpectrumMenuTriggerProps> = {
   title: 'MenuTrigger/SubmenuTrigger',
@@ -131,7 +131,7 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
   }
 };
 
-export type DefaultStory = ComponentStoryObj<typeof DefaultSubmenu>;
+export type DefaultStory = StoryObj<typeof DefaultSubmenu>;
 
 export const Default: DefaultStory = {
   render: () => <DefaultSubmenu />,
@@ -143,6 +143,9 @@ Default.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  // clean up any previous click state
+  await userEvent.click(document.body);
   await userEvent.hover(menuItems[0]);
   let submenuTrigger = await within(body).findByText('Baseline');
   await userEvent.hover(submenuTrigger);
@@ -166,11 +169,14 @@ Mobile.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
+
+  // clean up any previous click state
+  await userEvent.click(document.body);
   await userEvent.click(menuItems[0]);
   await within(body).findByText('Baseline');
 };
 
-function DefaultSubmenu(props) {
+function DefaultSubmenu(props: Omit<SpectrumMenuTriggerProps, 'children'>): JSX.Element {
   return (
     <MenuTrigger {...props} isOpen>
       <ActionButton>

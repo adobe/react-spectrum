@@ -1,0 +1,273 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const section = 'Guides';
+export const tags = ['links', 'navigation'];
+export const description = 'Integrating client side routing with React Spectrum';
+
+# Client Side Routing
+
+<PageDescription>Many React Spectrum components support rendering as HTML links. This page discusses how to set up your app to integrate React Spectrum links with your framework or client side router.</PageDescription>
+
+## Introduction
+
+React Spectrum components such as [Menu](Menu.html), [Tabs](Tabs.html), [TableView](TableView.html), and many others support rendering elements as links that perform navigation when the user interacts with them. Each component that supports link behavior accepts the `href` prop, which causes the component to render an `<a>` element. Other link DOM props such as `target` and `download` are also supported.
+
+By default, links perform native browser navigation when they are interacted with. However, many apps and frameworks use client side routers to avoid a full page reload when navigating between pages. The [Provider](getting-started.html#setting-up-your-app) component can configure all React Spectrum components within it to navigate using the client side router you provide. Set this up once in the root of your app, and any React Spectrum component with the `href` prop will automatically navigate using your router.
+
+Note that external links to different origins will not trigger client side routing, and will use native browser navigation. Additionally, if the link has a [target](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target) other than `"_self"`, uses the [download](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download) attribute, or the user presses modifier keys such as <Keyboard>Command</Keyboard> or <Keyboard>Alt</Keyboard> to change the default behavior, browser native navigation will occur instead of client side routing.
+
+## Provider setup
+
+The `Provider` component accepts a `router` prop, which can be set to a router object. This should include a `navigate` function received from your router for performing a client side navigation programmatically. It can optionally also include a `useHref` function that converts a router-specific href to a native HTML href, e.g. prepending a base path. The following example shows the general pattern. Framework-specific examples are shown below.
+
+```tsx
+import {Provider} from '@react-spectrum/s2';
+import {useNavigate, useHref} from 'your-router';
+
+function App() {
+  let navigate = useNavigate();
+
+  return (
+    <Provider router={{navigate, useHref}}>
+      {/* ... */}
+    </Provider>
+  );
+}
+```
+
+### Router options
+
+All React Spectrum link components accept a `routerOptions` prop, which is an object that is passed through to the client side router's `navigate` function as the second argument. This can be used to control any router-specific behaviors, such as scrolling, replacing instead of pushing to the history, etc.
+
+```tsx
+<MenuItem href="/login" routerOptions={{replace: true}}>{/* ...*/}</MenuItem>
+```
+
+When using TypeScript, you can configure the `RouterConfig` type globally so that all link components have auto complete and type safety using a type provided by your router.
+
+```tsx
+import type {RouterOptions} from 'your-router';
+
+declare module '@react-spectrum/s2' {
+  interface RouterConfig {
+    routerOptions: RouterOptions
+  }
+}
+```
+
+### React Router
+
+The [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) hook from `react-router-dom` returns a `navigate` function you can pass to `Provider`. The [useHref](https://reactrouter.com/en/main/hooks/use-href) hook can also be provided if you're using React Router's `basename` option. Ensure that the component that calls `useNavigate` and renders `Provider` is inside the router component (e.g. `BrowserRouter`) so that it has access to React Router's internal context. The React Router `<Routes>` element should also be defined inside React Spectrum's `<Provider>` so that links inside the rendered routes have access to the router.
+
+```tsx
+import {BrowserRouter, useNavigate, useHref, type NavigateOptions} from 'react-router-dom';
+import {Provider} from '@react-spectrum/s2';
+
+declare module '@react-spectrum/s2' {
+  interface RouterConfig {
+    routerOptions: NavigateOptions
+  }
+}
+
+function App() {
+  let navigate = useNavigate();
+
+  return (
+    <Provider router={{navigate, useHref}}>
+      {/* Your app here... */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        {/* ... */}
+      </Routes>
+    </Provider>
+  );
+}
+
+<BrowserRouter>
+  <App />
+</BrowserRouter>
+```
+
+### Next.js
+
+#### App router
+
+The [useRouter](https://nextjs.org/docs/app/api-reference/functions/use-router) hook from `next/navigation` returns a router object that can be used to perform navigation. `Provider` should be rendered from a client component at the root of each page or layout that includes React Spectrum components. You can create a new client component for this, or combine it with other top-level providers as described in the [Next.js docs](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#using-context-providers).
+
+```tsx
+// app/provider.tsx
+"use client";
+
+import {useRouter} from 'next/navigation';
+import {Provider} from '@react-spectrum/s2';
+
+declare module '@react-spectrum/s2' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>
+  }
+}
+
+export function ClientProviders({children}) {
+  let router = useRouter();
+
+  return (
+    <Provider router={{navigate: router.push}}>
+      {children}
+    </Provider>
+  );
+}
+```
+
+Then, in your page or layout server component, wrap your app in the `ClientProviders` component that you defined.
+
+```tsx
+// app/layout.tsx
+import {ClientProviders} from './provider';
+
+export default function RootLayout({children}) {
+  return (
+    <html>
+      <body>
+        <ClientProviders>{children}</ClientProviders>
+      </body>
+    </html>
+  );
+}
+```
+
+If you are using the Next.js [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) setting, you'll need to configure an environment variable to access it. Then, provide a custom `useHref` function to prepend it to the href for all links.
+
+```tsx
+// next.config.js
+const basePath = '...';
+const nextConfig = {
+  basePath,
+  env: {
+    BASE_PATH: basePath
+  }
+};
+```
+
+```tsx
+// app/provider.tsx
+// ...
+
+export function ClientProviders({children}) {
+  let router = useRouter();
+  /*- begin highlight -*/
+  let useHref = (href: string) => process.env.BASE_PATH + href;
+  /*- end highlight -*/
+
+  return (
+    <Provider router={{navigate: router.push, useHref}}>
+      {children}
+    </Provider>
+  );
+}
+```
+
+#### Pages router
+
+The [useRouter](https://nextjs.org/docs/pages/api-reference/functions/use-router) hook from `next/router` returns a router object that can be used to perform navigation. `Provider` should be rendered at the root of each page that includes React Spectrum components, or in `pages/_app.tsx` to add it to all pages.
+
+```tsx
+// pages/_app.tsx
+import type {AppProps} from 'next/app';
+import {useRouter, type NextRouter} from 'next/router';
+import {Provider} from '@react-spectrum/s2';
+
+declare module '@react-spectrum/s2' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<NextRouter['push']>[2]>
+  }
+}
+
+export default function MyApp({Component, pageProps}: AppProps) {
+  let router = useRouter();
+
+  return (
+    <Provider 
+      router={{
+        navigate: (href, opts) => router.push(href, undefined, opts),
+      }}>
+      <Component {...pageProps} />
+    </Provider>
+  );
+}
+```
+
+When using the [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) configuration option, provide a `useHref` option to the `router` passed to `Provider` to prepend it to links automatically.
+
+```tsx
+// pages/_app.tsx
+// ...
+
+export default function MyApp({Component, pageProps}: AppProps) {
+  let router = useRouter();
+
+  return (
+    <Provider 
+      router={{
+        navigate: (href, opts) => router.push(href, undefined, opts),
+        /*- begin highlight -*/
+        useHref: (href: string) => router.basePath + href
+        /*- end highlight -*/
+      }}>
+      <Component {...pageProps} />
+    </Provider>
+  );
+}
+```
+
+### Remix
+
+Remix uses React Router under the hood, so the same [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) and [useHref](https://reactrouter.com/en/main/hooks/use-href) hooks described above also work in Remix apps. `Provider` should be rendered at the root of each page that includes React Spectrum components, or in `app/root.tsx` to add it to all pages. See the [Remix docs](https://remix.run/docs/en/main/file-conventions/root) for more details.
+
+```tsx
+// app/root.tsx
+import {useNavigate, useHref, Outlet} from '@remix-run/react';
+import type {NavigateOptions} from 'react-router-dom';
+import {Provider} from '@react-spectrum/s2';
+
+declare module '@react-spectrum/s2' {
+  interface RouterConfig {
+    routerOptions: NavigateOptions
+  }
+}
+
+export default function App() {
+  let navigate = useNavigate();
+
+  return (
+    <html lang="en">
+      <head>
+        {/* ... */}
+      </head>
+      <body>
+        <Provider router={{navigate, useHref}}>
+          <Outlet />
+        </Provider>
+        {/* ... */}
+      </body>
+    </html>
+  );
+}
+```
+
+## TanStack Router
+
+To use [TanStack Router](https://tanstack.com/router) with React Spectrum, use the [createLink](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) function to wrap each React Spectrum component as a link. `RouterProvider` is not needed.
+
+```tsx
+// src/Link.tsx
+import {createLink} from '@tanstack/react-router';
+import {Link as SpectrumLink, MenuItem} from '@react-spectrum/s2';
+
+export const Link = createLink(SpectrumLink);
+export const MenuItemLink = createLink(MenuItem);
+```
+
+In your app, use these components instead of importing directly from `@react-spectrum/s2`.

@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+'use client';
 import {animate, useIntersectionObserver} from './utils';
 import {Button} from 'tailwind-starter/Button';
 import {ButtonContext, Key, TooltipTrigger} from 'react-aria-components';
 import {CogIcon, PencilIcon, ShareIcon} from 'lucide-react';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useRef, useState} from 'react';
 import {Tooltip} from 'tailwind-starter/Tooltip';
 
-export function MouseAnimation() {
+export function MouseAnimation(): ReactNode {
   let ref = useRef<HTMLDivElement>(null);
   let [tooltip, setTooltip] = useState<Key | null>(null);
   let [hovered, setHovered] = useState<Key | null>(null);

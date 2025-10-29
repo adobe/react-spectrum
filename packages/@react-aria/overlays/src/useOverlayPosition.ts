@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PositionResult} from './calculatePosition';
+import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -37,6 +37,10 @@ export interface AriaPositionProps extends PositionProps {
    * The ref for the overlay element.
    */
   overlayRef: RefObject<Element | null>,
+  /**
+   * The ref for the arrow element.
+   */
+  arrowRef?: RefObject<Element | null>,
   /**
    * A ref for the scrollable region within the overlay.
    * @default overlayRef
@@ -68,6 +72,8 @@ export interface PositionAria {
   arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis | null,
+  /** The origin of the target in the overlay's coordinate system. Useful for animations. */
+  triggerAnchorPoint: {x: number, y: number} | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -86,9 +92,10 @@ let visualViewport = typeof document !== 'undefined' ? window.visualViewport : n
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
   let {
-    arrowSize = 0,
+    arrowSize,
     targetRef,
     overlayRef,
+    arrowRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
     containerPadding = 12,
@@ -109,6 +116,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement,
     overlayRef.current,
     targetRef.current,
+    arrowRef?.current,
     scrollRef.current,
     containerPadding,
     shouldFlip,
@@ -181,7 +189,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       offset,
       crossOffset,
       maxHeight,
-      arrowSize,
+      arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
       arrowBoundaryOffset
     });
 
@@ -280,13 +288,16 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   return {
     overlayProps: {
       style: {
-        position: 'absolute',
+        position: position ? 'absolute' : 'fixed',
+        top: !position ? 0 : undefined,
+        left: !position ? 0 : undefined,
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position?.position,
         maxHeight: position?.maxHeight ?? '100vh'
       }
     },
     placement: position?.placement ?? null,
+    triggerAnchorPoint: position?.triggerAnchorPoint ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',

@@ -1,0 +1,86 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ActionButton} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# ActionButton
+
+<PageDescription>{docs.exports.ActionButton.description}</PageDescription>
+
+<VisualExample
+  component={ActionButton}
+  docs={docs.exports.ActionButton}
+  props={['children', 'size', 'staticColor', 'isQuiet', 'isDisabled', 'isPending']}
+  initialProps={{children: 'Action'}}
+  slots={{icon: true, avatar: true, badge: true}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Events
+
+Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button.
+
+```tsx render hideImports
+"use client";
+import {ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [count, setCount] = useState(0);
+
+  return (
+    /*- begin highlight -*/
+    <ActionButton onPress={() => setCount(c => c + 1)}>
+    {/*- end highlight -*/}
+      {count} Edits
+    </ActionButton>
+  );
+}
+```
+
+## Pending
+
+Use the `isPending` prop to display a pending state. Pending buttons remain focusable, but are otherwise disabled. After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon.
+
+```tsx render
+"use client";
+import {ActionButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function PendingButton() {
+  let [isPending, setPending] = useState(false);
+
+  return (
+    <ActionButton
+      variant="primary"
+      ///- begin highlight -///
+      isPending={isPending}
+      ///- end highlight -///
+      onPress={() => {
+        setPending(true);
+        setTimeout(() => {
+          setPending(false);
+        }, 5000);
+      }}>
+      Save
+    </ActionButton>
+  );
+}
+```
+
+## API
+
+```tsx links={{ActionButton: '#actionbutton', Avatar: 'Avatar.html'}}
+<ActionButton>
+  <Icon /> or <Avatar />
+  <Text />
+  <NotificationBadge />
+</ActionButton>
+```
+
+### ActionButton
+
+<PropTable component={docs.exports.ActionButton} links={docs.links} />

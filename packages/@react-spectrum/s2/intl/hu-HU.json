@@ -6,9 +6,13 @@
   "actionbar.selectedAll": "Mind kijelölve",
   "breadcrumbs.more": "További elemek",
   "button.pending": "függőben levő",
+  "calendar.invalidSelection": "A kijelölt {selectedCount, plural, one {dátum nem érhető el} other {dátumok nem érhetőek el}}.",
   "combobox.noResults": "Nincsenek találatok",
   "contextualhelp.help": "Súgó",
   "contextualhelp.info": "Információ",
+  "datepicker.endTime": "Befejezés ideje",
+  "datepicker.startTime": "Kezdés ideje",
+  "datepicker.time": "Idő",
   "dialog.alert": "Figyelmeztetés",
   "dialog.dismiss": "Elutasítás",
   "dropzone.replaceMessage": "Ejtse le a fájlt a cseréhez",
@@ -22,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Új tevékenység",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Kiválasztás…",
+  "picker.selectedCount": "{count, plural, =0 {Egy elem sincs kijelölve} one {# elem kijelölve} other {# elem kijelölve}}",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Betöltés folyamatban…",
@@ -33,7 +38,7 @@
   "tag.hideButtonLabel": "Mutass kevesebbet",
   "tag.noTags": "Egyik sem",
   "tag.showAllButtonLabel": "Az összes megjelenítése ({tagCount, number})",
-  "toast.clearAll": "Clear all",
-  "toast.collapse": "Collapse",
-  "toast.showAll": "Show all"
+  "toast.clearAll": "Összes törlése",
+  "toast.collapse": "Összecsukás",
+  "toast.showAll": "Összes megjelenítése"
 }

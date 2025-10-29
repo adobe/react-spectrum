@@ -12,7 +12,7 @@
 
 import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
 import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
-import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, rawColorToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, shadowToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -330,7 +330,7 @@ const padding = {
   ...relativeSpacing
 };
 
-export function size(this: MacroContext | void, px: number): string {
+export function size(this: MacroContext | void, px: number): `calc(${string})` {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
@@ -432,11 +432,20 @@ const timingFunction = {
 let durationValue = (value: number | string) => typeof value === 'number' ? value + 'ms' : value;
 
 const fontWeightBase = {
-  light: '300',
   normal: '400',
-  medium: '500',
-  bold: '700',
-  'extra-bold': '800',
+  medium: {
+    default: '500',
+    ':lang(ar, he)': '600' // Myriad does not have a 500 weight
+  },
+  bold: {
+    default: '700',
+    ':lang(ja, ko, zh)': '500' // Adobe Clean Han uses 500 as the bold weight
+  },
+  'extra-bold': {
+    default: '800',
+    ':lang(ja, ko, zh)': '700', // Adobe Clean Han uses 700 as the extra bold weight.
+    ':lang(ar, he)': '700' // Myriad does not have a 800 weight
+  },
   black: '900'
 } as const;
 
@@ -464,6 +473,7 @@ const i18nFonts = {
   ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
   // TODO: are these fallbacks supposed to be different than above?
   ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+  ':lang(zh-HK)': "adobe-clean-han-hong-kong, source-han-hong-kong, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
   ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
 } as const;
 
@@ -515,6 +525,15 @@ const fontSize = {
   'code-lg': fontSizeToken('code-size-l'),
   'code-xl': fontSizeToken('code-size-xl')
 } as const;
+
+// Line heights linearly interpolate between 1.3 and 1.15 for font sizes between 10 and 32, rounded to the nearest 2px.
+// Text above 32px always has a line height of 1.15.
+const fontSizeCalc = 'var(--s2-font-size-base, 14) * var(--fs)';
+const minFontScale = 1.15;
+const maxFontScale = 1.3;
+const minFontSize = 10;
+const maxFontSize = 32;
+const lineHeightCalc = `round(1em * (${minFontScale} + (1 - ((min(${maxFontSize}, ${fontSizeCalc}) - ${minFontSize})) / ${maxFontSize - minFontSize}) * ${(maxFontScale - minFontScale).toFixed(2)}), 2px)`;
 
 export const style = createTheme({
   properties: {
@@ -731,20 +750,27 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: 'var(--s2-font-family-sans, adobe-clean-spectrum-vf), adobe-clean-variable, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
-        default: 'adobe-clean-serif, "Source Serif", Georgia, serif',
+        default: 'var(--s2-font-family-serif, adobe-clean-spectrum-srf-vf), adobe-clean-serif, "Source Serif", Georgia, serif',
         ...i18nFonts
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize,
+    fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
+      if (typeof value === 'number') {
+        return {
+          '--fs': `pow(1.125, ${value})`,
+          fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
+        } as CSSProperties;
+      }
+
+      return {fontSize: value};
+    }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
       return {
-        // Set font-variation-settings in addition to font-weight to work around typekit issue.
-        fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
         fontWeight: value as any,
         fontSynthesisWeight: 'none'
       };
@@ -752,28 +778,36 @@ export const style = createTheme({
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
-        default: getToken('line-height-100'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('line-height-200')
+        // Calculate line-height based on font size.
+        default: lineHeightCalc,
+        // Arabic and hebrew use the old line-height for now since they are on Myriad instead of Adobe Clean.
+        ':lang(ar, he)': getToken('line-height-100'),
+        // CJK fonts use a larger line-height.
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('line-height-200')
       },
       heading: {
-        default: getToken('heading-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('heading-cjk-line-height')
+        default: lineHeightCalc,
+        ':lang(ar, he)': getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('heading-cjk-line-height')
       },
       title: {
-        default: getToken('title-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('title-cjk-line-height')
+        default: lineHeightCalc,
+        ':lang(ar, he)': getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('title-cjk-line-height')
       },
       body: {
+        // Body text uses spacious line height, 1.5 for all font sizes.
         default: getToken('body-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('body-cjk-line-height')
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('body-cjk-line-height')
       },
       detail: {
-        default: getToken('detail-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('detail-cjk-line-height')
+        default: lineHeightCalc,
+        ':lang(ar, he)': getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('detail-cjk-line-height')
       },
       code: {
         default: getToken('code-line-height'),
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('code-cjk-line-height')
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('code-cjk-line-height')
       }
     },
     listStyleType: ['none', 'disc', 'decimal'] as const,
@@ -795,20 +829,22 @@ export const style = createTheme({
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
-    wordBreak: ['normal', 'break-all', 'keep-all'] as const, // also overflowWrap??
+    wordBreak: ['normal', 'break-all', 'keep-all', 'break-word'] as const,
+    overflowWrap: ['normal', 'anywhere', 'break-word'] as const,
     boxDecorationBreak: ['slice', 'clone'] as const,
 
     // effects
     boxShadow: {
-      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')}`,
-      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')}`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
+      emphasized: shadowToken('drop-shadow-emphasized').join(', '),
+      elevated: shadowToken('drop-shadow-elevated').join(', '),
+      dragged: shadowToken('drop-shadow-dragged').join(', '),
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')})`,
-      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')})`,
-      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
+      // layer order is reversed for filter property. filters are applied in the order they are specified.
+      emphasized: shadowToken('drop-shadow-emphasized').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      elevated: shadowToken('drop-shadow-elevated').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      dragged: shadowToken('drop-shadow-dragged').reverse().map(s => `drop-shadow(${s})`).join(' '),
       none: 'none'
     },
     borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),
@@ -866,6 +902,7 @@ export const style = createTheme({
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
     animationIterationCount: new ArbitraryProperty<number | string>('animationIterationCount'),
     animationTimingFunction: timingFunction,
+    animationPlayState: ['paused', 'running'] as const,
 
     // layout
     display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?
@@ -924,7 +961,8 @@ export const style = createTheme({
     zIndex: new ArbitraryProperty<number>('zIndex'),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     disableTapHighlight: new ArbitraryProperty('-webkit-tap-highlight-color', (_value: true) => 'rgba(0,0,0,0)'),
-    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const
+    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const,
+    caretColor: ['auto', 'transparent'] as const
   },
   shorthands: {
     padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'] as const,

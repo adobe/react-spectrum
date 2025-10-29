@@ -1,0 +1,191 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/ColorPicker';
+import {ColorPicker as VanillaColorPicker} from 'vanilla-starter/ColorPicker';
+import {ColorPicker as TailwindColorPicker} from 'tailwind-starter/ColorPicker';
+import '../../tailwind/tailwind.css';
+
+export const tags = ['input'];
+
+# ColorPicker
+
+<PageDescription>{docs.exports.ColorPicker.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaColorPicker}
+    docs={vanillaDocs.exports.ColorPicker}
+    links={vanillaDocs.links}
+    props={['label']}
+    initialProps={{label: 'Fill', defaultValue: '#5100FF'}}
+    type="vanilla"
+    files={["starters/docs/src/ColorPicker.tsx", "starters/docs/src/ColorPicker.css"]} />
+  <VisualExample
+    component={TailwindColorPicker}
+    docs={vanillaDocs.exports.ColorPicker}
+    links={vanillaDocs.links}
+    props={['label']}
+    initialProps={{label: 'Fill', defaultValue: '#5100FF'}}
+    type="tailwind"
+    files={["starters/tailwind/src/ColorPicker.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the color value. This may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function. The `onChange` event is always called with a `Color` object.
+
+```tsx render
+"use client";
+import {parseColor} from 'react-aria-components';
+import {ColorPicker} from 'vanilla-starter/ColorPicker';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(parseColor('hsl(50, 100%, 50%)'));
+
+  return (
+    <>
+      <ColorPicker
+        label="Color"
+        /*- begin highlight -*/
+        value={value}
+        onChange={setValue} />
+        {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>Selected color: {value.toString('hsl')}</pre>
+    </>
+  );
+}
+```
+
+## Examples
+
+### Channel sliders
+
+This example uses [ColorSlider](ColorSlider.html) to allow a user to adjust each channel of a color value, with a [Select](Select.html) to switch between color spaces.
+
+```tsx render
+"use client";
+import type {ColorSpace} from 'react-aria-components';
+import {getColorChannels} from 'react-aria-components';
+import {ColorPicker} from 'vanilla-starter/ColorPicker';
+import {ColorSlider} from 'vanilla-starter/ColorSlider';
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {useState} from 'react';
+
+function Example() {
+  let [space, setSpace] = useState<ColorSpace>('rgb');
+
+  return (
+    <ColorPicker label="Fill color" defaultValue="#184">
+      <Select aria-label="Color space" selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
+        <SelectItem id="rgb">RGB</SelectItem>
+        <SelectItem id="hsl">HSL</SelectItem>
+        <SelectItem id="hsb">HSB</SelectItem>
+      </Select>
+      {getColorChannels(space).map(channel => (
+        <ColorSlider
+          key={channel}
+          colorSpace={space}
+          channel={channel} />
+      ))}
+      <ColorSlider channel="alpha" />
+    </ColorPicker>
+  );
+}
+```
+
+### Color wheel
+
+This example combines a [ColorWheel](ColorWheel.html) and [ColorArea](ColorArea.html) to build an HSB color picker.
+
+```tsx render
+"use client";
+import {ColorPicker} from 'vanilla-starter/ColorPicker';
+import {ColorWheel} from 'vanilla-starter/ColorWheel';
+import {ColorArea} from 'vanilla-starter/ColorArea';
+
+<ColorPicker label="Stroke color" defaultValue="#345">
+  <ColorWheel />
+  <ColorArea 
+    colorSpace="hsb"
+    xChannel="saturation"
+    yChannel="brightness"
+    style={{
+      width: '100px',
+      height: '100px',
+      position: 'absolute',
+      top: 'calc(50% - 50px)',
+      left: 'calc(50% - 50px)'}} />
+</ColorPicker>
+```
+
+### Channel fields
+
+This example uses [ColorField](ColorField.html) to allow a user to edit the value of each color channel as a number, along with a [Select](Select.html) to switch between color spaces.
+
+```tsx render
+"use client";
+import type {ColorSpace} from 'react-aria-components';
+import {ColorPicker} from 'vanilla-starter/ColorPicker';
+import {getColorChannels} from 'react-aria-components';
+import {ColorArea} from 'vanilla-starter/ColorArea';
+import {ColorSlider} from 'vanilla-starter/ColorSlider';
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {ColorField} from 'vanilla-starter/ColorField';
+import {useState} from 'react';
+
+function Example() {
+  let [space, setSpace] = useState<ColorSpace>('rgb');
+
+  return (
+    <ColorPicker label="Color" defaultValue="#f80">
+      <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
+      <ColorSlider colorSpace="hsb" channel="hue" />
+      <Select aria-label="Color space" selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
+        <SelectItem id="rgb">RGB</SelectItem>
+        <SelectItem id="hsl">HSL</SelectItem>
+        <SelectItem id="hsb">HSB</SelectItem>
+      </Select>
+      <div style={{display: 'flex', gap: 4, width: 192}}>
+        {getColorChannels(space).map(channel => (
+          <ColorField
+            key={channel}
+            colorSpace={space}
+            channel={channel}
+            style={{flex: 1}} />
+        ))}
+      </div>
+    </ColorPicker>
+  );
+}
+```
+
+### Swatches
+
+This example uses a [ColorSwatchPicker](ColorSwatchPicker.html) to provide color presets for a color picker.
+
+```tsx render
+"use client";
+import {ColorPicker} from 'vanilla-starter/ColorPicker';
+import {ColorArea} from 'vanilla-starter/ColorArea';
+import {ColorSlider} from 'vanilla-starter/ColorSlider';
+import {ColorSwatchPicker, ColorSwatchPickerItem} from 'vanilla-starter/ColorSwatchPicker';
+
+<ColorPicker label="Color" defaultValue="#A00">
+  <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
+  <ColorSlider colorSpace="hsb" channel="hue" />
+  <ColorSwatchPicker>
+    <ColorSwatchPickerItem color="#A00" />
+    <ColorSwatchPickerItem color="#f80" />
+    <ColorSwatchPickerItem color="#080" />
+    <ColorSwatchPickerItem color="#08f" />
+    <ColorSwatchPickerItem color="#008" />
+  </ColorSwatchPicker>
+</ColorPicker>
+```
+
+## API
+
+<PropTable component={docs.exports.ColorPicker} links={docs.links} />

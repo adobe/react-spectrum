@@ -1,0 +1,175 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Popover';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/overlays/docs/popover-anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['popup', 'overlay'];
+
+# Popover
+
+<PageDescription>{docs.exports.Popover.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']}  type="vanilla" files={["starters/docs/src/Popover.tsx", "starters/docs/src/Popover.css"]}
+  "use client";
+  import {DialogTrigger} from 'react-aria-components';
+  import {Popover} from 'vanilla-starter/Popover';
+  import {Button} from 'vanilla-starter/Button';
+  import {Switch} from 'vanilla-starter/Switch';
+  import {Settings2} from 'lucide-react';
+
+  function Example(props) {
+    return (
+      <DialogTrigger>
+        <Button aria-label="Settings">
+          <Settings2 size={20} />
+        </Button>
+        {/*- begin focus -*/}
+        <Popover {...props}/* PROPS */>
+          <div style={{display: 'flex', flexDirection: 'column', gap: 12}}>
+            <Switch defaultSelected>Wi-Fi</Switch>
+            <Switch defaultSelected>Bluetooth</Switch>
+            <Switch>Mute</Switch>
+          </div>
+        </Popover>
+        {/*- end focus -*/}
+      </DialogTrigger>
+    );
+  }
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="tailwind" files={["starters/docs/src/Popover.tsx"]}
+  "use client";
+  import {DialogTrigger} from 'react-aria-components';
+  import {Popover} from 'tailwind-starter/Popover';
+  import {Button} from 'tailwind-starter/Button';
+  import {Switch} from 'tailwind-starter/Switch';
+  import {Settings2} from 'lucide-react';
+
+  function Example(props) {
+    return (
+      <DialogTrigger>
+        <Button aria-label="Settings" variant="secondary">
+          <Settings2 size={20} />
+        </Button>
+        {/*- begin focus -*/}
+        <Popover
+          /* PROPS */
+          className="flex flex-col gap-2 p-4"
+          showArrow
+          {...props}>
+          <Switch defaultSelected>Wi-Fi</Switch>
+          <Switch defaultSelected>Bluetooth</Switch>
+          <Switch>Mute</Switch>
+        </Popover>
+        {/*- end focus -*/}
+      </DialogTrigger>
+    );
+  }
+  ```
+</ExampleSwitcher>
+
+## Custom trigger
+
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+
+```tsx render
+"use client"
+import {Pressable, DialogTrigger} from 'react-aria-components';
+import {Popover} from 'vanilla-starter/Popover';
+
+<DialogTrigger>
+  {/*- begin highlight -*/}
+  <Pressable>
+    <span role="button">Custom trigger</span>
+  </Pressable>
+  {/*- end highlight -*/}
+  <Popover style={{padding: 16}}>
+    This popover was triggered by a custom button.
+  </Popover>
+</DialogTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Any `<Pressable>` child must have an [interactive ARIA role](https://www.w3.org/TR/wai-aria-1.2/#widget_roles) or use an appropriate semantic HTML element so that screen readers can announce the trigger. Trigger components must forward their `ref` and spread all props to a DOM element.</Content>
+</InlineAlert>
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <button {...props} ref={ref} />
+));
+```
+
+## Custom anchor
+
+To position a popover relative to a different element than its trigger, use the `triggerRef` and `isOpen` props instead of `<DialogTrigger>`. `onOpenChange` will be called when the user closes the popover.
+
+```tsx render
+"use client";
+import {useState, useRef} from 'react';
+import {Popover} from 'vanilla-starter/Popover';
+import {Heading} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+
+function Example() {
+  let [isOpen, setOpen] = useState(false);
+  let triggerRef = useRef(null);
+
+  return (
+    <div>
+      <Button onPress={() => setOpen(true)}>Trigger</Button>
+      <span ref={triggerRef} style={{paddingLeft: 12}}>Popover will be positioned relative to me</span>
+      <Popover
+        style={{padding: 16}}
+        /*- begin highlight -*/
+        triggerRef={triggerRef}
+        isOpen={isOpen}
+        onOpenChange={setOpen}>
+        {/*- end highlight -*/}
+        I'm over here!
+      </Popover>
+    </div>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="popover" pages={props.pages} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', Popover: '#popover', OverlayArrow: '#overlayarrow'}}
+<DialogTrigger>
+  <Button />
+  <Popover>
+    <OverlayArrow />
+  </Popover>
+</DialogTrigger>
+```
+
+### DialogTrigger
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} showDescription />
+
+### Popover
+
+<PropTable
+  component={docs.exports.Popover}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--trigger-width': 'The width of the popover trigger element.',
+    '--trigger-anchor-point': 'The position of the trigger relative to the popover. Use with `transform-origin` when applying scale transitions.'
+  }} />
+
+### OverlayArrow
+
+<PropTable component={docs.exports.OverlayArrow} links={docs.links} showDescription />

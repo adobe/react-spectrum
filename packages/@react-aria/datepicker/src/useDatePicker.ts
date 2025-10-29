@@ -136,6 +136,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
+      defaultValue: state.defaultValue,
       onChange: state.setValue,
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,
@@ -149,7 +150,8 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       // DatePicker owns the validation state for the date field.
       [privateValidationStateProp]: state,
       autoFocus: props.autoFocus,
-      name: props.name
+      name: props.name,
+      form: props.form
     },
     descriptionProps,
     errorMessageProps,
@@ -179,7 +181,9 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDateUnavailable: props.isDateUnavailable,
       defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' ')),
+      firstDayOfWeek: props.firstDayOfWeek,
+      pageBehavior: props.pageBehavior
     },
     isInvalid,
     validationErrors,

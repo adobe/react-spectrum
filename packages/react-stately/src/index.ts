@@ -53,7 +53,7 @@ export {useSearchFieldState} from '@react-stately/searchfield';
 export {useSelectState} from '@react-stately/select';
 export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
-export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
+export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState, UNSTABLE_useFilteredTableState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
 export {useToastState, ToastQueue, useToastQueue} from '@react-stately/toast';
 export {useToggleState, useToggleGroupState} from '@react-stately/toggle';
