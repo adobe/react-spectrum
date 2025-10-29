@@ -119,7 +119,7 @@ chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
 
 // Polling service to clean up stale macros
 // Runs every 5 minutes to check if macro class names still exist on the page
-const CLEANUP_INTERVAL = 1000 * 60 * 5; // 5 minutes
+const CLEANUP_INTERVAL = 1000 * 60 * 5;
 
 setInterval(() => {
   if (!window.__macros) {
@@ -135,7 +135,7 @@ setInterval(() => {
 
   for (const hash of macroHashes) {
     // Check if any element with this macro class exists in the DOM
-    const selector = `.-macro\\$${CSS.escape(hash)}`;
+    const selector = `.-macro-dynamic-${CSS.escape(hash)}`;
     const elementExists = document.querySelector(selector);
 
     if (!elementExists) {
