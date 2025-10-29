@@ -47,19 +47,23 @@ This extension uses Chrome's standard extension architecture with three main com
 
 ### Components
 
-#### 1. **Page Context** (style-macro runtime)
+#### 1. **Page Context** (style-macro runtime + MutationObserver)
 - **Location**: Runs in the actual page's JavaScript context
-- **Responsibility**: Generates macro metadata (hash, location, styles) when style macro is evaluated
+- **Responsibility**:
+  - Generates macro metadata (hash, location, styles) when style macro is evaluated
+  - Hosts MutationObserver that watches selected element for className changes
 - **Storage**: None - static macros embed data in CSS, dynamic macros send messages
 - **Communication**:
   - For static macros: Embeds data in CSS custom property `--macro-data`
   - For dynamic macros: Sends `window.postMessage({ action: 'update-macros', hash, loc, style })` to content script
+  - For className changes: Sends `window.postMessage({ action: 'class-changed', elementId })` to content script
 
 #### 2. **Content Script** (`content-script.js`)
 - **Location**: Isolated sandboxed environment injected into the page
 - **Scope**: Handles dynamic macros only (static macros are read directly from CSS)
 - **Responsibility**:
   - Listens for `window.postMessage({ action: 'update-macros' })` from the page and stores dynamic macro data in its own `window.__macros`
+  - Forwards `window.postMessage({ action: 'class-changed' })` from page to background script
   - Responds to queries from DevTools (via background script), with retry logic to handle race conditions
   - Cleans up stale macros every 5 minutes
 - **Storage**: `window.__macros[hash] = { loc: string, style: object }` (in content script context, not page context)
@@ -67,9 +71,11 @@ This extension uses Chrome's standard extension architecture with three main com
 - **Communication**:
   - Receives:
     - `window.postMessage({ action: 'update-macros' })` from page
+    - `window.postMessage({ action: 'class-changed' })` from page
     - `chrome.runtime.onMessage({ action: 'get-macro' })` from background
   - Sends:
     - `chrome.runtime.sendMessage({ action: 'update-macros' })` to background
+    - `chrome.runtime.sendMessage({ action: 'class-changed' })` to background
     - `chrome.runtime.sendMessage({ action: 'macro-response' })` to background
 
 #### 3. **Background Script** (`background.js`)
@@ -83,10 +89,12 @@ This extension uses Chrome's standard extension architecture with three main com
     - `port.onMessage({ type: 'query-macros' })` from DevTools
     - `chrome.runtime.onMessage({ action: 'update-macros' })` from content script
     - `chrome.runtime.onMessage({ action: 'macro-response' })` from content script
+    - `chrome.runtime.onMessage({ action: 'class-changed' })` from content script
   - Sends:
     - `chrome.tabs.sendMessage({ action: 'get-macro' })` to content script
     - `port.postMessage({ action: 'update-macros' })` to DevTools
     - `port.postMessage({ action: 'macro-response' })` to DevTools
+    - `port.postMessage({ action: 'class-changed' })` to DevTools
 
 #### 4. **DevTools Panel** (`devtool.js`)
 - **Location**: DevTools sidebar panel context
@@ -96,10 +104,19 @@ This extension uses Chrome's standard extension architecture with three main com
     - Dynamic macros: `-macro-dynamic-{hash}` → queries data via content script (responds to changing conditions)
   - Queries for macro data using appropriate method based on macro type
   - Displays style information in sidebar
+  - **Automatic Updates**: Sets up a MutationObserver on the selected element to detect className changes and automatically refreshes the panel
+- **Mutation Observer**:
+  - Created when an element is selected via `chrome.devtools.panels.elements.onSelectionChanged`
+  - Watches the selected element's `class` attribute for changes
+  - Disconnects when:
+    - A new element is selected
+    - The DevTools connection is closed
+  - Triggers automatic panel refresh when className changes
 - **Communication**:
   - Receives:
     - `port.onMessage({ action: 'macro-response' })` from background
     - `port.onMessage({ action: 'update-macros' })` from background
+    - `port.onMessage({ action: 'class-changed' })` from background (triggers refresh)
   - Sends:
     - `chrome.runtime.connect({ name: 'devtools-page' })` to establish connection
     - `port.postMessage({ type: 'init' })` to background
@@ -115,17 +132,15 @@ Static macros are generated when style macro conditions don't change at runtime.
 ┌─────────────────┐
 │ DevTools Panel  │ User selects element with -macro-static-{hash} class
 └────────┬────────┘
-         │ chrome.devtools.inspectedWindow.eval(
-         │   'window.getComputedStyle($0).getPropertyValue("--macro-data")'
-         │ )
+         │ Read CSS custom property --macro-data via getComputedStyle()
          ↓
 ┌─────────────────┐
-│ Page DOM/CSS    │ Returns JSON string from CSS custom property
+│ Page DOM/CSS    │ Returns macro data from CSS
 └────────┬────────┘
          │ { loc: "...", style: {...} }
          ↓
 ┌─────────────────┐
-│ DevTools Panel  │ Parses JSON, displays in sidebar
+│ DevTools Panel  │ Parses and displays in sidebar
 └─────────────────┘
 ```
 
@@ -202,6 +217,83 @@ Dynamic macros are generated when style macro conditions can change at runtime. 
 └─────────────────┘
 ```
 
+#### Flow 4: Automatic Updates on className Changes (MutationObserver)
+
+When you select an element, the DevTools panel automatically watches for className changes and refreshes the panel.
+
+```
+┌─────────────────┐
+│ DevTools Panel  │ User selects element in Elements panel
+└────────┬────────┘
+         │ chrome.devtools.panels.elements.onSelectionChanged
+         │
+         │ chrome.devtools.inspectedWindow.eval(`
+         │   // Disconnect old observer (if any)
+         │   if (window.__styleMacroObserver) {
+         │     window.__styleMacroObserver.disconnect();
+         │   }
+         │
+         │   // Create new MutationObserver on $0
+         │   window.__styleMacroObserver = new MutationObserver(() => {
+         │     window.postMessage({
+         │       action: 'class-changed',
+         │       elementId: $0.getAttribute('data-devtools-id')
+         │     }, '*');
+         │   });
+         │
+         │   window.__styleMacroObserver.observe($0, {
+         │     attributes: true,
+         │     attributeFilter: ['class']
+         │   });
+         │ `)
+         ↓
+┌─────────────────┐
+│ Page DOM        │ MutationObserver active on selected element
+└────────┬────────┘
+         │
+         │ ... User interacts with page, element's className changes ...
+         │
+         │ MutationObserver detects class attribute change
+         │ window.postMessage({ action: 'class-changed', elementId }, '*')
+         ↓
+┌─────────────────┐
+│ Content Script  │ Receives window message, forwards to extension
+└────────┬────────┘
+         │ chrome.runtime.sendMessage({ action: 'class-changed', elementId })
+         ↓
+┌─────────────────┐
+│ Background      │ Looks up DevTools connection for tabId
+└────────┬────────┘
+         │ port.postMessage({ action: 'class-changed', elementId })
+         ↓
+┌─────────────────┐
+│ DevTools Panel  │ Verifies elementId matches currently selected element
+│                 │ Triggers full panel refresh (re-reads classes, re-queries macros)
+└─────────────────┘
+
+When selection changes or panel closes:
+  ↓
+┌─────────────────┐
+│ DevTools Panel  │ Calls disconnectObserver()
+└────────┬────────┘
+         │ chrome.devtools.inspectedWindow.eval(`
+         │   if (window.__styleMacroObserver) {
+         │     window.__styleMacroObserver.disconnect();
+         │     window.__styleMacroObserver = null;
+         │   }
+         │ `)
+         ↓
+┌─────────────────┐
+│ Page DOM        │ Old observer disconnected, new observer created for new selection
+└─────────────────┘
+```
+
+**Key Benefits:**
+- Panel automatically refreshes when element classes change (e.g., hover states, conditional styles)
+- No manual refresh needed
+- Observer is cleaned up properly to prevent memory leaks
+- Each element has its own unique tracking ID to prevent cross-contamination
+
 ### Key Technical Details
 
 #### Why Background Script is Needed
@@ -262,6 +354,7 @@ Note: The page context does NOT have access to `window.__macros`. This is stored
 | `macro-response` | Content → Background → DevTools | Return requested macro data |
 | `get-macro` | Background → Content | Internal forwarding of query-macros |
 | `init` | DevTools → Background | Establish connection with tabId |
+| `class-changed` | Page → Content → Background → DevTools | Notify that selected element's className changed |
 
 ### Debugging
 

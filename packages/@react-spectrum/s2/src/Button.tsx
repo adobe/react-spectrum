@@ -292,6 +292,13 @@ const gradient = style({
   }
 });
 
+const buttonStyle1 = style({
+  backgroundColor: 'red'
+});
+const buttonStyle2 = style({
+  backgroundColor: 'green'
+});
+
 export function usePendingState(isPending: boolean) {
   let [isProgressVisible, setIsProgressVisible] = useState(false);
   useEffect(() => {
@@ -348,6 +355,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
+        <span className={renderProps.isFocused ? buttonStyle1 : buttonStyle2} />
         {variant === 'genai' || variant === 'premium'
           ? (
             <span

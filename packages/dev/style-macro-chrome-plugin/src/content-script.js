@@ -18,32 +18,50 @@ window.addEventListener('message', function (event) {
 
   // Only accept messages that we know are ours. Note that this is not foolproof
   // and the page can easily spoof messages if it wants to.
-  if (message && typeof message === 'object' && message.action === 'update-macros') {
-    let {hash, loc, style} = message;
-    if (!window.__macros) {
-      window.__macros = {};
-    }
+  if (message && typeof message === 'object') {
+    if (message.action === 'update-macros') {
+      let {hash, loc, style} = message;
+      if (!window.__macros) {
+        window.__macros = {};
+      }
 
-    // Update the specific macro without overwriting others
-    window.__macros[hash] = {
-      loc,
-      style
-    };
+      // Update the specific macro without overwriting others
+      window.__macros[hash] = {
+        loc,
+        style
+      };
 
-    debugLog('Updated macro:', hash, 'Total macros:', Object.keys(window.__macros).length);
+      debugLog('Updated macro:', hash, 'Total macros:', Object.keys(window.__macros).length);
 
-    // if this script is run multiple times on the page, then only handle it once
-    event.stopImmediatePropagation();
-    event.stopPropagation();
+      // if this script is run multiple times on the page, then only handle it once
+      event.stopImmediatePropagation();
+      event.stopPropagation();
 
-    // Send message to background script (which forwards to DevTools)
-    try {
-      chrome.runtime.sendMessage({
-        action: 'update-macros',
-        ...message
-      });
-    } catch (err) {
-      debugLog('Failed to send update-macros message:', err);
+      // Send message to background script (which forwards to DevTools)
+      try {
+        chrome.runtime.sendMessage({
+          action: 'update-macros',
+          ...message
+        });
+      } catch (err) {
+        debugLog('Failed to send update-macros message:', err);
+      }
+    } else if (message.action === 'class-changed') {
+      // Forward class-changed messages from page context to background script
+      debugLog('Class changed for element:', message.elementId);
+
+      // if this script is run multiple times on the page, then only handle it once
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+
+      try {
+        chrome.runtime.sendMessage({
+          action: 'class-changed',
+          elementId: message.elementId
+        });
+      } catch (err) {
+        debugLog('Failed to send class-changed message:', err);
+      }
     }
   }
 });
