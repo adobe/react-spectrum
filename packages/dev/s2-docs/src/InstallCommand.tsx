@@ -2,7 +2,6 @@
 
 import {CopyButton} from './CopyButton';
 import {Key} from 'react-aria-components';
-import {Pre} from './CodePlatter';
 import React, {useEffect, useMemo, useState} from 'react';
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -28,6 +27,18 @@ const switcher = style({
 
 const codeWrap = style({
   padding: 16
+});
+
+const preStyle = style({
+  font: {default: 'code-xs', lg: 'code-sm'},
+  overflowX: 'auto',
+  paddingY: 8,
+  paddingX: 0,
+  margin: 0,
+  whiteSpace: 'pre',
+  flex: 1,
+  minWidth: 0,
+  overflow: 'auto'
 });
 
 type PkgManager = 'yarn' | 'npm' | 'pnpm';
@@ -98,7 +109,7 @@ export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandPro
       <div className={codeWrap}>
         {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
         <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
-          <Pre>{command}</Pre>
+          <pre className={preStyle}>{command}</pre>
           <CopyButton ariaLabel="Copy command" tooltip="Copy command" text={command} />
         </div>
       </div>
