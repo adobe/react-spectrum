@@ -38,7 +38,7 @@ const staticTransition = {
 const SHEET_MARGIN = 34;
 const SHEET_RADIUS = 12;
 
-const root = typeof document !== 'undefined' ? document.body.firstChild as HTMLElement : null;
+const root = typeof document !== 'undefined' ? document.querySelector('body > div:first-of-type') as HTMLElement : null;
 
 function Sheet() {
   let [isOpen, setOpen] = useState(false);
