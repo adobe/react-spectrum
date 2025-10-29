@@ -149,6 +149,8 @@ Static macros are generated when style macro conditions don't change at runtime.
 #### Flow 1b: Dynamic Macro Updates (Page → DevTools)
 
 Dynamic macros are generated when style macro conditions can change at runtime. Updates are sent via message passing.
+This could be simplified and we could rely on the MutationObserver to trigger the refresh, but this way ensures
+that the storage is update before we try to access the data.
 
 ```
 ┌─────────────────┐
