@@ -53,7 +53,7 @@ export interface ICodeProps {
   links?: Links,
   styles?: StyleString
 }
- 
+
 export function Code({children, lang, hideImports = true, links, styles}: ICodeProps) {
   if (lang) {
     // @ts-ignore
@@ -121,12 +121,8 @@ export function Code({children, lang, hideImports = true, links, styles}: ICodeP
         borderColor: 'gray-100',
         borderStyle: 'solid',
         borderRadius: 'sm',
-        whiteSpace: 'pre-wrap',
-        display: {
-          default: 'inline-block',
-          isBlock: 'block'
-        }
-      })({isBlock})}>
+        whiteSpace: 'pre-wrap'
+      })}>
       {children}
     </code>
   );
