@@ -44,9 +44,9 @@ const negativeSpacingProperties = new Set([
 ]);
 
 // Spacing values used across multiple properties
-const baseSpacingValues = ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96',];
+const baseSpacingValues = ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96'];
 const negativeBaseSpacingValues = ['-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96'];
-const relativeSpacingValues = [ 'text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
+const relativeSpacingValues = ['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
 // const spacingValues = [...baseSpacingValues, ...relativeSpacingValues];
 // const marginValues = [...spacingValues, ...negativeBaseSpacingValues, 'auto'];
 // const insetValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'auto', 'full'];
@@ -218,9 +218,9 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   gridRowStart: [],
   gridRowEnd: [],
   gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'],
-  gridAutoRows:['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
+  gridAutoRows: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
   gridAutoColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
-  gridTemplateColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string',],
+  gridTemplateColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string'],
   gridTemplateRows: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string'],
   gridTemplateAreas: ['string[]'],
   float: ['inline-start', 'inline-end', 'right', 'left', 'none'],
@@ -238,7 +238,7 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   overscrollBehaviorX: ['auto', 'contain', 'none'],
   overscrollBehaviorY: ['auto', 'contain', 'none'],
   scrollBehavior: ['auto', 'smooth'],
-  order: ['number'],
+  order: ['number']
 };
 
 const miscPropertyValues: {[key: string]: string[]} = {
@@ -430,7 +430,7 @@ const conditionMapping: {[key: string]: string[]} = {
   lg: ['@media (min-width: ${pxToRem(1024)})'],
   xl: ['@media (min-width: ${pxToRem(1280)})'],
   '2xl': ['@media (min-width: ${pxToRem(1536)})']
-}
+};
 
 const properties: {[key: string]: {[key: string]: string[]}} = {
   color: colorPropertyValues,
@@ -483,7 +483,7 @@ const relativeLinks: {[key: string]: string} = {
   'pill': '#dimensions',
   'baseColors': '#colors',
   'fontSize': '#text'
-}
+};
 
 // a mapping of value to mdn links that should be replaced in place
 const mdnTypeLinks: {[key: string]: string} = {
@@ -494,7 +494,7 @@ const mdnTypeLinks: {[key: string]: string} = {
 // a mapping of value to links that should be replaced in place with the provided string
 const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
   'flexShrink': {
-    'number':  'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink'
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink'
   },
   'flexGrow': {
     'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow'
@@ -548,7 +548,7 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
       // see if the property has any common types that should link to MDN instead
       for (let value of values) {
         // make sure not to overwrite number in sizing properties and pill in other sections aka effects
-        if ((value === 'number' && sizingProperties.has(name)) || (value === 'pill' && propertyCategory !== 'dimensions') ) {
+        if ((value === 'number' && sizingProperties.has(name)) || (value === 'pill' && propertyCategory !== 'dimensions')) {
           continue;
         }
 

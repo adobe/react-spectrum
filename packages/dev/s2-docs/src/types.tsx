@@ -729,7 +729,7 @@ const styleMacroTypeLinks = {
   'number': {
     description: <>A numeric value in pixels e.g. <code className={codeStyle}>20</code>. Will be converted to rem and scaled on touch devices.</>
   }
-}
+};
 
 interface StyleMacroTypePopoverProps {
   typeName: string,
@@ -748,7 +748,7 @@ function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopo
         {body}
       </>
     </TypePopover>
-  )
+  );
 }
 
 interface StyleMacroPropertyDefinition {
@@ -760,7 +760,7 @@ interface StyleMacroPropertyDefinition {
 }
 
 interface StyleMacroPropertiesProps {
-  properties: {[propertyName: string]: StyleMacroPropertyDefinition},
+  properties: {[propertyName: string]: StyleMacroPropertyDefinition}
 }
 
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
@@ -799,8 +799,8 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                           <ColorLink
                             href={links[value].href}
                             type="variable"
-                            rel={links[value].isRelative ? undefined : "noreferrer"}
-                            target={links[value].isRelative ? undefined : "_blank"}>
+                            rel={links[value].isRelative ? undefined : 'noreferrer'}
+                            target={links[value].isRelative ? undefined : '_blank'}>
                             {value}
                           </ColorLink>
                         ) : (
@@ -813,6 +813,7 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                       return (
                         <React.Fragment key={`type-${i}`}>
                           {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
+                          {/* eslint-disable-next-line no-nested-ternary */}
                           {typeLink ? (
                             // only if the type link has a description and/or body do we want to render the type popover
                             // this is to make things like baseColor
