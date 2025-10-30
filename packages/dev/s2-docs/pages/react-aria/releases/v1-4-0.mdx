@@ -49,21 +49,14 @@ Huge thanks as always to everyone who contributed to this release! 😍
 
 ## Fixes
 
-- ActionBar
-  - Pass through ActionBar `disabledKeys` to ActionGroup - [@GrantRussell](https://github.com/GrantRussell) - [PR](https://github.com/adobe/react-spectrum/pull/7090)
 - ComboBox
   - Keep focus on the input in ComboBox - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/6783)
-  - Fix `isQuiet` and `isReadOnly` styling - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
 - Date/Time
   - Fix type regression in Calendar - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6790)
   - Add missing `endOfWeek` overload - [@cyyynthia](https://github.com/cyyynthia) - [PR](https://github.com/adobe/react-spectrum/pull/6749)
   - Fix `useDateSegment` null ref error - [@teemuandersen](https://github.com/teemuandersen) - [PR](https://github.com/adobe/react-spectrum/pull/6989)
 - Menu
   - Fix `useMenuItem` `onAction` regression - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6807)
-- Picker
-  - Update Picker placeholder to be shorter - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6796)
-- SearchField
-  - Fix SearchField padding right specificity - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6829)
 - Select
   - Fix Select from showing placeholder when selected value is 0 - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6968)
 - Tabs
@@ -100,15 +93,6 @@ Huge thanks as always to everyone who contributed to this release! 😍
   - Add DisclosureGroup component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7063)
   - Add basic docs for Accordion, DisclosureGroup, Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7071)
 
-### Accordion updates
-
-We have made improvements to the Accordion component, which includes moving away from the Collection API in favor of wrapping `Disclosure` components, which can be used standalone. This includes a few breaking changes.
-- `Item` has been replaced with the `Disclosure` component, which consists of two children: `DisclosureHeader` and `DisclosurePanel`
-- `title` on `Item` is now a child of `DisclosureHeader`
-- Children of `Item` is now children of `DisclosurePanel`
-- `key` on `Item` is now `id` on `Disclosure`
-- `disabledKeys` has been removed in favor of adding `isDisabled` on individual `Disclosure` components
-- `allowsMultipleExpanded` can be added to allow multiple Disclosure components to be expanded at once (previously default behavior)
 
 ## Released packages
 

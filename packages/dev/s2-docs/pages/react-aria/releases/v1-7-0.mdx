@@ -41,10 +41,6 @@ Thanks to an update in Safari 17, all elements with an explicit `tabIndex` can n
 
 Note that this refactor changes the order that focus occurs. Previously, focus always occurred before `onPressStart`. Now focus occurs after `onPressStart` on mouse and keyboard interactions, and after `onPressEnd` on touch screens, matching native browser behavior. Additionally, unit tests may need to simulate different events than before. We recommend the [user-event](https://testing-library.com/docs/user-event/intro/) library to simulate events matching browser behavior.
 
-**TreeView changes:**
-
-With the GA release of TreeView, be sure to update any usages of [TreeViewItem](../react-spectrum/TreeView.html#treeviewitem-props) so that its contents are wrapped in the new [TreeViewItemContent](../react-spectrum/TreeView.html#treeviewitemcontent-props).
-
 ## Enhancements
 
 - Button
@@ -55,12 +51,9 @@ With the GA release of TreeView, be sure to update any usages of [TreeViewItem](
   - Support Tooltips on Tags and Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7793)
   - Support nested collections - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7379)
   - Add WaterfallLayout for Virtualizer and update GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7729)
-- LabeledValue
-  - Allow `ReactElement` in LabeledValue value - [@sana-malik](https://github.com/sana-malik) - [PR](https://github.com/adobe/react-spectrum/pull/7679)
 - Popover
   - Automatically render Popovers as Dialogs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7813)
 - Toast
-  - Add `placement` prop to Spectrum ToastContainer - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7609), [PR](https://github.com/adobe/react-spectrum/pull/7615)
   - Use View Transition API for Toast animations - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7631), [PR](https://github.com/adobe/react-spectrum/pull/7760)
 - usePress
   - No longer `preventDefault` in `usePress` and allow browser to manage focus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7542), [PR](https://github.com/adobe/react-spectrum/pull/7774), [PR](https://github.com/adobe/react-spectrum/pull/7677), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7832), [PR](https://github.com/adobe/react-spectrum/pull/7720)
@@ -88,7 +81,6 @@ With the GA release of TreeView, be sure to update any usages of [TreeViewItem](
 - Tabs
   - Fix TabList auto selection - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7529)
 - Tree
-  - Update Spectrum TreeView API - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7613)
   - Add label to the expand/collapse button in `useTreeItem` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7840)
 - Toast
   - Remove Toast priority queue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7805)

@@ -17,12 +17,12 @@ export const section = '';
 export const tags = ['release', 'React Aria'];
 export const date = 'November 20, 2024';
 export const title = 'v1.5.0';
-export const description = 'We\'re excited to announce that our Accordion and Disclosure components are now generally available! We\'ve also introduced the ToggleButtonGroup component, as well as Section-level selection groups in Menu. Additionally, React Aria is now Typescript Strict compliant.';
+export const description = 'We\'re excited to announce that our Disclosure components are now generally available! We\'ve also introduced the ToggleButtonGroup component, as well as Section-level selection groups in Menu. Additionally, React Aria is now Typescript Strict compliant.';
 
 # v1.5.0
 <Time date={date} />
 
-We're excited to announce that our Accordion and Disclosure components are now generally available! This includes [Disclosure](../Disclosure.html) and [DisclosureGroup](../DisclosureGroup.html) in React Aria. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
+We're excited to announce that our Disclosure components are now generally available! This includes [Disclosure](../Disclosure.html) and [DisclosureGroup](../DisclosureGroup.html) in React Aria. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
 
 We are also introducing [ToggleButtonGroup](../ToggleButtonGroup.html) in React Aria Components, which supports arrow key navigation with single and multiple selection modes. In addition, Menu now supports the ability to create [Section-level selection groups](../Menu.html#section-level-selection), allowing you to mix actions, single, and multiple selection within the same menu. Menus can also be nested inside Dialog popovers to enable more complex use cases.
 
@@ -34,25 +34,16 @@ As always, thanks to everyone in our community for your feedback and contributio
 
 React Aria is now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant!
 
-**Accordion changes**
-
-With the GA release of Accordion and Disclosure, take note of the following changes:
-
-- `useAccordion` and `useAccordionItem` from `@react-aria/accordion` have been deprecated in favor of `useDisclosure` from `@react-aria/disclosure`
-- `DisclosureHeader` from `@react-spectrum/accordion` has been updated to be `DisclosureTitle`
-
-If you're using an older pre-release version of Accordion, see the [previous release notes](/releases/2024-09-30.html#accordion-updates) for instructions on how to migrate to the released API.
-
 **Section changes**
 
 `Section` in React Aria Components is deprecated in this release. It is replaced by specific components for each parent collection component, e.g. ListBoxSection and MenuSection.
 
 ## Enhancements
 
-- Accordion
-  - Support `hidden="until-found"` in `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7199)
 - Dialog
   - Add `<Button slot="close">` support - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7405)
+- DisclosureGroup
+  - Support `hidden="until-found"` in `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7199)
 - Menu
   - Add Section-level selection groups in `Menu` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7254)
   - Support nesting `Menu` inside `Dialog` popovers with additional interactive content - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7402)
@@ -66,9 +57,6 @@ If you're using an older pre-release version of Accordion, see the [previous rel
 
 ## Fixes
 
-- Accordion
-  - Fix `Accordion` borders - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7284)
-  - Add `box-sizing: content-box` to `Accordion` chevron - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7354)
 - Button
   - Fix `useButton` `href` condition - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7239)
 - Checkbox
@@ -100,14 +88,13 @@ If you're using an older pre-release version of Accordion, see the [previous rel
 - Update CodeSandbox templates in `useDatePicker` and `useDateRangePicker` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7342)
 - Fix `DisclosureGroup` anatomy diagram SVG clipping on mobile - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7323)
 - Update contribution guide - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7253)
-- Update `Accordion` and `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7273)
+- Update `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7273)
 - Add Tailwind starter for `Disclosure` and `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7166)
-- Update `Accordion`, `Disclosure`, `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7165)
+- Update `Disclosure`, `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7165)
 - Fix typo on `ProgressBar` docs - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7373)
 - Add `Disclosure` hook docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7178)
 - Add Q&A section to contribution guide - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6951)
 - Fix Tailwind starter `Submenu` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7251)
-- Add `Accordion` to example apps - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7296)
 - Fix disabled `Tag` styles in RAC Tailwind starter - [@steveoh](https://github.com/steveoh) - [PR](https://github.com/adobe/react-spectrum/pull/7247)
 
 
