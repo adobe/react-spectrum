@@ -181,16 +181,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
-    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-    let isClientWidthMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
-    let isClientHeightMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
-
-    let rect: Rect;
-    if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
-      rect = new Rect(0, 0, this.contentSize.width, this.contentSize.height);
-    } else {
-      rect = this._overscanManager.getOverscannedRect();
-    }
+    let rect = this._overscanManager.getOverscannedRect();
     let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
