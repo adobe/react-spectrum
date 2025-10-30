@@ -392,6 +392,7 @@ export const spacingTypeValues = {
   negativeSpacing: negativeBaseSpacingValues
 };
 
+// a mapping of value to relative links that should be replaced in place
 // opted NOT to link to Fonts from 'ui', 'code', etc since the visual example
 // is so close to the area in the table where those are rendered
 const relativeLinks: {[key: string]: string} = {
@@ -402,48 +403,46 @@ const relativeLinks: {[key: string]: string} = {
   'baseColors': '#colors'
 }
 
+// a mapping of value to mdn links that should be replaced in place
 const mdnTypeLinks: {[key: string]: string} = {
   'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
   'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number'
 };
 
-const mdnPropertyLinks: {[key: string]: {[value: string]: {href: string, isRelative?: boolean}}} = {
+// a mapping of value to links that should be replaced in place with the provided string
+const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
   'flexShrink': {
-    'number': {
-      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink',
-    }
+    'number':  'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-shrink'
   },
   'flexGrow': {
-    'number': {
-      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow'
-    }
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-grow'
   },
   'gridColumnStart': {
-    'string': {
-      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start'
-    }
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start'
   },
   'gridColumnEnd': {
-    'string': {
-      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end'
-    }
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end'
   },
   'gridRowStart': {
-    'string': {
-      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start'
-    }
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start'
   },
   'gridRowEnd': {
-    'string': {
-      href: 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end'
-    }
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end'
   }
+};
+
+const propertyDescriptions: {[key: string]: string} = {
+  'rotate': 'Accepts a number (treated as degrees) or a string with units (deg, rad, grad, turn).',
+  'scaleX': 'Accepts a number or percentage string.',
+  'scaleY': 'Accepts a number or percentage string.',
+  'aspectRatio': 'Also accepts a ratio in the format number/number (e.g., 16/9, 4/3).'
 };
 
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
-  links?: {[value: string]: {href: string, isRelative?: boolean}}
+  links?: {[value: string]: {href: string, isRelative?: boolean}},
+  description?: string
 }
 
 export function getPropertyDefinitions(propertyCategory: string): {[key: string]: StyleMacroPropertyDefinition} {
@@ -454,8 +453,9 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
     let links: {[value: string]: {href: string, isRelative?: boolean}} = {};
 
     if (mdnPropertyLinks[name]) {
-      links = {...mdnPropertyLinks[name]};
-      values = [Object.keys(links)[0]];
+      let [key, value] = Object.entries(mdnPropertyLinks[name])[0];
+      links[key] = {href: value};
+      values = [key];
     } else {
       // see if the property has any common types that should link to MDN instead
       for (let value of values) {
@@ -475,7 +475,8 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
     result[name] = {
       values,
       additionalTypes: getAdditionalTypes(name),
-      links: Object.keys(links).length > 0 ? links : undefined
+      links: Object.keys(links).length > 0 ? links : undefined,
+      description: propertyDescriptions[name]
     };
   }
   return result;

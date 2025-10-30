@@ -754,14 +754,14 @@ function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopo
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
-  links?: {[value: string]: {href: string, isRelative?: boolean}}
+  links?: {[value: string]: {href: string, isRelative?: boolean}},
+  description?: string
 }
 
 interface StyleMacroPropertiesProps {
   properties: {[propertyName: string]: StyleMacroPropertyDefinition}
 }
 
-// TODO: fix the width of the columns so that they are consistent
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   let propertyNames = Object.keys(properties);
 
@@ -780,53 +780,60 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
           let links = propDef.links || {};
 
           return (
-            <TableRow key={index}>
-              <TableCell role="rowheader">
-                <code className={codeStyle}>
-                  <span className={codeStyles.attribute}>{propertyName}</span>
-                </code>
-              </TableCell>
-              <TableCell>
-                <code className={codeStyle}>
-                  {values.map((value, i) => (
-                    <React.Fragment key={i}>
-                      {i > 0 && <Punctuation>{' | '}</Punctuation>}
-                      {links[value] ? (
-                        <ColorLink
-                          href={links[value].href}
-                          type="variable"
-                          rel={links[value].isRelative ? undefined : "noreferrer"}
-                          target={links[value].isRelative ? undefined : "_blank"}>
-                          {value}
-                        </ColorLink>
-                      ) : (
-                        <span className={codeStyles.string}>'{value}'</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                  {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                    let typeLink = styleMacroTypeLinks[typeName];
-                    return (
-                      <React.Fragment key={`type-${i}`}>
-                        {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
-                        {typeLink ? (
-                          // only if the type link has a description and/or body do we want to render the type popover
-                          // this is to make things like baseColor
-                          typeLink.link && !typeLink.description && !typeLink.body ? (
-                            <ColorLink href={typeLink.link} type="variable">{typeName}</ColorLink>
-                          ) : (
-                            <StyleMacroTypePopover
-                              typeName={typeName}
-                              description={typeLink.description}
-                              body={typeLink.body} />
-                          )
-                        ) : undefined}
+            <React.Fragment key={index}>
+              <TableRow>
+                <TableCell role="rowheader" hideBorder={!!propDef.description}>
+                  <code className={codeStyle}>
+                    <span className={codeStyles.attribute}>{propertyName}</span>
+                  </code>
+                </TableCell>
+                <TableCell hideBorder={!!propDef.description}>
+                  <code className={codeStyle}>
+                    {values.map((value, i) => (
+                      <React.Fragment key={i}>
+                        {i > 0 && <Punctuation>{' | '}</Punctuation>}
+                        {links[value] ? (
+                          <ColorLink
+                            href={links[value].href}
+                            type="variable"
+                            rel={links[value].isRelative ? undefined : "noreferrer"}
+                            target={links[value].isRelative ? undefined : "_blank"}>
+                            {value}
+                          </ColorLink>
+                        ) : (
+                          <span className={codeStyles.string}>'{value}'</span>
+                        )}
                       </React.Fragment>
-                    );
-                  })}
-                </code>
-              </TableCell>
-            </TableRow>
+                    ))}
+                    {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
+                      let typeLink = styleMacroTypeLinks[typeName];
+                      return (
+                        <React.Fragment key={`type-${i}`}>
+                          {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
+                          {typeLink ? (
+                            // only if the type link has a description and/or body do we want to render the type popover
+                            // this is to make things like baseColor
+                            typeLink.link && !typeLink.description && !typeLink.body ? (
+                              <ColorLink href={typeLink.link} type="variable">{typeName}</ColorLink>
+                            ) : (
+                              <StyleMacroTypePopover
+                                typeName={typeName}
+                                description={typeLink.description}
+                                body={typeLink.body} />
+                            )
+                          ) : undefined}
+                        </React.Fragment>
+                      );
+                    })}
+                  </code>
+                </TableCell>
+              </TableRow>
+              {propDef.description && (
+                <TableRow>
+                  <TableCell colSpan={2}>{propDef.description}</TableCell>
+                </TableRow>
+              )}
+            </React.Fragment>
           );
         })}
       </TableBody>
@@ -834,8 +841,4 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   );
 }
 
-//  same for spacing, perhaps do the type that contains the same explaination, and remove the text blob
-// TODO: add to the table a description col span 2 to describe what things like aspectRatio and such accept (aka This takes a). this exists in the Prop table so look there
-
 // TODO: For the Shorthands, have a column for Name, value (what values it accepts), and mapping where mapping is what properties it maps to
-//
