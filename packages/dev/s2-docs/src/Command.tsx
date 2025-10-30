@@ -31,7 +31,8 @@ const preStyle = style({
   margin: 0,
   whiteSpace: 'pre',
   flex: 1,
-  minWidth: 0
+  minWidth: 0,
+  overflow: 'auto'
 });
 
 export interface CommandProps {

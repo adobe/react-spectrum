@@ -30,7 +30,11 @@ export function Sidebar({selectedAlbum, onSelectionChange, isVisible, onDrop}: S
   let renderAlbum = (album: Album) => (
     <TreeItem textValue={album.name} className="sidebar-TreeItem">
       <TreeItemContent>
-        {album.children && <Button slot="chevron"><ChevronRight size={16} /></Button>}
+        {album.children &&
+          <Button slot="chevron" className="chevron">
+            <ChevronRight size={16} />
+          </Button>
+        }
         <span>{album.name}</span>
       </TreeItemContent>
       {album.children && <Collection items={album.children}>{renderAlbum}</Collection>}
