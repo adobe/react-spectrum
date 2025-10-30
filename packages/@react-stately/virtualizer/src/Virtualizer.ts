@@ -17,9 +17,7 @@ import {isSetEqual} from './utils';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
-import {Point} from './Point';
-import {Rect} from './Rect';
-import {Size} from './Size';
+import {Point, Rect, Size} from '@react-stately/utils';
 
 interface VirtualizerOptions<T extends object, V> {
   delegate: VirtualizerDelegate<T, V>,
@@ -193,7 +191,7 @@ export class Virtualizer<T extends object, V> {
     } else {
       rect = this._overscanManager.getOverscannedRect();
     }
-    let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
