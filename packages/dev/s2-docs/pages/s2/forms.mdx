@@ -18,7 +18,11 @@ Accessible forms start with clear, descriptive labels for each field. All React 
 ```tsx render
 import {TextField} from '@react-spectrum/s2';
 
-<TextField type="password" label="Password" description="Password must be at least 8 characters." />
+<TextField
+  type="password"
+  label="Password"
+  placeholder="Choose a password"
+  description="Password must be at least 8 characters." />
 ```
 
 Most fields should have a visible label. In rare exceptions, the `aria-label` or `aria-labelledby` attribute must be provided instead to identify the element to screen readers.
@@ -55,7 +59,7 @@ function Example() {
 
   return (
     <Form onSubmit={onSubmit} styles={style({maxWidth: 320})}>
-      <TextField name="name" label="Name" />
+      <TextField name="name" label="Name" placeholder="Enter your name" />
       <ButtonGroup>
         <Button type="submit" variant="primary">Submit</Button>
         <Button type="reset" variant="secondary">Reset</Button>
@@ -90,8 +94,12 @@ function Example() {
 
   return (
     <Form onSubmit={onSubmit} styles={style({maxWidth: 320})}>
-      {/*- begin highlight -*/}
-      <TextField label="Name" value={name} onChange={setName} />
+      <TextField
+        label="Name"
+        placeholder="Enter your name"
+        /*- begin highlight -*/
+        value={name}
+        onChange={setName} />
       {/*- end highlight -*/}
       <div>You entered: {name}</div>
       <ButtonGroup>
@@ -118,8 +126,13 @@ import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form validationBehavior="native" styles={style({maxWidth: 320})}>
-  {/*- begin highlight -*/}
-  <TextField label="Email" name="email" type="email" isRequired />
+  <TextField
+    label="Email"
+    name="email"
+    placeholder="Enter your email"
+    /*- begin highlight -*/
+    type="email"
+    isRequired />
   {/*- end highlight -*/}
   <ButtonGroup>
     <Button type="submit" variant="primary">Submit</Button>
@@ -151,6 +164,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   <TextField
     label="Name"
     name="name"
+    placeholder="Enter your name"
     isRequired
     /*- begin highlight -*/
     errorMessage={({validationDetails}) => (
@@ -177,6 +191,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 <Form validationBehavior="native" styles={style({maxWidth: 320})}>
   <TextField
     label="Username"
+    placeholder="Choose a username"
     /*- begin highlight -*/
     validate={value => value === 'admin' ? 'Nice try!' : null}
     /*- end highlight -*/
@@ -213,6 +228,7 @@ function Example() {
   return (
     <TextField
       label="Password"
+      placeholder="Choose a password"
       /*- begin highlight -*/
       validationState={!!error ? 'invalid' : undefined}
       errorMessage={error}
@@ -237,39 +253,6 @@ import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-function Example() {
-  /*- begin highlight -*/
-  let [errors, setErrors] = useState({});
-  /*- end highlight -*/
-  let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    let data = Object.fromEntries(new FormData(e.currentTarget));
-    let result = await callServer(data)
-    /*- begin highlight -*/
-    setErrors(result.errors);
-    /*- end highlight -*/
-  };
-
-  return (
-    <Form
-      validationBehavior="native"
-      styles={style({maxWidth: 320})}
-      onSubmit={onSubmit}
-      /*- begin highlight -*/
-      validationErrors={errors}
-      /*- end highlight -*/
-    >
-      <TextField label="Username" name="username" isRequired />
-      <TextField label="Password" name="password" type="password" isRequired />
-      <ButtonGroup>
-        <Button type="submit" variant="primary">Submit</Button>
-        <Button type="reset" variant="secondary">Reset</Button>
-      </ButtonGroup>
-    </Form>
-  );
-}
-
 // Fake server used in this example.
 function callServer(data) {
   return {
@@ -277,6 +260,42 @@ function callServer(data) {
       username: 'Sorry, this username is taken.'
     }
   };
+}
+
+function Example() {
+  let [errors, setErrors] = useState({});
+  let action = async (formData) => {
+    let data = Object.fromEntries(formData);
+    let result = await callServer(data)
+    setErrors(result.errors);
+  };
+
+  return (
+    <Form
+      validationBehavior="native"
+      styles={style({maxWidth: 320})}
+      action={action}
+      /*- begin highlight -*/
+      validationErrors={errors}
+      /*- end highlight -*/
+    >
+      <TextField
+        label="Username"
+        name="username"
+        placeholder="Enter your username"
+        isRequired />
+      <TextField
+        label="Password"
+        name="password"
+        placeholder="Enter your password"
+        type="password"
+        isRequired />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
 }
 ```
 
