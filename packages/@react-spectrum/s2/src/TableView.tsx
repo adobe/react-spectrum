@@ -69,7 +69,7 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {Button as SpectrumButton} from './Button';
@@ -1122,7 +1122,11 @@ interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
   /** Whether the cell is currently being saved. */
   isSaving?: boolean,
   /** Handler that is called when the value has been changed and is ready to be saved. */
-  onSubmit: (values: Record<string, any>) => void
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => void,
+  /** Handler that is called when the user cancels the edit. */
+  onCancel?: () => void,
+  /** The action to submit the form to. Only available in React 19+. */
+  action?: string | FormHTMLAttributes<HTMLFormElement>['action']
 }
 
 /**
@@ -1165,7 +1169,7 @@ const nonTextInputTypes = new Set([
 ]);
 
 function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
-  let {children, align, renderEditing, isSaving, onSubmit, isFocusVisible, cellRef} = props;
+  let {children, align, renderEditing, isSaving, onSubmit, isFocusVisible, cellRef, action, onCancel} = props;
   let [isOpen, setIsOpen] = useState(false);
   let popoverRef = useRef<HTMLDivElement>(null);
   let formRef = useRef<HTMLFormElement>(null);
@@ -1218,28 +1222,32 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     }
   }, [isOpen]);
 
-  let cancel = () => {
+  let cancel = useCallback(() => {
     setIsOpen(false);
-  };
+    onCancel?.();
+  }, [onCancel]);
 
   // Can't differentiate between Dialog click outside dismissal and Escape key dismissal
   let isMobile = !useMediaQuery('(any-pointer: fine)');
+  let prevIsOpen = useRef(isOpen);
   useEffect(() => {
     let dialog = dialogRef.current?.UNSAFE_getDOMNode();
-    if (isOpen && dialog) {
+    if (isOpen && dialog && !prevIsOpen.current) {
       let handler = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
-          setIsOpen(false);
+          cancel();
           e.stopPropagation();
           e.preventDefault();
         }
       };
       dialog.addEventListener('keydown', handler);
+      prevIsOpen.current = isOpen;
       return () => {
         dialog.removeEventListener('keydown', handler);
       };
     }
-  }, [isOpen]);
+    prevIsOpen.current = isOpen;
+  }, [isOpen, cancel]);
 
   return (
     <Provider
@@ -1306,11 +1314,9 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               ]}>
               <Form
                 ref={formRef}
+                action={action}
                 onSubmit={(e) => {
-                  e.preventDefault();
-                  let formData = new FormData(formRef.current as HTMLFormElement);
-                  let values = Object.fromEntries(formData.entries());
-                  onSubmit(values);
+                  onSubmit?.(e);
                   setIsOpen(false);
                 }}
                 className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
@@ -1334,11 +1340,9 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
                 aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}>
                 <Form
                   ref={formRef}
+                  action={action}
                   onSubmit={(e) => {
-                    e.preventDefault();
-                    let formData = new FormData(formRef.current as HTMLFormElement);
-                    let values = Object.fromEntries(formData.entries());
-                    onSubmit(values);
+                    onSubmit?.(e);
                     setIsOpen(false);
                   }}
                   className={style({width: 'full', display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16})}>

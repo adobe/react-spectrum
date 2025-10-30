@@ -698,7 +698,8 @@ import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, Text
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import User from '@react-spectrum/s2/icons/User';
 import Edit from '@react-spectrum/s2/icons/Edit';
-import {useCallback,useRef, useState} from 'react';
+import {useCallback} from 'react';
+import {useListData} from '@react-stately/data';
 
 ///- begin collapse -///
 let defaultItems = [
@@ -725,18 +726,16 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
 
 export default function EditableTable(props) {
   let columns = editableColumns;
-  let [editableItems, setEditableItems] = useState(defaultItems);
+  let data = useListData({initialItems: defaultItems});
 
   let onChange = useCallback((id: Key, columnId: Key, values: any) => {
     let value = values[columnId];
-    if (value === null) {
+    if (value == null) {
       return;
     }
-    setEditableItems(prev => {
-      let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value} : i);
-      return newItems;
-    });
-  }, []);
+    let prevItem = data.getItem(id);
+    data.update(id, {...prevItem, [columnId]: value});
+  }, [data]);
 
   return (
     <TableView aria-label="Dynamic table" {...props} styles={style({height: 208})}>
@@ -745,7 +744,7 @@ export default function EditableTable(props) {
           <Column {...column}>{column.name}</Column>
         )}
       </TableHeader>
-      <TableBody items={editableItems}>
+      <TableBody items={data.items}>
         {item => (
           <Row id={item.id} columns={columns}>
             {(column) => {
@@ -756,7 +755,12 @@ export default function EditableTable(props) {
                     aria-label={`Edit ${item[column.id]} in ${column.name}`}
                     align={column.align}
                     showDivider={column.showDivider}
-                    onSubmit={(values) => onChange(item.id, column.id!, values)}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
                     renderEditing={() => (
                       <TextField
                         aria-label="Fruit name edit field"
@@ -770,7 +774,8 @@ export default function EditableTable(props) {
                       {item[column.id]}
                       <ActionButton slot="edit" aria-label="Edit fruit">
                         <Edit />
-                      </ActionButton></div>
+                      </ActionButton>
+                    </div>
                   </EditableCell>
                 );
                 ///- end highlight -///
@@ -781,7 +786,12 @@ export default function EditableTable(props) {
                   <EditableCell
                     align={column.align}
                     showDivider={column.showDivider}
-                    onSubmit={(values) => onChange(item.id, column.id!, values)}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
                     renderEditing={() => (
                       <Picker
                         aria-label="Edit farmer"

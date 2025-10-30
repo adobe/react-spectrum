@@ -33,7 +33,9 @@ import {
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import {installPointerEvent, pointerMap, User} from '@react-aria/test-utils';
 import {Key} from '@react-types/shared';
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
+import {useEffectEvent} from '@react-aria/utils';
+import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
@@ -65,53 +67,43 @@ describe('TableView', () => {
   let defaultItems = [
     {id: 1,
       fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 2,
       fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 3,
       fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 4,
       fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 5,
       fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 6,
       fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 7,
       fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 8,
       fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 9,
       fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     },
     {id: 10,
       fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla',
-      isSaving: {},
-      intermediateValue: {}
+      isSaving: {}
     }
   ];
 
@@ -124,15 +116,16 @@ describe('TableView', () => {
 
   interface EditableTableProps extends TableViewProps {}
 
-  function EditableTable(props: EditableTableProps & {delay?: number}) {
-    let {delay = 0} = props;
+  function EditableTable(props: EditableTableProps & {delay?: number, onCancel?: () => void}) {
+    let {delay = 0, onCancel} = props;
     let columns = editableColumns;
-    let [editableItems, setEditableItems] = useState(defaultItems);
+    let data = useListData({initialItems: defaultItems});
 
-    let saveItem = useCallback((id: Key, columnId: Key) => {
-      setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: {...i.isSaving, [columnId]: false}} : i));
+    let saveItem = useEffectEvent((id: Key, columnId: Key) => {
+      let prevItem = data.getItem(id)!;
+      data.update(id, {...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}});
       currentRequests.current.delete(id);
-    }, []);
+    });
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
     let onChange = useCallback((id: Key, columnId: Key, values: any) => {
       let value = values[columnId];
@@ -145,15 +138,23 @@ describe('TableView', () => {
         currentRequests.current.delete(id);
         clearTimeout(alreadySaving.request);
       }
-      setEditableItems(prev => {
-        let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value, isSaving: {...i.isSaving, [columnId]: true}} : i);
-        let timeout = setTimeout(() => {
-          saveItem(id, columnId);
-        }, delay);
-        currentRequests.current.set(id, {request: timeout});
-        return newItems;
-      });
-    }, [saveItem, delay]);
+      let prevItem = data.getItem(id)!;
+      data.update(id, {...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}});
+    }, [data]);
+
+    useEffect(() => {
+      // if any item is saving and we don't have a request for it, start a timer to commit it
+      for (const item of data.items) {
+        for (const columnId in item.isSaving) {
+          if (item.isSaving[columnId] && !currentRequests.current.has(item.id)) {
+            let timeout = setTimeout(() => {
+              saveItem(item.id, columnId);
+            }, delay);
+            currentRequests.current.set(item.id, {request: timeout});
+          }
+        }
+      }
+    }, [data, delay]);
 
     return (
       <div>
@@ -163,7 +164,7 @@ describe('TableView', () => {
               <Column {...column}>{column.name}</Column>
             )}
           </TableHeader>
-          <TableBody items={editableItems}>
+          <TableBody items={data.items}>
             {item => (
               <Row id={item.id} columns={columns}>
                 {(column) => {
@@ -172,7 +173,13 @@ describe('TableView', () => {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={(values) => onChange(item.id, column.id!, values)}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
+                        onCancel={onCancel}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -191,7 +198,13 @@ describe('TableView', () => {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={(values) => onChange(item.id, column.id!, values)}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
+                        onCancel={onCancel}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
@@ -330,8 +343,9 @@ describe('TableView', () => {
     });
 
     it('should be cancellable through the buttons in the dialog', async () => {
+      let onCancel = jest.fn();
       let {getByRole} = render(
-        <EditableTable />
+        <EditableTable onCancel={onCancel} />
       );
 
       let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
@@ -354,11 +368,13 @@ describe('TableView', () => {
       expect(dialog).not.toBeInTheDocument();
 
       expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(onCancel).toHaveBeenCalled();
     });
 
     it('should be cancellable through Escape key', async () => {
+      let onCancel = jest.fn();
       let {getByRole} = render(
-        <EditableTable />
+        <EditableTable onCancel={onCancel} />
       );
 
       let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
@@ -379,6 +395,7 @@ describe('TableView', () => {
 
       expect(dialog).not.toBeInTheDocument();
       expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+      expect(onCancel).toHaveBeenCalled();
     });
   });
 
