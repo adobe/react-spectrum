@@ -94,7 +94,7 @@ function useScrollViewRef(props: ScrollViewProps, ref: RefObject<HTMLElement | n
     if (process.env.NODE_ENV !== 'test') { return ref; }
 
     let cache: HTMLElement | null = null;
-    let proto = Object.getOwnPropertyNames(window.HTMLElement.prototype);
+    let proto = typeof window !== 'undefined' ? Object.getOwnPropertyNames(window.HTMLElement.prototype) : [];
 
     return {
       get current() {
