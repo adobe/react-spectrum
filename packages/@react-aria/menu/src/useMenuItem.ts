@@ -72,9 +72,16 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
 
   /**
    * Whether the menu should close when the menu item is selected.
-   * @default true
+   * @deprecated - use shouldCloseOnSelect instead.
    */
   closeOnSelect?: boolean,
+
+  /**
+   * 
+   * Whether the menu should close when the menu item is selected.
+   * @default true
+   */
+  shouldCloseOnSelect?: boolean,
 
   /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
@@ -109,6 +116,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     id,
     key,
     closeOnSelect,
+    shouldCloseOnSelect,
     isVirtualized,
     'aria-haspopup': hasPopup,
     onPressStart,
@@ -222,7 +230,16 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       // Close except if multi-select is enabled.
       : selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key);
     
-    shouldClose = closeOnSelect ?? shouldClose;
+    
+    // console.log(!shouldCloseOnSelect, !closeOnSelect)
+    // console.log(shouldClose);
+    // if (!shouldCloseOnSelect || !closeOnSelect ) {
+    //   shouldClose = false;
+    // }
+
+    // shouldClose = closeOnSelect ?? shouldClose;
+    shouldClose = shouldCloseOnSelect ?? closeOnSelect ?? shouldClose;
+
     if (onClose && !isTrigger && shouldClose) {
       onClose();
     }

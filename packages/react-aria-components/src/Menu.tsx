@@ -194,7 +194,11 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
    */
   className?: ClassNameOrFunction<MenuRenderProps>,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  /** Whether the menu should close when the menu item is selected. 
+   * @default true
+   */
+  shouldCloseOnSelect?: boolean
 }
 
 /**
@@ -267,7 +271,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
-            [MenuItemContext, null],
+            [MenuItemContext, {shouldCloseOnSelect: props.shouldCloseOnSelect}],
             [SelectableCollectionContext, null],
             [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
@@ -294,7 +298,11 @@ export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection 
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-MenuSection'
    */
-  className?: string
+  className?: string,
+  /** Whether the menu should close when the menu item is selected. 
+   * @default true
+   */
+  shouldCloseOnSelect?: boolean
 }
 
 // A subclass of SelectionManager that forwards focus-related properties to the parent,
@@ -347,6 +355,8 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   let selectionState = useMultipleSelectionState(props);
   let manager = props.selectionMode != null ? new GroupSelectionManager(parent, selectionState) : parent;
 
+  let closeOnSelect = useSlottedContext(MenuItemContext)?.shouldCloseOnSelect;
+
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
 
@@ -357,7 +367,8 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
       <Provider
         values={[
           [HeaderContext, {...headingProps, ref: headingRef}],
-          [SelectionManagerContext, manager]
+          [SelectionManagerContext, manager],
+          [MenuItemContext, {shouldCloseOnSelect: closeOnSelect ?? props.shouldCloseOnSelect}]
         ]}>
         <CollectionBranch collection={state.collection} parent={section} />
       </Provider>
@@ -407,7 +418,7 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
    * Whether the menu should close when the menu item is selected.
    * @default true
    */
-  closeOnSelect?: boolean
+  shouldCloseOnSelect?: boolean
 }
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
