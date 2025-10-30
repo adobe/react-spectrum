@@ -231,13 +231,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       : selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key);
     
     
-    // console.log(!shouldCloseOnSelect, !closeOnSelect)
-    // console.log(shouldClose);
-    // if (!shouldCloseOnSelect || !closeOnSelect ) {
-    //   shouldClose = false;
-    // }
-
-    // shouldClose = closeOnSelect ?? shouldClose;
     shouldClose = shouldCloseOnSelect ?? closeOnSelect ?? shouldClose;
 
     if (onClose && !isTrigger && shouldClose) {
