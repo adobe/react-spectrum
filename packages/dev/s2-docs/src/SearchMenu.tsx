@@ -149,7 +149,7 @@ export function SearchMenu(props: SearchMenuProps) {
   const baseSectionIds = sectionTags.map(s => s.id);
   const baseIconIds = iconTag.map(t => t.id);
   const allBaseIds = [...baseSectionIds, ...baseIconIds];
-  const sectionIds = searchValue.trim().length > 0 ? ['all', ...allBaseIds] : allBaseIds;
+  const sectionIds = searchValue.trim().length > 0 && selectedSectionId !== 'icons' ? ['all', ...allBaseIds] : allBaseIds;
   if (!selectedSectionId || !sectionIds.includes(selectedSectionId)) {
     setSelectedSectionId(sectionIds[0] || 'components');
   }
@@ -213,12 +213,12 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [sections, searchValue]);
 
   const tags = useMemo(() => {
-    if (searchValue.trim().length > 0) {
-      // When searching, prepend an All tag
+    if (searchValue.trim().length > 0 && selectedSectionId !== 'icons') {
+      // When searching, prepend an All tag (unless Icons is selected)
       return [{id: 'all', name: 'All'}, ...sectionTags];
     }
     return sectionTags;
-  }, [searchValue, sectionTags]);
+  }, [searchValue, sectionTags, selectedSectionId]);
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
     if (searchValue) {
