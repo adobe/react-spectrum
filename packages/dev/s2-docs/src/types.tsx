@@ -755,15 +755,17 @@ interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
   links?: {[value: string]: {href: string, isRelative?: boolean}},
-  description?: string
+  description?: string,
+  mapping?: string[]
 }
 
 interface StyleMacroPropertiesProps {
-  properties: {[propertyName: string]: StyleMacroPropertyDefinition}
+  properties: {[propertyName: string]: StyleMacroPropertyDefinition},
 }
 
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   let propertyNames = Object.keys(properties);
+  let hasMapping = Object.values(properties).some(p => p.mapping);
 
   return (
     <Table>
@@ -771,6 +773,7 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
         <tr>
           <TableColumn>Property</TableColumn>
           <TableColumn>Values</TableColumn>
+          {hasMapping && <TableColumn>Mapping</TableColumn>}
         </tr>
       </TableHeader>
       <TableBody>
@@ -827,10 +830,22 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                     })}
                   </code>
                 </TableCell>
+                {hasMapping && (
+                  <TableCell hideBorder={!!propDef.description}>
+                    <code className={codeStyle}>
+                      {propDef.mapping?.map((mappedProp, i) => (
+                        <React.Fragment key={i}>
+                          {i > 0 && <Punctuation>{', '}</Punctuation>}
+                          <span className={codeStyles.attribute}>{mappedProp}</span>
+                        </React.Fragment>
+                      ))}
+                    </code>
+                  </TableCell>
+                )}
               </TableRow>
               {propDef.description && (
                 <TableRow>
-                  <TableCell colSpan={2}>{propDef.description}</TableCell>
+                  <TableCell colSpan={hasMapping ? 3 : 2}>{propDef.description}</TableCell>
                 </TableRow>
               )}
             </React.Fragment>

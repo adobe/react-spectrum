@@ -3,7 +3,7 @@ import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
 import {S2Colors} from '../../src/S2Colors';
 import {S2Typography} from '../../src/S2Typography';
 import {StyleMacroProperties} from '../../src/types';
-import {getPropertyDefinitions} from '../../src/styleProperties';
+import {getPropertyDefinitions, getShorthandDefinitions} from '../../src/styleProperties';
 export default Layout;
 
 export const section = 'Guides';
@@ -71,5 +71,10 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
 
 ## Shorthands
 
+Shorthands apply their provided value to commonly grouped properties.
+
+<StyleMacroProperties properties={getShorthandDefinitions('shorthand')} />
 
 ## Conditions
+
+<StyleMacroProperties properties={getPropertyDefinitions('conditions')} />

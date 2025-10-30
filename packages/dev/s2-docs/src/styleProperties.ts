@@ -128,7 +128,6 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   textIndent: [],
   translateX: ['full'],
   translateY: ['full'],
-  // TODO These ones should have a description for the supported values
   rotate: ['number', '${number}deg', '${number}rad', '${number}grad', '${number}turn'],
   scaleX: ['number', '${number}%'],
   scaleY: ['number', '${number}%'],
@@ -140,7 +139,6 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   left: ['auto', 'full'],
   bottom: ['auto', 'full'],
   right: ['auto', 'full'],
-  // TODO: add description for this one
   aspectRatio: ['auto', 'square', 'video', 'number / number']
 };
 
@@ -192,7 +190,7 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   transitionDelay: ['string', 'number'],
   transitionDuration: ['string', 'number'],
   transitionTimingFunction: ['default', 'linear', 'in', 'out', 'in-out'],
-  animation: ['string', 'number'],
+  animation: ['string'],
   animationDuration: ['string', 'number'],
   animationDelay: ['string', 'number'],
   animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'],
@@ -220,14 +218,11 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   gridRowStart: [],
   gridRowEnd: [],
   gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'],
-
-  // TODO: make these link to MDN and also have baseSpacingValue type link
   gridAutoRows:['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
   gridAutoColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'string'],
   gridTemplateColumns: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string',],
   gridTemplateRows: ['auto', 'min-content', 'max-content', '${number}fr', 'minmax(${string}, ${string})', 'none', 'subgrid', 'string'],
   gridTemplateAreas: ['string[]'],
-
   float: ['inline-start', 'inline-end', 'right', 'left', 'none'],
   clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'],
   contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'],
@@ -268,78 +263,163 @@ const miscPropertyValues: {[key: string]: string[]} = {
   caretColor: ['auto', 'transparent']
 };
 
-
-// TODO add shorthand mapping and conditions to the docs
-const shorthandMapping: {[key: string]: string[]} = {
-  padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'],
-  paddingX: ['paddingStart', 'paddingEnd'],
-  paddingY: ['paddingTop', 'paddingBottom'],
-  margin: ['marginTop', 'marginBottom', 'marginStart', 'marginEnd'],
-  marginX: ['marginStart', 'marginEnd'],
-  marginY: ['marginTop', 'marginBottom'],
-  scrollPadding: ['scrollPaddingTop', 'scrollPaddingBottom', 'scrollPaddingStart', 'scrollPaddingEnd'],
-  scrollPaddingX: ['scrollPaddingStart', 'scrollPaddingEnd'],
-  scrollPaddingY: ['scrollPaddingTop', 'scrollPaddingBottom'],
-  scrollMargin: ['scrollMarginTop', 'scrollMarginBottom', 'scrollMarginStart', 'scrollMarginEnd'],
-  scrollMarginX: ['scrollMarginStart', 'scrollMarginEnd'],
-  scrollMarginY: ['scrollMarginTop', 'scrollMarginBottom'],
-  borderWidth: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth'],
-  borderXWidth: ['borderStartWidth', 'borderEndWidth'],
-  borderYWidth: ['borderTopWidth', 'borderBottomWidth'],
-  borderRadius: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius'],
-  borderTopRadius: ['borderTopStartRadius', 'borderTopEndRadius'],
-  borderBottomRadius: ['borderBottomStartRadius', 'borderBottomEndRadius'],
-  borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'],
-  borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'],
-  translate: ['translateX', 'translateY'],
-  scale: ['scaleX', 'scaleY'],
-  inset: ['top', 'bottom', 'insetStart', 'insetEnd'],
-  insetX: ['insetStart', 'insetEnd'],
-  insetY: ['top', 'bottom'],
-  placeItems: ['alignItems', 'justifyItems'],
-  placeContent: ['alignContent', 'justifyContent'],
-  placeSelf: ['alignSelf', 'justifySelf'],
-  gap: ['rowGap', 'columnGap'],
-  size: ['width', 'height'],
-  minSize: ['minWidth', 'minHeight'],
-  maxSize: ['maxWidth', 'maxHeight'],
-  overflow: ['overflowX', 'overflowY'],
-  overscrollBehavior: ['overscrollBehaviorX', 'overscrollBehaviorY'],
-  gridArea: ['gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd'],
-
-  // TODO: is it more important to display the mapping that each short hand corresponds to or the value that it accepts?
-  // I was hoping that I would just display the mapping and then have people reference the value for the corresponding
-  // values in the sections above
-  font: fontSize
-
-  // TODO: For the below, similar question as the above
-  // transition: (value: keyof typeof transitionProperty) => ({
-  //   transition: value,
-  //   transitionDuration: 150,
-  //   transitionTimingFunction: 'default'
-  // }),
-  // animation: (value: string) => ({
-  //   animation: value,
-  //   animationDuration: 150,
-  //   animationTimingFunction: 'default'
-  // }),
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // truncate: (_value: true) => ({
-  //   overflowX: 'hidden',
-  //   overflowY: 'hidden',
-  //   textOverflow: 'ellipsis',
-  //   whiteSpace: 'nowrap'
-  // }),
-  // font: (value: keyof typeof fontSize) => {
-  //   let type = value.split('-')[0];
-  //   return {
-  //     fontFamily: type === 'code' ? 'code' : 'sans',
-  //     fontSize: value,
-  //     fontWeight: type === 'heading' || type === 'title' || type === 'detail' ? type : 'normal',
-  //     lineHeight: type,
-  //     color: type === 'ui' ? 'body' : type
-  //   };
-  // }
+const shorthandMapping: {[key: string]: {values: string[], mapping: string[]}} = {
+  padding: {
+    values: relativeSpacingValues,
+    mapping: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd']
+  },
+  paddingX: {
+    values: relativeSpacingValues,
+    mapping: ['paddingStart', 'paddingEnd']
+  },
+  paddingY: {
+    values: relativeSpacingValues,
+    mapping: ['paddingTop', 'paddingBottom']
+  },
+  margin: {
+    values: ['auto'],
+    mapping: ['marginTop', 'marginBottom', 'marginStart', 'marginEnd']
+  },
+  marginX: {
+    values: ['auto'],
+    mapping: ['marginStart', 'marginEnd']
+  },
+  marginY: {
+    values: ['auto'],
+    mapping: ['marginTop', 'marginBottom']
+  },
+  scrollPadding: {
+    values: [],
+    mapping: ['scrollPaddingTop', 'scrollPaddingBottom', 'scrollPaddingStart', 'scrollPaddingEnd']
+  },
+  scrollPaddingX: {
+    values: [],
+    mapping: ['scrollPaddingStart', 'scrollPaddingEnd']
+  },
+  scrollPaddingY: {
+    values: [],
+    mapping: ['scrollPaddingTop', 'scrollPaddingBottom']
+  },
+  scrollMargin: {
+    values: [],
+    mapping: ['scrollMarginTop', 'scrollMarginBottom', 'scrollMarginStart', 'scrollMarginEnd']
+  },
+  scrollMarginX: {
+    values: [],
+    mapping: ['scrollMarginStart', 'scrollMarginEnd']
+  },
+  scrollMarginY: {
+    values: [],
+    mapping: ['scrollMarginTop', 'scrollMarginBottom']
+  },
+  borderWidth: {
+    values: ['0', '1', '2', '4'],
+    mapping: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth']
+  },
+  borderXWidth: {
+    values: ['0', '1', '2', '4'],
+    mapping: ['borderStartWidth', 'borderEndWidth']
+  },
+  borderYWidth: {
+    values: ['0', '1', '2', '4'],
+    mapping: ['borderTopWidth', 'borderBottomWidth']
+  },
+  borderRadius: {
+    values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
+    mapping: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius']
+  },
+  borderTopRadius: {
+    values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
+    mapping: ['borderTopStartRadius', 'borderTopEndRadius']
+  },
+  borderBottomRadius: {
+    values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
+    mapping: ['borderBottomStartRadius', 'borderBottomEndRadius']
+  },
+  borderStartRadius: {
+    values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
+    mapping: ['borderTopStartRadius', 'borderBottomStartRadius']
+  },
+  borderEndRadius: {
+    values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
+    mapping: ['borderTopEndRadius', 'borderBottomEndRadius']
+  },
+  translate: {
+    values: ['full'],
+    mapping: ['translateX', 'translateY']
+  },
+  scale: {
+    values: ['number', '${number}%'],
+    mapping: ['scaleX', 'scaleY']
+  },
+  inset: {
+    values: ['auto', 'full'],
+    mapping: ['top', 'bottom', 'insetStart', 'insetEnd']
+  },
+  insetX: {
+    values: ['auto', 'full'],
+    mapping: ['insetStart', 'insetEnd']
+  },
+  insetY: {
+    values: ['auto', 'full'],
+    mapping: ['top', 'bottom']
+  },
+  placeItems: {
+    values: ['start', 'end', 'center', 'stretch'],
+    mapping: ['alignItems', 'justifyItems']
+  },
+  placeContent: {
+    values: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'baseline', 'stretch'],
+    mapping: ['alignContent', 'justifyContent']
+  },
+  placeSelf: {
+    values: ['auto', 'start', 'end', 'center', 'stretch', 'baseline'],
+    mapping: ['alignSelf', 'justifySelf']
+  },
+  gap: {
+    values: relativeSpacingValues,
+    mapping: ['rowGap', 'columnGap']
+  },
+  size: {
+    values: heightBaseValues,
+    mapping: ['width', 'height']
+  },
+  minSize: {
+    values: heightBaseValues,
+    mapping: ['minWidth', 'minHeight']
+  },
+  maxSize: {
+    values: [...heightBaseValues, 'none'],
+    mapping: ['maxWidth', 'maxHeight']
+  },
+  overflow: {
+    values: ['auto', 'hidden', 'clip', 'visible', 'scroll'],
+    mapping: ['overflowX', 'overflowY']
+  },
+  overscrollBehavior: {
+    values: ['auto', 'contain', 'none'],
+    mapping: ['overscrollBehaviorX', 'overscrollBehaviorY']
+  },
+  gridArea: {
+    values: ['string'],
+    mapping: ['gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd']
+  },
+  transition: {
+    values: ['default', 'colors', 'opacity', 'shadow', 'transform', 'all', 'none'],
+    mapping: ['transition', 'transitionDuration', 'transitionTimingFunction']
+  },
+  animation: {
+    values: ['string'],
+    mapping: ['animation', 'animationDuration', 'animationTimingFunction']
+  },
+  truncate: {
+    values: ['true'],
+    mapping: ['overflowX', 'overflowY', 'textOverflow', 'whiteSpace']
+  },
+  font: {
+    values: ['fontSize'],
+    mapping: ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'color']
+  }
 };
 
 const conditionMapping: {[key: string]: string[]} = {
@@ -358,7 +438,8 @@ const properties: {[key: string]: {[key: string]: string[]}} = {
   text: textPropertyValues,
   effects: effectsPropertyValues,
   layout: layoutPropertyValues,
-  misc: miscPropertyValues
+  misc: miscPropertyValues,
+  conditions: conditionMapping
 };
 
 // TODO: will we need something specific for short hand?
@@ -400,7 +481,8 @@ const relativeLinks: {[key: string]: string} = {
   'text-to-visual': '#dimensions',
   'edge-to-text': '#dimensions',
   'pill': '#dimensions',
-  'baseColors': '#colors'
+  'baseColors': '#colors',
+  'fontSize': '#text'
 }
 
 // a mapping of value to mdn links that should be replaced in place
@@ -435,14 +517,20 @@ const propertyDescriptions: {[key: string]: string} = {
   'rotate': 'Accepts a number (treated as degrees) or a string with units (deg, rad, grad, turn).',
   'scaleX': 'Accepts a number or percentage string.',
   'scaleY': 'Accepts a number or percentage string.',
-  'aspectRatio': 'Also accepts a ratio in the format number/number (e.g., 16/9, 4/3).'
+  'scaleShortHand': 'Accepts a number or percentage string.',
+  'aspectRatio': 'Also accepts a ratio in the format number/number (e.g., 16/9, 4/3).',
+  'transitionShorthand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
+  'animationShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
+  'truncateShortHand': 'Applying this shorthand will enable text truncation.',
+  'fontShortHand': 'The "fontSize" provided defines the values this shorthand sets on the mapped values.'
 };
 
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
   links?: {[value: string]: {href: string, isRelative?: boolean}},
-  description?: string
+  description?: string,
+  mapping?: string[]
 }
 
 export function getPropertyDefinitions(propertyCategory: string): {[key: string]: StyleMacroPropertyDefinition} {
@@ -479,5 +567,36 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
       description: propertyDescriptions[name]
     };
   }
+  return result;
+}
+
+export function getShorthandDefinitions(): {[key: string]: StyleMacroPropertyDefinition} {
+  let result: {[key: string]: StyleMacroPropertyDefinition} = {};
+
+  for (let [shorthandName, shorthandDef] of Object.entries(shorthandMapping)) {
+    let values = shorthandDef.values;
+    let links: {[value: string]: {href: string, isRelative?: boolean}} = {};
+
+    for (let value of values) {
+      if (value === 'pill' && shorthandName.includes('border')) {
+        continue;
+      }
+
+      if (mdnTypeLinks[value]) {
+        links[value] = {href: mdnTypeLinks[value]};
+      } else if (relativeLinks[value]) {
+        links[value] = {href: relativeLinks[value], isRelative: true};
+      }
+    }
+
+    result[shorthandName] = {
+      values,
+      additionalTypes: getAdditionalTypes(shorthandDef.mapping[0]),
+      links: Object.keys(links).length > 0 ? links : undefined,
+      mapping: shorthandDef.mapping,
+      description: propertyDescriptions[`${shorthandName}ShortHand`]
+    };
+  }
+
   return result;
 }
