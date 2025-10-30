@@ -35,7 +35,8 @@ if (!process.env.LISTENING_TO_UNHANDLED_REJECTION) {
 const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   'ReactDOM.render is no longer supported in React 18',
   'ReactDOM.render has not been supported since React 18',
-  '`ReactDOMTestUtils.act` is deprecated in favor of `React.act`'
+  '`ReactDOMTestUtils.act` is deprecated in favor of `React.act`',
+  'Warning: unmountComponentAtNode is deprecated and will be removed in the next major release. Switch to the createRoot API. Learn more: https://reactjs.org/link/switch-to-createroot'
 ];
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [

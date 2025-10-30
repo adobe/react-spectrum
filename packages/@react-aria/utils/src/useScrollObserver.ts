@@ -87,7 +87,6 @@ export function useScrollObserver(props: ScrollObserverProps, ref: RefObject<HTM
 
   let handleScrollEnd = useCallback(() => flushSync(() => {
     state.isScrolling = false;
-    clearTimeout(state.scrollTimeout);
     state.scrollTimeout = undefined;
     onScrollEnd?.();
   }), [state, onScrollEnd]);
