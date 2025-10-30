@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
+import {ActionButton, Content, Divider, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
@@ -114,12 +114,13 @@ export function SearchMenu(props: SearchMenuProps) {
     });
   }, [transformedComponents]);
 
-  const allTags = useMemo(() => {
+  const sectionTags = useMemo(() => sections, [sections]);
+  const iconTag = useMemo(() => {
     if (selectedLibrary === 'react-spectrum') {
-      return [...sections, {id: 'icons', name: 'Icons'}];
+      return [{id: 'icons', name: 'Icons'}];
     }
-    return sections;
-  }, [sections, selectedLibrary]);
+    return [];
+  }, [selectedLibrary]);
 
   const [selectedSectionId, setSelectedSectionId] = useState<string>(() => currentPage.exports?.section?.toLowerCase() || 'components');
   const prevSearchWasEmptyRef = useRef<boolean>(true);
@@ -145,8 +146,10 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [searchValue, iconFilter]);
 
   // Ensure selected section is valid for the current library
-  const baseIds = allTags.map(s => s.id);
-  const sectionIds = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
+  const baseSectionIds = sectionTags.map(s => s.id);
+  const baseIconIds = iconTag.map(t => t.id);
+  const allBaseIds = [...baseSectionIds, ...baseIconIds];
+  const sectionIds = searchValue.trim().length > 0 ? ['all', ...allBaseIds] : allBaseIds;
   if (!selectedSectionId || !sectionIds.includes(selectedSectionId)) {
     setSelectedSectionId(sectionIds[0] || 'components');
   }
@@ -212,10 +215,10 @@ export function SearchMenu(props: SearchMenuProps) {
   const tags = useMemo(() => {
     if (searchValue.trim().length > 0) {
       // When searching, prepend an All tag
-      return [{id: 'all', name: 'All'}, ...allTags];
+      return [{id: 'all', name: 'All'}, ...sectionTags];
     }
-    return allTags;
-  }, [searchValue, allTags]);
+    return sectionTags;
+  }, [searchValue, sectionTags]);
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
     if (searchValue) {
@@ -233,6 +236,13 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [searchValue]);
 
   const handleSectionSelectionChange = React.useCallback((keys: Iterable<Key>) => {
+    const firstKey = Array.from(keys)[0] as string;
+    if (firstKey) {
+      setSelectedSectionId(firstKey);
+    }
+  }, []);
+
+  const handleIconSelectionChange = React.useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
     if (firstKey) {
       setSelectedSectionId(firstKey);
@@ -300,80 +310,102 @@ export function SearchMenu(props: SearchMenuProps) {
             </Tab>
           ))}
         </TabList>
-        {orderedTabs.map((tab, i) => (
-          <TabPanel key={tab.id} id={tab.id}>
-            <Autocomplete filter={selectedSectionId === 'icons' ? iconFilter : undefined}>
-              <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
-                <SearchField
-                  value={searchValue}
-                  onChange={setSearchValue}
-                  ref={searchRef}
-                  size="L"
-                  aria-label={`Search ${tab.label}`}
-                  UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
-                  styles={style({width: '[500px]'})} />
-              </div>
+        {orderedTabs.map((tab, i) => {
+          const tabIconTag = tab.id === 'react-spectrum' ? [{id: 'icons', name: 'Icons'}] : [];
+          return (
+            <TabPanel key={tab.id} id={tab.id}>
+              <Autocomplete filter={selectedSectionId === 'icons' ? iconFilter : undefined}>
+                <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
+                  <SearchField
+                    value={searchValue}
+                    onChange={setSearchValue}
+                    ref={searchRef}
+                    size="L"
+                    aria-label={`Search ${tab.label}`}
+                    UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
+                    styles={style({width: '[500px]'})} />
+                </div>
 
-              <CloseButton onClose={onClose} />
+                <CloseButton onClose={onClose} />
 
-              <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
-                {allTags.length > 0 && (
-                  <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
-                    <SelectableCollectionContext.Provider value={null}>
-                      <TagGroup
-                        selectionMode="single"
-                        disallowEmptySelection
-                        selectedKeys={selectedSectionId ? [selectedSectionId] : []}
-                        onSelectionChange={handleSectionSelectionChange}
-                        aria-label="Select section"
-                        items={tags}
-                        styles={style({marginX: 12})}>
-                        {(tag) => (
-                          <Tag key={tag.id} id={tag.id}>
-                            {tag.name}
-                          </Tag>
-                        )}
-                      </TagGroup>
-                    </SelectableCollectionContext.Provider>
-                  </div>
-                )}
-                {selectedSectionId === 'icons' ? (
-                  <Suspense fallback={<IconSearchSkeleton />}>
-                    <IconSearchView filteredItems={filteredIcons} />
-                  </Suspense>
-                ) : (
-                  <ComponentCardView
-                    onAction={() => {
-                      setSearchValue('');
-                      onClose();
-                    }}
-                    items={selectedItems.map(item => ({
-                      id: item.id,
-                      name: item.name,
-                      href: item.href ?? `/${tab.id}/${item.name}.html`,
-                      description: item.description
-                    }))}
-                    ariaLabel={selectedSectionName}
-                    renderEmptyState={() => (
-                      <IllustratedMessage styles={style({margin: 32})}>
-                        <NoSearchResults />
-                        <Heading>No results</Heading>
-                        {searchValue.trim().length > 0 ? (
-                          <Content>
-                            No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {tab.label}.
-                          </Content>
-                        ) : (
-                          <Content>
-                            No results found in {tab.label}.
-                          </Content>
-                        )}
-                      </IllustratedMessage>
-                    )} />
-                )}
-              </div>
-            </Autocomplete>
-          </TabPanel>
-        ))}
+                <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
+                  {(tags.length > 0 || tabIconTag.length > 0) && (
+                    <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
+                      <SelectableCollectionContext.Provider value={null}>
+                        <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 12})}>
+                          {tags.length > 0 && (
+                            <TagGroup
+                              selectionMode="single"
+                              selectedKeys={selectedSectionId && selectedSectionId !== 'icons' ? [selectedSectionId] : []}
+                              onSelectionChange={handleSectionSelectionChange}
+                              aria-label="Select section"
+                              items={tags}>
+                              {(tag) => (
+                                <Tag key={tag.id} id={tag.id}>
+                                  {tag.name}
+                                </Tag>
+                              )}
+                            </TagGroup>
+                          )}
+                          {tabIconTag.length > 0 && tags.length > 0 && (
+                            <Divider orientation="vertical" size="S" styles={style({marginY: 8, marginStart: -8})} />
+                          )}
+                          {tabIconTag.length > 0 && (
+                            <TagGroup
+                              selectionMode="single"
+                              selectedKeys={selectedSectionId === 'icons' ? ['icons'] : []}
+                              onSelectionChange={handleIconSelectionChange}
+                              aria-label="Icons"
+                              items={tabIconTag}>
+                              {(tag) => (
+                                <Tag key={tag.id} id={tag.id}>
+                                  {tag.name}
+                                </Tag>
+                              )}
+                            </TagGroup>
+                          )}
+                        </div>
+                      </SelectableCollectionContext.Provider>
+                    </div>
+                  )}
+                  {selectedSectionId === 'icons' ? (
+                    <Suspense fallback={<IconSearchSkeleton />}>
+                      <IconSearchView filteredItems={filteredIcons} />
+                    </Suspense>
+                  ) : (
+                    <ComponentCardView
+                      onAction={() => {
+                        setSearchValue('');
+                        onClose();
+                      }}
+                      items={selectedItems.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        href: item.href ?? `/${tab.id}/${item.name}.html`,
+                        description: item.description
+                      }))}
+                      ariaLabel={selectedSectionName}
+                      renderEmptyState={() => (
+                        <IllustratedMessage styles={style({margin: 32})}>
+                          <NoSearchResults />
+                          <Heading>No results</Heading>
+                          {searchValue.trim().length > 0 ? (
+                            <Content>
+                              No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {tab.label}.
+                            </Content>
+                          ) : (
+                            <Content>
+                              No results found in {tab.label}.
+                            </Content>
+                          )}
+                        </IllustratedMessage>
+                      )} />
+                  )}
+                </div>
+              </Autocomplete>
+            </TabPanel>
+          );
+        })}
       </Tabs>
     </Dialog>
   );
