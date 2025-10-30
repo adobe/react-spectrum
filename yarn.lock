@@ -6375,6 +6375,7 @@ __metadata:
     "@react-aria/i18n": "npm:^3.12.13"
     "@react-aria/interactions": "npm:^3.25.6"
     "@react-aria/utils": "npm:^3.31.0"
+    "@react-stately/utils": "npm:^3.10.8"
     "@react-stately/virtualizer": "npm:^4.4.4"
     "@react-types/shared": "npm:^3.32.1"
     "@swc/helpers": "npm:^0.5.0"
@@ -8447,6 +8448,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/utils@workspace:packages/@react-stately/utils"
   dependencies:
+    "@react-types/shared": "npm:^3.32.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -8457,6 +8459,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/virtualizer@workspace:packages/@react-stately/virtualizer"
   dependencies:
+    "@react-stately/utils": "npm:^3.10.8"
     "@react-types/shared": "npm:^3.32.1"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
