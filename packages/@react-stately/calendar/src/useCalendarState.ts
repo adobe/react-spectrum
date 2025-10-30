@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
+import {alignCenter, alignDate, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {
   Calendar,
   CalendarDate,
@@ -56,6 +56,9 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
+
+const DEFAULT_VISIBLE_DURATION: DateDuration = {months: 1};
+
 /**
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
@@ -66,7 +69,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   let {
     locale,
     createCalendar,
-    visibleDuration = {months: 1},
+    visibleDuration = DEFAULT_VISIBLE_DURATION,
     minValue,
     maxValue,
     selectionAlignment,
@@ -95,15 +98,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   ), [props.defaultFocusedValue, calendarDateValue, timeZone, calendar, minValue, maxValue]);
   let [focusedDate, setFocusedDate] = useControlledState(focusedCalendarDate, defaultFocusedCalendarDate, props.onFocusChange);
   let [startDate, setStartDate] = useState(() => {
-    switch (selectionAlignment) {
-      case 'start':
-        return alignStart(focusedDate, visibleDuration, locale, minValue, maxValue);
-      case 'end':
-        return alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue);
-      case 'center':
-      default:
-        return alignCenter(focusedDate, visibleDuration, locale, minValue, maxValue);
-    }
+    return alignDate(focusedDate, selectionAlignment || 'center', visibleDuration, locale, minValue, maxValue);
   });
   let [isFocused, setFocused] = useState(props.autoFocus || false);
 
@@ -194,6 +189,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     isReadOnly: props.isReadOnly ?? false,
     value: calendarDateValue,
     setValue,
+    visibleDuration,
     visibleRange: {
       start: startDate,
       end: endDate
@@ -204,9 +200,13 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     timeZone,
     validationState,
     isValueInvalid,
-    setFocusedDate(date) {
+    setFocusedDate(date, align) {
       focusCell(date);
       setFocused(true);
+
+      if (align && (date.compare(startDate) < 0 || date.compare(endDate) > 0)) {
+        setStartDate(alignDate(date, align, visibleDuration, locale, minValue, maxValue));
+      }
     },
     focusNextDay() {
       focusCell(focusedDate.add({days: 1}));
