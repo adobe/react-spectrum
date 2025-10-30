@@ -15,7 +15,6 @@ import {getScrollLeft, getScrollTop} from './getScrollOffset';
 import {isReactAct} from './platform';
 import {Rect, Size} from '@react-stately/utils';
 import {RefObject, useCallback, useRef, useState} from 'react';
-import {useEffectEvent} from './useEffectEvent';
 import {useEvent} from './useEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useResizeObserver} from './useResizeObserver';
@@ -177,10 +176,6 @@ export function useScrollObserver(props: ScrollObserverProps, ref: RefObject<HTM
   // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => updateSize(fn => fn()), [update]);
-
-  // Fire scrollend on unmount to run cleanups
-  let onScrollEndEvent = useEffectEvent(onScrollEnd);
-  useLayoutEffect(() => () => queueMicrotask(onScrollEndEvent), []);
 
   return {updateSize: queueUpdate};
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ScrollViewProps as AriaScrollViewProps, mergeProps, ScrollViewAria, useScrollView as useAriaScrollView, useObjectRef} from '@react-aria/utils';
+import {ScrollViewProps as AriaScrollViewProps, mergeProps, ScrollViewAria, useScrollView as useAriaScrollView, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, Orientation, Size} from '@react-types/shared';
 import React, {CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useMemo} from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -67,6 +67,11 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     orientation,
     direction
   }), viewRef);
+
+  // Re-connect typekit MutationObserver on unmount.
+  useLayoutEffect(() => () => {
+    window.dispatchEvent(new Event('tk.connect-observer'));
+  }, []);
 
   return {
     isScrolling,

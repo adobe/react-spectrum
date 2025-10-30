@@ -11,6 +11,7 @@
  */
 
 export {Point, Rect, Size} from '@react-stately/utils';
+export type {Corner as RectCorner} from '@react-types/shared';
 
 export {Layout} from './Layout';
 export {LayoutInfo} from './LayoutInfo';
@@ -19,4 +20,3 @@ export {useVirtualizerState} from './useVirtualizerState';
 
 export type {InvalidationContext} from './types';
 export type {VirtualizerState} from './useVirtualizerState';
-export type {RectCorner} from './Rect';
