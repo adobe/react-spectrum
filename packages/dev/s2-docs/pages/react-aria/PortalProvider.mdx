@@ -45,11 +45,10 @@ a detailed explanation of its implementation.
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/MyToastRegion.tsx"]}
 'use client';
 import React from 'react';
-import {Button} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
 import {MyToastRegion} from './MyToastRegion.tsx'
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
-
 
 // Define the type for your toast content.
 interface MyToastContent {
@@ -88,7 +87,70 @@ function App() {
 ```css render hidden
 .react-aria-ToastRegion {
   position: unset;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  border-radius: 8px;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
 }
+
+.react-aria-Toast {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--highlight-background);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  .react-aria-ToastContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0px;
+
+    [slot=title] {
+      font-weight: bold;
+    }
+  }
+
+  .react-aria-Button[slot=close] {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    appearance: none;
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+    font-size: 16px;
+    border: 1px solid var(--highlight-foreground);
+    color: white;
+    padding: 0;
+    outline: none;
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px var(--highlight-background), 0 0 0 4px var(--highlight-foreground);
+    }
+
+    &[data-pressed] {
+      background: var(--highlight-pressed);
+    }
+  }
+}
+
 ```
 
 ## Contexts
