@@ -38,6 +38,7 @@
     "@react-spectrum/utils": "^3.12.6",
     "@react-types/shared": "^3.30.0",
     "@react-types/textfield": "^3.12.3",
+    "@spectrum-icons/workflow": "^4.2.25",
     "emojibase-data": "^16.0.3",
     "fast-glob": "^3.3.3",
     "globals-docs": "^2.4.1",
