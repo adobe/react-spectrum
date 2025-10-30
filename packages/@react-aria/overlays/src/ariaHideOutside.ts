@@ -15,7 +15,8 @@ const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLEleme
 
 interface AriaHideOutsideOptions {
   root?: Element,
-  shouldUseInert?: boolean
+  shouldUseInert?: boolean,
+  getVisibleNodes?: (element: Element) => Element[]
 }
 
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
@@ -42,6 +43,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
   let opts = options instanceof windowObj.Element ? {root: options} : options;
   let root = opts?.root ?? document.body;
   let shouldUseInert = opts?.shouldUseInert && supportsInert;
+  let getVisibleNodes = opts?.getVisibleNodes;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
 
@@ -68,6 +70,12 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     // Keep live announcer and top layer elements (e.g. toasts) visible.
     for (let element of root.querySelectorAll('[data-live-announcer], [data-react-aria-top-layer]')) {
       visibleNodes.add(element);
+    }
+
+    if (getVisibleNodes) {
+      for (let element of getVisibleNodes(root)) {
+        visibleNodes.add(element);
+      }
     }
 
     let acceptNode = (node: Element) => {
