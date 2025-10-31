@@ -47,10 +47,6 @@ const negativeSpacingProperties = new Set([
 const baseSpacingValues = ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96'];
 const negativeBaseSpacingValues = ['-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96'];
 const relativeSpacingValues = ['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
-// const spacingValues = [...baseSpacingValues, ...relativeSpacingValues];
-// const marginValues = [...spacingValues, ...negativeBaseSpacingValues, 'auto'];
-// const insetValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'auto', 'full'];
-// const translateValues = [...baseSpacingValues, ...negativeBaseSpacingValues, 'full'];
 const heightBaseValues = ['auto', 'full', 'min', 'max', 'fit', 'screen'];
 const fontSize = [
   'ui-xs', 'ui-sm', 'ui', 'ui-lg', 'ui-xl', 'ui-2xl', 'ui-3xl',
@@ -442,10 +438,6 @@ const properties: {[key: string]: {[key: string]: string[]}} = {
   conditions: conditionMapping
 };
 
-// TODO: will we need something specific for short hand?
-// TODO: see if there are any others that we will need to add additional shared types for
-// this is less additional types and more that we want to represent the below as a type link
-// special custom types that should be appended to the property but need special handling (render a type popover)
 export function getAdditionalTypes(propertyName: string): string[] {
   let types: string[] = [];
 

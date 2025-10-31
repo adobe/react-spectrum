@@ -3,6 +3,7 @@ import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
 import {S2Colors} from '../../src/S2Colors';
 import {S2Typography} from '../../src/S2Typography';
 import {S2StyleProperties} from '../../src/S2StyleProperties';
+import {S2FAQ} from '../../src/S2FAQ';
 export default Layout;
 
 export const section = 'Guides';
@@ -241,21 +242,4 @@ we have MCP servers for [React Aria](#TODO) and [React Spectrum](https://www.npm
 
 ## FAQ
 
-> I'm getting a "Could not statically evaluate macro argument" error.
-
-This indicates that your `style` macro has a condition that isn't evaluable at build time. This can happen for a variety of reasons such
-as if you've referenced non-constant variables within your `style` macro or if you've called non-macro functions within your `style` macro.
-If you are using Typescript, it can be as simple as forgetting to add `as const` to your own defined reusable macro.
-
-> I'm seeing a ton of duplicate rules being generated and/or my dev tools are very slow.
-
-Please make sure you've followed the [best practices listed above](#css-optimization).
-
-> I tried to pass my `style` macro to `UNSAFE_className` but it doesn't work.
-
-The `style` macro is not meant to be used with `UNSAFE_className`. Overrides to the Spectrum styles is highly discouraged,
-consider styling an equivalent React Aria Component instead.
-
-> I'm coming from S1, but where are Flex/Grid/etc?
-
-These no longer exist. Please style `<div>`, `<span>`, and other standard HTML elements with the `style` macro instead.
+<S2FAQ />

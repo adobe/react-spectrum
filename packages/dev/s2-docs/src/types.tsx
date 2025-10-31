@@ -856,5 +856,3 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
     </Table>
   );
 }
-
-// TODO: For the Shorthands, have a column for Name, value (what values it accepts), and mapping where mapping is what properties it maps to

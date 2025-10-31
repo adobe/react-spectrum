@@ -31,23 +31,6 @@ const components = {
   p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
   ul: (props) => <ul {...props} />,
   li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 0})}>{children}</li>,
-  blockquote: ({children, ...props}) => (
-    <blockquote
-      {...props}
-      className={style({
-        borderStartWidth: 4,
-        borderEndWidth: 0,
-        borderTopWidth: 0,
-        borderBottomWidth: 0,
-        borderStyle: 'solid',
-        borderColor: 'gray-400',
-        paddingStart: 12,
-        font: {default: 'body', lg: 'body-lg'},
-        margin: 'unset'
-      })}>
-      {children}
-    </blockquote>
-  ),
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
@@ -243,6 +226,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
               <article
                 className={articleStyles({isWithToC: hasToC})}>
                 {React.cloneElement(children, {components})}
+                {currentPage.exports?.relatedPages && (
+                  <MobileRelatedPages pages={currentPage.exports.relatedPages} />
+                )}
               </article>
               <aside
                 className={style({
@@ -302,6 +288,35 @@ function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
           ))}
         </SideNav>
       </OnPageNav>
+    </div>
+  );
+}
+
+function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+  const P = components.p;
+  const Li = components.li;
+  const Ul = components.ul;
+
+  return (
+    <div
+      className={style({
+        display: {
+          default: 'block',
+          lg: 'none'
+        }
+      })}>
+      <H2>Related pages</H2>
+      <Ul>
+        {pages.map((page, i) => (
+          <Li key={i}>
+            <P>
+              <Link href={page.url}>
+                {page.title}
+              </Link>
+            </P>
+          </Li>
+        ))}
+      </Ul>
     </div>
   );
 }
