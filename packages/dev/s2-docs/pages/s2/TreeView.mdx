@@ -299,11 +299,11 @@ function Example(props) {
   let [selected, setSelected] = useState<Selection>(new Set());
 
   return (
-    <div>
+    <div className={style({width: 'full'})}>
       <TreeView
         {...props}
         aria-label="Pokemon evolution"
-        styles={style({height: 250, width: 300})}
+        styles={style({height: 250, width: 'full', maxWidth: 300})}
         ///- begin highlight -///
         /* PROPS */
         selectedKeys={selected}
