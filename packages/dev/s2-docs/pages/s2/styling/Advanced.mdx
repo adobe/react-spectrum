@@ -9,6 +9,23 @@ export const description = 'Style macro advanced usage guide';
 
 A guide to advanced use cases with the `style` macro.
 
+## Conditional styles
+
+Define conditional values as objects to handle media queries, UI states (hover/press), and variants. This keeps all values for a property together.
+
+```tsx
+<div
+  className={style({
+    padding: {
+      default: 8,
+      lg: 32
+    }
+  })}
+/>
+```
+
+Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
+
 ## Runtime conditions
 
 When runtime conditions are detected (e.g., variants, UI states), the macro returns a function to resolve styles at runtime.
