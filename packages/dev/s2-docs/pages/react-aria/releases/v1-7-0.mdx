@@ -42,7 +42,6 @@ Thanks to an update in Safari 17, all elements with an explicit `tabIndex` can n
 Note that this refactor changes the order that focus occurs. Previously, focus always occurred before `onPressStart`. Now focus occurs after `onPressStart` on mouse and keyboard interactions, and after `onPressEnd` on touch screens, matching native browser behavior. Additionally, unit tests may need to simulate different events than before. We recommend the [user-event](https://testing-library.com/docs/user-event/intro/) library to simulate events matching browser behavior.
 
 ## Enhancements
-
 - Button
   - Add support for `aria-current` prop - [@TimonVS](https://github.com/TimonVS) - [PR](https://github.com/adobe/react-spectrum/pull/7643)
 - Collections
@@ -64,7 +63,6 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
   - Add `has-child-items` to Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7842)
 
 ## Fixes
-
 - Collections
   - Prevent mutating non-empty selection upon focus - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/7513)
   - Update Table/Collection array types - [@lukeapage](https://github.com/lukeapage) - [PR](https://github.com/adobe/react-spectrum/pull/7741)
@@ -96,7 +94,6 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
   - Fix memory leak in `useId` when used with React Suspense - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7757)
 
 ## Docs
-
 - Update test util doc examples so they don't error out - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7612)
 - Fix typo in Slider - [@artola](https://github.com/artola) - [PR](https://github.com/adobe/react-spectrum/pull/7621)
 - Fix typo in Drag and Drop docs - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7647)
@@ -107,10 +104,8 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
 - Add docs for custom overlay trigger elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7662)
 
 ## Under Construction
-
 RAC Toast
   - Add Toast to React Aria Components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7783)
-
 Autocomplete
   - Fix broken link in `Autocomplete` docs - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/7618)
   - RAC Autocomplete docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7784), [PR](https://github.com/adobe/react-spectrum/pull/7826), [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7827), [PR](https://github.com/adobe/react-spectrum/pull/7824)

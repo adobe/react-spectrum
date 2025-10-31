@@ -33,14 +33,12 @@ Happy coding and see you in the new year! ☃️
 **React Aria Components API updates**
 
 In this release, we made a few last API updates to React Aria Components as they move along to GA.
-
- - Temporarily removed nested column support in `Tables` due to instability.
- - Hover and Focus are now distinct states in `ListBox`.
- - Hover state has been added to column headers in tables when sorting is allowed.
- - All refs given to a component now go to their outer most element. If you need a ref to the input, you can attach it directly.
- - Styles for `Popover`, `Tooltip`, and `OverlayArrow` are now merged in a different order to allow overriding our default styles.
- - Added a dependency array to help manage the item cache with columns in `Tables`.
-
+* Temporarily removed nested column support in `Tables` due to instability.
+* Hover and Focus are now distinct states in `ListBox`.
+* Hover state has been added to column headers in tables when sorting is allowed.
+* All refs given to a component now go to their outer most element. If you need a ref to the input, you can attach it directly.
+* Styles for `Popover`, `Tooltip`, and `OverlayArrow` are now merged in a different order to allow overriding our default styles.
+* Added a dependency array to help manage the item cache with columns in `Tables`.
 
 ## Enhancements
 * Improve behavior of `usePreventScroll` on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5346)
@@ -93,7 +91,6 @@ In this release, we made a few last API updates to React Aria Components as they
 * Make value and defaultValue valid in `NumberField` and `Slider` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5543)
 * Respect Tailwind hoverOnlyWhenSupported, and fix placeholder-shown with `Input` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5587)
 * Aria label on `ListBox` `Sections` in RAC - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5603)
-
 
 ## Docs
 * Fix `useToast` example in docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5398)

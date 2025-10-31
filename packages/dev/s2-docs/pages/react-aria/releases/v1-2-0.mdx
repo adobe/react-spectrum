@@ -33,118 +33,112 @@ We have also improved our integration with [client side routers](../routing.html
 Last but not least, we want to acknowledge all the wonderful contributors who have dedicated their time to improve our libraries. A special thanks to [@ryo-manba](https://github.com/ryo-manba) and [@sookmax](https://github.com/sookmax), who are responsible for multiple bug fixes to Switch, IME support, ListBox, ComboBox, as well as adding new features such as additional state attributes, hover events, and language support. Thank you!! 😍
 
 **React Aria Color API updates**
-
-- `gradientProps` was merged into `colorAreaProps` in [`useColorArea`](../useColorArea.html).
+* `gradientProps` was merged into `colorAreaProps` in [`useColorArea`](../useColorArea.html).
 
 ## Enhancements
-
-- Collections
-  - Support `onAction` and `isDisabled` on item elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5874)
-  - Add hover events to all collection items - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6255)
-  - Add support for hover events in `ListBox` Option component - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5777)
-  - Add `allowsEmptyCollection` property to `ComboBoxProps` - [@wdsjohn](https://github.com/wdsjohn) - [PR](https://github.com/adobe/react-spectrum/pull/5842)
-- Routing
-  - Add support for `routerOptions` and `useHref` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5864)
-  - Add `hrefLang` attribute to Link - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5894)
-- Forms
-  - Add `validationBehavior` to Form - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6062), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
-  - Export `FormContext` and document `validationBehavior` on RAC Form - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6292)
-  - Add `isReadyOnly` & `isRequired` data attributes to TextField - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5964)
-  - Allow passing of `inputRef` to RAC Checkbox/Switch/Radio - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5967), [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6067)
-  - Add `--trigger-width` support for DatePicker & DateRangePicker - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5895)
-  - Add `null` to RadioGroup `value` - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5896)
-- Drag and drop
-  - Add conditional drag and drop support - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5641)
-  - Add support for `isDisabled` to `useDrag` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6254)
-  - Add `isDisabled` to RAC DropZone - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5958)
-- Misc
-  - Add `data-focused` to RAC Tabs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5978)
-  - Add support for `onError` and `onLoad` callback in Image - [@skathuria29](https://github.com/skathuria29) - [PR](https://github.com/adobe/react-spectrum/pull/5945)
-  - Add `HoverEvents` type to `ToggleButtonProp` - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6042)
-  - Add support for `shouldFlip` in RAC Tooltip - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6147)
+* Collections
+  * Support `onAction` and `isDisabled` on item elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5874)
+  * Add hover events to all collection items - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6255)
+  * Add support for hover events in `ListBox` Option component - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5777)
+  * Add `allowsEmptyCollection` property to `ComboBoxProps` - [@wdsjohn](https://github.com/wdsjohn) - [PR](https://github.com/adobe/react-spectrum/pull/5842)
+* Routing
+  * Add support for `routerOptions` and `useHref` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5864)
+  * Add `hrefLang` attribute to Link - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5894)
+* Forms
+  * Add `validationBehavior` to Form - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6062), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
+  * Export `FormContext` and document `validationBehavior` on RAC Form - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6292)
+  * Add `isReadyOnly` & `isRequired` data attributes to TextField - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5964)
+  * Allow passing of `inputRef` to RAC Checkbox/Switch/Radio - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5967), [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6067)
+  * Add `--trigger-width` support for DatePicker & DateRangePicker - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5895)
+  * Add `null` to RadioGroup `value` - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5896)
+* Drag and drop
+  * Add conditional drag and drop support - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5641)
+  * Add support for `isDisabled` to `useDrag` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6254)
+  * Add `isDisabled` to RAC DropZone - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5958)
+* Misc
+  * Add `data-focused` to RAC Tabs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5978)
+  * Add support for `onError` and `onLoad` callback in Image - [@skathuria29](https://github.com/skathuria29) - [PR](https://github.com/adobe/react-spectrum/pull/5945)
+  * Add `HoverEvents` type to `ToggleButtonProp` - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6042)
+  * Add support for `shouldFlip` in RAC Tooltip - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6147)
 
 ## Fixes
-
-- Forms
-  - Fix Switch focus events - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5830)
-  - Fix `onSubmit` trigger for NumberField - [@tomekancu](https://github.com/tomekancu) - [PR](https://github.com/adobe/react-spectrum/pull/5951)
-  - Exclude `id` from TextField `DOMProps` - [@corydeppen](https://github.com/corydeppen) - [PR](https://github.com/adobe/react-spectrum/pull/6140)
-  - Render nothing if `isInvalid` and no `errorMessage` is provided - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6099)
-  - Correct floating precision in `snapValueToStep` - [@TMH-SE](https://github.com/TMH-SE) - [PR](https://github.com/adobe/react-spectrum/pull/6113)
-- ComboBox
-  - Fix `onSelectionChange` type in ComboBox- [@acr92](https://github.com/acr92) - [PR](https://github.com/adobe/react-spectrum/pull/5852)
-  - Fix `onBlur` in ComboBox when no button is provided - [@tomekancu](https://github.com/tomekancu) - [PR](https://github.com/adobe/react-spectrum/pull/6008)
-  - Fix timer cleanup on ComboBox unmount - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6072)
-- DatePicker
-  - Fix Persian/Gregorian calendar conversion - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6118)
-  - Fix validation for controlled DateField components - [@tomekancu](https://github.com/tomekancu) - [PR](https://github.com/adobe/react-spectrum/pull/5991)
-  - Allow calendar state context to set `null` value - [@psywalker](https://github.com/psywalker) - [PR](https://github.com/adobe/react-spectrum/pull/6030)
-  - Fix `useRangeCalendar` with mobile scrolling - [@QzCurious](https://github.com/QzCurious) - [PR](https://github.com/adobe/react-spectrum/pull/5976)
-  - Fix backspace to shift focus to previous element in `useDateSegment` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5715)
-  - Fix crash in `DateRangePicker` when using SSR optimized localized strings - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6286)
-- Menu
-  - Scroll Submenu trigger item into view when keyboard navigating - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6245)
-  - Fix Submenu safe area edge case - Reid Barber - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5866)
-  - Fix RAC Submenu jittering when rendered close to edge of container - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6194)
-  - Fix submenu CSS specificity - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6274)
-  - Change `useMenuTrigger` `onPressStart` to `state.open` - [@subvertallchris](https://github.com/subvertallchris) - [PR](https://github.com/adobe/react-spectrum/pull/6024)
-  - Improve scrolling behavior for elements with multiple scrollable parents - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6187)
-  - Automatically set `MenuItem` `textValue` from children if it is a string - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5868)
-  - Require children prop in MenuTrigger - [@PHILLIPS71](https://github.com/PHILLIPS71) - [PR](https://github.com/adobe/react-spectrum/pull/6244)
-- Focus
-  - Enhance `FocusScope` to support tab completion for IMEs - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5909)
-  - Fix focus tracking for dynamic iframe content - [@ritz078](https://github.com/ritz078) - [PR](https://github.com/adobe/react-spectrum/pull/5922)
-  - Fix intermittent focus ring compilation issue (Spectrum) - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6279)
-  - Ignore HiddenSelect when tree walking - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/6139)
-- Collections
-  - Ensure that arrow keys in grid cells always win over children - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6116)
-  - Allow escape key event to propagate if no items are selected - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6075)
-  - Fix TypeError in ListBox's grid layout keyboard navigation - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6172)
-  - Fix return type for `onSelectionChange` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
-- Drag and drop
-  - Fix focus returning to DropZone after closing FileTrigger - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5867), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
-- Internationalization
-  - Gracefully treat locales removed by `@react-aria/optimize-locales-plugin` - [@bhovhannes](https://github.com/bhovhannes) - [PR](https://github.com/adobe/react-spectrum/pull/6066)
-  - Export `LocalizedStringFormatter` type in react-aria - [@alexasselin008](https://github.com/alexasselin008) - [PR](https://github.com/adobe/react-spectrum/pull/6014)
-- Overlays
-  - Fix escape key to close IME in `useOverlay` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5923)
-  - Expose `shouldCloseOnInteractOutside`' on Modal/ModalOverlay - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5986)
-  - Expose `arrowBoundaryOffset` and internalize `arrowSize` calculation on RAC Popover and Tooltip - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5936)
-- Misc
-  - Rename and export `defaultSlot` and remove `slotCallbackSymbol` from RAC - [@alexasselin008](https://github.com/alexasselin008) - [PR](https://github.com/adobe/react-spectrum/pull/5850)
-  - Fix CSS properties with undefined custom property values - [@jdawber](https://github.com/jdawber) - [PR](https://github.com/adobe/react-spectrum/pull/5941)
-  - Fix `useTreeData` root move - [@telcy](https://github.com/telcy) - [PR](https://github.com/adobe/react-spectrum/pull/5950)
-  - Improve tree shaking - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6064)
-  - Backwards compatibility for `Validation` type - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6288)
+* Forms
+  * Fix Switch focus events - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5830)
+  * Fix `onSubmit` trigger for NumberField - [@tomekancu](https://github.com/tomekancu) - [PR](https://github.com/adobe/react-spectrum/pull/5951)
+  * Exclude `id` from TextField `DOMProps` - [@corydeppen](https://github.com/corydeppen) - [PR](https://github.com/adobe/react-spectrum/pull/6140)
+  * Render nothing if `isInvalid` and no `errorMessage` is provided - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6099)
+  * Correct floating precision in `snapValueToStep` - [@TMH-SE](https://github.com/TMH-SE) - [PR](https://github.com/adobe/react-spectrum/pull/6113)
+* ComboBox
+  * Fix `onSelectionChange` type in ComboBox- [@acr92](https://github.com/acr92) - [PR](https://github.com/adobe/react-spectrum/pull/5852)
+  * Fix `onBlur` in ComboBox when no button is provided - [@tomekancu](https://github.com/tomekancu) - [PR](https://github.com/adobe/react-spectrum/pull/6008)
+  * Fix timer cleanup on ComboBox unmount - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6072)
+* DatePicker
+  * Fix Persian/Gregorian calendar conversion - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6118)
+  * Fix validation for controlled DateField components - [@tomekancu](https://github.com/tomekancu) - [PR](https://github.com/adobe/react-spectrum/pull/5991)
+  * Allow calendar state context to set `null` value - [@psywalker](https://github.com/psywalker) - [PR](https://github.com/adobe/react-spectrum/pull/6030)
+  * Fix `useRangeCalendar` with mobile scrolling - [@QzCurious](https://github.com/QzCurious) - [PR](https://github.com/adobe/react-spectrum/pull/5976)
+  * Fix backspace to shift focus to previous element in `useDateSegment` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5715)
+  * Fix crash in `DateRangePicker` when using SSR optimized localized strings - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6286)
+* Menu
+  * Scroll Submenu trigger item into view when keyboard navigating - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6245)
+  * Fix Submenu safe area edge case - Reid Barber - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5866)
+  * Fix RAC Submenu jittering when rendered close to edge of container - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6194)
+  * Fix submenu CSS specificity - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6274)
+  * Change `useMenuTrigger` `onPressStart` to `state.open` - [@subvertallchris](https://github.com/subvertallchris) - [PR](https://github.com/adobe/react-spectrum/pull/6024)
+  * Improve scrolling behavior for elements with multiple scrollable parents - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6187)
+  * Automatically set `MenuItem` `textValue` from children if it is a string - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5868)
+  * Require children prop in MenuTrigger - [@PHILLIPS71](https://github.com/PHILLIPS71) - [PR](https://github.com/adobe/react-spectrum/pull/6244)
+* Focus
+  * Enhance `FocusScope` to support tab completion for IMEs - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5909)
+  * Fix focus tracking for dynamic iframe content - [@ritz078](https://github.com/ritz078) - [PR](https://github.com/adobe/react-spectrum/pull/5922)
+  * Fix intermittent focus ring compilation issue (Spectrum) - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6279)
+  * Ignore HiddenSelect when tree walking - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/6139)
+* Collections
+  * Ensure that arrow keys in grid cells always win over children - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6116)
+  * Allow escape key event to propagate if no items are selected - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/6075)
+  * Fix TypeError in ListBox's grid layout keyboard navigation - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6172)
+  * Fix return type for `onSelectionChange` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
+* Drag and drop
+  * Fix focus returning to DropZone after closing FileTrigger - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5867), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
+* Internationalization
+  * Gracefully treat locales removed by `@react-aria/optimize-locales-plugin` - [@bhovhannes](https://github.com/bhovhannes) - [PR](https://github.com/adobe/react-spectrum/pull/6066)
+  * Export `LocalizedStringFormatter` type in react-aria - [@alexasselin008](https://github.com/alexasselin008) - [PR](https://github.com/adobe/react-spectrum/pull/6014)
+* Overlays
+  * Fix escape key to close IME in `useOverlay` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5923)
+  * Expose `shouldCloseOnInteractOutside`' on Modal/ModalOverlay - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5986)
+  * Expose `arrowBoundaryOffset` and internalize `arrowSize` calculation on RAC Popover and Tooltip - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5936)
+* Misc
+  * Rename and export `defaultSlot` and remove `slotCallbackSymbol` from RAC - [@alexasselin008](https://github.com/alexasselin008) - [PR](https://github.com/adobe/react-spectrum/pull/5850)
+  * Fix CSS properties with undefined custom property values - [@jdawber](https://github.com/jdawber) - [PR](https://github.com/adobe/react-spectrum/pull/5941)
+  * Fix `useTreeData` root move - [@telcy](https://github.com/telcy) - [PR](https://github.com/adobe/react-spectrum/pull/5950)
+  * Improve tree shaking - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6064)
+  * Backwards compatibility for `Validation` type - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6288)
 
 ## Docs
-
-- Fix the spelling of `hierarchical` in docs - [@shpomp](https://github.com/shpomp) - [PR](https://github.com/adobe/react-spectrum/pull/5990)
-- Update cursor style to default for Tabs in docs - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5982)
-- Add ContextualHelp example for disabled button to Tooltip docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6018)
-- Fix the controlled RadioGroup example - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6057)
-- Fix various typos in docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5869)
-- Fix typo in `useListData` docs - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6106)
-- Escape `<form>` in `ButtonProps` with backticks - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6041)
-- Update testing documentation and expose some test utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5891)
-- Fix various imports in the docs from being set to monopackage imports - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6249)
-- Update docs for inline `onAction` and `isDisabled` for collection items - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
-- Remove extra example from advanced customization section of Calendar - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
-- Fix Submenu tray experience for iOS VoiceOver - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6263)
-- Adding missing support for disabled state in color hooks docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6278)
+* Fix the spelling of `hierarchical` in docs - [@shpomp](https://github.com/shpomp) - [PR](https://github.com/adobe/react-spectrum/pull/5990)
+* Update cursor style to default for Tabs in docs - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5982)
+* Add ContextualHelp example for disabled button to Tooltip docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6018)
+* Fix the controlled RadioGroup example - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6057)
+* Fix various typos in docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5869)
+* Fix typo in `useListData` docs - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/6106)
+* Escape `<form>` in `ButtonProps` with backticks - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/6041)
+* Update testing documentation and expose some test utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5891)
+* Fix various imports in the docs from being set to monopackage imports - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6249)
+* Update docs for inline `onAction` and `isDisabled` for collection items - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
+* Remove extra example from advanced customization section of Calendar - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/6248)
+* Fix Submenu tray experience for iOS VoiceOver - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/6263)
+* Adding missing support for disabled state in color hooks docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6278)
 
 ## Under Construction
 
 **React Aria Components Tree (Alpha):**
-
-- RAC Tree - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5756), [PR](https://github.com/adobe/react-spectrum/pull/6002)
+* RAC Tree - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5756), [PR](https://github.com/adobe/react-spectrum/pull/6002)
 
 **Color Components (Beta):**
-
-- Add color naming for accessibility - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6180), [PR](https://github.com/adobe/react-spectrum/pull/6210), [PR](https://github.com/adobe/react-spectrum/pull/6238)
-- Add ColorArea, ColorField, ColorSlider, and ColorWheel to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6199), [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6278)
-- Add ColorSwatch component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6204)
-- Add ColorPicker and ColorSwatchPicker components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6272)
+* Add color naming for accessibility - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6180), [PR](https://github.com/adobe/react-spectrum/pull/6210), [PR](https://github.com/adobe/react-spectrum/pull/6238)
+* Add ColorArea, ColorField, ColorSlider, and ColorWheel to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6199), [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/6278)
+* Add ColorSwatch component - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6204)
+* Add ColorPicker and ColorSwatchPicker components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6272)
 
 ## Released packages
 
