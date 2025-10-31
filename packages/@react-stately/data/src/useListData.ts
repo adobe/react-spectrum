@@ -351,11 +351,18 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
           return state;
         }
 
+        let updatedValue: T;
+        if (typeof newValue === 'function') {
+          updatedValue = (newValue as (prev: T) => T)(state.items[index]);
+        } else {
+          updatedValue = newValue;
+        }
+
         return {
           ...state,
           items: [
             ...state.items.slice(0, index),
-            typeof newValue === 'function' ? newValue(state.items[index]) : newValue,
+            updatedValue,
             ...state.items.slice(index + 1)
           ]
         };
