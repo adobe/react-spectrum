@@ -20,7 +20,7 @@ export function S2FAQ() {
         </DisclosurePanel>
       </Disclosure>
       <Disclosure isQuiet>
-        <DisclosureTitle>I tried to pass my <code>style</code> macro to <code>UNSAFE_className</code> but it doesn't work.</DisclosureTitle>
+        <DisclosureTitle>I tried to pass my style macro to "UNSAFE_className" but it doesn't work.</DisclosureTitle>
         <DisclosurePanel>
           The <code>style</code> macro is not meant to be used with <code>UNSAFE_className</code>. Overrides to the Spectrum styles is highly discouraged,
           consider styling an equivalent React Aria Component instead.
