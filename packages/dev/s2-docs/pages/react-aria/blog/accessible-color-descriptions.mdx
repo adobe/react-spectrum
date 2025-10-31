@@ -26,7 +26,7 @@ export const hideNav = true;
 
 # Accessible Color Descriptions for Improved Color Pickers
 
-Recently, we released a suite of color picker components in React Aria and React Spectrum. These components help users choose a color in various ways, including a 2D [ColorArea](../react-aria/ColorArea.html), channel-based [ColorSlider](../react-aria/ColorSlider.html), circular [ColorWheel](../react-aria/ColorWheel.html), preset [ColorSwatchPicker](../react-aria/ColorSwatchPicker.html), and a hex value [ColorField](../react-aria/ColorField.html). You can compose these individual pieces together to create a full [ColorPicker](../react-aria/ColorPicker.html) with whatever custom layout or configuration you need.
+Recently, we released a suite of color picker components in React Aria and React Spectrum. These components help users choose a color in various ways, including a 2D [ColorArea](../ColorArea.html), channel-based [ColorSlider](../ColorSlider.html), circular [ColorWheel](../ColorWheel.html), preset [ColorSwatchPicker](../ColorSwatchPicker.html), and a hex value [ColorField](../ColorField.html). You can compose these individual pieces together to create a full [ColorPicker](../ColorPicker.html) with whatever custom layout or configuration you need.
 
 ## Initial accessibility experience
 
@@ -154,12 +154,15 @@ The order that the hue, chroma, and lightness descriptors are combined varies by
 
 Check out the color picker below to see the results of this algorithm:
 
-```tsx snippet
-// TODO: render
+```tsx render
+'use client';
+import {ColorPicker} from 'react-aria-components';
+import {ColorSwatch} from '@react-spectrum/s2';
+
+// TODO: No ColorEditor in S2
 <ColorPicker label="Fill" defaultValue="#5100FF">
   {({color}) =>
     <div style={{display: 'flex', flexWrap: 'wrap', gap: 24}}>
-      <ColorEditor />
       <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
         <ColorSwatch size="L" />
         <span>{color.getColorName(navigator.language || 'en-US')}</span>
@@ -177,4 +180,4 @@ The video below shows interacting with a ColorArea with color descriptions. You 
 
 <video src={finalVideoUrl} style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} controls preload="metadata" />
 
-Check out our [ColorPicker](../react-aria/ColorPicker.html) components in React Aria to build accessible, customizable, and styleable color pickers in your own applications.
+Check out our [ColorPicker](../ColorPicker.html) components in React Aria to build accessible, customizable, and styleable color pickers in your own applications.

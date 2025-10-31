@@ -19,7 +19,7 @@ import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
 
 export const tags = ['drag and drop', 'dnd', 'components', 'accessibility', 'keyboard', 'mobile', 'react spectrum', 'react', 'spectrum', 'interactions', 'touch'];
-export const description = 'We are excited to announce the release of drag and drop support in [React Aria](https://react-spectrum.adobe.com/react-aria/dnd.html) and [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input.';
+export const description = 'We are excited to announce the release of drag and drop support in [React Aria](../dnd.html) and [React Spectrum](../../s2/dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input.';
 export const date = '2022-11-16';
 export const author = 'Devon Govett';
 export const authorLink = 'https://x.com/devongovett';
@@ -27,14 +27,14 @@ export const hideNav = true;
 
 # Taming the dragon: Accessible drag and drop
 
-We are excited to announce the release of drag and drop support in [React Aria](https://react-spectrum.adobe.com/react-aria/dnd.html) and [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input. We've designed these hooks with the following features in mind:
+We are excited to announce the release of drag and drop support in [React Aria](../dnd.html) and [React Spectrum](../../s2/dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input. We've designed these hooks with the following features in mind:
 
 - **Flexibility** – Our hooks include high level APIs for building common interactions such as dragging between lists, reordering, inserting, moving, copying, and file/directory uploading, as well as lower level APIs for building custom experiences.
 - **Accessibility** – Full support for keyboard and screen reader interactions is included out of the box, ensuring that applications implementing drag and drop using React Aria and React Spectrum are accessible with no additional work.
 - **Interoperability** – Drag data can be provided in multiple data formats for compatibility with many targets and external applications via the native HTML drag and drop API. Drag and drop integrates with multiple selection to allow dragging many objects at once.
 - **Customizability** – Interactions such as hit testing, keyboard navigation, and drop operations can be customized, as well as UIs for drag previews and drop indicators.
 
-TODO: Add video showing features of the React Spectrum and React Aria drag and drop implementation
+TODO: Add heroVideo video
 
 ## Introduction
 
@@ -44,11 +44,11 @@ While drag and drop has historically been mostly limited to mouse and touchscree
 
 While alternative interactions may still be useful for discoverability, we wanted to make the drag and drop interactions provided by React Aria accessible out of the box. This way, keyboard and screen reader users have full feature parity with mouse and touchscreen users, and applications that implement drag and drop using React Aria are guaranteed to be accessible without any additional work.
 
-After years of research, development, and extensive testing across many devices and assistive technologies, the result is a unified drag and drop API in React Aria that works across mouse, touch, and keyboard interactions, and with both desktop and mobile screen readers. It can be used standalone, or integrated with existing React Aria and React Spectrum components. Check out the [documentation](https://react-spectrum.adobe.com/react-aria/dnd.html) for more details!
+After years of research, development, and extensive testing across many devices and assistive technologies, the result is a unified drag and drop API in React Aria that works across mouse, touch, and keyboard interactions, and with both desktop and mobile screen readers. It can be used standalone, or integrated with existing React Aria and React Spectrum components. Check out the [documentation](../dnd.html) for more details!
 
 ## Interactions
 
-Drag and drop starts with a drag source, implemented using the [useDrag](https://react-spectrum.adobe.com/react-aria/useDrag.html) hook, which provides data to be dragged. Multiple items can be dragged at once, and each item can include several representations in different data formats so that they can be dropped in many compatible locations. The [useDrop](https://react-spectrum.adobe.com/react-aria/useDrop.html) hook can be used to implement a drop target, which accepts dragged items containing specific data types.
+Drag and drop starts with a drag source, implemented using the [useDrag](../useDrag.html) hook, which provides data to be dragged. Multiple items can be dragged at once, and each item can include several representations in different data formats so that they can be dropped in many compatible locations. The [useDrop](../useDrop.html) hook can be used to implement a drop target, which accepts dragged items containing specific data types.
 
 <Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
@@ -79,7 +79,7 @@ Collection components such as lists or tables are treated as a single drop targe
   <figcaption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</figcaption>
 </figure>
 
-The [useDraggableCollection](https://react-spectrum.adobe.com/react-aria/useDraggableCollection.html) and [useDroppableCollection](https://react-spectrum.adobe.com/react-aria/useDroppableCollection.html) hooks can be used to implement drag and drop within components built with existing React Aria hooks such as [useListBox](https://react-spectrum.adobe.com/react-aria/useListBox.html), [useTable](https://react-spectrum.adobe.com/react-aria/useTable.html), and [useGridList](https://react-spectrum.adobe.com/react-aria/useGridList.html). The drag and drop system integrates with our existing architecture for [collections](https://react-spectrum.adobe.com/react-stately/collections.html) and [selection](https://react-spectrum.adobe.com/react-stately/selection.html), which are used across all of these components. This enables multiple selected items to be dragged at once, allows keyboard navigation within a droppable collection to adapt based on the collection's layout, and facilitates automatic focus management when items are dropped.
+The [useDraggableCollection](../useDraggableCollection.html) and [useDroppableCollection](../useDroppableCollection.html) hooks can be used to implement drag and drop within components built with existing React Aria hooks such as [useListBox](../useListBox.html), [useTable](../useTable.html), and [useGridList](../useGridList.html). The drag and drop system integrates with our existing architecture for [collections](../collections.html) and [selection](../selection.html), which are used across all of these components. This enables multiple selected items to be dragged at once, allows keyboard navigation within a droppable collection to adapt based on the collection's layout, and facilitates automatic focus management when items are dropped.
 
 Try out an example below, which allows reordering and dragging elements between lists.
 
@@ -99,11 +99,11 @@ Defining an API that is both flexible and easy to use was also difficult. We ini
 
 ## Try it out!
 
-We've been working on our drag and drop implementation for a while, and we're excited to share it with the community! Check out our documentation for [React Aria](https://react-spectrum.adobe.com/react-aria/dnd.html) and [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/dnd.html) to get started.
+We've been working on our drag and drop implementation for a while, and we're excited to share it with the community! Check out our documentation for [React Aria](../dnd.html) and [React Spectrum](../../s2/dnd.html) to get started.
 
 You can use our React Aria hooks standalone, or integrate with existing collection components for common use cases like list reordering, inserting items, or dropping into folders. You can also customize most of the behavior with lower level APIs as needed, allowing you to build more specialized experiences.
 
-For React Spectrum, the [useDragAndDrop](https://react-spectrum.adobe.com/react-spectrum/dnd.html) hook can be used to enable drag and drop in the components that support it. This returns an object containing implementations of the React Aria hooks used to implement drag and drop, keeping bundle size small when drag and drop is unused. Currently support is limited to [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html), but we will be adding drag and drop to other components soon.
+For React Spectrum, the [useDragAndDrop](../../s2/dnd.html) hook can be used to enable drag and drop in the components that support it. This returns an object containing implementations of the React Aria hooks used to implement drag and drop, keeping bundle size small when drag and drop is unused. Currently support is limited to [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html), but we will be adding drag and drop to other components soon.
 
 We hope these new hooks help make accessible drag and drop interactions easier to build, and we can't wait to see what you create!
 
