@@ -39,9 +39,9 @@ import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from '@react-types/shared';
-import {ListState, SortDescriptor} from 'react-aria-components';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
+import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useEffectEvent} from '@react-aria/utils';
@@ -1693,104 +1693,6 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
             )}
           </TableBody>
         </TableView>
-      </div>
-    );
-  }
-};
-
-export const ActionEditableTable = {
-  render: function ActionEditableTable(props: EditableTableProps & {delay?: number, onCancel?: () => void}) {
-    let {onCancel} = props;
-    let columns = editableColumns;
-    let data = useListData({initialItems: defaultItems});
-    let [formState, formAction] = React.useActionState<{list: ListState<any>}>((prev, formData) => {
-      let updateKeys = ['fruits', 'farmer'];
-      for (const key of updateKeys) {
-        let value = formData.get(key);
-        console.log('key', key, value);
-        if (value != null) {
-          prev.list.update(value, (prevItem) => ({...prevItem, [key]: value}));
-        }
-      }
-      return {list: prev.list};
-    }, {list: data});
-
-    return (
-      <div>
-        <TableView aria-label="Dynamic table" {...props}>
-          <TableHeader columns={columns}>
-            {(column) => (
-              <Column {...column}>{column.name}</Column>
-            )}
-          </TableHeader>
-          <TableBody items={formState.list.items}>
-            {item => (
-              <Row id={item.id} columns={columns}>
-                {(column) => {
-                  if (column.id === 'fruits') {
-                    return (
-                      <EditableCell
-                        align={column.align}
-                        showDivider={column.showDivider}
-                        action={formAction}
-                        onCancel={onCancel}
-                        isSaving={item.isSaving[column.id!]}
-                        renderEditing={() => (
-                          <TextField
-                            aria-label="Edit fruit"
-                            autoFocus
-                            validate={value => value.length > 0 ? null : 'Fruit name is required'}
-                            defaultValue={item[column.id!]}
-                            name={column.id! as string} />
-                        )}>
-                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
-                      </EditableCell>
-                    );
-                  }
-                  if (column.id === 'farmer') {
-                    return (
-                      <EditableCell
-                        align={column.align}
-                        showDivider={column.showDivider}
-                        action={formAction}
-                        onCancel={onCancel}
-                        isSaving={item.isSaving[column.id!]}
-                        renderEditing={() => (
-                          <Picker
-                            aria-label="Edit farmer"
-                            autoFocus
-                            defaultValue={item[column.id!]}
-                            name={column.id! as string}>
-                            <PickerItem textValue="Eva" id="Eva"><Text>Eva</Text></PickerItem>
-                            <PickerItem textValue="Steven" id="Steven"><Text>Steven</Text></PickerItem>
-                            <PickerItem textValue="Michael" id="Michael"><Text>Michael</Text></PickerItem>
-                            <PickerItem textValue="Sara" id="Sara"><Text>Sara</Text></PickerItem>
-                            <PickerItem textValue="Karina" id="Karina"><Text>Karina</Text></PickerItem>
-                            <PickerItem textValue="Otto" id="Otto"><Text>Otto</Text></PickerItem>
-                            <PickerItem textValue="Matt" id="Matt"><Text>Matt</Text></PickerItem>
-                            <PickerItem textValue="Emily" id="Emily"><Text>Emily</Text></PickerItem>
-                            <PickerItem textValue="Amelia" id="Amelia"><Text>Amelia</Text></PickerItem>
-                            <PickerItem textValue="Isla" id="Isla"><Text>Isla</Text></PickerItem>
-                          </Picker>
-                        )}>
-                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>
-                      </EditableCell>
-                    );
-                  }
-                  if (column.id === 'status') {
-                    return (
-                      <Cell align={column.align} showDivider={column.showDivider}>
-                        <StatusLight variant="informative">{item[column.id]}</StatusLight>
-                      </Cell>
-                    );
-                  }
-                  return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
-                }}
-              </Row>
-            )}
-          </TableBody>
-        </TableView>
-        <button>After</button>
       </div>
     );
   }
