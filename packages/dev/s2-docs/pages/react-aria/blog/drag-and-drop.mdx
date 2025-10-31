@@ -7,6 +7,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
+import Anatomy from '@react-aria/dnd/docs/Anatomy.svg';
+import BetweenDropPosition from '@react-aria/dnd/docs/BetweenDropPosition.svg';
+import OnDropPosition from '@react-aria/dnd/docs/OnDropPosition.svg';
+import RootDropPosition from '@react-aria/dnd/docs/RootDropPosition.svg';
+
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
 
@@ -45,7 +50,7 @@ After years of research, development, and extensive testing across many devices 
 
 Drag and drop starts with a drag source, implemented using the [useDrag](https://react-spectrum.adobe.com/react-aria/useDrag.html) hook, which provides data to be dragged. Multiple items can be dragged at once, and each item can include several representations in different data formats so that they can be dropped in many compatible locations. The [useDrop](https://react-spectrum.adobe.com/react-aria/useDrop.html) hook can be used to implement a drop target, which accepts dragged items containing specific data types.
 
-TODO: Add SVG diagram showing drag and drop anatomy (drag source, drag preview, and drop target)
+<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
 For mouse and touch screen users, React Aria uses the native [HTML drag and drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) under the hood. This means items can be dragged within the browser window, between browser windows, or even outside the browser into external native applications (e.g. email programs). External items such as files or directories from the user's device may also be dragged in.
 
@@ -67,9 +72,9 @@ Collection components such as lists or tables are treated as a single drop targe
 
 <figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
   <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 4}}>
-    TODO: Add SVG diagram showing root drop position
-    TODO: Add SVG diagram showing on drop position
-    TODO: Add SVG diagram showing between drop position
+    <RootDropPosition role="img" aria-label="Root drop position diagram, showing the root drop position." />
+    <OnDropPosition role="img" aria-label="On drop position diagram, showing the on drop position." />
+    <BetweenDropPosition role="img" aria-label="Between drop position diagram, showing the between drop position." />
   </div>
   <figcaption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</figcaption>
 </figure>
@@ -78,130 +83,7 @@ The [useDraggableCollection](https://react-spectrum.adobe.com/react-aria/useDrag
 
 Try out an example below, which allows reordering and dragging elements between lists.
 
-```tsx snippet
-import {Flex, ListView, Item, Text, useListData} from '@adobe/react-spectrum';
-import {useDragAndDrop} from '@react-spectrum/dnd';
-import File from '@spectrum-icons/illustrations/File';
-import Folder from '@spectrum-icons/illustrations/Folder';
-
-function BidirectionalDnDListView(props) {
-  let {list} = props;
-  let {dragAndDropHooks} = useDragAndDrop({
-    acceptedDragTypes: ['custom-app-type-bidirectional'],
-    // Only allow move operations
-    getAllowedDropOperations: () => ['move'],
-    getItems(keys) {
-      return [...keys].map(key => {
-        let item = list.getItem(key);
-        // Setup the drag types and associated info for each dragged item.
-        return {
-          'custom-app-type-bidirectional': JSON.stringify(item),
-          'text/plain': item.name
-        };
-      });
-    },
-    onInsert: async (e) => {
-      let {
-        items,
-        target
-      } = e;
-      let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
-      );
-      if (target.dropPosition === 'before') {
-        list.insertBefore(target.key, ...processedItems);
-      } else if (target.dropPosition === 'after') {
-        list.insertAfter(target.key, ...processedItems);
-      }
-    },
-    onReorder: async (e) => {
-      let {
-        keys,
-        target
-      } = e;
-
-      if (target.dropPosition === 'before') {
-        list.moveBefore(target.key, [...keys]);
-      } else if (target.dropPosition === 'after') {
-        list.moveAfter(target.key, [...keys]);
-      }
-    },
-    onRootDrop: async (e) => {
-      let {
-        items
-      } = e;
-      let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
-      );
-      list.append(...processedItems);
-    },
-    /*- begin highlight -*/
-    onDragEnd: (e) => {
-      let {
-        dropOperation,
-        keys,
-        isInternal
-      } = e;
-      // Only remove the dragged items if they aren't dropped inside the source list
-      if (dropOperation === 'move' && !isInternal) {
-        list.remove(...keys);
-      }
-    }
-    /*- end highlight -*/
-  });
-
-  return (
-    <ListView
-      aria-label={props['aria-label']}
-      selectionMode="multiple"
-      width="size-3600"
-      height="size-3600"
-      items={list.items}
-      dragAndDropHooks={dragAndDropHooks}>
-      {item => (
-        <Item textValue={item.name}>
-          {item.type === 'folder' ? <Folder /> : <File />}
-          <Text>{item.name}</Text>
-        </Item>
-      )}
-    </ListView>
-  );
-}
-
-function DragBetweenListsExample() {
-  let list1 = useListData({
-    initialItems: [
-      {id: '1', type: 'file', name: 'Adobe Photoshop'},
-      {id: '2', type: 'file', name: 'Adobe XD'},
-      {id: '3', type: 'folder', name: 'Documents'},
-      {id: '4', type: 'file', name: 'Adobe InDesign'},
-      {id: '5', type: 'folder', name: 'Utilities'},
-      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
-    ]
-  });
-
-  let list2 = useListData({
-    initialItems: [
-      {id: '7', type: 'folder', name: 'Pictures'},
-      {id: '8', type: 'file', name: 'Adobe Fresco'},
-      {id: '9', type: 'folder', name: 'Apps'},
-      {id: '10', type: 'file', name: 'Adobe Illustrator'},
-      {id: '11', type: 'file', name: 'Adobe Lightroom'},
-      {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
-    ]
-  });
-
-
-  return (
-    <Flex wrap gap="size-300">
-      <BidirectionalDnDListView list={list1} aria-label="First ListView in drag between list example" />
-      <BidirectionalDnDListView list={list2} aria-label="Second ListView in drag between list example" />
-    </Flex>
-  );
-}
-
-<DragBetweenListsExample />
-```
+TODO: DragBetweenListsExample
 
 ## Challenges
 

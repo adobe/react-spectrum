@@ -327,24 +327,21 @@ export function BlogPostLayout(props: PageProps & {children: ReactElement<any>})
   let author = currentPage.exports?.author as string | undefined;
   let authorLink = currentPage.exports?.authorLink as string | undefined;
   
-  let blogComponents = {...components};
-  
-  if (date) {
-    blogComponents = {
-      ...components,
-      h1: ({children: h1Children, ...h1Props}) => (
-        <header className={style({display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 32})}>
-          <h1 {...h1Props} id="top" style={{'--width-per-em': getTextWidth(h1Children)} as any} className={h1}>{h1Children}</h1>
-          {author && (
-            <address className={style({font: 'body-sm', fontStyle: 'normal'})}>
-              By {authorLink ? <Link href={authorLink} rel="author">{author}</Link> : author}
-            </address>
-          )}
-          <Time date={date} />
-        </header>
-      )
-    };
-  }
+  // TODO: author/time not rendering
+  const blogComponents = {
+    ...components,
+    h1: ({children: h1Children, ...h1Props}) => (
+      <header className={style({display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 32})}>
+        <h1 {...h1Props} id="top" style={{'--width-per-em': getTextWidth(h1Children)} as any} className={h1}>{h1Children}</h1>
+        {author && (
+          <address className={style({font: 'body-sm', fontStyle: 'normal'})}>
+            By {authorLink ? <Link href={authorLink} rel="author">{author}</Link> : author}
+          </address>
+        )}
+        {date && <Time date={date} />}
+      </header>
+    )
+  };
   
   return (
     <Layout {...props}>

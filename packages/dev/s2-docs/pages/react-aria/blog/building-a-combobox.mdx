@@ -7,6 +7,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
+import comboboxExampleImageUrl from 'url:../../../../docs/pages/assets/combobox-example.png';
+import screenreaderSpreadsheetImageUrl from 'url:../../../../docs/pages/assets/screenreader-spreadsheet-combobox.png';
+import comboboxAccessibilityUrl from 'url:../../../../docs/pages/assets/combobox-accessibility.mp4';
+
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
 
@@ -37,7 +41,7 @@ For those who may be unfamiliar with a combobox (alternatively known as an "auto
 a list of options within that a user may select as the value for the combobox and is often filtered to display possible matches to the user's current input text. Finally, there may be a button accompanying the input field used
 for toggling the open state of the popover listbox. An example of a combobox that you may be familiar with is the search bar found on Google, Youtube, or X.
 
-TODO: Add image showing example ComboBox
+<img src={comboboxExampleImageUrl} alt="Screenshot of example ComboBox, select a major" style={{maxWidth: 'min(100%, 350px)', display: 'block', margin: '20px auto'}} />
 
 While the above may seem rather straight forward, a combobox contains a significant amount of complexity. The state logic of the combobox needs to track the input value and selected option, determining when to sync the two or allow each to
 diverge depending on the user interaction. This logic is complicated even further if the combobox allows the user to submit custom values or if the input value or selected item is controlled via props instead. Additionally, the combobox can be used
@@ -104,7 +108,7 @@ resembles a combo box. Tapping the button opens the tray that contains the actua
 Just like browsers, screen readers can be quite varied in behavior and may require deliberate tooling to ensure a consistent degree of functionality. While automated accessibility tools can be useful for ensuring that your component meets baseline accessibility guidelines,
 manual testing is irreplaceable for surfacing these behavioral differences, illustrated in part by the image below.
 
-TODO: Add image showing screen reader test matrix
+<img src={screenreaderSpreadsheetImageUrl} alt="Screenshot of ComboBox screen reader vs browser test matrix" style={{maxWidth: 'min(100%, 1200px)', display: 'block', margin: '20px auto'}} />
 
 #### NVDA
 
@@ -131,7 +135,7 @@ we only trigger the `LiveAnnouncer` on Apple devices to avoid announcement overl
 
 If you are interested in using this `LiveAnnouncer` yourself, check out [LiveAnnouncer](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/live-announcer/src/LiveAnnouncer.tsx) in `@react-aria/live-announcer`. Otherwise, the [useComboBox](../react-aria/useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
 
-TODO: Add video showing VoiceOver announcement in ComboBox
+<video src={comboboxAccessibilityUrl} loop autoPlay muted style={{maxWidth: 'min(80%, 700px)', display: 'block', margin: '20px auto'}} />
 
 ## Conclusion
 

@@ -62,7 +62,7 @@ However, instead of changing the DOM structure and introducing potential side ef
 
 Below is a simplified code example of how we utilize Unicode characters to enforce a left-to-right direction on the segments:
 
-```tsx example render=false
+```tsx
 <div styles={{display: 'inline'}}>
   {/*- begin highlight -*/}
   <span>{'\u2066'}</span>
@@ -82,7 +82,7 @@ Date fields, on the other hand, were much more complicated to solve in comparsio
 
 However, this assumption proved too broad. In some locales, such as Arabic (`ar-AE`), the date segments were already correctly formatted. In particular, we found that in Arabic, the separators between date segments contained [right-to-left marks](https://en.wikipedia.org/wiki/Implicit_directional_marks) which were returned by the `Intl.DateTimeFormat` API. This causes the separators to be positioned to the left of the preceding text. When we tried enforcing a left-to-right direction like we did in time field using the same solution, the date field was formatted as `2 2022/ 12/` instead of `2022/12/2` due to the presence of the right-to-left marks interfering with the LRI Unicode. In contrast, Hebrew did not have such markers. Therefore, we had to adopt a different approach that accounted for these variations. 
 
-```tsx example render=false
+```tsx
 // An example of a date field in ar-AE
 <div>
   <span aria-label="day">3</span>
@@ -97,7 +97,7 @@ However, this assumption proved too broad. In some locales, such as Arabic (`ar-
 </div>
 ```
 
-```tsx example render=false
+```tsx
 // An example of a date field in he-IL
 <div>
   <span aria-label="day">3</span>
@@ -118,7 +118,7 @@ Through much trial and error, we discovered that appplying the [left-to-right em
 
 After fixing the formatting, we also needed to update the keyboard navigation. Previously, when pressing the left arrow key, you would go to the next node in the DOM and vice versa for the right arrow key. However, after these changes, visually adjacent elements were not necessarily adjacent in the DOM so this would not work anymore. For example, in Hebrew (`he-IL`), the day and minute segment are supposed to be visually adjacent (e.g. `HH:MM DD.MM.YYYY`), but in the DOM, there are several other segments between them.
 
-```tsx example render=false
+```tsx
 // An example of the DOM structure of a date field in he-IL
 <div>
   <span aria-label="day">3</span>

@@ -19,6 +19,7 @@ export default BlogPostLayout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
+import {NumberField} from '@react-spectrum/s2';
 
 export const tags = ['react aria', 'react spectrum', 'react', 'spectrum', 'interactions', 'numberfield', 'touch', 'spinbutton'];
 export const description = 'Number fields are commonly used form components, but are frequently not a great user experience. They often lack support for advanced formatting, such as currency and unit values, and do not provide a localized experience for users around the world. In this post, we\'ll discuss how we approached building our number field component with support for formatting and internationalization in mind.';
@@ -37,9 +38,9 @@ A number field allows users to input and edit numeric values. For example, quant
 
 Values such as credit card and phone numbers are not typically represented by a number field because while they do contain numbers, they are not incrementable, and have additional formatting and validation requirements.
 
-```tsx snippet
-<NumberField label="Width" defaultValue={1024} minValue={0}  />
-```
+<div style={{display: 'flex', justifyContent: 'center'}}>
+  <NumberField label="Width" defaultValue={1024} minValue={0}  />
+</div>
 
 ### Formatting
 
@@ -47,7 +48,9 @@ Number fields can be used to represent many different types of numeric values, e
 
 We use the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) API built into browsers to handle all of these formatting requirements across all locales. Our number field component supports most of the formatting options that the Intl API supports, which ensures that it is international friendly and supports many common formatting options out of the box. The browser currently only provides formatting support, however, not parsing support, so we built a custom number parser using information from the formatter. We'll discuss how this works in detail later in the post.
 
-```tsx example
+```tsx render
+import {NumberField} from '@react-spectrum/s2';
+
 <NumberField
   label="Transaction amount"
   defaultValue={45}
@@ -64,7 +67,9 @@ Many number fields also support incrementing and decrementing their value using 
 
 One area of complexity here is dealing with floating point rounding errors. All JavaScript numbers are double precision floating point, which means when you add or subtract two numbers, you can get rounding errors. For example, `0.1 + 0.2 === 0.30000000000000004`. This isn't really what users expect, however, so to fix this, we determine how many decimal places there are, multiply to convert the two numbers to integers, perform the addition or subtraction, and then divide again to get a decimal. A similar fix is necessary to perform step snapping on blur.
 
-```tsx example
+```tsx render
+import {NumberField} from '@react-spectrum/s2';
+
 <NumberField
   label="Exposure"
   formatOptions={{
@@ -93,25 +98,25 @@ On mobile devices, the keyboard should be as helpful as possible, providing only
 
 The `inputMode` DOM attribute can be used to control the on screen keyboard shown by mobile devices. However, standard numeric keyboards vary across devices and operating systems making it difficult to provide a unified experience. For example, the iOS numeric keyboard does not include a minus sign at all, which means we must use a full text keyboard instead. This is unfortunately not an ideal experience, but it is the only way to allow a user to enter all possible numbers.
 
-<div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
+<div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around', flexWrap: 'wrap'}}>
   <figure style={{width: '200px'}}>
-    <img src={numberfieldIphoneInteger} style={{margin: 0}} alt="Iphone screenshot of example NumberField inputMode=numeric" />
+    <img src={numberfieldIphoneInteger} style={{margin: 0, width: '100%'}} alt="Iphone screenshot of example NumberField inputMode=numeric" />
     <figcaption>With inputMode="numeric", iOS does not include a minus key or a decimal point.</figcaption>
   </figure>
   <figure style={{width: '200px'}}>
-    <img src={numberfieldIphonePositive} style={{margin: 0}} alt="Iphone screenshot of example NumberField inputMode=decimal" />
+    <img src={numberfieldIphonePositive} style={{margin: 0, width: '100%'}} alt="Iphone screenshot of example NumberField inputMode=decimal" />
     <figcaption>Wth inputMode="decimal", iOS does include a decimal point, but no minus key.</figcaption>
   </figure>
   <figure style={{width: '200px'}}>
-    <img src={numberfieldIphoneDefault} style={{margin: 0}} alt="Iphone screenshot of example NumberField inputMode=text" />
+    <img src={numberfieldIphoneDefault} style={{margin: 0, width: '100%'}} alt="Iphone screenshot of example NumberField inputMode=text" />
     <figcaption>inputMode="text" is the only way to get a minus key on iOS.</figcaption>
   </figure>
   <figure style={{width: '200px'}}>
-    <img src={numberfieldAndroidPositive} style={{margin: 0}} alt="Android screenshot of example NumberField inputMode=decimal" />
+    <img src={numberfieldAndroidPositive} style={{margin: 0, width: '100%'}} alt="Android screenshot of example NumberField inputMode=decimal" />
     <figcaption>Android does not include a negative sign with inputMode="decimal".</figcaption>
   </figure>
   <figure style={{width: '200px'}}>
-    <img src={numberfieldAndroidInteger} style={{margin: 0}} alt="Android screenshot of example NumberField inputMode=numeric" />
+    <img src={numberfieldAndroidInteger} style={{margin: 0, width: '100%'}} alt="Android screenshot of example NumberField inputMode=numeric" />
     <figcaption>Android includes both a negative sign and decimals with inputMode="numeric".</figcaption>
   </figure>
 </div>

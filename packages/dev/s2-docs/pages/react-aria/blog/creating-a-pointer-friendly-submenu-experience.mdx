@@ -10,6 +10,7 @@ governing permissions and limitations under the License. */}
 import SubmenuSafeArea from '../../../../docs/pages/assets/submenu-safe-area.svg';
 import SubmenuAtan2 from '../../../../docs/pages/assets/submenu-atan2.svg';
 import SubmenuAtan2FromPointer from '../../../../docs/pages/assets/submenu-atan2-from-pointer.svg';
+import {SubmenuAnimation} from './SubmenuAnimation';
 
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
@@ -32,10 +33,7 @@ We are excited to announce support of submenus in the latest release of [React S
 
 Submenus (or nested menus) enable multi-level exploration of menus, and even with a large number of options, users should be able to quickly find their desired option. A user should be able to hover over an item to see its submenu. Then, they should be able to move their pointer directly to any item in the newly opened submenu, following the shortest path. While doing so, the pointer may leave the original item entirely and hover an unrelated item in its path towards the submenu, causing the submenu to close. We need a way to know when they're moving their pointer to that submenu, so we can keep it open until they reach the submenu.
 
-```tsx snippet
-import {SubmenuAnimation} from './SubmenuAnimation';
 <SubmenuAnimation />
-```
 
 ## Predicting User Intent
 
