@@ -262,6 +262,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
                 )}
                 <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+                {currentPage.exports?.relatedPages && (
+                  <RelatedPages pages={currentPage.exports.relatedPages} />
+                )}
               </aside>
             </main>
           </div>
@@ -286,10 +289,31 @@ function Toc({toc}) {
   );
 }
 
+function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+  return (
+    <div className={style({paddingTop: 24})}>
+      <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Related pages</div>
+      <OnPageNav>
+        <SideNav>
+          {pages.map((page, i) => (
+            <SideNavItem key={i}>
+              <SideNavLink href={page.url}>{page.title}</SideNavLink>
+            </SideNavItem>
+          ))}
+        </SideNav>
+      </OnPageNav>
+    </div>
+  );
+}
+
 function MobileToc({toc, currentPage}) {
+  let relatedPages = currentPage.exports?.relatedPages;
   return (
     <MobileOnPageNav currentPage={currentPage}>
       {renderMobileToc(toc)}
+      {relatedPages && relatedPages.map((page, i) => (
+        <PickerItem key={`related-${i}`} id={page.url} href={page.url}>{page.title}</PickerItem>
+      ))}
     </MobileOnPageNav>
   );
 }

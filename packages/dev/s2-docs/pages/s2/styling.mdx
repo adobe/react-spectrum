@@ -8,6 +8,10 @@ export default Layout;
 export const section = 'Guides';
 export const tags = ['style', 'macro', 'spectrum', 'custom'];
 export const description = 'Styling in React Spectrum';
+export const relatedPages = [
+  {title: 'Advanced', url: './styling/advanced.html'},
+  {title: 'Reference Table', url: './styling/reference.html'}
+];
 
 # Styling
 
@@ -164,23 +168,6 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
     Only use `<Heading>` and `<Text>` inside Spectrum components with predefined styles (e.g., `<Dialog>`, `<MenuItem>`). They are unstyled by default and should not be used standalone. Use HTML elements with the `style` macro instead.
   </Content>
 </InlineAlert>
-
-## Conditional styles
-
-Define conditional values as objects to handle media queries, UI states (hover/press), and variants. This keeps all values for a property together.
-
-```tsx
-<div
-  className={style({
-    padding: {
-      default: 8,
-      lg: 32
-    }
-  })}
-/>
-```
-
-Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
 
 ## CSS optimization
 
