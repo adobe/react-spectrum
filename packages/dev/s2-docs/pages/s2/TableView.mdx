@@ -733,8 +733,7 @@ export default function EditableTable(props) {
     if (value == null) {
       return;
     }
-    let prevItem = data.getItem(id);
-    data.update(id, {...prevItem, [columnId]: value});
+    data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
   }, [data]);
 
   return (

@@ -122,8 +122,7 @@ describe('TableView', () => {
     let data = useListData({initialItems: defaultItems});
 
     let saveItem = useEffectEvent((id: Key, columnId: Key) => {
-      let prevItem = data.getItem(id)!;
-      data.update(id, {...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}});
+      data.update(id, (prevItem) => ({...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}}));
       currentRequests.current.delete(id);
     });
     let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
@@ -138,8 +137,7 @@ describe('TableView', () => {
         currentRequests.current.delete(id);
         clearTimeout(alreadySaving.request);
       }
-      let prevItem = data.getItem(id)!;
-      data.update(id, {...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}});
+      data.update(id, (prevItem) => ({...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}}));
     }, [data]);
 
     useEffect(() => {
@@ -493,4 +491,378 @@ describe('TableView', () => {
       expect(button).not.toHaveAttribute('aria-disabled');
     });
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    describe('using action instead of onSubmit', () => {
+      function ActionEditableTable(props: EditableTableProps & {delay?: number, onCancel?: () => void}) {
+        let {delay = 0, onCancel} = props;
+        let columns = editableColumns;
+        let data = useListData({initialItems: defaultItems});
+
+        let saveItem = useEffectEvent((id: Key, columnId: Key) => {
+          data.update(id, (prevItem) => ({...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}}));
+          currentRequests.current.delete(id);
+        });
+        let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
+        let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+          let value = values.get(columnId);
+          if (value === null) {
+            return;
+          }
+          let alreadySaving = currentRequests.current.get(id);
+          if (alreadySaving) {
+            // remove and cancel the previous request
+            currentRequests.current.delete(id);
+            clearTimeout(alreadySaving.request);
+          }
+          data.update(id, (prevItem) => ({...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}}));
+        }, [data]);
+
+        useEffect(() => {
+          // if any item is saving and we don't have a request for it, start a timer to commit it
+          for (const item of data.items) {
+            for (const columnId in item.isSaving) {
+              if (item.isSaving[columnId] && !currentRequests.current.has(item.id)) {
+                let timeout = setTimeout(() => {
+                  saveItem(item.id, columnId);
+                }, delay);
+                currentRequests.current.set(item.id, {request: timeout});
+              }
+            }
+          }
+        }, [data, delay]);
+
+        return (
+          <div>
+            <TableView aria-label="Dynamic table" {...props}>
+              <TableHeader columns={columns}>
+                {(column) => (
+                  <Column {...column}>{column.name}</Column>
+                )}
+              </TableHeader>
+              <TableBody items={data.items}>
+                {item => (
+                  <Row id={item.id} columns={columns}>
+                    {(column) => {
+                      if (column.id === 'fruits') {
+                        return (
+                          <EditableCell
+                            align={column.align}
+                            showDivider={column.showDivider}
+                            action={(e) => {
+                              onChange(item.id, column.id!, e);
+                            }}
+                            onCancel={onCancel}
+                            isSaving={item.isSaving[column.id!]}
+                            renderEditing={() => (
+                              <TextField
+                                aria-label="Edit fruit"
+                                autoFocus
+                                validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                                defaultValue={item[column.id!]}
+                                name={column.id! as string} />
+                            )}>
+                            <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                          </EditableCell>
+                        );
+                      }
+                      if (column.id === 'farmer') {
+                        return (
+                          <EditableCell
+                            align={column.align}
+                            showDivider={column.showDivider}
+                            action={(e) => {
+                              onChange(item.id, column.id!, e);
+                            }}
+                            onCancel={onCancel}
+                            isSaving={item.isSaving[column.id!]}
+                            renderEditing={() => (
+                              <Picker
+                                aria-label="Edit farmer"
+                                autoFocus
+                                defaultValue={item[column.id!]}
+                                name={column.id! as string}>
+                                <PickerItem textValue="Eva" id="Eva"><Text>Eva</Text></PickerItem>
+                                <PickerItem textValue="Steven" id="Steven"><Text>Steven</Text></PickerItem>
+                                <PickerItem textValue="Michael" id="Michael"><Text>Michael</Text></PickerItem>
+                                <PickerItem textValue="Sara" id="Sara"><Text>Sara</Text></PickerItem>
+                                <PickerItem textValue="Karina" id="Karina"><Text>Karina</Text></PickerItem>
+                                <PickerItem textValue="Otto" id="Otto"><Text>Otto</Text></PickerItem>
+                                <PickerItem textValue="Matt" id="Matt"><Text>Matt</Text></PickerItem>
+                                <PickerItem textValue="Emily" id="Emily"><Text>Emily</Text></PickerItem>
+                                <PickerItem textValue="Amelia" id="Amelia"><Text>Amelia</Text></PickerItem>
+                                <PickerItem textValue="Isla" id="Isla"><Text>Isla</Text></PickerItem>
+                              </Picker>
+                            )}>
+                            <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>
+                          </EditableCell>
+                        );
+                      }
+                      if (column.id === 'status') {
+                        return (
+                          <Cell align={column.align} showDivider={column.showDivider}>
+                            <StatusLight variant="informative">{item[column.id]}</StatusLight>
+                          </Cell>
+                        );
+                      }
+                      return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+                    }}
+                  </Row>
+                )}
+              </TableBody>
+            </TableView>
+            <button>After</button>
+          </div>
+        );
+      }
+
+      describe('keyboard', () => {
+        it('should edit text in a cell either through a TextField or a Picker', async () => {
+          let {getByRole} = render(
+            <ActionEditableTable />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          let dialogTrigger = document.activeElement! as HTMLElement;
+          let dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
+          await dialogTester.open();
+          let dialog = dialogTester.dialog;
+          expect(dialog).toBeVisible();
+
+          let input = within(dialog!).getByRole('textbox');
+          expect(input).toHaveFocus();
+
+          await user.keyboard('Apples Crisp');
+          await user.keyboard('{Enter}'); // implicitly submit through form
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).not.toBeInTheDocument();
+
+          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+
+          // navigate to Farmer column
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{ArrowRight}');
+          dialogTrigger = document.activeElement!  as HTMLElement;
+          dialogTester = testUtilUser.createTester('Dialog', {root: dialogTrigger, interactionType: 'keyboard', overlayType: 'modal'});
+          await dialogTester.open();
+          dialog = dialogTester.dialog;
+          // TODO: also weird that it is dialog.dialog?
+          expect(dialog).toBeVisible();
+
+          let selectTester = testUtilUser.createTester('Select', {root: dialog!});
+          expect(selectTester.trigger).toHaveFocus();
+          await selectTester.selectOption({option: 'Steven'});
+          act(() => {jest.runAllTimers();});
+          await user.tab();
+          await user.tab();
+          expect(within(dialog!).getByRole('button', {name: 'Save'})).toHaveFocus();
+          await user.keyboard('{Enter}');
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).not.toBeInTheDocument();
+          expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByText('Steven')).toBeInTheDocument();
+
+          await user.tab();
+          expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+          await user.tab({shift: true});
+          expect(within(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).getByRole('button', {name: 'Edit farmer'})).toHaveFocus();
+        });
+
+        it('should perform validation when editing text in a cell', async () => {
+          let {getByRole} = render(
+            <ActionEditableTable />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{Enter}');
+
+          let dialog = getByRole('dialog');
+          expect(dialog).toBeVisible();
+
+          let input = within(dialog).getByRole('textbox');
+          expect(input).toHaveFocus();
+
+          await user.clear(input);
+          await user.keyboard('{Enter}');
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).toBeInTheDocument();
+          expect(input).toHaveFocus();
+          expect(document.getElementById(input.getAttribute('aria-describedby')!)).toHaveTextContent('Fruit name is required');
+
+          await user.keyboard('Peaches');
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{Enter}');
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).not.toBeInTheDocument();
+
+          expect(tableTester.findRow({rowIndexOrText: 'Peaches'})).toBeInTheDocument();
+        });
+
+        it('should be cancellable through the buttons in the dialog', async () => {
+          let onCancel = jest.fn();
+          let {getByRole} = render(
+            <ActionEditableTable onCancel={onCancel} />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{Enter}');
+
+          let dialog = getByRole('dialog');
+          expect(dialog).toBeVisible();
+
+          let input = within(dialog).getByRole('textbox');
+          expect(input).toHaveFocus();
+
+          await user.keyboard(' Crisp');
+          await user.tab();
+          await user.keyboard('{Enter}');
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).not.toBeInTheDocument();
+
+          expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+          expect(onCancel).toHaveBeenCalled();
+        });
+
+        it('should be cancellable through Escape key', async () => {
+          let onCancel = jest.fn();
+          let {getByRole} = render(
+            <ActionEditableTable onCancel={onCancel} />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{Enter}');
+
+          let dialog = getByRole('dialog');
+          expect(dialog).toBeVisible();
+
+          let input = within(dialog).getByRole('textbox');
+          expect(input).toHaveFocus();
+
+          await user.keyboard(' Crisp');
+          await user.keyboard('{Escape}');
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).not.toBeInTheDocument();
+          expect(tableTester.findRow({rowIndexOrText: 'Apples'})).toBeInTheDocument();
+          expect(onCancel).toHaveBeenCalled();
+        });
+      });
+
+      describe('pointer', () => {
+        installPointerEvent();
+
+        it('should edit text in a cell', async () => {
+          let {getByRole} = render(
+            <ActionEditableTable />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.click(within(tableTester.findCell({text: 'Apples'})).getByRole('button'));
+
+          let dialog = getByRole('dialog');
+          expect(dialog).toBeVisible();
+
+          await user.click(within(dialog).getByRole('textbox'));
+          await user.keyboard(' Crisp');
+          await user.click(document.body);
+
+          act(() => {jest.runAllTimers();});
+
+          expect(dialog).not.toBeInTheDocument();
+          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+        });
+      });
+
+      describe('pending', () => {
+        it('should display a pending state when editing a cell', async () => {
+          let {getByRole} = render(
+            <ActionEditableTable delay={10000} />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{Enter}');
+
+          let dialog = getByRole('dialog');
+          expect(dialog).toBeVisible();
+
+          let input = within(dialog).getByRole('textbox');
+          expect(input).toHaveFocus();
+
+          await user.keyboard('Apples Crisp');
+          await user.keyboard('{Enter}'); // implicitly submit through form
+
+          act(() => {jest.advanceTimersByTime(5000);});
+
+          expect(dialog).not.toBeInTheDocument();
+          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
+          expect(button).toHaveAttribute('aria-disabled', 'true');
+          expect(button).toHaveFocus();
+
+          act(() => {jest.runAllTimers();});
+
+          expect(button).not.toHaveAttribute('aria-disabled');
+          expect(button).toHaveFocus();
+        });
+
+        it('should allow tabbing off a pending button', async () => {
+          let {getByRole} = render(
+            <ActionEditableTable delay={10000} />
+          );
+
+          let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{Enter}');
+
+          let dialog = getByRole('dialog');
+          expect(dialog).toBeVisible();
+
+          let input = within(dialog).getByRole('textbox');
+          expect(input).toHaveFocus();
+
+          await user.keyboard('Apples Crisp');
+          await user.keyboard('{Enter}'); // implicitly submit through form
+
+          act(() => {jest.advanceTimersByTime(5000);});
+
+          expect(dialog).not.toBeInTheDocument();
+          expect(tableTester.findRow({rowIndexOrText: 'Apples Crisp'})).toBeInTheDocument();
+          let button = within(tableTester.findCell({text: 'Apples Crisp'})).getByRole('button');
+          expect(button).toHaveAttribute('aria-disabled', 'true');
+          expect(button).toHaveFocus();
+
+          await user.tab();
+          expect(getByRole('button', {name: 'After'})).toHaveFocus();
+
+          act(() => {jest.runAllTimers();});
+
+          expect(button).not.toHaveAttribute('aria-disabled');
+        });
+      });
+    });
+  }
 });
