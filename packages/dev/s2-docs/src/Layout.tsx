@@ -16,6 +16,7 @@ import {CodePlatterProvider} from './CodePlatter';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {getTextWidth} from './textWidth';
+import {GoUpOneLink} from './GoUpOneLink';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
@@ -61,6 +62,16 @@ const components = {
   ExampleSwitcher,
   TypeLink,
   ExampleList
+};
+
+const subPageComponents = {
+  ...components,
+  h1: ({children, ...props}) => (
+    <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+      <GoUpOneLink />
+      <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
+    </div>
+  )
 };
 
 function anchorId(children) {
@@ -128,6 +139,7 @@ let articleStyles = style({
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let isSubpage = currentPage.exports?.isSubpage;
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
   let ogImage = getOgImageUrl(currentPage);
@@ -243,7 +255,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 <article
                   className={articleStyles({isWithToC: hasToC})}>
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {components, pages})}
+                  {React.cloneElement(children, {components: isSubpage ? subPageComponents : components, pages})}
                 </article>
               </CodePlatterProvider>
               {hasToC && <aside
