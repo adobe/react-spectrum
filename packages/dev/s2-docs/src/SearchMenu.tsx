@@ -348,7 +348,7 @@ export function SearchMenu(props: SearchMenuProps) {
                             </TagGroup>
                           )}
                           {tabIconTag.length > 0 && tags.length > 0 && (
-                            <Divider orientation="vertical" size="S" styles={style({marginY: 8, marginStart: -8})} />
+                            <Divider orientation="vertical" styles={style({marginY: 8, marginStart: -8})} />
                           )}
                           {tabIconTag.length > 0 && (
                             <TagGroup
