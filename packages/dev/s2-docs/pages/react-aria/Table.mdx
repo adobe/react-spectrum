@@ -6,8 +6,9 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/Table';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import testUtilDocs from 'docs:@react-aria/test-utils';
+import {PatternTestingFAQ} from '../../src/PatternTestingFAQ';
 
 export const tags = ['data', 'grid'];
 
@@ -713,9 +714,6 @@ function ReorderableTable() {
 
 ## Testing
 
-TODO make this a subpage
-
-
 ### General setup
 
 Table features long press interactions on its rows depending on the row actions provided and if the user is interacting with the table on
@@ -784,13 +782,4 @@ See below for the full definition of the `User` and the `Table` tester.
 
 ### Testing FAQ
 
-> When using the test utils, what if a certain interaction errors or doesn't seem to result in the expected state?
-
-In cases like this, first double check your test setup and make sure that your test is rendering your table in its expected
-state before the test util interaction call. If everything looks correct, you can always fall back to simulating interactions manually,
-and using the test util to query your table's state post interaction.
-
-> The tester doesn't offer a specific interaction flow, what should I do?
-
-Whenever the table tester queries its rows/cells/etc or triggers a user flow, it does so against the current state of the table. Therefore the table test can be used alongside
-whatever simulated user flow you add.
+<PatternTestingFAQ patternName="table" />
