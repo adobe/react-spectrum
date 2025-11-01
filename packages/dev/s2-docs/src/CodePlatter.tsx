@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, SegmentedControl, SegmentedControlItem, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
