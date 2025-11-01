@@ -3,11 +3,11 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
-import testUtilDocs from 'docs:@react-aria/test-utils';
-import {InstallCommand} from '../../src/InstallCommand';
-import {PatternTestingFAQ} from '../../src/PatternTestingFAQ';
 
 export const tags = ['table', 'data', 'grid'];
+export const relatedPages = [
+  {title: 'Testing', url: './TableView/testing.html'}
+];
 
 # TableView
 
@@ -899,75 +899,3 @@ export default function EditableTable(props) {
 ### EditableCell
 
 <PropTable component={docs.exports.EditableCell} links={docs.links} showDescription />
-
-## Testing
-
-### General setup
-
-TableView features long press interactions on its rows depending on the row actions provided and if the user is interacting with the table on
-a touch device. Please see the following sections in the general testing documentation for more information on how to handle these
-behaviors in your test suite.
-
-[Timers](testing.html#timers)
-
-[Long press](testing.html#simulating-user-long-press)
-
-### Test utils
-
-`@react-spectrum/test-utils` offers common table interaction utilities which you may find helpful when writing tests. To install, simply
-add it to your dev dependencies via your preferred package manager.
-
-<InstallCommand pkg="@react-spectrum/test-utils" flags="--dev" />
-
-<InlineAlert variant="notice">
-  <Heading>Requirements</Heading>
-  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
-</InlineAlert>
-
-Once installed, you can access the `User` that `@react-spectrum/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
-the `TableView` tester in your test cases. This gives you access to `TableView` specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
-The example test case below shows how you might go about setting up the `TableView` tester, use it to simulate row selection, and verify the table's state after each interaction.
-
-```ts
-// Table.test.ts
-import {render, within} from '@testing-library/react';
-import {User} from '@react-spectrum/test-utils';
-
-let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
-// ...
-
-it('TableView can toggle row selection', async function () {
-  // Render your test component/app and initialize the table tester
-  let {getByTestId} = render(
-    <TableView data-testid="test-table" selectionMode="multiple">
-    ...
-    </TableView>
-  );
-  let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
-  expect(tableTester.selectedRows).toHaveLength(0);
-
-  await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
-
-  await tableTester.toggleRowSelection({row: 2});
-  expect(tableTester.selectedRows).toHaveLength(9);
-  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
-  expect(checkbox).not.toBeChecked();
-
-  await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(10);
-  expect(checkbox).toBeChecked();
-
-  await tableTester.toggleSelectAll();
-  expect(tableTester.selectedRows).toHaveLength(0);
-});
-```
-
-See below for the full definition of the `User` and the `TableView` tester.
-
-<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
-<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TableTester} />
-
-### Testing FAQ
-
-<PatternTestingFAQ patternName="table" />

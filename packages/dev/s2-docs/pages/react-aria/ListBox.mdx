@@ -7,11 +7,11 @@ import vanillaDocs from 'docs:vanilla-starter/ListBox';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
-import testUtilDocs from 'docs:@react-aria/test-utils';
-import {InstallCommand} from '../../src/InstallCommand';
-import {PatternTestingFAQ} from '../../src/PatternTestingFAQ';
 
 export const tags = ['options'];
+export const relatedPages = [
+  {title: 'Testing', url: './ListBox/testing.html'}
+];
 
 # ListBox
 
@@ -418,62 +418,3 @@ function Example() {
 ### ListBoxLoadMoreItem
 
 <PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} showDescription />
-
-## Testing
-
-### General setup
-
-ListBox features long press interactions on its options depending on the option actions provided and if the user is interacting with the listbox on
-a touch device. Please see the following sections in the general testing documentation for more information on how to handle these
-behaviors in your test suite.
-
-[Timers](testing.html#timers)
-
-[Long press](testing.html#simulating-user-long-press)
-
-### Test utils
-
-`@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. To install, simply
-add it to your dev dependencies via your preferred package manager.
-
-<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
-
-<InlineAlert variant="notice">
-  <Heading>Requirements</Heading>
-  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
-</InlineAlert>
-
-Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
-the `ListBox` tester in your test cases. This gives you access to `ListBox` specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
-The example test case below shows how you might go about setting up the `ListBox` tester, use it to simulate option selection, and verify the listbox's state after each interaction.
-
-```ts
-// ListBox.test.ts
-import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
-
-let testUtilUser = new User({interactionType: 'mouse'});
-// ...
-
-it('ListBox can select an option via keyboard', async function () {
-  // Render your test component/app and initialize the listbox tester
-  let {getByTestId} = render(
-    <ListBox selectionMode="single" data-testid="test-listbox">
-      ...
-    </ListBox>
-  );
-  let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
-
-  await listboxTester.toggleOptionSelection({option: 4});
-  expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
-});
-```
-
-See below for the full definition of the `User` and the `ListBox` tester.
-
-<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
-<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.ListBoxTester} />
-
-### Testing FAQ
-
-<PatternTestingFAQ patternName="listbox" />

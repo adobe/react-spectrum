@@ -6,11 +6,11 @@ import vanillaDocs from 'docs:vanilla-starter/Select';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
-import testUtilDocs from 'docs:@react-aria/test-utils';
-import {InstallCommand} from '../../src/InstallCommand';
-import {PatternTestingFAQ} from '../../src/PatternTestingFAQ';
 
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
+export const relatedPages = [
+  {title: 'Testing', url: './Select/testing.html'}
+];
 
 # Select
 
@@ -354,54 +354,3 @@ import {Form} from 'vanilla-starter/Form';
 ### SelectValue
 
 <PropTable component={docs.exports.SelectValue} links={docs.links} showDescription />
-
-## Testing
-
-### Test utils
-
-`@react-aria/test-utils` offers common select interaction utilities which you may find helpful when writing tests. To install, simply
-add it to your dev dependencies via your preferred package manager.
-
-<InstallCommand pkg="@react-aria/test-utils" flags="--dev" />
-
-<InlineAlert variant="notice">
-  <Heading>Requirements</Heading>
-  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
-</InlineAlert>
-
-Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
-the `Select` tester in your test cases. This gives you access to `Select` specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
-The example test case below shows how you might go about setting up the `Select` tester, use it to simulate option selection, and verify the select's state after each interaction.
-
-```ts
-// Select.test.ts
-import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
-
-let testUtilUser = new User({interactionType: 'mouse'});
-// ...
-
-it('Select can select an option via keyboard', async function () {
-  // Render your test component/app and initialize the select tester
-  let {getByTestId} = render(
-    <Select data-testid="test-select">
-    ...
-    </Select>
-  );
-  let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
-  let trigger = selectTester.trigger;
-  expect(trigger).toHaveTextContent('Select an item');
-
-  await selectTester.selectOption({option: 'Cat'});
-  expect(trigger).toHaveTextContent('Cat');
-});
-```
-
-See below for the full definition of the `User` and the `Select` tester.
-
-<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
-<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.SelectTester} />
-
-### Testing FAQ
-
-<PatternTestingFAQ patternName="select" />
