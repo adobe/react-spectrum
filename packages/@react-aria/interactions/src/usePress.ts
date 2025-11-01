@@ -596,7 +596,13 @@ export function usePress(props: PressHookProps): PressResult {
           // This enables onPointerLeave and onPointerEnter to fire.
           let target = getEventTarget(e.nativeEvent);
           if ('releasePointerCapture' in target) {
-            target.releasePointerCapture(e.pointerId);
+            if ('hasPointerCapture' in target) {
+              if (target.hasPointerCapture(e.pointerId)) {
+                target.releasePointerCapture(e.pointerId);
+              }
+            } else {
+              (target as Element).releasePointerCapture(e.pointerId);
+            }
           }
         }
 
