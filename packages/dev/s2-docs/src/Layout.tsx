@@ -309,3 +309,43 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
     </React.Fragment>);
   });
 }
+
+export function Time({date}: {date: string}) {
+  let dateObj = new Date(date);
+  return (
+    <time
+      dateTime={date}
+      className={style({font: 'detail'})}>
+      {dateObj.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+    </time>
+  );
+}
+
+export function BlogPostLayout(props: PageProps & {children: ReactElement<any>}) {
+  let {currentPage, children} = props;
+  let date = currentPage.exports?.date as string | undefined;
+  let author = currentPage.exports?.author as string | undefined;
+  let authorLink = currentPage.exports?.authorLink as string | undefined;
+  
+  // TODO: author/time not rendering
+  const blogComponents = {
+    ...components,
+    h1: ({children: h1Children, ...h1Props}) => (
+      <header className={style({display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 32})}>
+        <h1 {...h1Props} id="top" style={{'--width-per-em': getTextWidth(h1Children)} as any} className={h1}>{h1Children}</h1>
+        {author && (
+          <address className={style({font: 'body-sm', fontStyle: 'normal'})}>
+            By {authorLink ? <Link href={authorLink} rel="author">{author}</Link> : author}
+          </address>
+        )}
+        {date && <Time date={date} />}
+      </header>
+    )
+  };
+  
+  return (
+    <Layout {...props}>
+      {React.cloneElement(children, {components: blogComponents})}
+    </Layout>
+  );
+}
