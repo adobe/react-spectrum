@@ -176,7 +176,7 @@ function useCurrentSection() {
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article > :is(h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article :is(h2,h3,h4,h5)'));
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
