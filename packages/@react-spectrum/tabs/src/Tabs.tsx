@@ -112,7 +112,7 @@ export const Tabs = React.forwardRef(function Tabs<T extends object>(props: Spec
     }
   }, [tablistRef, wrapperRef, direction, orientation, setCollapsed, prevTabPositions, setTabPositions]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     checkShouldCollapse();
   }, [children, checkShouldCollapse]);
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {Well} from '../';
 
@@ -18,8 +18,11 @@ let refExists = (ComponentToCheck, children, props) => {
   let ref;
   let dataTestId = props['data-testid'] || 'refTestId';
   let Component = () => {
-    ref = useRef();
-    return (<ComponentToCheck ref={ref} {...props} data-testid={dataTestId}>{children}</ComponentToCheck>);
+    let internalRef = useRef();
+    useEffect(() => {
+      ref = internalRef;
+    }, [internalRef]);
+    return (<ComponentToCheck ref={internalRef} {...props} data-testid={dataTestId}>{children}</ComponentToCheck>);
   };
 
   let {getByText, getByTestId} = render(<Component />);

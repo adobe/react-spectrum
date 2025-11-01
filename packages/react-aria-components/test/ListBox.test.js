@@ -29,7 +29,7 @@ import {
   Virtualizer
 } from '../';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -312,9 +312,11 @@ describe('ListBox', () => {
     let setItemText;
     function Child() {
       let [showTwo, _setShowTwo] = useState(false);
-      setShowTwo = _setShowTwo;
       let [itemText, _setItemText] = useState('One');
-      setItemText = _setItemText;
+      useEffect(() => {
+        setItemText = _setItemText;
+        setShowTwo = _setShowTwo;
+      }, [_setItemText, _setShowTwo]);
       return (
         <>
           <ListBoxItem id={1}>{itemText}</ListBoxItem>
@@ -1771,7 +1773,7 @@ describe('ListBox', () => {
       let {getByRole} = renderListbox({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
       let listBoxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
       await listBoxTester.triggerOptionAction({option: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
