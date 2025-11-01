@@ -101,7 +101,7 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
         component={render}
         align={props.align} />
       <div>
-        {files 
+        {files
           ? <Files files={includeAllImports ? findAllFiles(files) : files} maxLines={expanded ? Infinity : 6}>{content}</Files>
           : content}
       </div>
@@ -179,7 +179,7 @@ export function getFiles(files: string[]) {
     let contents = fs.readFileSync(file, 'utf8');
     fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
   }
-  
+
   return fileContents;
 }
 

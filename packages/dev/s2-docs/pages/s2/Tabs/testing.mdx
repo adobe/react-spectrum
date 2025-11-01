@@ -1,0 +1,68 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+import testUtilDocs from 'docs:@react-spectrum/test-utils';
+import {InstallCommand} from '../../../src/InstallCommand';
+import {PatternTestingFAQ} from '../../../src/PatternTestingFAQ';
+
+export const omitFromNav = true;
+export const tags = ['testing', 'tabs', 'test-utils'];
+export const description = 'Testing Tabs with React Spectrum test utils';
+
+# Testing Tabs
+
+## General setup
+
+Tabs features automatic tab collapse behavior and may need specific mocks to test said behavior.
+TODO: update this with what mocks are required
+
+## Test utils
+
+`@react-spectrum/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. To install, simply
+add it to your dev dependencies via your preferred package manager.
+
+<InstallCommand pkg="@react-spectrum/test-utils" flags="--dev" />
+
+<InlineAlert variant="notice">
+  <Heading>Requirements</Heading>
+  <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
+</InlineAlert>
+
+Once installed, you can access the `User` that `@react-spectrum/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+the `Tabs` tester in your test cases. This gives you access to `Tabs` specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
+The example test case below shows how you might go about setting up the `Tabs` tester, use it to change tab selection, and verify the tabs' state after each interaction.
+
+```ts
+// Tabs.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Tabs can change selection via keyboard', async function () {
+  // Render your test component/app and initialize the listbox tester
+  let {getByTestId} = render(
+    <Tabs data-testid="test-tabs">
+      ...
+    </Tabs>
+  );
+  let tabsTester = testUtilUser.createTester('Tabs', {root: getByTestId('test-tabs'), interactionType: 'keyboard'});
+
+  let tabs = tabsTester.tabs;
+  expect(tabsTester.selectedTab).toBe(tabs[0]);
+
+  await tabsTester.triggerTab({tab: 1});
+  expect(tabsTester.selectedTab).toBe(tabs[1]);
+});
+```
+
+See below for the full definition of the `User` and the `Tabs` tester.
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TabsTester} />
+
+## Testing FAQ
+
+<PatternTestingFAQ patternName="tabs" />
