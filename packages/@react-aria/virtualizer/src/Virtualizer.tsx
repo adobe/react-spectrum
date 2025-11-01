@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Key, RefObject} from '@react-types/shared';
+import {Collection, forwardRefType, Key} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {mergeProps, useLoadMore, useObjectRef} from '@react-aria/utils';
-import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
+import React, {ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -36,9 +36,7 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   layoutOptions?: O
 }
 
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-export const Virtualizer = React.forwardRef(function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
+export const Virtualizer = /*#__PURE__*/ (forwardRef as forwardRefType)(function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     children: renderView,
     renderWrapper,
@@ -84,7 +82,7 @@ export const Virtualizer = React.forwardRef(function Virtualizer<T extends objec
       {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
     </ScrollView>
   );
-}) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
+});
 
 function renderChildren<T extends object, V>(parent: ReusableView<T, V> | null, views: ReusableView<T, V>[], renderWrapper: RenderWrapper<T, V>) {
   return views.map(view => {

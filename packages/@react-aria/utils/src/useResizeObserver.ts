@@ -17,7 +17,7 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
   // Only call onResize from inside the effect, otherwise we'll void our assumption that
   // useEffectEvents are safe to pass in.
   const {ref, box, onResize} = options;
-  let onResizeEvent = useEffectEvent(onResize);
+  let onResizeEvent = useEffectEvent(() => onResize());
 
   useEffect(() => {
     let element = ref?.current;

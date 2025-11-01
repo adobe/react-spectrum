@@ -11,97 +11,41 @@
  */
 
 import {Direction} from '@react-types/shared';
+import {getScrollLeft as get, getOffsetType, setScrollLeft as set} from '@react-aria/utils';
 
-export type RTLOffsetType =
-  | 'negative'
-  | 'positive-descending'
-  | 'positive-ascending';
+let cache: ReturnType<typeof getOffsetType> | null = null;
 
-let cachedRTLResult: RTLOffsetType | null = null;
+/** 
+ * @deprecated
+ */
+export type RTLOffsetType = ReturnType<typeof getOffsetType>;
 
+/** 
+ * @deprecated Use `getOffsetType` from `@react-aria/utils` instead. 
+ */
+// TODO: Just return 'negative' here instead? Browsers aligned on RTL since Chrome 85+.
+export function getRTLOffsetType(recalculate: boolean = false): ReturnType<typeof getOffsetType> {
+  if (!cache || recalculate) {
+    let el = document.createElement('div');
+    el.dir = 'rtl';
 
-// Original licensing for the following methods can be found in the
-// NOTICE file in the root directory of this source tree.
-// See https://github.com/bvaughn/react-window/blob/master/src/createGridComponent.js
-
-// According to the spec, scrollLeft should be negative for RTL aligned elements.
-// Chrome does not seem to adhere; its scrollLeft values are positive (measured relative to the left).
-// Safari's elastic bounce makes detecting this even more complicated wrt potential false positives.
-// The safest way to check this is to intentionally set a negative offset,
-// and then verify that the subsequent "scroll" event matches the negative offset.
-// If it does not match, then we can assume a non-standard RTL scroll implementation.
-export function getRTLOffsetType(recalculate: boolean = false): RTLOffsetType {
-  if (cachedRTLResult === null || recalculate) {
-    const outerDiv = document.createElement('div');
-    const outerStyle = outerDiv.style;
-    outerStyle.width = '50px';
-    outerStyle.height = '50px';
-    outerStyle.overflow = 'scroll';
-    outerStyle.direction = 'rtl';
-
-    const innerDiv = document.createElement('div');
-    const innerStyle = innerDiv.style;
-    innerStyle.width = '100px';
-    innerStyle.height = '100px';
-
-    outerDiv.appendChild(innerDiv);
-
-    document.body.appendChild(outerDiv);
-
-    if (outerDiv.scrollLeft > 0) {
-      cachedRTLResult = 'positive-descending';
-    } else {
-      outerDiv.scrollLeft = 1;
-      if (outerDiv.scrollLeft === 0) {
-        cachedRTLResult = 'negative';
-      } else {
-        cachedRTLResult = 'positive-ascending';
-      }
-    }
-
-    document.body.removeChild(outerDiv);
-
-    return cachedRTLResult;
+    cache = getOffsetType(el, recalculate);
   }
 
-  return cachedRTLResult;
+  return cache;
 }
 
+/** 
+ * @deprecated Use `getScrollLeft` from `@react-aria/utils` instead. 
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getScrollLeft(node: Element, direction: Direction): number {
-  let {scrollLeft} = node;
-
-  // scrollLeft in rtl locales differs across browsers, so normalize.
-  // See comment by getRTLOffsetType below for details.
-  if (direction === 'rtl') {
-    let {scrollWidth, clientWidth} = node;
-    switch (getRTLOffsetType()) {
-      case 'negative':
-        scrollLeft = -scrollLeft;
-        break;
-      case 'positive-descending':
-        scrollLeft = scrollWidth - clientWidth - scrollLeft;
-        break;
-    }
-  }
-
-  return scrollLeft;
+  return get(node);
 }
 
+/** 
+ * @deprecated Use `setScrollLeft` from `@react-aria/utils` instead. 
+ */
 export function setScrollLeft(node: Element, direction: Direction, scrollLeft: number): void {
-  if (direction === 'rtl') {
-    switch (getRTLOffsetType()) {
-      case 'negative':
-        scrollLeft = -scrollLeft;
-        break;
-      case 'positive-ascending':
-        break;
-      default: {
-        const {clientWidth, scrollWidth} = node;
-        scrollLeft = scrollWidth - clientWidth - scrollLeft;
-        break;
-      }
-    }
-  }
-
-  node.scrollLeft = scrollLeft;
+  return set(node, scrollLeft);
 }

@@ -11,7 +11,7 @@
  */
 
 import {Key} from '@react-types/shared';
-import {Rect} from './Rect';
+import {Rect} from '@react-stately/utils';
 
 /**
  * Instances of this lightweight class are created by `Layout` subclasses
