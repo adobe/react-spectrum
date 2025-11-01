@@ -1,0 +1,41 @@
+{
+  "name": "@react-aria/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for React Aria documentation",
+  "type": "module",
+  "bin": "dist/react-aria/src/index.js",
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/react-aria/src/index.js",
+    "dev": "node --enable-source-maps dist/react-aria/src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "@swc/helpers": "^0.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts"
+}

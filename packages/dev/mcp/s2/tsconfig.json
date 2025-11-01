@@ -1,0 +1,23 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "..",
+    "skipLibCheck": true,
+    "types": ["node"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2020",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false
+  },
+  "include": [
+    "src/**/*",
+    "../shared/src/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}
