@@ -72,14 +72,14 @@ const getTitle = (currentPage: Page): string => {
   if (explicitTitle && explicitTitle !== currentPage.tableOfContents?.[0]?.title && explicitTitle !== currentPage.name) {
     return explicitTitle as string;
   }
-  
+
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
-  
+
   if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
     return library || 'React Spectrum';
   }
-  
+
   return library ? `${pageTitle} | ${library}` : pageTitle;
 };
 
@@ -243,7 +243,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 <article
                   className={articleStyles({isWithToC: hasToC})}>
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {components})}
+                  {React.cloneElement(children, {components, pages})}
                 </article>
               </CodePlatterProvider>
               {hasToC && <aside

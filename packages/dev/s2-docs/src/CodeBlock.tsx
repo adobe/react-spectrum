@@ -101,7 +101,7 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
         component={render}
         align={props.align} />
       <div>
-        {files 
+        {files
           ? <Files files={includeAllImports ? findAllFiles(files) : files} maxLines={expanded ? Infinity : 6}>{content}</Files>
           : content}
       </div>
