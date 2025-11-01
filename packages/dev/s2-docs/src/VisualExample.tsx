@@ -91,7 +91,8 @@ export interface VisualExampleProps {
   wide?: boolean,
   align?: 'center' | 'start' | 'end',
   acceptOrientation?: boolean,
-  propsObject?: string
+  propsObject?: string,
+  showCoachMark?: boolean
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -105,7 +106,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, acceptOrientation, type, propsObject}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -160,7 +161,8 @@ export function VisualExample({component, docs, links, importSource, props, init
       code={code}
       files={files ? getFiles(files) : undefined}
       type={type}
-      registryUrl={type === 's2' || docs.type !== 'component' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
+      registryUrl={type === 's2' || docs.type !== 'component' ? undefined : `${type}/${docs.name}.json`}
+      showCoachMark={showCoachMark} />
   );
 
   // Render the corresponding client component to make the controls interactive.

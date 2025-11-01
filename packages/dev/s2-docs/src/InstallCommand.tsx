@@ -1,10 +1,11 @@
 'use client';
 
 import {CopyButton} from './CopyButton';
+import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria-components';
+import Prompt from '@react-spectrum/s2/icons/Prompt';
 import React, {useEffect, useMemo, useState} from 'react';
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const container = style({
   backgroundColor: 'layer-1',
@@ -109,6 +110,7 @@ export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandPro
       <div className={codeWrap}>
         {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
         <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
+          <Prompt styles={iconStyle({size: 'L'})} />
           <pre className={preStyle}>{command}</pre>
           <CopyButton ariaLabel="Copy command" tooltip="Copy command" text={command} />
         </div>

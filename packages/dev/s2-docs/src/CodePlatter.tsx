@@ -1,18 +1,19 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, SegmentedControl, SegmentedControlItem, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
-import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Key} from 'react-aria';
+import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import React, {createContext, ReactNode, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, ReactNode, useContext, useRef, useState} from 'react';
+import {ShadcnCommand} from './ShadcnCommand';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {zip} from './zip';
 
 const platterStyle = style({
@@ -38,7 +39,8 @@ interface CodePlatterProps {
   shareUrl?: string,
   files?: {[name: string]: string},
   type?: 'vanilla' | 'tailwind' | 's2',
-  registryUrl?: string
+  registryUrl?: string,
+  showCoachMark?: boolean
 }
 
 interface CodePlatterContextValue {
@@ -50,7 +52,7 @@ export function CodePlatterProvider(props: CodePlatterContextValue & {children: 
   return <CodePlatterContext.Provider value={props}>{props.children}</CodePlatterContext.Provider>;
 }
 
-export function CodePlatter({children, shareUrl, files, type, registryUrl}: CodePlatterProps) {
+export function CodePlatter({children, shareUrl, files, type, registryUrl, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
   let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
@@ -65,7 +67,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
 
   return (
     <div className={platterStyle}>
-      <div className={style({display: 'flex', justifyContent: 'end', padding: 4, position: 'absolute', top: 8, insetEnd: 8, backgroundColor: 'layer-2', boxShadow: 'elevated', borderRadius: 'default', zIndex: 1})}>
+      <Toolbar showCoachMark={showCoachMark}>
         <ActionButtonGroup
           orientation="vertical"
           isQuiet
@@ -174,7 +176,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
             </Menu>
           </MenuTrigger>}
         </ActionButtonGroup>
-      </div>
+      </Toolbar>
       <div ref={codeRef}> 
         {children}
       </div>
@@ -246,28 +248,8 @@ const Flash = createIcon(props => (
 ));
 
 function ShadcnDialog({registryUrl}) {
-  let [packageManager, setPackageManager] = useState<Key>('npm');
-  let command = packageManager;
-  if (packageManager === 'npx') {
-    command = 'npx';
-  } else if (packageManager === 'pnpm') {
-    command = 'pnpm dlx';
-  }
-
   let componentName = registryUrl.match(/([^/]+)\.json$/)[1];
   let preRef = useRef<HTMLPreElement | null>(null);
-
-  useEffect(() => {
-    let value = localStorage.getItem('packageManager');
-    if (value) {
-      setPackageManager(value);
-    }
-  }, []);
-
-  let onSelectionChange = value => {
-    setPackageManager(value);
-    localStorage.setItem('packageManager', value);
-  };
 
   return (
     <Dialog size="L">
@@ -275,39 +257,7 @@ function ShadcnDialog({registryUrl}) {
         <Heading slot="title">Install with shadcn</Heading>
         <Content>
           <p>Use the <Link href="https://ui.shadcn.com/docs/cli" target="_blank" rel="noopener noreferrer">shadcn CLI</Link> to install {componentName} and its dependencies into your project.</p>
-          <div 
-            className={style({
-              backgroundColor: 'layer-1',
-              borderRadius: 'xl',
-              padding: 16,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 16
-            })}>
-            <SegmentedControl aria-label="Package manager" selectedKey={packageManager} onSelectionChange={onSelectionChange}>
-              <SegmentedControlItem id="npm">npm</SegmentedControlItem>
-              <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
-              <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
-            </SegmentedControl>
-            <div
-              className={style({
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12
-              })}>
-              <Prompt styles={iconStyle({size: 'L'})} />
-              <pre
-                ref={preRef}
-                className={style({
-                  font: {default: 'code-xs', lg: 'code-sm'},
-                  overflowX: 'auto',
-                  padding: 0,
-                  margin: 0
-                })}>
-                {command} shadcn@latest add {registryUrl}
-              </pre>
-            </div>
-          </div>
+          <ShadcnCommand registryUrl={registryUrl} preRef={preRef} />
         </Content>
         <ButtonGroup>
           <Button variant="secondary" slot="close">Cancel</Button>
@@ -322,5 +272,68 @@ function ShadcnDialog({registryUrl}) {
         </ButtonGroup>
       </>)}
     </Dialog>
+  );
+}
+
+const pulseAnimation = keyframes(`
+  0% {
+    outline-width: 0px;
+    transform: scale(100%);
+  }
+  50% {
+    outline-width: 8px;
+    transform: scale(104%);
+  }
+  100% {
+     outline-width: 0px;
+     transform: scale(100%);
+  }
+`);
+
+
+const indicator = style({
+  animation: pulseAnimation,
+  animationDuration: 2500,
+  animationIterationCount: 'infinite',
+  animationFillMode: 'forwards',
+  animationTimingFunction: 'in-out',
+  position: 'absolute',
+  inset: 0,
+  borderRadius: 'default',
+  borderWidth: 2,
+  borderColor: 'blue-800',
+  borderStyle: 'solid',
+  outlineColor: 'blue-800/20',
+  outlineWidth: 4,
+  outlineStyle: 'solid'
+});
+
+const toolbar = style({
+  display: 'flex',
+  justifyContent: 'end',
+  padding: 4,
+  position: 'absolute',
+  top: 8,
+  insetEnd: 8,
+  backgroundColor: 'layer-2',
+  boxShadow: 'elevated',
+  borderRadius: 'default',
+  zIndex: 1
+});
+
+function Toolbar({children, showCoachMark}) {
+  if (showCoachMark) {
+    children = (
+      <>
+        <div className={indicator} />
+        {children}
+      </>
+    );
+  }
+
+  return (
+    <div className={toolbar}>
+      {children}
+    </div>
   );
 }

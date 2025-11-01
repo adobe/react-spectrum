@@ -148,10 +148,11 @@ interface CodeOutputProps {
   code?: ReactNode,
   files?: {[name: string]: string},
   type?: 'vanilla' | 'tailwind' | 's2',
-  registryUrl?: string
+  registryUrl?: string,
+  showCoachMark?: boolean
 }
 
-export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
+export function CodeOutput({code, files, type, registryUrl, showCoachMark}: CodeOutputProps) {
   let {name, importSource, props, controls, propsObject} = useContext(Context);
   let searchParams = new URLSearchParams();
 
@@ -187,7 +188,7 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   );
 
   return (
-    <CodePlatter shareUrl={url} files={files} type={type} registryUrl={registryUrl}>
+    <CodePlatter shareUrl={url} files={files} type={type} registryUrl={registryUrl} showCoachMark={showCoachMark}>
       {code}
     </CodePlatter>
   );
