@@ -60,7 +60,7 @@ function PhotoCategories() {
   return (
     <TagGroup
       label="Photo categories"
-      styles={style({width: 320})}
+      styles={style({maxWidth: 320})}
       /*- begin highlight -*/
       items={list.items}
       onRemove={(keys) => list.remove(...keys)}>
