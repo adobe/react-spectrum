@@ -18,11 +18,11 @@ export const tags = ['input', 'field'];
   import {Button} from 'vanilla-starter/Button';
 
   <Form/* PROPS */>
-    <TextField label="Name" name="name" isRequired />
-    <TextField label="Email" name="email" type="email" isRequired />
+    <TextField label="Name" name="name" isRequired placeholder="Enter your full name" />
+    <TextField label="Email" name="email" type="email" isRequired placeholder="Enter your email" />
     <div style={{display: 'flex', gap: 8}}>
       <Button type="submit">Submit</Button>
-      <Button type="reset">Reset</Button>
+      <Button type="reset" variant="secondary">Reset</Button>
     </div>
   </Form>
   ```
@@ -34,11 +34,11 @@ export const tags = ['input', 'field'];
   import {Button} from 'tailwind-starter/Button';
 
   <Form/* PROPS */>
-    <TextField label="Name" name="name" isRequired />
-    <TextField label="Email" name="email" type="email" isRequired />
+    <TextField label="Name" name="name" isRequired placeholder="Enter your full name" />
+    <TextField label="Email" name="email" type="email" isRequired placeholder="Enter your email" />
     <div style={{display: 'flex', gap: 8}}>
       <Button type="submit">Submit</Button>
-      <Button type="reset">Reset</Button>
+      <Button type="reset" variant="secondary">Reset</Button>
     </div>
   </Form>
   ```
@@ -64,7 +64,7 @@ import {Button} from 'vanilla-starter/Button';
     alert(`Hello, ${name}!`);
   }}>
   {/*- end highlight -*/}
-  <TextField name="name" label="Name" />
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
   <Button type="submit">Submit</Button>
 </Form>
 ```
@@ -90,7 +90,7 @@ import {Button} from 'vanilla-starter/Button';
     event.target.reset();
   }}>
   {/*- end highlight -*/}
-  <TextField name="name" label="Name" />
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
   <Button type="submit">Submit</Button>
 </Form>
 ```
@@ -110,6 +110,7 @@ import {Button} from 'vanilla-starter/Button';
 <Form/* PROPS */>
   <TextField
     label="Username"
+    placeholder="Choose a username"
     isRequired
     validate={value => value === 'admin' ? 'Nice try.' : null}
     name="username"
@@ -136,6 +137,7 @@ import {TextField} from 'vanilla-starter/TextField';
   <TextField
     name="username"
     label="Username"
+    placeholder="Choose a username"
     defaultValue="admin" />
 </Form>
 ```
@@ -176,19 +178,25 @@ function Example() {
       <TextField
         name="firstName"
         isRequired
-        label="First Name" />
+        label="First Name"
+        placeholder="Enter your first name" />
       <TextField
         name="lastName"
         isRequired
-        label="Last Name" />
+        label="Last Name"
+        placeholder="Enter your last name" />
       <div style={{display: 'flex', gap: 8}}>
         <Button type="submit">Submit</Button>
-        <Button type="reset">Reset</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
       </div>
     </Form>
   );
 }
 ```
+
+## Examples
+
+<ExampleList tag="form" pages={props.pages} />
 
 ## API
 

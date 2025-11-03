@@ -4,11 +4,11 @@ import {
   ComboBoxProps as AriaComboBoxProps,
   Input,
   ListBoxItemProps,
+  ListBoxProps,
   ValidationResult
 } from 'react-aria-components';
-import {Label, FieldError, FieldButton} from './Form';
-import {Text} from './Content';
-import {ListBox, ListBoxItem} from './ListBox';
+import {Label, FieldError, FieldButton, Description} from './Form';
+import {DropdownItem, DropdownListBox} from './ListBox';
 import {Popover} from './Popover';
 import {ChevronDown} from 'lucide-react';
 
@@ -26,27 +26,27 @@ export function ComboBox<T extends object>(
   { label, description, errorMessage, children, ...props }: ComboBoxProps<T>
 ) {
   return (
-    (
-      <AriaComboBox {...props}>
-        {({isInvalid}) => (<>
-          <Label>{label}</Label>
-          <div className="my-combobox-container">
-            <Input />
-            <FieldButton><ChevronDown size={16} /></FieldButton>
-          </div>
-          {description && !isInvalid && <Text slot="description">{description}</Text>}
-          <FieldError>{errorMessage}</FieldError>
-          <Popover hideArrow>
-            <ListBox>
-              {children}
-            </ListBox>
-          </Popover>
-        </>)}
-      </AriaComboBox>
-    )
+    <AriaComboBox {...props}>
+      <Label>{label}</Label>
+      <div className="combobox-field">
+        <Input className="react-aria-Input inset" />
+        <FieldButton><ChevronDown size={16} /></FieldButton>
+      </div>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+      <Popover hideArrow className="combobox-popover">
+        <ComboBoxListBox>
+          {children}
+        </ComboBoxListBox>
+      </Popover>
+    </AriaComboBox>
   );
 }
 
+export function ComboBoxListBox<T extends object>(props: ListBoxProps<T>) {
+  return <DropdownListBox {...props} />;
+}
+
 export function ComboBoxItem(props: ListBoxItemProps) {
-  return <ListBoxItem {...props} />;
+  return <DropdownItem {...props} />;
 }

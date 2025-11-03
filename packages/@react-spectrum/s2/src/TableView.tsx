@@ -122,7 +122,7 @@ export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledB
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple'}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -291,6 +291,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onResizeEnd: propsOnResizeEnd,
     onAction,
     onLoadMore,
+    selectionMode = 'none',
     ...otherProps
   } = props;
 
@@ -315,11 +316,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     loadingState,
     onLoadMore,
     isInResizeMode,
-    setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode,
+    selectionMode
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
-  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+  let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -362,6 +364,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isQuiet
             })}
             selectionBehavior="toggle"
+            selectionMode={selectionMode}
             onRowAction={onAction}
             {...otherProps}
             selectedKeys={selectedKeys}
@@ -516,7 +519,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends Omit<RACColumnProps, keyof GlobalDOMAttributes> {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -1014,7 +1017,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1053,6 +1056,45 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   );
 });
 
+
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+  ...commonCellStyles,
+  color: {
+    default: baseColor('neutral'),
+    isSaving: baseColor('neutral-subdued')
+  },
+  paddingY: centerPadding(),
+  boxSizing: 'border-box',
+  height: 'calc(100% - 1px)', // so we don't overlap the border of the next cell
+  width: 'full',
+  fontSize: controlFont(),
+  alignItems: 'center',
+  display: 'flex',
+  borderStyle: {
+    default: 'none',
+    isDivider: 'solid'
+  },
+  borderEndWidth: {
+    default: 0,
+    isDivider: 1
+  },
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  },
+  backgroundColor: {
+    default: 'transparent',
+    ':is([role="rowheader"]:hover, [role="gridcell"]:hover)': {
+      selectionMode: {
+        none: colorMix('gray-25', 'gray-900', 7),
+        single: 'gray-25',
+        multiple: 'gray-25'
+      }
+    },
+    ':is([role="row"][data-focus-visible-within] [role="rowheader"]:focus-within, [role="row"][data-focus-visible-within] [role="gridcell"]:focus-within)': 'gray-25'
+  }
+});
+
 let editPopover = style({
   ...colorScheme(),
   '--s2-container-bg': {
@@ -1083,17 +1125,19 @@ let editPopover = style({
 }, getAllowedOverrides());
 
 interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
+  /** The component which will handle editing the cell. For example, a `TextField` or a `Picker`. */
   renderEditing: () => ReactNode,
+  /** Whether the cell is currently being saved. */
   isSaving?: boolean,
-  onSubmit: () => void,
-  onCancel: () => void
+  /** Handler that is called when the value has been changed and is ready to be saved. */
+  onSubmit: () => void
 }
 
 /**
- * An exditable cell within a table row.
+ * An editable cell within a table row.
  */
 export const EditableCell = forwardRef(function EditableCell(props: EditableCellProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {children, showDivider = false, textValue, ...otherProps} = props;
+  let {children, showDivider = false, textValue, isSaving, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useObjectRef(ref);
   textValue ||= typeof children === 'string' ? children : undefined;
@@ -1101,10 +1145,11 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
   return (
     <RACCell
       ref={domRef}
-      className={renderProps => cell({
+      className={renderProps => editableCell({
         ...renderProps,
         ...tableVisualOptions,
-        isDivider: showDivider
+        isDivider: showDivider,
+        isSaving
       })}
       textValue={textValue}
       {...otherProps}>
@@ -1128,7 +1173,7 @@ const nonTextInputTypes = new Set([
 ]);
 
 function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
-  let {children, align, renderEditing, isSaving, onSubmit, onCancel, isFocusVisible, cellRef} = props;
+  let {children, align, renderEditing, isSaving, onSubmit, isFocusVisible, cellRef} = props;
   let [isOpen, setIsOpen] = useState(false);
   let popoverRef = useRef<HTMLDivElement>(null);
   let formRef = useRef<HTMLFormElement>(null);
@@ -1180,10 +1225,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     }
   }, [isOpen]);
 
-  // Cancel, don't save the value
   let cancel = () => {
     setIsOpen(false);
-    onCancel();
   };
 
   return (
@@ -1202,6 +1245,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               styles: style({
                 // TODO: really need access to display here instead, but not possible right now
                 // will be addressable with displayOuter
+                // Could use `hidden` attribute instead of css, but I don't have access to much of this state at the moment
                 visibility: {
                   default: 'hidden',
                   isForcedVisible: 'visible',
@@ -1366,6 +1410,9 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
+        // The `spread` otherProps must be after className in Cell.
+        // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>

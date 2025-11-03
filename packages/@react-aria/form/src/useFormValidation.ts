@@ -112,7 +112,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
         form.reset = reset;
       }
     };
-  }, [ref, onInvalid, onChange, onReset, validationBehavior]);
+  }, [ref, validationBehavior]);
 }
 
 function getValidity(input: ValidatableElement) {

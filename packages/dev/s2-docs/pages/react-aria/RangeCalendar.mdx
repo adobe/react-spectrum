@@ -202,8 +202,11 @@ Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to di
 
 ```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
-import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {RangeCalendar, Heading} from 'react-aria-components';
+import {CalendarGrid, CalendarCell} from 'vanilla-starter/RangeCalendar';
+import {Button} from 'vanilla-starter/Button';
 import {useDateFormatter} from 'react-aria';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 // TODO: move this into the starter example.
 function Example(props) {
@@ -219,18 +222,22 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       ///- end highlight -///
-      style={{display: 'flex', gap: 30, overflow: 'auto'}}
+      style={{display: 'flex', gap: 12, overflow: 'auto'}}
     >
       {({state}) => (
         [...Array(props.visibleDuration.months).keys()].map(i => (
           <div key={i} style={{flex: 1}}>
-            <header>
+            <header style={{minHeight: 32}}>
               {i === 0 && 
-                <Button slot="previous">◀</Button>
+                <Button slot="previous" variant="quiet">
+                  <ChevronLeft />
+                </Button>
               }
-              <h2 style={{flex: 1, textAlign: 'center'}}>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</h2>
+              <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
               {i === props.visibleDuration.months - 1 && 
-                <Button slot="next">▶</Button>
+                <Button slot="next" variant="quiet">
+                  <ChevronRight />
+                </Button>
               }
             </header>
             <CalendarGrid offset={{months: i}}>
@@ -283,19 +290,25 @@ You can also control the focused date via `CalendarStateContext`. This example s
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/MonthDropdown.tsx', 'packages/dev/s2-docs/pages/react-aria/YearDropdown.tsx']}
 "use client";
-import {RangeCalendar, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {RangeCalendar} from 'react-aria-components';
+import {CalendarGrid, CalendarCell} from 'vanilla-starter/RangeCalendar';
 import {MonthDropdown} from './MonthDropdown';
 import {YearDropdown} from './YearDropdown';
 import {Button} from 'vanilla-starter/Button';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 
 <RangeCalendar>
   <header style={{display: 'flex', gap: 4}}>
-    <Button slot="previous">◀</Button>
+    <Button slot="previous" variant="quiet">
+      <ChevronLeft />
+    </Button>
     {/*- begin highlight -*/}
     <MonthDropdown />
     <YearDropdown />
     {/*- end highlight -*/}
-    <Button slot="next">▶</Button>
+    <Button slot="next" variant="quiet">
+      <ChevronRight />
+    </Button>
   </header>
   <CalendarGrid>
     {(date) => <CalendarCell date={date} />}

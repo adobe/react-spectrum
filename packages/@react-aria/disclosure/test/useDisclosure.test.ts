@@ -91,7 +91,7 @@ describe('useDisclosure', () => {
   });
 
   it('should keep panel hidden when toggling disabled state', () => {
-    let {result, rerender} = renderHook(({isDisabled}: {isDisabled: boolean}) => {
+    let {rerender} = renderHook(({isDisabled}: {isDisabled: boolean}) => {
       let state = useDisclosureState({});
       return useDisclosure({isDisabled}, state, ref);
     }, {initialProps: {isDisabled: false}});
@@ -100,13 +100,13 @@ describe('useDisclosure', () => {
       rerender({isDisabled: true});
     });
 
-    expect(result.current.panelProps.hidden).toBe(true);
+    expect(ref.current.hidden).toBe(true);
 
     act(() => {
       rerender({isDisabled: false});
     });
 
-    expect(result.current.panelProps.hidden).toBe(true);
+    expect(ref.current.hidden).toBe(true);
   });
 
   it('should set correct IDs for accessibility', () => {

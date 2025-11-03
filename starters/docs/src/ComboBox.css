@@ -1,106 +1,24 @@
 @import "./theme.css";
+@import "./TextField.css";
 
 .react-aria-ComboBox {
   color: var(--text-color);
+  width: calc(var(--spacing) * 50);
 
-  > div:has(.react-aria-Input) {
+  .combobox-field {
     display: flex;
     align-items: center;
+    height: var(--spacing-8);
+    width: 100%;
   }
 
   .react-aria-Input {
-    margin: 0;
-    font-size: 0.9380000000000001rem;
-    background: var(--field-background);
-    color: var(--field-text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 0.25025rem 1.75rem 0.25025rem 0.499625rem;
-    vertical-align: middle;
-    outline: none;
-    min-width: 0;
-
-    &[data-focused] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -1px;
-    }
-  }
-
-  .field-Button {
-    margin-left: -1.49975rem;
+    width: 100%;
+    padding: 0 calc(var(--spacing-3) + var(--spacing-6)) 0 var(--spacing-3);
   }
 }
 
-.react-aria-Popover[data-trigger=ComboBox] {
+.combobox-popover[data-trigger=ComboBox] {
   width: var(--trigger-width);
-
-  .react-aria-ListBox {
-    display: block;
-    width: unset;
-    max-height: inherit;
-    min-height: unset;
-    border: none;
-
-    .react-aria-Header {
-      padding-left: 1.374625rem;
-    }
-  }
-
-  .react-aria-ListBoxItem {
-    padding: 0 0.499625rem 0 1.374625rem;
-
-    &[data-focus-visible] {
-      outline: none;
-    }
-
-    &[data-selected] {
-      font-weight: 600;
-      background: unset;
-      color: var(--text-color);
-
-      &::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        top: 4px;
-        left: 4px;
-      }
-    }
-
-    &[data-focused],
-    &[data-pressed] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-ListBoxItem[href] {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.react-aria-ComboBox {
-  .react-aria-Input {
-    &[data-disabled] {
-      border-color: var(--border-color-disabled);
-    }
-  }
-
-  .react-aria-Button {
-    &[data-disabled] {
-      background: var(--border-color-disabled);
-    }
-  }
-
-  .react-aria-Input {
-    &[data-invalid]:not([data-focused]) {
-      border-color: var(--invalid-color);
-    }
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
+  padding: 0;
 }
