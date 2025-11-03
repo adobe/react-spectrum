@@ -16,7 +16,7 @@ export function ReleasesList({pages}: {pages: Page[]}) {
             <h2 className={style({font: 'heading-lg', margin: 0})}><Link href={release.url}>{release.exports?.title}</Link></h2>
             <Time date={release.exports?.date} />
           </header>
-          <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(release.exports?.description, {forceInline: false, forceBlock: true})}</p>
+          <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(release.exports?.description, {})}</p>
         </div>
       ))}
       <div>
