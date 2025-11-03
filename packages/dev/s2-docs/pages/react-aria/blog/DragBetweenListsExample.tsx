@@ -1,12 +1,13 @@
 'use client';
 
-import {ListView, Item, Text, useListData, useDragAndDrop} from '@adobe/react-spectrum';
-import {style} from '@react-spectrum/s2/style';
-import File from '@spectrum-icons/illustrations/File';
-import Folder from '@spectrum-icons/illustrations/Folder';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
+import {useListData} from 'react-stately';
+import File from '@react-spectrum/s2/icons/File';
+import Folder from '@react-spectrum/s2/icons/Folder';
 import React from 'react';
 
-function BidirectionalDnDListView(props) {
+function BidirectionalDnDGridList(props) {
   let {list} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     acceptedDragTypes: ['custom-app-type-bidirectional'],
@@ -28,7 +29,9 @@ function BidirectionalDnDListView(props) {
         target
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+        items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
       );
       if (target.dropPosition === 'before') {
         list.insertBefore(target.key, ...processedItems);
@@ -36,7 +39,7 @@ function BidirectionalDnDListView(props) {
         list.insertAfter(target.key, ...processedItems);
       }
     },
-    onReorder: async (e) => {
+    onReorder: (e) => {
       let {
         keys,
         target
@@ -53,7 +56,9 @@ function BidirectionalDnDListView(props) {
         items
       } = e;
       let processedItems = await Promise.all(
-        items.map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
+        items
+          .filter(isTextDropItem)
+          .map(async item => JSON.parse(await item.getText('custom-app-type-bidirectional')))
       );
       list.append(...processedItems);
     },
@@ -73,20 +78,20 @@ function BidirectionalDnDListView(props) {
   });
 
   return (
-    <ListView
+    <GridList
       aria-label={props['aria-label']}
       selectionMode="multiple"
-      width="size-3600"
-      height="size-3600"
+      layout="list"
       items={list.items}
-      dragAndDropHooks={dragAndDropHooks}>
+      dragAndDropHooks={dragAndDropHooks}
+      style={{width: 300, height: 300}}>
       {item => (
-        <Item textValue={item.name}>
+        <GridListItem textValue={item.name}>
           {item.type === 'folder' ? <Folder /> : <File />}
-          <Text>{item.name}</Text>
-        </Item>
+          <span>{item.name}</span>
+        </GridListItem>
       )}
-    </ListView>
+    </GridList>
   );
 }
 
@@ -115,9 +120,9 @@ export default function DragBetweenListsExample() {
 
 
   return (
-    <div className={style({display: 'flex', flexWrap: 'wrap', gap: 8})}>
-      <BidirectionalDnDListView list={list1} aria-label="First ListView in drag between list example" />
-      <BidirectionalDnDListView list={list2} aria-label="Second ListView in drag between list example" />
+    <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 8}}>
+      <BidirectionalDnDGridList list={list1} aria-label="First GridList in drag between list example" />
+      <BidirectionalDnDGridList list={list2} aria-label="Second GridList in drag between list example" />
     </div>
   );  
 }
