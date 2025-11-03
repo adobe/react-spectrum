@@ -1,4 +1,4 @@
-.animated-GridListItem {
+.animated-ListBoxItem {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -26,7 +26,7 @@
     width: 3px;
     height: 20px;
     border-radius: 4px;
-    background: var(--gray-600);
+    background: var(--highlight-background);
     transition-property: translate, opacity;
     transition-duration: 250ms;
 

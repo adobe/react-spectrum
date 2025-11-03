@@ -18,7 +18,7 @@ import { composeTailwindRenderProps, focusRing } from "./utils";
 import { DisclosureGroupStateContext } from "react-aria-components";
 
 const disclosure = tv({
-  base: "group min-w-64 border border-gray-200 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-zinc-200",
+  base: "group min-w-64 bg-white font-sans dark:bg-gray-900 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-zinc-200",
   variants: {
     isInGroup: {
       true: "border-0 border-b last:border-b-0 rounded-b-none last:rounded-b-lg",
@@ -109,7 +109,7 @@ export interface DisclosureGroupProps extends AriaDisclosureGroupProps {
 
 export function DisclosureGroup({ children, ...props }: DisclosureGroupProps) {
   return (
-    <AriaDisclosureGroup {...props} className={composeTailwindRenderProps(props.className, 'border border-gray-200 dark:border-zinc-600 rounded-lg')}>
+    <AriaDisclosureGroup {...props} className={composeTailwindRenderProps(props.className, 'border border-gray-300 dark:border-zinc-600 rounded-lg')}>
       {children}
     </AriaDisclosureGroup>
   );

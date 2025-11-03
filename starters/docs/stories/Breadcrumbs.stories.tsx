@@ -16,14 +16,8 @@ type Story = StoryFn<typeof Breadcrumbs>;
 
 export const Example: Story = (args) => (
   <Breadcrumbs {...args}>
-    <Breadcrumb>
-      <Link href="/">Home</Link>
-    </Breadcrumb>
-    <Breadcrumb>
-      <Link href="/react-aria/">React Aria</Link>
-    </Breadcrumb>
-    <Breadcrumb>
-      <Link>Breadcrumbs</Link>
-    </Breadcrumb>
+    <Breadcrumb href="/">Home</Breadcrumb>
+    <Breadcrumb href="/react-aria/">React Aria</Breadcrumb>
+    <Breadcrumb>Breadcrumbs</Breadcrumb>
   </Breadcrumbs>
 );

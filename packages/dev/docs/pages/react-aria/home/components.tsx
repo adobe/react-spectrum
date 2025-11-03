@@ -18,9 +18,9 @@ export function Window({children, className = '', isBackground = false, toolbar}
       <div className="bg-gray-200/80 dark:bg-zinc-700/80 backdrop-blur-md border-b border-gray-300 dark:border-white/10 flex flex-row px-3 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] dark:shadow-none">
         {toolbar}
         <div className="absolute flex flex-row left-4 top-3.5 forced-color-adjust-none">
-          <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-red-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
-          <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-yellow-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
-          <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-green-500'} border border-black/5 h-3 rounded-full w-3`} />
+          <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-red-500'} box-border border border-black/5 h-3 mr-2 rounded-full w-3`} />
+          <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-yellow-500'} box-border border border-black/5 h-3 mr-2 rounded-full w-3`} />
+          <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-green-500'} box-border border border-black/5 h-3 rounded-full w-3`} />
         </div>
       </div>
       {children}
@@ -44,15 +44,15 @@ export function Card({className, ...otherProps}: {
   [x: string]: any,
   className: any
 }): ReactNode {
-  return <div className={`flex flex-col bg-white dark:bg-zinc-800/80 dark:backdrop-saturate-200 rounded-2xl p-6 overflow-hidden card-shadow snap-center snap-always ${className}`} {...otherProps} />;
+  return <div className={`flex flex-col bg-white dark:bg-zinc-800/80 dark:backdrop-saturate-200 rounded-2xl box-border p-6 overflow-hidden card-shadow snap-center snap-always ${className}`} {...otherProps} />;
 }
 
 export function CardTitle({children}: {children: ReactNode}): ReactNode {
-  return <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">{children}</h3>;
+  return <h3 className="text-xl font-semibold m-0 mb-2 text-gray-800 dark:text-gray-100">{children}</h3>;
 }
 
 export function CardDescription({children}: {children: ReactNode}): ReactNode {
-  return <p className="text-gray-600 dark:text-gray-400 text-base [text-wrap:pretty] [&_a]:text-blue-600 dark:[&_a]:text-blue-400 [&_a]:underline">{children}</p>;
+  return <p className="m-0 text-gray-600 dark:text-gray-400 text-base [text-wrap:pretty] [&_a]:text-blue-600 dark:[&_a]:text-blue-400 [&_a]:underline">{children}</p>;
 }
 
 interface ArrowProps {
@@ -86,7 +86,7 @@ React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLD
 });
 
 export function LearnMoreLink({href, className}: {href: string, className: string}): ReactNode {
-  return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95 ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+  return <a href={href} className={`group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95 ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
 }
 
 export function Scrollable({children, className = ''}: {children: ReactNode, className?: string}): ReactNode {

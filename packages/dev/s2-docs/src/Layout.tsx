@@ -1,6 +1,8 @@
+import {ExampleList} from './ExampleList';
 import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
 import type {Page, PageProps, TocNode} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
+// @ts-ignore
 import '../src/client';
 // @ts-ignore
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
@@ -10,8 +12,10 @@ import './anatomy.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
+import {CodePlatterProvider} from './CodePlatter';
 import {ExampleSwitcher} from './ExampleSwitcher';
-import {getLibraryFromPage, getLibraryLabel} from './library';
+import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
+import {getTextWidth} from './textWidth';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
@@ -21,10 +25,21 @@ import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
+import {VersionBadge} from './VersionBadge';
 import {VisualExample} from './VisualExample';
 
+const h1 = style({
+  font: 'heading-3xl',
+  fontSize: {
+    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
+    lg: 'heading-3xl'
+  },
+  marginY: 0
+});
+
 const components = {
-  h1: ({children, ...props}) => <h1 {...props} id="top" className={style({font: {default: 'heading-2xl', lg: 'heading-3xl'}, marginY: 0})}>{children}</h1>,
+  h1: ({children, ...props}) => <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>,
   h2: H2,
   h3: H3,
   h4: H4,
@@ -44,7 +59,8 @@ const components = {
   StateTable,
   ClassAPI,
   ExampleSwitcher,
-  TypeLink
+  TypeLink,
+  ExampleList
 };
 
 function anchorId(children) {
@@ -109,20 +125,51 @@ let articleStyles = style({
   height: 'fit'
 });
 
-
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
   let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let library = getLibraryLabel(getLibraryFromPage(currentPage));
+  let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
+  let ogImage = getOgImageUrl(currentPage);
+  let title = getTitle(currentPage);
+  let description = getDescription(currentPage);
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
         <meta charSet="utf-8" />
+        <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="alternate" type="text/markdown" title="LLM-friendly version" href={currentPage.url.replace(/\.html$/, '.md')} />
         <link rel="icon" href={getFaviconUrl(currentPage)} />
-        <meta name="description" content={getDescription(currentPage)} />
-        <meta property="og:image" content={getOgImageUrl(currentPage)} />
-        <title>{getTitle(currentPage)}</title>
+        <meta name="description" content={description} />
+        {keywords.length > 0 ? <meta name="keywords" content={keywords.join(',')} /> : null}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={ogImage} />
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={currentPage.url} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:description" content={description} />
+        <meta property="og:locale" content="en_US" />
+        <link rel="canonical" href={currentPage.url} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(
+            {
+              '@context': 'http://schema.org',
+              '@type': 'Article',
+              author: 'Adobe Inc',
+              headline: title,
+              description: description,
+              image: ogImage,
+              publisher: {
+                '@type': 'Organization',
+                url: 'https://www.adobe.com',
+                name: 'Adobe',
+                logo: 'https://www.adobe.com/favicon.ico'
+              }
+            }
+          )}} />
       </head>
       <body
         className={style({
@@ -192,11 +239,14 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   lg: 'auto'
                 }
               })}>
-              <article
-                className={articleStyles({isWithToC: hasToC})}>
-                {React.cloneElement(children, {components})}
-              </article>
-              <aside
+              <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                <article
+                  className={articleStyles({isWithToC: hasToC})}>
+                  {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
+                  {React.cloneElement(children, {components})}
+                </article>
+              </CodePlatterProvider>
+              {hasToC && <aside
                 className={style({
                   position: 'sticky',
                   top: 0,
@@ -210,11 +260,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                     lg: 'block'
                   }
                 })}>
-                {hasToC && (
-                  <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                )}
+                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
                 <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-              </aside>
+              </aside>}
             </main>
           </div>
         </div>

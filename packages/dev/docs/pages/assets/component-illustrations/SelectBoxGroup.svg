@@ -1,0 +1,40 @@
+<svg style="background:var(--anatomy-gray-100); padding: 30px 10px" height="180" viewBox="0 0 240 180">
+  <rect id="Placement_Area" data-name="Placement Area" width="240" height="180" fill="red" opacity="0"/>
+  <g id="Box_1" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-700)" stroke-width="2">
+    <rect width="110" height="80" rx="4" stroke="none" fill="var(--anatomy-gray-200)"/>
+    <rect x="1" y="1" width="108" height="78" rx="3" fill="none"/>
+    <g id="Checkbox" transform="translate(10 10)">
+      <rect width="14" height="14" rx="2" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1.5"/>
+      <path d="M3.5,7 L6,9.5 L10.5,4.5" fill="none" stroke="var(--anatomy-gray-700)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <rect id="Icon" x="38" y="22" width="34" height="24" rx="3" fill="var(--anatomy-gray-500)" stroke="none"/>
+    <rect id="Text" x="30" y="54" width="50" height="6" rx="2" fill="var(--anatomy-gray-600)" stroke="none"/>
+  </g>
+  <g id="Box_2" transform="translate(130 0)" fill="var(--anatomy-gray-400)" stroke="var(--anatomy-gray-400)" stroke-width="2">
+    <rect width="110" height="80" rx="4" stroke="none" fill="var(--anatomy-gray-200)"/>
+    <rect x="1" y="1" width="108" height="78" rx="3" fill="none"/>
+    <g id="Checkbox" transform="translate(10 10)">
+      <rect width="14" height="14" rx="2" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+    </g>
+    <rect id="Icon" x="38" y="22" width="34" height="24" rx="3" fill="var(--anatomy-gray-400)" stroke="none"/>
+    <rect id="Text" x="30" y="54" width="50" height="6" rx="2" fill="var(--anatomy-gray-500)" stroke="none"/>
+  </g>
+  <g id="Box_3" transform="translate(0 100)" fill="var(--anatomy-gray-400)" stroke="var(--anatomy-gray-400)" stroke-width="2">
+    <rect width="110" height="80" rx="4" stroke="none" fill="var(--anatomy-gray-200)"/>
+    <rect x="1" y="1" width="108" height="78" rx="3" fill="none"/>
+    <g id="Checkbox" transform="translate(10 10)">
+      <rect width="14" height="14" rx="2" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+    </g>
+    <rect id="Icon" x="38" y="22" width="34" height="24" rx="3" fill="var(--anatomy-gray-400)" stroke="none"/>
+    <rect id="Text" x="30" y="54" width="50" height="6" rx="2" fill="var(--anatomy-gray-500)" stroke="none"/>
+  </g>
+  <g id="Box_4" transform="translate(130 100)" fill="var(--anatomy-gray-400)" stroke="var(--anatomy-gray-400)" stroke-width="2">
+    <rect width="110" height="80" rx="4" stroke="none" fill="var(--anatomy-gray-200)"/>
+    <rect x="1" y="1" width="108" height="78" rx="3" fill="none"/>
+    <g id="Checkbox" transform="translate(10 10)">
+      <rect width="14" height="14" rx="2" fill="none" stroke="var(--anatomy-gray-400)" stroke-width="1.5"/>
+    </g>
+    <rect id="Icon" x="38" y="22" width="34" height="24" rx="3" fill="var(--anatomy-gray-400)" stroke="none"/>
+    <rect id="Text" x="30" y="54" width="50" height="6" rx="2" fill="var(--anatomy-gray-500)" stroke="none"/>
+  </g>
+</svg>

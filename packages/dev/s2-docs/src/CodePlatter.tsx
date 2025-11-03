@@ -7,27 +7,30 @@ import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria';
+import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import React, {ReactNode, useEffect, useRef, useState} from 'react';
+import React, {createContext, ReactNode, useContext, useEffect, useRef, useState} from 'react';
 import {zip} from './zip';
 
 const platterStyle = style({
   backgroundColor: 'layer-2',
   borderRadius: 'lg',
-  '--code-padding-x': {
-    type: 'paddingTop',
+  '--code-padding-start': {
+    type: 'paddingStart',
+    value: 16
+  },
+  '--code-padding-end': {
+    type: 'paddingEnd',
     value: 16
   },
   '--code-padding-y': {
     type: 'paddingTop',
     value: 16
   },
-  position: 'relative',
-  maxHeight: 600,
-  overflow: 'auto'
+  position: 'relative'
 });
 
 interface CodePlatterProps {
@@ -38,21 +41,38 @@ interface CodePlatterProps {
   registryUrl?: string
 }
 
+interface CodePlatterContextValue {
+  library: Library
+}
+
+const CodePlatterContext = createContext<CodePlatterContextValue>({library: 'react-spectrum'});
+export function CodePlatterProvider(props: CodePlatterContextValue & {children: any}) {
+  return <CodePlatterContext.Provider value={props}>{props.children}</CodePlatterContext.Provider>;
+}
+
 export function CodePlatter({children, shareUrl, files, type, registryUrl}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
   let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
+  let {library} = useContext(CodePlatterContext);
+  if (!type) {
+    if (library === 'react-aria') {
+      type = 'vanilla';
+    } else if (library === 'react-spectrum') {
+      type = 's2';
+    }
+  }
 
   return (
     <div className={platterStyle}>
-      <div className={style({display: 'flex', justifyContent: 'end', float: 'inline-end', padding: 16, position: 'relative', zIndex: 1})}>
+      <div className={style({display: 'flex', justifyContent: 'end', padding: 4, position: 'absolute', top: 8, insetEnd: 8, backgroundColor: 'layer-2', boxShadow: 'elevated', borderRadius: 'default', zIndex: 1})}>
         <ActionButtonGroup
           orientation="vertical"
           isQuiet
           density="regular"
           size="S">
           <CopyButton ariaLabel="Copy code" tooltip="Copy code" getText={getText} />
-          {(shareUrl || files || type || registryUrl) && <MenuTrigger>
+          {(shareUrl || files || type || registryUrl) && <MenuTrigger align="end">
             <TooltipTrigger placement="end">
               <ActionButton aria-label="Open in…">
                 <OpenIn />
@@ -167,9 +187,23 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl}: Code
   );
 }
 
+const pre = style({
+  borderRadius: 'lg',
+  font: {
+    default: 'code-xs',
+    lg: 'code-sm'
+  },
+  margin: 0,
+  paddingStart: '--code-padding-start',
+  paddingEnd: '--code-padding-end',
+  paddingY: '--code-padding-y',
+  width: 'fit',
+  minWidth: 'full'
+});
+
 export function Pre({children}) {
   return (
-    <pre className={style({borderRadius: 'lg', font: {default: 'code-xs', lg: 'code-sm'}, whiteSpace: 'pre-wrap', margin: 0, paddingX: '--code-padding-x', paddingY: '--code-padding-y'})} style={{overflowWrap: 'break-word'}}>
+    <pre className={pre}>
       {children}
     </pre>
   );
@@ -250,7 +284,7 @@ function ShadcnDialog({registryUrl}) {
               flexDirection: 'column',
               gap: 16
             })}>
-            <SegmentedControl selectedKey={packageManager} onSelectionChange={onSelectionChange}>
+            <SegmentedControl aria-label="Package manager" selectedKey={packageManager} onSelectionChange={onSelectionChange}>
               <SegmentedControlItem id="npm">npm</SegmentedControlItem>
               <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
               <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>

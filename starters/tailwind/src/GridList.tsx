@@ -4,6 +4,7 @@ import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
   Button,
+  composeRenderProps,
   GridListItemProps,
   GridListProps
 } from 'react-aria-components';
@@ -15,7 +16,7 @@ export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>
 ) {
   return (
-    <AriaGridList {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border border-gray-200 dark:border-zinc-600 rounded-lg')}>
+    <AriaGridList {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto w-[200px] relative bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg font-sans empty:flex empty:items-center empty:justify-center empty:italic empty:text-sm')}>
       {children}
     </AriaGridList>
   );
@@ -23,7 +24,7 @@ export function GridList<T extends object>(
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative flex gap-3 cursor-default select-none py-2 px-3 text-sm text-gray-900 dark:text-zinc-200 border-y dark:border-y-zinc-700 border-transparent first:border-t-0 last:border-b-0 first:rounded-t-md last:rounded-b-md -mb-px last:mb-0 -outline-offset-2',
+  base: 'relative flex gap-3 cursor-default select-none py-2 px-3 text-sm text-gray-900 dark:text-zinc-200 border-y dark:border-y-zinc-700 border-transparent first:border-t-0 last:border-b-0 first:rounded-t-lg last:rounded-b-lg -mb-px last:mb-0 -outline-offset-2',
   variants: {
     isSelected: {
       false: 'hover:bg-gray-100 dark:hover:bg-zinc-700/60',
@@ -39,7 +40,7 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props} className={itemStyles}>
-      {({ selectionMode, selectionBehavior, allowsDragging }) => (
+      {composeRenderProps(children, (children, {selectionMode, selectionBehavior, allowsDragging}) => (
         <>
           {/* Add elements for drag and drop and selection. */}
           {allowsDragging && <Button slot="drag">≡</Button>}
@@ -48,7 +49,7 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
           )}
           {children}
         </>
-      )}
+      ))}
     </AriaGridListItem>
   );
 }

@@ -15,7 +15,7 @@ export const tags = ['options'];
 <PageDescription>{docs.exports.ListBox.description}</PageDescription>
 
 <ExampleSwitcher>
-  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} type="vanilla" files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css"]}
+  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css"]}
   "use client";
   import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
@@ -29,7 +29,7 @@ export const tags = ['options'];
   </ListBox>
   ```
 
-  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} type="tailwind" files={["starters/tailwind/src/ListBox.tsx"]}
+  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/ListBox.tsx"]}
   "use client";
   import {ListBox, ListBoxItem} from 'tailwind-starter/ListBox';
 
@@ -145,9 +145,9 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {Collection} from 'react-aria-components';
 import {useAsyncList} from 'react-stately';
 
 interface Character {
@@ -183,9 +183,7 @@ function AsyncLoadingExample() {
       {/*- begin highlight -*/}
       <ListBoxLoadMoreItem
         onLoadMore={list.loadMore}
-        isLoading={list.loadingState === 'loadingMore'}>
-        <ProgressCircle isIndeterminate aria-label="Loading more..." />
-      </ListBoxLoadMoreItem>
+        isLoading={list.loadingState === 'loadingMore'} />
       {/*- end highlight -*/}
     </ListBox>
   );
@@ -271,52 +269,61 @@ Use the `layout` and `orientation` props to create horizontal and vertical stack
 import {ListBox, ListBoxItem, Text} from 'react-aria-components';
 
 ///- begin collapse -///
-let albums = [
+let planets = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
-    title: 'Euphoric Echoes',
-    artist: 'Luna Solstice'
+    title: 'Mercury',
+    description: 'A year lasts 88 days'
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
-    title: 'Neon Dreamscape',
-    artist: 'Electra Skyline'
+    title: 'Venus',
+    description: 'Spins backwards!'
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
-    title: 'Cosmic Serenade',
-    artist: 'Orion\'s Symphony'
+    title: 'Earth',
+    description: 'Only planet with life'
   },
   {
     id: 4,
-    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
-    title: 'Melancholy Melodies',
-    artist: 'Violet Mistral'
+    title: 'Mars',
+    description: 'Has the tallest volcano'
   },
   {
     id: 5,
-    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
-    title: 'Rhythmic Illusions',
-    artist: 'Mirage Beats'
+    title: 'Jupiter',
+    description: 'Can fit 1,300 Earths'
+  },
+  {
+    id: 6,
+    title: 'Saturn',
+    description: 'Rings made of ice'
+  },
+  {
+    id: 7,
+    title: 'Uranus',
+    description: 'Rolls on its side'
+  },
+  {
+    id: 8,
+    title: 'Neptune',
+    description: 'Fastest winds in space'
   }
 ];
 ///- end collapse -///
 
 <ListBox
-  aria-label="Albums"
+  aria-label="Planets"
   /*- begin highlight -*/
   /* PROPS */
   /*- end highlight -*/
-  items={albums}
+  items={planets}
   selectionMode="multiple">
   {item => (
     <ListBoxItem textValue={item.title}>
-      <img src={item.image} alt="" />
       <Text slot="label">{item.title}</Text>
-      <Text slot="description">{item.artist}</Text>
+      <Text slot="description">{item.description}</Text>
     </ListBoxItem>
   )}
 </ListBox>
@@ -369,6 +376,10 @@ function Example() {
   );
 }
 ```
+
+## Examples
+
+<ExampleList tag="listbox" pages={props.pages} />
 
 ## API
 

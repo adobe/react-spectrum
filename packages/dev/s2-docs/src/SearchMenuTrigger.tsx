@@ -1,6 +1,6 @@
 'use client';
 
-import {Button, ButtonProps, Modal} from 'react-aria-components';
+import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
@@ -23,6 +23,25 @@ export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | '
   isSearchOpen: boolean,
   overlayId: string
 }
+
+let underlayStyle = style({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: 'full',
+  height: '--page-height',
+  isolation: 'isolate',
+  backgroundColor: 'transparent-black-500',
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
+  },
+  transition: 'opacity',
+  transitionDuration: {
+    default: 250,
+    isExiting: 130
+  }
+});
 
 let modalStyle = style({
   position: 'absolute',
@@ -173,18 +192,20 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             alignSelf: 'center'
           })}>⌘K</kbd>
       </Button>
-      <Modal
+      <ModalOverlay
         isDismissable
         isOpen={isSearchOpen}
         onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
-        className={modalStyle}>
-        <SearchMenu
-          pages={props.pages}
-          currentPage={props.currentPage}
-          onClose={onClose}
-          overlayId={overlayId}
-          initialSearchValue={initialSearchValue} />
-      </Modal>
+        className={underlayStyle}>
+        <Modal className={modalStyle}>
+          <SearchMenu
+            pages={props.pages}
+            currentPage={props.currentPage}
+            onClose={onClose}
+            overlayId={overlayId}
+            initialSearchValue={initialSearchValue} />
+        </Modal>
+      </ModalOverlay>
     </div>
   );
 }
