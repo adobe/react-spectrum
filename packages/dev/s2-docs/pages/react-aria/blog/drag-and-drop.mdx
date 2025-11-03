@@ -11,6 +11,10 @@ import Anatomy from '@react-aria/dnd/docs/Anatomy.svg';
 import BetweenDropPosition from '@react-aria/dnd/docs/BetweenDropPosition.svg';
 import OnDropPosition from '@react-aria/dnd/docs/OnDropPosition.svg';
 import RootDropPosition from '@react-aria/dnd/docs/RootDropPosition.svg';
+import heroVideo from 'url:../../../../docs/pages/assets/dnd.mp4';
+import dndKeyboard from 'url:../../../../docs/pages/assets/dnd-keyboard.mp4';
+import dndMobile from 'url:../../../../docs/pages/assets/dnd-mobile.mp4';
+import dndMobileVTT from 'url:../../../../docs/pages/assets/dnd-mobile.vtt';
 
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
@@ -34,7 +38,7 @@ We are excited to announce the release of drag and drop support in [React Aria](
 - **Interoperability** – Drag data can be provided in multiple data formats for compatibility with many targets and external applications via the native HTML drag and drop API. Drag and drop integrates with multiple selection to allow dragging many objects at once.
 - **Customizability** – Interactions such as hit testing, keyboard navigation, and drop operations can be customized, as well as UIs for drag previews and drop indicators.
 
-TODO: Add heroVideo video
+<video src={heroVideo} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
 
 ## Introduction
 
@@ -56,13 +60,15 @@ For mouse and touch screen users, React Aria uses the native [HTML drag and drop
 
 In addition to native drag and drop, we have also implemented keyboard and screen reader accessible interactions from scratch. Keyboard users can focus a draggable element and press the `Enter` key to start dragging it. This enters a drag and drop mode across the whole page, which allows the user to press `Tab` to navigate only between drop targets that accept the dragged data, while skipping over all other elements. This reduces the number of elements on the page that must be traversed to find a drop target, and removes the guess work often found with other alternatives such as copy and paste. Once a target is chosen, pressing the `Enter` key again performs the drop.
 
-TODO: Add video showing drag and drop using a keyboard
+<video src={dndKeyboard} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
 
 For screen reader users, the interactions are similar. We've taken great care to include prompts and announcements to help guide the user through the process, which adapt to the device, and are localized into over 30 languages. Drag sources and drop targets include ARIA descriptions indicating that the user can press `Enter` or double tap to drag or drop, depending on their device. We also use an ARIA live region to announce when a drag starts, with instructions on how to navigate and perform a drop, and to announce when a drop is completed successfully or canceled by the user.
 
 In addition, while in drag and drop mode, all elements other than valid drop targets are hidden from screen readers. Desktop screen reader users can use the `Tab` key to navigate as described earlier, but touch screen readers navigate by swiping through elements using a virtual cursor, and double tapping to drop. Hiding all non-drop target elements makes it much easier to find valid places to drop, without needing to swipe through potentially hundreds of unrelated elements.
 
-TODO: Add video showing drag and drop using VoiceOver on iOS
+<video src={dndMobile} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}}>
+  <Track src={dndMobileVTT} default kind="captions" label="English Captions" srclang="en-us" type="text/vtt" />
+</video>
 
 All of these accessibility features are implemented behind the scenes using the same API as for mouse and touch interactions. There is no additional effort required by the developer to make drag and drop accessible.
 

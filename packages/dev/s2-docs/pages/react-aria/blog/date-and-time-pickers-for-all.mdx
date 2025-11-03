@@ -10,6 +10,9 @@ governing permissions and limitations under the License. */}
 import Anatomy from '../../../../docs/pages/assets/daterangepicker-anatomy.svg';
 import calendarMobileScreenReader from 'url:../../../../docs/pages/assets/calendar-mobile-screen-reader.mp4';
 import calendarMobileScreenReaderVTT from 'url:../../../../docs/pages/assets/calendar-mobile-screen-reader.vtt';
+import datepickerVideo from 'url:../../../../docs/pages/assets/datepicker.mp4';
+import datepickerScreenReader from 'url:../../../../docs/pages/assets/datepicker-screen-reader.mp4';
+
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
 
@@ -38,7 +41,7 @@ In building these components, we have focused on the following areas:
 - **Accessibility** – All of our date and time picker components have been tested across desktop and mobile devices, and with many different input methods including mouse, touch, and keyboard. We have worked hard to ensure screen reader announcements are clear and consistent.
 - **Customizability** – As with all of React Aria, our hooks give you full control over the rendering and styling of your components, while letting us handle the internationalization and accessibility challenges for you. We have examples using many different styling libraries, such as Tailwind CSS, Styled Components, CSS modules, and Chakra UI.
 
-TODO: Add datepickerVideoUrl video
+<video src={datepickerVideo} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
 
 ## User experience
 
@@ -60,7 +63,7 @@ We took a different approach, and followed the lead of native date picker UIs on
 
 This approach has benefits for internationalization and accessibility, as well as usability on mobile. For internationalization, individual segments avoid the problem of parsing dates in various formats entirely. The date format is automatically determined based on the locale, and the user only needs to fill in the values and not worry about messing up the separators or getting the order wrong. Each segment is also individually labeled for accessibility, so users always know which field they are on (e.g. "year", "month", "day", etc.). This is much easier to use for screen reader users than a plain text field where the expected format is unknown. Finally, on mobile, we can take advantage of the numeric software keyboard, which is nicer to use than a full QWERTY keyboard.
 
-TODO: Add datefieldVideoUrl video
+<video src={datepickerScreenReader} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
 
 The [useDateField](../useDateField.html) and [useTimeField](../useTimeField.html) hooks (or the [DateField](../../s2/DateField.html) and [TimeField](../../s2/TimeField.html) React Spectrum components) may be used standalone in cases where the user is likely to already know the date they need to enter, or the date is far in the past or future, e.g. a birthday or passport expiration date. In these cases, browsing through a calendar UI to find a date is tedious, and entering the date with a keyboard is much more efficient.
 
