@@ -3,11 +3,11 @@ export default Layout;
 
 export const omitFromNav = true;
 export const tags = ['style', 'macro', 'spectrum', 'custom', 'advanced'];
-export const description = 'Style macro advanced usage guide';
+export const description = 'A guide to advanced styling use cases for React Spectrum';
 
-# Advanced style macro usage
+# Advanced styling guide
 
-A guide to advanced use cases with the `style` macro.
+A guide to advanced styling use cases for React Spectrum.
 
 ## Conditional styles
 
@@ -18,7 +18,8 @@ Define conditional values as objects to handle media queries, UI states (hover/p
   className={style({
     padding: {
       default: 8,
-      lg: 32
+      lg: 32,
+      '@media (min-width: 2560px)': 64,
     }
   })}
 />
@@ -215,3 +216,26 @@ function MyComponent({isQuiet, styles}: {isQuiet?: boolean, styles?: StyleString
 ```
 
 The `iconStyle` macro should be used when styling Icons, see the [docs](../icons.html#iconstyle) for more information.
+
+## UNSAFE Style Overrides
+
+We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using [React Aria Components](https://react-spectrum.adobe.com/react-aria/) with our `style` macro to build a custom component with Spectrum styles instead.
+
+With that being said, the `UNSAFE_className` and `UNSAFE_style` props are supported on Spectrum 2 components as last-resort escape hatches.
+
+```tsx
+/* YourComponent.tsx */
+import {Button} from '@react-spectrum/s2';
+import './YourComponent.css';
+
+function YourComponent() {
+  return <Button UNSAFE_className="your-unsafe-class">Button</Button>;
+}
+```
+
+```css
+/* YourComponent.css */
+.your-unsafe-class {
+  background: red;
+}
+```

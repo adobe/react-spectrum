@@ -99,29 +99,6 @@ import {Button} from '@react-spectrum/s2';
   'visibility'
 ]} />
 
-### UNSAFE Style Overrides
-
-We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using [React Aria Components](https://react-spectrum.adobe.com/react-aria/) with our `style` macro to build a custom component with Spectrum styles instead.
-
-With that being said, the `UNSAFE_className` and `UNSAFE_style` props are supported on Spectrum 2 components as last-resort escape hatches.
-
-```tsx
-/* YourComponent.tsx */
-import {Button} from '@react-spectrum/s2';
-import './YourComponent.css';
-
-function YourComponent() {
-  return <Button UNSAFE_className="your-unsafe-class">Button</Button>;
-}
-```
-
-```css
-/* YourComponent.css */
-.your-unsafe-class {
-  background: red;
-}
-```
-
 ## Values
 
 The `style` macro supports a constrained set of values per property that conform to Spectrum 2. This improves consistency and maintainability. See the [reference](./styling/reference.html) page for a full list of available style macro properties.
@@ -148,6 +125,7 @@ Size props like `width` and `height` accept arbitrary pixel values. Values are c
 ### Typography
 
 Spectrum 2 typography is applied via the `font` shorthand, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+Note that you should always specify the `font` at the element level, setting it globally is insufficient since this will often differ per component.
 
 ```tsx
 <main>
@@ -169,6 +147,10 @@ Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has 
     Only use `<Heading>` and `<Text>` inside Spectrum components with predefined styles (e.g., `<Dialog>`, `<MenuItem>`). They are unstyled by default and should not be used standalone. Use HTML elements with the `style` macro instead.
   </Content>
 </InlineAlert>
+
+### Breakpoints
+
+The style macro has several predefined [breakpoints](./styling/reference.html#conditions), but you can use arbitrary CSS media or container queries as [conditional values](./styling/advanced.html#conditional-styles) in your style macro as well.
 
 ## CSS optimization
 
@@ -238,7 +220,7 @@ in a non-atomic format, making it easier to scan.
 the `style` macros for quick prototyping.
 
 - If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
-we have MCP servers for [React Aria](#TODO) and [React Spectrum](https://www.npmjs.com/package/@react-spectrum/mcp) respectively that interface with the docs.
+we have MCP servers for [React Aria](../react-aria/mcp.html) and [React Spectrum](./mcp.html) respectively that interface with the docs.
 
 ## FAQ
 
