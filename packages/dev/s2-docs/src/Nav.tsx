@@ -21,6 +21,9 @@ export function Nav({pages, currentPage}: PageProps) {
     }
 
     let section = page.exports?.section ?? 'Components';
+    if (section === '') {
+      continue;
+    }
     let sectionPages = sections.get(section) ?? [];
     sectionPages.push(page);
     sections.set(section, sectionPages);
@@ -176,7 +179,7 @@ function useCurrentSection() {
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article > :is(h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article :is(h2,h3,h4,h5)'));
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {

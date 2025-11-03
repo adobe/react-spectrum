@@ -16,6 +16,7 @@ import {CodePlatterProvider} from './CodePlatter';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {getTextWidth} from './textWidth';
+import {GoUpOneLink} from './GoUpOneLink';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {Link} from './Link';
@@ -61,6 +62,16 @@ const components = {
   ExampleSwitcher,
   TypeLink,
   ExampleList
+};
+
+const subPageComponents = {
+  ...components,
+  h1: ({children, ...props}) => (
+    <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+      <GoUpOneLink />
+      <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
+    </div>
+  )
 };
 
 function anchorId(children) {
@@ -133,6 +144,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let ogImage = getOgImageUrl(currentPage);
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
+  let isSubpage = currentPage.exports?.isSubpage;
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -243,7 +255,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 <article
                   className={articleStyles({isWithToC: hasToC})}>
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {components})}
+                  {React.cloneElement(children, {components: isSubpage ? subPageComponents : components, pages})}
                   {currentPage.exports?.relatedPages && (
                     <MobileRelatedPages pages={currentPage.exports.relatedPages} />
                   )}
