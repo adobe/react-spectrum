@@ -34,17 +34,6 @@ in combination with a FocusScope to programmatically move focus within the scope
 arrow key navigation could be implemented by handling keyboard events and using a focus manager
 to move focus to the next and previous elements.
 
-## Props
-
-<PropTable links={docs.links} component={docs.exports.FocusScope} />
-
-## FocusManager Interface
-
-To get a focus manager, call the <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook
-from a component within the FocusScope. A focus manager supports the following methods:
-
-<ClassAPI links={docs.links} class={docs.exports.FocusManager} />
-
 ## Example
 
 A basic example of a focus scope that contains focus within it is below. Clicking the "Open"
@@ -128,3 +117,14 @@ function ToolbarButton(props) {
   <ToolbarButton>Paste</ToolbarButton>
 </Toolbar>
 ```
+
+## Props
+
+<PropTable links={docs.links} component={docs.exports.FocusScope} />
+
+## FocusManager Interface
+
+To get a focus manager, call the <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook
+from a component within the FocusScope. A focus manager supports the following methods:
+
+<ClassAPI links={docs.links} class={docs.exports.FocusManager} />

@@ -30,21 +30,11 @@ This provides better modularity by default, so that a parent component doesn't r
 that a child already handled. If the child doesn't handle the event (e.g. it was for an unknown key),
 it can call `event.continuePropagation()` to allow parents to handle the event.
 
-## Usage
-
-`useKeyboard` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.KeyboardResult} />
-
-`useKeyboard` supports the following props:
-
-<InterfaceType {...docs.exports.KeyboardProps} />
-
 ## Example
 
 This example shows a simple input element that handles keyboard events with `useKeyboard` and logs them to a list below.
 
-{/* Components hooks have not been written yet */}
+{/* TODO: Components hooks have not been written yet */}
 {/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).** */}
 
 ```tsx render
@@ -81,3 +71,12 @@ function Example() {
   );
 }
 ```
+## Usage
+
+`useKeyboard` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.KeyboardResult} />
+
+`useKeyboard` supports the following props:
+
+<InterfaceType {...docs.exports.KeyboardProps} />

@@ -37,21 +37,6 @@ event. In addition, after a user focuses the target element, move events are fir
 * Handles disabling text selection on mobile while the press interaction is active
 * Normalizes many cross browser inconsistencies
 
-## Usage
-
-`useMove` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.MoveResult} />
-
-`useMove` supports the following event handlers:
-
-<InterfaceType {...typesDocs.exports.MoveEvents} />
-
-Each of these handlers is fired with a `MoveEvent`, which exposes information about the target and the
-type of event that triggered the interaction.
-
-<InterfaceType {...typesDocs.exports.MoveMoveEvent} />
-
 ## Example
 
 This example shows a ball that can be moved by dragging with a mouse or touch, or by tabbing to it and using
@@ -75,7 +60,6 @@ function Example() {
   });
 
   let clamp = pos => Math.min(Math.max(pos, 0), CONTAINER_SIZE - BALL_SIZE);
-  {/*- begin highlight -*/}
   let {moveProps} = useMove({
     onMoveStart(e) {
       setColor('red');
@@ -113,7 +97,6 @@ function Example() {
       setEvents(events => [`move end with pointerType = ${e.pointerType}`, ...events]);
     }
   });
-  {/*- end highlight -*/}
 
   return (
     <>
@@ -150,3 +133,18 @@ function Example() {
   );
 }
 ```
+
+## Usage
+
+`useMove` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.MoveResult} />
+
+`useMove` supports the following event handlers:
+
+<InterfaceType {...typesDocs.exports.MoveEvents} />
+
+Each of these handlers is fired with a `MoveEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<InterfaceType {...typesDocs.exports.MoveMoveEvent} />

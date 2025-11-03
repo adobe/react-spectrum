@@ -39,21 +39,6 @@ and device, `:hover` may never apply, or may apply continuously until the user t
 {/* TODO: uncomment once we transfer over the blogs to new docs  */}
 {/* Read our [blog post](/blog/building-a-button-part-2.html) about the complexities of hover event handling to learn more. */}
 
-## Usage
-
-`useHover` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.HoverResult} />
-
-`useHover` supports the following event handlers and options:
-
-<InterfaceType {...docs.exports.HoverProps} />
-
-Each of these handlers is fired with a `HoverEvent`, which exposes information about the target and the
-type of event that triggered the interaction.
-
-<InterfaceType {...typesDocs.exports.HoverEvent} />
-
 ## Accessibility
 
 Hover interactions should never be the only way to interact with an element because they are not
@@ -112,3 +97,18 @@ function Example() {
   );
 }
 ```
+
+## Usage
+
+`useHover` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.HoverResult} />
+
+`useHover` supports the following event handlers and options:
+
+<InterfaceType {...docs.exports.HoverProps} />
+
+Each of these handlers is fired with a `HoverEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<InterfaceType {...typesDocs.exports.HoverEvent} />

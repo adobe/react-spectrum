@@ -38,21 +38,6 @@ such as `usePress` and `useMove` will be canceled so that only the long press is
 * Customizable time threshold for long press
 * Supports an accessibility description to indicate to assistive technology users that a long press action is available
 
-## Usage
-
-`useLongPress` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.LongPressResult} />
-
-`useLongPress` supports the following event handlers and options:
-
-<InterfaceType {...docs.exports.LongPressProps} />
-
-Each of these handlers is fired with a `LongPressEvent`, which exposes information about the target and the
-type of event that triggered the interaction.
-
-<InterfaceType {...typesDocs.exports.LongPressEvent} />
-
 ## Example
 
 This example shows a button that has both a normal press action using [usePress](usePress.html), as well as a long
@@ -112,3 +97,18 @@ function Example() {
   );
 }
 ```
+
+## Usage
+
+`useLongPress` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.LongPressResult} />
+
+`useLongPress` supports the following event handlers and options:
+
+<InterfaceType {...docs.exports.LongPressProps} />
+
+Each of these handlers is fired with a `LongPressEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<InterfaceType {...typesDocs.exports.LongPressEvent} />

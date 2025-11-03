@@ -32,10 +32,6 @@ outside of any possible overflow or stacking contexts. We envision `UNSAFE_Porta
 elements into a single container at the root of the app or to control the order of children of the `body` element, but you may have use cases
 that need to do otherwise.
 
-## Props
-
-<PropTable links={docs.links} component={docs.exports.UNSAFE_PortalProvider} />
-
 ## Example
 
 The example below shows how you can use `UNSAFE_PortalProvider` to portal your Toasts to an arbitrary container. Note that
@@ -169,3 +165,8 @@ function MyOverlay(props) {
   return ReactDOM.createPortal(children, getContainer());
 }
 ```
+
+## Props
+
+<PropTable links={docs.links} component={docs.exports.UNSAFE_PortalProvider} />
+

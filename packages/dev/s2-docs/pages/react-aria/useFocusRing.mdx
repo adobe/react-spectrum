@@ -32,14 +32,6 @@ and touch screen users.
 
 If CSS classes are being used for styling, see the [FocusRing](FocusRing.html) component for a shortcut.
 
-## Options
-
-<InterfaceType {...docs.exports.AriaFocusRingProps} />
-
-## Result
-
-<InterfaceType {...docs.exports.FocusRingAria} />
-
 ## Example
 
 This example shows how to use `useFocusRing` to adjust styling when keyboard focus is on a button.
@@ -76,3 +68,13 @@ function Example() {
   );
 }
 ```
+
+## Usage
+
+`useFocusRing` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.FocusRingAria} />
+
+`useFocusRing` supports the following options and event handlers:
+
+<InterfaceType {...docs.exports.AriaFocusRingProps} />
