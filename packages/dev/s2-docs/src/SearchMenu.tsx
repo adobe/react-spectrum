@@ -272,22 +272,23 @@ export function SearchMenu(props: SearchMenuProps) {
         {orderedTabs.map((tab, i) => (
           <TabPanel key={tab.id} id={tab.id}>
             <Autocomplete>
-              <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
-                <SearchField
-                  value={searchValue}
-                  onChange={setSearchValue}
-                  ref={searchRef}
-                  size="L"
-                  aria-label={`Search ${tab.label}`}
-                  UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
-                  styles={style({width: '[500px]'})} />
-              </div>
+              <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
+                <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
+                  <SearchField
+                    value={searchValue}
+                    onChange={setSearchValue}
+                    ref={searchRef}
+                    size="L"
+                    aria-label={`Search ${tab.label}`}
+                    placeholder={`Search ${tab.label}`}
+                    UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
+                    styles={style({width: 500})} />
+                </div>
 
-              <CloseButton onClose={onClose} />
+                <CloseButton onClose={onClose} />
 
-              <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
                 {sections.length > 0 && (
-                  <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
+                  <div className={style({flexShrink: 0, zIndex: 1, backgroundColor: 'layer-2', paddingTop: 16})}>
                     <SelectableCollectionContext.Provider value={null}>
                       <TagGroup
                         selectionMode="single"
@@ -296,7 +297,7 @@ export function SearchMenu(props: SearchMenuProps) {
                         onSelectionChange={handleSectionSelectionChange}
                         aria-label="Select section"
                         items={tags}
-                        styles={style({marginX: 12})}>
+                        styles={style({marginX: 16})}>
                         {(tag) => (
                           <Tag key={tag.id} id={tag.id}>
                             {tag.name}
@@ -307,10 +308,7 @@ export function SearchMenu(props: SearchMenuProps) {
                   </div>
                 )}
                 <ComponentCardView
-                  onAction={() => {
-                    setSearchValue('');
-                    onClose();
-                  }}
+                  onAction={onClose}
                   items={selectedItems.map(item => ({
                     id: item.id,
                     name: item.name,
