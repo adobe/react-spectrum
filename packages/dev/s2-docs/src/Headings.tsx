@@ -3,12 +3,24 @@
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link} from '@react-spectrum/s2';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
-function anchorId(children) {
-  return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
+function childrenToString(children: ReactNode) {
+  if (typeof children === 'string') {
+    return children;
+  }
+
+  if (Array.isArray(children)) {
+    return children.reduce((p, c) => p + childrenToString(c), '');
+  }
+
+  return '';
+}
+
+function anchorId(children: ReactNode) {
+  return childrenToString(children).replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
 
 function AnchorLink({anchorId, isHovered, level, headingText}) {
