@@ -1,7 +1,7 @@
 'use client';
 
-import {ActionButton, Content, Divider, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
-import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, useFilter} from 'react-aria-components';
+import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
+import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator, useFilter} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
@@ -17,6 +17,22 @@ import {SelectableCollectionContext} from '../../../react-aria-components/src/RS
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
+
+export const divider = style({
+  marginY: 8,
+  marginStart: -8,
+  marginEnd: 0,
+  alignSelf: 'stretch',
+  backgroundColor: {
+    default: 'gray-400',
+    forcedColors: 'ButtonBorder'
+  },
+  borderStyle: 'none',
+  borderRadius: 'full',
+  flexGrow: 0,
+  flexShrink: 0,
+  width: '[3px]'
+});
 
 const IconSearchView = lazy(() => import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView})));
 
@@ -348,7 +364,7 @@ export function SearchMenu(props: SearchMenuProps) {
                             </TagGroup>
                           )}
                           {tabIconTag.length > 0 && tags.length > 0 && (
-                            <Divider orientation="vertical" styles={style({marginY: 8, marginStart: -8})} />
+                            <RACSeparator className={divider} />
                           )}
                           {tabIconTag.length > 0 && (
                             <TagGroup
