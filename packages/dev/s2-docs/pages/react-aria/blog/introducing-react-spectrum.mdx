@@ -7,6 +7,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
+import heroNarrow from 'url:../../../../docs/pages/assets/ReactAria_Mobile_976x1025_1x.png';
+import heroNarrow2x from 'url:../../../../docs/pages/assets/ReactAria_Mobile_976x1025_2x.png';
+import heroNarrowWebp from 'url:../../../../docs/pages/assets/ReactAria_Mobile_976x1025_1x.webp';
+import heroNarrow2xWebp from 'url:../../../../docs/pages/assets/ReactAria_Mobile_976x1025_2x.webp';
+import heroWide from 'url:../../../../docs/pages/assets/ReactAria_976x445_1x.png';
+import heroWide2x from 'url:../../../../docs/pages/assets/ReactAria_976x445_2x.png';
+import heroWideWebp from 'url:../../../../docs/pages/assets/ReactAria_976x445_1x.webp';
+import heroWide2xWebp from 'url:../../../../docs/pages/assets/ReactAria_976x445_2x.webp';
+
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
 
@@ -26,7 +35,15 @@ We're excited to announce [React Spectrum](https://react-spectrum.adobe.com/inde
 - **React Aria** — A library of React Hooks that provides accessible UI primitives for your design system.
 - **React Stately** — A library of React Hooks that provides cross-platform state management and core logic for your design system.
 
-TODO: Add hero image
+<div style={{display: 'flex', justifyContent: 'center', padding: '40px 0'}}>
+  <picture>
+    <source srcSet={` ${heroWideWebp} 967w,  ${heroWide2xWebp} 2x`} type="image/webp" media="(min-width: 600px)" />
+    <source srcSet={`${heroNarrowWebp} 600w, ${heroNarrow2xWebp} 2x`} type="image/webp" media="(max-width: 600px)" />
+    <source srcSet={` ${heroWide} 967w,  ${heroWide2x} 2x`} type="image/png" media="(min-width: 600px)" />
+    <source srcSet={`${heroNarrow} 600w, ${heroNarrow2x} 2x`} type="image/png" media="(max-width: 600px)" />
+    <img src={heroWide} alt="React Aria hero image" style={{maxWidth: '100%', borderRadius: '4px'}} />
+  </picture>
+</div>
 
 ## Features
 
