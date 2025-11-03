@@ -53,8 +53,9 @@ export const btnStyles = style<Omit<ButtonRenderProps, 'isPending'>>({
 
 export function GoUpOneLink() {
   let ref = useRef(null);
+  // How to add aria-label to the Link component
   return (
-    <Link href="./index.html" className={btnStyles} style={pressScale(ref)} ref={ref}>
+    <Link href="./index.html" className={btnStyles} style={pressScale(ref)} ref={ref} aria-label="Go to all releases">
       <Provider
         values={[
           [IconContext, {
