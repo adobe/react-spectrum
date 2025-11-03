@@ -38,7 +38,8 @@ const itemStyle = style({
   gap: 4,
   alignItems: 'center',
   justifyContent: 'center',
-  paddingX: 4
+  paddingX: 4,
+  cursor: 'default'
 });
 
 let handleCopyImport = (id: string) => {
