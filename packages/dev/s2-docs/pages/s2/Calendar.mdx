@@ -77,13 +77,15 @@ import type {AnyCalendarDate} from '@internationalized/date';
 import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
 import {Calendar} from '@react-spectrum/s2';
 
-export default (
-  <Calendar
-    firstDayOfWeek="sun"
-    ///- begin highlight -///
-    createCalendar={() => new Custom454()} />
-    ///- end highlight -///
-);
+export default function Example() {
+  return (
+    <Calendar
+      firstDayOfWeek="sun"
+      ///- begin highlight -///
+      createCalendar={() => new Custom454()} />
+      ///- end highlight -///
+  );
+}
 
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
