@@ -36,7 +36,10 @@ const standaloneCode = style({
     value: '--code-padding-start'
   },
   padding: '--code-padding-start',
-  marginY: 32,
+  marginY: {
+    default: 32,
+    ':is([data-example-switcher] *)': 0
+  },
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
   font: {
@@ -53,7 +56,8 @@ interface CodeBlockProps extends VisualExampleProps {
   expanded?: boolean,
   hidden?: boolean,
   hideExampleCode?: boolean,
-  includeAllImports?: boolean
+  includeAllImports?: boolean,
+  showCoachMark?: boolean
 }
 
 export function CodeBlock({render, children, files, expanded, hidden, hideExampleCode, includeAllImports, ...props}: CodeBlockProps) {
@@ -90,7 +94,8 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
   let content = hideExampleCode ? null : (
     <CodePlatter
       files={files ? getFiles(files) : undefined}
-      type={props.type}>
+      type={props.type}
+      showCoachMark={props.showCoachMark}>
       {code}
     </CodePlatter>
   );

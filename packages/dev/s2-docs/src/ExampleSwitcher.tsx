@@ -1,9 +1,10 @@
 'use client';
 
 import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-import {createContext, useEffect, useState} from 'react';
+import {createContext, useState} from 'react';
 import {Key} from 'react-aria-components';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useLayoutEffect} from '@react-aria/utils';
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -64,7 +65,7 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
   let [selected, setSelected] = useState<Key>(examples[0]);
   let [theme, setTheme] = useState('indigo');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!type) {
       return;
     }
@@ -93,7 +94,7 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
     return () => controller.abort();
   }, [type, examples]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.style.setProperty('--tint', `var(--${theme})`);
   }, [theme]);
 
