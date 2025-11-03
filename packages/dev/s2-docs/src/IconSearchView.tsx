@@ -60,7 +60,7 @@ export function IconSearchView({filteredItems}: IconSearchViewProps) {
         onAction={(item) => handleCopyImport(item.toString())}
         items={filteredItems}
         layout="grid"
-        className={style({height: 'full', width: '100%', overflow: 'auto', scrollPaddingY: 4})}
+        className={style({width: '100%', scrollPaddingY: 4})}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
             <NoSearchResults />
@@ -154,7 +154,7 @@ export function IconSearchSkeleton() {
         <ListBox
           items={mockItems}
           layout="grid"
-          className={style({height: 'full', width: '100%', overflow: 'auto', scrollPaddingY: 4})}>
+          className={style({width: '100%', scrollPaddingY: 4})}>
           {(item) => <SkeletonIconItem item={item} />}
         </ListBox>
       </Virtualizer>
