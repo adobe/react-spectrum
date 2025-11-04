@@ -76,7 +76,7 @@ export function IconSearchView({filteredItems}: IconSearchViewProps) {
     <>
       <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
         <InfoCircle styles={iconStyle({size: 'XS'})} />
-        <span className={style({font: 'ui-sm'})}>Press an item to copy its import statement</span>
+        <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
       </div>
       <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
         <ListBox
@@ -230,7 +230,7 @@ export function IconCards() {
           <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
           <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
             <InfoCircle styles={iconStyle({size: 'XS'})} />
-            <span className={style({font: 'ui-sm'})}>Press an item to copy its import statement</span>
+            <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
           </div>
           <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
             <ListBox
