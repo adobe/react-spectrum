@@ -11,6 +11,14 @@
  */
 
 import {getScrollParents} from './getScrollParents';
+import {isChrome} from './platform';
+
+interface ScrollIntoViewOpts {
+  /** The position to align items along the block axis in. */
+  block?: ScrollLogicalPosition,
+  /** The position to align items along the inline axis in. */
+  inline?: ScrollLogicalPosition
+}
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
@@ -22,74 +30,84 @@ interface ScrollIntoViewportOpts {
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
  */
-export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement): void {
-  let offsetX = relativeOffset(scrollView, element, 'left');
-  let offsetY = relativeOffset(scrollView, element, 'top');
-  let width = element.offsetWidth;
-  let height = element.offsetHeight;
-  let x = scrollView.scrollLeft;
+export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, opts: ScrollIntoViewOpts = {}): void {
+  let {block = 'nearest', inline = 'nearest'} = opts;
+
+  if (scrollView === element) { return; }
+
   let y = scrollView.scrollTop;
+  let x = scrollView.scrollLeft;
 
-  // Account for top/left border offsetting the scroll top/Left + scroll padding
-  let {
-    borderTopWidth,
-    borderLeftWidth,
-    scrollPaddingTop,
-    scrollPaddingRight,
-    scrollPaddingBottom,
-    scrollPaddingLeft
-  } = getComputedStyle(scrollView);
+  let target = element.getBoundingClientRect();
+  let view = scrollView.getBoundingClientRect();
+  let itemStyle = window.getComputedStyle(element);
+  let viewStyle = window.getComputedStyle(scrollView);
+  let root = document.scrollingElement || document.documentElement;
 
-  let borderAdjustedX = x + parseInt(borderLeftWidth, 10);
-  let borderAdjustedY = y + parseInt(borderTopWidth, 10);
-  // Ignore end/bottom border via clientHeight/Width instead of offsetHeight/Width
-  let maxX = borderAdjustedX + scrollView.clientWidth;
-  let maxY = borderAdjustedY + scrollView.clientHeight;
+  let viewTop = scrollView === root ? 0 : view.top;
+  let viewBottom = scrollView === root ? scrollView.clientHeight : view.bottom;
+  let viewLeft = scrollView === root ? 0 : view.left;
+  let viewRight = scrollView === root ? scrollView.clientWidth : view.right;
 
-  // Get scroll padding values as pixels - defaults to 0 if no scroll padding
-  // is used.
-  let scrollPaddingTopNumber = parseInt(scrollPaddingTop, 10) || 0;
-  let scrollPaddingBottomNumber = parseInt(scrollPaddingBottom, 10) || 0;
-  let scrollPaddingRightNumber = parseInt(scrollPaddingRight, 10) || 0;
-  let scrollPaddingLeftNumber = parseInt(scrollPaddingLeft, 10) || 0;
+  let scrollMarginTop = parseInt(itemStyle.scrollMarginTop, 10) || 0;
+  let scrollMarginBottom = parseInt(itemStyle.scrollMarginBottom, 10) || 0;
+  let scrollMarginLeft = parseInt(itemStyle.scrollMarginLeft, 10) || 0;
+  let scrollMarginRight = parseInt(itemStyle.scrollMarginRight, 10) || 0;
 
-  if (offsetX <= x + scrollPaddingLeftNumber) {
-    x = offsetX - parseInt(borderLeftWidth, 10) - scrollPaddingLeftNumber;
-  } else if (offsetX + width > maxX - scrollPaddingRightNumber) {
-    x += offsetX + width - maxX + scrollPaddingRightNumber;
+  let scrollPaddingTop = parseInt(itemStyle.scrollPaddingTop, 10) || 0;
+  let scrollPaddingBottom = parseInt(itemStyle.scrollPaddingBottom, 10) || 0;
+  let scrollPaddingLeft = parseInt(itemStyle.scrollPaddingLeft, 10) || 0;
+  let scrollPaddingRight = parseInt(itemStyle.scrollPaddingRight, 10) || 0;
+
+  let borderTopWidth = parseInt(viewStyle.borderTopWidth, 10) || 0;
+  let borderBottomWidth = parseInt(viewStyle.borderBottomWidth, 10) || 0;
+  let borderLeftWidth = parseInt(viewStyle.borderLeftWidth, 10) || 0;
+  let borderRightWidth = parseInt(viewStyle.borderRightWidth, 10) || 0;
+
+  let scrollAreaTop = target.top - scrollMarginTop;
+  let scrollAreaBottom = target.bottom + scrollMarginBottom;
+  let scrollAreaLeft = target.left - scrollMarginLeft;
+  let scrollAreaRight = target.right + scrollMarginRight;
+
+  let scrollPortTop = viewTop + borderTopWidth + scrollPaddingTop;
+  let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom;
+  let scrollPortLeft = viewLeft + borderLeftWidth + scrollPaddingLeft;
+  let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight;
+
+  let shouldScrollBlock = scrollAreaTop < scrollPortTop || scrollAreaBottom > scrollPortBottom;
+  let shouldScrollInline = scrollAreaLeft < scrollPortLeft || scrollAreaRight > scrollPortRight;
+
+  if (shouldScrollBlock && block === 'start') {
+    y += scrollAreaLeft - scrollPortLeft;
+  } else if (shouldScrollBlock && block === 'center') {
+    y += (scrollAreaTop + scrollAreaBottom) / 2 - (scrollPortTop + scrollPortBottom) / 2;
+  } else if (shouldScrollBlock && block === 'end') {
+    y += scrollAreaBottom - scrollPortBottom;
+  } else if (shouldScrollBlock && block === 'nearest') {
+    let start = scrollAreaTop - scrollPortTop;
+    let end = scrollAreaBottom - scrollPortBottom;
+    y += Math.abs(start) <= Math.abs(end) ? start : end;
   }
-  if (offsetY <= borderAdjustedY + scrollPaddingTopNumber) {
-    y = offsetY - parseInt(borderTopWidth, 10) - scrollPaddingTopNumber;
-  } else if (offsetY + height > maxY - scrollPaddingBottomNumber) {
-    y += offsetY + height - maxY + scrollPaddingBottomNumber;
+
+  if (shouldScrollInline && inline === 'start') {
+    x += scrollAreaLeft - scrollPortLeft;
+  } else if (shouldScrollInline && inline === 'center') {
+    x += (scrollAreaLeft + scrollAreaRight) / 2 - (scrollPortLeft + scrollPortRight) / 2;
+  } else if (shouldScrollInline && inline === 'end') {
+    x += scrollAreaRight - scrollPortRight;
+  } else if (shouldScrollInline && inline === 'nearest') {
+    let start = scrollAreaLeft - scrollPortLeft;
+    let end = scrollAreaRight - scrollPortRight;
+    x += Math.abs(start) <= Math.abs(end) ? start : end;
   }
 
-  scrollView.scrollLeft = x;
-  scrollView.scrollTop = y;
-}
-
-/**
- * Computes the offset left or top from child to ancestor by accumulating
- * offsetLeft or offsetTop through intervening offsetParents.
- */
-function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
-  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
-  let sum = 0;
-  while (child.offsetParent) {
-    sum += child[prop];
-    if (child.offsetParent === ancestor) {
-      // Stop once we have found the ancestor we are interested in.
-      break;
-    } else if (child.offsetParent.contains(ancestor)) {
-      // If the ancestor is not `position:relative`, then we stop at
-      // _its_ offset parent, and we subtract off _its_ offset, so that
-      // we end up with the proper offset from child to ancestor.
-      sum -= ancestor[prop];
-      break;
-    }
-    child = child.offsetParent as HTMLElement;
+  if (process.env.NODE_ENV === 'test') {
+    scrollView.scrollLeft = x;
+    scrollView.scrollTop = y;
+    return;
   }
-  return sum;
+
+  scrollView.scrollTo({left: x, top: y});
 }
 
 /**
@@ -97,12 +115,14 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
  * that will be centered in the viewport prior to scrolling the targetElement into view. If scrolling is prevented on
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
-export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollIntoViewportOpts): void {
+export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIntoViewportOpts = {}): void {
+  let {containingElement} = opts;
   if (targetElement && document.contains(targetElement)) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
-    // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
-    if (!isScrollPrevented) {
+    // If scrolling is not currently prevented then we aren't in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
+    // Also ignore in chrome because of this bug: https://issues.chromium.org/issues/40074749
+    if (!isScrollPrevented && !isChrome()) {
       let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
 
       // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()
@@ -111,17 +131,24 @@ export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollI
       let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
       // Account for sub pixel differences from rounding
       if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
-        opts?.containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
+        containingElement?.scrollIntoView?.({block: 'center', inline: 'center'});
         targetElement.scrollIntoView?.({block: 'nearest'});
       }
     } else {
-      let scrollParents = getScrollParents(targetElement);
+      let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
+
       // If scrolling is prevented, we don't want to scroll the body since it might move the overlay partially offscreen and the user can't scroll it back into view.
-      if (!isScrollPrevented) {
-        scrollParents.push(root);
-      }
+      let scrollParents = getScrollParents(targetElement, true);
       for (let scrollParent of scrollParents) {
         scrollIntoView(scrollParent as HTMLElement, targetElement as HTMLElement);
+      }
+      let {left: newLeft, top: newTop} = targetElement.getBoundingClientRect();
+      // Account for sub pixel differences from rounding
+      if ((Math.abs(originalLeft - newLeft) > 1) || (Math.abs(originalTop - newTop) > 1)) {
+        scrollParents = containingElement ? getScrollParents(containingElement, true) : [];
+        for (let scrollParent of scrollParents) {
+          scrollIntoView(scrollParent as HTMLElement, containingElement as HTMLElement, {block: 'center', inline: 'center'});
+        }
       }
     }
   }
