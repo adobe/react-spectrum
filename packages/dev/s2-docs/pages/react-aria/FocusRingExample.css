@@ -1,0 +1,14 @@
+.button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: green;
+  border: none;
+  color: white;
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
+.button.focus-ring {
+  outline: 2px solid dodgerblue;
+  outline-offset: 2px;
+}

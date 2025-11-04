@@ -1,0 +1,73 @@
+import {Counter} from './Step';
+
+<Counter />Render a `RouterProvider` at the root of your app to enable React Aria links to use your client side router. This accepts two props:
+        
+1. `navigate` – a function received from your router for performing a client side navigation programmatically.
+2. `useHref` (optional) – converts a router-specific href to a native HTML href, e.g. prepending a base path.
+
+<ExampleSwitcher type="router" examples={['React Router', 'TanStack Router']}>
+
+```tsx
+// src/app.tsx
+import {RouterProvider} from 'react-aria-components';
+import {BrowserRouter, useNavigate, useHref, type NavigateOptions} from 'react-router';
+
+/*- begin highlight -*/
+// Configure the type of the `routerOptions` prop on all React Aria components.
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NavigateOptions
+  }
+}
+/*- end highlight -*/
+
+function App() {
+  let navigate = useNavigate();
+
+  return (
+    /*- begin highlight -*/
+    <RouterProvider navigate={navigate} useHref={useHref}>
+      {/*- end highlight -*/}
+      {/* Your app here... */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        {/* ... */}
+      </Routes>
+    </RouterProvider>
+  );
+}
+```
+
+```tsx
+// src/routes/__root.tsx
+import {RouterProvider} from 'react-aria-components';
+import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
+import ReactDOM from 'react-dom/client';
+
+/*- begin highlight -*/
+// Configure the type of the `href` and `routerOptions` props on all React Aria components.
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    href: ToOptions,
+    routerOptions: Omit<NavigateOptions, keyof ToOptions>
+  }
+}
+/*- end highlight -*/
+
+export const Route = createRootRoute({
+  component: () => {
+    let router = useRouter();
+    return (
+      /*- begin highlight -*/
+      <RouterProvider 
+        navigate={(href, opts) => router.navigate({...href, ...opts})}
+        useHref={href => router.buildLocation(href).href}>
+        {/*- end highlight -*/}
+        {/* Your app here... */}
+      </RouterProvider>
+    );
+  }
+});
+```
+
+</ExampleSwitcher>

@@ -141,7 +141,6 @@
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.15.1",
-    "@parcel/macros": "^2.16.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
@@ -152,6 +151,7 @@
   "dependencies": {
     "@internationalized/date": "^3.10.0",
     "@internationalized/number": "^3.6.5",
+    "@parcel/macros": "^2.16.0",
     "@react-aria/calendar": "^3.9.2",
     "@react-aria/collections": "^3.0.0",
     "@react-aria/focus": "^3.21.2",
