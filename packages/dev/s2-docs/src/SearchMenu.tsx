@@ -347,7 +347,7 @@ export function SearchMenu(props: SearchMenuProps) {
                   <CloseButton onClose={onClose} />
 
                   {(tags.length > 0 || tabIconTag.length > 0) && (
-                    <div className={style({flexShrink: 0, zIndex: 1, backgroundColor: 'layer-2', paddingTop: 16})}>
+                    <div className={style({flexShrink: 0, zIndex: 1, paddingTop: 16})}>
                       <SelectableCollectionContext.Provider value={null}>
                         <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 16})}>
                           {tags.length > 0 && (
