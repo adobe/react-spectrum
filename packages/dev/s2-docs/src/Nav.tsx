@@ -75,6 +75,7 @@ export function Nav({pages, currentPage}: PageProps) {
                 }
                 return title(a).localeCompare(title(b));
               })
+              .filter(page => !page.exports?.isSubpage)
               .map(page => (
                 <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
             ))}
