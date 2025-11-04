@@ -1,4 +1,4 @@
-import {Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
+import {Disclosure, DisclosurePanel, DisclosureTitle, Link} from '@react-spectrum/s2';
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -30,6 +30,12 @@ export function S2FAQ() {
         <DisclosureTitle>I'm coming from S1, but where are Flex/Grid/etc?</DisclosureTitle>
         <DisclosurePanel>
           These no longer exist. Please style <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>, and other standard HTML elements with the <code>style</code> macro instead.
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure isQuiet>
+        <DisclosureTitle>Where can I find a list of what values are supported by the style macro?</DisclosureTitle>
+        <DisclosurePanel>
+          See the <Link href="./reference.html">following page</Link> for a full list of what values are supported by the <code>style</code> macro.
         </DisclosurePanel>
       </Disclosure>
     </div>
