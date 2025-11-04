@@ -151,7 +151,6 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let parentPage = pages.find(p => {
     return p.url === currentPage.url.replace(/\/[^/]+\.html$/, '/index.html');
   });
-  console.log(parentPage);
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
