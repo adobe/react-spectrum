@@ -30,13 +30,8 @@ function App() {
 }
 ```
 
-## Application provider
-
-A Provider must be the root component of your application. All other React Spectrum components rely on the Provider to define the font, locale, and other settings that they need in order to render.
-
-### Color Schemes
+## Color Schemes
 By default, React Spectrum follows the operating system color scheme setting, supporting both light and dark mode. The colorScheme prop can be set on `<Provider>` to force the app to always render in a certain color scheme.
-
 
 ```tsx render
 'use client';
@@ -48,8 +43,8 @@ import {ActionButton} from '@react-spectrum/s2';
 </Provider>
 ```
 
-### Locales
-By default, React Spectrum chooses the locale matching the user’s browser/operating system language, but this can be overridden with the locale prop if you have an application specific setting. This prop accepts a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
+## Locales
+By default, React Spectrum chooses the locale matching the user’s browser/operating system language, but this can be overridden with the locale prop if you have an application specific setting. This prop accepts a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code. A list of supported locales is available [here](Concepts.html#supported-locales)
 
 ```tsx
 <Provider locale="en-US">
@@ -57,60 +52,10 @@ By default, React Spectrum chooses the locale matching the user’s browser/oper
 </Provider>
 ```
 
-#### Supported locales
-
-React Spectrum currently includes translations for over 30 locales. They are listed below.
-
-<div style={{columnWidth: 200}}>
-  * Arabic (United Arab Emirates)
-  * Bulgarian (Bulgaria)
-  * Chinese (Simplified)
-  * Chinese (Traditional)
-  * Croatian (Croatia)
-  * Czech (Czech Republic)
-  * Danish (Denmark)
-  * Dutch (Netherlands)
-  * English (Great Britain)
-  * English (United States)
-  * Estonian (Estonia)
-  * Finnish (Finland)
-  * French (Canada)
-  * French (France)
-  * German (Germany)
-  * Greek (Greece)
-  * Hebrew (Israel)
-  * Hungarian (Hungary)
-  * Italian (Italy)
-  * Japanese (Japan)
-  * Korean (Korea)
-  * Latvian (Latvia)
-  * Lithuanian (Lithuania)
-  * Norwegian (Norway)
-  * Polish (Poland)
-  * Portuguese (Brazil)
-  * Romanian (Romania)
-  * Russian (Russia)
-  * Serbian (Serbia)
-  * Slovakian (Slovakia)
-  * Slovenian (Slovenia)
-  * Spanish (Spain)
-  * Swedish (Sweden)
-  * Turkish (Turkey)
-  * Ukrainian (Ukraine)
-</div>
-
-<style>{`
-  ul {
-    margin: 0;
-    padding-left: 1em;
-  }
-`}</style>
-
-
 {/* ### Breakpoints */}
 {/* TODO: Link to style macro docs about breakpoints */}
 
-### Client side routing
+## Client side routing
 
 The Provider component accepts an optional `router` prop. This enables React Spectrum components that render links to perform client side navigation using your application or framework's client side router. See the client side routing guide for details on how to set this up.
 
@@ -122,7 +67,7 @@ let navigate = useNavigateFromYourRouter();
 </Provider>
 ```
 
-### Server side rendering 
+## Server side rendering 
 
 When using SSR, the `<Provider>` component can be rendered as the root `<html>` element. The `locale` prop should always be specified to avoid hydration errors.
 
