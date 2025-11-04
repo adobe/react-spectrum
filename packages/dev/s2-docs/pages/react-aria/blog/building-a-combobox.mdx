@@ -10,9 +10,6 @@ governing permissions and limitations under the License. */}
 import comboboxExampleImageUrl from 'url:../../../../docs/pages/assets/combobox-example.png';
 import screenreaderSpreadsheetImageUrl from 'url:../../../../docs/pages/assets/screenreader-spreadsheet-combobox.png';
 import comboboxAccessibilityUrl from 'url:../../../../docs/pages/assets/combobox-accessibility.mp4';
-import comboboxVideoUrl from 'url:../../../../docs/pages/assets/combobox.mp4';
-import comboboxVisualViewportUrl from 'url:../../../../docs/pages/assets/combobox-visual-viewport.mp4';
-import comboboxScrollingUrl from 'url:../../../../docs/pages/assets/combobox-scrolling-safari.mp4';
 
 import {BlogPostLayout} from '../../../src/Layout';
 export default BlogPostLayout;
@@ -36,7 +33,7 @@ After many months of research, development, and extensive testing across browser
 - **Asynchronous loading** — Autocomplete suggestions can be loaded asynchronously, and large lists can be loaded on demand through infinite scrolling.
 - **Customizability** — React Aria hooks allow full control over the rendering and styling of your ComboBox component, while letting us take care of the behavioral complexities for you. Use our default filter or you can provide custom filtering for complete control.
 
-<video src={comboboxVideoUrl} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
+TODO: Add comboboxVideoUrl video
 
 ## Building a ComboBox
 
@@ -68,7 +65,7 @@ Luckily for us, iOS 13 added support for the [VisualViewport](https://developer.
 when the onscreen keyboard was opened or dismissed by listening to the VisualViewport's `resize` event. Leveraging these two allowed us to create a tray that properly adjusts to the presence of iOS onscreen keyboard. Check out the video below
 to see how the ComboBox tray worked before and after we switched to the VisualViewport API. If you'd like to track the visual viewport size in your own app, you can use the [useViewportSize](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/utils/src/useViewportSize.ts) hook available in the `@react-aria/utils` package.
 
-<video src={comboboxVisualViewportUrl} loop autoPlay muted style={{maxWidth: 'min(80%, 350px)', display: 'block', margin: '20px auto'}} />
+TODO: Add comboboxVisualViewportUrl video
 
 ### Page Scrolling
 
@@ -77,7 +74,7 @@ now that our ComboBox tray sizes itself to fit in the visual viewport, users cou
 or root element of the document. This preserves the user's ability to scroll through the options in the tray but blocks any attempt to scroll the page itself until the tray is closed. The video below
 illustrates the difference in scrolling behavior before and after our fix. If you are building your own overlays and would like to prevent this kind of document scrolling behavior, check out the [usePreventScroll](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/overlays/src/usePreventScroll.ts) hook in the `react-aria/overlays` package.
 
-<video src={comboboxScrollingUrl} loop autoPlay muted style={{maxWidth: 'min(80%, 350px)', display: 'block', margin: '20px auto'}} />
+TODO: Add comboboxScrollingUrl video
 
 ## Accessibility
 
