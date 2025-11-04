@@ -31,6 +31,16 @@ export function Nav({pages, currentPage}: PageProps) {
 
   let [maskSize, setMaskSize] = useState(0);
 
+  let sortedSections = [...sections].sort((a, b) => {
+    if (a[0] === 'Getting started') {
+      return -1;
+    }
+    if (b[0] === 'Getting started') {
+      return 1;
+    }
+    return a[0].localeCompare(b[0]);
+  });
+
   return (
     <nav
       onScroll={e => setMaskSize(Math.min(e.currentTarget.scrollTop, 32))}
@@ -50,7 +60,7 @@ export function Nav({pages, currentPage}: PageProps) {
           lg: 'block'
         }
       })}>
-      {[...sections].sort((a, b) => a[0] === 'Getting started' ? -1 : a[0].localeCompare(b[0])).map(([name, pages]) => (
+      {sortedSections.map(([name, pages]) => (
         <SideNavSection title={name} key={name}>
           <SideNav>
             {pages
