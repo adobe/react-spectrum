@@ -1,6 +1,6 @@
 'use client';
 
-import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {LinkProps, Link as S2Link} from '@react-spectrum/s2';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import React from 'react';
