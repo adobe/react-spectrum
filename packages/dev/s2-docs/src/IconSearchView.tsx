@@ -9,7 +9,8 @@ import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type:
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
-// eslint-disable-next-line monorepo/no-internal-import
+ 
+import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -72,23 +73,29 @@ export function IconSearchView({filteredItems}: IconSearchViewProps) {
   }, []);
 
   return (
-    <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
-      <ListBox
-        onAction={(item) => handleCopyImport(item.toString())}
-        items={filteredItems}
-        layout="grid"
-        className={style({width: '100%', scrollPaddingY: 4})}
-        dependencies={[copiedId]}
-        renderEmptyState={() => (
-          <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
-            <NoSearchResults />
-            <Heading>No results</Heading>
-            <Content>Try a different search term.</Content>
-          </IllustratedMessage>
-        )}>
-        {item => <IconItem item={item} isCopied={copiedId === item.id} />}
-      </ListBox>
-    </Virtualizer>
+    <>
+      <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
+        <InfoCircle styles={iconStyle({size: 'XS'})} />
+        <span className={style({font: 'ui-sm'})}>Press an item to copy its import statement</span>
+      </div>
+      <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
+        <ListBox
+          onAction={(item) => handleCopyImport(item.toString())}
+          items={filteredItems}
+          layout="grid"
+          className={style({width: '100%', scrollPaddingY: 4})}
+          dependencies={[copiedId]}
+          renderEmptyState={() => (
+            <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+              <NoSearchResults />
+              <Heading>No results</Heading>
+              <Content>Try a different search term.</Content>
+            </IllustratedMessage>
+          )}>
+          {item => <IconItem item={item} isCopied={copiedId === item.id} />}
+        </ListBox>
+      </Virtualizer>
+    </>
   );
 }
 
@@ -217,27 +224,33 @@ export function IconCards() {
   }, []);
 
   return (
-    <Autocomplete filter={filter}>
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
-        <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
-          <ListBox
-            onAction={(item) => handleCopyImport(item.toString())}
-            items={iconList}
-            layout="grid"
-            className={style({height: 440, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
-            dependencies={[copiedId]}
-            renderEmptyState={() => (
-              <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
-                <NoSearchResults />
-                <Heading>No results</Heading>
-                <Content>Try a different search term.</Content>
-              </IllustratedMessage>
-            )}>
-            {item => <IconItem item={item} isCopied={copiedId === item.id} />}
-          </ListBox>
-        </Virtualizer>
-      </div>
-    </Autocomplete>
+    <>
+      <Autocomplete filter={filter}>
+        <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+          <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
+          <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
+            <InfoCircle styles={iconStyle({size: 'XS'})} />
+            <span className={style({font: 'ui-sm'})}>Press an item to copy its import statement</span>
+          </div>
+          <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
+            <ListBox
+              onAction={(item) => handleCopyImport(item.toString())}
+              items={iconList}
+              layout="grid"
+              className={style({height: 440, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+              dependencies={[copiedId]}
+              renderEmptyState={() => (
+                <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+                  <NoSearchResults />
+                  <Heading>No results</Heading>
+                  <Content>Try a different search term.</Content>
+                </IllustratedMessage>
+              )}>
+              {item => <IconItem item={item} isCopied={copiedId === item.id} />}
+            </ListBox>
+          </Virtualizer>
+        </div>
+      </Autocomplete>
+    </>
   );
 }
