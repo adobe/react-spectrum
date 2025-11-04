@@ -12,7 +12,7 @@ class Store {
   subscriptions: Set<() => void>;
 
   constructor(key: string, defaultValue: string) {
-    this.key = key;
+    this.key = 's2.' + key;
     this.defaultValue = defaultValue;
     this.subscriptions = new Set();
   }
