@@ -1,6 +1,6 @@
 'use client';
 
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {LinkProps, Link as S2Link} from '@react-spectrum/s2';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import React from 'react';
@@ -49,13 +49,18 @@ export function CodeLink(props: RACLinkProps) {
 }
 
 const titleLink = style({
+  ...focusRing(),
   font: 'heading-3xl',
   fontSize: {
     // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
     default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
     lg: 'heading-3xl'
   },
-  marginY: 0
+  marginY: 0,
+  color: {
+    default: 'heading',
+    forcedColors: 'LinkText'
+  }
 });
 
 export function TitleLink(props: RACLinkProps) {
