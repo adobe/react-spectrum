@@ -9,8 +9,8 @@ import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type:
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
- 
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+// eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
