@@ -172,11 +172,11 @@ const MyCustomLabel = React.forwardRef(
   (props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
     // Merge the local props and ref with the ones provided via context.
     /*- begin highlight -*/
-    [props, ref] = useContextProps(props, ref, LabelContext);
+    let [mergedProps, mergedRef] = useContextProps(props, ref, LabelContext);
     /*- end highlight -*/
 
     // ... your existing Label component
-    return <label {...props} ref={ref} />;
+    return <label {...mergedProps} ref={mergedRef} />;
   }
 );
 ```
@@ -268,13 +268,13 @@ import {useCheckbox} from 'react-aria';
 const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   // Merge the local props and ref with the ones provided via context.
   ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, CheckboxContext);
+  let [mergedProps, mergedRef] = useContextProps(props, ref, CheckboxContext);
   ///- end highlight -///
 
   // Follow the hook docs and implement your customizations...
-  let state = useToggleState(props);
-  let {inputProps} = useCheckbox(props, state, ref);
-  return <input {...inputProps} ref={ref} />;
+  let state = useToggleState(mergedProps);
+  let {inputProps} = useCheckbox(mergedProps, state, mergedRef);
+  return <input {...inputProps} ref={mergedRef} />;
 });
 ```
 
