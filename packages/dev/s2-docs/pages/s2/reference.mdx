@@ -1,18 +1,18 @@
-import {Layout} from '../../../src/Layout';
+import {Layout} from '../../src/Layout';
 import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
-import {S2Colors} from '../../../src/S2Colors';
-import {S2Typography} from '../../../src/S2Typography';
-import {StyleMacroProperties} from '../../../src/types';
-import {getPropertyDefinitions, getShorthandDefinitions} from '../../../src/styleProperties';
+import {S2Colors} from '../../src/S2Colors';
+import {S2Typography} from '../../src/S2Typography';
+import {StyleMacroProperties} from '../../src/types';
+import {getPropertyDefinitions, getShorthandDefinitions} from '../../src/styleProperties';
 export default Layout;
 
-export const omitFromNav = true;
+export const section = 'Components';
 export const tags = ['style', 'macro', 'spectrum', 'custom', 'values', 'reference'];
-export const description = 'Reference table for the `style` macro';
+export const description = 'Reference table for the style macro';
 
-# Style Macro Reference
+# Style Macro
 
-Reference for the properties and values supported by React Spectrum `style` macro.
+The `style` macro supports a constrained set of values per property that conform to Spectrum 2.
 
 ## Colors
 
@@ -37,7 +37,7 @@ Size props like `width` and `height` accept arbitrary pixel values. Values are c
 
 ## Text
 
-Spectrum 2 typography can be applied via the `font` [shorthand](#shorthand), which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+Spectrum 2 typography can be applied via the `font` [shorthand](#shorthands), which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
 
 ```tsx
 <main>

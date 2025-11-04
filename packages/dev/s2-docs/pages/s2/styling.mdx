@@ -1,7 +1,5 @@
 import {Layout} from '../../src/Layout';
 import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
-import {S2Colors} from '../../src/S2Colors';
-import {S2Typography} from '../../src/S2Typography';
 import {S2StyleProperties} from '../../src/S2StyleProperties';
 import {S2FAQ} from '../../src/S2FAQ';
 export default Layout;
@@ -9,10 +7,6 @@ export default Layout;
 export const section = 'Guides';
 export const tags = ['style', 'macro', 'spectrum', 'custom'];
 export const description = 'Styling in React Spectrum';
-export const relatedPages = [
-  {title: 'Advanced', url: './styling/advanced.html'},
-  {title: 'Reference Table', url: './styling/reference.html'}
-];
 
 # Styling
 
@@ -99,76 +93,214 @@ import {Button} from '@react-spectrum/s2';
   'visibility'
 ]} />
 
-### UNSAFE Style Overrides
+## Conditional styles
 
-We highly discourage overriding the styles of React Spectrum components because it may break at any time when we change our implementation, making it difficult for you to update in the future. Consider using [React Aria Components](https://react-spectrum.adobe.com/react-aria/) with our `style` macro to build a custom component with Spectrum styles instead.
-
-With that being said, the `UNSAFE_className` and `UNSAFE_style` props are supported on Spectrum 2 components as last-resort escape hatches.
+Define conditional values as objects to handle media queries, UI states (hover/press), and variants. This keeps all values for a property together.
+Note how the example below uses a predefined [breakpoint](./reference.html#conditions) alongside a custom media query.
 
 ```tsx
-/* YourComponent.tsx */
+<div
+  className={style({
+    padding: {
+      default: 8,
+      lg: 32,
+      '@media (min-width: 2560px)': 64,
+    }
+  })}
+/>
+```
+
+Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
+
+## Runtime conditions
+
+When runtime conditions are detected (e.g., variants, UI states), the macro returns a function to resolve styles at runtime.
+
+```tsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const styles = style({
+  backgroundColor: {
+    variant: {
+      primary: 'accent',
+      secondary: 'neutral'
+    }
+  }
+});
+
+function MyComponent({variant}: {variant: 'primary' | 'secondary'}) {
+  return <div className={styles({variant})} />
+}
+```
+
+Boolean conditions starting with `is` or `allows` can be used directly without nesting:
+
+```tsx
+const styles = style({
+  backgroundColor: {
+    default: 'gray-100',
+    isSelected: 'gray-900',
+    allowsRemoving: 'gray-400'
+  }
+});
+
+<div className={styles({isSelected: true})} />
+```
+
+Runtime conditions work well with render props in React Aria Components. If you inline styles, you’ll get autocomplete for available conditions.
+
+```tsx
+import {Checkbox} from 'react-aria-components';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Checkbox
+  className={style({
+    backgroundColor: {
+      default: 'gray-100',
+      isHovered: 'gray-200',
+      isSelected: 'gray-900'
+    }
+  })}
+/>
+```
+
+### Nesting conditions
+
+Nest conditions to apply styles when multiple conditions are true. Conditions at the same level are mutually exclusive; order determines precedence.
+
+```tsx
+const styles = style({
+  backgroundColor: {
+    default: 'gray-25',
+    isSelected: {
+      default: 'neutral',
+      isEmphasized: 'accent',
+      forcedColors: 'Highlight',
+      isDisabled: {
+        default: 'gray-400',
+        forcedColors: 'GrayText'
+      }
+    }
+  }
+});
+
+<div className={styles({isSelected, isEmphasized, isDisabled})} />
+```
+
+## Reusing styles
+
+Extract common styles into constants and spread them into `style` calls. These must be in the same file or imported from another file as a macro.
+
+```tsx
+// style-utils.ts
+export const bannerBackground = () => 'blue-1000' as const;
+
+// component.tsx
+import {bannerBackground} from './style-utils' with {type: 'macro'};
+const horizontalStack = {
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: 8
+} as const;
+
+const styles = style({
+  ...horizontalStack,
+  backgroundColor: bannerBackground(),
+  columnGap: 4
+});
+```
+
+Create custom utilities by defining your own macros.
+
+```ts
+// style-utils.ts
+export function horizontalStack(gap: number) {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: gap
+  } as const;
+}
+```
+
+Usage:
+
+```tsx
+// component.tsx
+import {horizontalStack} from './style-utils' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const styles = style({
+  ...horizontalStack(4),
+  backgroundColor: 'base'
+});
+```
+
+### Built-in utilities
+
+Use `focusRing()` to add the standard Spectrum focus ring.
+
+```tsx
+"use client";
+import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button} from '@react-spectrum/s2';
-import './YourComponent.css';
 
-function YourComponent() {
-  return <Button UNSAFE_className="your-unsafe-class">Button</Button>;
-}
+const buttonStyle = style({
+  ...focusRing(),
+  // ...other styles
+});
+
+<Button styles={buttonStyle}>Press me</Button>
 ```
 
-```css
-/* YourComponent.css */
-.your-unsafe-class {
-  background: red;
-}
-```
+## Setting CSS variables
 
-## Values
-
-The `style` macro supports a constrained set of values per property that conform to Spectrum 2. This improves consistency and maintainability. See the [reference](./styling/reference.html) page for a full list of available style macro properties.
-
-### Colors
-
-All Spectrum 2 color tokens are available across color properties (e.g., `backgroundColor`, `color`, `borderColor`).
-
-<S2Colors />
-
-### Spacing
-
-Spacing props like `margin` and `padding` accept values on a **4px grid**. These are specified in `px` and get converted to `rem`. In addition to numbers, these named options are available:
-
-- `edge-to-text` – default spacing between the edge of a control and its text. Relative to control height.
-- `pill` – default spacing between the edge of a pill-shaped control and its text. Relative to control height.
-- `text-to-control` – default spacing between text and a control (e.g., label and input). Scales with font size.
-- `text-to-visual` – default spacing between text and a visual element (e.g., icon). Scales with font size.
-
-### Sizing
-
-Size props like `width` and `height` accept arbitrary pixel values. Values are converted to `rem` and multiplied by 1.25x on touch devices to increase hit targets.
-
-### Typography
-
-Spectrum 2 typography is applied via the `font` shorthand, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+CSS variables can be directly defined in a `style` macro, allowing child elements to then access them in their own styles.
+A `type` should be provided to specify the CSS property type the `value` represents.
 
 ```tsx
-<main>
-  <h1 className={style({font: 'heading-xl'})}>Heading</h1>
-  <p className={style({font: 'body'})}>Body</p>
-  <ul className={style({font: 'body-sm', fontWeight: 'bold'})}>
-    <li>List item</li>
-  </ul>
-</main>
+const parentStyle = style({
+  '--rowBackgroundColor': {
+    type: 'backgroundColor',
+    value: 'gray-400'
+  }
+});
+
+const childStyle = style({
+  backgroundColor: '--rowBackgroundColor'
+});
 ```
 
-Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has a default and additional t-shirt sizes (e.g., `ui-sm`, `heading-2xl`, `code-xl`).
+## Creating custom components
 
-<S2Typography />
+In-depth examples are coming soon!
 
-<InlineAlert variant="notice">
-  <Heading>Important Note</Heading>
-  <Content>
-    Only use `<Heading>` and `<Text>` inside Spectrum components with predefined styles (e.g., `<Dialog>`, `<MenuItem>`). They are unstyled by default and should not be used standalone. Use HTML elements with the `style` macro instead.
-  </Content>
-</InlineAlert>
+`mergeStyles` can be used to merge the style strings from multiple macros together, with the latter styles taking precedence similar to object spreading.
+This behavior can be leveraged to create a component API that allows an end user to only override specific styles conditionally.
+
+```tsx
+// User can override the component's background color ONLY if it isn't "quiet"
+const baselineStyles = style({backgroundColor: 'gray-100'}, ['backgroundColor']);
+const quietStyles = style({backgroundColor: 'transparent'});
+const userStyles = style({backgroundColor: 'celery-600'});
+
+function MyComponent({isQuiet, styles}: {isQuiet?: boolean, styles?: StyleString}) {
+  let result = mergeStyles(
+    baselineStyles(null, styles),
+    isQuiet ? quietStyles : null
+  );
+
+  return <div className={result}>My component</div>
+}
+
+// Displays quiet styles
+<MyComponent isQuiet styles={userStyles} />
+
+// Displays user overrides
+<MyComponent styles={userStyles} />
+```
+
+The `iconStyle` macro should be used when styling Icons, see the [docs](./icons.html#iconstyle) for more information.
 
 ## CSS optimization
 
@@ -238,7 +370,7 @@ in a non-atomic format, making it easier to scan.
 the `style` macros for quick prototyping.
 
 - If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
-we have MCP servers for [React Aria](#TODO) and [React Spectrum](https://www.npmjs.com/package/@react-spectrum/mcp) respectively that interface with the docs.
+we have MCP servers for [React Aria](../react-aria/mcp.html) and [React Spectrum](./mcp.html) respectively that interface with the docs.
 
 ## FAQ
 

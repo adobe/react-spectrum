@@ -102,7 +102,7 @@ export function S2Colors() {
           </div>
         </DisclosurePanel>
       </Disclosure>
-      <Disclosure isQuiet>
+      <Disclosure isQuiet styles={style({marginBottom: 16})}>
         <DisclosureTitle>Global colors</DisclosureTitle>
         <DisclosurePanel>
           <p>The following values are available across all color properties.</p>
