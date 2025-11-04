@@ -64,12 +64,13 @@ const components = {
   ExampleList
 };
 
-const subPageComponents = (previousPage?: Page) => ({
+const subPageComponents = (previousPage?: Page, href?: string) => ({
   ...components,
   h1: ({children, ...props}) => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-        <TitleLink href="./index.html">{previousPage?.exports?.title}</TitleLink>
+        {/* see title in Layout.tsx for this logic for extracting the title of a page */}
+        <TitleLink href={href ?? './index.html'}>{previousPage?.exports?.title ?? previousPage?.tableOfContents?.[0]?.title ?? previousPage?.name}</TitleLink>
         <ChevronRightIcon styles={iconStyle({size: 'M'})} />
       </div>
       <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
@@ -148,9 +149,27 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
   let isSubpage = currentPage.exports?.isSubpage;
-  let parentPage = pages.find(p => {
-    return p.url === currentPage.url.replace(/\/[^/]+\.html$/, '/index.html');
-  });
+
+  let parentUrl;
+  let parentPage;
+  if (isSubpage) {
+    let pathParts = currentPage.url.split('/');
+    let fileName = pathParts.pop();
+
+    if (fileName === 'testing.html') {
+      // for testing pages like /CheckboxGroup/testing.html, parent is /CheckboxGroup.html
+      let parentDir = pathParts.pop();
+      parentUrl = `../${parentDir}.html`;
+
+      let parentPageUrl = pathParts.join('/') + `/${parentDir}.html`;
+      parentPage = pages.find(p => p.url === parentPageUrl);
+    } else {
+      // for release subpages like releases/2024-01-15.html, parent is just the same but with the end replaced with index.html
+      parentUrl = './index.html';
+      let parentIndexUrl = pathParts.join('/') + '/index.html';
+      parentPage = pages.find(p => p.url === parentIndexUrl);
+    }
+  }
 
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
@@ -264,7 +283,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
                   {React.cloneElement(children, {
                     components: isSubpage ?
-                      subPageComponents(parentPage) :
+                      subPageComponents(parentPage, parentUrl) :
                       components,
                     pages
                   })}
