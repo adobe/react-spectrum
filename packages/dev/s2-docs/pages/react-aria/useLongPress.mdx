@@ -19,16 +19,9 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useLongPress.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useLongPress} links={docs.links} />
-
 ## Features
 
-`useLongPress` handles long press interactions across both mouse and touch devices. A long press is triggered when a user presses
-and holds their pointer over a target for a minimum period of time. If the user moves their pointer off of the target before the
-time threshold, the interaction is canceled. Once a long press event is triggered, other pointer interactions that may be active
-such as `usePress` and `useMove` will be canceled so that only the long press is activated.
+A long press is triggered when a user presses and holds their pointer over a target for a minimum period of time. If the user moves their pointer off of the target before the time threshold, the interaction is canceled. Once a long press event is triggered, other pointer interactions that may be active such as `usePress` and `useMove` will be canceled so that only the long press is activated.
 
 * Handles mouse and touch events
 * Uses pointer events where available, with fallbacks to mouse and touch events
@@ -98,7 +91,11 @@ function Example() {
 }
 ```
 
-## Usage
+## API
+
+<FunctionAPI function={docs.exports.useLongPress} links={docs.links} />
+
+### Usage
 
 `useLongPress` returns props that you should spread onto the target element:
 

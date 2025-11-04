@@ -18,10 +18,6 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useFocusWithin.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useFocusWithin} links={docs.links} />
-
 ## Features
 
 `useFocusWithin` handles focus interactions for an element and its descendants. Focus is "within"
@@ -33,8 +29,7 @@ To handle focus events on only the target element, and not descendants, see [use
 
 ## Example
 
-This example shows two text fields inside a div, which handles focus within events. It stores focus
-within state in local component state, which is updated by an `onFocusWithinChange` handler. This is used
+This example stores focus within state in local component state, which is updated by an `onFocusWithinChange` handler. This is used
 to update the background color and text color of the group while one of the text fields has focus.
 
 Focus within and blur within events are also logged to the list below. Notice that the events are only
@@ -91,7 +86,11 @@ function Example() {
 }
 ```
 
-## Usage
+## API
+
+<FunctionAPI function={docs.exports.useFocusWithin} links={docs.links} />
+
+### Usage
 
 `useFocusWithin` returns props that you should spread onto the target element:
 

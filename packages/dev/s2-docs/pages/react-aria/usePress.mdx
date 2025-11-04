@@ -19,15 +19,9 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.usePress.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.usePress} links={docs.links} />
-
 ## Features
 
-`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a
-user presses down with a mouse or their finger on the target, and ends when they move the pointer off the target. It may
-start again if the pointer re-enters the target. `usePress` returns the current press state, which can be used to adjust
+`usePress` returns the current press state, which can be used to adjust
 the visual appearance of the target. If the pointer is released over the target, then an `onPress` event is fired.
 
 * Handles mouse and touch events
@@ -98,7 +92,11 @@ function Example() {
 }
 ```
 
-## Usage
+## API
+
+<FunctionAPI function={docs.exports.usePress} links={docs.links} />
+
+### Usage
 
 `usePress` returns props that you should spread onto the target element, along with the current press state:
 

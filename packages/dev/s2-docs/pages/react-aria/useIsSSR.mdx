@@ -18,10 +18,6 @@ export const section = 'Utilities';
 
 <PageDescription>{docs.exports.useIsSSR.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useIsSSR} links={docs.links} />
-
 ## Introduction
 
 `useIsSSR` returns `true` during server rendering and hydration, and updates to `false`
@@ -43,3 +39,7 @@ function MyComponent() {
   return <span>{isSSR ? 'Server' : 'Client'}</span>;
 }
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useIsSSR} links={docs.links} />

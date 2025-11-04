@@ -19,14 +19,7 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useHover.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useHover} links={docs.links} />
-
 ## Features
-
-`useHover` handles hover interactions for an element. A hover interaction begins when a user moves their pointer
-over an element, and ends when they move their pointer off of the element.
 
 * Uses pointer events where available, with fallbacks to mouse and touch events
 * Ignores emulated mouse events in mobile browsers
@@ -98,7 +91,11 @@ function Example() {
 }
 ```
 
-## Usage
+## API
+
+<FunctionAPI function={docs.exports.useHover} links={docs.links} />
+
+### Usage
 
 `useHover` returns props that you should spread onto the target element:
 

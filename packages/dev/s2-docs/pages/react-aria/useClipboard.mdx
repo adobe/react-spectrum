@@ -18,10 +18,6 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useClipboard.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useClipboard} links={docs.links} />
-
 ## Introduction
 
 Copy and paste is a common way to transfer data between locations, either within or between apps. Browsers support copy and paste of selected text content by default, but rich objects with custom data can also be copied and pasted using the [clipboard events](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent) API. For example, an app could support copying and pasting a selected card representing a rich object to a new location, or allow a user to paste files from their device to upload them. This can provide a keyboard accessible alternative to drag and drop.
@@ -415,3 +411,7 @@ function Pasteable() {
   <Pasteable />
 </div>
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useClipboard} links={docs.links} />

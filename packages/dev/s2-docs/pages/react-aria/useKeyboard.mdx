@@ -18,10 +18,6 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useKeyboard.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useKeyboard} links={docs.links} />
-
 ## Features
 
 `useKeyboard` handles keyboard interactions. The only difference from DOM events is that propagation
@@ -71,7 +67,12 @@ function Example() {
   );
 }
 ```
-## Usage
+
+## API
+
+<FunctionAPI function={docs.exports.useKeyboard} links={docs.links} />
+
+### Usage
 
 `useKeyboard` returns props that you should spread onto the target element:
 
