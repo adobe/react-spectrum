@@ -64,15 +64,15 @@ const components = {
   ExampleList
 };
 
-const subPageComponents = {
+const getSubPageComponents = (parentUrl?: string, ariaLabel?: string) => ({
   ...components,
   h1: ({children, ...props}) => (
     <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-      <GoUpOneLink />
+      <GoUpOneLink href={parentUrl} aria-label={ariaLabel} />
       <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
     </div>
   )
-};
+});
 
 function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
@@ -145,6 +145,24 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
   let isSubpage = currentPage.exports?.isSubpage;
+  let parentUrl;
+  let subPageReturnLabel;
+  if (isSubpage) {
+    // for testing pages, parent should be ../COMPONENT_NAME.html
+    // for releases, parent should be ./index.html
+    let pathParts = currentPage.url.split('/');
+    let fileName = pathParts.pop();
+
+    if (fileName === 'testing.html') {
+      let parentDir = pathParts.pop();
+      parentUrl = `../${parentDir}.html`;
+      subPageReturnLabel = `Go to ${parentDir} parent page.`;
+    } else {
+      parentUrl = './index.html';
+      subPageReturnLabel = 'Go to all releases.';
+    }
+  }
+
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -255,7 +273,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 <article
                   className={articleStyles({isWithToC: hasToC})}>
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {components: isSubpage ? subPageComponents : components, pages})}
+                  {React.cloneElement(children, {components: isSubpage ? getSubPageComponents(parentUrl, subPageReturnLabel) : components, pages})}
                   {currentPage.exports?.relatedPages && (
                     <MobileRelatedPages pages={currentPage.exports.relatedPages} />
                   )}
