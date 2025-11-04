@@ -37,10 +37,20 @@ By default, React Spectrum follows the operating system color scheme setting, su
 'use client';
 import {Provider} from '@react-spectrum/s2';
 import {ActionButton} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<Provider colorScheme="light">
-  <ActionButton>I'm a light button</ActionButton>
-</Provider>
+<div className={style({display: 'flex', gap: 12})}>
+  <Provider colorScheme="light">
+    <div className={style({backgroundColor: 'base', padding: 12})}>
+      <ActionButton>I'm a light button</ActionButton>
+    </div>
+  </Provider>
+  <Provider colorScheme="dark">
+    <div className={style({backgroundColor: 'elevated', padding: 12})}>
+      <ActionButton>I'm a dark button</ActionButton>
+    </div>
+  </Provider>
+</div>
 ```
 
 ## Locales

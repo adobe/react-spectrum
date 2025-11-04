@@ -53,7 +53,7 @@ export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | nul
 
 /**
  * Provider is the container for all React Spectrum components.
- * It sets the font, colorScheme, locale, and other application level settings.
+ * It loads the font and sets the colorScheme, locale, and other application level settings.
  */
 export function Provider(props: ProviderProps): JSX.Element {
   let result = <ProviderInner {...props} />;
