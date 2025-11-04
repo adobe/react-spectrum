@@ -18,10 +18,6 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useLandmark.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useLandmark} links={docs.links} />
-
 ## Features
 
 Landmarks provide a way to designate important subsections of a page. They allow screen reader users to get an overview of the various sections of the page, and jump to a specific section.
@@ -44,16 +40,6 @@ If multiple landmarks are registered with the same role, they should have unique
 
 {/* TODO: Not implemented yet */}
 {/* For an example of landmarks in use, see the [useToastRegion](useToast.html#anatomy) documentation. */}
-
-## Usage
-
-`useLandmark` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.LandmarkAria} />
-
-`useLandmark` supports the following options:
-
-<InterfaceType {...docs.exports.AriaLandmarkProps} />
 
 ## Example
 
@@ -108,3 +94,17 @@ function Search(props) {
   </Region>
 </div>
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useLandmark} links={docs.links} />
+
+### Usage
+
+`useLandmark` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.LandmarkAria} />
+
+`useLandmark` supports the following options:
+
+<InterfaceType {...docs.exports.AriaLandmarkProps} />

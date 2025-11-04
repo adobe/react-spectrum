@@ -12,16 +12,11 @@ export default Layout;
 import docs from 'docs:@react-aria/ssr';
 import {FunctionAPI} from '../../src/FunctionAPI';
 
-
-export const section = 'Server Side Rendering';
+export const section = 'Utilities';
 
 # useIsSSR
 
 <PageDescription>{docs.exports.useIsSSR.description}</PageDescription>
-
-## API
-
-<FunctionAPI function={docs.exports.useIsSSR} links={docs.links} />
 
 ## Introduction
 
@@ -44,3 +39,7 @@ function MyComponent() {
   return <span>{isSSR ? 'Server' : 'Client'}</span>;
 }
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useIsSSR} links={docs.links} />

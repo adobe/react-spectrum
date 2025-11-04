@@ -18,40 +18,6 @@ export const section = 'Utilities';
 
 <PageDescription>{docs.exports.VisuallyHidden.description}</PageDescription>
 
-## Introduction
-
-`VisuallyHidden` is a utility component that can be used to hide its children visually,
-while keeping them visible to screen readers and other assistive technology. This would
-typically be used when you want to take advantage of the behavior and semantics of a
-native element like a checkbox or radio button, but replace it with a custom styled
-element visually.
-
-## Props
-
-<PropTable links={docs.links} component={docs.exports.VisuallyHidden} />
-
-{/* not implemented yet */}
-{/* ## Example
-
-See [useRadioGroup](useRadioGroup.html#styling) and [useCheckbox](useCheckbox.html#styling)
-for examples of using `VisuallyHidden` to hide native form elements visually. */}
-
-## Hook
-
-In order to allow additional rendering flexibility, the `useVisuallyHidden` hook can be
-used in custom components instead of the `VisuallyHidden` component. It supports the same
-options as the component, and returns props to spread onto the element that should be hidden.
-
-<FunctionAPI links={docs.links} function={docs.exports.useVisuallyHidden} />
-
-```tsx
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
-
-let {visuallyHiddenProps} = useVisuallyHidden();
-
-<div {...visuallyHiddenProps}>I am hidden</div>
-```
-
 ## Gotchas
 
 VisuallyHidden is positioned absolutely, so it needs a positioned ancestor. Otherwise, it will be positioned relative to the nearest positioned ancestor, which may be the body, causing undesired scroll bars to appear.
@@ -65,3 +31,30 @@ VisuallyHidden is positioned absolutely, so it needs a positioned ancestor. Othe
 </label>
 ```
 
+##  Hook
+
+In order to allow additional rendering flexibility, the `useVisuallyHidden` hook can be
+used in custom components instead of the `VisuallyHidden` component. It supports the same
+options as the component, and returns props to spread onto the element that should be hidden.
+
+<FunctionAPI links={docs.links} function={docs.exports.useVisuallyHidden} />
+
+### Example
+
+```tsx
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
+
+let {visuallyHiddenProps} = useVisuallyHidden();
+
+<div {...visuallyHiddenProps}>I am hidden</div>
+```
+
+## API
+
+<PropTable links={docs.links} component={docs.exports.VisuallyHidden} />
+
+{/* not implemented yet */}
+{/* ## Example
+
+See [useRadioGroup](useRadioGroup.html#styling) and [useCheckbox](useCheckbox.html#styling)
+for examples of using `VisuallyHidden` to hide native form elements visually. */}
