@@ -50,11 +50,11 @@ export function CodeLink(props: RACLinkProps) {
 
 const titleLink = style({
   ...focusRing(),
-  font: 'heading-3xl',
+  font: 'heading',
   fontSize: {
     // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
     default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-    lg: 'heading-3xl'
+    lg: 'heading'
   },
   marginY: 0,
   color: {

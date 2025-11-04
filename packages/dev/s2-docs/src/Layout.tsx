@@ -67,9 +67,11 @@ const components = {
 const subPageComponents = (previousPage?: Page) => ({
   ...components,
   h1: ({children, ...props}) => (
-    <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-      <TitleLink href="./index.html">{previousPage?.exports?.title}</TitleLink>
-      <ChevronRightIcon styles={iconStyle({size: 'XL'})} />
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+        <TitleLink href="./index.html">{previousPage?.exports?.title}</TitleLink>
+        <ChevronRightIcon styles={iconStyle({size: 'M'})} />
+      </div>
       <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
     </div>
   )
