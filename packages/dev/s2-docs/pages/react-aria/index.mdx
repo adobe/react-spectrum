@@ -392,45 +392,97 @@ export const hideFromSearch = true;
 
         <Scrollable className="relative flex-1 -mx-6 -mb-6 mt-6 [&_pre]:m-0 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm isolate rounded-b-2xl">
 
-    <div className="highlight-tags [--delay:2.5s] h-full *:h-full cross-fade [--fade-from:1] [--fade-to:0]">
-
-    ```tsx
-    <Select>
-      <Label>Permissions</Label>
-      <Button>
-        <SelectValue />
-        <span>▼</span>
-      </Button>
-      <Popover>
-        <ListBox>
-          <ListBoxItem>Read Only</ListBoxItem>
-          <ListBoxItem>Edit</ListBoxItem>
-          <ListBoxItem>Admin</ListBoxItem>
-        </ListBox>
-      </Popover>
-    </Select>
-    ```
-
-    </div>
+          <div className="highlight-tags [--delay:2.5s] h-full *:h-full cross-fade [--fade-from:1] [--fade-to:0]">
+            <div className="hidden md:contents">
+              ```tsx
+              <Select>
+                <Label>Permissions</Label>
+                <Button>
+                  <SelectValue />
+                  <span>▼</span>
+                </Button>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>Read Only</ListBoxItem>
+                    <ListBoxItem>Edit</ListBoxItem>
+                    <ListBoxItem>Admin</ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </Select>
+              ```
+            </div>
+            <div className="contents md:hidden">
+              ```tsx
+              <Select>
+                <Label>
+                  Permissions
+                </Label>
+                <Button>
+                  <SelectValue />
+                  <span>▼</span>
+                </Button>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>
+                      Read Only
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Edit
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Admin
+                    </ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </Select>
+              ```
+            </div>
+          </div>
           <div className="absolute top-0 left-0 highlight-tags cross-fade">
-
-    ```tsx
-    <ComboBox>
-      <Label>Permissions</Label>
-      <Group>
-        <Input />
-        <Button>▼</Button>
-      </Group>
-      <Popover>
-        <ListBox>
-          <ListBoxItem>Read Only</ListBoxItem>
-          <ListBoxItem>Edit</ListBoxItem>
-          <ListBoxItem>Admin</ListBoxItem>
-        </ListBox>
-      </Popover>
-    </ComboBox>
-    ```
-
+            <div className="hidden md:contents">
+              ```tsx
+              <ComboBox>
+                <Label>Permissions</Label>
+                <Group>
+                  <Input />
+                  <Button>▼</Button>
+                </Group>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>Read Only</ListBoxItem>
+                    <ListBoxItem>Edit</ListBoxItem>
+                    <ListBoxItem>Admin</ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </ComboBox>
+              ```
+            </div>
+            <div className="contents md:hidden">
+              ```tsx
+              <ComboBox>
+                <Label>
+                  Permissions
+                </Label>
+                <Group>
+                  <Input />
+                  <Button>▼</Button>
+                </Group>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>
+                      Read Only
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Edit
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Admin
+                    </ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </ComboBox>
+              ```
+            </div>
           </div>
         </Scrollable>
       </Card>
