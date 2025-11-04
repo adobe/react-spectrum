@@ -14,7 +14,9 @@ React Spectrum includes a build-time `style` macro that generates atomic CSS and
 
 ## Style macro
 
-The `style` macro runs at build time and returns a class name for applying Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.).
+The `style` macro runs at build time and returns a class name for applying Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.). As can been seen below,
+the keys of the object passed to the `style` macro correspond to a CSS property, each paired with the property's desired value. See [here](./reference.html) for a full list
+of supported values.
 
 ```tsx
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -39,7 +41,7 @@ Colocating styles with your component code means:
 <InlineAlert variant="informative">
   <Heading>Important Note</Heading>
   <Content>
-    Due to the atomic nature of the generated CSS rules, it is strongly recommended that you follow the best practices listed [below](#css-optimization).
+    Due to the atomic nature of the generated CSS rules, it is strongly recommended that you follow the CSS optimization guide listed [below](#css-optimization).
     Failure to do so can result in large number of duplicate rules and obtuse styling bugs.
   </Content>
 </InlineAlert>
@@ -96,7 +98,6 @@ import {Button} from '@react-spectrum/s2';
 ## Conditional styles
 
 Define conditional values as objects to handle media queries, UI states (hover/press), and variants. This keeps all values for a property together.
-Note how the example below uses a predefined [breakpoint](./reference.html#conditions) alongside a custom media query.
 
 ```tsx
 <div
@@ -104,15 +105,21 @@ Note how the example below uses a predefined [breakpoint](./reference.html#condi
     padding: {
       default: 8,
       lg: 32,
-      '@media (min-width: 2560px)': 64,
+      '@media (min-width: 2560px)': 64
     }
   })}
 />
 ```
 
+In the example above, the keys of the nested object now map out the "conditions" that govern the padding of the `div`. This translates to the following:
+
+- If the viewport is larger than `2560px`, as specified by a user defined [media query](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries), the padding of the `div` is set to `64px`.
+- If the viewport matches the `style` macro's predefined `lg` [breakpoint](./reference.html#conditions) (i.e. the viewport is larger than `1024px`), but does not exceed previous condition, the padding of the `div` is set to `32px`
+- Otherwise, default to a padding of `8px`.
+
 Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
 
-## Runtime conditions
+### Runtime conditions
 
 When runtime conditions are detected (e.g., variants, UI states), the macro returns a function to resolve styles at runtime.
 
@@ -309,6 +316,8 @@ The `style` macro relies on CSS bundling and minification for optimal output. Fo
 - Ensure styles are extracted into a CSS bundle; do not inject at runtime with `<style>` tags.
 - Use a CSS minifier like `lightningcss` to deduplicate common rules (consider in dev for easier debugging).
 - Bundle all CSS for S2 components and style macros into a single CSS bundle rather than code splitting to avoid duplicate rules across chunks.
+
+**Failure to perform this optimization will result in a suboptimal developer experience and obtuse styling bugs.**
 
 ### Parcel
 
