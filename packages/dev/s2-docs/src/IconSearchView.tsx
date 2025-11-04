@@ -2,6 +2,7 @@
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
+import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Close from '@react-spectrum/s2/icons/Close';
 import {Content, Heading, IllustratedMessage, pressScale, SearchField, Skeleton, Text} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -10,7 +11,7 @@ import {iconAliases} from './iconAliases.js';
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
 
@@ -42,19 +43,34 @@ const itemStyle = style({
   cursor: 'default'
 });
 
-let handleCopyImport = (id: string) => {
-  navigator.clipboard.writeText(`import ${id} from '@react-spectrum/s2/icons/${id}';`).then(() => {
-    // noop
-  }).catch(() => {
-    // noop
-  });
-};
-
 interface IconSearchViewProps {
   filteredItems: typeof iconList
 }
 
 export function IconSearchView({filteredItems}: IconSearchViewProps) {
+  let [copiedId, setCopiedId] = useState<string | null>(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
+
+  let handleCopyImport = useCallback((id: string) => {
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    navigator.clipboard.writeText(`import ${id} from '@react-spectrum/s2/icons/${id}';`).then(() => {
+      setCopiedId(id);
+      timeout.current = setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => {
+      // noop
+    });
+  }, []);
+
   return (
     <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(64, 64), maxItemSize: new Size(64, 64), minSpace: new Size(12, 12), preserveAspectRatio: true}}>
       <ListBox
@@ -62,6 +78,7 @@ export function IconSearchView({filteredItems}: IconSearchViewProps) {
         items={filteredItems}
         layout="grid"
         className={style({width: '100%', scrollPaddingY: 4})}
+        dependencies={[copiedId]}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
             <NoSearchResults />
@@ -69,18 +86,18 @@ export function IconSearchView({filteredItems}: IconSearchViewProps) {
             <Content>Try a different search term.</Content>
           </IllustratedMessage>
         )}>
-        {item => <IconItem item={item} />}
+        {item => <IconItem item={item} isCopied={copiedId === item.id} />}
       </ListBox>
     </Virtualizer>
   );
 }
 
-function IconItem({item}) {
+function IconItem({item, isCopied = false}: {item: typeof iconList[number], isCopied?: boolean}) {
   let Icon = item.icon;
   let ref = useRef(null);
   return (
     <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      <Icon styles={iconStyle({size: 'XL'})} />
+      {isCopied ? <CheckmarkCircle styles={iconStyle({size: 'XL'})} /> : <Icon styles={iconStyle({size: 'XL'})} />}
       <div
         className={style({
           maxWidth: '100%',
@@ -88,7 +105,7 @@ function IconItem({item}) {
           overflow: 'hidden',
           whiteSpace: 'nowrap'
         })}>
-        {item.id}
+        {isCopied ? 'Copied!' : item.id}
       </div>
     </ListBoxItem>
   );
@@ -175,6 +192,30 @@ export function IconCards() {
     // also compare for substrings in the icon's actual name
     return textValue != null && contains(textValue, inputValue);
   }, [contains]);
+  
+  let [copiedId, setCopiedId] = useState<string | null>(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
+
+  let handleCopyImport = useCallback((id: string) => {
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    navigator.clipboard.writeText(`import ${id} from '@react-spectrum/s2/icons/${id}';`).then(() => {
+      setCopiedId(id);
+      timeout.current = setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => {
+      // noop
+    });
+  }, []);
+
   return (
     <Autocomplete filter={filter}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
@@ -185,6 +226,7 @@ export function IconCards() {
             items={iconList}
             layout="grid"
             className={style({height: 440, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+            dependencies={[copiedId]}
             renderEmptyState={() => (
               <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
                 <NoSearchResults />
@@ -192,7 +234,7 @@ export function IconCards() {
                 <Content>Try a different search term.</Content>
               </IllustratedMessage>
             )}>
-            {item => <IconItem item={item} />}
+            {item => <IconItem item={item} isCopied={copiedId === item.id} />}
           </ListBox>
         </Virtualizer>
       </div>
