@@ -237,7 +237,7 @@ function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name:
   let code = codeRef.current!.querySelector('pre')!.textContent!;
   let fileTabs = codeRef.current!.closest('[data-files]');
   if (fileTabs) {
-    let example = fileTabs.querySelector('[data-example]');
+    let example = fileTabs.querySelector('[data-example] pre');
     if (example) {
       code = example.textContent!;
     }
