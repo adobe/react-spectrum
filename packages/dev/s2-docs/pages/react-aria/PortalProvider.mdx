@@ -12,7 +12,7 @@ export default Layout;
 import docs from 'docs:@react-aria/overlays';
 import {FunctionAPI} from '../../src/FunctionAPI';
 
-export const section = 'Server Side Rendering';
+export const section = 'Utilities';
 
 # PortalProvider
 
@@ -31,10 +31,6 @@ or for a variety of other reasons. Typically, it is best to portal to the root o
 outside of any possible overflow or stacking contexts. We envision `UNSAFE_PortalProvider` being used to group all of the portalled
 elements into a single container at the root of the app or to control the order of children of the `body` element, but you may have use cases
 that need to do otherwise.
-
-## Props
-
-<PropTable links={docs.links} component={docs.exports.UNSAFE_PortalProvider} />
 
 ## Example
 
@@ -169,3 +165,8 @@ function MyOverlay(props) {
   return ReactDOM.createPortal(children, getContainer());
 }
 ```
+
+## Props
+
+<PropTable links={docs.links} component={docs.exports.UNSAFE_PortalProvider} />
+

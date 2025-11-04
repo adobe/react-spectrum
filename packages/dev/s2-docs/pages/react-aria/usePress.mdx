@@ -19,15 +19,9 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.usePress.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.usePress} links={docs.links} />
-
 ## Features
 
-`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a
-user presses down with a mouse or their finger on the target, and ends when they move the pointer off the target. It may
-start again if the pointer re-enters the target. `usePress` returns the current press state, which can be used to adjust
+`usePress` returns the current press state, which can be used to adjust
 the visual appearance of the target. If the pointer is released over the target, then an `onPress` event is fired.
 
 * Handles mouse and touch events
@@ -41,21 +35,6 @@ the visual appearance of the target. If the pointer is released over the target,
 
 {/* TODO: uncomment once blog posts are transferred over */}
 {/* Read our [blog post](/blog/building-a-button-part-1.html) about the complexities of press event handling to learn more. */}
-
-## Usage
-
-`usePress` returns props that you should spread onto the target element, along with the current press state:
-
-<InterfaceType {...docs.exports.PressResult} />
-
-`usePress` supports the following event handlers:
-
-<InterfaceType {...typesDocs.exports.PressEvents} />
-
-Each of these handlers is fired with a `PressEvent`, which exposes information about the target and the
-type of event that triggered the interaction.
-
-<InterfaceType {...typesDocs.exports.PressEvent} />
 
 ## Example
 
@@ -112,3 +91,22 @@ function Example() {
   );
 }
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.usePress} links={docs.links} />
+
+### Usage
+
+`usePress` returns props that you should spread onto the target element, along with the current press state:
+
+<InterfaceType {...docs.exports.PressResult} />
+
+`usePress` supports the following event handlers:
+
+<InterfaceType {...typesDocs.exports.PressEvents} />
+
+Each of these handlers is fired with a `PressEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<InterfaceType {...typesDocs.exports.PressEvent} />

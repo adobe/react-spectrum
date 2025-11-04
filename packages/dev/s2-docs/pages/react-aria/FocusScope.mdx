@@ -13,7 +13,7 @@ import {GroupedPropTable} from '../../src/PropTable';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/focus';
 
-export const section = 'Focus';
+export const section = 'Interactions';
 
 # FocusScope
 
@@ -33,17 +33,6 @@ The <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook can
 in combination with a FocusScope to programmatically move focus within the scope. For example,
 arrow key navigation could be implemented by handling keyboard events and using a focus manager
 to move focus to the next and previous elements.
-
-## Props
-
-<PropTable links={docs.links} component={docs.exports.FocusScope} />
-
-## FocusManager Interface
-
-To get a focus manager, call the <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook
-from a component within the FocusScope. A focus manager supports the following methods:
-
-<ClassAPI links={docs.links} class={docs.exports.FocusManager} />
 
 ## Example
 
@@ -128,3 +117,16 @@ function ToolbarButton(props) {
   <ToolbarButton>Paste</ToolbarButton>
 </Toolbar>
 ```
+
+## API
+
+### Props
+
+<PropTable links={docs.links} component={docs.exports.FocusScope} />
+
+### FocusManager Interface
+
+To get a focus manager, call the <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook
+from a component within the FocusScope. A focus manager supports the following methods:
+
+<ClassAPI links={docs.links} class={docs.exports.FocusManager} />

@@ -13,19 +13,13 @@ import {GroupedPropTable} from '../../src/PropTable';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
-export const section = 'Drag and Drop';
+export const section = 'Interactions';
 
 # useDrag
 
 <PageDescription>{docs.exports.useDrag.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useDrag} links={docs.links} />
-
 ## Introduction
-
-Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen. It is a flexible, efficient, and intuitive way for users to perform a variety of tasks, and is widely supported across both desktop and mobile operating systems.
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop.
 
@@ -40,6 +34,7 @@ This example shows how to make a simple draggable element that provides data as 
 import {useDrag} from '@react-aria/dnd';
 import {DropTarget} from './DropTarget.tsx';
 import './useDragExample.css';
+import 'vanilla-starter/theme.css';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -155,9 +150,11 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.D
 * `copy` – indicates that the dragged data will be copied to the target destination.
 * `link` – indicates that there will be a relationship established between the source and target locations.
 * `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
 Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
 The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged element.
 This example removes the draggable element from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
 ```tsx render
 "use client"
 import React from 'react';
@@ -305,3 +302,7 @@ function Draggable() {
 }
 <Draggable />
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useDrag} links={docs.links} />
