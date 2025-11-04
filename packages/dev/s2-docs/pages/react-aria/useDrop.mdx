@@ -198,7 +198,7 @@ function DropTarget() {
     );
   }
   return (
-    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`} style={{overflow: 'auto'}}>
       {contents}
     </div>
   );
@@ -309,7 +309,7 @@ function DropTarget() {
     onDrop: onEvent
   });
   return (
-    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto'}}>
+    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto', overflow: 'auto'}}>
       {events.map((e, i) => <li key={i}>{e}</li>)}
     </ul>
   );
