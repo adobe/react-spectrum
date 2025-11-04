@@ -14,7 +14,7 @@ Accessible applications are usable by everyone, including people with disabiliti
 
 React Aria provides built-in support for screen readers and keyboard navigation, following the [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.2/) and [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/) guidelines. It supplies the correct semantics via ARIA roles and attributes, handles keyboard and pointer events, manages focus, and provides screen reader announcements. React Aria components are tested across a wide variety of devices, browsers, and screen readers.
 
-You’re responsible for providing meaningful labels and ensuring your visual design supports all users. This includes designing with sufficient [color contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast) and [hit target sizes](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced), including visible [focus rings](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance), respecting [motion preferences](https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions), and more. The [WCAG guidelines](https://www.w3.org/WAI/WCAG22/Understanding/) are a good resource to reference when designing and building components with React Aria.
+Be sure to create an accessible visual design with meaningful labels, sufficient [color contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast) and [hit target sizes](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced), visible [focus rings](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance), and respect [motion preferences](https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions). The [WCAG guidelines](https://www.w3.org/WAI/WCAG22/Understanding/) are a good resource to reference when designing and building components with React Aria.
 
 ### Labeling
 
@@ -54,24 +54,13 @@ React Aria is tested across a variety of devices, browsers, and screen readers.
 
 ### Automated testing
 
-Automated accessibility testing tools sometimes catch false positives in React Aria. These are documented in our [wiki](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives). Use the rules below to ignore these issues in your own testing tools, such as in the [Storybook test runner](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#a11y-config-with-the-test-runner) or [Storybook a11y addon](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#global-a11y-configuration).
-
-```tsx
-{
-  rules: [
-    {
-      id: 'aria-hidden-focus',
-      selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
-    }
-  ]
-}
-```
+Automated accessibility testing tools sometimes catch false positives in React Aria. These are documented in our [wiki](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives).
 
 ## Internationalization
 
 Localization is an important way to make your application usable by the widest number of people. React Aria includes localized strings for 30+ languages, handles dates and numbers in many calendar and numbering systems, and supports right-to-left interactions (e.g. keyboard navigation).
 
-You’re responsible for ensuring your design supports right-to-left layout, and adapts to different languages (e.g. using appropriate fonts). Modern CSS grid and flex layouts are automatically mirrored depending on the direction, and [logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values) can be used to adapt margins, paddings, borders, etc.
+Make sure your design supports right-to-left layout, and adapts to different languages (e.g. using appropriate fonts). Modern CSS grid and flex layouts are automatically mirrored depending on the direction, and [logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values) can be used to adapt margins, paddings, borders, etc.
 
 ### Setting the locale
 
@@ -141,9 +130,9 @@ Modern web apps run on everything from desktops to mobile devices to TVs, with u
 
 React Aria components provide data attributes and render props to style these states:
 
-* `data-pressed` – like the `:active` pseudo class, but removed when dragging off the element.
-* `data-hovered` – like `:hover`, but does not apply on touch devices to avoid sticky hover states.
-* `data-focus-visible` – like `:focus-visible`, but avoids false positives from programmatic focus.
+* `data-pressed` – like the `:active` pseudo class, but removed when the pointer is dragged off.
+* `data-hovered` – like `:hover`, but not applied on touch devices, preventing sticky hover states.
+* `data-focus-visible` – like `:focus-visible`, but not on input click or programmatic focus.
 
 These states also come with corresponding events such as `onPress` and `onHoverStart`. To use these events in your own custom components, see hooks such as [usePress](usePress.html), [useHover](useHover.html), [useMove](useMove.html), and [useFocusRing](useFocusRing.html).
 
