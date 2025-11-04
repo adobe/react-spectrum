@@ -13,16 +13,11 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/focus';
 
-export const section = 'Focus';
-export const description = 'Implementing collections in React Aria';
+export const section = 'Interactions';
 
 # useFocusRing
 
 <PageDescription>{docs.exports.useFocusRing.description}</PageDescription>
-
-## API
-
-<FunctionAPI links={docs.links} function={docs.exports.useFocusRing} />
 
 ## Introduction
 
@@ -32,14 +27,6 @@ navigate around. Focus rings are only visible when interacting with a keyboard s
 and touch screen users.
 
 If CSS classes are being used for styling, see the [FocusRing](FocusRing.html) component for a shortcut.
-
-## Options
-
-<InterfaceType {...docs.exports.AriaFocusRingProps} />
-
-## Result
-
-<InterfaceType {...docs.exports.FocusRingAria} />
 
 ## Example
 
@@ -77,3 +64,17 @@ function Example() {
   );
 }
 ```
+
+## API
+
+<FunctionAPI links={docs.links} function={docs.exports.useFocusRing} />
+
+### Usage
+
+`useFocusRing` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.FocusRingAria} />
+
+`useFocusRing` supports the following options and event handlers:
+
+<InterfaceType {...docs.exports.AriaFocusRingProps} />

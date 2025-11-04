@@ -1,6 +1,6 @@
 "use client";
 
-import React, {JSX} from 'react';
+import React, {JSX, ReactNode} from 'react';
 import type {TextDropItem} from '@react-aria/dnd';
 import {useDrop} from '@react-aria/dnd';
 
@@ -18,7 +18,7 @@ export function DropTarget() {
       let items = await Promise.all(
         (e.items as TextDropItem[])
           .filter(item => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
-          .map(async item => {
+          .map(async (item: TextDropItem) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
@@ -30,16 +30,16 @@ export function DropTarget() {
     }
   });
 
-  let message: JSX.Element[] = [<div>{`Drop here`}</div>];
+  let message: ReactNode = <div key="drop here">'Drop here'</div>;
   if (dropped) {
     message = dropped.map((d, index) => {
-      let m = d.message;
+      let m: ReactNode = d.message;
       if (d.style === 'bold') {
-        message = [<strong>{m}</strong>];
+        m = <strong key={index}>{m}</strong>;
       } else if (d.style === 'italic') {
-        message = [<em>{m}</em>];
+        m = <em key={index}>{m}</em>;
       }
-      return <div key={index}>{message}</div>;
+      return <div key={index}>{m}</div>;
     });
   }
 

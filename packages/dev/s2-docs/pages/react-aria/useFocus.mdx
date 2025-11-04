@@ -18,10 +18,6 @@ export const section = 'Interactions';
 
 <PageDescription>{docs.exports.useFocus.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useFocus} links={docs.links} />
-
 ## Features
 
 `useFocus` handles focus interactions for an element. Unlike React's built-in focus events,
@@ -31,16 +27,6 @@ the [:focus](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus) pseudo cla
 in CSS.
 
 To handle focus events on descendants of an element, see [useFocusWithin](useFocusWithin.html).
-
-## Usage 
-
-`useFocus` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.FocusResult} />
-
-`useFocus` supports the following options and event handlers:
-
-<InterfaceType {...docs.exports.FocusProps} />
 
 ## Example
 
@@ -83,3 +69,17 @@ function Example() {
   );
 }
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useFocus} links={docs.links} />
+
+### Usage
+
+`useFocus` returns props that you should spread onto the target element:
+
+<InterfaceType {...docs.exports.FocusResult} />
+
+`useFocus` supports the following options and event handlers:
+
+<InterfaceType {...docs.exports.FocusProps} />
