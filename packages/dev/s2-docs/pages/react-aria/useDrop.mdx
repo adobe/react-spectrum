@@ -22,8 +22,6 @@ export const section = 'Interactions';
 
 ## Introduction
 
-Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen. It is a flexible, efficient, and intuitive way for users to perform a variety of tasks, and is widely supported across both desktop and mobile operating systems.
-
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop.
 
 See the [drag and drop introduction](dnd.html) to learn more.
@@ -39,6 +37,7 @@ import type {TextDropItem} from '@react-aria/dnd';
 import {useDrop} from '@react-aria/dnd';
 import {Draggable} from './Draggable.tsx';
 import './useDragExample.css';
+import 'vanilla-starter/theme.css';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
@@ -74,6 +73,7 @@ function DropTarget() {
 * `directory` – references the contents of a directory
 ### Text
 A <TypeLink links={sharedDocs.links} type={sharedDocs.exports.TextDropItem} /> represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
 The example below finds the first available item that includes a custom app-specific type. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead.
 
 ```tsx render
@@ -114,8 +114,8 @@ function DropTarget() {
 ```
 ### Files
 A <TypeLink links={sharedDocs.links} type={sharedDocs.exports.FileDropItem} /> references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
-This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 ```tsx render
 'use client';
 import React from 'react';
@@ -194,7 +194,7 @@ function DropTarget() {
     );
   }
   return (
-    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`}>
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`} style={{overflow: 'auto'}}>
       {contents}
     </div>
   );
@@ -208,6 +208,7 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.exports.DropOperation} /> 
 * `copy` – indicates that the dragged data will be copied to the target destination.
 * `link` – indicates that there will be a relationship established between the source and target locations.
 * `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
 Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
 The drag source can specify which drop operations are allowed for the dragged data (see the [useDrag docs](useDrag.html) for how to customize this). By default, the first allowed operation is allowed by drop targets, meaning that the drop target accepts data of any type and operation.
 
@@ -305,7 +306,7 @@ function DropTarget() {
     onDrop: onEvent
   });
   return (
-    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto'}}>
+    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto', overflow: 'auto'}}>
       {events.map((e, i) => <li key={i}>{e}</li>)}
     </ul>
   );
