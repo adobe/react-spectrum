@@ -47,3 +47,17 @@ export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | '
 export function CodeLink(props: RACLinkProps) {
   return <RACLink {...props} style={({isHovered}) => ({textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
 }
+
+const titleLink = style({
+  font: 'heading-3xl',
+  fontSize: {
+    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
+    lg: 'heading-3xl'
+  },
+  marginY: 0
+});
+
+export function TitleLink(props: RACLinkProps) {
+  return <RACLink {...props} className={titleLink} />;
+}
