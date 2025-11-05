@@ -109,7 +109,7 @@ function stripMarkdown(description) {
 }
 
 function isBlogSection(section) {
-  return section === 'blog' || section === 'releases';
+  return section === 'blog';
 }
 
 function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
@@ -253,6 +253,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
 }
 
 const CATEGORY_ORDER = [
+  'Foundation',
   'Introduction',
   'Concepts',
   'Application',
@@ -363,6 +364,7 @@ function Nav({currentPageName, pages}) {
   let currentPageIsIndex = INDEX_RE.test(currentPageName);
   let sectionIndex = './index.html';
   let back = '../index.html';
+  // TODO: might need to handle the back button for going from /v3 to s2 new docs?
   if (isBlog) {
     sectionIndex = '/index.html';
   } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
