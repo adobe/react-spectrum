@@ -1,13 +1,12 @@
 'use client';
 
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {Folder, File} from 'lucide-react';
 import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
 import {useListData} from 'react-stately';
-import File from '@react-spectrum/s2/icons/File';
-import Folder from '@react-spectrum/s2/icons/Folder';
 import React from 'react';
 
-function BidirectionalDnDGridList(props) {
+function BidirectionalDnDListBox(props) {
   let {list} = props;
   let {dragAndDropHooks} = useDragAndDrop({
     acceptedDragTypes: ['custom-app-type-bidirectional'],
@@ -78,20 +77,19 @@ function BidirectionalDnDGridList(props) {
   });
 
   return (
-    <GridList
+    <ListBox
       aria-label={props['aria-label']}
       selectionMode="multiple"
-      layout="list"
       items={list.items}
       dragAndDropHooks={dragAndDropHooks}
-      style={{width: 300, height: 300}}>
+      style={{width: 300, height: 300, overflow: 'auto'}}>
       {item => (
-        <GridListItem textValue={item.name}>
+        <ListBoxItem textValue={item.name} style={{display: 'flex', alignItems: 'center', gap: 8, flexDirection: 'row', justifyContent: 'flex-start'}}>
           {item.type === 'folder' ? <Folder /> : <File />}
           <span>{item.name}</span>
-        </GridListItem>
+        </ListBoxItem>
       )}
-    </GridList>
+    </ListBox>
   );
 }
 
@@ -121,8 +119,8 @@ export default function DragBetweenListsExample() {
 
   return (
     <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 8}}>
-      <BidirectionalDnDGridList list={list1} aria-label="First GridList in drag between list example" />
-      <BidirectionalDnDGridList list={list2} aria-label="Second GridList in drag between list example" />
+      <BidirectionalDnDListBox list={list1} aria-label="First ListBox in drag between list example" />
+      <BidirectionalDnDListBox list={list2} aria-label="Second ListBox in drag between list example" />
     </div>
   );  
 }
