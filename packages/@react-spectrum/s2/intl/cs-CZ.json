@@ -26,6 +26,7 @@
   "notificationbadge.indicatorOnly": "Nová aktivita",
   "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vybrat…",
+  "picker.selectedCount": "{count, plural, =0 {Nevybrány žádné položky} one {Vybrána # položka} other {Vybráno # položek}}",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
   "table.loading": "Načítání...",

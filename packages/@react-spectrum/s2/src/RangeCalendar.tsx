@@ -34,7 +34,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface RangeCalendarProps<T extends DateValue>
-  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles' | keyof GlobalDOMAttributes>,
+  extends Omit<AriaRangeCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'children' | 'styles' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.
@@ -64,6 +64,9 @@ const headerStyles = style({
   width: 'full'
 });
 
+/**
+ * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ */
 export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, RangeCalendarContext);
   let {

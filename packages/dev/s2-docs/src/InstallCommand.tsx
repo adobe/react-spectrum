@@ -1,11 +1,11 @@
 'use client';
 
 import {CopyButton} from './CopyButton';
+import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria-components';
-import {Pre} from './CodePlatter';
+import Prompt from '@react-spectrum/s2/icons/Prompt';
 import React, {useEffect, useMemo, useState} from 'react';
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const container = style({
   backgroundColor: 'layer-1',
@@ -30,6 +30,18 @@ const codeWrap = style({
   padding: 16
 });
 
+const preStyle = style({
+  font: {default: 'code-xs', lg: 'code-sm'},
+  overflowX: 'auto',
+  paddingY: 8,
+  paddingX: 0,
+  margin: 0,
+  whiteSpace: 'pre',
+  flex: 1,
+  minWidth: 0,
+  overflow: 'auto'
+});
+
 type PkgManager = 'yarn' | 'npm' | 'pnpm';
 
 export interface InstallCommandProps {
@@ -38,18 +50,23 @@ export interface InstallCommandProps {
   /** Optional flags appended after the package name(s), e.g. "--dev". */
   flags?: string,
   /** Optional label preceding the code block. */
-  label?: string
+  label?: string,
+  /** If true, renders an npx command instead of install (hides manager switcher). */
+  isCommand?: boolean
 }
 
-export function InstallCommand({pkg, flags, label}: InstallCommandProps) {
+export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandProps) {
   let [manager, setManager] = useState<PkgManager>('yarn');
 
   useEffect(() => {
+    if (isCommand) {
+      return;
+    }
     let stored = localStorage.getItem('packageManager');
     if (stored === 'npm' || stored === 'pnpm' || stored === 'yarn') {
       setManager(stored);
     }
-  }, []);
+  }, [isCommand]);
 
   let onSelectionChange = (key: Key) => {
     let value = String(key) as PkgManager;
@@ -59,35 +76,42 @@ export function InstallCommand({pkg, flags, label}: InstallCommandProps) {
 
   let command = useMemo(() => {
     let parts: string[] = [];
-    switch (manager) {
-      case 'yarn':
-        parts = ['yarn', 'add'];
-        break;
-      case 'npm':
-        parts = ['npm', 'install'];
-        break;
-      case 'pnpm':
-        parts = ['pnpm', 'add'];
-        break;
+    if (isCommand) {
+      parts = ['npx', pkg];
+    } else {
+      switch (manager) {
+        case 'yarn':
+          parts = ['yarn', 'add'];
+          break;
+        case 'npm':
+          parts = ['npm', 'install'];
+          break;
+        case 'pnpm':
+          parts = ['pnpm', 'add'];
+          break;
+      }
+      parts.push(pkg);
     }
-    parts.push(pkg);
     if (flags) {
       parts.push(flags);
     }
     return parts.join(' ');
-  }, [manager, pkg, flags]);
+  }, [isCommand, manager, pkg, flags]);
 
   return (
     <div className={container} data-example-switcher>
-      <SegmentedControl selectedKey={manager} onSelectionChange={onSelectionChange} styles={switcher}>
-        <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
-        <SegmentedControlItem id="npm">npm</SegmentedControlItem>
-        <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
-      </SegmentedControl>
+      {!isCommand && (
+        <SegmentedControl selectedKey={manager} onSelectionChange={onSelectionChange} styles={switcher}>
+          <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
+          <SegmentedControlItem id="npm">npm</SegmentedControlItem>
+          <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
+        </SegmentedControl>
+      )}
       <div className={codeWrap}>
         {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
-        <div className={style({display: 'flex', alignItems: 'center', gap: 12})}>
-          <Pre>{command}</Pre>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
+          <Prompt styles={iconStyle({size: 'L'})} />
+          <pre className={preStyle}>{command}</pre>
           <CopyButton ariaLabel="Copy command" tooltip="Copy command" text={command} />
         </div>
       </div>

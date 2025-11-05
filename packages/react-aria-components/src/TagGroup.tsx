@@ -12,19 +12,38 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DOMProps,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
 import {Collection, CollectionBuilder, createLeafComponent, ItemNode} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
-import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
-import {SelectableCollectionContext} from './context';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
-export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-TagGroup'
+   */
+  className?: string
+}
 
 export interface TagListRenderProps {
   /**
@@ -49,6 +68,11 @@ export interface TagListRenderProps {
 }
 
 export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TagList'
+   */
+  className?: ClassNameOrFunction<TagListRenderProps>,
   /** Provides content to display when there are no items in the tag list. */
   renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }
@@ -70,48 +94,48 @@ export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ta
   );
 });
 
-interface TagGroupInnerProps {
-  props: TagGroupProps,
+interface TagGroupInnerProps<T> {
+  props: TagGroupProps & SelectableCollectionContextValue<T>,
   forwardedRef: ForwardedRef<HTMLDivElement>,
   collection
 }
 
-function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
-  let contextProps;
-  [contextProps] = useContextProps({}, null, SelectableCollectionContext);
-  let {filter, ...collectionProps} = contextProps;
+function TagGroupInner<T extends object>({props, forwardedRef: ref, collection}: TagGroupInnerProps<T>) {
+  let tagListRef = useRef<HTMLElement>(null);
+  // Extract the user provided id so it doesn't clash with the collection id provided by Autocomplete
+  let {id, ...otherProps} = props;
+  [otherProps, tagListRef] = useContextProps(otherProps, tagListRef, SelectableCollectionContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {shouldUseVirtualFocus, disallowTypeAhead, ...DOMCollectionProps} = collectionProps || {};
-  let tagListRef = useRef<HTMLDivElement>(null);
+  let {filter, shouldUseVirtualFocus, ...DOMCollectionProps} = otherProps;
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
   let tagGroupState = useListState({
-    ...props,
+    ...DOMCollectionProps,
     children: undefined,
     collection
   });
 
-  let filteredState = UNSTABLE_useFilteredListState(tagGroupState, filter);
+  let filteredState = UNSTABLE_useFilteredListState(tagGroupState as ListState<T>, filter);
 
   // Prevent DOM props from going to two places.
-  let domProps = filterDOMProps(props, {global: true});
-  let domPropOverrides = Object.fromEntries(Object.entries(domProps).map(([k]) => [k, undefined]));
+  let domProps = filterDOMProps(otherProps, {global: true});
+  let domPropOverrides = Object.fromEntries(Object.entries(domProps).map(([k, val]) => [k, k === 'id' ? val : undefined]));
   let {
     gridProps,
     labelProps,
     descriptionProps,
     errorMessageProps
   } = useTagGroup({
-    ...props,
-    ...domPropOverrides,
     ...DOMCollectionProps,
+    ...domPropOverrides,
     label
   }, filteredState, tagListRef);
 
   return (
     <div
       {...domProps}
+      id={id}
       ref={ref}
       slot={props.slot || undefined}
       className={props.className ?? 'react-aria-TagGroup'}
@@ -119,7 +143,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
       <Provider
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
-          [TagListContext, {...gridProps, ref: tagListRef}],
+          [TagListContext, {...gridProps, ref: tagListRef as RefObject<HTMLDivElement>}],
           [ListStateContext, filteredState],
           [TextContext, {
             slots: {
@@ -178,9 +202,11 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState
-        ? props.renderEmptyState(renderValues)
-        : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
+      <SharedElementTransition>
+        {state.collection.size === 0 && props.renderEmptyState
+          ? props.renderEmptyState(renderValues)
+          : <CollectionRoot collection={state.collection} persistedKeys={persistedKeys} />}
+      </SharedElementTransition>
     </div>
   );
 }
@@ -194,6 +220,11 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
 }
 
 export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tag'
+   */
+  className?: ClassNameOrFunction<TagRenderProps>,
   /** A unique id for the tag. */
   id?: Key,
   /**
@@ -265,7 +296,8 @@ export const Tag = /*#__PURE__*/ createLeafComponent(ItemNode, (props: TagProps,
                 remove: removeButtonProps
               }
             }],
-            [CollectionRendererContext, DefaultCollectionRenderer]
+            [CollectionRendererContext, DefaultCollectionRenderer],
+            [SelectionIndicatorContext, {isSelected: states.isSelected}]
           ]}>
           {renderProps.children}
         </Provider>

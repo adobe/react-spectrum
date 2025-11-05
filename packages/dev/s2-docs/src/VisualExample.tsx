@@ -14,7 +14,7 @@ const exampleStyle = style({
   },
   marginTop: {
     default: 20,
-    ':is([data-example-switcher] > *)': 0
+    ':is([data-example-switcher] *)': 0
   },
   borderRadius: 'xl',
   display: 'grid',
@@ -56,7 +56,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    default: 'repeat(auto-fit, minmax(200px, 1fr))',
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',
@@ -91,7 +91,8 @@ export interface VisualExampleProps {
   wide?: boolean,
   align?: 'center' | 'start' | 'end',
   acceptOrientation?: boolean,
-  propsObject?: string
+  propsObject?: string,
+  showCoachMark?: boolean
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -105,7 +106,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, acceptOrientation, type, propsObject}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -160,15 +161,16 @@ export function VisualExample({component, docs, links, importSource, props, init
       code={code}
       files={files ? getFiles(files) : undefined}
       type={type}
-      registryUrl={type === 's2' || docs.type !== 'component' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
+      registryUrl={type === 's2' || docs.type !== 'component' ? undefined : `${type}/${docs.name}.json`}
+      showCoachMark={showCoachMark} />
   );
 
   // Render the corresponding client component to make the controls interactive.
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
-      <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
+      <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
         <Output align={align} acceptOrientation={acceptOrientation} />
-        <div className={controlsStyle}>
+        <div role="group" aria-label="Controls" className={controlsStyle}>
           {Object.keys(controls).map(control => <Control key={control} name={control} />)}
         </div>
         <div style={{gridArea: 'files', overflow: 'hidden'}}>

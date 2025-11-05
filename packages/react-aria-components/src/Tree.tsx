@@ -13,7 +13,18 @@
 import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {ChildrenOrFunction, ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ChildrenOrFunction,
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  RenderProps,
+  SlotProps,
+  StyleRenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
@@ -22,6 +33,8 @@ import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
+import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
@@ -135,6 +148,11 @@ export interface TreeRenderProps {
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
 export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tree'
+   */
+  className?: ClassNameOrFunction<TreeRenderProps>,
   /**
    * How multiple selection should behave in the tree.
    * @default "toggle"
@@ -400,11 +418,13 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
               [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
             ]}>
             {hasDropHooks && <RootDropIndicator />}
-            <CollectionRoot
-              collection={state.collection}
-              persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
-              scrollRef={ref}
-              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+            <SharedElementTransition>
+              <CollectionRoot
+                collection={state.collection}
+                persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
+                scrollRef={ref}
+                renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+            </SharedElementTransition>
           </Provider>
           {emptyState}
         </div>
@@ -448,7 +468,10 @@ export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
-export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
+export interface TreeItemContentProps {
+  /** The children of the component. A function may be provided to alter the children based on component state. */
+  children: ChildrenOrFunction<TreeItemContentRenderProps>
+}
 
 class TreeContentNode extends CollectionNode<any> {
   static readonly type = 'content';
@@ -470,6 +493,11 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TreeItem'
+   */
+  className?: ClassNameOrFunction<TreeItemRenderProps>,
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
@@ -627,39 +655,39 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   return (
     <>
       {dropIndicator && !dropIndicator.isHidden && (
-        <div
-          role="row"
-          aria-level={rowProps['aria-level']}
-          aria-expanded={rowProps['aria-expanded']}
-          aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
-          <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
-            <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
-            {rowProps['aria-expanded'] != null ? (
-              // Button to allow touch screen reader users to expand the item while dragging.
-              <div
-                role="button"
-                {...visuallyHiddenProps}
-                id={activateButtonId}
-                aria-label={expandButtonProps['aria-label']}
-                aria-labelledby={`${activateButtonId} ${rowProps.id}`}
-                tabIndex={-1}
-                ref={activateButtonRef} />
-            ) : null}
-          </div>
+      <div
+        role="row"
+        aria-level={rowProps['aria-level']}
+        aria-expanded={rowProps['aria-expanded']}
+        aria-label={dropIndicator.dropIndicatorProps['aria-label']}>
+        <div role="gridcell" aria-colindex={1} style={{display: 'contents'}}>
+          <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+          {rowProps['aria-expanded'] != null ? (
+            // Button to allow touch screen reader users to expand the item while dragging.
+            <div
+              role="button"
+              {...visuallyHiddenProps}
+              id={activateButtonId}
+              aria-label={expandButtonProps['aria-label']}
+              aria-labelledby={`${activateButtonId} ${rowProps.id}`}
+              tabIndex={-1}
+              ref={activateButtonRef} />
+          ) : null}
         </div>
-      )}
+      </div>
+    )}
       <div
         {...mergeProps(
-          DOMProps,
-          rowProps,
-          focusProps,
-          hoverProps,
-          focusWithinProps,
-          draggableItem?.dragProps
-        )}
+        DOMProps,
+        rowProps,
+        focusProps,
+        hoverProps,
+        focusWithinProps,
+        draggableItem?.dragProps
+      )}
         {...renderProps}
         ref={ref}
-        // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
+      // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
         data-expanded={(hasChildItems && isExpanded) || undefined}
         data-has-child-items={hasChildItems || undefined}
         data-level={level}
@@ -682,8 +710,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
                   selection: checkboxProps
                 }
               }],
-              // TODO: support description in the tree row
-              // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
+            // TODO: support description in the tree row
+            // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
               [ButtonContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},
@@ -702,7 +730,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
               }],
               [TreeItemContentContext, {
                 ...renderPropValues
-              }]
+              }],
+            [SelectionIndicatorContext, {isSelected: states.isSelected}]
             ]}>
             {children}
           </Provider>
@@ -721,6 +750,11 @@ export interface TreeLoadMoreItemRenderProps {
 }
 
 export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-TreeLoadMoreItem'
+   */
+  className?: ClassNameOrFunction<TreeLoadMoreItemRenderProps>,
   /**
    * The load more spinner to render when loading additional items.
    */

@@ -61,7 +61,9 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void,
+  /** Whether the select should be allowed to be open when the collection is empty. */
+  allowsEmptyCollection?: boolean
 }
 
 export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {

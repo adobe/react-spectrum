@@ -1,7 +1,8 @@
 import {Code, styles as codeStyles} from './Code';
+import {CSSVariables, StateTable} from './StateTable';
 import {DisclosureRow} from './DisclosureRow';
 import React from 'react';
-import {renderHTMLfromMarkdown, setLinks, TComponent, TInterface, Type} from './types';
+import {renderHTMLfromMarkdown, setLinks, TComponent, TInterface, TType, Type} from './types';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 
@@ -55,13 +56,38 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 interface PropTableProps {
   component: TComponent,
   links: any,
-  showDescription?: boolean
+  showDescription?: boolean,
+  hideRenderProps?: boolean,
+  showOptionalRenderProps?: boolean,
+  hideSelector?: boolean,
+  cssVariables?: {[name: string]: string}
 }
 
-export function PropTable({component, links, showDescription}: PropTableProps) {
+export function PropTable({component, links, showDescription, hideRenderProps, showOptionalRenderProps, hideSelector, cssVariables}: PropTableProps) {
   let properties = component?.props?.type === 'interface' ? component.props.properties : null;
   if (!properties) {
     return null;
+  }
+
+  let defaultClassName = properties.className?.default?.slice(1, -1);
+  let renderProps: TType | null = null;
+  let renderPropProperty = properties.className || properties.children;
+  if (!hideRenderProps && renderPropProperty?.type === 'property') {
+    if (renderPropProperty.value.type === 'union') {
+      let func = renderPropProperty.value.elements.find(e => e.type === 'function');
+      if (func) {
+        renderProps = func.parameters[0]?.value;
+      }
+    } else if (renderPropProperty.value.type === 'application') {
+      let application = renderPropProperty.value;
+      if (application.base.type === 'link' && /ClassNameOrFunction|ChildrenOrFunction/.test(links[application.base.id]?.name)) {
+        renderProps = application.typeParameters[0];
+      }
+    }
+
+    if (renderProps?.type === 'link') {
+      renderProps = links[renderProps.id];
+    }
   }
 
   return (
@@ -72,6 +98,15 @@ export function PropTable({component, links, showDescription}: PropTableProps) {
         links={links}
         propGroups={GROUPS}
         defaultExpanded={DEFAULT_EXPANDED} />
+      {defaultClassName ? <DefaultClassName defaultClassName={defaultClassName} /> : null}
+      {renderProps && renderProps.type === 'interface' ? (
+        <StateTable
+          style={!defaultClassName ? {marginTop: 16} : undefined}
+          properties={renderProps.properties}
+          showOptional={showOptionalRenderProps}
+          hideSelector={hideSelector} />
+      ) : null}
+      {cssVariables && <CSSVariables cssVariables={cssVariables} />}
     </>
   );
 }
@@ -215,4 +250,13 @@ function groupProps(
   }
 
   return [props, groups];
+}
+
+function DefaultClassName({defaultClassName}: {defaultClassName: string}) {
+  return (
+    <p className={style({font: 'ui'})}>
+      <span className={style({fontWeight: 'bold'})}>Default className: </span>
+      <span className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{defaultClassName}</span>
+    </p>
+  );
 }
