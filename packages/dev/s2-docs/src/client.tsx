@@ -35,6 +35,8 @@ async function navigate(pathname: string, push = false) {
           element.scrollIntoView();
         }
       }
+
+      window.dispatchEvent(new CustomEvent('rsc-navigation'));
     });
   } catch {
     let errorRes = await fetchRSC<ReactElement>('/error.rsc');

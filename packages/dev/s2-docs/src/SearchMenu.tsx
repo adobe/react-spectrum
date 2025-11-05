@@ -310,6 +310,18 @@ export function SearchMenu(props: SearchMenuProps) {
       || 'Items';
   }, [filteredComponents, sections, selectedSectionId, searchValue]);
 
+  useEffect(() => {
+    const handleNavigation = () => {
+      setSearchValue('');
+      onClose();
+    };
+
+    window.addEventListener('rsc-navigation', handleNavigation);
+    return () => {
+      window.removeEventListener('rsc-navigation', handleNavigation);
+    };
+  }, [onClose]);
+
   return (
     <Dialog id={overlayId} className={style({height: 'full'})} aria-label="Search menu">
       <Tabs
@@ -399,10 +411,6 @@ export function SearchMenu(props: SearchMenuProps) {
                     </Suspense>
                   ) : (
                     <ComponentCardView
-                      onAction={() => {
-                        setSearchValue('');
-                        onClose();
-                      }}
                       items={selectedItems.map(item => ({
                         id: item.id,
                         name: item.name,
