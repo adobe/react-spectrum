@@ -368,7 +368,7 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
         values={[
           [HeaderContext, {...headingProps, ref: headingRef}],
           [SelectionManagerContext, manager],
-          [MenuItemContext, {shouldCloseOnSelect: closeOnSelect ?? props.shouldCloseOnSelect}]
+          [MenuItemContext, {shouldCloseOnSelect: props.shouldCloseOnSelect ?? closeOnSelect}]
         ]}>
         <CollectionBranch collection={state.collection} parent={section} />
       </Provider>
