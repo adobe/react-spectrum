@@ -69,7 +69,7 @@ For screen reader users, the interactions are similar. We've taken great care to
 In addition, while in drag and drop mode, all elements other than valid drop targets are hidden from screen readers. Desktop screen reader users can use the `Tab` key to navigate as described earlier, but touch screen readers navigate by swiping through elements using a virtual cursor, and double tapping to drop. Hiding all non-drop target elements makes it much easier to find valid places to drop, without needing to swipe through potentially hundreds of unrelated elements.
 
 <video src={dndMobile} loop autoPlay muted style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}}>
-  <Track src={dndMobileVTT} default kind="captions" label="English Captions" srclang="en-us" type="text/vtt" />
+  <track src={dndMobileVTT} default kind="captions" label="English Captions" srcLang="en-us" type="text/vtt" />
 </video>
 
 All of these accessibility features are implemented behind the scenes using the same API as for mouse and touch interactions. There is no additional effort required by the developer to make drag and drop accessible.
@@ -87,7 +87,7 @@ Collection components such as lists or tables are treated as a single drop targe
   <figcaption style={{fontStyle: 'italic'}}>The "root", "on", and "between" drop positions.</figcaption>
 </figure>
 
-The [useDraggableCollection](../useDraggableCollection.html) and [useDroppableCollection](../useDroppableCollection.html) hooks can be used to implement drag and drop within components built with existing React Aria hooks such as [useListBox](../useListBox.html), [useTable](../useTable.html), and [useGridList](../useGridList.html). The drag and drop system integrates with our existing architecture for [collections](../collections.html) and [selection](../selection.html), which are used across all of these components. This enables multiple selected items to be dragged at once, allows keyboard navigation within a droppable collection to adapt based on the collection's layout, and facilitates automatic focus management when items are dropped.
+The [useDraggableCollection](https://react-spectrum.adobe.com/react-aria/useDraggableCollection.html) and [useDroppableCollection](../useDroppableCollection.html) hooks can be used to implement drag and drop within components built with existing React Aria hooks such as [useListBox](https://react-spectrum.adobe.com/react-aria/useListBox.html), [useTable](https://react-spectrum.adobe.com/react-aria/useTable.html), and [useGridList](https://react-spectrum.adobe.com/react-aria/useGridList.html). The drag and drop system integrates with our existing architecture for [collections](../collections.html) and [selection](../selection.html), which are used across all of these components. This enables multiple selected items to be dragged at once, allows keyboard navigation within a droppable collection to adapt based on the collection's layout, and facilitates automatic focus management when items are dropped.
 
 Try out an example below, which allows reordering and dragging elements between lists.
 

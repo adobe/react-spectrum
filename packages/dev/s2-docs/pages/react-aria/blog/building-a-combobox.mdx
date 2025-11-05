@@ -21,7 +21,7 @@ import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
 
 export const tags = ['combobox', 'accessibility', 'mobile', 'react spectrum', 'react', 'spectrum', 'interactions', 'touch'];
-export const description = 'After many months of research, development, and testing, we\'re excited to announce that the React Spectrum [ComboBox](../react-spectrum/ComboBox.html) component and React Aria [useComboBox](../useComboBox.html) hook are now available! In this post we\'ll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox.';
+export const description = 'After many months of research, development, and testing, we\'re excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook are now available! In this post we\'ll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox.';
 export const date = '2021-07-13';
 export const author = 'Daniel Lu';
 export const authorLink = 'https://github.com/LFDanLu';
@@ -30,7 +30,7 @@ export const section = 'Blog';
 
 # Creating an accessible autocomplete experience
 
-After many months of research, development, and extensive testing across browsers, devices, and assistive technology, we're excited to announce that the React Spectrum [ComboBox](../react-spectrum/ComboBox.html) component and React Aria [useComboBox](../useComboBox.html) hook are now available! We've focused on the following areas to help you build quality autocomplete experiences.
+After many months of research, development, and extensive testing across browsers, devices, and assistive technology, we're excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook are now available! We've focused on the following areas to help you build quality autocomplete experiences.
 
 - **Accessibility** — Our ComboBox has been tested with screen readers across desktop and mobile devices, and with many different input methods including mouse, touch, and keyboard. We encountered many screen reader differences, and worked hard to ensure announcements are clear and consistent.
 - **Mobile** — On small screens, the React Spectrum ComboBox is automatically displayed in a tray, which improves the user experience by giving them a larger area to scroll. We also optimized our experience for touch screen interactions and on screen keyboards.
@@ -137,12 +137,12 @@ Special care was taken such that the messages themselves only contained relevant
 When the user then moves to a different option in the same section, only the newly focused item name is announced. Similarly, the total option count is only announced when number of options available in the listbox changes. Since many of these messages were added to fill in gaps in VoiceOver's announcement,
 we only trigger the `LiveAnnouncer` on Apple devices to avoid announcement overlap on other screen readers.
 
-If you are interested in using this `LiveAnnouncer` yourself, check out [LiveAnnouncer](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/live-announcer/src/LiveAnnouncer.tsx) in `@react-aria/live-announcer`. Otherwise, the [useComboBox](../useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
+If you are interested in using this `LiveAnnouncer` yourself, check out [LiveAnnouncer](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/live-announcer/src/LiveAnnouncer.tsx) in `@react-aria/live-announcer`. Otherwise, the [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
 
 <video src={comboboxAccessibilityUrl} loop autoPlay muted style={{maxWidth: 'min(80%, 700px)', display: 'block', margin: '20px auto'}} />
 
 ## Conclusion
 
-When we first set off to build ComboBox, we had no idea of the complexity that awaited us. If you're building your own combo box component for your design system, I'd recommend checking out the [useComboBox](../useComboBox.html) hook which handles all of this complexity and has been tested across a wide variety of devices, browsers, and assistive technology combinations.
+When we first set off to build ComboBox, we had no idea of the complexity that awaited us. If you're building your own combo box component for your design system, I'd recommend checking out the [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook which handles all of this complexity and has been tested across a wide variety of devices, browsers, and assistive technology combinations.
 It really just goes to show how important cross browser and device testing is when building a component.
 

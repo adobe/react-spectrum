@@ -72,7 +72,7 @@ However, it gets even more tricky on iOS. While on macOS, Safari will respect ou
 
 The only solution is to call `event.preventDefault()` on all mouse and touch events on the element, and handle focusing ourselves. This ensures that the browser does not perform any of its default behavior, including this forced blur, but it means that we'll have to handle all of the default browser behavior ourselves.
 
-This focus normalization behavior is implemented by the [usePress](../usePress.html) hook in React Aria, which is used by [useButton](../useButton.html), [useCheckbox](../useCheckbox.html), [useRadio](../useRadioGroup.html), and many other hooks. If you're implementing your own components, I'd highly recommend checking them out to ensure the focus behavior is consistent across browsers.
+This focus normalization behavior is implemented by the [usePress](../usePress.html) hook in React Aria, which is used by [useButton](https://react-spectrum.adobe.com/react-aria/useButton.html), [useCheckbox](https://react-spectrum.adobe.com/react-aria/useCheckbox.html), [useRadio](https://react-spectrum.adobe.com/react-aria/useRadioGroup.html), and many other hooks. If you're implementing your own components, I'd highly recommend checking them out to ensure the focus behavior is consistent across browsers.
 
 ## Conclusion
 
