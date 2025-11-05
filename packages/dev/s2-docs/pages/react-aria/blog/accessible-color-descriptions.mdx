@@ -60,9 +60,9 @@ In addition to reducing the number of strings we need, these descriptions are al
 Our algorithm for generating color descriptions works in the [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch) color space, recently standardized by CSS. This color space offers the advantage of uniform lightness across all hues, unlike HSL, where hues like blue appear significantly darker than hues like green or yellow at the same lightness value. The difference between HSL and OKLCH is shown below.
 
 <div role="img" aria-label="Color wheel for HSL and OKLCH" style={{display: 'flex', gap: 24, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
-  <div style={{width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(var(--lightningcss-light, #fff) var(--lightningcss-dark, #111) 0% 25%, transparent 20%), conic-gradient(in hsl longer hue, hsl(0, 100%, 50%), hsl(360, 100%, 50%))`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2em'}}>HSL</div>
+  <div style={{width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(var(--lightningcss-light, #fff) var(--lightningcss-dark, #111) 0% 25%, transparent 20%), conic-gradient(in hsl longer hue, hsl(0, 100%, 50%), hsl(360, 100%, 50%))`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'adobe-clean-spectrum-vf'}}>HSL</div>
 
-  <div style={{width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(var(--lightningcss-light, #fff) var(--lightningcss-dark, #111) 0% 25%, transparent 20%), conic-gradient(in oklch longer hue, oklch(70% 0.25 0), oklch(70% 0.25 360))`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2em'}}>OKLCH</div>
+  <div style={{width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(var(--lightningcss-light, #fff) var(--lightningcss-dark, #111) 0% 25%, transparent 20%), conic-gradient(in oklch longer hue, oklch(70% 0.25 0), oklch(70% 0.25 360))`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'adobe-clean-spectrum-vf'}}>OKLCH</div>
 </div>
 
 In HSL, certain hues also appear to shift as the lightness changes — for example, blue tends to shift toward purple as it gets lighter. This would lead to perceptually inaccurate descriptions, where colors that appear purple might be described as blue. OKLCH resolves this issue by maintaining a consistent hue across all lightness levels.
@@ -70,11 +70,11 @@ In HSL, certain hues also appear to shift as the lightness changes — for examp
 <div role="img" aria-label="Comparison of a blue gradient in HSL and OKLCH" style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
     <div style={{width: 240, height: 240, background: 'linear-gradient(to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
-    <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>HSL</span>
+    <span style={{fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'adobe-clean-spectrum-vf'}}>HSL</span>
   </div>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
     <div style={{width: 240, height: 240, background: 'linear-gradient(in oklab to right, hsl(240, 0%, 100%), hsl(240, 100%, 50%))'}} />
-    <span style={{fontWeight: 'bold', fontSize: '1.2em'}}>OKLCH</span>
+    <span style={{fontWeight: 'bold', fontSize: '1.2em', fontFamily: 'adobe-clean-spectrum-vf'}}>OKLCH</span>
   </div>
 </div>
 
@@ -97,7 +97,7 @@ These properties of OKLCH allow us to generate perceptually accurate description
     return (
       <React.Fragment key={name}>
         <div style={{width: 2, height: radius, background: 'black', position: 'absolute', top: '0%', left: 'calc(50% - 1px)', transform: `rotate(${start}deg)`, transformOrigin: 'center bottom'}} />
-        <span style={{position: 'absolute', top: radius + Math.cos(center) * 100, left: radius + Math.sin(center) * 100, transform: 'translate(-50%, -50%)'}}>{name}</span>
+        <span style={{position: 'absolute', top: radius + Math.cos(center) * 100, left: radius + Math.sin(center) * 100, transform: 'translate(-50%, -50%)', fontFamily: 'adobe-clean-spectrum-vf'}}>{name}</span>
       </React.Fragment>
     )
   })}
@@ -107,7 +107,7 @@ If a hue falls at least halfway between two segments, the names of both segments
 
 There are also a few additional special cases. For instance, dark orange is referred to as “brown”, while darker yellows tend to appear more green and are described as “yellow green”.
 
-<div role="img" aria-label="Two gradients showing orange to brown and yellow to yellow green. Orange to brown splits 15% down, yellow to yellow green splits 8% down" style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
+<div role="img" aria-label="Two gradients showing orange to brown and yellow to yellow green. Orange to brown splits 15% down, yellow to yellow green splits 8% down" style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none', fontFamily: 'adobe-clean-spectrum-vf'}}>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
     <div style={{width: 240, height: 240, background: 'linear-gradient(in oklch to bottom, oklch(100% 0.2 60), oklch(0% 0.2 60))', position: 'relative'}}>
       <span style={{position: 'absolute', top: '16%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Orange</span>
@@ -126,7 +126,7 @@ There are also a few additional special cases. For instance, dark orange is refe
 
 The hue name is combined with lightness (very dark, dark, light, very light) and chroma (grayish, pale, and vibrant) descriptors based on ranges in the L and C channels of the OKLCH color space to create a complete color description.
 
-<div role="img" aria-label="Two pink gradients showing lightness and chroma. Lightness has 5 segments labeled very light, light, nothing, dark, and very dark. Chroma has 4 segments labeled grayish, pale, nothing, and vibrant." style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none'}}>
+<div role="img" aria-label="Two pink gradients showing lightness and chroma. Lightness has 5 segments labeled very light, light, nothing, dark, and very dark. Chroma has 4 segments labeled grayish, pale, nothing, and vibrant." style={{display: 'flex', gap: 32, margin: '48px 0', flexWrap: 'wrap', justifyContent: 'center', forcedColorAdjust: 'none', fontFamily: 'adobe-clean-spectrum-vf'}}>
   <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'}}>
     <div style={{width: 240, height: 240, background: 'linear-gradient(in oklch to bottom, oklch(100% 0.25 0), oklch(0% 0.25 0))', position: 'relative'}}>
       <span style={{position: 'absolute', top: '7.5%', left: '50%', transform: 'translate(-50%, -50%)', color: 'black'}}>Very Light</span>
