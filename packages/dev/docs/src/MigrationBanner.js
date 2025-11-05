@@ -17,8 +17,18 @@ import React from 'react';
 import url from 'url:../pages/assets/wallpaper_collaborative_S2_desktop.webp';
 
 export function MigrationBanner({currentPage}) {
+  if (!currentPage || !currentPage.name) {
+    return null;
+  }
+
   let parts = currentPage.name.split('/');
   let section = parts[0];
+  let isIndexPage = /^(?:[^/]+\/)?index\.html$/.test(currentPage.name);
+
+  // only banner on react-stately index page, not other index pages
+  if (isIndexPage && section !== 'react-stately') {
+    return null;
+  }
 
   let content;
   if (section === 'react-aria') {
@@ -32,7 +42,7 @@ export function MigrationBanner({currentPage}) {
         {' has a new home!'}
       </>
     );
-  } else if (section === 'react-spectrum') {
+  } else if (section === 'v3') {
     content = (
       <>
         <Link variant="overBackground">

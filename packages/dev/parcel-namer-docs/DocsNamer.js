@@ -30,7 +30,12 @@ module.exports = new Namer({
 
       // For dev files, simply /PageName.html or /dir/PageName.html
       if (parts[1] === 'dev') {
-        return path.join(...parts.slice(4, -1), basename);
+        let devPath = parts.slice(4, -1);
+        // move /releases to v3/releases
+        if (devPath[0] === 'releases') {
+          return path.join('v3', ...devPath, basename);
+        }
+        return path.join(...devPath, basename);
       }
 
       // For @internationalized, group by package name.
@@ -47,9 +52,15 @@ module.exports = new Namer({
         return path.join('react-aria', ...parts.slice(3, -1), basename);
       }
 
-      // For @namespace package files, urls will be /${namespace}/PageName.html
+      // move /react-spectrum pages under /v3
+      let namespace = parts[1].replace(/^@/, '');
+
+      if (namespace === 'react-spectrum') {
+        namespace = 'v3';
+      }
+
       return path.join(
-        parts[1].replace(/^@/, ''),
+        namespace,
         ...parts.slice(4, -1),
         basename
       );
