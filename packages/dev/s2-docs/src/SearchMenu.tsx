@@ -1,18 +1,17 @@
 'use client';
 
 import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
-import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator, useFilter} from 'react-aria-components';
+import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
-import {iconAliases} from './iconAliases.js';
-import {iconList, IconSearchSkeleton} from './IconSearchView';
+import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 // @ts-ignore
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
@@ -142,18 +141,7 @@ export function SearchMenu(props: SearchMenuProps) {
   const [selectedSectionId, setSelectedSectionId] = useState<string>(() => currentPage.exports?.section?.toLowerCase() || 'components');
   const prevSearchWasEmptyRef = useRef<boolean>(true);
 
-  // Icon filter function
-  const {contains} = useFilter({sensitivity: 'base'});
-  const iconFilter = useCallback((textValue, inputValue) => {
-    // check if we're typing part of a category alias
-    for (const alias of Object.keys(iconAliases)) {
-      if (contains(alias, inputValue) && iconAliases[alias].includes(textValue)) {
-        return true;
-      }
-    }
-    // also compare for substrings in the icon's actual name
-    return textValue != null && contains(textValue, inputValue);
-  }, [contains]);
+  const iconFilter = useIconFilter();
 
   const filteredIcons = useMemo(() => {
     if (!searchValue.trim()) {

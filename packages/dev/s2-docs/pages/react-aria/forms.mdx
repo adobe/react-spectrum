@@ -1,29 +1,35 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/s2';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const section = 'Guides';
 export const tags = ['forms', 'validation'];
-export const description = 'Building accessible forms with React Spectrum';
+export const description = 'Building accessible forms with React Aria';
 
 # Forms
 
-<PageDescription>Forms allow users to enter and submit data, and provide them with feedback along the way. React Spectrum includes many components that integrate with HTML forms, with support for custom validation, labels, and help text.</PageDescription>
+<PageDescription>Forms allow users to enter and submit data, and provide them with feedback along the way. React Aria includes many components that integrate with HTML forms, with support for custom validation and styling.</PageDescription>
 
 ## Labels and help text
 
-Accessible forms start with clear, descriptive labels for each field. Use the `label` prop to add a visible label to any field. Additional help text can also be added via the `description` prop. The label and help text are announced by screen readers when the field is focused.
+Accessible forms start with clear, descriptive labels for each field. Rendering a `<Label>` within a field automatically associates it with the input. Additional context can also be added via a secondary `description` slot. The label and description are announced by screen readers when the field is focused.
 
-```tsx render
-import {TextField} from '@react-spectrum/s2';
+```tsx render expanded
+"use client";
+import {TextField, Label, Input, Text} from 'react-aria-components';
 
-<TextField
-  type="password"
-  label="Password"
-  placeholder="Choose a password"
-  description="Password must be at least 8 characters." />
+<TextField type="password">
+  {/*- begin highlight -*/}
+  <Label>Password</Label>
+  {/*- end highlight -*/}
+  <Input className="react-aria-Input inset" placeholder="Choose a password" />
+  {/*- begin highlight -*/}
+  <Text slot="description" className="field-description">
+    Password must be at least 8 characters.
+  </Text>
+  {/*- end highlight -*/}
+</TextField>
 ```
 
 Most fields should have a visible label. In rare exceptions, the `aria-label` or `aria-labelledby` attribute must be provided for assistive technologies.
@@ -40,7 +46,9 @@ When using React 19, use the `action` prop to handle form submission. This recei
 
 ```tsx render
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 
 <Form
   /*- begin highlight -*/
@@ -56,7 +64,9 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 
 <Form
   /*- begin highlight -*/
@@ -82,28 +92,26 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
 
 ### Controlled forms
 
-By default, all React Spectrum components are uncontrolled, which means that the state is stored internally on your behalf. To synchronize the value with another part of the UI as the user edits, use the `value` and `onChange` props with the [useState](https://react.dev/reference/react/useState) hook.
+By default, all React Aria components are uncontrolled, which means that the state is stored internally on your behalf. To synchronize the value with another part of the UI as the user edits, use the `value` and `onChange` props with the [useState](https://react.dev/reference/react/useState) hook.
 
 ```tsx render
 'use client';
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example() {
   /*- begin highlight -*/
   let [name, setName] = useState('');
   /*- end highlight -*/
 
-  let onSubmit = (e) => {
-    e.preventDefault();
-
-    // Submit data to your backend API...
-    alert(name);
-  };
-
   return (
-    <Form onSubmit={onSubmit} styles={style({maxWidth: 320})}>
+    <Form
+      action={() => {
+        // Submit data to your backend API...
+        alert(name)
+      }}>
       <TextField
         label="Name"
         placeholder="Enter your name"
@@ -112,10 +120,7 @@ function Example() {
         onChange={setName} />
       {/*- end highlight -*/}
       <div>You entered: {name}</div>
-      <ButtonGroup>
-        <Button type="submit" variant="primary">Submit</Button>
-        <Button type="reset" variant="secondary">Reset</Button>
-      </ButtonGroup>
+      <Button type="submit">Submit</Button>
     </Form>
   );
 }
@@ -123,29 +128,31 @@ function Example() {
 
 ## Validation
 
-Well-designed form validation assists the user with specific, helpful error messages without confusing them with unnecessary errors for partial input. React Spectrum supports native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and integration with server-side validation errors.
+Well-designed form validation assists the user with specific, helpful error messages without confusing them with unnecessary errors for partial input. React Aria supports native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and integration with server-side validation errors.
 
 ### Constraint validation
 
-All React Spectrum form components integrate with native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation). This allows you to define constraints on each field such as required, minimum and maximum values, text formats such as email addresses, and even custom regular expression patterns. These constraints are checked by the browser when the user commits changes to the value (e.g. on blur) or submits the form.
+All React Aria form components integrate with HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation). This allows you to define constraints on each field such as required, minimum and maximum values, text formats such as email addresses, and custom regular expression patterns. These constraints are checked by the browser when the user commits changes to the value (e.g. on blur) or submits the form.
+
+Use the `FieldError` component to display validation errors with custom styles rather than the browser's default UI.
 
 ```tsx render
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+"use client";
+import {TextField, Label, Input, FieldError} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';
+import {Button} from 'vanilla-starter/Button';
 
-<Form styles={style({maxWidth: 320})}>
-  <TextField
-    label="Email"
-    name="email"
-    placeholder="Enter your email"
-    /*- begin highlight -*/
-    type="email"
-    isRequired />
+<Form>
+  {/*- begin highlight -*/}
+  <TextField name="email" type="email" isRequired>
   {/*- end highlight -*/}
-  <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
+    <Label>Email</Label>
+    <Input className="react-aria-Input inset" placeholder="Enter your email" />
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+  </TextField>
+  <Button type="submit">Submit</Button>
 </Form>
 ```
 
@@ -161,35 +168,33 @@ See each component's documentation for more details on the supported validation 
 
 ### Customizing error messages
 
-By default, React Spectrum displays the error message provided by the browser, which is localized in the user's preferred language. You can customize these messages by providing a function to the `errorMessage` prop. This receives a list of error strings along with a [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) object describing why the field is invalid.
+By default, the `FieldError` component displays the error message provided by the browser, which is localized in the user's preferred language. You can customize these messages by providing a render prop function to `FieldError`. This receives a list of error strings along with a [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) object describing why the field is invalid.
 
 ```tsx render
 "use client";
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TextField, Label, Input, FieldError} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';
+import {Button} from 'vanilla-starter/Button';
 
-<Form styles={style({maxWidth: 320})}>
-  <TextField
-    label="Name"
-    name="name"
-    placeholder="Enter your name"
-    isRequired
-    /*- begin highlight -*/
-    errorMessage={({validationDetails}) => (
-      validationDetails.valueMissing ? 'Please enter a name.' : ''
-    )}
-    /*- end highlight -*/
-  />
-  <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
+<Form>
+  <TextField name="name" isRequired>
+    <Label>Name</Label>
+    <Input className="react-aria-Input inset" placeholder="Enter your name" />
+    {/*- begin highlight -*/}
+    <FieldError>
+      {({validationDetails}) => (
+        validationDetails.valueMissing ? 'Please enter a name.' : ''
+      )}
+    </FieldError>
+    {/*- end highlight -*/}
+  </TextField>
+  <Button type="submit">Submit</Button>
 </Form>
 ```
 
 <InlineAlert variant="informative">
   <Heading>Localization</Heading>
-  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Spectrums's [Provider](Provider.html) has no effect on validation errors.</Content>
+  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Aria's [I18nProvider](I18nProvider.html) has no effect on validation errors.</Content>
 </InlineAlert>
 
 ### Custom validation
@@ -198,21 +203,18 @@ To implement custom validation rules, pass a function to the `validate` prop. Th
 
 ```tsx render
 "use client";
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 
-<Form styles={style({maxWidth: 320})}>
+<Form>
   <TextField
     label="Username"
     placeholder="Choose a username"
     /*- begin highlight -*/
-    validate={value => value === 'admin' ? 'Nice try!' : null}
-    /*- end highlight -*/
-  />
-  <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
-  </ButtonGroup>
+    validate={value => value === 'admin' ? 'Nice try!' : null} />
+    {/*- end highlight -*/}
+  <Button type="submit">Submit</Button>
 </Form>
 ```
 
@@ -220,11 +222,13 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 By default, validation errors are displayed after the value is committed (e.g. on blur), or when the form is submitted. This avoids confusing the user with irrelevant errors while they are still entering a value.
 
-In some cases, validating in realtime can be desireable, such as when meeting password requirements. This can be accomplished by making the field value [controlled](#controlled-forms), and setting the `isInvalid` and `errorMessage` props accordingly.
+In some cases, validating in realtime can be helpful, such as when meeting password requirements. To implement this, make the field value [controlled](#controlled-forms), and set the `isInvalid` prop and error message appropriately.
 
 ```tsx render
 'use client';
-import {TextField} from '@react-spectrum/s2';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 function Example() {
@@ -262,9 +266,10 @@ To display server validation errors, set the the `validationErrors` prop on the 
 
 ```tsx render
 'use client';
-import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 import {useActionState} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function action(prevState, formData: FormData) {
   return {
@@ -280,7 +285,7 @@ function Example() {
 
   return (
     <Form
-      styles={style({maxWidth: 320})}
+      validationBehavior="native"
       action={formAction}
       /*- begin highlight -*/
       validationErrors={errors}>
@@ -298,10 +303,7 @@ function Example() {
         defaultValue={values?.password}
         type="password"
         isRequired />
-      <ButtonGroup>
-        <Button type="submit" variant="primary">Submit</Button>
-        <Button type="reset" variant="secondary">Reset</Button>
-      </ButtonGroup>
+      <Button type="submit">Submit</Button>
     </Form>
   );
 }
@@ -309,7 +311,7 @@ function Example() {
 
 #### Schema validation
 
-React Spectrum is compatible with errors returned from schema validation libraries like [Zod](https://zod.dev/), which are often used for server-side form validation. Use the [flatten](https://zod.dev/ERROR_HANDLING?id=flattening-errors) method to get a list of errors for each field and return this as part of your HTTP response.
+React Aria is compatible with errors returned from schema validation libraries like [Zod](https://zod.dev/), which are often used for server-side form validation. Use the [flatten](https://zod.dev/ERROR_HANDLING?id=flattening-errors) method to get a list of errors for each field and return this as part of your HTTP response.
 
 ```tsx
 // In your server...
@@ -343,7 +345,7 @@ function handleRequest(formData: FormData) {
   <Content>Error message localization is best done on the server rather than on the client to avoid large bundles. You can submit the user's locale as part of the form data if needed, and use a library like [zod-i18n](https://github.com/aiji42/zod-i18n) to translate the errors.</Content>
 </InlineAlert>
 
-#### React Server Actions
+#### React Server Functions
 
 [Server Functions](https://react.dev/reference/rsc/server-functions), marked with the `"use server"` directive, allow client components to call async functions executed on the server in supported frameworks (e.g. Next.js).
 
@@ -366,13 +368,17 @@ export async function createTodo(prevState: any, formData: FormData) {
 }
 ```
 
+Server functions can be imported into client components and passed to the Form `action` prop. Use the [useActionState](https://react.dev/reference/react/useActionState) hook to access the return value, which may include validation errors.
+
 ```tsx
 // app/add-form.tsx
 'use client';
 
 import {useActionState} from 'react';
-import {Form, TextField, ActionButton} from '@react-spectrum/s2';
-import {createTodo} from '@/app/actions';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
+import {createTodo} from './actions';
 
 export function AddForm() {
   /*- begin highlight -*/
@@ -384,7 +390,7 @@ export function AddForm() {
     <Form action={formAction} validationErrors={errors}>
     {/*- end highlight -*/}
       <TextField label="Task" name="todo" />
-      <ActionButton type="submit">Add</ActionButton>
+      <Button type="submit">Add</Button>
     </Form>
   );
 }
@@ -397,7 +403,9 @@ export function AddForm() {
 ```tsx
 // app/routes/signup.tsx
 import {useSubmit} from 'react-router';
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 
 export default function SignupForm({actionData}: Route.ComponentProps) {
   let submit = useSubmit();
@@ -414,7 +422,7 @@ export default function SignupForm({actionData}: Route.ComponentProps) {
       {/*- end highlight -*/}
       <TextField label="Username" name="username" isRequired />
       <TextField label="Password" name="password" type="password" isRequired />
-      <Button type="submit" variant="accent">Submit</Button>
+      <Button type="submit">Submit</Button>
     </Form>
   );
 }
@@ -436,17 +444,19 @@ export async function action({request}: Route.ActionArgs) {
 
 ## Form libraries
 
-In most cases, uncontrolled forms with the builtin validation features are sufficient. However, if you are building a truly complex form, or integrating React Spectrum components into an existing form, a separate form library such as [React Hook Form](https://react-hook-form.com/) or [Formik](https://formik.org/) may be helpful.
+In most cases, uncontrolled forms with the builtin validation features are sufficient. However, if you are building a truly complex form, or integrating React Aria components into an existing form, a separate form library such as [React Hook Form](https://react-hook-form.com/) or [Formik](https://formik.org/) may be helpful.
 
 ### React Hook Form
 
-[React Hook Form](https://react-hook-form.com/) is a popular form library for React. It is primarily designed to work directly with plain HTML input elements, but supports custom form components like the ones in React Spectrum as well.
+[React Hook Form](https://react-hook-form.com/) is a popular form library for React. It is primarily designed to work directly with plain HTML input elements, but supports custom form components like the ones in React Aria as well.
 
-Use the [Controller](https://react-hook-form.com/docs/usecontroller/controller) component from React Hook Form to integrate React Spectrum components. Pass the props for the `field` render prop through to the React Spectrum component you're using, and use the `fieldState` to get validation errors to display.
+Use the [Controller](https://react-hook-form.com/docs/usecontroller/controller) component from React Hook Form to integrate React Aria components. Pass the props for the `field` render prop through to the React Aria component you're using, and use the `fieldState` to get validation errors to display.
 
 ```tsx
-import {useForm, Controller} from 'react-hook-form'
-import {Form, TextField, Button} from '@react-spectrum/s2';
+import {useForm, Controller} from 'react-hook-form';
+import {Form} from 'vanilla-starter/Form';
+import {TextField} from 'vanilla-starter/TextField';
+import {Button} from 'vanilla-starter/Button';
 
 function App() {
   let {handleSubmit, control} = useForm({
@@ -476,13 +486,14 @@ function App() {
             onBlur={onBlur}
             ref={ref}
             isRequired
-            validationState={invalid ? 'invalid' : undefined}
-            errorMessage={error?.message}
-          />
-        )}
-      />
-      <Button type="submit" variant="accent">Submit</Button>
+            // Let React Hook Form handle validation instead of the browser.
+            validationBehavior="aria"
+            isInvalid={invalid}
+            errorMessage={error?.message} />
+        )} />
+      <Button type="submit">Submit</Button>
     </Form>
   );
 }
 ```
+

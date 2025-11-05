@@ -51,6 +51,10 @@ export interface ProviderProps extends UnsafeStyles {
 
 export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | null>(null);
 
+/**
+ * Provider is the container for all React Spectrum components.
+ * It loads the font and sets the colorScheme, locale, and other application level settings.
+ */
 export function Provider(props: ProviderProps): JSX.Element {
   let result = <ProviderInner {...props} />;
   let parentColorScheme = useContext(ColorSchemeContext);
