@@ -36,6 +36,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
+import {MigrationBanner} from './MigrationBanner';
 
 const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
@@ -551,6 +552,7 @@ export function Layout(props) {
     <BaseLayout {...props}>
       <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
         <VersionBadge version={props.currentPage.preRelease} size="large" />
+        <MigrationBanner currentPage={props.currentPage} />
         {props.children}
       </article>
     </BaseLayout>
