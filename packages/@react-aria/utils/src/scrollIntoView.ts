@@ -54,10 +54,10 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let scrollMarginLeft = parseInt(itemStyle.scrollMarginLeft, 10) || 0;
   let scrollMarginRight = parseInt(itemStyle.scrollMarginRight, 10) || 0;
 
-  let scrollPaddingTop = parseInt(itemStyle.scrollPaddingTop, 10) || 0;
-  let scrollPaddingBottom = parseInt(itemStyle.scrollPaddingBottom, 10) || 0;
-  let scrollPaddingLeft = parseInt(itemStyle.scrollPaddingLeft, 10) || 0;
-  let scrollPaddingRight = parseInt(itemStyle.scrollPaddingRight, 10) || 0;
+  let scrollPaddingTop = parseInt(viewStyle.scrollPaddingTop, 10) || 0;
+  let scrollPaddingBottom = parseInt(viewStyle.scrollPaddingBottom, 10) || 0;
+  let scrollPaddingLeft = parseInt(viewStyle.scrollPaddingLeft, 10) || 0;
+  let scrollPaddingRight = parseInt(viewStyle.scrollPaddingRight, 10) || 0;
 
   let borderTopWidth = parseInt(viewStyle.borderTopWidth, 10) || 0;
   let borderBottomWidth = parseInt(viewStyle.borderBottomWidth, 10) || 0;
