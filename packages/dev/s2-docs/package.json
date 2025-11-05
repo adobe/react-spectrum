@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",
-    "@parcel/plugin": "^2.16.0",
-    "@parcel/rsc": "^2.16.0",
+    "@parcel/plugin": "^2.16.1",
+    "@parcel/rsc": "^2.16.1",
     "@react-aria/focus": "^3.20.4",
     "@react-aria/i18n": "^3.12.10",
     "@react-aria/interactions": "^3.25.1",
