@@ -18,6 +18,7 @@ export default BlogPostLayout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
+import {Byline} from '../../../src/BlogList';
 
 export const tags = ['date picker', 'date', 'time', 'calendar', 'components', 'accessibility', 'react spectrum', 'react', 'spectrum'];
 export const description = 'Internationalization is a core feature of our Date and Time components. We support 13 different calendar systems as well as locale-specific formatting, number systems, and 12 and 24 hour time. However, we identified an issue with our right-to-left support where in some right-to-left (RTL) languages, the format of the date and time fields was incorrect. While investigating this bug, we faced several challenges in ensuring proper date and time representation in RTL languages and implemented various strategies that we\'d like to share.';
@@ -28,6 +29,7 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Improving Internationalization Support in Our Date and Time Components
+<Byline author={author} authorLink={authorLink} date={date} />
 
 Internationalization is a core feature of our Date and Time components. We support 13 different calendar systems as well as locale-specific formatting, number systems, and 12 and 24 hour time. However, we identified an issue in our support for several right-to-left (RTL) languages where in some, the format of the date and time fields was incorrect. While investigating this bug, we faced several challenges in ensuring accurate date and time representation in RTL languages and implemented various strategies that we'd like to share.
 

@@ -19,6 +19,7 @@ export default BlogPostLayout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
+import {Byline} from '../../../src/BlogList';
 
 export const tags = ['combobox', 'accessibility', 'mobile', 'react spectrum', 'react', 'spectrum', 'interactions', 'touch'];
 export const description = 'After many months of research, development, and testing, we\'re excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook are now available! In this post we\'ll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox.';
@@ -29,6 +30,7 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Creating an accessible autocomplete experience
+<Byline author={author} authorLink={authorLink} date={date} />
 
 After many months of research, development, and extensive testing across browsers, devices, and assistive technology, we're excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook are now available! We've focused on the following areas to help you build quality autocomplete experiences.
 
