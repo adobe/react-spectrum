@@ -251,12 +251,12 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
 }, getAllowedOverrides());
 
 // Matching icon sizes. TBD.
-const avatarSize = {
+const avatarSize: Record<NonNullable<ActionButtonStyleProps['size']>, number> = {
   XS: 14,
   S: 16,
   M: 20,
   L: 22,
-  X: 26
+  XL: 26
 } as const;
 
 export const ActionButtonContext = createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
