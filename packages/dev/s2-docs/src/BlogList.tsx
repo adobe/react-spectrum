@@ -17,7 +17,7 @@ export function BlogList({pages}: {pages: Page[]}) {
             <h2 className={style({font: 'heading-lg', margin: 0})}><Link href={post.url}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link></h2>
             <Byline author={post.exports?.author} authorLink={post.exports?.authorLink} date={post.exports?.date} />
           </header>
-          <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(post.exports?.description, {forceInline: false, forceBlock: true})}</p>
+          <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(post.exports?.description, {forceInline: true, forceBlock: false})}</p>
         </div>
       ))}
     </article>
