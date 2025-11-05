@@ -278,46 +278,14 @@ const childStyle = style({
 });
 ```
 
-## Creating custom components
-
-In-depth examples are coming soon!
-
-`mergeStyles` can be used to merge the style strings from multiple macros together, with the latter styles taking precedence similar to object spreading.
-This behavior can be leveraged to create a component API that allows an end user to only override specific styles conditionally.
-
-```tsx
-// User can override the component's background color ONLY if it isn't "quiet"
-const baselineStyles = style({backgroundColor: 'gray-100'}, ['backgroundColor']);
-const quietStyles = style({backgroundColor: 'transparent'});
-const userStyles = style({backgroundColor: 'celery-600'});
-
-function MyComponent({isQuiet, styles}: {isQuiet?: boolean, styles?: StyleString}) {
-  let result = mergeStyles(
-    baselineStyles(null, styles),
-    isQuiet ? quietStyles : null
-  );
-
-  return <div className={result}>My component</div>
-}
-
-// Displays quiet styles
-<MyComponent isQuiet styles={userStyles} />
-
-// Displays user overrides
-<MyComponent styles={userStyles} />
-```
-
-The `iconStyle` macro should be used when styling Icons, see the [docs](./icons.html#iconstyle) for more information.
-
 ## CSS optimization
 
-The `style` macro relies on CSS bundling and minification for optimal output. Follow these best practices:
+The `style` macro relies on CSS bundling and minification for optimal output. Failure to perform this optimization will result in a suboptimal developer experience and obtuse styling bugs.
+Follow these best practices:
 
 - Ensure styles are extracted into a CSS bundle; do not inject at runtime with `<style>` tags.
 - Use a CSS minifier like `lightningcss` to deduplicate common rules (consider in dev for easier debugging).
 - Bundle all CSS for S2 components and style macros into a single CSS bundle rather than code splitting to avoid duplicate rules across chunks.
-
-**Failure to perform this optimization will result in a suboptimal developer experience and obtuse styling bugs.**
 
 ### Parcel
 
