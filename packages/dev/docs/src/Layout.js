@@ -26,6 +26,7 @@ import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
+import {MigrationBanner} from './MigrationBanner';
 import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import path from 'path';
 import React from 'react';
@@ -36,7 +37,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
-import {MigrationBanner} from './MigrationBanner';
 
 const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
@@ -422,6 +422,7 @@ function Nav({currentPageName, pages}) {
       }
     }
     // we only want the hooks for now, so get rid of the top level ones and non component ones
+    // eslint-disable-next-line no-unused-vars
     let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = ariaOtherPages;
     hooks = {...hooks, ...pagesByType.hook};
     sections.push({
