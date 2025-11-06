@@ -1,0 +1,380 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['hierarchy', 'data', 'nested'];
+
+# TreeView
+
+<PageDescription>{docs.exports.TreeView.description}</PageDescription>
+
+```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'isDetached', 'isEmphasized']} initialProps={{selectionMode: 'multiple'}} type="s2"
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
+
+<TreeView
+  aria-label="Files"
+  /* PROPS */
+  defaultExpandedKeys={['documents']}>
+  <TreeViewItem id="documents" textValue="Documents">
+    <TreeViewItemContent>Documents</TreeViewItemContent>
+    <TreeViewItem id="project-a" textValue="Project A">
+      <TreeViewItemContent>Project A</TreeViewItemContent>
+      <TreeViewItem id="report" textValue="Weekly Report">
+        <TreeViewItemContent>Weekly Report</TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+    <TreeViewItem id="readme" textValue="README">
+      <TreeViewItemContent>README</TreeViewItemContent>
+    </TreeViewItem>
+  </TreeViewItem>
+</TreeView>
+```
+
+## Content
+
+`TreeView` follows the [Collection Components API](collections.html?component=TreeView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+
+```tsx render
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2';
+
+///- begin collapse -///
+let items = [
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', children: []},
+      {id: 4, title: 'Budget', type: 'file', children: []}
+    ]}
+  ]},
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', children: []},
+    {id: 7, title: 'Image 2', type: 'file', children: []}
+  ]}
+];
+///- end collapse -///
+
+<TreeView
+  aria-label="Files"
+  defaultExpandedKeys={[1, 4]}
+  items={items}
+  selectionMode="multiple">
+  {function renderItem(item) {
+    return (
+      <TreeViewItem>
+        <TreeViewItemContent>{item.title}</TreeViewItemContent>
+        {/*- begin highlight -*/}
+        {/* recursively render children */}
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+        {/*- end highlight -*/}
+      </TreeViewItem>
+    );
+  }}
+</TreeView>
+```
+
+### Slots
+
+`TreeViewItemContent` supports icons, `Text`, [ActionMenu](ActionMenu.html), and [ActionButtonGroup](ActionButtonGroup.html) as children.
+
+```tsx render
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection, ActionMenu, MenuItem, Text} from '@react-spectrum/s2';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import File from '@react-spectrum/s2/icons/File';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import Delete from '@react-spectrum/s2/icons/Delete';
+
+///- begin collapse -///
+let items = [
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', children: []},
+      {id: 4, title: 'Budget', type: 'file', children: []}
+    ]}
+  ]},
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', children: []},
+    {id: 7, title: 'Image 2', type: 'file', children: []}
+  ]}
+];
+///- end collapse -///
+
+<TreeView
+  aria-label="Files"
+  defaultExpandedKeys={[1, 4]}
+  items={items}
+  selectionMode="multiple">
+  {function renderItem(item) {
+    return (
+      <TreeViewItem>
+        <TreeViewItemContent>
+          {/*- begin highlight -*/}
+          {item.type === 'directory' ? <Folder /> : <File />}
+          <Text>{item.title}</Text>
+          <ActionMenu>
+          {/*- end highlight -*/}
+            <MenuItem>
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem>
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    );
+  }}
+</TreeView>
+```
+
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<TreeViewLoadMoreItem>` at the end of each `<TreeViewItem>`.
+
+```tsx render
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  ///- begin collapse -///
+  let starWarsList = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  ///- end collapse -///
+
+  ///- begin collapse -///
+  let pokemonList = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  ///- end collapse -///
+
+  return (
+    <TreeView
+      aria-label="Async loading tree"
+      styles={style({height: 300})}>
+      <TreeViewItem>
+        <TreeViewItemContent>Pokemon</TreeViewItemContent>
+        <Collection items={pokemonList.items}>
+          {(item) => (
+            <TreeViewItem id={item.name}>
+              <TreeViewItemContent>{item.name}</TreeViewItemContent>
+            </TreeViewItem>
+          )}
+        </Collection>
+        {/*- begin highlight -*/}
+        <TreeViewLoadMoreItem
+          onLoadMore={pokemonList.loadMore}
+          isLoading={pokemonList.loadingState === 'loadingMore'} />
+        {/*- end highlight -*/}
+      </TreeViewItem>
+      <TreeViewItem>
+        <TreeViewItemContent>Star Wars</TreeViewItemContent>
+        <Collection items={starWarsList.items}>
+          {(item) => (
+            <TreeViewItem id={item.name}>
+              <TreeViewItemContent>{item.name}</TreeViewItemContent>
+            </TreeViewItem>
+          )}
+        </Collection>
+        {/*- begin highlight -*/}
+        <TreeViewLoadMoreItem
+          onLoadMore={starWarsList.loadMore}
+          isLoading={starWarsList.loadingState === 'loadingMore'} />
+        {/*- end highlight -*/}
+      </TreeViewItem>
+    </TreeView>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<TreeItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. See the [selection guide](selection.html?component=Tree#selection-behavior) for more details.
+
+```tsx render
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
+
+<TreeView
+  aria-label="TreeView with links"
+  selectionMode="multiple"
+  defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
+  <TreeViewItem
+    /*- begin highlight -*/
+    href="https://pokemondb.net/pokedex/bulbasaur"
+    target="_blank"
+    /*- end highlight -*/
+    id="bulbasaur">
+    <TreeViewItemContent>Bulbasaur</TreeViewItemContent>
+    <TreeViewItem
+      id="ivysaur"
+      href="https://pokemondb.net/pokedex/ivysaur"
+      target="_blank">
+      <TreeViewItemContent>Ivysaur</TreeViewItemContent>
+      <TreeViewItem
+        id="venusaur"
+        title="Venusaur"
+        href="https://pokemondb.net/pokedex/venusaur"
+        target="_blank">
+        <TreeViewItemContent>Venusaur</TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeViewItem>
+</TreeView>
+```
+
+### Empty state
+
+Use `renderEmptyState` to render placeholder content when the tree is empty.
+
+```tsx render
+"use client";
+import {TreeView, IllustratedMessage, Heading, Content, Link} from '@react-spectrum/s2';
+import FolderOpen from '@react-spectrum/s2/illustrations/linear/FolderOpen';
+
+<TreeView
+  aria-label="Search results"
+  /*- begin highlight -*/
+  renderEmptyState={() => (
+    <IllustratedMessage>
+      <FolderOpen />
+      <Heading>No results</Heading>
+      <Content>Press <Link href="https://adobe.com">here</Link> for more info.</Content>
+    </IllustratedMessage>
+  )}>
+  {/*- end highlight -*/}
+  {[]}
+</TreeView>
+```
+
+## Selection and actions
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tree) for more details.
+
+```tsx render docs={docs.exports.TreeView} links={docs.links} props={['selectionMode', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {TreeView, TreeViewItem, TreeViewItemContent, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div className={style({width: 'full'})}>
+      <TreeView
+        {...props}
+        aria-label="Pokemon evolution"
+        styles={style({height: 250, width: 'full', maxWidth: 300})}
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Clicked ${key}`)}
+        ///- end highlight -///
+      >
+        <TreeViewItem id="bulbasaur">
+          <TreeViewItemContent>Bulbasaur</TreeViewItemContent>
+          <TreeViewItem id="ivysaur">
+            <TreeViewItemContent>Ivysaur</TreeViewItemContent>
+            <TreeViewItem id="venusaur" isDisabled>
+              <TreeViewItemContent>Venusaur</TreeViewItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem id="charmander">
+          <TreeViewItemContent>Charmander</TreeViewItemContent>
+          <TreeViewItem id="charmeleon">
+            <TreeViewItemContent>Charmeleon</TreeViewItemContent>
+            <TreeViewItem id="charizard">
+              <TreeViewItemContent>Charizard</TreeViewItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem id="squirtle">
+          <TreeViewItemContent>Squirtle</TreeViewItemContent>
+          <TreeViewItem id="wartortle">
+            <TreeViewItemContent>Wartortle</TreeViewItemContent>
+            <TreeViewItem id="blastoise">
+              <TreeViewItemContent>Blastoise</TreeViewItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+        </TreeViewItem>
+      </TreeView>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+## API
+
+```tsx links={{TreeView: '#treeview', TreeViewItem: '#treeviewitem', TreeViewItemContent: '#treeviewitemcontent', TreeViewLoadMoreItem: '#treeloadmoreitem', ActionMenu: 'ActionMenu.html', ActionButtonGroup: 'ActionButtonGroup.html'}}
+<TreeView>
+  <TreeViewItem>
+    <TreeViewItemContent>
+      <Icon />
+      <Text />
+      <ActionMenu /> or <ActionButtonGroup />
+    </TreeViewItemContent>
+    <TreeViewItem>
+      {/* ... */}
+    </TreeViewItem>
+    <TreeViewLoadMoreItem />
+  </TreeViewItem>
+</TreeView>
+```
+
+### TreeView
+
+<PropTable component={docs.exports.TreeView} links={docs.links} />
+
+### TreeViewItem
+
+<PropTable component={docs.exports.TreeViewItem} links={docs.links} showDescription />
+
+### TreeViewItemContent
+
+<PropTable component={docs.exports.TreeViewItemContent} links={docs.links} showDescription />
+
+### TreeViewLoadMoreItem
+
+<PropTable component={docs.exports.TreeViewLoadMoreItem} links={docs.links} showDescription />

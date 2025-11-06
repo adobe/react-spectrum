@@ -23,6 +23,7 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
+  MenuItemRenderProps,
   Provider,
   Separator,
   SeparatorProps
@@ -30,20 +31,20 @@ import {
 import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
-import {DOMRef, DOMRefValue, PressEvent} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
 import {ImageContext} from './Image';
+import {InPopoverContext, Popover, PopoverContext} from './Popover';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
-import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {useGlobalListeners} from '@react-aria/utils';
@@ -72,7 +73,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState'>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -103,7 +104,7 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   width: 'full',
   overflow: {
     isPopover: 'auto'
@@ -115,7 +116,7 @@ export let menu = style({
     isPopover: 8
   },
   fontFamily: 'sans',
-  fontSize: 'control',
+  fontSize: controlFont(),
   gridAutoRows: 'min-content'
 }, getAllowedOverrides());
 
@@ -136,7 +137,7 @@ export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   gridColumnStart: 2,
   gridColumnEnd: -2,
   boxSizing: 'border-box',
-  minHeight: 'control',
+  minHeight: controlSize(),
   paddingY: centerPadding()
 });
 
@@ -146,15 +147,11 @@ export let sectionHeading = style({
   margin: 0
 });
 
-export let menuitem = style({
+export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> & {isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL', isLink?: boolean, hasSubmenu?: boolean, isOpen?: boolean}>({
   ...focusRing(),
-  boxSizing: 'border-box',
-  borderRadius: 'control',
-  font: 'control',
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
+  ...control({shape: 'default', wrap: true, icon: true}),
+  columnGap: 0,
+  paddingX: 0,
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
@@ -163,7 +160,7 @@ export let menuitem = style({
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -187,8 +184,6 @@ export let menuitem = style({
   rowGap: {
     ':has([slot=description])': space(1)
   },
-  alignItems: 'baseline',
-  minHeight: 'control',
   height: 'min',
   textDecoration: 'none',
   cursor: {
@@ -204,7 +199,7 @@ export let checkmark = style({
     isSelected: 'visible'
   },
   gridArea: 'checkmark',
-  color: 'accent',
+  color: baseColor('accent'),
   '--iconPrimary': {
     type: 'fill',
     value: {
@@ -216,7 +211,7 @@ export let checkmark = style({
   aspectRatio: 'square'
 });
 
-let checkbox = style({
+export let checkbox = style({
   gridArea: 'checkmark',
   marginEnd: 'text-to-control'
 });
@@ -260,8 +255,8 @@ let image = style({
 
 export let label = style<{size: string}>({
   gridArea: 'label',
-  font: 'control',
-  color: '[inherit]',
+  font: controlFont(),
+  color: 'inherit',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding'
@@ -279,7 +274,7 @@ export let description = style({
     }
   },
   color: {
-    default: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
     // Ideally this would use the same token as hover, but we don't have access to that here.
     // TODO: should we always consider isHovered and isFocused to be the same thing?
     isFocused: 'gray-800',
@@ -293,11 +288,11 @@ let value = style({
   marginStart: 8
 });
 
-let keyboard = style({
+let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
-  fontWeight: 'light',
+  textAlign: 'end',
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',
@@ -305,7 +300,6 @@ let keyboard = style({
       isDisabled: 'GrayText'
     }
   },
-  background: 'gray-25',
   unicodeBidi: 'plaintext'
 });
 
@@ -326,6 +320,11 @@ let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu
 
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
+let wrappingDiv = style({
+  display: 'flex',
+  size: 'full'
+});
+
 /**
  * Menus display a list of actions or options that a user can choose.
  */
@@ -341,72 +340,54 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     hideLinkOutIcon = false
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
-  let {align = 'start', direction = 'bottom', shouldFlip} = ctx ?? {};
+  let inPopover = useContext(InPopoverContext);
 
-  // TODO: change offset/crossoffset based on size? scale?
-  // actual values?
-  let initialPlacement: Placement;
-  switch (direction) {
-    case 'left':
-    case 'right':
-    case 'start':
-    case 'end':
-      initialPlacement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
-      break;
-    case 'bottom':
-    case 'top':
-    default:
-      initialPlacement = `${direction} ${align}` as Placement;
-  }
-  if (isSubmenu) {
-    initialPlacement = 'end top' as Placement;
-  }
-
+  let isPopover = (ctx || isSubmenu) && !inPopover;
   let content = (
     <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
       <Provider
         values={[
           [HeaderContext, {styles: sectionHeader({size})}],
-          [HeadingContext, {styles: sectionHeading}],
+          [HeadingContext, {
+            // @ts-ignore
+            role: 'presentation',
+            styles: sectionHeading
+          }],
           [TextContext, {
             slots: {
               'description': {styles: description({size})}
             }
-          }]
+          }],
+          [InPopoverContext, false]
         ]}>
         <AriaMenu
           {...props}
-          className={menu({size, isPopover: !!ctx || isSubmenu}, ctx ? null : styles)}>
+          className={menu({size, isPopover}, isPopover ? null : styles)}>
           {children}
         </AriaMenu>
       </Provider>
     </InternalMenuContext.Provider>
   );
 
-  if (ctx || isSubmenu) {
+  if (isPopover) {
     return (
-      <PopoverBase
+      <Popover
         ref={ref}
-        hideArrow
-        placement={initialPlacement}
-        shouldFlip={shouldFlip}
-        // For submenus, the offset from the edge of the popover should be 10px.
-        // Subtract 8px for the padding around the parent menu.
-        offset={isSubmenu ? -2 : 8}
-        // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
-        crossOffset={isSubmenu ? -9 : 0}
-        UNSAFE_style={UNSAFE_style}
-        UNSAFE_className={UNSAFE_className}
-        styles={styles}>
-        {content}
-      </PopoverBase>
+        padding="none"
+        hideArrow>
+        <div
+          style={UNSAFE_style}
+          className={(UNSAFE_className || '') + wrappingDiv}>
+          {content}
+        </div>
+      </Popover>
     );
   }
 
   return content;
 });
 
-export function Divider(props: SeparatorProps) {
+export function Divider(props: SeparatorProps): ReactNode {
   return (
     <Separator
       {...props}
@@ -428,8 +409,13 @@ export function Divider(props: SeparatorProps) {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
-export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {
+  /**
+   * The children of the menu section.
+   */
+  children?: ReactNode
+}
+export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
   return (
@@ -444,7 +430,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */
@@ -465,7 +451,7 @@ const linkIconSize = {
   XL: 'XL'
 } as const;
 
-export function MenuItem(props: MenuItemProps) {
+export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
@@ -548,7 +534,7 @@ export function MenuItem(props: MenuItemProps) {
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
  * linking the Menu's open state with the trigger's press state.
  */
-function MenuTrigger(props: MenuTriggerProps) {
+function MenuTrigger(props: MenuTriggerProps): ReactNode {
   // RAC sets isPressed via PressResponder when the menu is open.
   // We don't want press scaling to appear to get "stuck", so override this.
   // For mouse interactions, menus open on press start. When the popover underlay appears
@@ -566,6 +552,21 @@ function MenuTrigger(props: MenuTriggerProps) {
     }, {once: true, capture: true});
   };
 
+  let {align = 'start', direction = 'bottom', shouldFlip} = props;
+  let placement: Placement;
+  switch (direction) {
+    case 'left':
+    case 'right':
+    case 'start':
+    case 'end':
+      placement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
+      break;
+    case 'bottom':
+    case 'top':
+    default:
+      placement = `${direction} ${align}` as Placement;
+  }
+
   return (
     <InternalMenuTriggerContext.Provider
       value={{
@@ -573,24 +574,38 @@ function MenuTrigger(props: MenuTriggerProps) {
         direction: props.direction,
         shouldFlip: props.shouldFlip
       }}>
-      <AriaMenuTrigger {...props}>
-        <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-          {props.children}
-        </PressResponder>
-      </AriaMenuTrigger>
+      <PopoverContext.Provider value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
+        <AriaMenuTrigger {...props}>
+          <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+            {props.children}
+          </PressResponder>
+        </AriaMenuTrigger>
+      </PopoverContext.Provider>
     </InternalMenuTriggerContext.Provider>
   );
 }
 
 export interface SubmenuTriggerProps extends Omit<AriaSubmenuTriggerProps, 'delay'> {}
 
-const SubmenuTrigger = AriaSubmenuTrigger as (props: SubmenuTriggerProps) => JSX.Element | null;
+function SubmenuTrigger(props: SubmenuTriggerProps): JSX.Element {
+  // For submenus, the offset from the edge of the popover should be 10px.
+  // Subtract 8px for the padding around the parent menu.
+  // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
+  return (
+    <AriaSubmenuTrigger {...props}>
+      {props.children[0]}
+      <PopoverContext.Provider value={{hideArrow: true, offset: -2, crossOffset: -8, placement: 'end top'}}>
+        {props.children[1]}
+      </PopoverContext.Provider>
+    </AriaSubmenuTrigger>
+  );
+}
 
 export {MenuTrigger, SubmenuTrigger};
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedMenu<T extends object>(props: ICombined<T>) {
+export function CombinedMenu<T extends object>(props: ICombined<T>): ReactNode {
   return <div />;
 }

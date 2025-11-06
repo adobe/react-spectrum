@@ -19,4 +19,4 @@ interface MenuData {
   shouldUseVirtualFocus?: boolean
 }
 
-export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
+export const menuData: WeakMap<TreeState<unknown>, MenuData> = new WeakMap<TreeState<unknown>, MenuData>();

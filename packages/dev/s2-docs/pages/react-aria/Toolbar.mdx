@@ -1,0 +1,120 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/toolbar/docs/toolbar-anatomy.svg';
+
+export const tags = ['group'];
+
+# Toolbar
+
+<PageDescription>{docs.exports.Toolbar.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Toolbar} links={docs.links} props={['orientation']} initialProps={{'aria-label': 'Text formatting'}} type="vanilla" files={["starters/docs/src/Toolbar.tsx", "starters/docs/src/Toolbar.css"]}
+  "use client";
+  import {Toolbar} from 'vanilla-starter/Toolbar';
+  import {ToggleButtonGroup} from 'vanilla-starter/ToggleButtonGroup';
+  import {ToggleButton} from 'vanilla-starter/ToggleButton';
+  import {Button} from 'vanilla-starter/Button';
+  import {Select, SelectItem} from 'vanilla-starter/Select';
+  import {Group, Separator} from 'react-aria-components';
+  import {Bold, Italic, Underline, ClipboardCopy, Scissors, ClipboardPaste} from 'lucide-react';
+
+  <Toolbar/* PROPS */>
+    <ToggleButtonGroup aria-label="Style">
+      <ToggleButton id="bold" aria-label="Bold">
+        <Bold size={16} />
+      </ToggleButton>
+      <ToggleButton id="italic" aria-label="Italic">
+        <Italic size={16} />
+      </ToggleButton>
+      <ToggleButton id="underline" aria-label="Underline">
+        <Underline size={16} />
+      </ToggleButton>
+    </ToggleButtonGroup>
+    <Separator orientation="vertical" />
+    <Group aria-label="Clipboard">
+      <Button aria-label="Copy">
+        <ClipboardCopy size={16} />
+      </Button>
+      <Button aria-label="Cut">
+        <Scissors size={16} />
+      </Button>
+      <Button aria-label="Paste">
+        <ClipboardPaste size={16} />
+      </Button>
+    </Group>
+    <Separator orientation="vertical" />
+    <Select aria-label="Font" defaultSelectedKey="helvetica">
+      <SelectItem id="helvetica">Helvetica</SelectItem>
+      <SelectItem id="times">Times</SelectItem>
+      <SelectItem id="comic-sans">Comic Sans</SelectItem>
+    </Select>
+  </Toolbar>
+  ```
+
+  ```tsx render docs={docs.exports.Toolbar} links={docs.links} props={['orientation']} initialProps={{'aria-label': 'Text formatting'}} type="tailwind" files={["starters/docs/src/Toolbar.tsx"]}
+  "use client";
+  import {Toolbar} from 'tailwind-starter/Toolbar';
+  import {ToggleButtonGroup} from 'tailwind-starter/ToggleButtonGroup';
+  import {ToggleButton} from 'tailwind-starter/ToggleButton';
+  import {Button} from 'tailwind-starter/Button';
+  import {Select, SelectItem} from 'tailwind-starter/Select';
+  import {Group} from 'react-aria-components';
+  import {Bold, Italic, Underline, ClipboardCopy, Scissors, ClipboardPaste} from 'lucide-react';
+
+  <Toolbar/* PROPS */>
+    <ToggleButtonGroup selectionMode="multiple" aria-label="Style">
+      <ToggleButton aria-label="Bold">
+        <Bold size={16} />
+      </ToggleButton>
+      <ToggleButton aria-label="Italic">
+        <Italic size={16} />
+      </ToggleButton>
+      <ToggleButton aria-label="Underline">
+        <Underline size={16} />
+      </ToggleButton>
+    </ToggleButtonGroup>
+    <Group aria-label="Clipboard" className="flex gap-1">
+      <Button aria-label="Copy" variant="secondary">
+        <ClipboardCopy size={16} />
+      </Button>
+      <Button aria-label="Cut" variant="secondary">
+        <Scissors size={16} />
+      </Button>
+      <Button aria-label="Paste" variant="secondary">
+        <ClipboardPaste size={16} />
+      </Button>
+    </Group>
+    <Select aria-label="Font" defaultSelectedKey="helvetica">
+      <SelectItem id="helvetica">Helvetica</SelectItem>
+      <SelectItem id="times">Times</SelectItem>
+      <SelectItem id="comic-sans">Comic Sans</SelectItem>
+    </Select>
+  </Toolbar>
+  ```
+</ExampleSwitcher>
+
+## API
+
+<Anatomy />
+
+```tsx links={{Toolbar: '#toolbar', Button: 'Button.html', ToggleButtonGroup: 'ToggleButtonGroup.html', ToggleButton: 'ToggleButton.html', Group: 'Group.html', Select: 'Select.html'}}
+<Toolbar>
+  <Button />
+  <ToggleButtonGroup>
+    <ToggleButton />
+  </ToggleButtonGroup>
+  <Separator />
+  <Group>
+    <Button />
+  </Group>
+  <Select />
+</Toolbar>
+```
+
+### Toolbar
+
+<PropTable component={docs.exports.Toolbar} links={docs.links} />

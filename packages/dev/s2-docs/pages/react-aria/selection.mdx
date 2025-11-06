@@ -1,0 +1,1078 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+
+export const section = 'Guides';
+export const description = 'Implementing selection in React Aria';
+
+# Selection
+
+<PageDescription>Many collection components support selecting items by clicking or tapping them, or by using the keyboard. This page discusses how to handle selection events, how to control selection programmatically, and the data structures used to represent a selection.</PageDescription>
+
+## Multiple selection
+
+Most collection components support item selection, which is handled by the `onSelectionChange` event. Use the `selectedKeys` prop to control the selected items programmatically, or `defaultSelectedKeys` for uncontrolled behavior.
+
+Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) containing the `id` of each selected item. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props, but the `onSelectionChange` event will always pass back a Set.
+
+<ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'TagGroup', 'Table']}>
+
+```tsx render
+"use client";
+import {type Selection} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <div>
+      <ListBox
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+        <ListBoxItem id="tomato">Tomato</ListBoxItem>
+        <ListBoxItem id="cheese">Cheese</ListBoxItem>
+        <ListBoxItem id="tuna">Tuna Salad</ListBoxItem>
+        <ListBoxItem id="egg">Egg Salad</ListBoxItem>
+        <ListBoxItem id="ham">Ham</ListBoxItem>
+      </ListBox>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text, type Selection} from 'react-aria-components';
+import {useState} from 'react';
+
+export default function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['Blastoise']));
+
+  return (
+    <>
+      <GridList
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+        data-size="small">
+        <PokemonItem name="Charizard" />
+        <PokemonItem name="Blastoise" />
+        <PokemonItem name="Venusaur" />
+        <PokemonItem name="Pikachu" />
+      </GridList>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+
+///- begin collapse -///
+function PokemonItem(props: {name: string}) {
+  return (
+    <GridListItem id={props.name} textValue={props.name}>
+      <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${props.name.toLowerCase()}.avif`} />
+      <Text>{props.name}</Text>
+    </GridListItem>
+  );
+}
+///- end collapse -///
+```
+
+```tsx render
+"use client";
+import {type Selection} from 'react-aria-components';
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['project']));
+
+  return (
+    <div>
+      <Tree
+        aria-label="Files"
+        defaultExpandedKeys={['documents', 'photos', 'project']}
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <TreeItem id="documents" title="Documents">
+          <TreeItem id="project" title="Project">
+            <TreeItem title="Weekly Report" />
+          </TreeItem>
+        </TreeItem>
+        <TreeItem id="photos" title="Photos">
+          <TreeItem title="Image 1" />
+          <TreeItem title="Image 2" />
+        </TreeItem>
+      </Tree>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {type Selection} from 'react-aria-components';
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <div>
+      <TagGroup
+        label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <Tag id="lettuce">Lettuce</Tag>
+        <Tag id="tomato">Tomato</Tag>
+        <Tag id="cheese">Cheese</Tag>
+        <Tag id="tuna">Tuna Salad</Tag>
+        <Tag id="egg">Egg Salad</Tag>
+        <Tag id="ham">Ham</Tag>
+      </TagGroup>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+```tsx render
+"use client";
+import {type Selection} from 'react-aria-components';
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
+import {useState} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {id: 'lettuce', name: 'Lettuce', type: 'Vegetable', calories: 4},
+  {id: 'tomato', name: 'Tomato', type: 'Vegetable', calories: 5},
+  {id: 'cheese', name: 'Cheddar', type: 'Cheese', calories: 113},
+  {id: 'tuna', name: 'Tuna salad', type: 'Salad', calories: 187},
+  {id: 'egg', name: 'Egg salad', type: 'Salad', calories: 200},
+  {id: 'ham', name: 'Ham', type: 'Meat', calories: 205}
+];
+///- end collapse -///
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <div>
+      <Table
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        ///- end highlight -///
+      >
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Calories</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.calories}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+</ExampleSwitcher>
+
+### Select all
+
+Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <Keyboard>⌘ Cmd</Keyboard> + <Keyboard>A</Keyboard>. This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network. For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded. For this reason, it makes sense for select all to represent all items, not just the loaded ones.
+
+When a select all event occurs, `onSelectionChange` is called with the string `"all"` rather than a set of selected keys. `selectedKeys`
+and `defaultSelectedKeys` can also be set to `"all"` to programmatically select all items. The application must adjust its handling of bulk actions in this case to apply to the entire collection rather than only the keys available to it locally.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
+import {Checkbox} from 'vanilla-starter/Checkbox';
+import {useState} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
+///- end collapse -///
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  ///- begin highlight -///
+  function performBulkAction() {
+    if (selectedKeys === 'all') {
+      // perform action on all items
+    } else {
+      // perform action on selected items in selectedKeys
+    }
+  }
+  ///- end highlight -///
+
+  ///- begin collapse -///
+  return (
+    <div>
+      <Table
+        aria-label="Files"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}>
+        <TableHeader>
+          <Column><Checkbox slot="selection" /></Column>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Date Modified</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row id={item.name}>
+              <Cell><Checkbox slot="selection" /></Cell>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+  ///- end collapse -///
+}
+```
+
+### Selection behavior
+
+By default, React Aria uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused row. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with a column of checkboxes in each row as an explicit affordance for selection.
+
+When the `selectionBehavior` prop is set to `"replace"`, clicking a row with the mouse _replaces_ the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each row are not desired.
+
+To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused row, which allows multiple selection of non-contiguous items.
+
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
+
+<ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'TagGroup', 'Table']}>
+
+```tsx render wide docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <ListBox
+      {...props}
+      aria-label="ListBox"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      /* PROPS */
+      /*- end highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}>
+      <ListBoxItem id="one">One</ListBoxItem>
+      <ListBoxItem id="two">Two</ListBoxItem>
+      <ListBoxItem id="three">Three</ListBoxItem>
+    </ListBox>
+  );
+}
+```
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <GridList
+      {...props}
+      aria-label="GridList"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      /* PROPS */
+      /*- end highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      data-size="small">
+      <GridListItem textValue="Desert Sunset">
+        <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+        <Text>Desert Sunset</Text>
+        <Text slot="description">PNG • 2/3/2024</Text>
+      </GridListItem>
+      <GridListItem textValue="Hiking Trail">
+        <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+        <Text>Hiking Trail</Text>
+        <Text slot="description">JPEG • 1/10/2022</Text>
+      </GridListItem>
+      <GridListItem textValue="Lion">
+        <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+        <Text>Lion</Text>
+        <Text slot="description">JPEG • 8/28/2021</Text>
+      </GridListItem>
+    </GridList>
+  );
+}
+```
+
+```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {type Selection} from 'react-aria-components';
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <Tree
+        {...props}
+        aria-label="Files"
+        defaultExpandedKeys={['documents', 'photos', 'project']}
+        selectionMode="multiple"
+        /*- begin highlight -*/
+        /* PROPS */
+        /*- end highlight -*/
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}>
+        <TreeItem id="documents" title="Documents">
+          <TreeItem id="project" title="Project">
+            <TreeItem title="Weekly Report" />
+          </TreeItem>
+        </TreeItem>
+        <TreeItem id="photos" title="Photos">
+          <TreeItem title="Image 1" />
+          <TreeItem title="Image 2" />
+        </TreeItem>
+      </Tree>
+      <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+```tsx render wide docs={docs.exports.TagGroup} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <TagGroup
+      {...props}
+      label="TagGroup"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      /* PROPS */
+      /*- end highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}>
+      <Tag id="one">One</Tag>
+      <Tag id="two">Two</Tag>
+      <Tag id="three">Three</Tag>
+    </TagGroup>
+  );
+}
+```
+
+```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
+import {TableBody, Cell} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <Table
+      {...props}
+      aria-label="Table"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      /* PROPS */
+      /*- end highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Games</Cell>
+          <Cell>File folder</Cell>
+          <Cell>6/7/2020</Cell>
+        </Row>
+        <Row>
+          <Cell>Program Files</Cell>
+          <Cell>File folder</Cell>
+          <Cell>4/7/2021</Cell>
+        </Row>
+        <Row>
+          <Cell>bootmgr</Cell>
+          <Cell>System file</Cell>
+          <Cell>11/20/2010</Cell>
+        </Row>
+        <Row>
+          <Cell>log.txt</Cell>
+          <Cell>Text Document</Cell>
+          <Cell>1/18/2016</Cell>
+        </Row>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+</ExampleSwitcher>
+
+## Single selection
+
+In some components like [ComboBox](ComboBox.html), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKey, setSelectedKey] = useState<Key | null>(null);
+
+  return (
+    <div>
+      <ComboBox
+        label="ComboBox"
+        ///- begin highlight -///
+        selectedKey={selectedKey}
+        ///- end highlight -///
+        onSelectionChange={setSelectedKey}>
+        <ComboBoxItem id="one">One</ComboBoxItem>
+        <ComboBoxItem id="two">Two</ComboBoxItem>
+        <ComboBoxItem id="three">Three</ComboBoxItem>
+      </ComboBox>
+      <p>selectedKey: {String(selectedKey)}</p>
+    </div>
+  );
+}
+```
+
+In components which support multiple selection, you can limit the selection to a single item using the
+`selectionMode` prop. This continues to accept `selectedKeys` and `defaultSelectedKeys` as a `Set`, but it will
+only contain a single id at a time.
+
+### Animated SelectionIndicator
+
+Render a `<SelectionIndicator />` within each collection item to animate selection changes. All CSS properties listed by `transition-property` are animated. Include the `translate` property to smoothly animate the position. Use the entering and exiting states to add a transition when no items are selected.
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/SelectionIndicator.css']}
+"use client";
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {SelectionIndicator} from 'react-aria-components';
+import './SelectionIndicator.css';
+
+function SelectableItem({id, children}) {
+  return (
+    <ListBoxItem id={id} className="animated-ListBoxItem">
+      {/*- begin highlight -*/}
+      <SelectionIndicator />
+      {/*- end highlight -*/}
+      {children}
+    </ListBoxItem>
+  );
+}
+
+<ListBox
+  aria-label="Animated ListBox"
+  selectionMode="single">
+  <SelectableItem>Home</SelectableItem>
+  <SelectableItem>Getting Started</SelectableItem>
+  <SelectableItem>Components</SelectableItem>
+</ListBox>
+```
+
+<PropTable component={docs.exports.SelectionIndicator} links={docs.links} />
+
+## Item actions
+
+In addition to selection, some collection components support item actions via the `onAction` prop. In the default `"toggle"` selection behavior, when nothing is selected, clicking, tapping, or pressing the <Keyboard>Enter</Keyboard> key triggers the item action. Items may be selected using the checkbox, or by pressing the <Keyboard>Space</Keyboard> key. When at least one item is selected, clicking or tapping a row toggles the selection.
+
+In the `"replace"` selection behavior, selection is the primary interaction. Clicking an item with a mouse selects it, and double clicking performs the action. On touch devices, actions remain the primary tap interaction. Long pressing enters selection mode, which temporarily swaps the selection behavior to `"toggle"`. Deselecting all items exits selection mode and reverts the selection behavior back to `"replace"`. Keyboard behaviors are unaffected.
+
+<ExampleSwitcher type="component" examples={['GridList', 'Tree', 'Table']}>
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple', 'data-size': 'small'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+
+<GridList/* PROPS */>
+  <GridListItem
+    /*- begin highlight -*/
+    onAction={() => alert('Opening "Mountain Sunrise"')}
+    /*- end highlight -*/
+    textValue="Mountain Sunrise">
+    <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    <Text>Mountain Sunrise</Text>
+    <Text slot="description">PNG • 3/15/2015</Text>
+  </GridListItem>
+  <GridListItem
+    onAction={() => alert('Opening "Architecture"')}
+    textValue="Architecture">
+    <img src="https://images.unsplash.com/photo-1721661657253-6621d52db753?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDYxfE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+    <Text>Architecture</Text>
+    <Text slot="description">PNG • 12/24/2016</Text>
+  </GridListItem>
+  <GridListItem
+    onAction={() => alert('Opening "Golden Hour"')}
+    textValue="Golden Hour">
+    <img src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={402} />
+    <Text>Golden Hour</Text>
+    <Text slot="description">WEBP • 7/24/2024</Text>
+  </GridListItem>
+</GridList>
+```
+
+```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+
+<Tree
+  aria-label="Files"
+  selectionMode="multiple"
+  /* PROPS */
+  defaultExpandedKeys={['computer']}>
+  <TreeItem id="computer" title="My Computer">
+    <TreeItem
+      title="Games"
+      /*- begin highlight -*/
+      onAction={() => alert('Opening Games')} />
+      {/*- end highlight -*/}
+    <TreeItem
+      title="Documents"
+      onAction={() => alert('Opening Documents')} />
+    <TreeItem
+      title="Photos"
+      onAction={() => alert('Opening Photos')} />
+  </TreeItem>
+</Tree>
+```
+
+```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {useState} from 'react';
+
+<Table
+  aria-label="Table"
+  selectionMode="multiple"
+  /* PROPS */
+  selectionMode="multiple">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <Row onAction={() => alert('Opening Games')}>
+    {/*- end highlight -*/}
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row onAction={() => alert('Opening Documents')}>
+      <Cell>Documents</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row onAction={() => alert('Opening Photos')}>
+      <Cell>Photos</Cell>
+      <Cell>File folder</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+</ExampleSwitcher>
+
+In dynamic collections, it may be more convenient to use the `onAction` prop at the collection level instead of on individual items. This receives the id of the pressed item.
+
+<ExampleSwitcher type="component" examples={['GridList', 'Tree', 'Table']}>
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+
+///- begin collapse -///
+let images = [
+  {
+    title: "Rays of sun in the forest",
+    user: "Joyce G",
+    image: "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    title: "Tall grass",
+    user: "Ingmar H",
+    image: "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 600
+  },
+  {
+    title: "Winding Road",
+    user: "Artem Stoliar",
+    image: "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    width: 400,
+    height: 300
+  }
+];
+///- end collapse -///
+
+<GridList
+  aria-label="Files"
+  selectionMode="multiple"
+  data-size="small"
+  /* PROPS */
+  items={images}
+  /*- begin highlight -*/
+  onAction={id => alert(`Opening "${id}"`)}>
+  {/*- end highlight -*/}
+  {image => (
+    <GridListItem id={image.title} textValue={image.title}>
+      <img src={image.image} width={image.width} height={image.height} />
+      <Text>{image.title}</Text>
+      <Text slot="description">By {image.user}</Text>
+    </GridListItem>
+  )}
+</GridList>
+```
+
+```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Collection} from 'react-aria-components';
+
+///- begin collapse -///
+const files = [
+  {id: 'games', name: 'Games'},
+  {id: 'documents', name: 'Documents'},
+  {id: 'photos', name: 'Photos'}
+];
+///- end collapse -///
+
+<Tree
+  aria-label="Files"
+  selectionMode="multiple"
+  /* PROPS */
+  defaultExpandedKeys={['computer']}
+  /*- begin highlight -*/
+  onAction={id => alert(`Opening ${id}`)}>
+  {/*- end highlight -*/}
+  <TreeItem id="computer" title="My Computer">
+    <Collection items={files}>
+      {item => <TreeItem title={item.name} />}
+    </Collection>
+  </TreeItem>
+</Tree>
+```
+
+```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {useState} from 'react';
+
+///- begin collapse -///
+const files = [
+  {id: 'games', name: 'Games', type: 'Folder', date: '6/7/2020'},
+  {id: 'documents', name: 'Documents', type: 'Folder', date: '4/7/2021'},
+  {id: 'photos', name: 'Photos', type: 'Folder', date: '11/20/2010'}
+];
+///- end collapse -///
+
+<Table
+  aria-label="Table"
+  selectionMode="multiple"
+  /* PROPS */
+  /*- begin highlight -*/
+  onRowAction={id => alert(`Opening ${id}`)}>
+  {/*- end highlight -*/}
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody items={files}>
+    {item => (
+      <Row>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.date}</Cell>
+      </Row>
+    )}
+  </TableBody>
+</Table>
+```
+
+</ExampleSwitcher>
+
+## Disabled items
+
+An item can be disabled with the `isDisabled` prop. By default, disabled items are not focusable, selectable, or actionable. When `disabledBehavior="selection"`, only selection is disabled.
+
+<ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'TagGroup', 'Table']}>
+
+```tsx render wide
+"use client";
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+
+<ListBox aria-label="Pokemon" selectionMode="multiple">
+  <ListBoxItem>Charizard</ListBoxItem>
+  <ListBoxItem>Blastoise</ListBoxItem>
+  {/*- begin highlight -*/}
+  <ListBoxItem isDisabled>Venusaur</ListBoxItem>
+  {/*- end highlight -*/}
+  <ListBoxItem>Pikachu</ListBoxItem>
+</ListBox>
+```
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple', 'data-size': 'small'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+
+<GridList/* PROPS */>
+  <GridListItem textValue="Desert Sunset">
+    <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+    <Text>Desert Sunset</Text>
+    <Text slot="description">PNG • 2/3/2024</Text>
+  </GridListItem>
+  {/*- begin highlight -*/}
+  <GridListItem isDisabled textValue="Hiking Trail">
+  {/*- end highlight -*/}
+    <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    <Text>Hiking Trail</Text>
+    <Text slot="description">JPEG • 1/10/2022</Text>
+  </GridListItem>
+  <GridListItem textValue="Lion">
+    <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+    <Text>Lion</Text>
+    <Text slot="description">JPEG • 8/28/2021</Text>
+  </GridListItem>
+  <GridListItem textValue="Mountain Sunrise">
+    <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    <Text>Mountain Sunrise</Text>
+    <Text slot="description">PNG • 3/15/2015</Text>
+  </GridListItem>
+</GridList>
+```
+
+```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['disabledBehavior']}
+"use client";
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+
+<Tree
+  aria-label="Pokemon evolution"
+  style={{height: 250}}
+  defaultExpandedKeys={['bulbasaur', 'ivysaur']}
+  /* PROPS */
+  selectionMode="multiple">
+  <TreeItem id="bulbasaur" title="Bulbasaur">
+    <TreeItem id="ivysaur" title="Ivysaur">
+      {/*- begin highlight -*/}
+      <TreeItem id="venusaur" title="Venusaur" isDisabled />
+      {/*- end highlight -*/}
+    </TreeItem>
+  </TreeItem>
+  <TreeItem id="charmander" title="Charmander">
+    <TreeItem id="charmeleon" title="Charmeleon">
+      <TreeItem id="charizard" title="Charizard" />
+    </TreeItem>
+  </TreeItem>
+  <TreeItem id="squirtle" title="Squirtle">
+    <TreeItem id="wartortle" title="Wartortle">
+      <TreeItem id="blastoise" title="Blastoise" />
+    </TreeItem>
+  </TreeItem>
+</Tree>
+```
+
+```tsx render wide
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+
+<TagGroup
+  label="Pokemon"
+  /* PROPS */
+  selectionMode="multiple">
+  <Tag>Charizard</Tag>
+  <Tag>Blastoise</Tag>
+  {/*- begin highlight -*/}
+  <Tag isDisabled>Venusaur</Tag>
+  {/*- end highlight -*/}
+  <Tag>Pikachu</Tag>
+</TagGroup>
+```
+
+```tsx render wide docs={docs.exports.Table} links={docs.links} props={['disabledBehavior']}
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+
+<Table
+  aria-label="Pokemon"
+  /* PROPS */
+  selectionMode="multiple">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row id="charizard">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row id="blastoise">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    {/*- begin highlight -*/}
+    <Row id="venusaur" isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row id="pikachu">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+</ExampleSwitcher>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the collection level instead of `isDisabled` on individual items. This accepts a list of item ids that are disabled.
+
+<ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'TagGroup', 'Table']}>
+
+```tsx render wide
+"use client";
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+
+///- begin collapse -///
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+///- end collapse -///
+
+<ListBox
+  aria-label="Pokemon"
+  /* PROPS */
+  ///- begin highlight -///
+  disabledKeys={[3]}
+  ///- end highlight -///
+  selectionMode="multiple"
+  items={items}>
+  {item => <ListBoxItem>{item.name}</ListBoxItem>}
+</ListBox>
+
+```
+
+```tsx render wide docs={docs.exports.GridList} links={docs.links} props={['disabledBehavior']} initialProps={{'aria-label': 'Pokemon', selectionMode: 'multiple'}}
+"use client";
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {Text} from 'react-aria-components';
+
+///- begin collapse -///
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+///- end collapse -///
+
+<GridList
+  aria-label="Pokemon"
+  data-size="small"
+  /* PROPS */
+  ///- begin highlight -///
+  disabledKeys={[3]}
+  ///- end highlight -///
+  items={items}>
+  {item => (
+    <GridListItem textValue={item.name}>
+      <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`} />
+      <Text>{item.name}</Text>
+    </GridListItem>
+  )}
+</GridList>
+```
+
+```tsx render wide docs={docs.exports.Tree} links={docs.links} props={['disabledBehavior']}
+"use client";
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Collection} from 'react-aria-components';
+
+///- begin collapse -///
+let items = [
+  {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
+    {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
+      {id: 3, name: 'Venusaur', type: 'Grass', level: 83}
+    ]}
+  ]},
+  {id: 4, name: 'Charmander', type: 'Fire', level: 16, children: [
+    {id: 5, name: 'Charmeleon', type: 'Fire', level: 32, children: [
+      {id: 6, name: 'Charizard', type: 'Fire, Flying', level: 67}
+    ]}
+  ]},
+  {id: 7, name: 'Squirtle', type: 'Water', level: 8, children: [
+    {id: 8, name: 'Wartortle', type: 'Water', level: 34, children: [
+      {id: 9, name: 'Blastoise', type: 'Water', level: 56}
+    ]}
+  ]}
+];
+///- end collapse -///
+
+<Tree
+  aria-label="Pokemon evolution"
+  style={{height: 250}}
+  defaultExpandedKeys={[1, 2]}
+  selectionMode="multiple"
+  /* PROPS */
+  ///- begin highlight -///
+  disabledKeys={[3]}
+  ///- end highlight -///
+  items={items}>
+  {function renderItem(item: Pokemon) {
+    return (
+      <TreeItem title={item.name}>
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+      </TreeItem>
+    )
+  }}
+</Tree>
+```
+
+```tsx render wide
+"use client";
+import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
+
+///- begin collapse -///
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+///- end collapse -///
+
+<TagGroup
+  aria-label="Pokemon"
+  selectionMode="multiple"
+  /* PROPS */
+  ///- begin highlight -///
+  disabledKeys={[3]}
+  ///- end highlight -///
+  items={items}>
+  {item => <Tag>{item.name}</Tag>}
+</TagGroup>
+```
+
+```tsx render wide docs={docs.exports.Table} links={docs.links} props={['disabledBehavior']}
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+
+///- begin collapse -///
+let items = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+///- end collapse -///
+
+<Table
+  aria-label="Pokemon"
+  /* PROPS */
+  ///- begin highlight -///
+  disabledKeys={[3]}
+  ///- end highlight -///
+  selectionMode="multiple">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody items={items}>
+    {item => (
+      <Row>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.level}</Cell>
+      </Row>
+    )}
+  </TableBody>
+</Table>
+```
+
+</ExampleSwitcher>

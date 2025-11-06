@@ -1,0 +1,579 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/MenuAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['dropdown'];
+
+# Menu
+
+<PageDescription>{docs.exports.Menu.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render type="vanilla" files={["starters/docs/src/Menu.tsx", "starters/docs/src/Menu.css"]}
+  "use client";
+  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+  import {Separator, Text, Keyboard} from 'react-aria-components';
+  import {Popover} from 'vanilla-starter/Popover';
+  import {Button} from 'vanilla-starter/Button';
+  import {Button} from 'vanilla-starter/Button';
+  import {Ellipsis, FolderOpen, Pencil, Copy, Trash, Share, Mail, Smartphone, Instagram} from 'lucide-react';
+
+  <MenuTrigger>
+    <Button aria-label="Actions">
+      <Ellipsis size={18} />
+    </Button>
+    <Popover>
+      <Menu>
+        <MenuSection>
+          <MenuItem onAction={() => alert('open')}>
+            <FolderOpen />
+            <Text slot="label">Open</Text>
+            <Keyboard>⌘O</Keyboard>
+          </MenuItem>
+          <MenuItem onAction={() => alert('rename')}>
+            <Pencil />
+            <Text slot="label">Rename…</Text>
+            <Keyboard>⌘R</Keyboard>
+          </MenuItem>
+          <MenuItem onAction={() => alert('duplicate')}>
+            <Copy />
+            <Text slot="label">Duplicate</Text>
+            <Keyboard>⌘D</Keyboard>
+          </MenuItem>
+          <MenuItem onAction={() => alert('delete')}>
+            <Trash />
+            <Text slot="label">Delete…</Text>
+            <Keyboard>⌘⌫</Keyboard>
+          </MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>
+              <Share />
+              <Text slot="label">Share</Text>
+            </MenuItem>
+            <Menu>
+              <MenuItem>
+                <Mail />
+                <Text slot="label">Email</Text>
+              </MenuItem>
+              <MenuItem>
+                <Smartphone />
+                <Text slot="label">SMS</Text>
+              </MenuItem>
+              <MenuItem>
+                <Instagram />
+                <Text slot="label">Instagram</Text>
+              </MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </MenuSection>
+        <Separator />
+        <MenuSection selectionMode="multiple" defaultSelectedKeys={['files']}>
+          <MenuItem id="files">Show files</MenuItem>
+          <MenuItem id="folders">Show folders</MenuItem>
+        </MenuSection>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+  ```
+
+  ```tsx render type="tailwind" files={["starters/tailwind/src/Menu.tsx"]}
+  "use client";
+  import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection, MenuSeparator} from 'tailwind-starter/Menu';
+  import {Button} from 'tailwind-starter/Button';
+  import {MoreHorizontal} from 'lucide-react';
+
+  <MenuTrigger>
+    <Button aria-label="Actions" variant="secondary">
+      <MoreHorizontal className="w-5 h-5" />
+    </Button>
+    <Menu>
+      <MenuItem onAction={() => alert('open')}>Open</MenuItem>
+      <MenuItem onAction={() => alert('rename')}>Rename…</MenuItem>
+      <MenuItem onAction={() => alert('duplicate')}>Duplicate</MenuItem>
+      <MenuItem onAction={() => alert('delete')}>Delete…</MenuItem>
+      <SubmenuTrigger>
+        <MenuItem>Share</MenuItem>
+        <Menu>
+          <MenuItem>Email</MenuItem>
+          <MenuItem>SMS</MenuItem>
+          <MenuItem>Instagram</MenuItem>
+        </Menu>
+      </SubmenuTrigger>
+      <MenuSeparator />
+      <MenuSection selectionMode="multiple" defaultSelectedKeys={['files']}>
+        <MenuItem id="files">Show files</MenuItem>
+        <MenuItem id="folders">Show folders</MenuItem>
+      </MenuSection>
+    </Menu>
+  </MenuTrigger>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`Menu` follows the [Collection Components API](collections.html?component=Menu), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+function Example() {
+  let items = [
+    { id: 1, name: 'New file…' },
+    { id: 2, name: 'New window' },
+    { id: 3, name: 'Open…' },
+    { id: 4, name: 'Save' },
+    { id: 5, name: 'Save as…' },
+    { id: 6, name: 'Revert file' },
+    { id: 7, name: 'Print…' },
+    { id: 8, name: 'Close window' },
+    { id: 9, name: 'Quit' }
+  ];
+
+  return (
+    <MenuTrigger>
+      <Button>File</Button>
+      <Popover>
+        {/*- begin highlight -*/}
+        <Menu items={items}>
+          {(item) => <MenuItem>{item.name}</MenuItem>}
+        </Menu>
+        {/*- end highlight -*/}
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+### Text slots
+
+Use the `"label"` and `"description"` slots to separate primary and secondary content within a `<MenuItem>`. This improves screen reader announcements and can also be used for styling purposes. Use the `<Keyboard>` component to display a keyboard shortcut.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Text, Keyboard} from 'react-aria-components';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+<MenuTrigger>
+  <Button>Permissions</Button>
+  <Popover>
+    <Menu>
+      <MenuItem textValue="Copy">
+        {/*- begin highlight -*/}
+        <Text slot="label">Copy</Text>
+        <Text slot="description">Copy the selected text</Text>
+        {/*- end highlight -*/}
+        <Keyboard>⌘C</Keyboard>
+      </MenuItem>
+      <MenuItem textValue="Cut">
+        <Text slot="label">Cut</Text>
+        <Text slot="description">Cut the selected text</Text>
+        <Keyboard>⌘X</Keyboard>
+      </MenuItem>
+      <MenuItem textValue="Paste">
+        <Text slot="label">Paste</Text>
+        <Text slot="description">Paste the copied text</Text>
+        <Keyboard>⌘V</Keyboard>
+      </MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Interactive elements (e.g. buttons) within menu items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children.</Content>
+</InlineAlert>
+
+### Sections
+
+Use the `<MenuSection>` component to group options. A `<Header>` element may also be included to label the section. Sections without a header must have an `aria-label`.
+
+```tsx render hideImports
+"use client";
+import {Header} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+<MenuTrigger>
+  <Button>Publish</Button>
+  <Popover>
+    <Menu>
+      {/*- begin highlight -*/}
+      <MenuSection>
+        <Header>Export</Header>
+        {/*- end highlight -*/}
+        <MenuItem>Image…</MenuItem>
+        <MenuItem>Video…</MenuItem>
+        <MenuItem>Text…</MenuItem>
+      </MenuSection>
+      <MenuSection>
+        <Header>Share</Header>
+        <MenuItem>YouTube…</MenuItem>
+        <MenuItem>Instagram…</MenuItem>
+        <MenuItem>Email…</MenuItem>
+      </MenuSection>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### Submenus
+
+Wrap a `<MenuItem>` and a `<Popover>` with a `<SubmenuTrigger>` to create a submenu.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+<MenuTrigger>
+  <Button>Actions</Button>
+  <Popover>
+    <Menu>
+      <MenuItem>Cut</MenuItem>
+      <MenuItem>Copy</MenuItem>
+      <MenuItem>Delete</MenuItem>
+      {/*- begin highlight -*/}
+      <SubmenuTrigger>
+        <MenuItem>Share</MenuItem>
+        {/*- end highlight -*/}
+        <Menu>
+          <MenuItem>SMS</MenuItem>
+          <MenuItem>Instagram</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>Email</MenuItem>
+            <Menu>
+              <MenuItem>Work</MenuItem>
+              <MenuItem>Personal</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </SubmenuTrigger>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### Separators
+
+Separators may be added between menu items or sections in order to create non-labeled groupings.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Separator} from 'react-aria-components';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+<MenuTrigger>
+  <Button>Actions</Button>
+  <Popover>
+    <Menu>
+      <MenuItem>New…</MenuItem>
+      <MenuItem>Open…</MenuItem>
+      {/*- begin highlight -*/}
+      <Separator />
+      {/*- end highlight -*/}
+      <MenuItem>Save</MenuItem>
+      <MenuItem>Save as…</MenuItem>
+      <MenuItem>Rename…</MenuItem>
+      <Separator />
+      <MenuItem>Page setup…</MenuItem>
+      <MenuItem>Print…</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### Links
+
+Use the `href` prop on a `<MenuItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Popover} from 'vanilla-starter/Popover';
+import {Button} from 'vanilla-starter/Button';
+
+<MenuTrigger>
+  <Button>Links</Button>
+  <Popover>
+    <Menu>
+      {/*- begin highlight -*/}
+      <MenuItem href="https://adobe.com/" target="_blank">Adobe</MenuItem>
+      {/*- end highlight -*/}
+      <MenuItem href="https://apple.com/" target="_blank">Apple</MenuItem>
+      <MenuItem href="https://google.com/" target="_blank">Google</MenuItem>
+      <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### Autocomplete
+
+Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+
+```tsx render
+"use client";
+import {Autocomplete, useFilter} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {SearchField} from 'vanilla-starter/SearchField';
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <MenuTrigger>
+      <Button>Add tag...</Button>
+      <Popover style={{display: 'flex', flexDirection: 'column'}}>
+        {/*- begin highlight -*/}
+        <Autocomplete filter={contains}>
+          <SearchField aria-label="Search tags" placeholder="Search tags" autoFocus style={{margin: 4}} />
+          <Menu style={{flex: 1}}>
+            {/*- end highlight -*/}
+            <MenuItem>News</MenuItem>
+            <MenuItem>Travel</MenuItem>
+            <MenuItem>Shopping</MenuItem>
+            <MenuItem>Business</MenuItem>
+            <MenuItem>Entertainment</MenuItem>
+            <MenuItem>Food</MenuItem>
+            <MenuItem>Technology</MenuItem>
+            <MenuItem>Health</MenuItem>
+            <MenuItem>Science</MenuItem>
+          </Menu>
+        </Autocomplete>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Menu) for more details.
+
+```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start"
+"use client";
+import type {Selection} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set(['rulers']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <Button>View</Button>
+        <Popover>
+          <Menu
+            {...props}
+            ///- begin highlight -///
+            /* PROPS */
+            selectedKeys={selected}
+            onSelectionChange={setSelected}
+            ///- end highlight -///
+          >
+            <MenuItem id="grid">Pixel grid</MenuItem>
+            <MenuItem id="rulers">Rulers</MenuItem>
+            <MenuItem id="comments" isDisabled>Comments</MenuItem>
+            <MenuItem id="layout">Layout guides</MenuItem>
+            <MenuItem id="toolbar">Toolbar</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+### Section-level selection
+
+Each section in a menu may have independent selection states by passing `selectionMode` and `selectedKeys` to the `MenuSection`.
+
+```tsx render hideImports
+"use client";
+import type {Selection} from 'react-aria-components';
+import {Header} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {useState} from 'react';
+
+function Example() {
+  let [style, setStyle] = useState<Selection>(new Set(['bold']));
+  let [align, setAlign] = useState<Selection>(new Set(['left']));
+  return (
+    <MenuTrigger>
+      <Button>Edit</Button>
+      <Popover>
+        <Menu>
+          <MenuSection>
+            <Header>Clipboard</Header>
+            <MenuItem>Cut</MenuItem>
+            <MenuItem>Copy</MenuItem>
+            <MenuItem>Paste</MenuItem>
+          </MenuSection>
+          {/*- begin highlight -*/}
+          <MenuSection
+            selectionMode="multiple"
+            selectedKeys={style}
+            onSelectionChange={setStyle}>
+            {/*- end highlight -*/}
+            <Header>Text style</Header>
+            <MenuItem id="bold">Bold</MenuItem>
+            <MenuItem id="italic">Italic</MenuItem>
+            <MenuItem id="underline">Underline</MenuItem>
+          </MenuSection>
+          <MenuSection selectionMode="single" selectedKeys={align} onSelectionChange={setAlign}>
+            <Header>Text alignment</Header>
+            <MenuItem id="left">Left</MenuItem>
+            <MenuItem id="center">Center</MenuItem>
+            <MenuItem id="right">Right</MenuItem>
+          </MenuSection>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
+  );
+}
+```
+
+## Menu trigger
+
+### Custom trigger
+
+`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+
+```tsx render hideImports
+"use client";
+import {Pressable} from 'react-aria-components';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+
+<MenuTrigger>
+  {/*- begin highlight -*/}
+  <Pressable>
+    <span role="button">Custom trigger</span>
+  </Pressable>
+  {/*- end highlight -*/}
+  <Popover>
+    <Menu>
+      <MenuItem>Open</MenuItem>
+      <MenuItem>Rename…</MenuItem>
+      <MenuItem>Duplicate</MenuItem>
+      <MenuItem>Delete…</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Any `<Pressable>` child must have an [interactive ARIA role](https://www.w3.org/TR/wai-aria-1.2/#widget_roles) or use an appropriate semantic HTML element so that screen readers can announce the trigger. Trigger components must forward their `ref` and spread all props to a DOM element.</Content>
+</InlineAlert>
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <button {...props} ref={ref} />
+));
+```
+
+### Long press
+
+Use `trigger="longPress"` to open the menu on long press instead of on click/tap. Keyboard users can open the menu using <Keyboard>Alt</Keyboard> <Keyboard>▼</Keyboard>. This is useful when the menu trigger has a primary action on press, and the menu provides secondary actions.
+
+```tsx render hideImports
+"use client";
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {ChevronDown} from 'lucide-react';
+
+<MenuTrigger trigger="longPress">
+  <Button onPress={() => alert('crop')}>
+    <span>Crop</span>
+    <ChevronDown size={18} />
+  </Button>
+  <Popover>
+    <Menu>
+      <MenuItem>Rotate</MenuItem>
+      <MenuItem>Slice</MenuItem>
+      <MenuItem>Clone stamp</MenuItem>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+## Examples
+
+<ExampleList tag="menu" pages={props.pages} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Popover: 'Popover.html', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator.html', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<MenuTrigger>
+  <Button />
+  <Popover>
+    <Menu>
+      <MenuItem>
+        <Text slot="label" />
+        <Text slot="description" />
+        <Keyboard />
+        <SelectionIndicator />
+      </MenuItem>
+      <Separator />
+      <MenuSection>
+        <Header />
+        <MenuItem />
+      </MenuSection>
+      <SubmenuTrigger>
+        <MenuItem />
+        <Popover>
+          <Menu />
+        </Popover>
+      </SubmenuTrigger>
+    </Menu>
+  </Popover>
+</MenuTrigger>
+```
+
+### MenuTrigger
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} showDescription />
+
+### Menu
+
+<PropTable component={docs.exports.Menu} links={docs.links} showDescription />
+
+### MenuItem
+
+<PropTable component={docs.exports.MenuItem} links={docs.links} showDescription />
+
+### MenuSection
+
+<PropTable component={docs.exports.MenuSection} links={docs.links} showDescription />
+
+### SubmenuTrigger
+
+<PropTable component={docs.exports.SubmenuTrigger} links={docs.links} showDescription />

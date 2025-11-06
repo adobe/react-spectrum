@@ -13,21 +13,26 @@
 import {action} from '@storybook/addon-actions';
 import {Button, ProgressBar, Text} from 'react-aria-components';
 import {mergeProps} from '@react-aria/utils';
+import {Meta, StoryObj} from '@storybook/react';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';
+import './styles.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components/Button',
+  component: Button
+} as Meta<typeof Button>;
+
+export type ButtonStory = StoryObj<typeof Button>;
+
+export const ButtonExample: ButtonStory = {
+  render: () => (
+    <Button data-testid="button-example" onPress={action('onPress')} onClick={action('onClick')}>Press me</Button>
+  )
 };
 
-export const ButtonExample = () => {
-  return (
-    <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
-  );
-};
-
-export const PendingButton = {
+export const PendingButton: ButtonStory = {
   render: (args) => <PendingButtonExample {...args} />,
   args: {
     children: 'Press me'
@@ -79,10 +84,10 @@ function PendingButtonExample(props) {
   );
 }
 
-export const RippleButtonExample = () => {
-  return (
+export const RippleButtonExample: ButtonStory = {
+  render: () => (
     <RippleButton data-testid="button-example">Press me</RippleButton>
-  );
+  )
 };
 
 function RippleButton(props) {
@@ -119,3 +124,40 @@ function RippleButton(props) {
     </Button>
   );
 }
+
+function ButtonPerformanceExample() {
+  const [count, setCount] = useState(0);
+  const [showButtons, setShowButtons] = useState(false);
+
+  const handlePress = () => {
+    if (!showButtons) {
+      setShowButtons(true);
+    } else {
+      setCount(count + 1);
+    }
+  };
+
+  return (
+    <div>
+      <Button style={{marginTop: 24, marginBottom: 16}} onPress={handlePress}>
+        {showButtons ? 'Re-render' : 'Render'}
+      </Button>
+      {showButtons && (
+        <div style={{display: 'flex', gap: 2, flexWrap: 'wrap'}} key={count}>
+          {new Array(20000).fill(0).map((_, i) => (
+            <Button key={i}>Press me</Button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export const ButtonPerformance: ButtonStory = {
+  render: (args) => <ButtonPerformanceExample {...args} />,
+  parameters: {
+    description: {
+      data: 'When usePress is used on the page, there should be a <style> tag placed in the head of the document that applies touch-action: pan-x pan-y pinch-zoom to the [data-react-aria-pressable] elements.'
+    }
+  }
+};

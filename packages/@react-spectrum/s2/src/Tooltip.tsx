@@ -23,11 +23,11 @@ import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {typ
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
+export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
   children: ReactNode,
   /**
@@ -38,7 +38,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /** The content of the tooltip. */
   children: ReactNode
 }
@@ -65,7 +65,7 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
     forcedColors: 'transparent'
   },
   backgroundColor: 'neutral',
-  borderRadius: 'control',
+  borderRadius: 'default',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,
@@ -101,12 +101,17 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   opacity: {
     isEntering: 0,
     isExiting: 0
+  },
+  overflowWrap: {
+    default: 'break-word'
   }
 });
 
 const arrowStyles = style<TooltipRenderProps>({
   display: 'block',
   fill: 'gray-800',
+  width: 10,
+  height: 5,
   rotate: {
     placement: {
       top: 0,
@@ -117,8 +122,8 @@ const arrowStyles = style<TooltipRenderProps>({
   },
   translateX: {
     placement: {
-      left: '[-25%]',
-      right: '[25%]'
+      left: '-25%',
+      right: '25%'
     }
   }
 });
@@ -170,7 +175,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       {renderProps => (
         <>
           <OverlayArrow>
-            <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5">
+            <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 5">
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
           </OverlayArrow>
@@ -186,7 +191,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerProps) {
+export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
   let {
     containerPadding,
     crossOffset,
@@ -216,6 +221,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined extends Omit<TooltipProps, 'placement'>, TooltipTriggerProps {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedTooltip(props: ICombined) {
+export function CombinedTooltip(props: ICombined): ReactNode {
   return <div />;
 }

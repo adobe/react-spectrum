@@ -185,7 +185,7 @@ interface MyCheckboxGroupProps extends Omit<CheckboxGroupProps, 'children'> {
   errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
-function MyCheckboxGroup({
+export function MyCheckboxGroup({
   label,
   description,
   errorMessage,

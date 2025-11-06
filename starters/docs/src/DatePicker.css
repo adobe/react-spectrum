@@ -1,0 +1,15 @@
+@import "./theme.css";
+
+.react-aria-DatePicker {
+  .react-aria-Group {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    height: var(--spacing-8);
+  }
+
+  .react-aria-DateInput {
+    width: 100%;
+    padding-right: var(--spacing-10);
+  }
+}

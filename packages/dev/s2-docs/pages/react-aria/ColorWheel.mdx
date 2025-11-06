@@ -1,0 +1,89 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {ColorWheel as VanillaColorWheel} from 'vanilla-starter/ColorWheel';
+import {ColorWheel as TailwindColorWheel} from 'tailwind-starter/ColorWheel';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/color/docs/ColorWheelAnatomy.svg';
+
+export const tags = ['input'];
+
+# ColorWheel
+
+<PageDescription>{docs.exports.ColorWheel.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaColorWheel}
+    docs={docs.exports.ColorWheel}
+    links={docs.links}
+    props={['isDisabled']}
+    type="vanilla"
+    files={["starters/docs/src/ColorWheel.tsx", "starters/docs/src/ColorWheel.css"]} />
+  <VisualExample
+    component={TailwindColorWheel}
+    docs={docs.exports.ColorWheel}
+    links={docs.links}
+    props={['isDisabled']}
+    type="tailwind"
+    files={["starters/tailwind/src/ColorWheel.tsx", "starters/tailwind/src/ColorThumb.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the color value. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
+
+The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released. These are always called with a `Color` object.
+
+```tsx render
+"use client";
+import {parseColor} from 'react-aria-components';
+import {ColorWheel} from 'vanilla-starter/ColorWheel';
+import {useState} from 'react';
+
+function Example() {
+  let [currentValue, setCurrentValue] = useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = useState(currentValue);
+
+  return (
+    <>
+      <ColorWheel
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre style={{fontSize: 12}}>
+        onChange value: {currentValue.toString('hex')}{'\n'}
+        onChangeEnd value: {finalValue.toString('hex')}
+      </pre>
+    </>
+  );
+}
+```
+
+## API
+
+<Anatomy
+  role="img"
+  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements." />
+
+```tsx links={{ColorWheel: '#colorwheel', ColorWheelTrack: '#colorwheeltrack', ColorThumb: '#colorthumb'}}
+<ColorWheel>
+  <ColorWheelTrack />
+  <ColorThumb />
+</ColorWheel>
+```
+
+### ColorWheel
+
+<PropTable component={docs.exports.ColorWheel} links={docs.links} showDescription />
+
+### ColorWheelTrack
+
+<PropTable component={docs.exports.ColorWheelTrack} links={docs.links} showDescription />
+
+### ColorThumb
+
+<PropTable component={docs.exports.ColorThumb} links={docs.links} showDescription />

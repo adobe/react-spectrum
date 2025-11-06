@@ -1,0 +1,73 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Image} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['img', 'picture', 'photo'];
+
+# Image
+
+<PageDescription>{docs.exports.Image.description}</PageDescription>
+
+```tsx render docs={docs.exports.Image} links={docs.links} props={['src', 'alt']} initialProps={{src: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Desert Sunset', width: 1200, height: 800}} type="s2" wide
+"use client";
+import {Image} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Image
+  /* PROPS */
+  styles={style({width: 400, borderRadius: 'default'})} />
+```
+
+## Error state
+
+Use `renderError` to display a custom error UI when an image fails to load.
+
+```tsx render
+"use client";
+import {Image} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import ErrorIcon from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+
+<Image
+  src=""
+  alt="Error image"
+  styles={style({width: 400, height: 200, borderRadius: 'default'})}
+  renderError={() => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center', justifyContent: 'center', height: 'full'})}>
+      <ErrorIcon />
+      <span className={style({font: 'body'})}>Error loading image</span>
+    </div>
+  )} />
+```
+
+
+## ImageCoordinator
+
+An `ImageCoordinator` coordinates loading behavior for a group of images. Images within an ImageCoordinator are revealed together once all of them have loaded.
+
+```tsx render
+"use client";
+import {ImageCoordinator, Image} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<ImageCoordinator>
+  <div
+    className={style({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+      gridTemplateRows: [180],
+      gap: 8
+    })}>
+    <Image alt="" src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" styles={style({objectFit: 'cover', borderRadius: 'sm'})} />
+    <Image alt="" src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" styles={style({objectFit: 'cover', borderRadius: 'sm'})} />
+    <Image alt="" src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" styles={style({objectFit: 'cover', borderRadius: 'sm'})} />
+    <Image alt="" src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" styles={style({objectFit: 'cover', borderRadius: 'sm'})} />
+  </div>
+</ImageCoordinator>
+```
+
+## API
+
+<PropTable component={docs.exports.Image} links={docs.links} />

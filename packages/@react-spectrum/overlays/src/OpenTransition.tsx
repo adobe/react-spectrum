@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, {JSX, JSXElementConstructor, ReactElement} from 'react';
 import {Transition} from 'react-transition-group';
 
 const OPEN_STATES = {
@@ -31,9 +31,11 @@ const OPEN_STATES = {
  * **note** hitting esc bypasses exit animation for anyone testing.
  */
 
-export function OpenTransition(props) {
+export function OpenTransition(
+  props: any
+): JSX.Element | ReactElement<any, string | JSXElementConstructor<any>>[] {
   // Do not apply any transition if in chromatic.
-  if (process.env.CHROMATIC) {
+  if (typeof process !== 'undefined' && process.env.CHROMATIC) {
     return React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: props.in}));
   }
 

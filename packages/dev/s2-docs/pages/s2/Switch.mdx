@@ -1,0 +1,70 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Switch} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['toggle', 'input'];
+
+# Switch
+
+<PageDescription>{docs.exports.Switch.description}</PageDescription>
+
+<VisualExample
+  component={Switch}
+  docs={docs.exports.Switch}
+  props={['children', 'size', 'isEmphasized']}
+  initialProps={{
+    children: 'Low power mode'
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Selection
+
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes.
+
+```tsx render
+"use client";
+import {Switch} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelection] = useState(false);
+
+  return (
+    <>
+      <Switch 
+        {...props}
+        ///- begin highlight -///
+        isSelected={selected}
+        onChange={setSelection}
+        ///- end highlight -///
+      >
+        Low power mode
+      </Switch>
+      <p>{selected ? 'Low' : 'High'} power mode active.</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` and `value` props to submit the switch to the server. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {Switch, Button, Form} from '@react-spectrum/s2';
+
+<Form>
+  {/*- begin highlight -*/}
+  <Switch name="wifi">Wi-Fi</Switch>
+  {/*- end highlight -*/}
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## API
+
+<PropTable component={docs.exports.Switch} links={docs.links} />

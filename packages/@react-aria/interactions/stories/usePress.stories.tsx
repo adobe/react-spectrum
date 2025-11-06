@@ -19,7 +19,8 @@ import {
   Modal,
   ModalOverlay
 } from 'react-aria-components';
-import React from 'react';
+import React, {JSX, useState} from 'react';
+import {StoryObj} from '@storybook/react';
 import styles from './usePress-stories.css';
 import {usePress} from '@react-aria/interactions';
 
@@ -27,7 +28,14 @@ export default {
   title: 'usePress'
 };
 
-export function TouchIssue() {
+export type TouchIssueStory = StoryObj<typeof TouchIssueRender>;
+
+export const TouchIssue: TouchIssueStory = {
+  render: () => <TouchIssueRender />,
+  name: 'Touch Issue'
+};
+
+function TouchIssueRender(): JSX.Element {
   const [opened, setOpened] = React.useState(false);
   const handleOpen = React.useCallback(() => {
     console.log('opening');
@@ -94,7 +102,7 @@ function OnPress(props) {
   );
 }
 
-export const linkOnPress = {
+export const linkOnPress: TouchIssueStory = {
   render: () => (
     <div className={styles['outer-div']}>
       {/* Note that the svg needs to not have pointer-events: none */}
@@ -121,7 +129,14 @@ export const linkOnPress = {
   }
 };
 
-export function ClickOutsideIssue() {
+export type ClickOutsideIssueStory = StoryObj<typeof ClickOutsideIssueRender>;
+
+export const ClickOutsideIssue: ClickOutsideIssueStory = {
+  render: () => <ClickOutsideIssueRender />,
+  name: 'Click Outside Issue'
+};
+
+function ClickOutsideIssueRender(): JSX.Element {
   const handleClick = () => {
     alert('Clicked!');
   };
@@ -188,7 +203,14 @@ export function ClickOutsideIssue() {
   );
 }
 
-export function SoftwareKeyboardIssue() {
+export type SoftwareKeyboardIssueStory = StoryObj<typeof SoftwareKeyboardIssueRender>;
+
+export const SoftwareKeyboardIssue: SoftwareKeyboardIssueStory = {
+  render: () => <SoftwareKeyboardIssueRender />,
+  name: 'Software Keyboard Issue'
+};
+
+function SoftwareKeyboardIssueRender(): JSX.Element {
   return (
     <div
       style={{
@@ -232,5 +254,86 @@ export function SoftwareKeyboardIssue() {
         </div>
       </div>
     </div>
+  );
+}
+
+export type AndroidUnmountIssueStory = StoryObj<typeof AndroidUnmountIssueRender>;
+
+export const AndroidUnmountIssue: AndroidUnmountIssueStory = {
+  render: () => <AndroidUnmountIssueRender />,
+  name: 'Android Unmount Issue'
+};
+
+function AndroidUnmountIssueRender(): JSX.Element {
+  let [showButton, setShowButton] = useState(true);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <p>This story tests an Android issue where tapping a button that unmounts causes the element behind it to receive onClick.</p>
+      <div style={{position: 'relative', width: 100, height: 100}}>
+        <button
+          type="button"
+          onClick={() => {
+            alert('button underneath was pressed');
+          }}
+          style={{position: 'absolute', top: 0}}>
+          Test 2
+        </button>
+        {showButton && (
+          <Button
+            className="foo"
+            style={{position: 'absolute', top: 0}}
+            onPress={() => {
+              console.log('ra Button pressed');
+              setShowButton(false);
+            }}>
+            Test
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export type IOSScrollIssueStory = StoryObj<typeof IOSScrollIssueRender>;
+
+export const IOSScrollIssue: IOSScrollIssueStory = {
+  render: () => <IOSScrollIssueRender />,
+  name: 'iOS Scroll Issue'
+};
+
+function IOSScrollIssueRender(): JSX.Element {
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <p>This story tests an iOS Safari issue that causes onPointerCancel not to be fired with touch-action: manipulation. Scrolling the list should not trigger onPress.</p>
+      <div
+        style={{
+          marginTop: 10,
+          width: 500,
+          height: 100,
+          overflowY: 'hidden',
+          overflowX: 'auto',
+          border: '1px solid black',
+          display: 'flex',
+          gap: 8
+        }}>
+        {Array.from({length: 10}).map((_, i) => (
+          <Card key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Card() {
+  return (
+    <Button
+      className="foo"
+      style={{height: 80, width: 150, flexShrink: 0}}
+      onPress={() => {
+        alert('pressed');
+      }}>
+      Test
+    </Button>
   );
 }

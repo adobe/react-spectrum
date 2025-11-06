@@ -17,6 +17,7 @@ export class ListCollection<T> implements Collection<Node<T>> {
   private iterable: Iterable<Node<T>>;
   private firstKey: Key | null = null;
   private lastKey: Key | null = null;
+  private _size: number;
 
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
@@ -37,6 +38,7 @@ export class ListCollection<T> implements Collection<Node<T>> {
 
     let last: Node<T> | null = null;
     let index = 0;
+    let size = 0;
     for (let [key, node] of this.keyMap) {
       if (last) {
         last.nextKey = key;
@@ -50,51 +52,57 @@ export class ListCollection<T> implements Collection<Node<T>> {
         node.index = index++;
       }
 
+      // Only count sections and items when determining size so that
+      // loaders and separators in RAC/S2 don't influence the emptyState determination
+      if (node.type === 'section' || node.type === 'item') {
+        size++;
+      }
+
       last = node;
 
       // Set nextKey as undefined since this might be the last node
       // If it isn't the last node, last.nextKey will properly set at start of new loop
       last.nextKey = undefined;
     }
-
+    this._size = size;
     this.lastKey = last?.key ?? null;
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): IterableIterator<Node<T>> {
     yield* this.iterable;
   }
 
-  get size() {
-    return this.keyMap.size;
+  get size(): number {
+    return this._size;
   }
 
-  getKeys() {
+  getKeys(): IterableIterator<Key> {
     return this.keyMap.keys();
   }
 
-  getKeyBefore(key: Key) {
+  getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
     return node ? node.prevKey ?? null : null;
   }
 
-  getKeyAfter(key: Key) {
+  getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
     return node ? node.nextKey ?? null : null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     return this.firstKey;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     return this.lastKey;
   }
 
-  getItem(key: Key) {
+  getItem(key: Key): Node<T> | null {
     return this.keyMap.get(key) ?? null;
   }
 
-  at(idx: number) {
+  at(idx: number): Node<T> | null {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
   }

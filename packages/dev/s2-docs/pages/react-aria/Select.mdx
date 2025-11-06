@@ -1,0 +1,352 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Select';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
+
+export const tags = ['picker', 'dropdown', 'menu', 'input'];
+
+# Select
+
+<PageDescription>{docs.exports.Select.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css"]}
+  "use client";
+  import {Select, SelectItem} from 'vanilla-starter/Select';
+
+  <Select/* PROPS */>
+    <SelectItem>Aardvark</SelectItem>
+    <SelectItem>Cat</SelectItem>
+    <SelectItem>Dog</SelectItem>
+    <SelectItem>Kangaroo</SelectItem>
+    <SelectItem>Panda</SelectItem>
+    <SelectItem>Snake</SelectItem>
+  </Select>
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.Select} links={docs.links} props={['label', 'placeholder', 'selectionMode', 'isDisabled']} initialProps={{label: 'Favorite Animal'}} type="tailwind" files={["starters/tailwind/src/Select.tsx"]}
+  "use client";
+  import {Select, SelectItem} from 'tailwind-starter/Select';
+
+  <Select/* PROPS */>
+    <SelectItem>Aardvark</SelectItem>
+    <SelectItem>Cat</SelectItem>
+    <SelectItem>Dog</SelectItem>
+    <SelectItem>Kangaroo</SelectItem>
+    <SelectItem>Panda</SelectItem>
+    <SelectItem>Snake</SelectItem>
+  </Select>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`Select` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+
+The following example shows a dynamic collection of items, grouped into sections.
+
+```tsx render
+"use client";
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {ListBoxSection, Collection, Header} from 'react-aria-components';
+
+function Example() {
+  /*- begin collapse -*/
+  let options = [
+    {name: 'Fruit', children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Orange'},
+      {name: 'Honeydew'},
+      {name: 'Grapes'},
+      {name: 'Watermelon'},
+      {name: 'Cantaloupe'},
+      {name: 'Pear'}
+    ]},
+    {name: 'Vegetable', children: [
+      {name: 'Cabbage'},
+      {name: 'Broccoli'},
+      {name: 'Carrots'},
+      {name: 'Lettuce'},
+      {name: 'Spinach'},
+      {name: 'Bok Choy'},
+      {name: 'Cauliflower'},
+      {name: 'Potatoes'}
+    ]}
+  ];
+  /*- end collapse -*/
+
+  return (
+    <Select label="Preferred fruit or vegetable" items={options}>
+      {section => (
+        <ListBoxSection id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <SelectItem id={item.name}>{item.name}</SelectItem>}
+          </Collection>
+        </ListBoxSection>
+      )}
+    </Select>
+  );
+}
+```
+
+### Autocomplete
+
+`Select` can include additional components as siblings of the `ListBox`. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+
+```tsx render
+"use client";
+import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
+import {Popover} from 'vanilla-starter/Popover';
+import {SearchField} from 'vanilla-starter/SearchField';
+import {ChevronDown} from 'lucide-react';
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <Select>
+      <Label>Category</Label>
+      <Button>
+        <SelectValue />
+        <ChevronDown size={18} />
+      </Button>
+      <Popover hideArrow className="select-popover">
+        {/*- begin highlight -*/}
+        <Autocomplete filter={contains}>
+          <SearchField aria-label="Search tags" placeholder="Search tags" autoFocus style={{margin: 4}} />
+          <SelectListBox>
+            {/*- end highlight -*/}
+            <SelectItem>News</SelectItem>
+            <SelectItem>Travel</SelectItem>
+            <SelectItem>Shopping</SelectItem>
+            <SelectItem>Business</SelectItem>
+            <SelectItem>Entertainment</SelectItem>
+            <SelectItem>Food</SelectItem>
+            <SelectItem>Technology</SelectItem>
+            <SelectItem>Health</SelectItem>
+            <SelectItem>Science</SelectItem>
+          </SelectListBox>
+        </Autocomplete>
+      </Popover>
+    </Select>
+  );
+}
+```
+
+### TagGroup
+
+Use the `SelectValue` render prop function to display the selected items as a [TagGroup](TagGroup.html).
+
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/MultiSelect.css']}
+"use client";
+import {Autocomplete, Select, SelectValue, Group, useFilter} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
+import {Label} from 'vanilla-starter/Form';
+import {Popover} from 'vanilla-starter/Popover';
+import {Plus} from 'lucide-react';
+import {SearchField} from 'vanilla-starter/SearchField';
+import {Tag, TagGroup} from 'vanilla-starter/TagGroup';
+import {useRef} from 'react';
+import './MultiSelect.css';
+
+/*- begin collapse -*/
+const states = [
+  {id: 'AL', name: 'Alabama'},
+  {id: 'AK', name: 'Alaska'},
+  {id: 'AZ', name: 'Arizona'},
+  {id: 'AR', name: 'Arkansas'},
+  {id: 'CA', name: 'California'},
+  {id: 'CO', name: 'Colorado'},
+  {id: 'CT', name: 'Connecticut'},
+  {id: 'DE', name: 'Delaware'},
+  {id: 'DC', name: 'District of Columbia'},
+  {id: 'FL', name: 'Florida'},
+  {id: 'GA', name: 'Georgia'},
+  {id: 'HI', name: 'Hawaii'},
+  {id: 'ID', name: 'Idaho'},
+  {id: 'IL', name: 'Illinois'},
+  {id: 'IN', name: 'Indiana'},
+  {id: 'IA', name: 'Iowa'},
+  {id: 'KS', name: 'Kansas'},
+  {id: 'KY', name: 'Kentucky'},
+  {id: 'LA', name: 'Louisiana'},
+  {id: 'ME', name: 'Maine'},
+  {id: 'MD', name: 'Maryland'},
+  {id: 'MA', name: 'Massachusetts'},
+  {id: 'MI', name: 'Michigan'},
+  {id: 'MN', name: 'Minnesota'},
+  {id: 'MS', name: 'Mississippi'},
+  {id: 'MO', name: 'Missouri'},
+  {id: 'MT', name: 'Montana'},
+  {id: 'NE', name: 'Nebraska'},
+  {id: 'NV', name: 'Nevada'},
+  {id: 'NH', name: 'New Hampshire'},
+  {id: 'NJ', name: 'New Jersey'},
+  {id: 'NM', name: 'New Mexico'},
+  {id: 'NY', name: 'New York'},
+  {id: 'NC', name: 'North Carolina'},
+  {id: 'ND', name: 'North Dakota'},
+  {id: 'OH', name: 'Ohio'},
+  {id: 'OK', name: 'Oklahoma'},
+  {id: 'OR', name: 'Oregon'},
+  {id: 'PA', name: 'Pennsylvania'},
+  {id: 'RI', name: 'Rhode Island'},
+  {id: 'SC', name: 'South Carolina'},
+  {id: 'SD', name: 'South Dakota'},
+  {id: 'TN', name: 'Tennessee'},
+  {id: 'TX', name: 'Texas'},
+  {id: 'UT', name: 'Utah'},
+  {id: 'VT', name: 'Vermont'},
+  {id: 'VA', name: 'Virginia'},
+  {id: 'WA', name: 'Washington'},
+  {id: 'WV', name: 'West Virginia'},
+  {id: 'WI', name: 'Wisconsin'},
+  {id: 'WY', name: 'Wyoming'}
+];
+/*- end collapse -*/
+
+function SelectWithTagGroup() {
+  let triggerRef = useRef<HTMLDivElement | null>(null);
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <Select selectionMode="multiple" className="multi-select">
+      <Label>States</Label>
+      <Group aria-label="States" ref={triggerRef}>
+        {/*- begin highlight -*/}
+        <SelectValue<typeof states[0]> style={{flex: 1}}>
+          {({selectedItems, state}) => (
+            <TagGroup
+              aria-label="Selected states"
+              items={selectedItems.filter(item => item != null)}
+              renderEmptyState={() => 'No selected items'}
+              onRemove={(keys) => {
+                // Remove keys from Select state.
+                if (Array.isArray(state.value)) {
+                  state.setValue(state.value.filter(k => !keys.has(k)));
+                }
+              }}>
+              {item => <Tag>{item.name}</Tag>}
+            </TagGroup>
+          )}
+        </SelectValue>
+        {/*- end highlight -*/}
+        <Button variant="primary"><Plus /></Button>
+      </Group>
+      <Popover 
+        // Position popover relative to the wrapping div instead of the Button
+        triggerRef={triggerRef}
+        hideArrow
+        className="select-popover"
+        style={{display: 'flex', flexDirection: 'column', width: 250, padding: 4}}>
+        <Autocomplete filter={contains}>
+          <SearchField aria-label="Search states" placeholder="Search states" autoFocus style={{marginBottom: 4}} />
+          <SelectListBox items={states}>
+            {state => <SelectItem>{state.name}</SelectItem>}
+          </SelectListBox>
+        </Autocomplete>
+      </Popover>
+    </Select>
+  );
+}
+```
+
+## Value
+
+Use the `defaultValue` or `value` prop to set the selected item. The value corresponds to the `id` prop of an item. When `selectionMode="multiple"`, `value` and `onChange` accept an array. Items can be disabled with the `isDisabled` prop.
+
+```tsx render docs={docs.exports.Select} links={docs.links} props={['selectionMode']} wide
+"use client";
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {useState} from 'react';
+
+function Example(props) {
+  let [animal, setAnimal] = useState("bison");
+
+  return (
+    <div>
+      <Select
+        {...props}
+        label="Pick an animal"
+        ///- begin highlight -///
+        /* PROPS */
+        value={animal}
+        onChange={setAnimal}
+        ///- end highlight -///
+      >
+        <SelectItem id="koala">Koala</SelectItem>
+        <SelectItem id="kangaroo">Kangaroo</SelectItem>
+        <SelectItem id="platypus" isDisabled>Platypus</SelectItem>
+        <SelectItem id="eagle">Bald Eagle</SelectItem>
+        <SelectItem id="bison">Bison</SelectItem>
+        <SelectItem id="skunk">Skunk</SelectItem>
+      </Select>
+      <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
+    </div>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {Select, SelectItem} from 'vanilla-starter/Select';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';
+
+<Form>
+  <Select
+    label="Animal"
+    /*- begin highlight -*/
+    name="animal"
+    isRequired
+    /*- end highlight -*/
+    description="Please select an animal.">
+    <SelectItem id="aardvark">Aardvark</SelectItem>
+    <SelectItem id="cat">Cat</SelectItem>
+    <SelectItem id="dog">Dog</SelectItem>
+    <SelectItem id="kangaroo">Kangaroo</SelectItem>
+    <SelectItem id="panda">Panda</SelectItem>
+    <SelectItem id="snake">Snake</SelectItem>
+  </Select>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{Select: '#select', Button: 'Button.html', SelectValue: '#selectvalue', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+<Select>
+  <Label />
+  <Button>
+    <SelectValue />
+  </Button>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox />
+  </Popover>
+</Select>
+```
+
+### Select
+
+<PropTable component={docs.exports.Select} links={docs.links} />
+
+### SelectValue
+
+<PropTable component={docs.exports.SelectValue} links={docs.links} showDescription />

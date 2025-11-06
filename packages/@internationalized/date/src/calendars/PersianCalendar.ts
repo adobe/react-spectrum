@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, Calendar} from '../types';
+import {AnyCalendarDate, Calendar, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod} from '../utils';
 
@@ -42,7 +42,7 @@ const MONTH_START = [
  * around the March equinox.
  */
 export class PersianCalendar implements Calendar {
-  identifier = 'persian';
+  identifier: CalendarIdentifier = 'persian';
 
   fromJulianDay(jd: number): CalendarDate {
     let daysSinceEpoch = jd - PERSIAN_EPOCH;
@@ -80,7 +80,7 @@ export class PersianCalendar implements Calendar {
     return isLeapYear ? 30 : 29;
   }
 
-  getEras() {
+  getEras(): string[] {
     return ['AP'];
   }
 

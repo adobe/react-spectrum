@@ -12,26 +12,29 @@
 
 import {
   GridList as AriaGridList,
+  Collection,
   ContextValue,
   GridLayout,
   GridListItem,
+  GridListLoadMoreItem,
   GridListProps,
+  GridListRenderProps,
   Size,
   Virtualizer,
   WaterfallLayout
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
-import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, forwardRefType, Key, LoadingState} from '@react-types/shared';
+import {createContext, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
+import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
@@ -176,27 +179,46 @@ const cardViewStyles = style({
       isFocusVisible: 'solid'
     }
   },
-  outlineOffset: -2
+  outlineOffset: -2,
+  height: {
+    isActionBar: 'full'
+  }
 }, getAllowedOverrides({height: true}));
 
 const wrapperStyles = style({
-  position: 'relative', 
-  overflow: 'clip', 
-  size: 'fit'
+  position: 'relative',
+  overflow: 'clip'
 }, getAllowedOverrides({height: true}));
 
 export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
+/**
+ * A CardView displays a group of related objects, with support for selection and bulk actions.
+ */
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
-  let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
+  let {
+    children,
+    layout: layoutName = 'grid',
+    size: sizeProp = 'M',
+    density = 'regular',
+    variant = 'primary',
+    selectionStyle = 'checkbox',
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles,
+    loadingState,
+    onLoadMore,
+    items,
+    renderEmptyState: renderEmptyStateProp,
+    ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
   let scrollRef = props.renderActionBar ? innerRef : domRef;
 
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
-  let updateSize = useEffectEvent(() => {
+  let updateSize = useCallback(() => {
     let w = scrollRef.current?.clientWidth ?? 0;
     let i = SIZES.length - 1;
     while (i > 0) {
@@ -207,7 +229,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
       i--;
     }
     setMaxSizeIndex(i);
-  });
+  }, [scrollRef, density]);
+  let updateSizeEvent = useEffectEvent(updateSize);
 
   useResizeObserver({
     ref: scrollRef,
@@ -216,32 +239,68 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   });
 
   useLayoutEffect(() => {
-    updateSize();
-  }, [updateSize]);
+    updateSizeEvent();
+  }, []);
 
   // The actual rendered t-shirt size is the minimum between the size prop and the maximum possible size.
   let size = SIZES[Math.min(maxSizeIndex, SIZES.indexOf(sizeProp))];
   let layout = layoutName === 'waterfall' ? WaterfallLayout : GridLayout;
   let options = layoutOptions[size][density];
 
-  useLoadMore({
-    isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
-    items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
-    onLoadMore: props.onLoadMore
-  }, scrollRef);
-
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let renderer;
+  let cardLoadingSentinel = (
+    <GridListLoadMoreItem
+      isLoading={isLoading}
+      onLoadMore={onLoadMore} />
+  );
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items} dependencies={props.dependencies}>
+          {children}
+        </Collection>
+        {cardLoadingSentinel}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {cardLoadingSentinel}
+      </>
+    );
+  }
+
+  // Wrap the renderEmptyState function so that it is not called when there is a skeleton loader.
+  let renderEmptyState = renderEmptyStateProp ? (renderProps: GridListRenderProps) => {
+    let collection = renderProps.state.collection;
+    let firstKey = collection.getFirstKey();
+    if (firstKey == null || collection.getItem(firstKey)?.type !== 'skeleton') {
+      return renderEmptyStateProp(renderProps);
+    }
+  } : undefined;
+
+  let cardViewCtx = useMemo(() => ({
+    layout: layoutName,
+    ElementType: GridListItem
+  }), [layoutName]);
+
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
-      <InternalCardViewContext.Provider value={GridListItem}>
+      <InternalCardViewContext.Provider value={cardViewCtx}>
         <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
+              renderEmptyState={renderEmptyState}
+              items={items}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               selectedKeys={selectedKeys}
@@ -255,8 +314,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, !props.renderActionBar ? styles : undefined)}>
-              {children}
+              className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading', isActionBar: !!props.renderActionBar}, !props.renderActionBar ? styles : undefined)}>
+              {renderer}
             </AriaGridList>
           </ImageCoordinator>
         </CardContext.Provider>

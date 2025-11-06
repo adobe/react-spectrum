@@ -1,12 +1,12 @@
 import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useMemo} from 'react';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
@@ -110,7 +110,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
       }
     },
     onPress(e) {
-      if (e.pointerType !== 'mouse') {
+      if (e.pointerType === 'touch' || e.pointerType === 'pen') {
         focusLast();
       }
     }

@@ -1,0 +1,22 @@
+/* Special Tailwind imports for tailwind starter usage in docs. Avoids CSS reset conflicts. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../../../../starters/tailwind/src/*.{ts,tsx}";
+@source "../pages/**/*.mdx";
+@source "../pages/react-aria/examples/plants/*.tsx";
+@source "../pages/react-aria/examples/tabs/*.tsx";
+@plugin 'tailwindcss-react-aria-components';
+@plugin 'tailwindcss-animate';
+
+@media (min-resolution: 200dpi) {
+  :root {
+    --spacing: calc(0.25rem * 1.25);
+    --text-xs: calc(0.75rem * 1.125);
+    --text-sm: calc(0.875rem * 1.125);
+    --text-base: calc(1rem * 1.125);
+    --text-lg: calc(1.125rem * 1.125);
+    --text-xl: calc(1.25rem * 1.125);
+    --text-2xl: calc(1.5rem * 1.125);
+    --text-3xl: calc(1.875rem * 1.125);
+  }
+}

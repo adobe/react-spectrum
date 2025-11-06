@@ -11,15 +11,14 @@
  */
 
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
-import {colorToken} from '../style/tokens' with {type: 'macro'};
+import {color, style} from '../style' with {type: 'macro'};
 import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {useMediaQuery} from '@react-spectrum/utils';
 
-export function useLoadingAnimation(isAnimating: boolean) {
+export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement | null) => void {
   let animationRef = useRef<Animation | null>(null);
   let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   return useCallback((element: HTMLElement | null) => {
@@ -42,7 +41,7 @@ export function useLoadingAnimation(isAnimating: boolean) {
       animationRef.current.cancel();
       animationRef.current = null;
     }
-  }, [isAnimating]);
+  }, [isAnimating, reduceMotion]);
 }
 
 export type SkeletonElement = ReactElement<{
@@ -65,7 +64,7 @@ export interface SkeletonProps {
 /**
  * A Skeleton wraps around content to render it as a placeholder.
  */
-export function Skeleton({children, isLoading}: SkeletonProps) {
+export function Skeleton({children, isLoading}: SkeletonProps): ReactNode {
   // Disable all form components inside a skeleton.
   return (
     <SkeletonContext.Provider value={isLoading}>
@@ -75,7 +74,7 @@ export function Skeleton({children, isLoading}: SkeletonProps) {
 }
 
 export const loadingStyle = raw(`
-  background-image: linear-gradient(to right, ${colorToken('gray-100')} 33%, light-dark(${colorToken('gray-25')}, ${colorToken('gray-300')}), ${colorToken('gray-100')} 66%);
+  background-image: linear-gradient(to right, ${color('gray-100')} 33%, light-dark(${color('gray-25')}, ${color('gray-300')}), ${color('gray-100')} 66%);
   background-size: 300%;
   * {
     visibility: hidden;
@@ -97,7 +96,7 @@ export function useSkeletonText(children: ReactNode, style: CSSProperties | unde
 }
 
 // Rendered inside <Text> to create skeleton line boxes via box-decoration-break.
-export function SkeletonText({children}) {
+export function SkeletonText({children}: {children: ReactNode}): ReactNode {
   return (
     <span
       // @ts-ignore - compatibility with React < 19
@@ -114,20 +113,21 @@ export function SkeletonText({children}) {
 }
 
 // Clones the child element and displays it with skeleton styling.
-export function SkeletonWrapper({children}: {children: SkeletonElement}) {
+export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactNode {
   let isLoading = useContext(SkeletonContext);
   let animation = useLoadingAnimation(isLoading || false);
   if (isLoading == null) {
     return children;
   }
 
-  let childRef = 'ref' in children ? children.ref as any : children.props.ref;
+  let childRef = 'ref' in children && !Object.getOwnPropertyDescriptor(children, 'ref')?.get ? children.ref as any : children.props.ref;
   return (
     <SkeletonContext.Provider value={null}>
       {isLoading ? cloneElement(children, {
         ref: mergeRefs(childRef, animation),
         className: (children.props.className || '') + ' ' + loadingStyle,
-        inert: 'true'
+        // @ts-ignore - compatibility with React < 19
+        inert: inertValue(true)
       }) : children}
     </SkeletonContext.Provider>
   );

@@ -1,12 +1,16 @@
 {
   "name": "@react-aria/numberfield",
-  "version": "3.11.11",
+  "version": "3.12.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -22,16 +26,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.6",
-    "@react-aria/interactions": "^3.24.0",
-    "@react-aria/spinbutton": "^3.6.12",
-    "@react-aria/textfield": "^3.17.0",
-    "@react-aria/utils": "^3.28.0",
-    "@react-stately/form": "^3.1.2",
-    "@react-stately/numberfield": "^3.9.10",
-    "@react-types/button": "^3.11.0",
-    "@react-types/numberfield": "^3.8.9",
-    "@react-types/shared": "^3.28.0",
+    "@react-aria/i18n": "^3.12.13",
+    "@react-aria/interactions": "^3.25.6",
+    "@react-aria/spinbutton": "^3.6.19",
+    "@react-aria/textfield": "^3.18.2",
+    "@react-aria/utils": "^3.31.0",
+    "@react-stately/form": "^3.2.2",
+    "@react-stately/numberfield": "^3.10.2",
+    "@react-types/button": "^3.14.1",
+    "@react-types/numberfield": "^3.8.15",
+    "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

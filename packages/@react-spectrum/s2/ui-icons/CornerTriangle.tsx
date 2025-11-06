@@ -14,18 +14,38 @@ import CornerTriangle_L from './S2_CornerTriangleSize200.svg';
 import CornerTriangle_M from './S2_CornerTriangleSize100.svg';
 import CornerTriangle_S from './S2_CornerTriangleSize75.svg';
 import CornerTriangle_XL from './S2_CornerTriangleSize300.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
+let styles = style({
+  width: {
+    size: {
+      M: 5,
+      L: 6,
+      XL: 7,
+      S: 5
+    }
+  },
+  height: {
+    size: {
+      M: 5,
+      L: 6,
+      XL: 7,
+      S: 5
+    }
+  }
+});
+
+export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <CornerTriangle_M {...otherProps} />;
+      return <CornerTriangle_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <CornerTriangle_L {...otherProps} />;
+      return <CornerTriangle_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <CornerTriangle_XL {...otherProps} />;
+      return <CornerTriangle_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'S':
-      return <CornerTriangle_S {...otherProps} />;
+      return <CornerTriangle_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

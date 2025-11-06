@@ -31,7 +31,7 @@ export interface InteractOutsideProps {
  * Example, used in components like Dialogs and Popovers so they can close
  * when a user clicks outside them.
  */
-export function useInteractOutside(props: InteractOutsideProps) {
+export function useInteractOutside(props: InteractOutsideProps): void {
   let {ref, onInteractOutside, isDisabled, onInteractOutsideStart} = props;
   let stateRef = useRef({
     isPointerDown: false,
@@ -64,7 +64,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
 
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
-      let onPointerUp = (e) => {
+      let onClick = (e) => {
         if (state.isPointerDown && isValidEvent(e, ref)) {
           triggerInteractOutside(e);
         }
@@ -72,14 +72,16 @@ export function useInteractOutside(props: InteractOutsideProps) {
       };
 
       // changing these to capture phase fixed combobox
+      // Use click instead of pointerup to avoid Android Chrome issue
+      // https://issues.chromium.org/issues/40732224
       documentObject.addEventListener('pointerdown', onPointerDown, true);
-      documentObject.addEventListener('pointerup', onPointerUp, true);
+      documentObject.addEventListener('click', onClick, true);
 
       return () => {
         documentObject.removeEventListener('pointerdown', onPointerDown, true);
-        documentObject.removeEventListener('pointerup', onPointerUp, true);
+        documentObject.removeEventListener('click', onClick, true);
       };
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       let onMouseUp = (e) => {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
@@ -109,7 +111,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         documentObject.removeEventListener('touchend', onTouchEnd, true);
       };
     }
-  }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);
+  }, [ref, isDisabled]);
 }
 
 function isValidEvent(event, ref) {

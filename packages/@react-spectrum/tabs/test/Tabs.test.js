@@ -60,6 +60,7 @@ describe('Tabs', function () {
   beforeEach(() => {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
   });
 
@@ -1310,6 +1311,45 @@ describe('Tabs', function () {
           expect(tabpanel).toHaveTextContent(defaultItems[0].children);
         }
       }
+    });
+  });
+
+  describe('test utils', function () {
+    let items = [
+      {name: 'Tab 1', children: 'Tab 1 body'},
+      {name: 'Tab 2', children: 'Tab 2 body'},
+      {name: 'Tab 3', children: 'Tab 3 body'},
+      {name: 'Tab 4', children: 'Tab 4 body'},
+      {name: 'Tab 5', children: 'Tab 5 body'}
+    ];
+    it.each`
+      Name                    | props
+      ${'ltr + vertical'}     | ${{locale: 'de-DE', orientation: 'vertical'}}
+      ${'rtl + verfical'}     | ${{locale: 'ar-AE', orientation: 'vertical'}}
+      ${'ltr + horizontal'}   | ${{locale: 'de-DE', orientation: 'horizontal'}}
+      ${'rtl + horizontal'}   | ${{locale: 'ar-AE', orientation: 'horizontal'}}
+    `('$Name should select the correct radio via keyboard regardless of orientation and disabled radios', async function ({props}) {
+      let {getByRole} = renderComponent({items, orientation: props.orientation, disabledKeys: ['Tab 2', 'Tab 3'], providerProps: {locale: props.locale}});
+
+      let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
+      let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), direction});
+      expect(tabsTester.tablist).toHaveAttribute('aria-orientation', props.orientation);
+      let tabs = tabsTester.tabs;
+      await tabsTester.triggerTab({tab: tabs[0]});
+      expect(tabsTester.selectedTab).toBe(tabs[0]);
+
+      await tabsTester.triggerTab({tab: 4, interactionType: 'keyboard'});
+      expect(tabsTester.selectedTab).toBe(tabs[4]);
+      let tab4 = tabsTester.findTab({tabIndexOrText: 3});
+      await tabsTester.triggerTab({tab: tab4, interactionType: 'keyboard'});
+      expect(tabsTester.selectedTab).toBe(tabs[3]);
+
+      await tabsTester.triggerTab({tab: 'Tab 1', interactionType: 'mouse'});
+      expect(tabsTester.selectedTab).toBe(tabs[0]);
+
+      let tab5 = tabsTester.findTab({tabIndexOrText: 'Tab 5'});
+      await tabsTester.triggerTab({tab: tab5, interactionType: 'mouse'});
+      expect(tabsTester.selectedTab).toBe(tabs[4]);
     });
   });
 });

@@ -1,12 +1,16 @@
 {
   "name": "@react-spectrum/calendar",
-  "version": "3.6.1",
+  "version": "3.7.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -36,21 +40,21 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.7.0",
-    "@react-aria/calendar": "^3.7.1",
-    "@react-aria/focus": "^3.20.0",
-    "@react-aria/i18n": "^3.12.6",
-    "@react-aria/interactions": "^3.24.0",
-    "@react-aria/utils": "^3.28.0",
-    "@react-aria/visually-hidden": "^3.8.20",
-    "@react-spectrum/button": "^3.16.11",
-    "@react-spectrum/label": "^3.16.12",
-    "@react-spectrum/utils": "^3.12.2",
-    "@react-stately/calendar": "^3.7.1",
-    "@react-types/button": "^3.11.0",
-    "@react-types/calendar": "^3.6.1",
-    "@react-types/shared": "^3.28.0",
-    "@spectrum-icons/ui": "^3.6.13",
+    "@internationalized/date": "^3.10.0",
+    "@react-aria/calendar": "^3.9.2",
+    "@react-aria/focus": "^3.21.2",
+    "@react-aria/i18n": "^3.12.13",
+    "@react-aria/interactions": "^3.25.6",
+    "@react-aria/utils": "^3.31.0",
+    "@react-aria/visually-hidden": "^3.8.28",
+    "@react-spectrum/button": "^3.17.4",
+    "@react-spectrum/label": "^3.16.19",
+    "@react-spectrum/utils": "^3.12.9",
+    "@react-stately/calendar": "^3.9.0",
+    "@react-types/button": "^3.14.1",
+    "@react-types/calendar": "^3.8.0",
+    "@react-types/shared": "^3.32.1",
+    "@spectrum-icons/ui": "^3.6.20",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

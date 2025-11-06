@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
 import {DOMProps, RefObject} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {CSSProperties, ReactElement, useRef, useState} from 'react';
+import React, {CSSProperties, JSX, ReactElement, useRef, useState} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
 import {useId, useLayoutEffect} from '@react-aria/utils';
@@ -31,7 +31,7 @@ interface ColorThumbProps extends DOMProps {
   containerRef?: RefObject<HTMLElement | null>
 }
 
-function ColorThumb(props: ColorThumbProps) {
+function ColorThumb(props: ColorThumbProps): JSX.Element {
   let {value, isDisabled, isDragging, isFocused, children, className = '', style, containerRef, ...otherProps} = props;
 
   let valueCSS = value.toString('css');
@@ -69,11 +69,15 @@ function ColorLoupe({isOpen, valueCSS, containerRef, loupeRef, style}: any) {
   let thumbTop = style.top || '50%';
   if (typeof thumbTop === 'string' && thumbTop.endsWith('%')) {
     thumbTop = parseFloat(style.top || '50%') / 100 * containerRect.height;
+  } else if (typeof thumbTop === 'string' && thumbTop.endsWith('px')) {
+    thumbTop = parseFloat(thumbTop);
   }
 
   let thumbLeft = style.left || '50%';
   if (typeof thumbLeft === 'string' && thumbLeft.endsWith('%')) {
     thumbLeft = parseFloat(thumbLeft || '50%') / 100 * containerRect.width;
+  } else if (typeof thumbLeft === 'string' && thumbLeft.endsWith('px')) {
+    thumbLeft = parseFloat(thumbLeft);
   }
 
   return (

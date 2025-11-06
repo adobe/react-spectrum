@@ -13,26 +13,25 @@ export default ExampleLayout;
 import docs from 'docs:react-aria-components';
 import styles from '@react-spectrum/docs/src/docs.css';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
-import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
 import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
-keywords: [example, menu, popover, dialog, aria, accessibility, react, component]
+keywords: [example, menu, popover, aria, accessibility, react, component]
 type: component
 image: account-menu.png
-description: A Menu with an interactive header, built with a Dialog and Popover.
+description: A Menu with an interactive header, built with a Popover.
 ---
 
 # Account Menu
 
-A [Menu](../Menu.html) with an interactive header, built with a [Dialog](../Dialog.html) and [Popover](../Popover.html).
+A [Menu](../Menu.html) with an interactive header, built with a [Popover](../Popover.html).
 
 ## Example
 
-For accessibility reasons, standalone Menus cannot contain any children other than menu items (optionally grouped into sections). To build patterns that include such elements, place the Menu into a Dialog with additional interactive elements as siblings.
+For accessibility reasons, standalone Menus cannot contain any children other than menu items (optionally grouped into sections). To build patterns that include such elements, place the Menu into a Popover with additional interactive elements as siblings.
 
 ```tsx import
 import './tailwind.global.css';
@@ -80,7 +79,7 @@ function MyMenuItem(props: MenuItemProps) {
 
 function MySwitch(props: SwitchProps) {
   return (
-    <Switch className="group flex gap-2 items-center text-gray-800 dark:text-zinc-200 text-base transition">
+    <Switch className="group relative flex gap-2 items-center text-gray-800 dark:text-zinc-200 text-base transition">
       {composeRenderProps(props.children, children => <>
         <div className="flex h-3 w-6 p-[2px] items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent bg-gray-400 dark:bg-zinc-400 group-pressed:bg-gray-500 dark:group-pressed:bg-zinc-300 group-selected:bg-gray-700 group-selected:dark:bg-zinc-300 group-selected:forced-colors:bg-[Highlight]! group-selected:group-pressed:bg-gray-800 group-selected:dark:group-pressed:bg-zinc-200 outline outline-0 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] outline-offset-2 group-focus-visible:outline-2">
           <div className="h-3 w-3 transform rounded-full bg-white dark:bg-zinc-900 outline outline-1 -outline-offset-1 outline-transparent shadow-sm transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
@@ -150,13 +149,6 @@ module.exports = {
   title="Popover"
   description="A popover displays content in context with a trigger element.">
   <Popover />
-</ExampleCard>
-
-<ExampleCard
-  url="../Dialog.html"
-  title="Dialog"
-  description="A dialog is an overlay shown above other content in an application.">
-  <Dialog />
 </ExampleCard>
 
 </section>

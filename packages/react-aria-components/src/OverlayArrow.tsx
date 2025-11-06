@@ -10,8 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, RenderProps, useContextProps, useRenderProps} from './utils';
-import {forwardRefType} from '@react-types/shared';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {DOMProps, forwardRefType} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
@@ -23,7 +30,13 @@ export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContex
   placement: 'bottom'
 });
 
-export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {}
+export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps>, DOMProps {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-OverlayArrow'
+   */
+  className?: ClassNameOrFunction<OverlayArrowRenderProps>
+}
 
 export interface OverlayArrowRenderProps {
   /**
@@ -61,9 +74,11 @@ export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     Object.keys(renderProps.style).forEach(key => renderProps.style![key] === undefined && delete renderProps.style![key]);
   }
 
+  let DOMProps = filterDOMProps(props);
+
   return (
     <div
-      {...props}
+      {...DOMProps}
       {...renderProps}
       style={{
         ...style,

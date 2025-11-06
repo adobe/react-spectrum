@@ -1,0 +1,24 @@
+{
+  "name": "@parcel/config-storybook",
+  "version": "0.0.2",
+  "private": true,
+  "main": "storybook-config.json",
+  "engines": {
+    "parcel": "^2.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@parcel/config-default": "^2.16.1",
+    "@parcel/core": "^2.16.1",
+    "@parcel/resolver-storybook": "^0.0.0",
+    "@parcel/transformer-js": "^2.16.1",
+    "@parcel/transformer-react-refresh-wrap": "^2.16.1",
+    "@parcel/transformer-storybook": "^0.0.2"
+  },
+  "scripts": {
+    "build": "true",
+    "clean": "true"
+  }
+}

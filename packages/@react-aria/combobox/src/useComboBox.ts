@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useEvent, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -139,19 +139,22 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         }
 
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
-        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
-          let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-          if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
-            let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
-            if (collectionItem) {
+        if (state.isOpen && listBoxRef.current && state.selectionManager.focusedKey != null) {
+          let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+          if (collectionItem?.props.href) {
+            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            if (e.key === 'Enter' && item instanceof HTMLAnchorElement) {
               router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
+            state.close();
+            break;
+          } else if (collectionItem?.props.onAction) {
+            collectionItem.props.onAction();
+            state.close();
+            break;
           }
-
-          state.close();
-        } else {
-          state.commit();
         }
+        state.commit();
         break;
       case 'Escape':
         if (
@@ -210,6 +213,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
     value: state.inputValue,
+    defaultValue: state.defaultInputValue,
     onFocus,
     autoComplete: 'off',
     validate: undefined,
@@ -350,6 +354,10 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   }, [focusedItem]);
 
+  useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
+    state.close();
+  } : undefined);
+
   return {
     labelProps,
     buttonProps: {
@@ -375,11 +383,12 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       spellCheck: 'false'
     }),
     listBoxProps: mergeProps(menuProps, listBoxProps, {
-      autoFocus: state.focusStrategy,
+      autoFocus: state.focusStrategy || true,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
       shouldFocusOnHover: true,
-      linkBehavior: 'selection' as const
+      linkBehavior: 'selection' as const,
+      ['UNSTABLE_itemBehavior']: 'action'
     }),
     descriptionProps,
     errorMessageProps,

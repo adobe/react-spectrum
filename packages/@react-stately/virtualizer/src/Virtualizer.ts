@@ -84,7 +84,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
-  isPersistedKey(key: Key) {
+  isPersistedKey(key: Key): boolean {
     // Quick check if the key is directly in the set of persisted keys.
     if (this.persistedKeys.has(key)) {
       return true;
@@ -182,7 +182,7 @@ export class Virtualizer<T extends object, V> {
     }
   }
 
-  getVisibleLayoutInfos() {
+  getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
@@ -193,8 +193,7 @@ export class Virtualizer<T extends object, V> {
     } else {
       rect = this._overscanManager.getOverscannedRect();
     }
-
-    let layoutInfos = rect.area === 0 ? [] : this.layout.getVisibleLayoutInfos(rect);
+    let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
     for (let layoutInfo of layoutInfos) {
       map.set(layoutInfo.key, layoutInfo);
@@ -311,7 +310,7 @@ export class Virtualizer<T extends object, V> {
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
         layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
           && this._invalidationContext.layoutOptions != null
-          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions 
+          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions
           && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
         needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
@@ -345,11 +344,11 @@ export class Virtualizer<T extends object, V> {
     return this._visibleViews.get(key);
   }
 
-  invalidate(context: InvalidationContext) {
+  invalidate(context: InvalidationContext): void {
     this.delegate.invalidate(context);
   }
 
-  updateItemSize(key: Key, size: Size) {
+  updateItemSize(key: Key, size: Size): void {
     if (!this.layout.updateItemSize) {
       return;
     }

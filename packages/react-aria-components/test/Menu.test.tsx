@@ -15,7 +15,7 @@ import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -55,7 +55,7 @@ let renderMenu = (menuProps = {}, itemProps = {}) => render(<TestMenu {...{menuP
 
 describe('Menu', () => {
   let user;
-  let testUtilUser = new User();
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -386,6 +386,19 @@ describe('Menu', () => {
     }
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getAllByRole} = renderMenu({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+    let menuitem = getAllByRole('menuitemcheckbox')[0];
+
+    expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
+
+    await user.click(menuitem);
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
+
+    await user.keyboard('{Escape}');
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
+  });
+
   it('should support disabled state', () => {
     let {getAllByRole} = renderMenu({disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let menuitem = getAllByRole('menuitem')[0];
@@ -521,11 +534,12 @@ describe('Menu', () => {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = mockClickDefault();
+        let onClick = mockClickDefault({capture: true});
         if (type === 'mouse') {
           await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.click(items[1]);
           fireEvent.keyUp(items[1], {key: 'Enter'});
         }
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1336,7 +1350,7 @@ describe('Menu', () => {
   describe('portalContainer', () => {
     function InfoMenu(props) {
       return (
-        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+        <UNSAFE_PortalProvider getContainer={() => props.container.current}>
           <MenuTrigger>
             <Button aria-label="trigger" />
             <Popover>
@@ -1347,7 +1361,7 @@ describe('Menu', () => {
               </Menu>
             </Popover>
           </MenuTrigger>
-        </UNSTABLE_PortalProvider>
+        </UNSAFE_PortalProvider>
       );
     }
 
@@ -1427,6 +1441,141 @@ describe('Menu', () => {
     act(() => {jest.runAllTimers();});
     expect(menu).toBeInTheDocument();
     expect(document.activeElement).toBe(activeElement);
+  });
+
+  it('should support press events on menu items', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let onClickCapture = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items with closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when dragging and releasing', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await user.pointer({target: menuTester.trigger, keys: '[MouseLeft>]'});
+    await user.pointer({target: menuTester.findOption({optionIndexOrText: 'Cat'}), keys: '[/MouseLeft]'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).not.toHaveBeenCalled();
+    expect(onPressEnd).not.toHaveBeenCalled();
+    expect(onPress).not.toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    // React 17 has different batching in tests? This doesn't happen in the browser.
+    if (!React.version.startsWith('17')) {
+      expect(onPressEnd).not.toHaveBeenCalled();
+      expect(onPress).not.toHaveBeenCalled();
+    }
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard and closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
 

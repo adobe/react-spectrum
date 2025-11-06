@@ -1,0 +1,99 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/DisclosureGroup';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/DisclosureGroupAnatomy.svg';
+
+export const tags = ['accordion', 'collapsible', 'expandable', 'details'];
+
+# DisclosureGroup
+
+<PageDescription>{docs.exports.DisclosureGroup.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={vanillaDocs.exports.DisclosureGroup} links={vanillaDocs.links} props={['allowsMultipleExpanded', 'isDisabled']} type="vanilla" files={["starters/docs/src/DisclosureGroup.tsx", "starters/docs/src/DisclosureGroup.css"]}
+  "use client";
+  import {DisclosureGroup} from 'vanilla-starter/DisclosureGroup';
+  import {Disclosure, DisclosureHeader, DisclosurePanel} from 'vanilla-starter/Disclosure';
+
+  <DisclosureGroup/* PROPS */>
+    <Disclosure>
+      <DisclosureHeader>Personal Information</DisclosureHeader>
+      <DisclosurePanel>Personal information form here.</DisclosurePanel>
+    </Disclosure>
+    <Disclosure>
+      <DisclosureHeader>Billing Address</DisclosureHeader>
+      <DisclosurePanel>Billing address form here.</DisclosurePanel>
+    </Disclosure>
+  </DisclosureGroup>
+  ```
+
+  ```tsx render docs={vanillaDocs.exports.DisclosureGroup} links={vanillaDocs.links} props={['allowsMultipleExpanded', 'isDisabled']} type="tailwind" files={["starters/tailwind/src/Disclosure.tsx"]}
+  "use client";
+  import {DisclosureGroup, Disclosure, DisclosureHeader, DisclosurePanel} from 'tailwind-starter/Disclosure';
+
+  <DisclosureGroup/* PROPS */>
+    <Disclosure>
+      <DisclosureHeader>Personal Information</DisclosureHeader>
+      <DisclosurePanel>Personal information form here.</DisclosurePanel>
+    </Disclosure>
+    <Disclosure>
+      <DisclosureHeader>Billing Address</DisclosureHeader>
+      <DisclosurePanel>Billing address form here.</DisclosurePanel>
+    </Disclosure>
+  </DisclosureGroup>
+  ```
+</ExampleSwitcher>
+
+## Expanding
+
+Use the `defaultExpandedKeys` or `expandedKeys` prop to set the expanded items, and `onExpandedChange` to handle user interactions. The expanded keys correspond to the `id` prop of each `<Disclosure>`.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {DisclosureGroup} from 'vanilla-starter/DisclosureGroup';
+import {Disclosure, DisclosureHeader, DisclosurePanel} from 'vanilla-starter/Disclosure';
+import {useState} from 'react';
+
+function Example() {
+  let [expandedKeys, setExpandedKeys] = useState(new Set<Key>(['system']));
+
+  return (
+    <DisclosureGroup
+      /*- begin highlight -*/
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}>
+      {/*- end highlight -*/}
+      <Disclosure id="settings">
+        <DisclosureHeader>Settings</DisclosureHeader>
+        <DisclosurePanel>Application settings content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="preferences">
+        <DisclosureHeader>Preferences</DisclosureHeader>
+        <DisclosurePanel>User preferences content</DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="advanced">
+        <DisclosureHeader>Advanced</DisclosureHeader>
+        <DisclosurePanel>Advanced configuration options</DisclosurePanel>
+      </Disclosure>
+    </DisclosureGroup>
+  );
+}
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{DisclosureGroup: '#disclosuregroup', Disclosure: 'Disclosure.html'}}
+<DisclosureGroup>
+  <Disclosure />
+</DisclosureGroup>
+```
+
+### DisclosureGroup
+
+<PropTable component={docs.exports.DisclosureGroup} links={docs.links} />

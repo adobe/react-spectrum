@@ -165,12 +165,33 @@ describe('NumberParser', function () {
       });
     });
 
+    it('should parse a percent with signs', function () {
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+10%')).toBe(0.1);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('+0%')).toBe(0);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-10%')).toBe(-0.1);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'always'}).parse('-0%')).toBe(-0);
+      expect(new NumberParser('en-US', {style: 'percent', signDisplay: 'exceptZero', minimumFractionDigits: 2}).parse('+0.50%')).toBe(0.005);
+    });
+
+    it('should parse a percent with decimals and exceptZero', function () {
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0.532%')).toBe(0.01);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('+0%')).toBe(0);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('0.532%')).toBe(0.01);
+      expect(new NumberParser('en-GB', {style: 'percent', signDisplay: 'exceptZero'}).parse('-0.532%')).toBe(-0.01);
+    });
+
     describe('NumberFormat options', function () {
       it('supports roundingIncrement', function () {
         expect(new NumberParser('en-US', {roundingIncrement: 2}).parse('10')).toBe(10);
         // This doesn't fail in Node 18 because roundingIncrement isn't on the resolved options. Hopefully later versions of Node this test will be meaningful.
         expect(new NumberParser('en-US', {roundingIncrement: 2, minimumFractionDigits: 2, maximumFractionDigits: 2}).parse('10.00')).toBe(10.00);
       });
+    });
+
+    it('should parse a swiss currency number', () => {
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse('CHF 1’000.00')).toBe(1000);
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
+      expect(new NumberParser('de-CH', {style: 'currency', currency: 'CHF'}).parse("CHF 1'000.00")).toBe(1000);
     });
 
     describe('round trips', function () {

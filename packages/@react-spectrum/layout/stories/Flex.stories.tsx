@@ -12,6 +12,7 @@
 
 import {BackgroundColorValue, Responsive as TResponsive} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {View} from '@react-spectrum/view';
 
@@ -38,9 +39,11 @@ for (let color of baseColors) {
 
 export default {
   title: 'Flex'
-};
+} as Meta<typeof Flex>;
 
-export const VerticalStackWithGap = () => (
+export type FlexStory = StoryFn<typeof Flex>;
+
+export const VerticalStackWithGap: FlexStory = () => (
   <Flex direction="column" width="size-2000" gap="size-100">
     <View backgroundColor="celery-600" height="size-800" />
     <View backgroundColor="blue-600" height="size-800" />
@@ -52,7 +55,7 @@ VerticalStackWithGap.story = {
   name: 'Vertical stack with gap'
 };
 
-export const HorizontalStackWithGap = () => (
+export const HorizontalStackWithGap: FlexStory = () => (
   <Flex direction="row" height="size-800" gap="size-100">
     <View backgroundColor="celery-600" width="size-800" />
     <View backgroundColor="blue-600" width="size-800" />
@@ -64,7 +67,7 @@ HorizontalStackWithGap.story = {
   name: 'Horizontal stack with gap'
 };
 
-export const WrappingWithGap = () => (
+export const WrappingWithGap: FlexStory = () => (
   <View maxWidth="80%" borderWidth="thin" borderColor="dark">
     <Flex direction="row" gap="size-100" wrap>
       {colors.map((color) => (
@@ -78,7 +81,7 @@ WrappingWithGap.story = {
   name: 'Wrapping with gap'
 };
 
-export const NestedFlexWithGap = () => (
+export const NestedFlexWithGap: FlexStory = () => (
   <Flex direction="column" gap="size-150">
     <View backgroundColor="celery-600" height="size-800" />
     <Flex direction="row" height="size-800" gap="size-100">
@@ -94,7 +97,7 @@ NestedFlexWithGap.story = {
   name: 'Nested flex with gap'
 };
 
-export const AlignCenter = () => (
+export const AlignCenter: FlexStory = () => (
   <Flex direction="row" gap="size-100" alignItems="center">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-2000" />
@@ -106,7 +109,7 @@ AlignCenter.story = {
   name: 'Align center'
 };
 
-export const AlignEnd = () => (
+export const AlignEnd: FlexStory = () => (
   <Flex direction="row" gap="size-100" alignItems="end">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-2000" />
@@ -118,7 +121,7 @@ AlignEnd.story = {
   name: 'Align end'
 };
 
-export const JustifyStart = () => (
+export const JustifyStart: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="start" width="80%">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -130,7 +133,7 @@ JustifyStart.story = {
   name: 'Justify start'
 };
 
-export const JustifyCenter = () => (
+export const JustifyCenter: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="center" width="80%">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -142,7 +145,7 @@ JustifyCenter.story = {
   name: 'Justify center'
 };
 
-export const JustifyEnd = () => (
+export const JustifyEnd: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="end" width="80%">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -154,7 +157,7 @@ JustifyEnd.story = {
   name: 'Justify end'
 };
 
-export const JustifySpaceAround = () => (
+export const JustifySpaceAround: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="space-around" width="80%">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -166,7 +169,7 @@ JustifySpaceAround.story = {
   name: 'Justify space-around'
 };
 
-export const JustifySpaceBetween = () => (
+export const JustifySpaceBetween: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="space-between" width="80%">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -178,7 +181,7 @@ JustifySpaceBetween.story = {
   name: 'Justify space-between'
 };
 
-export const JustifySpaceEvenly = () => (
+export const JustifySpaceEvenly: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
     <View backgroundColor="celery-600" width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -190,7 +193,7 @@ JustifySpaceEvenly.story = {
   name: 'Justify space-evenly'
 };
 
-export const Ordered = () => (
+export const Ordered: FlexStory = () => (
   <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
     <View backgroundColor="celery-600" order={2} width="size-800" height="size-800" />
     <View backgroundColor="blue-600" width="size-800" height="size-800" />
@@ -202,7 +205,7 @@ Ordered.story = {
   name: 'ordered'
 };
 
-export const Responsive = () => (
+export const Responsive: FlexStory = () => (
   <Flex
     direction={{base: 'column', L: 'row'}}
     gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>

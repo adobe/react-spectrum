@@ -1,0 +1,67 @@
+{
+  "name": "@react-spectrum/s2-docs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
+    "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs",
+    "generate:og": "node scripts/generateOGImages.mjs",
+    "generate:md": "node scripts/generateMarkdownDocs.mjs"
+  },
+  "targets": {
+    "react-static": {
+      "source": "pages/**/*.mdx",
+      "context": "react-server",
+      "engines": {
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 2 Safari versions",
+          "last 2 Firefox versions"
+        ]
+      },
+      "includeNodeModules": {
+        "tree-sitter-highlight": false,
+        "json5": false,
+        "globals-docs": false
+      }
+    }
+  },
+  "dependencies": {
+    "@babel/parser": "^7.26.3",
+    "@parcel/plugin": "^2.16.1",
+    "@parcel/rsc": "^2.16.1",
+    "@react-aria/focus": "^3.20.4",
+    "@react-aria/i18n": "^3.12.10",
+    "@react-aria/interactions": "^3.25.1",
+    "@react-aria/utils": "^3.29.0",
+    "@react-spectrum/s2": "^0.12.0",
+    "@react-spectrum/utils": "^3.12.6",
+    "@react-types/shared": "^3.30.0",
+    "@react-types/textfield": "^3.12.3",
+    "emojibase-data": "^16.0.3",
+    "fast-glob": "^3.3.3",
+    "globals-docs": "^2.4.1",
+    "gray-matter": "^4.0.3",
+    "json5": "^2.2.3",
+    "lz-string": "^1.5.0",
+    "markdown-to-jsx": "^6.11.0",
+    "react": "^19",
+    "react-aria": "^3.40.0",
+    "react-aria-components": "^1.7.1",
+    "react-dom": "^19",
+    "react-stately": "^3.38.0",
+    "remark-mdx": "^3.1.0",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "satori": "^0.16.1",
+    "sharp": "^0.33.5",
+    "tree-sitter-highlight": "^1.0.1",
+    "ts-morph": "^26.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
+  },
+  "alias": {
+    "tailwind-starter": "../../../starters/tailwind/src",
+    "vanilla-starter": "../../../starters/docs/src"
+  }
+}

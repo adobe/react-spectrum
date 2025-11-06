@@ -19,7 +19,7 @@ export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
   event: K | (string & {}),
   handler?: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
-) {
+): void {
   let handleEvent = useEffectEvent(handler);
   let isDisabled = handler == null;
 
@@ -33,5 +33,5 @@ export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
     return () => {
       element.removeEventListener(event, handleEvent as EventListener, options);
     };
-  }, [ref, event, options, isDisabled, handleEvent]);
+  }, [ref, event, options, isDisabled]);
 }

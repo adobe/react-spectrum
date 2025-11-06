@@ -1,0 +1,160 @@
+import {VersionBadge} from '../../src/VersionBadge';
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['box'];
+export const version = 'alpha';
+
+# SelectBoxGroup
+
+<PageDescription>{docs.exports.SelectBoxGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.SelectBoxGroup} links={docs.links} props={['selectionMode', 'orientation', 'isDisabled']}
+"use client";
+import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2'
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import StarFilled1 from '@react-spectrum/s2/illustrations/linear/Star';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane';
+
+<SelectBoxGroup
+  aria-label="Select a cloud"
+  /* PROPS */
+  styles={style({width: 'full'})}>
+  <SelectBox id="aws" textValue="Amazon Web Services">
+    <Server />
+    <Text slot="label">Amazon Web Services</Text>
+    <Text slot="description">Reliable cloud infrastructure</Text>
+  </SelectBox>
+  <SelectBox id="azure" textValue="Microsoft Azure">
+    <AlertNotice />
+    <Text slot="label">Microsoft Azure</Text>
+  </SelectBox>
+  <SelectBox id="gcp" textValue="Google Cloud Platform">
+    <PaperAirplane />
+    <Text slot="label">Google Cloud Platform</Text>
+  </SelectBox>
+  <SelectBox id="ibm" textValue="IBM Cloud">
+    <StarFilled1 />
+    <Text slot="label">IBM Cloud</Text>
+    <Text slot="description">Hybrid cloud solutions</Text>
+  </SelectBox>
+</SelectBoxGroup>
+```
+
+## Content
+
+`SelectBoxGroup` follows the [Collection Components API](collections.html?component=SelectBoxGroup), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Home from '@react-spectrum/s2/illustrations/linear/Home';
+import Phone from '@react-spectrum/s2/illustrations/linear/Phone';
+import MailOpen from '@react-spectrum/s2/illustrations/linear/MailOpen';
+
+let options = [
+  { id: 'address', name: 'Home address', illustration: <Home /> },
+  { id: 'email', name: 'Email address', illustration: <MailOpen /> },
+  { id: 'phone', name: 'Phone number', illustration: <Phone /> }
+];
+
+function Example() {
+
+  return (
+    <SelectBoxGroup
+      aria-label="Contact info"
+      /*- begin highlight -*/
+      items={options}
+      /*- end highlight -*/
+      selectionMode="multiple"
+      styles={style({width: 'full'})}>
+      {/*- begin highlight -*/}
+      {(item) => (
+        <SelectBox>
+          {item.illustration}
+          <Text slot="label">{item.name}</Text>
+        </SelectBox>
+      )}
+      {/*- end highlight -*/}
+    </SelectBoxGroup>
+  );
+}
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=SelectBoxGroup) for more details.
+
+```tsx render docs={docs.exports.SelectBoxGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {SelectBoxGroup, SelectBox, Text, type Selection} from '@react-spectrum/s2'
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import StarFilled1 from '@react-spectrum/s2/illustrations/linear/Star';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <>
+      <SelectBoxGroup
+        {...props}
+        aria-label="Select a cloud"
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        ///- end highlight -///
+        styles={style({width: 'full'})}>
+        <SelectBox id="aws" textValue="Amazon Web Services">
+          <Server />
+          <Text slot="label">Amazon Web Services</Text>
+          <Text slot="description">Reliable cloud infrastructure</Text>
+        </SelectBox>
+        <SelectBox id="azure" textValue="Microsoft Azure">
+          <AlertNotice />
+          <Text slot="label">Microsoft Azure</Text>
+        </SelectBox>
+        <SelectBox id="gcp" textValue="Google Cloud Platform">
+          <PaperAirplane />
+          <Text slot="label">Google Cloud Platform</Text>
+        </SelectBox>
+        <SelectBox id="ibm" textValue="IBM Cloud">
+          <StarFilled1 />
+          <Text slot="label">IBM Cloud</Text>
+          <Text slot="description">Hybrid cloud solutions</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## API
+
+```tsx links={{SelectBoxGroup: '#selectboxgroup', SelectBox: '#selectbox'}}
+<SelectBoxGroup>
+  <SelectBox>
+    <Illustration />
+    <Text slot="label" />
+    <Text slot="description" />
+  </SelectBox>
+</SelectBoxGroup>
+```
+
+### SelectBoxGroup
+
+<PropTable component={docs.exports.SelectBoxGroup} links={docs.links} />
+
+### SelectBox
+
+<PropTable component={docs.exports.SelectBox} links={docs.links} />

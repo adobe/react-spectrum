@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {Button, Collection, Tab, TabList, TabPanel, Tabs, Tooltip, TooltipTrigger} from '../';
+import {Button, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, TooltipTrigger} from '../';
 import React, {useState} from 'react';
 import {TabsExample} from '../stories/Tabs.stories';
 import {User} from '@react-aria/test-utils';
@@ -565,7 +565,7 @@ describe('Tabs', () => {
               <Button onPress={removeTab}>Remove tab</Button>
             </div>
           </div>
-          <Collection items={tabs}>
+          <TabPanels items={tabs}>
             {(item) => (
               <TabPanel
                 style={{
@@ -574,7 +574,7 @@ describe('Tabs', () => {
                 {item.content}
               </TabPanel>
             )}
-          </Collection>
+          </TabPanels>
         </Tabs>
       );
     }
@@ -619,5 +619,26 @@ describe('Tabs', () => {
     await user.hover(tab);
     act(() => jest.runAllTimers());
     expect(getByRole('tooltip')).toHaveTextContent('Test');
+  });
+
+  describe('press events', () => {
+    it.each`
+      interactionType
+      ${'mouse'}
+      ${'keyboard'}
+    `('should support press events on items when using $interactionType', async function ({interactionType}) {
+      let onPressStart = jest.fn();
+      let onPressEnd = jest.fn();
+      let onPress = jest.fn();
+      let onClick = jest.fn();
+      let {getByRole} = renderTabs({keyboardActivation: 'manual'}, {}, {onPressStart, onPressEnd, onPress, onClick});
+      let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+      await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
+  
+      expect(onPressStart).toHaveBeenCalledTimes(1);
+      expect(onPressEnd).toHaveBeenCalledTimes(1);
+      expect(onPress).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
   });
 });

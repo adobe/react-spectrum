@@ -15,7 +15,7 @@ import {
   RadioGroupProps as AriaRadioGroupProps,
   ContextValue
 } from 'react-aria-components';
-import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -24,7 +24,7 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The Radios contained within the RadioGroup.
    */
@@ -74,10 +74,10 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
     UNSAFE_style,
     ...groupProps
   } = props;
-
   return (
     <AriaRadioGroup
       {...groupProps}
+      orientation={orientation}
       ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + style({
@@ -85,7 +85,7 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
         '--field-gap': {
           type: 'rowGap',
-          value: '[calc(var(--field-height) - 1lh)]'
+          value: 'calc(var(--field-height) - 1lh)'
         }
       }, getAllowedOverrides())({
         size,

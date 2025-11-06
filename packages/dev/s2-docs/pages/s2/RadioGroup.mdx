@@ -1,0 +1,96 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['input'];
+
+# RadioGroup
+
+<PageDescription>{docs.exports.RadioGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Favorite pet'}} type="s2"
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+
+<RadioGroup/* PROPS */>
+  <Radio value="cats">Cat</Radio>
+  <Radio value="dogs">Dog</Radio>
+  <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the selected item, and `onChange` to handle selection changes.
+
+```tsx render
+"use client";
+import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(null);
+
+  return (
+    <>
+      <RadioGroup
+        label="Favorite sport"
+        /*- begin highlight -*/
+        value={selected}
+        onChange={setSelected}>
+        {/*- end highlight -*/}
+        <Radio value="soccer">Soccer</Radio>
+        <Radio value="baseball">Baseball</Radio>
+        <Radio value="basketball">Basketball</Radio>
+      </RadioGroup>
+      <p>Current selection: {selected || 'None'}</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide
+"use client";
+import {RadioGroup, Radio, Button, Form} from '@react-spectrum/s2';
+
+function Example(props) {
+  return (
+    <Form>
+      <RadioGroup
+        {...props}
+        label="Favorite pet"
+        /*- begin highlight -*/
+        name="pet"
+        /* PROPS */
+        /*- end highlight -*/
+      >
+        <Radio value="dog">Dog</Radio>
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dragon">Dragon</Radio>
+      </RadioGroup>
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+```tsx links={{RadioGroup: '#radiogroup', Radio: '#radio'}}
+<RadioGroup>
+  <Radio />
+</RadioGroup>
+```
+
+### RadioGroup
+
+<PropTable component={docs.exports.RadioGroup} links={docs.links} />
+
+### Radio
+
+<PropTable component={docs.exports.Radio} links={docs.links} />

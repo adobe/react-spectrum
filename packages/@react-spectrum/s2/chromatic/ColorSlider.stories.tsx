@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSlider, Content, ContextualHelp, Heading} from '../src';
+import {ColorSlider, ColorSliderProps, Content, ContextualHelp, Heading} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
 
@@ -40,8 +41,8 @@ let states = [
 
 let combinations = generatePowerset(states, (merged) => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp));
 
-const Template = (args) => (
-  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+const Template = (args: ColorSliderProps): ReactElement => (
+  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
     {combinations.map(c => {
       let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -53,8 +54,8 @@ const Template = (args) => (
   </div>
 );
 
-const VerticalTemplate = (args) => (
-  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+const VerticalTemplate = (args: ColorSliderProps): ReactElement => (
+  <div className={style({display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gridAutoFlow: 'row', justifyItems: 'start', gap: 24, width: '100vw'})}>
     {combinations.map(c => {
       let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -66,38 +67,38 @@ const VerticalTemplate = (args) => (
   </div>
 );
 
-export const PropChannelRed = {
-  render: Template,
+export const PropChannelRed: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'channel: red',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
-export const PropChannelAlpha = {
-  render: Template,
+export const PropChannelAlpha: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'channel: alpha',
   args: {channel: 'alpha', defaultValue: '#7f0000'}
 };
 
-export const PropChannelLightness = {
-  render: Template,
+export const PropChannelLightness: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'channel: lightness',
   args: {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'}
 };
 
-export const PropChannelBrightness = {
-  render: Template,
+export const PropChannelBrightness: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'channel: brightness',
   args: {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'}
 };
 
-export const PropVertical = {
-  render: VerticalTemplate,
+export const PropVertical: StoryObj<typeof VerticalTemplate> = {
+  render: (args) => <VerticalTemplate {...args} />,
   name: 'orientation: vertical',
   args: {channel: 'red', defaultValue: '#7f0000'}
 };
 
-export const PropCustomWidth = {
-  render: Template,
+export const PropCustomWidth: StoryObj<typeof Template> = {
+  render: (args) => <Template {...args} />,
   name: 'custom width',
   args: {channel: 'red', defaultValue: '#7f0000', styles: style({width: 384})}
 };

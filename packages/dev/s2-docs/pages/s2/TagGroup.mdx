@@ -1,0 +1,272 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['chips', 'pills'];
+
+# TagGroup
+
+<PageDescription>{docs.exports.TagGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['label', 'selectionMode', 'size', 'labelPosition', 'maxRows', 'description', 'contextualHelp', 'isEmphasized']} initialProps={{label: 'Ice cream flavors', selectionMode: 'multiple', maxRows: 2}} controlOptions={{maxRows: {minValue: 1}}} type="s2"
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TagGroup/* PROPS */>
+  <Tag>Chocolate</Tag>
+  <Tag>Mint</Tag>
+  <Tag>Strawberry</Tag>
+  <Tag>Vanilla</Tag>
+  <Tag>Chocolate Chip Cookie Dough</Tag>
+  <Tag>Rocky Road</Tag>
+  <Tag>Butter Pecan</Tag>
+  <Tag>Neapolitan</Tag>
+  <Tag>Salted Caramel</Tag>
+  <Tag>Mint Chocolate Chip</Tag>
+  <Tag>Tonight Dough</Tag>
+  <Tag>Lemon Cookie</Tag>
+  <Tag>Cookies and Cream</Tag>
+  <Tag>Phish Food</Tag>
+  <Tag>Peanut Butter Cup</Tag>
+  <Tag>Coffee</Tag>
+  <Tag>Pistachio</Tag>
+  <Tag>Cherry</Tag>
+</TagGroup>
+```
+
+## Content
+
+`TagGroup` follows the [Collection Components API](collections.html?component=TagGroup), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag, TextField, Button} from '@react-spectrum/s2';
+import {useListData} from 'react-stately';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function PhotoCategories() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Landscape'},
+      {id: 2, name: 'Portrait'},
+      {id: 3, name: 'Night'},
+      {id: 4, name: 'Dual'},
+      {id: 5, name: 'Golden Hour'}
+    ]
+  });
+
+  return (
+    <TagGroup
+      label="Photo categories"
+      styles={style({maxWidth: 320})}
+      /*- begin highlight -*/
+      items={list.items}
+      onRemove={(keys) => list.remove(...keys)}>
+      {/*- end highlight -*/}
+      {(item) => <Tag>{item.name}</Tag>}
+    </TagGroup>
+  );
+}
+```
+
+### Slots
+
+`Tag` supports icons, avatars, or images, and text as children.
+
+<ExampleSwitcher type={null} examples={['Icon', 'Avatar', 'Image']}>
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag, Text} from '@react-spectrum/s2';
+import FileText from '@react-spectrum/s2/icons/FileText';
+import Camera from '@react-spectrum/s2/icons/Camera';
+import Filmstrip from '@react-spectrum/s2/icons/Filmstrip';
+import VectorDraw from '@react-spectrum/s2/icons/VectorDraw';
+
+<TagGroup label="Media types">
+  <Tag textValue="Text">
+    {/*- begin highlight -*/}
+    <FileText />
+    <Text>Text</Text>
+    {/*- end highlight -*/}
+  </Tag>
+  <Tag textValue="Photos">
+    <Camera />
+    <Text>Photos</Text>
+  </Tag>
+  <Tag textValue="Videos">
+    <Filmstrip />
+    <Text>Videos</Text>
+  </Tag>
+  <Tag textValue="Illustration">
+    <VectorDraw />
+    <Text>Illustration</Text>
+  </Tag>
+</TagGroup>
+```
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag, Avatar, Text} from '@react-spectrum/s2';
+
+<TagGroup label="Users">
+  <Tag textValue="Abraham Baker">
+    {/*- begin highlight -*/}
+    <Avatar src="https://www.untitledui.com/images/avatars/abraham-baker" />
+    <Text>Abraham Baker</Text>
+    {/*- end highlight -*/}
+  </Tag>
+  <Tag textValue="Adriana Sullivan">
+    <Avatar src="https://www.untitledui.com/images/avatars/adriana-sullivan" />
+    <Text>Adriana Sullivan</Text>
+  </Tag>
+  <Tag textValue="Jonathan Kelly">
+    <Avatar src="https://www.untitledui.com/images/avatars/jonathan-kelly" />
+    <Text>Jonathan Kelly</Text>
+  </Tag>
+  <Tag textValue="Zara Bush">
+    <Avatar src="https://www.untitledui.com/images/avatars/zara-bush" />
+    <Text>Zara Bush</Text>
+  </Tag>
+</TagGroup>
+```
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag, Image, Text} from '@react-spectrum/s2';
+
+<TagGroup label="Dogs">
+  <Tag textValue="Golden Retriever">
+    {/*- begin highlight -*/}
+    <Image src="https://images.unsplash.com/photo-1422565096762-bdb997a56a84?w=100&h=100&fit=crop" />
+    <Text>Golden Retriever</Text>
+    {/*- end highlight -*/}
+  </Tag>
+  <Tag textValue="Pug">
+    <Image src="https://images.unsplash.com/photo-1523626797181-8c5ae80d40c2?w=100&h=100&fit=crop" />
+    <Text>Pug</Text>
+  </Tag>
+  <Tag textValue="Chihuahua">
+    <Image src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=100&h=100&fit=crop" />
+    <Text>Chihuahua</Text>
+  </Tag>
+  <Tag textValue="Husky">
+    <Image src="https://images.unsplash.com/photo-1491604612772-6853927639ef?w=100&h=100&fit=crop" />
+    <Text>Husky</Text>
+  </Tag>
+</TagGroup>
+```
+
+</ExampleSwitcher>
+
+### Links
+
+Use the `href` prop on a `<Tag>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+
+<TagGroup label="Photo categories">
+  {/*- begin highlight -*/}
+  <Tag href="https://en.wikipedia.org/wiki/Landscape_photography" target="_blank">Landscape</Tag>
+  {/*- end highlight -*/}
+  <Tag href="https://en.wikipedia.org/wiki/Portrait_photography" target="_blank">Portrait</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Macro_photography" target="_blank">Macro</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Night_photography" target="_blank">Night</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Dualphotography" target="_blank">Dual</Tag>
+  <Tag href="https://en.wikipedia.org/wiki/Golden_hour_(photography)" target="_blank">Golden Hour</Tag>
+</TagGroup>
+```
+
+### Empty state
+
+Use `renderEmptyState` to render placeholder content when the TagGroup is empty.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Link} from '@react-spectrum/s2';
+
+<TagGroup
+  label="Photo categories"
+  renderEmptyState={() => (
+    <>No categories. <Link href="https://react-spectrum.adobe.com/">Click here</Link> to add some.</>
+  )}>
+  {[]}
+</TagGroup>
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=TagGroup) for more details.
+
+```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+import {useState} from 'react';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <TagGroup
+        {...props}
+        label="Amenities"
+        ///- begin highlight -///
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        ///- end highlight -///
+      >
+        <Tag id="laundry">Laundry</Tag>
+        <Tag id="fitness">Fitness center</Tag>
+        <Tag id="parking" isDisabled>Parking</Tag>
+        <Tag id="pool">Swimming pool</Tag>
+        <Tag id="breakfast">Breakfast</Tag>
+      </TagGroup>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+
+## Group actions
+
+Use the `groupActionLabel` and `onGroupAction` props to add an action button at the end of the tags.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag} from '@react-spectrum/s2';
+
+<TagGroup
+  label="Interests"
+  /*- begin highlight -*/
+  groupActionLabel="Clear"
+  onGroupAction={() => alert('Clear')}>
+  {/*- end highlight -*/}
+  <Tag>News</Tag>
+  <Tag>Travel</Tag>
+  <Tag>Gaming</Tag>
+  <Tag>Shopping</Tag>
+</TagGroup>
+```
+
+## API
+
+```tsx links={{TagGroup: '#taggroup', Tag: '#tag'}}
+<TagGroup>
+  <Tag />
+</TagGroup>
+```
+
+### TagGroup
+
+<PropTable component={docs.exports.TagGroup} links={docs.links} showDescription />
+
+### Tag
+
+<PropTable component={docs.exports.Tag} links={docs.links} showDescription />

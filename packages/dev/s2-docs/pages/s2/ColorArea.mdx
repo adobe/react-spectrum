@@ -1,0 +1,60 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorArea} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+import racDocs from 'docs:react-aria-components';
+
+export const tags = [];
+
+# ColorArea
+
+<PageDescription>{docs.exports.ColorArea.description}</PageDescription>
+
+<VisualExample
+  component={ColorArea}
+  docs={docs.exports.ColorArea}
+  links={docs.links}
+  props={['colorSpace', 'xChannel', 'yChannel', 'isDisabled']}
+  initialProps={{defaultValue: 'hsl(0, 100%, 50%)'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the color value, and the `xChannel` and `yChannel` props to specify which color channels to display. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
+
+The `onChange` event is called as the user drags, and `onChangeEnd` is called when the thumb is released. These are always called with a `Color` object.
+
+```tsx render
+"use client";
+import {ColorArea, parseColor} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [currentValue, setCurrentValue] = useState(parseColor('#9B80FF'));
+  let [finalValue, setFinalValue] = useState(currentValue);
+
+  return (
+    <>
+      <ColorArea
+        xChannel="red"
+        yChannel="green"
+        /*- begin highlight -*/
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue} />
+        {/*- end highlight -*/}
+      <pre className={style({font: 'body'})}>
+        onChange value: {currentValue.toString('hex')}{'\n'}
+        onChangeEnd value: {finalValue.toString('hex')}
+      </pre>
+    </>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.ColorArea} links={docs.links} />

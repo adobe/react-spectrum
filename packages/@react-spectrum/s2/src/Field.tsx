@@ -17,7 +17,7 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with {type: '
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
-import {fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -152,25 +152,20 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
 interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
   children: ReactNode,
-  styles?: StyleString
+  styles?: StyleString,
+  shouldTurnOffFocusRing?: boolean
 }
 
 const fieldGroupStyles = style({
   ...focusRing(),
+  ...control({shape: 'default'}),
   ...fieldInput(),
-  display: 'flex',
-  alignItems: 'center',
-  height: 'control',
-  boxSizing: 'border-box',
-  paddingX: 'edge-to-text',
-  font: 'control',
-  borderRadius: 'control',
   borderWidth: 2,
   borderStyle: 'solid',
   transition: 'default',
   borderColor: {
     default: baseColor('gray-300'),
-    isInvalid: 'negative',
+    isInvalid: baseColor('negative'),
     isFocusWithin: {
       default: 'gray-900',
       isInvalid: 'negative-1000',
@@ -183,7 +178,7 @@ const fieldGroupStyles = style({
   },
   backgroundColor: 'gray-25',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   cursor: {
@@ -193,26 +188,32 @@ const fieldGroupStyles = style({
 });
 
 export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {shouldTurnOffFocusRing, ...otherProps} = props;
   return (
     <Group
       ref={ref}
-      {...props}
+      {...otherProps}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
         if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
           e.preventDefault();
-          e.currentTarget.querySelector('input')?.focus();
+          (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
-      onPointerUp={e => {
-        if (e.pointerType !== 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+      onTouchEnd={e => {
+        if (!(e.target as Element).closest('button,input,textarea')) {
           e.preventDefault();
-          e.currentTarget.querySelector('input')?.focus();
+          (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
-        fieldGroupStyles({...renderProps, size: props.size || 'M'}),
+        fieldGroupStyles({
+          ...renderProps,
+          isFocusWithin: shouldTurnOffFocusRing ? false : renderProps.isFocusWithin,
+          isFocusVisible: shouldTurnOffFocusRing ? false : renderProps.isFocusVisible,
+          size: props.size || 'M'
+        }),
         props.styles
       )} />
   );
@@ -230,10 +231,13 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
       className={UNSAFE_className + mergeStyles(style({
         padding: 0,
         backgroundColor: 'transparent',
-        color: '[inherit]',
-        fontFamily: '[inherit]',
-        fontSize: '[inherit]',
-        fontWeight: '[inherit]',
+        color: {
+          default: 'inherit',
+          '::placeholder': 'gray-600'
+        },
+        fontFamily: 'inherit',
+        fontSize: 'inherit',
+        fontWeight: 'inherit',
         flexGrow: 1,
         flexShrink: 1,
         minWidth: 0,
@@ -253,12 +257,12 @@ interface HelpTextProps extends FieldErrorProps {
   showErrorIcon?: boolean
 }
 
-const helpTextStyles = style({
+export const helpTextStyles = style({
   gridArea: 'helptext',
   display: 'flex',
   alignItems: 'baseline',
   gap: 'text-to-visual',
-  font: 'control',
+  font: controlFont(),
   color: {
     default: 'neutral-subdued',
     isInvalid: 'negative',
@@ -276,7 +280,7 @@ const helpTextStyles = style({
   }
 });
 
-export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}) {
+export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}): ReactNode {
   let domDescriptionRef = useDOMRef(props.descriptionRef || null);
   let domErrorRef = useDOMRef(props.errorRef || null);
 
@@ -308,7 +312,7 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
   );
 }
 
-export function FieldErrorIcon(props: {isDisabled?: boolean}) {
+export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
   return (
     <Provider
       values={[

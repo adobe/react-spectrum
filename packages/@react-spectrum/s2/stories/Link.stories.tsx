@@ -10,45 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import {Link} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+
+const events = ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'];
 
 const meta: Meta<typeof Link> = {
   component: Link,
   parameters: {
     layout: 'centered'
   },
-  args: {
-    href: 'https://www.imdb.com/title/tt6348138/',
-    target: '_blank'
-  },
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
+    ...categorizeArgTypes('Events', events)
+  },
+  args: {
+    ...getActionArgs(events),
+    href: 'https://www.imdb.com/title/tt6348138/',
+    target: '_blank'
   },
   title: 'Link'
 };
 
 export default meta;
+type Story = StoryObj<typeof Link>;
 
-export const Inline = (args: any) => (
-  <p
-    className={style({
-      font: 'body',
-      color: {
-        default: 'body',
-        staticColor: {white: 'white', black: 'black', auto: 'auto'}
-      }
-    })({staticColor: args.staticColor})}>
-    Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.
-  </p>
-);
+export const Inline: Story = {
+  render: (args) => (
+    <p
+      className={style({
+        font: 'body',
+        color: {
+          default: 'body',
+          staticColor: {white: 'white', black: 'black', auto: 'auto'}
+        }
+      })({staticColor: args.staticColor})}>
+      Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.
+    </p>
+  )
+};
 
-export const Standalone = (args: any) => (
-  <Link {...args} isStandalone>
-    The missing link
-  </Link>
-);
+export const Standalone: Story = {
+  render: (args) => (
+    <Link {...args} isStandalone>
+      The missing link
+    </Link>
+  )
+};

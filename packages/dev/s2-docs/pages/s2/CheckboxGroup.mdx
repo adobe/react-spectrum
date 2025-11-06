@@ -1,0 +1,95 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {CheckboxGroup} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# CheckboxGroup
+
+<PageDescription>{docs.exports.CheckboxGroup.description}</PageDescription>
+
+```tsx render docs={docs.exports.CheckboxGroup} links={docs.links} props={['label', 'size', 'orientation', 'labelPosition', 'description', 'contextualHelp', 'isEmphasized', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="s2"
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+
+<CheckboxGroup/* PROPS */>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the selected items, and `onChange` to handle selection changes.
+
+```tsx render
+"use client";
+import {CheckboxGroup, Checkbox} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [selected, setSelected] = useState(['soccer', 'baseball']);
+
+  return (
+    <>
+      <CheckboxGroup
+        label="Favorite sports"
+        /*- begin highlight -*/
+        value={selected}
+        onChange={setSelected}>
+        {/*- end highlight -*/}
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <p>Current selection: {selected.join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the selected checkboxes to the server. Set the `isRequired` prop on the `<CheckboxGroup>` to validate the user selects at least one checkbox, or on individual checkboxes. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {CheckboxGroup, Checkbox, Button, Form} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Form/* PROPS */>
+  <CheckboxGroup
+    label="Sandwich condiments"
+    /*- begin highlight -*/
+    name="condiments"
+    isRequired>
+    {/*- end highlight -*/}
+    <Checkbox value="lettuce">Lettuce</Checkbox>
+    <Checkbox value="tomato">Tomato</Checkbox>
+    <Checkbox value="onion">Onion</Checkbox>
+    <Checkbox value="sprouts">Sprouts</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Agree to the following" name="terms">
+    {/*- begin highlight -*/}
+    <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+    <Checkbox value="privacy" isRequired>Privacy policy</Checkbox>
+    <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
+    {/*- end highlight -*/}
+  </CheckboxGroup>
+  <Button type="submit" className={style({marginTop: 8})}>Submit</Button>
+</Form>
+```
+
+## API
+
+```tsx links={{CheckboxGroup: '#checkboxgroup', Checkbox: 'Checkbox.html'}}
+<CheckboxGroup>
+  <Checkbox />
+</CheckboxGroup>
+```
+
+### CheckboxGroup
+
+<PropTable component={docs.exports.CheckboxGroup} links={docs.links} />

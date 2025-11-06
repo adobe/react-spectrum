@@ -1,0 +1,405 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {Tree as VanillaTree, TreeItem} from 'vanilla-starter/Tree';
+import vanillaDocs from 'docs:vanilla-starter/Tree';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
+
+export const tags = ['data', 'tree', 'nested', 'hierarchy'];
+
+# Tree
+
+<PageDescription>{docs.exports.Tree.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Tree.tsx", "starters/docs/src/Tree.css"]}
+  "use client";
+  import {Tree, TreeItem} from 'vanilla-starter/Tree';
+  import {Button} from 'vanilla-starter/Button';
+
+  <Tree
+    /* PROPS */
+    aria-label="Files">
+    <TreeItem title="Documents">
+      <TreeItem title="Project">
+        <TreeItem title="Weekly Report" />
+      </TreeItem>
+    </TreeItem>
+    <TreeItem title="Photos">
+      <TreeItem title="Image 1" />
+      <TreeItem title="Image 2" />
+    </TreeItem>
+  </Tree>
+  ```
+
+  ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/Tree.tsx"]}
+  "use client";
+  import {Tree, TreeItem} from 'tailwind-starter/Tree';
+
+  <Tree
+    /* PROPS */
+    aria-label="Files">
+    <TreeItem title="Documents">
+      <TreeItem title="Project">
+        <TreeItem title="Weekly Report" />
+      </TreeItem>
+    </TreeItem>
+    <TreeItem title="Photos">
+      <TreeItem title="Image 1" />
+      <TreeItem title="Image 2" />
+    </TreeItem>
+  </Tree>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`Tree` follows the [Collection Components API](collections.html?component=Tree), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+
+```tsx render
+"use client";
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {Collection} from 'react-aria-components';
+
+///- begin collapse -///
+let items = [
+  {id: 1, title: 'Documents', type: 'directory', children: [
+    {id: 2, title: 'Project', type: 'directory', children: [
+      {id: 3, title: 'Weekly Report', type: 'file', children: []},
+      {id: 4, title: 'Budget', type: 'file', children: []}
+    ]}
+  ]},
+  {id: 5, title: 'Photos', type: 'directory', children: [
+    {id: 6, title: 'Image 1', type: 'file', children: []},
+    {id: 7, title: 'Image 2', type: 'file', children: []}
+  ]}
+];
+///- end collapse -///
+
+<Tree
+  aria-label="Files"
+  defaultExpandedKeys={[1, 4]}
+  items={items}
+  selectionMode="multiple">
+  {function renderItem(item) {
+    return (
+      <TreeItem title={item.title}>
+        {/*- begin highlight -*/}
+        {/* recursively render children */}
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+        {/*- end highlight -*/}
+      </TreeItem>
+    );
+  }}
+</Tree>
+```
+
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<TreeLoadMoreItem>` at the end of each `<TreeItem>`. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
+
+```tsx render
+"use client";
+import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {Collection} from 'react-aria-components';
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  ///- begin collapse -///
+  let starWarsList = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  ///- end collapse -///
+
+  ///- begin collapse -///
+  let pokemonList = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  ///- end collapse -///
+
+  return (
+    <Tree
+      aria-label="Async loading tree"
+      style={{height: 300}}
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
+      <TreeItem title="Pokemon">
+        <Collection items={pokemonList.items}>
+          {(item) => <TreeItem id={item.name} title={item.name} />}
+        </Collection>
+        {/*- begin highlight -*/}
+        <TreeLoadMoreItem
+          onLoadMore={pokemonList.loadMore}
+          isLoading={pokemonList.loadingState === 'loadingMore'} />
+        {/*- end highlight -*/}
+      </TreeItem>
+      <TreeItem title="Star Wars">
+        <Collection items={starWarsList.items}>
+          {(item) => <TreeItem id={item.name} title={item.name} />}
+        </Collection>
+        {/*- begin highlight -*/}
+        <TreeLoadMoreItem
+          onLoadMore={starWarsList.loadMore}
+          isLoading={starWarsList.loadingState === 'loadingMore'} />
+        {/*- end highlight -*/}
+      </TreeItem>
+    </Tree>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<TreeItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=Tree#selection-behavior) for more details.
+
+```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+
+<Tree
+  /* PROPS */
+  aria-label="Tree with links"
+  defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
+  <TreeItem
+    /*- begin highlight -*/
+    href="https://pokemondb.net/pokedex/bulbasaur"
+    target="_blank"
+    /*- end highlight -*/
+    id="bulbasaur"
+    title="Bulbasaur">
+    <TreeItem
+      id="ivysaur"
+      title="Ivysaur"
+      href="https://pokemondb.net/pokedex/ivysaur"
+      target="_blank">
+      <TreeItem
+        id="venusaur"
+        title="Venusaur"
+        href="https://pokemondb.net/pokedex/venusaur"
+        target="_blank" />
+    </TreeItem>
+  </TreeItem>
+</Tree>
+```
+
+### Empty state
+
+```tsx render
+"use client";
+import {Tree} from 'vanilla-starter/Tree';
+
+<Tree
+  aria-label="Search results"
+  renderEmptyState={() => 'No results found.'}>
+  {[]}
+</Tree>
+```
+
+## Selection and actions
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tree) for more details.
+
+```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import type {Selection} from 'react-aria-components';
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <div>
+      <Tree
+        {...props}
+        aria-label="Pokemon evolution"
+        style={{height: 250}}
+        defaultExpandedKeys={['bulbasaur', 'ivysaur']}
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Clicked ${key}`)}
+        ///- end highlight -///
+      >
+        <TreeItem id="bulbasaur" title="Bulbasaur">
+          <TreeItem id="ivysaur" title="Ivysaur">
+            <TreeItem id="venusaur" title="Venusaur" isDisabled />
+          </TreeItem>
+        </TreeItem>
+        <TreeItem id="charmander" title="Charmander">
+          <TreeItem id="charmeleon" title="Charmeleon">
+            <TreeItem id="charizard" title="Charizard" />
+          </TreeItem>
+        </TreeItem>
+        <TreeItem id="squirtle" title="Squirtle">
+          <TreeItem id="wartortle" title="Wartortle">
+            <TreeItem id="blastoise" title="Blastoise" />
+          </TreeItem>
+        </TreeItem>
+      </Tree>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+## Drag and drop
+
+Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Tree) to learn more.
+
+```tsx render
+"use client";
+import {useTreeData} from 'react-stately';
+import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import {useDragAndDrop, Collection} from 'react-aria-components';
+
+function Example() {
+  ///- begin collapse -///
+  let tree = useTreeData({
+    initialItems: [
+      {id: '1', title: 'Documents', type: 'directory', children: [
+        {id: '2', title: 'Project', type: 'directory', children: [
+          {id: '3', title: 'Weekly Report', type: 'file', children: []},
+          {id: '4', title: 'Budget', type: 'file', children: []}
+        ]}
+      ]},
+      {id: '5', title: 'Photos', type: 'directory', children: [
+        {id: '6', title: 'Image 1', type: 'file', children: []},
+        {id: '7', title: 'Image 2', type: 'file', children: []}
+      ]}
+    ]
+  });
+  ///- end collapse -///
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': tree.getItem(key).value.title})),
+    onMove(e) {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'on') {
+        // Move items to become children of the target
+        let targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <Tree
+      aria-label="Tree with hierarchical drag and drop"
+      selectionMode="multiple"
+      items={tree.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {function renderItem(item) {
+        return (
+          <TreeItem title={item.value.title}>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </TreeItem>
+        )
+      }}
+    </Tree>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="tree" pages={props.pages} />
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
+
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<Tree>
+  <TreeItem>
+    <TreeItemContent>
+      <Button slot="chevron" />
+      <Checkbox slot="selection" /> or <SelectionIndicator />
+      <Button slot="drag" />
+    </TreeItemContent>
+    <TreeItem>
+      {/* ... */}
+    </TreeItem>
+    <TreeLoadMoreItem />
+  </TreeItem>
+</Tree>
+```
+
+### Tree
+
+<PropTable component={docs.exports.Tree} links={docs.links} showDescription />
+
+### TreeItem
+
+<PropTable
+  component={docs.exports.TreeItem}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation."
+  }} />
+
+### TreeItemContent
+
+<PropTable component={docs.exports.TreeItemContent} links={docs.links} showDescription hideRenderProps />
+
+### TreeLoadMoreItem
+
+<PropTable
+  component={docs.exports.TreeLoadMoreItem}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tree-item-level': "The depth of the item within the tree. Useful to calculate indentation."
+  }} />

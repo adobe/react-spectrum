@@ -55,22 +55,22 @@ components like action menus where the items are built into the application rath
 
 ### Sections
 
-Sections or groups of items can be constructed by wrapping the items in a `<Section>` element. A `<Header>` can also be
-rendered within a `<Section>` to provide a section title.
+Sections or groups of items can be constructed by wrapping the items in a section element. A `<Header>` can also be
+rendered within a section to provide a section title.
 
 ```tsx
 <Menu>
-  <Section>
+  <MenuSection>
     <Header>Styles</Header>
     <MenuItem>Bold</MenuItem>
     <MenuItem>Underline</MenuItem>
-  </Section>
-  <Section>
+  </MenuSection>
+  <MenuSection>
     <Header>Align</Header>
     <MenuItem>Left</MenuItem>
     <MenuItem>Middle</MenuItem>
     <MenuItem>Right</MenuItem>
-  </Section>
+  </MenuSection>
 </Menu>
 ```
 
@@ -179,9 +179,28 @@ function addAnimal(name) {
 
 Note that `useListData` is a convenience hook, not a requirement. You can use any state management library to manage collection items.
 
+### Dependencies
+
+As described above, dynamic collections are automatically memoized to improve performance. Rendered item elements are cached based on the object identity
+of the list item. If rendering an item depends on additional external state, the `dependencies` prop must be provided. This invalidates rendered elements 
+similar to dependencies in React's `useMemo` hook.
+
+```tsx
+function Example(props) {
+  return (
+    <ListBox items={items} dependencies={[props.layout]}>
+      {item => <MyItem layout={props.layout}>{item.name}</MyItem>}
+    </ListBox>
+  );
+}
+```
+
+Note that adding dependencies will result in the _entire_ list being invalidated when a dependency changes. To avoid this and invalidate only an individual item,
+update the item object itself to include the information rather than accessing it from external state.
+
 ### Sections
 
-Sections can be built by returning a `<Section>` instead of an item from the top-level item renderer. Sections
+Sections can be built by returning a section instead of an item from the top-level item renderer. Sections
 also support an `items` prop and a render function for their children. If the section also has a header,
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
@@ -207,12 +226,12 @@ let [sections, setSections] = useState([
 
 <ListBox items={sections}>
   {section =>
-    <Section id={section.name}>
+    <ListBoxSection id={section.name}>
       <Header>{section.name}</Header>
       <Collection items={section.children}>
         {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
       </Collection>
-    </Section>
+    </ListBoxSection>
   }
 </ListBox>
 ```
@@ -261,12 +280,12 @@ function addPerson(name) {
 
 <ListBox items={tree.items}>
   {node =>
-    <Section id={section.name} items={node.children}>
+    <ListBoxSection id={section.name} items={node.children}>
       <Header>{section.name}</Header>
       <Collection items={section.children}>
         {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
       </Collection>
-    </Section>
+    </ListBoxSection>
   }
 </ListBox>
 ```

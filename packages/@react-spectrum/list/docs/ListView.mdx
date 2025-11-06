@@ -1193,7 +1193,7 @@ behaviors in your test suite.
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/list/test/ListView.test.js) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
 
-### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-spectrum/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
@@ -1205,7 +1205,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
-// ...
+// Other setup, be sure to check out the suggested mocks mentioned above in https://react-spectrum.adobe.com/react-spectrum/ListView.html#testing
 
 it('ListView can select a row via keyboard', async function () {
   // Render your test component/app and initialize the gridlist tester

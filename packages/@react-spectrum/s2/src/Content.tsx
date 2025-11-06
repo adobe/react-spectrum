@@ -27,7 +27,8 @@ interface ContentProps extends UnsafeStyles, SlotProps {
   id?: string
 }
 
-interface HeadingProps extends ContentProps {
+interface HeadingProps extends Omit<ContentProps, 'children'> {
+  children: ReactNode,
   level?: number
 }
 
@@ -37,7 +38,7 @@ export const Heading = forwardRef(// Wrapper around RAC Heading to unmount when 
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, HeadingContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
     return null;
   }
@@ -57,7 +58,7 @@ export const HeaderContext = createContext<ContextValue<Partial<ContentProps>, D
 export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, HeaderContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
     return null;
   }
@@ -77,7 +78,7 @@ export const ContentContext = createContext<ContextValue<Partial<ContentProps>, 
 export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ContentContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
     return null;
   }
@@ -96,7 +97,7 @@ export const TextContext = createContext<ContextValue<Partial<ContentProps>, DOM
 export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, children, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, children, ...otherProps} = props;
   let racContext = useContext(RACTextContext);
   let isSkeleton = useIsSkeleton();
   [children, UNSAFE_style] = useSkeletonText(children, UNSAFE_style);
@@ -130,7 +131,7 @@ export const KeyboardContext = createContext<ContextValue<Partial<ContentProps>,
 export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, KeyboardContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
     return null;
   }
@@ -149,7 +150,7 @@ export const FooterContext = createContext<ContextValue<Partial<ContentProps>, D
 export const Footer = forwardRef(function Footer(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, FooterContext);
   let domRef = useDOMRef(ref);
-  let {UNSAFE_className = '', UNSAFE_style, styles, isHidden, slot, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
     return null;
   }

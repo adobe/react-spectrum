@@ -12,14 +12,14 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
   LabelHTMLAttributes,
   RefObject,
-  useEffect
+  useState
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useField} from '@react-aria/label';
@@ -83,7 +83,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
   /**
-   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint].
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
    */
   enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
 }
@@ -142,26 +142,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     pattern: props.pattern
   };
 
-  useFormReset(ref, value, setValue);
+  let [initialValue] = useState(value);
+  useFormReset(ref, props.defaultValue ?? initialValue, setValue);
   useFormValidation(props, validationState, ref);
-
-  useEffect(() => {
-    // This works around a React/Chrome bug that prevents textarea elements from validating when controlled.
-    // We prevent React from updating defaultValue (i.e. children) of textarea when `value` changes,
-    // which causes Chrome to skip validation. Only updating `value` is ok in our case since our
-    // textareas are always controlled. React is planning on removing this synchronization in a
-    // future major version.
-    // https://github.com/facebook/react/issues/19474
-    // https://github.com/facebook/react/issues/11896
-    if (ref.current instanceof getOwnerWindow(ref.current).HTMLTextAreaElement) {
-      let input = ref.current;
-      Object.defineProperty(input, 'defaultValue', {
-        get: () => input.value,
-        set: () => {},
-        configurable: true
-      });
-    }
-  }, [ref]);
 
   return {
     labelProps,
@@ -186,6 +169,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         maxLength: props.maxLength,
         minLength: props.minLength,
         name: props.name,
+        form: props.form,
         placeholder: props.placeholder,
         inputMode: props.inputMode,
         autoCorrect: props.autoCorrect,

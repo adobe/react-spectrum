@@ -11,65 +11,33 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerWindow, isFocusable, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
-import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
+import {focusWithoutScrolling, getOwnerWindow, isFocusable, useLayoutEffect} from '@react-aria/utils';
+import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 
-export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Target> {
-  nativeEvent: FocusEvent;
-  target: EventTarget & Target;
-  currentTarget: EventTarget & Target;
-  relatedTarget: Element;
-  bubbles: boolean;
-  cancelable: boolean;
-  defaultPrevented: boolean;
-  eventPhase: number;
-  isTrusted: boolean;
-  timeStamp: number;
-  type: string;
-
-  constructor(type: string, nativeEvent: FocusEvent) {
-    this.nativeEvent = nativeEvent;
-    this.target = nativeEvent.target as EventTarget & Target;
-    this.currentTarget = nativeEvent.currentTarget as EventTarget & Target;
-    this.relatedTarget = nativeEvent.relatedTarget as Element;
-    this.bubbles = nativeEvent.bubbles;
-    this.cancelable = nativeEvent.cancelable;
-    this.defaultPrevented = nativeEvent.defaultPrevented;
-    this.eventPhase = nativeEvent.eventPhase;
-    this.isTrusted = nativeEvent.isTrusted;
-    this.timeStamp = nativeEvent.timeStamp;
-    this.type = type;
-  }
-
-  isDefaultPrevented(): boolean {
-    return this.nativeEvent.defaultPrevented;
-  }
-
-  preventDefault(): void {
-    this.defaultPrevented = true;
-    this.nativeEvent.preventDefault();
-  }
-
-  stopPropagation(): void {
-    this.nativeEvent.stopPropagation();
-    this.isPropagationStopped = () => true;
-  }
-
-  isPropagationStopped(): boolean {
-    return false;
-  }
-
-  persist() {}
+// Turn a native event into a React synthetic event.
+export function createSyntheticEvent<E extends SyntheticEvent>(nativeEvent: Event): E {
+  let event = nativeEvent as any as E;
+  event.nativeEvent = nativeEvent;
+  event.isDefaultPrevented = () => event.defaultPrevented;
+  // cancelBubble is technically deprecated in the spec, but still supported in all browsers.
+  event.isPropagationStopped = () => (event as any).cancelBubble;
+  event.persist = () => {};
+  return event;
 }
 
-export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEvent<Target>) => void) {
+export function setEventTarget(event: Event, target: Element): void {
+  Object.defineProperty(event, 'target', {value: target});
+  Object.defineProperty(event, 'currentTarget', {value: target});
+}
+
+export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: (e: ReactFocusEvent<Target>) => void): (e: ReactFocusEvent<Target>) => void {
   let stateRef = useRef({
     isFocused: false,
     observer: null as MutationObserver | null
   });
 
   // Clean up MutationObserver on unmount. See below.
-   
+
   useLayoutEffect(() => {
     const state = stateRef.current;
     return () => {
@@ -79,10 +47,6 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
       }
     };
   }, []);
-
-  let dispatchBlur = useEffectEvent((e: SyntheticFocusEvent<Target>) => {
-    onBlur?.(e);
-  });
 
   // This function is called during a React onFocus event.
   return useCallback((e: ReactFocusEvent<Target>) => {
@@ -104,7 +68,8 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
 
         if (target.disabled) {
           // For backward compatibility, dispatch a (fake) React synthetic event.
-          dispatchBlur(new SyntheticFocusEvent('blur', e as FocusEvent));
+          let event = createSyntheticEvent<ReactFocusEvent<Target>>(e);
+          onBlur?.(event);
         }
 
         // We no longer need the MutationObserver once the target is blurred.
@@ -127,7 +92,7 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
 
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
-  }, [dispatchBlur]);
+  }, [onBlur]);
 }
 
 export let ignoreFocusEvent = false;
@@ -137,7 +102,7 @@ export let ignoreFocusEvent = false;
  * It works by waiting for the series of focus events to occur, and reverts focus back to where it was before.
  * It also makes these events mostly non-observable by using a capturing listener on the window and stopping propagation.
  */
-export function preventFocus(target: FocusableElement | null) {
+export function preventFocus(target: FocusableElement | null): (() => void) | undefined {
   // The browser will focus the nearest focusable ancestor of our target.
   while (target && !isFocusable(target)) {
     target = target.parentElement;
@@ -148,7 +113,7 @@ export function preventFocus(target: FocusableElement | null) {
   if (!activeElement || activeElement === target) {
     return;
   }
-  
+
   ignoreFocusEvent = true;
   let isRefocusing = false;
   let onBlur = (e: FocusEvent) => {
@@ -170,7 +135,7 @@ export function preventFocus(target: FocusableElement | null) {
       }
     }
   };
-  
+
   let onFocus = (e: FocusEvent) => {
     if (e.target === target || isRefocusing) {
       e.stopImmediatePropagation();

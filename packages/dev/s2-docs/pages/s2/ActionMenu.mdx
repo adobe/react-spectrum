@@ -1,0 +1,57 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['dropdown'];
+
+# ActionMenu
+
+<PageDescription>{docs.exports.ActionMenu.description}</PageDescription>
+
+```tsx render docs={docs.exports.ActionMenu} links={docs.links} props={[ 'size', 'align', 'direction', 'menuSize', 'isQuiet', 'isDisabled']} initialProps={{}} type="s2"
+"use client";
+import {ActionMenu, MenuItem, Text, Keyboard} from '@react-spectrum/s2';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import Paste from '@react-spectrum/s2/icons/Paste';
+
+<ActionMenu/* PROPS */>
+  <MenuItem
+    textValue="Copy"
+    onAction={() => alert('copy')}>
+    <Copy />
+    <Text slot="label">Copy</Text>
+    <Text slot="description">Copy the selected text</Text>
+    <Keyboard>⌘C</Keyboard>
+  </MenuItem>
+  <MenuItem
+    textValue="Cut"
+    onAction={() => alert('cut')}>
+    <Cut />
+    <Text slot="label">Cut</Text>
+    <Text slot="description">Cut the selected text</Text>
+    <Keyboard>⌘X</Keyboard>
+  </MenuItem>
+  <MenuItem
+    textValue="Paste"
+    onAction={() => alert('paste')}>
+    <Paste />
+    <Text slot="label">Paste</Text>
+    <Text slot="description">Paste the copied text</Text>
+    <Keyboard>⌘V</Keyboard>
+  </MenuItem>
+</ActionMenu>
+```
+
+## API
+
+```tsx links={{ActionMenu: '#actionmenu', MenuItem: 'Menu.html#menuitem'}}
+<ActionMenu>
+  <MenuItem />
+</ActionMenu>
+```
+
+### ActionMenu
+
+<PropTable component={docs.exports.ActionMenu} links={docs.links} />

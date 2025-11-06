@@ -1,0 +1,146 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ColorField as VanillaColorField} from 'vanilla-starter/ColorField';
+import {ColorField as TailwindColorField} from 'tailwind-starter/ColorField';
+import '../../tailwind/tailwind.css';
+import vanillaDocs from 'docs:vanilla-starter/ColorField';
+import docs from 'docs:react-aria-components';
+import Anatomy from '@react-aria/color/docs/ColorFieldAnatomy.svg';
+
+export const tags = ['input'];
+
+# ColorField
+
+<PageDescription>{docs.exports.ColorField.description}</PageDescription>
+
+<ExampleSwitcher>
+  <VisualExample
+    component={VanillaColorField}
+    docs={vanillaDocs.exports.ColorField}
+    links={vanillaDocs.links}
+    props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
+    type="vanilla"
+    files={["starters/docs/src/ColorField.tsx", "starters/docs/src/ColorField.css"]} />
+  <VisualExample
+    component={TailwindColorField}
+    docs={vanillaDocs.exports.ColorField}
+    links={vanillaDocs.links}
+    props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
+    type="tailwind"
+    files={["starters/tailwind/src/ColorField.tsx", "starters/tailwind/src/index.css"]} />
+</ExampleSwitcher>
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the color value, and `onChange` to handle user input. The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function. `onChange` is always called with a `Color` object.
+
+```tsx render
+"use client";
+import {ColorField} from 'vanilla-starter/ColorField';
+import {parseColor} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(parseColor('#e73623'));
+
+  return (
+    <div>
+      <ColorField
+        label="Primary color"
+        placeholder="Enter a color"
+        value={value}
+        onChange={setValue} />
+      <pre style={{fontSize: 12}}>Current value: {value?.toString('hex')}</pre>
+    </div>
+  );
+}
+```
+
+## Channel
+
+By default, ColorField displays a hex value. Set the `colorSpace` and `channel` props to display a specific color channel.
+
+```tsx render
+"use client";
+import {ColorField} from 'vanilla-starter/ColorField';
+import {parseColor} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [color, setColor] = useState(parseColor('#7f007f'));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <ColorField
+        label="Hue"
+        
+        value={color}
+        onChange={setColor}
+        /*- begin highlight -*/
+        colorSpace="hsl"
+        channel="hue" />
+        {/*- end highlight -*/}
+      <ColorField
+        label="Saturation"
+        value={color}
+        onChange={setColor}
+        colorSpace="hsl"
+        channel="saturation" />
+      <ColorField
+        label="Lightness"
+        value={color}
+        onChange={setColor}
+        colorSpace="hsl"
+        channel="lightness" />
+      <pre style={{fontSize: 12}}>Current value: {color?.toString('hex')}</pre>
+    </div>
+  );
+}
+```
+
+## Forms
+
+Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {ColorField, Button, Form} from 'vanilla-starter/ColorField';
+import {Button} from 'vanilla-starter/Button';
+import {Form} from 'vanilla-starter/Form';
+
+function Example(props) {
+  return (
+    <Form>
+      <ColorField
+        {...props}
+        label="Brand color"
+        placeholder="Enter a color"
+        ///- begin highlight -///
+        name="brandColor"
+        isRequired />
+        {/*- end highlight -*/}
+      <Button type="submit" style={{marginTop: 8}}>Submit</Button>
+    </Form>
+  );
+}
+```
+
+## API
+
+<Anatomy />
+
+```tsx links={{ColorField: '#colorfield'}}
+<ColorField>
+  <Label />
+  <Input />
+  <Text slot="description" />
+  <FieldError />
+</ColorField>
+```
+
+### ColorField
+
+<PropTable component={docs.exports.ColorField} links={docs.links} />

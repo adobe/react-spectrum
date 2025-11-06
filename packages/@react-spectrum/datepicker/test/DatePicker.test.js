@@ -2042,6 +2042,29 @@ describe('DatePicker', function () {
       expect(input).toHaveValue('2020-02-03');
     });
 
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        function Test() {
+          const [value, formAction] = React.useActionState(() => new CalendarDate(2025, 2, 3), new CalendarDate(2020, 2, 3));
+          
+          return (
+            <form action={formAction}>
+              <DatePicker label="Value" name="date" defaultValue={value} />
+              <input type="submit" data-testid="submit" />
+            </form>
+          );
+        }
+  
+        let {getByTestId} = render(<Test />);
+        let input = document.querySelector('input[name=date]');
+        expect(input).toHaveValue('2020-02-03');
+  
+        let button = getByTestId('submit');
+        await user.click(button);
+        expect(input).toHaveValue('2025-02-03');
+      });
+    }
+
     describe('validation', () => {
       describe('validationBehavior=native', () => {
         it('supports isRequired', async () => {

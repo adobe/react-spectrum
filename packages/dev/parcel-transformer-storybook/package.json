@@ -1,0 +1,28 @@
+{
+  "name": "@parcel/transformer-storybook",
+  "version": "0.0.2",
+  "private": true,
+  "main": "dist/StoryTransformer.js",
+  "source": "StoryTransformer.ts",
+  "engines": {
+    "parcel": "^2.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.23.0",
+    "@babel/types": "^7.23.0",
+    "@parcel/plugin": "^2.16.1",
+    "@parcel/source-map": "^2.1.1",
+    "@storybook/csf-tools": "^8",
+    "@storybook/docs-tools": "^8",
+    "react-docgen-typescript": "^2.2.2",
+    "storybook": "^8.6.14",
+    "typescript": "^5.5.0"
+  },
+  "scripts": {
+    "build": "rm -rf dist && swc . -d dist --config-file ../../.swcrc",
+    "clean": "rm -rf dist"
+  }
+}

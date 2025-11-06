@@ -1,0 +1,318 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {Tabs as VanillaTabs, TabsItem} from 'vanilla-starter/Tabs';
+import vanillaDocs from 'docs:vanilla-starter/Tabs';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
+
+export const tags = ['navigation'];
+
+# Tabs
+
+<PageDescription>{docs.exports.Tabs.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Tabs} links={docs.links} props={['orientation', 'keyboardActivation', 'isDisabled']} type="vanilla" files={["starters/docs/src/Tabs.tsx", "starters/docs/src/Tabs.css"]}
+  "use client";
+  import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
+  import {Form} from 'vanilla-starter/Form';
+  import {TextField} from 'vanilla-starter/TextField';
+  import {Button} from 'vanilla-starter/Button';
+  import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
+  import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
+  import {Checkbox} from 'vanilla-starter/Checkbox';
+
+  <Tabs/* PROPS */>
+    <TabList aria-label="Settings">
+      <Tab id="general">General</Tab>
+      <Tab id="appearance">Appearance</Tab>
+      <Tab id="notifications">Notifications</Tab>
+      <Tab id="profile">Profile</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="general">
+        <Form>
+          <TextField label="Homepage" defaultValue="react-aria.adobe.com" />
+          <Checkbox defaultSelected>Show sidebar</Checkbox>
+          <Checkbox>Show status bar</Checkbox>
+        </Form>
+      </TabPanel>
+      <TabPanel id="appearance">
+        <Form>
+          <RadioGroup label="Theme" defaultValue="auto">
+            <Radio value="auto">Auto</Radio>
+            <Radio value="light">Light</Radio>
+            <Radio value="dark">Dark</Radio>
+          </RadioGroup>
+          <RadioGroup label="Font size" defaultValue="medium">
+            <Radio value="small">Small</Radio>
+            <Radio value="medium">Medium</Radio>
+            <Radio value="large">Large</Radio>
+          </RadioGroup>
+        </Form>
+      </TabPanel>
+      <TabPanel id="notifications">
+        <CheckboxGroup label="Notifications settings" defaultValue={['account', 'dms']}>
+          <Checkbox value="account">Account activity</Checkbox>
+          <Checkbox value="mentions">Mentions</Checkbox>
+          <Checkbox value="dms">Direct message</Checkbox>
+          <Checkbox value="marketing">Marketing emails</Checkbox>
+        </CheckboxGroup>
+      </TabPanel>
+      <TabPanel id="profile">
+        <Form>
+          <TextField label="Name" defaultValue="Devon Govett" />
+          <TextField label="Username" defaultValue="@devongovett" />
+          <Button>Update profile</Button>
+        </Form>
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+  ```
+
+  ```tsx render docs={docs.exports.Tabs} links={docs.links} props={['orientation', 'keyboardActivation', 'isDisabled']} type="tailwind" files={["starters/tailwind/src/Tabs.tsx"]}
+  "use client";
+  import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'tailwind-starter/Tabs';
+  import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
+  import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
+  import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
+  import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSetting';
+
+  <Tabs/* PROPS */>
+    <TabList aria-label="Tabs">
+      <Tab id="home">Home</Tab>
+      <Tab id="files">Files</Tab>
+      <Tab id="search">Search</Tab>
+      <Tab id="settings">Settings</Tab>
+    </TabList>
+    <TabPanels>
+      <TabPanel id="home" className="flex items-center justify-center">
+        <Home />
+      </TabPanel>
+      <TabPanel id="files" className="flex items-center justify-center">
+        <Folder />
+      </TabPanel>
+      <TabPanel id="search" className="flex items-center justify-center">
+        <Search />
+      </TabPanel>
+      <TabPanel id="settings" className="flex items-center justify-center">
+        <Settings />
+      </TabPanel>
+    </TabPanels>
+  </Tabs>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`TabList` follows the [Collection Components API](collections.html?component=TabList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+function Example() {
+  let [tabs, setTabs] = useState([
+    {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+    {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+    {id: 3, title: 'Tab 3', content: 'Tab body 3'}
+  ]);
+
+  let addTab = () => {
+    setTabs(tabs => [
+      ...tabs,
+      {
+        id: tabs.length + 1,
+        title: `Tab ${tabs.length + 1}`,
+        content: `Tab body ${tabs.length + 1}`
+      }
+    ]);
+  };
+
+  let removeTab = () => {
+    if (tabs.length > 1) {
+      setTabs(tabs => tabs.slice(0, -1));
+    }
+  };
+
+  return (
+    <Tabs style={{width: '100%'}}>
+      <div style={{display: 'flex'}}>
+        <TabList 
+          aria-label="Dynamic tabs"
+          ///- begin highlight -///
+          items={tabs}
+          ///- end highlight -///
+          style={{flex: 1}}>
+          {item => <Tab>{item.title}</Tab>}
+        </TabList>
+        <div className="button-group">
+          <Button onPress={addTab}>Add tab</Button>
+          <Button onPress={removeTab}>Remove tab</Button>
+        </div>
+      </div>
+      <TabPanels items={tabs}>
+        {item => <TabPanel>{item.content}</TabPanel>}
+      </TabPanels>
+    </Tabs>
+  );
+}
+```
+
+```css render hidden
+.button-group {
+  border-bottom: 0.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+```
+
+### Links
+
+Use the `href` prop on a `<Tab>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. This example uses a simple hash-based router to sync the selected tab to the URL.
+
+```tsx render
+"use client";
+import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
+import {useSyncExternalStore} from 'react';
+
+export default function Example() {
+  let hash = useSyncExternalStore(subscribe, getHash, getHashServer);
+
+  return (
+    <Tabs selectedKey={hash}>
+      <TabList aria-label="Tabs">
+        {/*- begin highlight -*/}
+        <Tab id="#/" href="#/">Home</Tab>
+        {/*- end highlight -*/}
+        <Tab id="#/shared" href="#/shared">Shared</Tab>
+        <Tab id="#/deleted" href="#/deleted">Deleted</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel id="#/">Home</TabPanel>
+        <TabPanel id="#/shared">Shared</TabPanel>
+        <TabPanel id="#/deleted">Deleted</TabPanel>
+      </TabPanels>
+    </Tabs>
+  );
+}
+
+function getHash() {
+  return location.hash.startsWith('#/') ? location.hash : '#/';
+}
+
+function getHashServer() {
+  return '#/';
+}
+
+function subscribe(fn) {
+  addEventListener('hashchange', fn);
+  return () => removeEventListener('hashchange', fn);
+}
+```
+
+## Selection
+
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The selected key corresponds to the `id` prop of a `<Tab>`. Tabs can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tabs#single-selection) for more details.
+
+```tsx render
+"use client";
+import type {Key} from 'react-aria-components';
+import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
+import Home from '@react-spectrum/s2/illustrations/gradient/generic2/Home';
+import Folder from '@react-spectrum/s2/illustrations/gradient/generic2/FolderOpen';
+import Search from '@react-spectrum/s2/illustrations/gradient/generic2/Search';
+import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSetting';
+import {useState} from 'react';
+
+function Example() {
+  let [tab, setTab] = useState<Key>("files");
+
+  return (
+    <div>
+      <Tabs
+        ///- begin highlight -///
+        selectedKey={tab}
+        onSelectionChange={setTab}
+        ///- end highlight -///
+      >
+        <TabList aria-label="Tabs">
+          <Tab id="home">Home</Tab>
+          <Tab id="files">Files</Tab>
+          <Tab id="search" isDisabled>Search</Tab>
+          <Tab id="settings">Settings</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel id="home" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Home />
+          </TabPanel>
+          <TabPanel id="files" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Folder />
+          </TabPanel>
+          <TabPanel id="search" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Search />
+          </TabPanel>
+          <TabPanel id="settings" style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Settings />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+      <p>Selected tab: {tab}</p>
+    </div>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="tabs" pages={props.pages} />
+
+## API
+
+<Anatomy />
+
+```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanels: '#tabpanels', TabPanel: '#tabpanel', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<Tabs>
+  <TabList>
+    <Tab>
+      <SelectionIndicator />
+    </Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel />
+  </TabPanels>
+</Tabs>
+```
+
+### Tabs
+
+<PropTable component={docs.exports.Tabs} links={docs.links} showDescription />
+
+### TabList
+
+<PropTable component={docs.exports.TabList} links={docs.links} showDescription />
+
+### Tab
+
+<PropTable component={docs.exports.Tab} links={docs.links} showDescription />
+
+### TabPanels
+
+<PropTable
+  component={docs.exports.TabPanels}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--tab-panel-width': 'The width of the active tab panel in pixels. Useful for animations.',
+    '--tab-panel-height': 'The height of the active tab panel in pixels. Useful for animations.'
+  }} />
+
+### TabPanel
+
+<PropTable component={docs.exports.TabPanel} links={docs.links} showDescription />

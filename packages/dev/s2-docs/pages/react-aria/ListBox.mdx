@@ -1,0 +1,417 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {ListBox as VanillaListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import vanillaDocs from 'docs:vanilla-starter/ListBox';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['options'];
+
+# ListBox
+
+<PageDescription>{docs.exports.ListBox.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/ListBox.tsx", "starters/docs/src/ListBox.css"]}
+  "use client";
+  import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+
+  <ListBox aria-label="Favorite animal"/* PROPS */>
+    <ListBoxItem>Aardvark</ListBoxItem>
+    <ListBoxItem>Cat</ListBoxItem>
+    <ListBoxItem>Dog</ListBoxItem>
+    <ListBoxItem>Kangaroo</ListBoxItem>
+    <ListBoxItem>Panda</ListBoxItem>
+    <ListBoxItem>Snake</ListBoxItem>
+  </ListBox>
+  ```
+
+  ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/ListBox.tsx"]}
+  "use client";
+  import {ListBox, ListBoxItem} from 'tailwind-starter/ListBox';
+
+  <ListBox aria-label="Favorite animal"/* PROPS */>
+    <ListBoxItem>Aardvark</ListBoxItem>
+    <ListBoxItem>Cat</ListBoxItem>
+    <ListBoxItem>Dog</ListBoxItem>
+    <ListBoxItem>Kangaroo</ListBoxItem>
+    <ListBoxItem>Panda</ListBoxItem>
+    <ListBoxItem>Snake</ListBoxItem>
+  </ListBox>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`ListBox` follows the [Collection Components API](collections.html?component=ListBox), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+
+```tsx render
+"use client";
+import {ListBox, ListBoxItem} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    { id: 1, name: 'Aardvark' },
+    { id: 2, name: 'Cat' },
+    { id: 3, name: 'Dog' },
+    { id: 4, name: 'Kangaroo' },
+    { id: 5, name: 'Koala' },
+    { id: 6, name: 'Penguin' },
+    { id: 7, name: 'Snake' },
+    { id: 8, name: 'Turtle' },
+    { id: 9, name: 'Wombat' }
+  ];
+
+  return (
+    /*- begin highlight -*/
+    <ListBox aria-label="Animals" items={options} selectionMode="single">
+      {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+    /*- end highlight -*/
+  );
+}
+```
+
+### Text slots
+
+Use the `"label"` and `"description"` slots to separate primary and secondary content within a `<ListBoxItem>`. This improves screen reader announcements and can also be used for styling purposes.
+
+```tsx render
+"use client";
+import {ListBox, ListBoxItem, Text} from 'react-aria-components';
+
+<ListBox aria-label="Permissions" selectionMode="single">
+  <ListBoxItem textValue="Read">
+    {/*- begin highlight -*/}
+    <Text slot="label">Read</Text>
+    <Text slot="description">Read only</Text>
+    {/*- end highlight -*/}
+  </ListBoxItem>
+  <ListBoxItem textValue="Write">
+    <Text slot="label">Write</Text>
+    <Text slot="description">Read and write only</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Admin">
+    <Text slot="label">Admin</Text>
+    <Text slot="description">Full access</Text>
+  </ListBoxItem>
+</ListBox>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility warning</Heading>
+  <Content>Interactive elements (e.g. buttons) within listbox items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children. Use [GridList](GridList.html) if interactive children are needed.</Content>
+</InlineAlert>
+
+### Sections
+
+Use the `<ListBoxSection>` component to group options. A `<Header>` element may also be included to label the section. Sections without a header must have an `aria-label`.
+
+```tsx render
+"use client";
+import {ListBox, ListBoxItem, ListBoxSection, Header} from 'react-aria-components';
+
+<ListBox aria-label="Sandwich contents" selectionMode="multiple">
+  {/*- begin highlight -*/}
+  <ListBoxSection>
+    <Header>Veggies</Header>
+    {/*- end highlight -*/}
+    <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+    <ListBoxItem id="tomato">Tomato</ListBoxItem>
+    <ListBoxItem id="onion">Onion</ListBoxItem>
+  </ListBoxSection>
+  <ListBoxSection>
+    <Header>Protein</Header>
+    <ListBoxItem id="ham">Ham</ListBoxItem>
+    <ListBoxItem id="tuna">Tuna</ListBoxItem>
+    <ListBoxItem id="tofu">Tofu</ListBoxItem>
+  </ListBoxSection>
+  <ListBoxSection>
+    <Header>Condiments</Header>
+    <ListBoxItem id="mayo">Mayonaise</ListBoxItem>
+    <ListBoxItem id="mustard">Mustard</ListBoxItem>
+    <ListBoxItem id="ranch">Ranch</ListBoxItem>
+  </ListBoxSection>
+</ListBox>
+```
+
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<ListBoxLoadMoreItem>` at the end of the list or section. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
+
+```tsx render
+"use client";
+import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from 'vanilla-starter/ListBox';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {Collection} from 'react-aria-components';
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        { signal }
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListBox
+      aria-label="Pick a Pokemon"
+      selectionMode="single"
+      renderEmptyState={() => (
+        <ProgressCircle isIndeterminate aria-label="Loading..." />
+      )}>
+      <Collection items={list.items}>
+        {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </Collection>
+      {/*- begin highlight -*/}
+      <ListBoxLoadMoreItem
+        onLoadMore={list.loadMore}
+        isLoading={list.loadingState === 'loadingMore'} />
+      {/*- end highlight -*/}
+    </ListBox>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<ListBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+
+By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with `selectionBehavior="replace"`, items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
+
+```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} wide
+"use client";
+import {ListBox, ListBoxItem} from 'react-aria-components';
+
+<ListBox aria-label="Links" selectionMode="multiple">
+  {/*- begin highlight -*/}
+  <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
+  {/*- end highlight -*/}
+  <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
+  <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
+  <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
+</ListBox>
+```
+
+### Empty state
+
+```tsx render hideImports
+"use client";
+import {ListBox, ListBoxItem} from 'react-aria-components';
+
+<ListBox
+  aria-label="Search results"
+  renderEmptyState={() => 'No results found.'}>
+  {[]}
+</ListBox>
+```
+
+## Selection
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ListBox) for more details.
+
+```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import type {Selection} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <div>
+      <ListBox
+        {...props}
+        aria-label="Sandwich contents"
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        ///- end highlight -///
+      >
+        <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+        <ListBoxItem id="tomato">Tomato</ListBoxItem>
+        <ListBoxItem id="cheese">Cheese</ListBoxItem>
+        <ListBoxItem id="tuna" isDisabled>Tuna Salad</ListBoxItem>
+        <ListBoxItem id="egg">Egg Salad</ListBoxItem>
+        <ListBoxItem id="ham">Ham</ListBoxItem>
+      </ListBox>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+## Layouts
+
+Use the `layout` and `orientation` props to create horizontal and vertical stacks and grids. This affects keyboard navigation and drag and drop behavior.
+
+```tsx render docs={docs.exports.ListBox} links={docs.links} props={['layout', 'orientation']} initialProps={{layout: 'grid'}} wide
+"use client";
+import {ListBox, ListBoxItem, Text} from 'react-aria-components';
+
+///- begin collapse -///
+let planets = [
+  {
+    id: 1,
+    title: 'Mercury',
+    description: 'A year lasts 88 days'
+  },
+  {
+    id: 2,
+    title: 'Venus',
+    description: 'Spins backwards!'
+  },
+  {
+    id: 3,
+    title: 'Earth',
+    description: 'Only planet with life'
+  },
+  {
+    id: 4,
+    title: 'Mars',
+    description: 'Has the tallest volcano'
+  },
+  {
+    id: 5,
+    title: 'Jupiter',
+    description: 'Can fit 1,300 Earths'
+  },
+  {
+    id: 6,
+    title: 'Saturn',
+    description: 'Rings made of ice'
+  },
+  {
+    id: 7,
+    title: 'Uranus',
+    description: 'Rolls on its side'
+  },
+  {
+    id: 8,
+    title: 'Neptune',
+    description: 'Fastest winds in space'
+  }
+];
+///- end collapse -///
+
+<ListBox
+  aria-label="Planets"
+  /*- begin highlight -*/
+  /* PROPS */
+  /*- end highlight -*/
+  items={planets}
+  selectionMode="multiple">
+  {item => (
+    <ListBoxItem textValue={item.title}>
+      <Text slot="label">{item.title}</Text>
+      <Text slot="description">{item.description}</Text>
+    </ListBoxItem>
+  )}
+</ListBox>
+```
+
+## Drag and drop
+
+ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=ListBox) to learn more.
+
+```tsx render
+"use client";
+import {useListData} from 'react-stately';
+import {ListBox, ListBoxItem, useDragAndDrop} from 'react-aria-components';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Adobe Photoshop'},
+      {id: 2, name: 'Adobe XD'},
+      {id: 3, name: 'Adobe Dreamweaver'},
+      {id: 4, name: 'Adobe InDesign'},
+      {id: 5, name: 'Adobe Connect'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <ListBox
+      aria-label="Reorderable list"
+      selectionMode="multiple"
+      items={list.items}
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      {item => <ListBoxItem>{item.name}</ListBoxItem>}
+    </ListBox>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="listbox" pages={props.pages} />
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
+
+```tsx links={{ListBox: '#listbox', ListBoxItem: '#listboxitem', ListBoxSection: '#listboxsection', ListBoxLoadMoreItem: '#listboxloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<ListBox>
+  <ListBoxItem>
+    <Text slot="label" />
+    <Text slot="description" />
+    <SelectionIndicator />
+  </ListBoxItem>
+  <ListBoxSection>
+    <Header />
+    <ListBoxItem />
+  </ListBoxSection>
+  <ListBoxLoadMoreItem />
+</ListBox>
+```
+
+### ListBox
+
+<PropTable component={docs.exports.ListBox} links={docs.links} showDescription />
+
+### ListBoxItem
+
+<PropTable component={docs.exports.ListBoxItem} links={docs.links} showDescription />
+
+### ListBoxSection
+
+<PropTable component={docs.exports.ListBoxSection} links={docs.links} showDescription />
+
+### ListBoxLoadMoreItem
+
+<PropTable component={docs.exports.ListBoxLoadMoreItem} links={docs.links} showDescription />

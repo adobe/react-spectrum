@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   ColorSlider as AriaColorSlider,
@@ -29,7 +30,7 @@ interface ColorSliderProps extends AriaColorSliderProps {
 
 export function ColorSlider({ label, ...props }: ColorSliderProps) {
   return (
-    <AriaColorSlider {...props} className={composeTailwindRenderProps(props.className, 'orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-56')}>
+    <AriaColorSlider {...props} className={composeTailwindRenderProps(props.className, 'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-56')}>
       <Label>{label}</Label>
       <SliderOutput className="text-sm text-gray-500 dark:text-zinc-400 font-medium orientation-vertical:hidden" />
       <SliderTrack

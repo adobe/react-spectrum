@@ -48,7 +48,7 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   }, 50);
 }
 
-function handleGlobalPointerEvent(e) {
+function handleGlobalPointerEvent(e: PointerEvent) {
   if (e.pointerType === 'touch') {
     setGlobalIgnoreEmulatedMouseEvents();
   }
@@ -59,10 +59,12 @@ function setupGlobalTouchEvents() {
     return;
   }
 
-  if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent);
-  } else {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+  if (hoverCount === 0) {
+    if (typeof PointerEvent !== 'undefined') {
+      document.addEventListener('pointerup', handleGlobalPointerEvent);
+    } else if (process.env.NODE_ENV === 'test') {
+      document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+    }
   }
 
   hoverCount++;
@@ -74,7 +76,7 @@ function setupGlobalTouchEvents() {
 
     if (typeof PointerEvent !== 'undefined') {
       document.removeEventListener('pointerup', handleGlobalPointerEvent);
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
     }
   };
@@ -182,7 +184,7 @@ export function useHover(props: HoverProps): HoverResult {
           triggerHoverEnd(e, e.pointerType);
         }
       };
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       hoverProps.onTouchStart = () => {
         state.ignoreEmulatedMouseEvents = true;
       };

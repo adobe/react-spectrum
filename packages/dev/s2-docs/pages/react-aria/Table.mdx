@@ -1,0 +1,709 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import vanillaDocs from 'docs:vanilla-starter/Table';
+import '../../tailwind/tailwind.css';
+import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['data', 'grid'];
+
+# Table
+
+<PageDescription>{docs.exports.Table.description}</PageDescription>
+
+<ExampleSwitcher>
+  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Table.tsx", "starters/docs/src/Table.css"]}
+  "use client";
+  import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+
+  <Table/* PROPS */>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Date Modified</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell>6/7/2020</Cell>
+      </Row>
+      <Row>
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell>4/7/2021</Cell>
+      </Row>
+      <Row>
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+      </Row>
+      <Row>
+        <Cell>log.txt</Cell>
+        <Cell>Text Document</Cell>
+        <Cell>1/18/2016</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+  ```
+
+  ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/Table.tsx"]}
+  "use client";
+  import {Table, TableHeader, Column, Row, Cell} from 'tailwind-starter/Table';
+  import {TableBody} from 'react-aria-components';
+
+  <Table/* PROPS */>
+    <TableHeader>
+      <Column isRowHeader>Name</Column>
+      <Column>Type</Column>
+      <Column>Date Modified</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Games</Cell>
+        <Cell>File folder</Cell>
+        <Cell>6/7/2020</Cell>
+      </Row>
+      <Row>
+        <Cell>Program Files</Cell>
+        <Cell>File folder</Cell>
+        <Cell>4/7/2021</Cell>
+      </Row>
+      <Row>
+        <Cell>bootmgr</Cell>
+        <Cell>System file</Cell>
+        <Cell>11/20/2010</Cell>
+      </Row>
+      <Row>
+        <Cell>log.txt</Cell>
+        <Cell>Text Document</Cell>
+        <Cell>1/18/2016</Cell>
+      </Row>
+    </TableBody>
+  </Table>
+  ```
+
+</ExampleSwitcher>
+
+## Content
+
+`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
+In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {CheckboxGroup} from 'vanilla-starter/CheckboxGroup';
+import {Checkbox} from 'vanilla-starter/Checkbox';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+///- begin collapse -///
+const columns = [
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
+];
+///- end collapse -///
+
+///- begin collapse -///
+const initialRows = [
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
+///- end collapse -///
+
+function FileTable() {
+  let [showColumns, setShowColumns] = useState(['name', 'type', 'date']);
+  let visibleColumns = columns.filter(column => showColumns.includes(column.id));
+
+  let [rows, setRows] = useState(initialRows);
+  let addRow = () => {
+    let date = new Date().toLocaleDateString();
+    setRows(rows => [
+      ...rows,
+      {id: rows.length + 1, name: 'file.txt', date, type: 'Text Document'}
+    ]);
+  };
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'start', width: '100%'}}>
+      <CheckboxGroup aria-label="Show columns" value={showColumns} onChange={setShowColumns} orientation="horizontal">
+        <Checkbox value="type">Type</Checkbox>
+        <Checkbox value="date">Date Modified</Checkbox>
+      </CheckboxGroup>
+      <Table aria-label="Files" style={{width: '100%'}}>
+        <TableHeader columns={visibleColumns}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        {/*- begin highlight -*/}
+        <TableBody items={rows} dependencies={[visibleColumns]}>
+          {item => (
+            /*- end highlight -*/
+            <Row columns={visibleColumns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+      <Button onPress={addRow}>Add row</Button>
+    </div>
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Memoization</Heading>
+  <Content>Dynamic collections are automatically memoized to improve performance. Use the `dependencies` prop to invalidate cached elements that depend
+on external state (e.g. `columns` in this example).</Content>
+</InlineAlert>
+
+### Asynchronous loading
+
+Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<TableLoadMoreItem>` at the end of the list. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
+import {Collection} from 'react-aria-components';
+import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string;
+  height: number;
+  mass: number;
+  birth_year: number;
+}
+
+function AsyncSortTable() {
+  let list = useAsyncList<Character>({
+    async load({ signal, cursor }) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        { signal }
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <div
+      style={{
+        height: 150,
+        overflow: 'auto',
+        border: '0.5px solid var(--border-color)',
+        borderRadius: 'var(--radius)'
+      }}>
+      <Table
+        aria-label="Star Wars characters"
+        style={{tableLayout: 'fixed', width: '100%', border: 0}}>
+        <TableHeader
+          style={{
+            position: 'sticky',
+            top: 0,
+            background: 'var(--overlay-background)',
+            zIndex: 1
+          }}>
+          <Column id="name" isRowHeader>Name</Column>
+          <Column id="height">Height</Column>
+          <Column id="mass">Mass</Column>
+          <Column id="birth_year">Birth Year</Column>
+        </TableHeader>
+        <TableBody
+          renderEmptyState={() => (
+            <ProgressCircle isIndeterminate aria-label="Loading..." />
+          )}>
+          <Collection items={list.items}>
+            {(item) => (
+              <Row id={item.name}>
+                <Cell>{item.name}</Cell>
+                <Cell>{item.height}</Cell>
+                <Cell>{item.mass}</Cell>
+                <Cell>{item.birth_year}</Cell>
+              </Row>
+            )}
+          </Collection>
+          {/*- begin highlight -*/}
+          <TableLoadMoreItem
+            onLoadMore={list.loadMore}
+            isLoading={list.loadingState === 'loadingMore'} />
+          {/*- end highlight -*/}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+```
+
+### Links
+
+Use the `href` prop on a `<Row>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+
+<Table/* PROPS */>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </TableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <Row href="https://adobe.com/" target="_blank">
+      {/*- end highlight -*/}
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </Row>
+    <Row href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </Row>
+    <Row href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+### Empty state
+
+```tsx render hideImports
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+
+<Table aria-label="Search results">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  {/*- begin highlight -*/}
+  <TableBody renderEmptyState={() => 'No results found.'}>
+  {/*- end highlight -*/}
+    {[]}
+  </TableBody>
+</Table>
+```
+
+## Selection and actions
+
+Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+
+```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
+"use client";
+import type {Selection} from 'react-aria-components';
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelected] = useState<Selection>(new Set());
+
+  return (
+    <>
+      <Table
+        {...props}
+        aria-label="Favorite pokemon"
+        ///- begin highlight -///
+        /* PROPS */
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+        onAction={key => alert(`Clicked ${key}`)}
+        ///- end highlight -///
+      >
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Level</Column>
+        </TableHeader>
+        <TableBody>
+          <Row id="charizard">
+            <Cell>Charizard</Cell>
+            <Cell>Fire, Flying</Cell>
+            <Cell>67</Cell>
+          </Row>
+          <Row id="blastoise">
+            <Cell>Blastoise</Cell>
+            <Cell>Water</Cell>
+            <Cell>56</Cell>
+          </Row>
+          <Row id="venusaur" isDisabled>
+            <Cell>Venusaur</Cell>
+            <Cell>Grass, Poison</Cell>
+            <Cell>83</Cell>
+          </Row>
+          <Row id="pikachu">
+            <Cell>Pikachu</Cell>
+            <Cell>Electric</Cell>
+            <Cell>100</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Sorting
+
+Set the `allowsSorting` prop on a `<Column>` to make it sortable. When the column header is pressed, `onSortChange` is called with a <TypeLink type={docs.exports.SortDescriptor} links={docs.links} /> including the sorted column and direction (ascending or descending). Use this to sort the data accordingly, and pass the `sortDescriptor` prop to the `<Table>` to display the sorted column.
+
+```tsx render
+"use client";
+import {type SortDescriptor} from 'react-aria-components';
+import {Table, TableHeader, Column, TableBody, Row, Cell} from 'vanilla-starter/Table';
+import {useState} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+///- end collapse -///
+
+function SortableTable() {
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'name',
+    direction: 'ascending'
+  });
+
+  let sortedRows = rows;
+  if (sortDescriptor) {
+    sortedRows = rows.toSorted((a, b) => {
+      let first = a[sortDescriptor.column];
+      let second = b[sortDescriptor.column];
+      let cmp = first < second ? -1 : 1;
+      if (sortDescriptor.direction === 'descending') {
+        cmp = -cmp;
+      }
+      return cmp;
+    });
+  }
+
+  return (
+    <Table
+      aria-label="Favorite pokemon"
+      ///- begin highlight -///
+      sortDescriptor={sortDescriptor}
+      onSortChange={setSortDescriptor}
+      ///- end highlight -///
+    >
+      <TableHeader>
+        <Column id="name" isRowHeader allowsSorting>Name</Column>
+        <Column id="type" allowsSorting>Type</Column>
+        <Column id="level" allowsSorting>Level</Column>
+      </TableHeader>
+      <TableBody items={sortedRows}>
+        {item => (
+          <Row>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.level}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+## Column resizing
+
+Wrap the `<Table>` with a `<ResizableTableContainer>`, and add a `<ColumnResizer>` to each column to make it resizable. Use the `defaultWidth`, `width`, `minWidth`, and `maxWidth` props on a `<Column>` to control resizing behavior. These accept pixels, percentages, or fractional values (the [fr](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout#the_fr_unit) unit). The default column width is `1fr`.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {ResizableTableContainer} from 'react-aria-components';
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: '2022 Roadmap Proposal Revision 012822 Copy (2)', date: 'November 27, 2022 at 4:56PM', size: '214 KB'},
+  {id: 2, name: 'Budget', date: 'January 27, 2021 at 1:56AM', size: '14 MB'},
+  {id: 3, name: 'Welcome Email Template', date: 'July 24, 2022 at 2:48 PM', size: '20 KB'},
+  {id: 4, name: 'Job Posting_8301', date: 'May 30, 2025', size: '139 KB'}
+];
+///- end collapse -///
+
+<ResizableTableContainer>
+  <Table aria-label="Table with resizable columns">
+    <TableHeader>
+      {/*- begin highlight -*/}
+      <Column id="file" isRowHeader allowsResizing maxWidth={500}>File Name</Column>
+      <Column id="size" allowsResizing defaultWidth={80}>Size</Column>
+      <Column id="date" minWidth={100}>Date Modified</Column>
+      {/*- end highlight -*/}
+    </TableHeader>
+    <TableBody items={rows}>
+      {item => (
+        <Row>
+          <Cell>{item.name}</Cell>
+          <Cell>{item.size}</Cell>
+          <Cell>{item.date}</Cell>
+        </Row>
+      )}
+    </TableBody>
+  </Table>
+</ResizableTableContainer>
+```
+
+### Resize events
+
+The ResizableTableContainer's `onResize` event is called when a column resizer is moved by the user. The `onResizeEnd` event is called when the user finishes resizing. These receive a `Map` containing the widths of all columns in the Table. This example persists the column widths in `localStorage`.
+
+```tsx render
+"use client";
+import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {ResizableTableContainer} from 'react-aria-components';
+import {useSyncExternalStore} from 'react';
+
+///- begin collapse -///
+const rows = [
+  {id: 1, name: '2022 Roadmap Proposal Revision 012822 Copy (2)', date: 'November 27, 2022 at 4:56PM', size: '214 KB'},
+  {id: 2, name: 'Budget', date: 'January 27, 2021 at 1:56AM', size: '14 MB'},
+  {id: 3, name: 'Welcome Email Template', date: 'July 24, 2022 at 2:48 PM', size: '20 KB'},
+  {id: 4, name: 'Job Posting_8301', date: 'May 30, 2025', size: '139 KB'}
+];
+///- end collapse -///
+
+///- begin collapse -///
+const columns = [
+  {id: 'file', name: 'File Name'},
+  {id: 'size', name: 'Size'},
+  {id: 'date', name: 'Date'}
+];
+///- end collapse -///
+
+const initialWidths = new Map([
+  ['file', '1fr'],
+  ['size', 80],
+  ['date', 100]
+]);
+
+export default function ResizableTable() {
+  let columnWidths = useSyncExternalStore(subscribe, getColumnWidths, getInitialWidths);
+
+  return (
+    <ResizableTableContainer
+      ///- begin highlight -///
+      onResize={setColumnWidths}
+      ///- end highlight -///
+    >
+      <Table aria-label="Table with resizable columns">
+        <TableHeader columns={columns} dependencies={[columnWidths]}>
+          {column => (
+            <Column
+              isRowHeader={column.id === 'file'}
+              allowsResizing
+              ///- begin highlight -///
+              width={columnWidths.get(column.id)}
+              ///- end highlight -///
+            >
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.size}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    </ResizableTableContainer>
+  );
+}
+
+let parsedWidths;
+function getColumnWidths() {
+  // Parse column widths from localStorage.
+  if (!parsedWidths) {
+    let data = localStorage.getItem('table-widths');
+    if (data) {
+      parsedWidths = new Map(JSON.parse(data));
+    }
+  }
+  return parsedWidths || initialWidths;
+}
+
+function setColumnWidths(widths) {
+  // Store new widths in localStorage, and trigger subscriptions.
+  localStorage.setItem('table-widths', JSON.stringify(Array.from(widths)));
+  window.dispatchEvent(new Event('storage'));
+}
+
+function getInitialWidths() {
+  return initialWidths;
+}
+
+function subscribe(fn) {
+  let onStorage = () => {
+    // Invalidate cache.
+    parsedWidths = null;
+    fn();
+  };
+
+  window.addEventListener('storage', onStorage);
+  return () => window.removeEventListener('storage', onStorage);
+}
+```
+
+## Drag and drop
+
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Table) to learn more.
+
+```tsx render
+"use client";
+import {useListData} from 'react-stately';
+import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
+import {TableBody, Cell} from 'react-aria-components';
+import {useDragAndDrop} from 'react-aria-components';
+
+function ReorderableTable() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+    ]
+  });
+
+  ///- begin highlight -///
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': list.getItem(key).name
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+  ///- end highlight -///
+
+  return (
+    <Table
+      aria-label="Files"
+      selectionMode="multiple"
+      ///- begin highlight -///
+      dragAndDropHooks={dragAndDropHooks}
+      ///- end highlight -///
+    >
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {item => (
+          <Row>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+## Examples
+
+<ExampleList tag="table" pages={props.pages} />
+
+## API
+
+<Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
+
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+<ResizableTableContainer>
+  <Table>
+    <TableHeader>
+      <Column />
+      <Column><Checkbox slot="selection" /></Column>
+      <Column><ColumnResizer /></Column>
+      <Column />
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell><Button slot="drag" /></Cell>
+        <Cell>
+          <Checkbox slot="selection" /> or <SelectionIndicator />
+        </Cell>
+        <Cell />
+        <Cell />
+      </Row>
+      <TableLoadMoreItem />
+    </TableBody>
+  </Table>
+</ResizableTableContainer>
+```
+
+### Table
+
+<PropTable component={docs.exports.Table} links={docs.links} showDescription />
+
+### TableHeader
+
+<PropTable component={docs.exports.TableHeader} links={docs.links} showDescription />
+
+### Column
+
+<PropTable component={docs.exports.Column} links={docs.links} showDescription />
+
+### TableBody
+
+<PropTable component={docs.exports.TableBody} links={docs.links} showDescription />
+
+### Row
+
+<PropTable component={docs.exports.Row} links={docs.links} showDescription />
+
+### Cell
+
+<PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### ResizableTableContainer
+
+<PropTable component={docs.exports.ResizableTableContainer} links={docs.links} showDescription />
+
+### ColumnResizer
+
+<PropTable component={docs.exports.ColumnResizer} links={docs.links} showDescription />
+
+### TableLoadMoreItem
+
+<PropTable component={docs.exports.TableLoadMoreItem} links={docs.links} showDescription />

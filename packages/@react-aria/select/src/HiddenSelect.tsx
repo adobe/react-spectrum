@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableElement, RefObject} from '@react-types/shared';
-import React, {ReactNode, useRef} from 'react';
+import {FocusableElement, Key, RefObject} from '@react-types/shared';
+import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
+import {SelectionMode} from '@react-types/select';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
 import {useFormValidation} from '@react-aria/form';
@@ -30,13 +31,20 @@ export interface AriaHiddenSelectProps {
   /** HTML form input name. */
   name?: string,
 
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string,
+
   /** Sets the disabled state of the select and input. */
   isDisabled?: boolean
 }
 
-export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
+export interface HiddenSelectProps<T, M extends SelectionMode = 'single'> extends AriaHiddenSelectProps {
   /** State for the select. */
-  state: SelectState<T>,
+  state: SelectState<T, M>,
 
   /** A ref to the trigger element. */
   triggerRef: RefObject<FocusableElement | null>
@@ -44,7 +52,7 @@ export interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
 
 export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
   /** A ref to the hidden `<select>` element. */
-  selectRef?: RefObject<HTMLSelectElement | null>
+  selectRef?: RefObject<HTMLSelectElement | HTMLInputElement | null>
 }
 
 export interface HiddenSelectAria {
@@ -63,17 +71,36 @@ export interface HiddenSelectAria {
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement | null>): HiddenSelectAria {
+export function useHiddenSelect<T, M extends SelectionMode = 'single'>(props: AriaHiddenSelectOptions, state: SelectState<T, M>, triggerRef: RefObject<FocusableElement | null>): HiddenSelectAria {
   let data = selectData.get(state) || {};
-  let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
+  let {autoComplete, name = data.name, form = data.form, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
-  let {visuallyHiddenProps} = useVisuallyHidden();
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      // Prevent page scrolling.
+      position: 'fixed',
+      top: 0,
+      left: 0
+    }
+  });
 
-  useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
+  useFormReset(props.selectRef, state.defaultValue, state.setValue);
   useFormValidation({
     validationBehavior,
     focus: () => triggerRef.current?.focus()
   }, state, props.selectRef);
+
+  let setValue = state.setValue;
+  let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.multiple) {
+      setValue(Array.from(
+        e.target.selectedOptions,
+        (option) => option.value
+      ) as any);
+    } else {
+      setValue(e.currentTarget.value as any);
+    }
+  }, [setValue]);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
@@ -97,10 +124,13 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       tabIndex: -1,
       autoComplete,
       disabled: isDisabled,
+      multiple: state.selectionManager.selectionMode === 'multiple',
       required: validationBehavior === 'native' && isRequired,
       name,
-      value: state.selectedKey ?? undefined,
-      onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
+      form,
+      value: (state.value as string | string[]) ?? '',
+      onChange,
+      onInput: onChange
     }
   };
 }
@@ -109,10 +139,11 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
  * Renders a hidden native `<select>` element, which can be used to support browser
  * form autofill, mobile form navigation, and native form submission.
  */
-export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
-  let {state, triggerRef, label, name, isDisabled} = props;
+export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: HiddenSelectProps<T, M>): JSX.Element | null {
+  let {state, triggerRef, label, name, form, isDisabled} = props;
   let selectRef = useRef(null);
-  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
+  let inputRef = useRef(null);
+  let {containerProps, selectProps} = useHiddenSelect({...props, selectRef: state.collection.size <= 300 ? selectRef : inputRef}, state, triggerRef);
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
@@ -141,14 +172,46 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
       </div>
     );
   } else if (name) {
-    return (
-      <input
-        type="hidden"
-        autoComplete={selectProps.autoComplete}
-        name={name}
-        disabled={isDisabled}
-        value={state.selectedKey ?? ''} />
-    );
+    let data = selectData.get(state) || {};
+    let {validationBehavior} = data;
+
+    // Always render at least one hidden input to ensure required form submission.
+    let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
+    if (values.length === 0) {
+      values = [null];
+    }
+    
+    let res = values.map((value, i) => {
+      let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+        type: 'hidden',
+        autoComplete: selectProps.autoComplete,
+        name,
+        form,
+        disabled: isDisabled,
+        value: value ?? ''
+      };
+
+      if (validationBehavior === 'native') {
+        // Use a hidden <input type="text"> rather than <input type="hidden">
+        // so that an empty value blocks HTML form submission when the field is required.
+        return (
+          <input
+            key={i}
+            {...inputProps}
+            ref={i === 0 ? inputRef : null}
+            style={{display: 'none'}}
+            type="text"
+            required={i === 0 ? selectProps.required : false}
+            onChange={() => {/** Ignore react warning. */}} />
+        );
+      }
+
+      return (
+        <input key={i} {...inputProps} ref={i === 0 ? inputRef : null} />
+      );
+    });
+
+    return <>{res}</>;
   }
 
   return null;

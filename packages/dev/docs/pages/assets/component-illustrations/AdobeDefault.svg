@@ -1,0 +1,8 @@
+<svg style="background:var(--anatomy-gray-100); padding: 50px 10px" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <rect id="Placement_Area" data-name="Placement Area" width="120" height="120" fill="red" opacity="0"/>
+  <g id="Adobe_Logo" transform="translate(35 38)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 501.71 444.05" width="50" height="44.4">
+      <path d="m297.58 444.05-36.45-101.4h-91.46l76.87-193.53 116.65 294.93h138.52L316.8 0H186.23L0 444.05h297.58z" fill="var(--anatomy-gray-500)" stroke-width="0"/>
+    </svg>
+  </g>
+</svg>

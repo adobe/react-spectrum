@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components';
 import {CheckboxContext} from './Checkbox';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -25,7 +25,7 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   /**
    * The size of the Checkboxes in the CheckboxGroup.
    *
@@ -85,7 +85,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
         '--field-gap': {
           type: 'rowGap',
-          value: '[calc(var(--field-height) - 1lh)]'
+          value: 'calc(var(--field-height) - 1lh)'
         }
       }, getAllowedOverrides())({
         size: props.size,

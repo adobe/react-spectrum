@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
-import {categorizeArgTypes} from './utils';
+import {Button, ButtonGroup, Content, DropZone, DropZoneProps, FileTrigger, Heading, IllustratedMessage} from '../src';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
-import type {Meta} from '@storybook/react';
-import React, {useState} from 'react';
+import type {Meta, StoryObj} from '@storybook/react';
+import React, {ReactElement, useState} from 'react';
 import {style} from '../style' with { type: 'macro' };
+
+const events = ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'];
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
@@ -27,14 +29,16 @@ const meta: Meta<typeof DropZone> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
+    ...categorizeArgTypes('Events', events),
+    children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'DropZone'
 };
 
 export default meta;
 
-export const Example = (args: any) => {
+const ExampleRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -42,7 +46,7 @@ export const Example = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: 320, height: 280})}
+        styles={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -59,7 +63,11 @@ export const Example = (args: any) => {
   );
 };
 
-export const ExampleWithFileTrigger = (args: any) => {
+export const Example: StoryObj<typeof ExampleRender> = {
+  render: (args) => <ExampleRender {...args} />
+};
+
+const ExampleWithFileTriggerRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -67,7 +75,7 @@ export const ExampleWithFileTrigger = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: 380, height: 280})}
+        styles={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -90,7 +98,11 @@ export const ExampleWithFileTrigger = (args: any) => {
   );
 };
 
-export const LongBanner = (args: any) => {
+export const ExampleWithFileTrigger: StoryObj<typeof ExampleWithFileTriggerRender> = {
+  render: (args) => <ExampleWithFileTriggerRender {...args} />
+};
+
+const LongBannerRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -99,7 +111,7 @@ export const LongBanner = (args: any) => {
       <DropZone
         {...args}
         replaceMessage="A really long message that will show the text wrapping hopefully"
-        className={style({width: 380, height: 280})}
+        styles={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -116,7 +128,11 @@ export const LongBanner = (args: any) => {
   );
 };
 
-export const Gradient = (args: any) => {
+export const LongBanner: StoryObj<typeof LongBannerRender> = {
+  render: (args) => <LongBannerRender {...args} />
+};
+
+const GradientRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -124,7 +140,7 @@ export const Gradient = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: 380, height: 280})}
+        styles={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -139,6 +155,10 @@ export const Gradient = (args: any) => {
       </DropZone>
     </>
   );
+};
+
+export const Gradient: StoryObj<typeof GradientRender> = {
+  render: (args) => <GradientRender {...args} />
 };
 
 function Draggable() {

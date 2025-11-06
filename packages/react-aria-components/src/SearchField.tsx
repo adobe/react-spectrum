@@ -12,11 +12,25 @@
 
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {FieldInputContext} from './RSPContexts';
+import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -41,12 +55,28 @@ export interface SearchFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the search field is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the search field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
+  /**
    * State of the search field.
    */
   state: SearchFieldState
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps {}
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-SearchField'
+   */
+  className?: ClassNameOrFunction<SearchFieldRenderProps>
+}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -58,7 +88,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
-  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  [props, inputRef as unknown] = useContextProps(props, inputRef, FieldInputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
   );
@@ -71,7 +101,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
     ...removeDataAttributes(props),
     label,
     validationBehavior
-  }, state, mergedInputRef);
+  }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -79,12 +109,14 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       isEmpty: state.value === '',
       isDisabled: props.isDisabled || false,
       isInvalid: validation.isInvalid || false,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false,
       state
     },
     defaultClassName: 'react-aria-SearchField'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -95,11 +127,13 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
       slot={props.slot || undefined}
       data-empty={state.value === '' || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-invalid={validation.isInvalid || undefined}>
+      data-invalid={validation.isInvalid || undefined}
+      data-readonly={props.isReadOnly || undefined}
+      data-required={props.isRequired || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: mergedInputRef}],
+          [InputContext, {...inputProps, ref: inputRef}],
           [ButtonContext, clearButtonProps],
           [TextContext, {
             slots: {

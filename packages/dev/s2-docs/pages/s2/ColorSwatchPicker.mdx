@@ -1,0 +1,73 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# ColorSwatchPicker
+
+<PageDescription>{docs.exports.ColorSwatchPicker.description}</PageDescription>
+
+```tsx render docs={docs.exports.ColorSwatchPicker} links={docs.links} props={['size', 'density', 'rounding']} initialProps={{defaultValue: '#f00'}} type="s2"
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/s2';
+
+<ColorSwatchPicker/* PROPS */>
+  <ColorSwatch color="#f00" />
+  <ColorSwatch color="#0f0" />
+  <ColorSwatch color="#00f" />
+  <ColorSwatch color="#ff0" />
+  <ColorSwatch color="#f0f" />
+  <ColorSwatch color="#0ff" />
+</ColorSwatchPicker>
+```
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the selected color, and `onChange` to handle selection changes.  The value may be a string or <TypeLink type={docs.exports.Color} links={docs.links} /> object, parsed using the <TypeLink type={docs.exports.parseColor} links={docs.links} /> function.
+
+```tsx render
+"use client";
+import {ColorSwatchPicker, ColorSwatch, parseColor} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [value, setValue] = useState(parseColor('#e11d48'));
+
+  return (
+    <>
+      {/*- begin highlight -*/}
+      <ColorSwatchPicker value={value} onChange={setValue}>
+      {/*- end highlight -*/}
+        <ColorSwatch color="#e11d48" />
+        <ColorSwatch color="#f97316" />
+        <ColorSwatch color="#eab308" />
+        <ColorSwatch color="#22c55e" />
+        <ColorSwatch color="#3b82f6" />
+        <ColorSwatch color="#8b5cf6" />
+        <ColorSwatch color="#ec4899" />
+      </ColorSwatchPicker>
+      <pre className={style({font: 'body'})}>Selected color: {value.toString('rgb')}</pre>
+    </>
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Color swatches must be unique</Heading>
+  <Content>Equivalent colors in different color spaces are considered duplicates. For example, the values `#f00`, `hsl(0, 100%, 50%)`, and `hsb(0, 100%, 100%)` are all the same color. This is required for predictable selection behavior.</Content>
+</InlineAlert>
+
+## API
+
+```tsx links={{ColorSwatchPicker: '#colorswatchpicker', ColorSwatch: 'ColorSwatch.html'}}
+<ColorSwatchPicker>
+  <ColorSwatch />
+</ColorSwatchPicker>
+```
+
+### ColorSwatchPicker
+
+<PropTable component={docs.exports.ColorSwatchPicker} links={docs.links} />

@@ -14,18 +14,38 @@ import DragHandle_L from './S2_DragHandleSize200.svg';
 import DragHandle_M from './S2_DragHandleSize100.svg';
 import DragHandle_S from './S2_DragHandleSize75.svg';
 import DragHandle_XL from './S2_DragHandleSize300.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-export default function DragHandle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
+let styles = style({
+  width: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 14,
+      S: 10
+    }
+  },
+  height: {
+    size: {
+      M: 10,
+      L: 12,
+      XL: 14,
+      S: 10
+    }
+  }
+});
+
+export default function DragHandle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <DragHandle_M {...otherProps} />;
+      return <DragHandle_M {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'L':
-      return <DragHandle_L {...otherProps} />;
+      return <DragHandle_L {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'XL':
-      return <DragHandle_XL {...otherProps} />;
+      return <DragHandle_XL {...otherProps} className={(otherProps.className || '') + styles({size})} />;
     case 'S':
-      return <DragHandle_S {...otherProps} />;
+      return <DragHandle_S {...otherProps} className={(otherProps.className || '') + styles({size})} />;
   }
 }

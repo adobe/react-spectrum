@@ -123,7 +123,10 @@ describe('Checkbox', () => {
   });
 
   it('should support press state', async () => {
-    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''}>Test</Checkbox>);
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
@@ -136,6 +139,32 @@ describe('Checkbox', () => {
     await user.pointer({target: checkbox, keys: '[/MouseLeft]'});
     expect(checkbox).not.toHaveAttribute('data-pressed');
     expect(checkbox).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press state with keyboard', async () => {
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Checkbox>);
+    let checkbox = getByRole('checkbox').closest('label');
+
+    expect(checkbox).not.toHaveAttribute('data-pressed');
+    expect(checkbox).not.toHaveClass('pressed');
+
+    await user.tab();
+    await user.keyboard('[Space>]');
+    expect(checkbox).toHaveAttribute('data-pressed', 'true');
+    expect(checkbox).toHaveClass('pressed');
+
+    await user.keyboard('[/Space]');
+    expect(checkbox).not.toHaveAttribute('data-pressed');
+    expect(checkbox).not.toHaveClass('pressed');
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {
@@ -243,5 +272,34 @@ describe('Checkbox', () => {
     );
     expect(inputRef.current).toBe(getByRole('checkbox'));
     expect(contextInputRef.current).toBe(getByRole('checkbox'));
+  });
+
+  it('should support form prop', () => {
+    let {getByRole} = render(<Checkbox form="test">Test</Checkbox>);
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('form', 'test');
+  });
+
+
+  it('should not trigger onBlur/onFocus on sequential presses', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let {getByRole} = render(
+      <Checkbox onFocus={onFocus} onBlur={onBlur}>Test</Checkbox>
+    );
+
+    let checkbox = getByRole('checkbox');
+    let label = checkbox.closest('label');
+
+    await user.click(label);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+
+    onFocus.mockClear();
+
+    await user.click(label);
+
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).not.toHaveBeenCalled();
   });
 });

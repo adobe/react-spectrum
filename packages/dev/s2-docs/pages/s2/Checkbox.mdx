@@ -1,0 +1,74 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Checkbox} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = [];
+
+# Checkbox
+
+<PageDescription>{docs.exports.Checkbox.description}</PageDescription>
+
+<VisualExample
+  component={Checkbox}
+  docs={docs.exports.Checkbox}
+  props={['children', 'size', 'isEmphasized', 'isIndeterminate', 'isDisabled']}
+  initialProps={{children: 'Unsubscribe'}}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Selection
+
+Use the `isSelected` or `defaultSelected` prop to set the selection state, and `onChange` to handle selection changes. The `isIndeterminate` prop overrides the selection state regardless of user interaction.
+
+```tsx render wide docs={docs.exports.Checkbox} links={docs.links} props={['isIndeterminate']}
+"use client";
+import {Checkbox} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let [selected, setSelection] = useState(false);
+
+  return (
+    <>
+      <Checkbox 
+        {...props}
+        ///- begin highlight -///
+        isSelected={selected}
+        onChange={setSelection}
+        /* PROPS */
+        ///- end highlight -///
+      >
+        Subscribe
+      </Checkbox>
+      <p>{`You are ${props.isIndeterminate ? 'partially subscribed' : selected ? 'subscribed' : 'unsubscribed'}`}</p>
+    </>
+  );
+}
+```
+
+## Forms
+
+Use the `name` and `value` props to submit the checkbox to the server. Set the `isRequired` prop to validate the user selects the checkbox, or implement custom client or server-side validation. See the Forms guide to learn more.
+
+```tsx render
+"use client";
+import {Checkbox, Button, Form} from '@react-spectrum/s2';
+
+<Form>
+  <Checkbox
+    ///- begin highlight -///
+    name="terms"
+    value="agree"
+    isRequired>
+    {/*- end highlight -*/}
+    I agree to the terms
+  </Checkbox>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## API
+
+<PropTable component={docs.exports.Checkbox} links={docs.links} />

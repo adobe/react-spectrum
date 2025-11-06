@@ -10,20 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import {ChildrenOrFunction, Provider, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
 import {Color, ColorPickerState, ColorPickerProps as StatelyColorPickerProps, useColorPickerState} from 'react-stately';
 import {ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext} from './RSPContexts';
 import {ColorSwatchContext} from './ColorSwatch';
 import {ColorSwatchPickerContext} from './ColorSwatchPicker';
 import {mergeProps} from 'react-aria';
-import {Provider, RenderProps, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
-import React, {createContext} from 'react';
+import React, {createContext, JSX} from 'react';
 
 export interface ColorPickerRenderProps {
   /** The currently selected color. */
   color: Color
 }
 
-export interface ColorPickerProps extends StatelyColorPickerProps, SlotProps, Pick<RenderProps<ColorPickerRenderProps>, 'children'> {}
+export interface ColorPickerProps extends StatelyColorPickerProps, SlotProps {
+  /** The children of the component. A function may be provided to alter the children based on component state. */
+  children: ChildrenOrFunction<ColorPickerRenderProps>
+}
 
 export const ColorPickerContext = createContext<SlottedContextValue<ColorPickerProps>>(null);
 export const ColorPickerStateContext = createContext<ColorPickerState | null>(null);
@@ -32,7 +35,7 @@ export const ColorPickerStateContext = createContext<ColorPickerState | null>(nu
  * A ColorPicker synchronizes a color value between multiple React Aria color components.
  * It simplifies building color pickers with customizable layouts via composition.
  */
-export function ColorPicker(props: ColorPickerProps) {
+export function ColorPicker(props: ColorPickerProps): JSX.Element {
   let ctx = useSlottedContext(ColorPickerContext, props.slot);
   props = mergeProps(ctx, props);
   let state = useColorPickerState(props);

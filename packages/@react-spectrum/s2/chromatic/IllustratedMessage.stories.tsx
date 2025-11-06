@@ -13,7 +13,7 @@
 import {Button, ButtonGroup, Content, Heading, IllustratedMessage} from '../src';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import Folder from '../spectrum-illustrations/gradient/generic2/FolderOpen';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,
@@ -24,9 +24,10 @@ const meta: Meta<typeof IllustratedMessage> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof IllustratedMessage>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <IllustratedMessage {...args}>
       <Cloud />
       <Heading>
@@ -42,8 +43,8 @@ export const Example = {
   )
 };
 
-export const NoButtonLongText = {
-  render: (args: any) => (
+export const NoButtonLongText: Story = {
+  render: (args) => (
     <IllustratedMessage {...args}>
       <Cloud />
       <Heading>
@@ -56,8 +57,8 @@ export const NoButtonLongText = {
   )
 };
 
-export const NoButtonShortText = {
-  render: (args: any) => (
+export const NoButtonShortText: Story = {
+  render: (args) => (
     <IllustratedMessage {...args}>
       <Cloud />
       <Heading>
@@ -70,8 +71,8 @@ export const NoButtonShortText = {
   )
 };
 
-export const Gradient = {
-  render: (args: any) => (
+export const Gradient: Story = {
+  render: (args) => (
     <IllustratedMessage {...args}>
       <Folder />
       <Heading>

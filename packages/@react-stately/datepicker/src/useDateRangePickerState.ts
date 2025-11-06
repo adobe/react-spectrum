@@ -32,6 +32,8 @@ type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date range. */
   value: RangeValue<DateValue | null>,
+  /** The default selected date range. */
+  defaultValue: DateRange | null,
   /** Sets the selected date range. */
   setValue(value: DateRange | null): void,
   /**
@@ -83,6 +85,7 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
 export function useDateRangePickerState<T extends DateValue = DateValue>(props: DateRangePickerStateOptions<T>): DateRangePickerState {
   let overlayState = useOverlayTriggerState(props);
   let [controlledValue, setControlledValue] = useControlledState<DateRange | null, RangeValue<MappedDateValue<T>> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [initialValue] = useState(controlledValue);
   let [placeholderValue, setPlaceholderValue] = useState<RangeValue<DateValue | null>>(() => controlledValue || {start: null, end: null});
 
   // Reset the placeholder if the value prop is set to null.
@@ -93,8 +96,9 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   let value = controlledValue || placeholderValue;
 
-  let setValue = (value: RangeValue<DateValue | null> | null) => {
-    setPlaceholderValue(value || {start: null, end: null});
+  let setValue = (newValue: RangeValue<DateValue | null> | null) => {
+    value = newValue || {start: null, end: null};
+    setPlaceholderValue(value);
     if (isCompleteRange(value)) {
       setControlledValue(value);
     } else {
@@ -131,7 +135,8 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   let setDateRange = (range: RangeValue<DateValue | null>) => {
     let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
-      if (isCompleteRange(range) && timeRange?.start && timeRange?.end) {
+      // Set a placeholder time if the popover is closing so we don't leave the field in an incomplete state.
+      if (isCompleteRange(range) && (shouldClose || (timeRange?.start && timeRange?.end))) {
         commitValue(range, {
           start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
           end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
@@ -191,6 +196,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   return {
     ...validation,
     value,
+    defaultValue: props.defaultValue ?? initialValue,
     setValue,
     dateRange,
     timeRange,

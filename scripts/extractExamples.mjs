@@ -13,7 +13,7 @@
 import {unified} from 'unified';
 import remarkParse from 'remark-parse';
 import remarkMdx from 'remark-mdx';
-import glob from 'glob';
+import {globSync} from 'glob';
 import fs from 'fs';
 import path from 'path';
 import {visit} from 'unist-util-visit';
@@ -25,7 +25,7 @@ try {
 } catch (err) {}
 fs.mkdirSync(distDir, {recursive: true});
 
-for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/**/*.mdx')) {
+for (let file of globSync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/**/*.mdx')) {
   console.log(`Extracting ${file}...`);
   let contents = fs.readFileSync(file);
   let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
@@ -108,7 +108,6 @@ import ReactDOM from 'react-dom/client';
 
 fs.copyFileSync('lib/svg.d.ts', `${distDir}/svg.d.ts`);
 fs.copyFileSync('lib/css.d.ts', `${distDir}/css.d.ts`);
-fs.copyFileSync('lib/viewTransitions.d.ts', `${distDir}/viewTransitions.d.ts`);
 fs.writeFileSync(`${distDir}/tsconfig.json`, `{
   "compilerOptions": {
     "target": "es2018",

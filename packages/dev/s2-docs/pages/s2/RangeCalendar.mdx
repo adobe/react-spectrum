@@ -1,0 +1,225 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {RangeCalendar} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['calendar'];
+
+# RangeCalendar
+
+<PageDescription>{docs.exports.RangeCalendar.description}</PageDescription>
+
+<VisualExample
+  component={RangeCalendar}
+  docs={docs.exports.RangeCalendar}
+  links={docs.links}
+  props={['visibleMonths', 'pageBehavior', 'firstDayOfWeek', 'isDisabled']}
+  initialProps={{'aria-label': 'Trip dates'}}
+  controlOptions={{
+    visibleMonths: {
+      minValue: 1,
+      maxValue: 3
+    }
+  }}
+  importSource="@react-spectrum/s2"
+  type="s2" />
+
+## Value
+
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+
+```tsx render
+"use client";
+import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from 'react-aria';
+import {RangeCalendar} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example() {
+  let [range, setRange] = useState({
+    start: parseDate('2025-02-03'),
+    end: parseDate('2025-02-12')
+  });
+  let formatter = useDateFormatter({ dateStyle: 'long' });
+  
+  return (
+    <>
+      <RangeCalendar
+        ///- begin highlight -///
+        value={range}
+        onChange={setRange}
+        ///- end highlight -///
+      />
+      <p>Selected range: {formatter.formatRange(
+        range.start.toDate(getLocalTimeZone()),
+        range.end.toDate(getLocalTimeZone())
+      )}</p>
+    </>
+  );
+}
+```
+
+### International calendars
+
+By default, `RangeCalendar` displays the value using the calendar system for the user's locale. Use `<Provider>` to override the calendar system by setting the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string). The `onChange` event always receives a date in the same calendar as the `value` or `defaultValue` (Gregorian if no value is provided), regardless of the displayed locale.
+
+```tsx render wide docs={docs.exports.Provider} links={docs.links} props={['locale']} initialProps={{locale: 'hi-IN-u-ca-indian'}} type="s2"
+"use client";
+import {Provider, RangeCalendar} from '@react-spectrum/s2';
+import {parseDate} from '@internationalized/date';
+
+<Provider/* PROPS */>
+  <RangeCalendar
+    defaultValue={{
+      start: parseDate('2025-02-03'),
+      end: parseDate('2025-02-12')
+    }} />
+</Provider>
+```
+
+### Custom calendar systems
+
+`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+
+```tsx render
+"use client";
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
+import {RangeCalendar} from '@react-spectrum/s2';
+
+export default (
+  <RangeCalendar
+    firstDayOfWeek="sun"
+    ///- begin highlight -///
+    createCalendar={() => new Custom454()} />
+    ///- end highlight -///
+);
+
+// See @internationalized/date docs linked above.
+///- begin collapse -///
+class Custom454 extends GregorianCalendar {
+  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+  getDaysInMonth(date) {
+    return this.weekPattern[date.month - 1] * 7;
+  }
+
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < this.weekPattern.length; months++) {
+      let weeksInMonth = this.weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  getFormattableMonth(date) {
+    let gregorian = toCalendar(date, new GregorianCalendar());
+    return gregorian.set({month: date.month, day: 1});
+  }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
+}
+///- end collapse -///
+```
+
+## Validation
+
+Use the `minValue` and `maxValue` props to set the valid date range. The `isDateUnavailable` callback prevents certain dates from being selected. Use `allowsNonContiguousRanges` to allow selecting ranges containing unavailable dates. For custom validation rules, set the `isInvalid` prop and the `errorMessage` slot.
+
+```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide type="s2"
+"use client";
+import {today, getLocalTimeZone} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+import {RangeCalendar} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+function Example(props) {
+  let {locale} = useLocale();
+  let now = today(getLocalTimeZone());
+  let [range, setRange] = useState({
+    start: now.add({days: 6}),
+    end: now.add({ days: 14 })
+  });
+  let disabledRanges = [
+    [now, now.add({ days: 5 })],
+    [now.add({ days: 15 }), now.add({ days: 17 })],
+    [now.add({ days: 23 }), now.add({ days: 24 })]
+  ];
+  let isInvalid = range.end.compare(range.start) > 7;
+
+  return (
+    <RangeCalendar
+      {...props}
+      aria-label="Trip dates"
+      value={range}
+      onChange={setRange}
+      ///- begin highlight -///
+      /* PROPS */
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={date => (
+        disabledRanges.some((interval) =>
+          date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+        )
+      )}
+      isInvalid={isInvalid}
+      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined} />
+      ///- end highlight -///
+  );
+}
+```
+
+## Controlling the focused date
+
+Use the `focusedValue` or `defaultFocusedValue` prop to control which date is focused. This controls which month is visible. The `onFocusChange` event is called when a date is focused by the user.
+
+```tsx render
+"use client";
+import {RangeCalendar, ActionButton} from '@react-spectrum/s2';
+import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let defaultDate = new CalendarDate(2021, 7, 1);
+  let [focusedDate, setFocusedDate] = useState(defaultDate);
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
+      <ActionButton onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
+        Today
+      </ActionButton>
+      <RangeCalendar
+        ///- begin highlight -///
+        focusedValue={focusedDate}
+        onFocusChange={setFocusedDate}
+        ///- end highlight -///
+      />
+    </div>
+  );
+}
+```
+
+## API
+
+<PropTable component={docs.exports.RangeCalendar} links={docs.links} />

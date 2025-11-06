@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, RangeValue, StyleProps, ValidationState, ValueBase} from '@react-types/shared';
-import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
+import type {CalendarDate, CalendarDateTime, CalendarIdentifier, Calendar as ICalendar, ZonedDateTime} from '@internationalized/date';
 import {ReactNode} from 'react';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
@@ -66,7 +66,12 @@ export interface CalendarPropsBase {
   /**
    * The day that starts the week.
    */
-  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat',
+  /** 
+   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
+   * @default 'center'
+   */
+  selectionAlignment?: 'start' | 'center' | 'end'
 }
 
 export type DateRange = RangeValue<DateValue> | null;
@@ -90,7 +95,14 @@ export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendar
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
-  visibleMonths?: number
+  visibleMonths?: number,
+
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. If not provided, the `createCalendar` function
+   * from `@internationalized/date` will be used.
+   */
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
 export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRangeCalendarProps<T>, StyleProps {
@@ -98,5 +110,12 @@ export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRan
    * The number of months to display at once. Up to 3 months are supported.
    * @default 1
    */
-  visibleMonths?: number
+  visibleMonths?: number,
+
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. If not provided, the `createCalendar` function
+   * from `@internationalized/date` will be used.
+   */
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }

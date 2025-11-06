@@ -88,13 +88,13 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getNextKey(key: Key) {
+  getNextKey(key: Key): Key | null {
     let nextKey: Key | null = key;
     nextKey = this.collection.getKeyAfter(nextKey);
     return this.findNextNonDisabled(nextKey, key => this.collection.getKeyAfter(key));
   }
 
-  getPreviousKey(key: Key) {
+  getPreviousKey(key: Key): Key | null {
     let nextKey: Key | null = key;
     nextKey = this.collection.getKeyBefore(nextKey);
     return this.findNextNonDisabled(nextKey, key => this.collection.getKeyBefore(key));
@@ -132,7 +132,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return prevRect.x === itemRect.x || prevRect.y !== itemRect.y;
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(key: Key): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
       return this.findKey(key, (key) => this.getNextKey(key), this.isSameRow);
     } else {
@@ -140,7 +140,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
   }
 
-  getKeyAbove(key: Key) {
+  getKeyAbove(key: Key): Key | null {
     if (this.layout === 'grid' && this.orientation === 'vertical') {
       return this.findKey(key, (key) => this.getPreviousKey(key), this.isSameRow);
     } else {
@@ -152,7 +152,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return right ? this.getPreviousKey(key) : this.getNextKey(key);
   }
 
-  getKeyRightOf?(key: Key) {
+  getKeyRightOf?(key: Key): Key | null {
     // This is a temporary solution for CardView until we refactor useSelectableCollection.
     // https://github.com/orgs/adobe/projects/19/views/32?pane=issue&itemId=77825042
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyRightOf' : 'getKeyLeftOf';
@@ -174,7 +174,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getKeyLeftOf?(key: Key) {
+  getKeyLeftOf?(key: Key): Key | null {
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyLeftOf' : 'getKeyRightOf';
     if (this.layoutDelegate[layoutDelegateMethod]) {
       key = this.layoutDelegate[layoutDelegateMethod](key);
@@ -194,17 +194,17 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     let key = this.collection.getFirstKey();
     return this.findNextNonDisabled(key, key => this.collection.getKeyAfter(key));
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let key = this.collection.getLastKey();
     return this.findNextNonDisabled(key, key => this.collection.getKeyBefore(key));
   }
 
-  getKeyPageAbove(key: Key) {
+  getKeyPageAbove(key: Key): Key | null {
     let menu = this.ref.current;
     let itemRect = this.layoutDelegate.getItemRect(key);
     if (!itemRect) {
@@ -235,7 +235,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return nextKey ?? this.getFirstKey();
   }
 
-  getKeyPageBelow(key: Key) {
+  getKeyPageBelow(key: Key): Key | null {
     let menu = this.ref.current;
     let itemRect = this.layoutDelegate.getItemRect(key);
     if (!itemRect) {
@@ -266,7 +266,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return nextKey ?? this.getLastKey();
   }
 
-  getKeyForSearch(search: string, fromKey?: Key) {
+  getKeyForSearch(search: string, fromKey?: Key): Key | null {
     if (!this.collator) {
       return null;
     }

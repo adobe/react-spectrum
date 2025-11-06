@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   DateField as AriaDateField,
@@ -48,7 +49,7 @@ const segmentStyles = tv({
 
 export function DateInput(props: Omit<DateInputProps, 'children'>) {
   return (
-    <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'block min-w-[150px] px-2 py-1.5 text-sm'})} {...props}>
+    <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'block min-w-[150px] px-2 py-1.5 text-sm font-sans'})} {...props}>
       {(segment) => <DateSegment segment={segment} className={segmentStyles} />}
     </AriaDateInput>
   );
