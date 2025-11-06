@@ -432,6 +432,11 @@ function Nav({currentPageName, pages}) {
       pages: utilities,
       isActive: isActive(utilities)
     });
+  } else if (currentPageName.startsWith('v3/')) {
+    // make sure we add all the react spectrum pages to the side nav, specifically the intro and concept section ones
+    sections.push({
+      pages: {...pagesByType.other, ...pagesByType.component}
+    });
   } else {
     sections.push({
       pages: pagesByType.other

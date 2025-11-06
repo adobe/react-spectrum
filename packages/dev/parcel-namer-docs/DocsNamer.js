@@ -37,6 +37,11 @@ module.exports = new Namer({
         if (devPath[0] === 'releases') {
           return path.join('v3', ...devPath, basename);
         }
+
+        // move /react-spectrum to v3 (aka getting started, etc)
+        if (devPath[0] === 'react-spectrum') {
+          return path.join('v3', ...devPath.slice(1), basename);
+        }
         return path.join(...devPath, basename);
       }
 
@@ -54,7 +59,7 @@ module.exports = new Namer({
         return path.join('react-aria', ...parts.slice(3, -1), basename);
       }
 
-      // move /react-spectrum pages under /v3
+      // move @react-spectrum pages under /v3 aka components and stuff
       // TODO: note that both http://localhost:1234/v3/ActionGroup.html and http://localhost:1234/react-spectrum/ActionGroup.html
       // exist, the latter we will redirect to the former
       let namespace = parts[1].replace(/^@/, '');
