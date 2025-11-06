@@ -53,7 +53,7 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
     <div className={style({display: 'flex', justifyContent: 'space-between', paddingX: 4, paddingBottom: 16})}>
       <ActionButton isQuiet size="M" onPress={handleCopy}>
         {isCopied ? <CheckmarkCircle /> : <Copy />}
-        <Text>Copy Page</Text>
+        <Text>Copy for LLM</Text>
       </ActionButton>
       <MenuTrigger>
         <ActionButton size="M" isQuiet aria-label="Markdown options">
