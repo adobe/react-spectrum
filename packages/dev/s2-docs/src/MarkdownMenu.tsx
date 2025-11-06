@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, Menu, MenuItem, MenuTrigger, Text} from '@react-spectrum/s2';
+import {ActionButton, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import React, {useCallback} from 'react';
@@ -26,8 +26,11 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
 
             let markdown = await response.text();
             await navigator.clipboard.writeText(markdown);
-          } catch {
-            // ignore failures (e.g., insecure context, network errors)
+          } catch (error) {
+            // Show toast for clipboard errors, but silently ignore fetch errors
+            if (error instanceof Error && error.name !== 'TypeError') {
+              ToastQueue.negative('Failed to copy markdown.');
+            }
           }
         }
         break;

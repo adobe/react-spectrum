@@ -4,7 +4,7 @@
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Close from '@react-spectrum/s2/icons/Close';
-import {Content, Heading, IllustratedMessage, pressScale, SearchField, Skeleton, Text} from '@react-spectrum/s2';
+import {Content, Heading, IllustratedMessage, pressScale, SearchField, Skeleton, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
@@ -50,7 +50,7 @@ export function useCopyImport() {
       setCopiedId(id);
       timeout.current = setTimeout(() => setCopiedId(null), 2000);
     }).catch(() => {
-      // noop
+      ToastQueue.negative('Failed to copy import statement.');
     });
   }, []);
 

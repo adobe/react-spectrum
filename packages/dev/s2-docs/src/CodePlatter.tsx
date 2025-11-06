@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
@@ -97,7 +97,9 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl, showC
                     if (node instanceof HTMLHeadingElement && node.id) {
                       url.hash = '#' + node.id;
                     }
-                    navigator.clipboard.writeText(url.toString());
+                    navigator.clipboard.writeText(url.toString()).catch(() => {
+                      ToastQueue.negative('Failed to copy link.');
+                    });
                   }}>
                   <LinkIcon />
                   <Text slot="label">Copy link</Text>
@@ -265,7 +267,9 @@ function ShadcnDialog({registryUrl}) {
           <Button
             variant="accent"
             onPress={() => {
-              navigator.clipboard.writeText(preRef.current!.textContent!);
+              navigator.clipboard.writeText(preRef.current!.textContent!).catch(() => {
+                ToastQueue.negative('Failed to copy command. Please try again.');
+              });
               close();
             }}>
             Copy and close
