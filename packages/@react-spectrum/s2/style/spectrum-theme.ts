@@ -23,7 +23,8 @@ function pxToRem(px: string | number) {
   if (typeof px === 'string') {
     px = parseFloat(px);
   }
-  return px / 16 + 'rem';
+  // return px / 16 + 'rem';
+  return `calc(${px / 16} * var(--rem, 1rem))`;
 }
 
 const baseColors = {
@@ -763,7 +764,7 @@ export const style = createTheme({
       if (typeof value === 'number') {
         return {
           '--fs': `pow(1.125, ${value})`,
-          fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
+          fontSize: `round(${fontSizeCalc} / 16 * var(--rem, 1rem), 1px)`
         } as CSSProperties;
       }
 
@@ -1039,10 +1040,10 @@ export const style = createTheme({
     // Windows tablet matches the same as iPhone. No difference when a mouse is connected.
     // Windows touch laptop matches same as macOS: (any-pointer: fine), (pointer: fine), (any-hover: hover), (hover: hover).
     touch: '@media not ((hover: hover) and (pointer: fine))',
-    sm: `@media (min-width: ${pxToRem(640)})`,
-    md: `@media (min-width: ${pxToRem(768)})`,
-    lg: `@media (min-width: ${pxToRem(1024)})`,
-    xl: `@media (min-width: ${pxToRem(1280)})`,
-    '2xl': `@media (min-width: ${pxToRem(1536)})`
+    sm: `@media (min-width: ${(640 / 16)}rem)`,
+    md: `@media (min-width: ${(768 / 16)}rem)`,
+    lg: `@media (min-width: ${(1024 / 16)}rem)`,
+    xl: `@media (min-width: ${(1280 / 16)}rem)`,
+    '2xl': `@media (min-width: ${(1536 / 16)}rem)`
   }
 });

@@ -76,7 +76,7 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
   } = props;
   const domProps = filterDOMProps(otherProps);
 
-  let remSize = size / 16 + 'rem';
+  let remSize = `calc(${size / 16} * var(--rem, 1rem))`;
   let isLarge = size >= 64;
   return (
     <Image
