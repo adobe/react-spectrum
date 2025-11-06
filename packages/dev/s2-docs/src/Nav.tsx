@@ -54,7 +54,7 @@ export function Nav({pages, currentPage}: PageProps) {
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
         paddingX: 12,
-        minWidth: 180,
+        width: 200,
         display: {
           default: 'none',
           lg: 'block'

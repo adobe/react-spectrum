@@ -318,6 +318,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   overflow: 'auto',
                   paddingY: 32,
                   boxSizing: 'border-box',
+                  width: 200,
                   display: {
                     default: 'none',
                     lg: 'block'
