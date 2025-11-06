@@ -9,11 +9,13 @@ import internationalizedFavicon from 'url:../assets/internationalized.ico';
 // @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
 import './anatomy.css';
+import './footer.css';
 import ChevronRightIcon from '@react-spectrum/s2/icons/ChevronRight';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
+import {Divider, PickerItem, Provider} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {getTextWidth} from './textWidth';
@@ -22,7 +24,6 @@ import Header from './Header';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link, TitleLink} from './Link';
 import {MobileHeader} from './MobileHeader';
-import {PickerItem, Provider} from '@react-spectrum/s2';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {TypeLink} from './types';
@@ -138,6 +139,36 @@ let articleStyles = style({
   width: 'full',
   height: 'fit'
 });
+
+function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer
+      className={style({
+        marginTop: 32,
+        paddingY: 12
+      })}>
+      <Divider size="S" />
+      <ul
+        className={style({
+          display: 'flex',
+          justifyContent: 'end',
+          flexWrap: 'wrap',
+          paddingX: 12,
+          margin: 0,
+          marginTop: 16,
+          font: 'body-2xs',
+          listStyleType: 'none'
+        })}>
+        <li>Copyright © {year} Adobe. All rights reserved.</li>
+        <li><Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">Privacy</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">Terms of Use</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">Cookies</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">Do not sell my personal information</Link></li>
+      </ul>
+    </footer>
+  );
+}
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
@@ -257,18 +288,27 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   lg: 'auto'
                 }
               })}>
-              <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
-                <article
-                  className={articleStyles({isWithToC: hasToC})}>
-                  {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {
-                    components: isSubpage ?
-                      subPageComponents(parentPage) :
-                      components,
-                    pages
-                  })}
-                </article>
-              </CodePlatterProvider>
+              <div
+                className={style({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flexGrow: 1,
+                  width: 'full'
+                })}>
+                <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                  <article
+                    className={articleStyles({isWithToC: hasToC})}>
+                    {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
+                    {React.cloneElement(children, {
+                      components: isSubpage ?
+                        subPageComponents(parentPage) :
+                        components,
+                      pages
+                    })}
+                  </article>
+                </CodePlatterProvider>
+                <Footer />
+              </div>
               {hasToC && <aside
                 className={style({
                   position: 'sticky',
