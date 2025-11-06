@@ -249,6 +249,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             gap: {
               default: 0,
               lg: 12
+            },
+            minHeight: {
+              default: 'screen',
+              lg: 'auto'
             }
           })}>
           <Header pages={pages} currentPage={currentPage} />
@@ -256,7 +260,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 1 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
             pages={pages}
             currentPage={currentPage} />
-          <div className={style({display: 'flex', width: 'full'})}>
+          <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
             {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
             <main
               key={currentPage.url}
