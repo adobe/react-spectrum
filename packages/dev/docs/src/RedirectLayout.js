@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2025 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,19 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Image';
-export * from './Highlights';
-export * from './Layout';
-export * from './PropTable';
-export * from './VersionBadge';
-export * from './HeaderInfo';
-export * from './ResourceCard';
-export * from './types';
-export * from './FunctionAPI';
-export * from './TypeLink';
-export * from './ClassAPI';
-export * from './PostListing';
-export * from './PageDescription';
-export * from './StateTable';
-export * from './ContextTable';
-export * from './RedirectLayout';
+import React from 'react';
+
+export function RedirectLayout(props) {
+  let {redirectTo} = props;
+
+  return (
+    <html lang="en-US">
+      <head>
+        <meta charSet="utf-8" />
+        <meta httpEquiv="refresh" content={`0; url=${redirectTo}`} />
+        <link rel="canonical" href={redirectTo} />
+        <title>Redirecting...</title>
+      </head>
+      <body>
+        <p>This page has moved to <a href={redirectTo}>{redirectTo}</a>.</p>
+      </body>
+    </html>
+  );
+}

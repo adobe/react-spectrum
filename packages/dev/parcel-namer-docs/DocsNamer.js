@@ -38,6 +38,11 @@ module.exports = new Namer({
           return path.join('v3', ...devPath, basename);
         }
 
+        // keep redirect pages at their original path
+        if (devPath[0] === 'redirects') {
+          return path.join(...devPath.slice(1), basename);
+        }
+
         // move /react-spectrum to v3 (aka getting started, etc)
         if (devPath[0] === 'react-spectrum') {
           return path.join('v3', ...devPath.slice(1), basename);
