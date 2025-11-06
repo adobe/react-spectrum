@@ -15,12 +15,14 @@ let path = require('path');
 let glob = require('glob');
 
 let packagesDir = path.join(__dirname, '../packages/@react-spectrum');
+let reactSpectrumDocsDir = path.join(__dirname, '../packages/dev/docs/pages/react-spectrum');
 let reactSpectrumRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/react-spectrum');
 let releasesDir = path.join(__dirname, '../packages/dev/docs/pages/releases');
 let releasesRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/releases');
 
 // find all old v3 component and release mdx
 let componentDocs = glob.sync('*/docs/*.mdx', {cwd: packagesDir});
+let devDocs = glob.sync('*.mdx', {cwd: reactSpectrumDocsDir});
 let releaseDocs = glob.sync('*.mdx', {cwd: releasesDir}).filter(f => f !== 'index.mdx');
 
 function createRedirectMdx(redirectTo) {
@@ -41,12 +43,21 @@ export default function Layout(props) {
 `;
 }
 
+// generate redirects for rsp component docs
 componentDocs.forEach(docPath => {
   const fileName = path.basename(docPath, '.mdx');
   const outputPath = path.join(reactSpectrumRedirectsDir, `${fileName}.mdx`);
   fs.writeFileSync(outputPath, createRedirectMdx(`/v3/${fileName}.html`));
 });
 
+// generate redirects for getting intro and concepts section focs
+devDocs.forEach(docPath => {
+  const fileName = path.basename(docPath, '.mdx');
+  const outputPath = path.join(reactSpectrumRedirectsDir, `${fileName}.mdx`);
+  fs.writeFileSync(outputPath, createRedirectMdx(`/v3/${fileName}.html`));
+});
+
+// generate redirects for releases
 releaseDocs.forEach(docPath => {
   const fileName = path.basename(docPath, '.mdx');
   const outputPath = path.join(releasesRedirectsDir, `${fileName}.mdx`);
