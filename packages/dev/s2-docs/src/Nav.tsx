@@ -110,7 +110,7 @@ function SideNavSection({title, children}) {
 
 const SideNavContext = createContext('');
 
-export function SideNav({children}) {
+export function SideNav({children, isNested = false}) {
   return (
     <ul
       className={style({
@@ -120,13 +120,17 @@ export function SideNav({children}) {
           default: 0,
           ':is(li > ul)': 16
         },
+        paddingTop: {
+          default: 0,
+          isNested: 8
+        },
         margin: 0,
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
         width: 'full',
         boxSizing: 'border-box'
-      })}>
+      })({isNested})}>
       {children}
     </ul>
   );

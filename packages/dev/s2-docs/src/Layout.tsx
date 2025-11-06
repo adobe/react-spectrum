@@ -23,8 +23,10 @@ import {H2, H3, H4} from './Headings';
 import Header from './Header';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link, TitleLink} from './Link';
+import {MarkdownMenu} from './MarkdownMenu';
 import {MobileHeader} from './MobileHeader';
 import {PropTable} from './PropTable';
+import {ScrollableToc} from './ScrollableToc';
 import {StateTable} from './StateTable';
 import {TypeLink} from './types';
 import {VersionBadge} from './VersionBadge';
@@ -317,19 +319,29 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 className={style({
                   position: 'sticky',
                   top: 0,
-                  height: 'fit',
-                  maxHeight: 'screen',
-                  overflow: 'auto',
+                  height: {
+                    default: 'fit',
+                    lg: '[calc(100vh - 72px)]'
+                  },
                   paddingY: 32,
+                  paddingX: 4,
                   boxSizing: 'border-box',
-                  width: 200,
+                  width: 180,
+                  flexShrink: 0,
                   display: {
                     default: 'none',
-                    lg: 'block'
-                  }
+                    lg: 'flex'
+                  },
+                  flexDirection: 'column'
                 })}>
-                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center', marginBottom: 4, flexShrink: 0})}>On this page</div>
+                <ScrollableToc>
+                  <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+                </ScrollableToc>
+                <div className={style({flexShrink: 0})}>
+                  <Divider size="S" styles={style({marginY: 12})} />
+                  <MarkdownMenu url={currentPage.url} />
+                </div>
               </aside>}
             </main>
           </div>
@@ -340,14 +352,14 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   );
 }
 
-function Toc({toc}) {
+function Toc({toc, isNested = false}) {
   return (
     <OnPageNav>
-      <SideNav>
+      <SideNav isNested={isNested}>
         {toc.map((c, i) => (
           <SideNavItem key={i}>
             <SideNavLink href={'#' + anchorId(c.title)}>{c.title}</SideNavLink>
-            {c.children.length > 0 && <Toc toc={c.children} />}
+            {c.children.length > 0 && <Toc toc={c.children} isNested />}
           </SideNavItem>
         ))}
       </SideNav>
