@@ -25,6 +25,7 @@ import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link, TitleLink} from './Link';
 import {MarkdownMenu} from './MarkdownMenu';
 import {MobileHeader} from './MobileHeader';
+import {NavigationSuspense} from './NavigationSuspense';
 import {PropTable} from './PropTable';
 import {ScrollableToc} from './ScrollableToc';
 import {StateTable} from './StateTable';
@@ -302,16 +303,18 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   width: 'full'
                 })}>
                 <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
-                  <article
-                    className={articleStyles({isWithToC: hasToC})}>
-                    {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                    {React.cloneElement(children, {
-                      components: isSubpage ?
-                        subPageComponents(parentPage) :
-                        components,
-                      pages
-                    })}
-                  </article>
+                  <NavigationSuspense pages={pages}>
+                    <article
+                      className={articleStyles({isWithToC: hasToC})}>
+                      {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
+                      {React.cloneElement(children, {
+                        components: isSubpage ?
+                          subPageComponents(parentPage) :
+                          components,
+                        pages
+                      })}
+                    </article>
+                  </NavigationSuspense>
                 </CodePlatterProvider>
                 <Footer />
               </div>

@@ -1,7 +1,8 @@
 'use client-entry';
 
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
-import type {ReactElement} from 'react';
+import {type ReactElement, startTransition} from 'react';
+import {setNavigationLoading} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
 // Hydrate initial RSC payload embedded in the HTML.
@@ -16,40 +17,49 @@ let updateRoot = hydrate({
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
+  setNavigationLoading(true, pathname);
+  
   try {
     let res = await fetchRSC<ReactElement>(pathname.replace('.html', '.rsc'));
     let currentPath = location.pathname;
     let [newBasePath, newPathAnchor] = pathname.split('#');
 
-    updateRoot(res, () => {
-      if (push) {
-        history.pushState(null, '', pathname);
-        push = false;
-      }
-
-      // Reset scroll if navigating to a different page without an anchor
-      if (currentPath !== newBasePath && !newPathAnchor) {
-        window.scrollTo(0, 0);
-      } else if (newPathAnchor) {
-        let element = document.getElementById(newPathAnchor);
-        if (element) {
-          element.scrollIntoView();
+    startTransition(() => {
+      updateRoot(res, () => {
+        if (push) {
+          history.pushState(null, '', pathname);
+          push = false;
         }
-      }
 
-      queueMicrotask(() => {
-        window.dispatchEvent(new CustomEvent('rsc-navigation'));
+        // Reset scroll if navigating to a different page without an anchor
+        if (currentPath !== newBasePath && !newPathAnchor) {
+          window.scrollTo(0, 0);
+        } else if (newPathAnchor) {
+          let element = document.getElementById(newPathAnchor);
+          if (element) {
+            element.scrollIntoView();
+          }
+        }
+
+        queueMicrotask(() => {
+          window.dispatchEvent(new CustomEvent('rsc-navigation'));
+          setNavigationLoading(false);
+        });
       });
     });
   } catch {
     try {
       let errorRes = await fetchRSC<ReactElement>('/error.rsc');
-      updateRoot(errorRes, () => {
-        if (push) {
-          history.pushState(null, '', '/error.html');
-        }
+      startTransition(() => {
+        updateRoot(errorRes, () => {
+          if (push) {
+            history.pushState(null, '', '/error.html');
+          }
+          setNavigationLoading(false);
+        });
       });
     } catch {
+      setNavigationLoading(false);
       ToastQueue.negative('Failed to load page. Check your connection and try again.');
     }
   }
