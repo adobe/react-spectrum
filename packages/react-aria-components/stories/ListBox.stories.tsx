@@ -748,3 +748,63 @@ AsyncListBoxVirtualized.story = {
     delay: 50
   }
 };
+
+export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: 2, background: isDropTarget ? 'blue' : 'gray', margin: '2px 0'})} />;
+    }
+  });
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center'}}>
+      <div style={{padding: 20, background: '#f0f0f0', borderRadius: 8, maxWidth: 600}}>
+        <h3 style={{margin: '0 0 10px 0'}}>Instructions:</h3>
+        <ul style={{margin: 0, paddingLeft: 20}}>
+          <li><strong>Enter:</strong> Triggers onAction</li>
+          <li><strong>Alt+Enter:</strong> Starts drag mode</li>
+          <li><strong>Space:</strong> Toggles selection</li>
+        </ul>
+      </div>
+      <div style={{height: 400, width: 300, resize: 'both', padding: 20, overflow: 'hidden', border: '2px solid #ccc', borderRadius: 8}}>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            rowHeight: 25,
+            gap: 4
+          }}>
+          <ListBox
+            className={styles.menu}
+            selectionMode="multiple"
+            style={{width: '100%', height: '100%'}}
+            aria-label="Virtualized listbox with drag and drop and onAction"
+            items={list.items}
+            dragAndDropHooks={dragAndDropHooks}
+            onAction={action('onAction')}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </div>
+    </div>
+  );
+};
+

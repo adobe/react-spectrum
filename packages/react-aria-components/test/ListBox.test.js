@@ -1244,6 +1244,86 @@ describe('ListBox', () => {
       keyPress('Escape');
       act(() => jest.runAllTimers());
     });
+
+    it('should support onAction with drag and drop in virtualized list', async () => {
+      let items = [];
+      for (let i = 0; i < 20; i++) {
+        items.push({id: i, name: 'Item ' + i});
+      }
+
+      jest.restoreAllMocks();
+      jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+      let onAction = jest.fn();
+      let onReorder = jest.fn();
+
+      function VirtualizedDraggableListBox() {
+        let {dragAndDropHooks} = useDragAndDrop({
+          getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+          onReorder,
+          renderDropIndicator: (target) => <DropIndicator target={target}>Drop</DropIndicator>
+        });
+
+        return (
+          <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
+            <ListBox
+              aria-label="Test"
+              dragAndDropHooks={dragAndDropHooks}
+              onAction={onAction}
+              items={items}>
+              {item => <ListBoxItem>{item.name}</ListBoxItem>}
+            </ListBox>
+          </Virtualizer>
+        );
+      }
+
+      let {getAllByRole} = render(<VirtualizedDraggableListBox />);
+      let options = getAllByRole('option');
+
+      // Focus first item
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+
+      // Pressing Enter should trigger onAction, and not start drag
+      keyPress('Enter');
+      act(() => jest.runAllTimers());
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenCalledWith(0);
+      expect(onReorder).not.toHaveBeenCalled();
+
+      // Should not be in drag mode
+      options = getAllByRole('option');
+      expect(options.filter(opt => opt.classList.contains('react-aria-DropIndicator'))).toHaveLength(0);
+
+      // Now test that Alt+Enter starts drag mode
+      expect(document.activeElement).toBe(options[0]);
+      fireEvent.keyDown(document.activeElement, {key: 'Enter', altKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter', altKey: true});
+      act(() => jest.runAllTimers());
+
+      // Verify we're in drag mode
+      options = getAllByRole('option');
+      let dropIndicators = options.filter(opt => opt.classList.contains('react-aria-DropIndicator'));
+      expect(dropIndicators.length).toBeGreaterThan(0);
+      expect(document.activeElement).toHaveAttribute('aria-label');
+      expect(document.activeElement.getAttribute('aria-label')).toContain('Insert');
+
+      // onAction should not have been called again
+      expect(onAction).toHaveBeenCalledTimes(1);
+
+      // Complete the drop
+      keyPress('ArrowDown');
+      expect(document.activeElement.getAttribute('aria-label')).toContain('Insert');
+      keyPress('Enter');
+      act(() => jest.runAllTimers());
+
+      expect(onReorder).toHaveBeenCalledTimes(1);
+      
+      // Verify we're no longer in drag mode
+      options = getAllByRole('option');
+      expect(options.filter(opt => opt.classList.contains('react-aria-DropIndicator'))).toHaveLength(0);
+    });
   });
 
   describe('inside modals', () => {
