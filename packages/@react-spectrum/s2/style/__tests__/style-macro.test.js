@@ -40,22 +40,22 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs12:first-child {
-    margin-top: 0.25rem;
+  .JbR3ltQc12:first-child {
+    margin-top: calc(0.25 * var(--rem, 1rem));
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv12:first-child {
-      margin-top: 0.5rem;
+    .JbpH5kTnc12:first-child {
+      margin-top: calc(0.5 * var(--rem, 1rem));
     }
   }
 }
 
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12"');
+    expect(js).toMatchInlineSnapshot('" JbR3ltQc12 JbpH5kTnc12"');
   });
 
   it('should support self references', () => {
@@ -186,8 +186,8 @@ describe('style-macro', () => {
     });
 
     expect(js()).toMatchInlineSnapshot('"  gE12"');
-    expect(overrides).toMatchInlineSnapshot('" Nk12"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12"');
+    expect(overrides).toMatchInlineSnapshot('" N4dY0ec12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  N4dY0ec12 gE12"');
   });
 
   it('should support runtime conditions', () => {
