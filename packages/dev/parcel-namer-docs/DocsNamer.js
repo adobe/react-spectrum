@@ -31,8 +31,6 @@ module.exports = new Namer({
       // For dev files, simply /PageName.html or /dir/PageName.html
       if (parts[1] === 'dev') {
         let devPath = parts.slice(4, -1);
-        // TODO: note that both http://localhost:1234/v3/releases/2025-10-02.html and http://localhost:1234/releases/2025-10-02.html
-        // exist, the latter we will redirect to the former
         // move /releases to v3/releases
         if (devPath[0] === 'releases') {
           return path.join('v3', ...devPath, basename);
@@ -65,8 +63,6 @@ module.exports = new Namer({
       }
 
       // move @react-spectrum pages under /v3 aka components and stuff
-      // TODO: note that both http://localhost:1234/v3/ActionGroup.html and http://localhost:1234/react-spectrum/ActionGroup.html
-      // exist, the latter we will redirect to the former
       let namespace = parts[1].replace(/^@/, '');
       if (namespace === 'react-spectrum') {
         namespace = 'v3';
