@@ -37,7 +37,9 @@ async function navigate(pathname: string, push = false) {
         }
       }
 
-      window.dispatchEvent(new CustomEvent('rsc-navigation'));
+      queueMicrotask(() => {
+        window.dispatchEvent(new CustomEvent('rsc-navigation'));
+      });
     });
   } catch {
     try {
