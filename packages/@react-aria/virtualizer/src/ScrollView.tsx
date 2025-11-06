@@ -73,7 +73,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     ...otherProps
   } = props;
 
-  let stateRef = useRef({
+  let state = useRef({
     scrollTop: 0,
     scrollLeft: 0,
     scrollEndTime: 0,
@@ -81,7 +81,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     width: 0,
     height: 0,
     isScrolling: false
-  });
+  }).current;
   let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
@@ -98,7 +98,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     flushSync(() => {
       let scrollTop = e.currentTarget.scrollTop;
       let scrollLeft = getScrollLeft(e.currentTarget, direction);
-      let state = stateRef.current;
 
       // Prevent rubber band scrolling from shaking when scrolling out of bounds
       state.scrollTop = Math.max(0, Math.min(scrollTop, contentSize.height - state.height));
@@ -139,13 +138,12 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         }, 300);
       }
     });
-  }, [props, direction, stateRef, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
+  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
 
   useEffect(() => {
-    let state = stateRef.current;
     return () => {
       if (state.scrollTimeout != null) {
         clearTimeout(state.scrollTimeout);
@@ -155,7 +153,8 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         window.dispatchEvent(new Event('tk.connect-observer'));
       }
     };
-  }, [stateRef]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let isUpdatingSize = useRef(false);
   let updateSize = useCallback((flush: typeof flushSync) => {
@@ -176,7 +175,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
     let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
 
-    let state = stateRef.current;
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
@@ -199,11 +197,36 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     }
 
     isUpdatingSize.current = false;
-  }, [ref, stateRef, onVisibleRectChange]);
-  let [update, setUpdate] = useState({});
+  }, [ref, state, onVisibleRectChange]);
   let updateSizeEvent = useEffectEvent(updateSize);
 
-  useScrollViewContentSizeChange({updateSize, contentSize, isUpdatingSize, setUpdate});
+  // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
+  let lastContentSize = useRef<Size | null>(null);
+  let [update, setUpdate] = useState({});
+  // We only contain a call to setState in here for testing environments.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(() => {
+    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
+      // React doesn't allow flushSync inside effects, so queue a microtask.
+      // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
+      // If we are in an `act` environment, update immediately without a microtask so you don't need
+      // to mock timers in tests. In this case, the update is synchronous already.
+      // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+      // https://github.com/reactwg/react-18/discussions/102
+      // @ts-ignore
+      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
+        // This is so we update size in a separate render but within the same act. Needs to be setState instead of refs
+        // due to strict mode.
+        setUpdate({});
+        lastContentSize.current = contentSize;
+        return;
+      } else {
+        queueMicrotask(() => updateSizeEvent(flushSync));
+      }
+    }
+
+    lastContentSize.current = contentSize;
+  });
 
   // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
   useLayoutEffect(() => {
@@ -227,7 +250,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
-  } else if (scrollDirection === 'vertical' || contentSize.width === stateRef.current.width) {
+  } else if (scrollDirection === 'vertical' || contentSize.width === state.width) {
     // Set overflow-x: hidden if content size is equal to the width of the scroll view.
     // This prevents horizontal scrollbars from flickering during resizing due to resize observer
     // firing slower than the frame rate, which may cause an infinite re-render loop.
@@ -256,34 +279,4 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       style: innerStyle
     }
   };
-}
-
-function useScrollViewContentSizeChange({updateSize, contentSize, isUpdatingSize, setUpdate}: {updateSize: (flush: typeof flushSync) => void, contentSize: Size, isUpdatingSize: RefObject<boolean>, setUpdate: (update: {}) => void}) {
-  let updateSizeEvent = useEffectEvent(updateSize);
-
-  // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
-  let lastContentSize = useRef<Size | null>(null);
-  // We only contain a call to setState in here for testing environments.
-  useLayoutEffect(() => {
-    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
-      // React doesn't allow flushSync inside effects, so queue a microtask.
-      // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
-      // If we are in an `act` environment, update immediately without a microtask so you don't need
-      // to mock timers in tests. In this case, the update is synchronous already.
-      // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
-      // https://github.com/reactwg/react-18/discussions/102
-      // @ts-ignore
-      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
-        // This is so we update size in a separate render but within the same act. Needs to be setState instead of refs
-        // due to strict mode.
-        setUpdate({});
-        lastContentSize.current = contentSize;
-        return;
-      } else {
-        queueMicrotask(() => updateSizeEvent(flushSync));
-      }
-    }
-
-    lastContentSize.current = contentSize;
-  });
 }
