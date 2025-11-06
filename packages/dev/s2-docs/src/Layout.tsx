@@ -393,3 +393,14 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
     </React.Fragment>);
   });
 }
+
+export function Time({date}: {date: string}) {
+  let dateObj = new Date(date);
+  return (
+    <time
+      dateTime={date}
+      className={style({font: 'detail'})}>
+      {dateObj.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+    </time>
+  );
+}

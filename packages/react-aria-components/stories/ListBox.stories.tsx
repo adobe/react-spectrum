@@ -15,7 +15,7 @@ import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, Lis
 import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import React, {JSX} from 'react';
+import React, {JSX, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import './styles.css';
@@ -514,14 +514,14 @@ export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExamp
 };
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
-
+let defaultItems: {id: number, name: string}[] = [];
+for (let i = 0; i < 1000; i++) {
+  let words = Math.max(2, Math.floor(Math.random() * 25));
+  let name = lorem.slice(0, words).join(' ');
+  defaultItems.push({id: i, name});
+}
 function VirtualizedListBoxWaterfallExample({minSize = 40, maxSize = 65, maxColumns = undefined, minSpace = undefined, maxSpace = undefined}: {minSize: number, maxSize: number, maxColumns?: number, minSpace?: number, maxSpace?: number}): JSX.Element {
-  let items: {id: number, name: string}[] = [];
-  for (let i = 0; i < 1000; i++) {
-    let words = Math.max(2, Math.floor(Math.random() * 25));
-    let name = lorem.slice(0, words).join(' ');
-    items.push({id: i, name});
-  }
+  let [items] = useState(defaultItems);
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
