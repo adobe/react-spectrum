@@ -15,7 +15,7 @@ import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
-import {Divider, PickerItem, Provider} from '@react-spectrum/s2';
+import {Divider, PickerItem, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {getTextWidth} from './textWidth';
@@ -334,6 +334,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             </main>
           </div>
         </div>
+        <ToastContainer placement="bottom" />
       </body>
     </Provider>
   );

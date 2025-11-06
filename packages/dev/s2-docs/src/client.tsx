@@ -2,6 +2,7 @@
 
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import type {ReactElement} from 'react';
+import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({
@@ -39,12 +40,16 @@ async function navigate(pathname: string, push = false) {
       window.dispatchEvent(new CustomEvent('rsc-navigation'));
     });
   } catch {
-    let errorRes = await fetchRSC<ReactElement>('/error.rsc');
-    updateRoot(errorRes, () => {
-      if (push) {
-        history.pushState(null, '', '/error.html');
-      }
-    });
+    try {
+      let errorRes = await fetchRSC<ReactElement>('/error.rsc');
+      updateRoot(errorRes, () => {
+        if (push) {
+          history.pushState(null, '', '/error.html');
+        }
+      });
+    } catch {
+      ToastQueue.negative('Failed to load page. Check your connection and try again.');
+    }
   }
 }
 
