@@ -17,10 +17,24 @@ let updateRoot = hydrate({
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
-  setNavigationLoading(true, pathname);
+  let loadingShown = false;
+  const fetchPromise = fetchRSC<ReactElement>(pathname.replace('.html', '.rsc'));
+  const delayPromise = new Promise<void>(resolve => setTimeout(resolve, 50));
+  
+  // Race the fetch against a small delay to detect cached responses
+  // If fetch resolves before the delay, we won't show the skeleton
+  const raceResult = await Promise.race([
+    fetchPromise.then(() => 'fast' as const),
+    delayPromise.then(() => 'slow' as const)
+  ]);
+  
+  if (raceResult === 'slow') {
+    setNavigationLoading(true, pathname);
+    loadingShown = true;
+  }
   
   try {
-    let res = await fetchRSC<ReactElement>(pathname.replace('.html', '.rsc'));
+    let res = await fetchPromise;
     let currentPath = location.pathname;
     let [newBasePath, newPathAnchor] = pathname.split('#');
 
@@ -42,7 +56,9 @@ async function navigate(pathname: string, push = false) {
 
       queueMicrotask(() => {
         window.dispatchEvent(new CustomEvent('rsc-navigation'));
-        setNavigationLoading(false);
+        if (loadingShown) {
+          setNavigationLoading(false);
+        }
       });
     });
   } catch {
@@ -52,10 +68,14 @@ async function navigate(pathname: string, push = false) {
         if (push) {
           history.pushState(null, '', '/error.html');
         }
-        setNavigationLoading(false);
+        if (loadingShown) {
+          setNavigationLoading(false);
+        }
       });
     } catch {
-      setNavigationLoading(false);
+      if (loadingShown) {
+        setNavigationLoading(false);
+      }
       ToastQueue.negative('Failed to load page. Check your connection and try again.');
     }
   }
