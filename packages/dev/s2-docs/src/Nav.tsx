@@ -16,6 +16,13 @@ export function PendingPageProvider({children, currentPage}: {children: React.Re
   useEffect(() => {
     setPendingPage(null);
   }, [currentPage.url]);
+  
+  useEffect(() => {
+    const unsubscribe = subscribeToClearPendingPage(() => {
+      setPendingPage(null);
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <PendingPageContext.Provider value={pendingPage}>
@@ -132,6 +139,19 @@ function SideNavSection({title, children}) {
 const SideNavContext = createContext('');
 const PendingNavContext = createContext<((page: Page | null) => void) | null>(null);
 const PendingPageContext = createContext<Page | null>(null);
+
+let clearPendingPageListeners = new Set<() => void>();
+
+function subscribeToClearPendingPage(callback: () => void): () => void {
+  clearPendingPageListeners.add(callback);
+  return () => {
+    void clearPendingPageListeners.delete(callback);
+  };
+}
+
+export function clearPendingPage() {
+  clearPendingPageListeners.forEach(callback => callback());
+}
 
 export function usePendingPage() {
   return useContext(PendingPageContext);

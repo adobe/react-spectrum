@@ -1,5 +1,6 @@
 'use client-entry';
 
+import {clearPendingPage} from './Nav';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import {getPrefetchedPromise} from './prefetch';
 import {type ReactElement} from 'react';
@@ -30,14 +31,37 @@ async function navigate(pathname: string, push = false) {
   
   // Race the fetch against a small delay to detect cached responses
   // If fetch resolves before the delay, we won't show the skeleton
-  const raceResult = await Promise.race([
-    fetchPromise.then(() => 'fast' as const),
-    delayPromise.then(() => 'slow' as const)
-  ]);
+  let raceResult: 'fast' | 'slow' | 'error' = 'slow';
+  try {
+    raceResult = await Promise.race([
+      fetchPromise.then(() => 'fast' as const).catch(() => 'error' as const),
+      delayPromise.then(() => 'slow' as const)
+    ]);
+  } catch {
+    raceResult = 'error';
+  }
   
   if (raceResult === 'slow') {
     setNavigationLoading(true, pathname);
     loadingShown = true;
+  }
+  
+  if (raceResult === 'error') {
+    clearPendingPage();
+    if (loadingShown) {
+      setNavigationLoading(false);
+    }
+    try {
+      let errorRes = await fetchRSC<ReactElement>('/error.rsc');
+      updateRoot(errorRes, () => {
+        if (push) {
+          history.pushState(null, '', '/error.html');
+        }
+      });
+    } catch {
+      ToastQueue.negative('Failed to load page. Check your connection and try again.');
+    }
+    return;
   }
   
   try {
@@ -69,6 +93,7 @@ async function navigate(pathname: string, push = false) {
       });
     });
   } catch {
+    clearPendingPage();
     try {
       let errorRes = await fetchRSC<ReactElement>('/error.rsc');
       updateRoot(errorRes, () => {
