@@ -40,9 +40,22 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
     return {};
   }
   
+  let publicUrl = process.env.PUBLIC_URL || '/';
+  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+  let publicUrlPrefix = publicUrlPathname === '/' ? '/' : publicUrlPathname.replace(/\/$/, '');
+  
   const [basePathname] = pathname.split('?');
   const [cleanPathname] = basePathname.split('#');
-  let normalizedPathname = cleanPathname.startsWith('/') ? cleanPathname : '/' + cleanPathname;
+  
+  let pathnameWithoutPrefix = cleanPathname;
+  if (publicUrlPrefix !== '/' && cleanPathname.startsWith(publicUrlPrefix)) {
+    pathnameWithoutPrefix = cleanPathname.slice(publicUrlPrefix.length);
+    if (!pathnameWithoutPrefix.startsWith('/')) {
+      pathnameWithoutPrefix = '/' + pathnameWithoutPrefix;
+    }
+  }
+  
+  let normalizedPathname = pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
   
   const targetPage = pages.find(p => {
     const pageUrl = p.url.split('?')[0].split('#')[0];
