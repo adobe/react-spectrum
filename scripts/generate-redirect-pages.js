@@ -14,15 +14,24 @@ let fs = require('fs');
 let path = require('path');
 let glob = require('glob');
 
-let packagesDir = path.join(__dirname, '../packages/@react-spectrum');
-let reactSpectrumDocsDir = path.join(__dirname, '../packages/dev/docs/pages/react-spectrum');
+let reactAriaDir = path.join(__dirname, '../packages/@react-aria');
+let reactAriaComponentsDir = path.join(__dirname, '../packages/react-aria-components');
+let reactAriaDevDocsDir = path.join(__dirname, '../packages/dev/docs/pages/react-aria');
+let reactAriaRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/react-aria');
+
+let reactSpectrumDir = path.join(__dirname, '../packages/@react-spectrum');
+let reactSpectrumDevDocsDir = path.join(__dirname, '../packages/dev/docs/pages/react-spectrum');
 let reactSpectrumRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/react-spectrum');
+
 let releasesDir = path.join(__dirname, '../packages/dev/docs/pages/releases');
 let releasesRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/releases');
 
-// find all old v3 component and release mdx
-let componentDocs = glob.sync('*/docs/*.mdx', {cwd: packagesDir});
-let devDocs = glob.sync('*.mdx', {cwd: reactSpectrumDocsDir});
+// from the above paths, find all mdx files for components/hooks/top level docs
+let componentDocs = glob.sync('*/docs/*.mdx', {cwd: reactSpectrumDir});
+let devDocs = glob.sync('*.mdx', {cwd: reactSpectrumDevDocsDir});
+let reactAriaDevDocs = glob.sync('*.mdx', {cwd: reactAriaDevDocsDir});
+let reactAriaHooksDocs = glob.sync('*/docs/*.mdx', {cwd: reactAriaDir});
+let reactAriaComponentsDocs = glob.sync('docs/*.mdx', {cwd: reactAriaComponentsDir});
 let releaseDocs = glob.sync('*.mdx', {cwd: releasesDir}).filter(f => f !== 'index.mdx');
 
 function createRedirectMdx(redirectTo) {
@@ -45,21 +54,85 @@ export default function Layout(props) {
 
 // generate redirects for rsp component docs
 componentDocs.forEach(docPath => {
-  const fileName = path.basename(docPath, '.mdx');
-  const outputPath = path.join(reactSpectrumRedirectsDir, `${fileName}.mdx`);
+  let fileName = path.basename(docPath, '.mdx');
+  let outputPath = path.join(reactSpectrumRedirectsDir, `${fileName}.mdx`);
   fs.writeFileSync(outputPath, createRedirectMdx(`/v3/${fileName}.html`));
 });
 
-// generate redirects for getting intro and concepts section focs
+// generate redirects for getting intro and concepts section docs in rsp
 devDocs.forEach(docPath => {
-  const fileName = path.basename(docPath, '.mdx');
-  const outputPath = path.join(reactSpectrumRedirectsDir, `${fileName}.mdx`);
+  let fileName = path.basename(docPath, '.mdx');
+  let outputPath = path.join(reactSpectrumRedirectsDir, `${fileName}.mdx`);
   fs.writeFileSync(outputPath, createRedirectMdx(`/v3/${fileName}.html`));
+});
+
+// TODO: for the aria redirects, will need to check the mapping to the new react-aria site
+// generate redirects for react aria top level docs to new site.
+// note that examples, interactions, internationalization, testing, DnD, styling, and
+// advanced customization are not in the /dev folder and thus handled elsewhere
+// also note that we don't include "hooks" since we wanna keep that "getting started"
+let reactAriaDevDocsToRedirect = [
+  'index',
+  'getting-started',
+  'routing',
+  'ssr',
+  'testing',
+  'accessibility',
+  'collections',
+  'components',
+  'forms',
+  'selection',
+  'why'
+];
+
+reactAriaDevDocs.forEach(docPath => {
+  let fileName = path.basename(docPath, '.mdx');
+
+  if (reactAriaDevDocsToRedirect.includes(fileName)) {
+    let outputPath = path.join(reactAriaRedirectsDir, `${fileName}.mdx`);
+    fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/${fileName}.html`));
+  }
+});
+
+// generate redirects for the react aria hooks
+// the below coorespond to the "category" in the mdx that have been removed from the sidebar and thus we want to redirect,
+// aka we redirect anything but 'Hooks'
+let removedCategories = [
+  'Concepts',
+  'Guides',
+  'Interactions',
+  'Focus',
+  'Internationalization',
+  'Server Side Rendering',
+  'Utilities',
+  'Drag and Drop'
+];
+
+reactAriaHooksDocs.forEach(docPath => {
+  let fileName = path.basename(docPath, '.mdx');
+  let fullPath = path.join(reactAriaDir, docPath);
+  let content = fs.readFileSync(fullPath, 'utf-8');
+
+  // extract "category" from mdx file and create a redirect if it matches one of the removed categories
+  let categoryMatch = content.match(/^category:\s*(.+)$/m);
+  let category = categoryMatch ? categoryMatch[1].trim() : null;
+
+  if (category && removedCategories.includes(category)) {
+    let outputPath = path.join(reactAriaRedirectsDir, `${fileName}.mdx`);
+    fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/${fileName}.html`));
+  }
+});
+
+// generate redirects for react aria components
+reactAriaComponentsDocs.forEach(docPath => {
+  let fileName = path.basename(docPath, '.mdx');
+  let outputPath = path.join(reactAriaRedirectsDir, `${fileName}.mdx`);
+  fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/${fileName}.html`));
 });
 
 // generate redirects for releases
 releaseDocs.forEach(docPath => {
-  const fileName = path.basename(docPath, '.mdx');
-  const outputPath = path.join(releasesRedirectsDir, `${fileName}.mdx`);
+  let fileName = path.basename(docPath, '.mdx');
+  let outputPath = path.join(releasesRedirectsDir, `${fileName}.mdx`);
   fs.writeFileSync(outputPath, createRedirectMdx(`/v3/releases/${fileName}.html`));
 });

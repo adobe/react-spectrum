@@ -12,6 +12,7 @@
 
 const {Namer} = require('@parcel/plugin');
 const path = require('path');
+const fs = require('fs');
 
 module.exports = new Namer({
   name({bundle, bundleGraph, options}) {
@@ -45,6 +46,19 @@ module.exports = new Namer({
         if (devPath[0] === 'react-spectrum') {
           return path.join('v3', ...devPath.slice(1), basename);
         }
+
+        // TODO: this allows us to keep the original mdx files for the aria hooks/other aria level docs intact in
+        // favor of the generated redirects. Happy to delete the contents for those pages instead in favor of the redirect if we'd like
+        // check if a redirect exists for this page
+        // if so, put the original in a .unused directory so it doesn't conflict
+        if (devPath.length > 0 && devPath[0] !== 'redirects') {
+          let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', ...devPath, parts[parts.length - 1]);
+          if (fs.existsSync(redirectPath)) {
+            // put original in .unused directory to avoid conflict
+            return path.join('.unused', ...devPath, basename);
+          }
+        }
+
         return path.join(...devPath, basename);
       }
 
@@ -59,6 +73,12 @@ module.exports = new Namer({
       }
 
       if (parts[1] === 'react-aria-components') {
+        // check if a redirect exists for this react-aria-components page
+        let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', 'react-aria', basename.replace('.html', '.mdx'));
+        if (fs.existsSync(redirectPath)) {
+          // put original in .unused directory to avoid conflict
+          return path.join('.unused', 'react-aria', ...parts.slice(3, -1), basename);
+        }
         return path.join('react-aria', ...parts.slice(3, -1), basename);
       }
 
@@ -66,6 +86,15 @@ module.exports = new Namer({
       let namespace = parts[1].replace(/^@/, '');
       if (namespace === 'react-spectrum') {
         namespace = 'v3';
+      }
+
+      // check if a redirect exists for @react-aria pages
+      if (namespace === 'react-aria') {
+        let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', 'react-aria', basename.replace('.html', '.mdx'));
+        if (fs.existsSync(redirectPath)) {
+          // put original in .unused directory to avoid conflict
+          return path.join('.unused', namespace, ...parts.slice(4, -1), basename);
+        }
       }
 
       return path.join(
