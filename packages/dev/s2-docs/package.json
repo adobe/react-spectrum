@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
+    "start": "node dev-server.js",
+    "start:simple": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
     "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs",
     "generate:og": "node scripts/generateOGImages.mjs",
     "generate:md": "node scripts/generateMarkdownDocs.mjs"
@@ -39,9 +40,11 @@
     "@react-types/shared": "^3.30.0",
     "@react-types/textfield": "^3.12.3",
     "emojibase-data": "^16.0.3",
+    "express": "^4.18.2",
     "fast-glob": "^3.3.3",
     "globals-docs": "^2.4.1",
     "gray-matter": "^4.0.3",
+    "http-proxy-middleware": "^3.0.0",
     "json5": "^2.2.3",
     "lz-string": "^1.5.0",
     "markdown-to-jsx": "^6.11.0",

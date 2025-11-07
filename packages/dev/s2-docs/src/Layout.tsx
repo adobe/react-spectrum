@@ -139,8 +139,40 @@ let articleStyles = style({
   height: 'fit'
 });
 
+// Convert path-based URLs to subdomain URLs for proper navigation in dev mode
+function transformPageUrls(pages: Page[]): Page[] {
+  // Check if we're using fake subdomains (development mode)
+  if (typeof window === 'undefined' || !window.location.hostname.includes('-dev.adobe.com')) {
+    return pages; // Keep path-based URLs in production or SSR
+  }
+
+  const port = window.location.port;
+  const protocol = window.location.protocol;
+
+  return pages.map(page => {
+    let url = page.url;
+
+    // Convert /react-aria/* to react-aria-dev.adobe.com subdomain
+    if (url.startsWith('/react-aria/')) {
+      const path = url.replace('/react-aria/', '/');
+      url = `${protocol}//react-aria-dev.adobe.com${port ? ':' + port : ''}${path}`;
+    }
+    // Convert /s2/* to react-spectrum-dev.adobe.com subdomain
+    else if (url.startsWith('/s2/')) {
+      const path = url.replace('/s2/', '/');
+      url = `${protocol}//react-spectrum-dev.adobe.com${port ? ':' + port : ''}${path}`;
+    }
+    // Keep internationalized and other paths as-is
+
+    return {...page, url};
+  });
+}
+
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
-  let {pages, currentPage, children} = props;
+  let {pages: originalPages, currentPage, children} = props;
+  // Transform page URLs to subdomain URLs in dev mode
+  let pages = transformPageUrls(originalPages);
+
   let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
