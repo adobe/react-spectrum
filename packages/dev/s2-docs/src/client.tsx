@@ -1,7 +1,7 @@
 'use client-entry';
 
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
-import {type ReactElement, startTransition} from 'react';
+import {type ReactElement} from 'react';
 import {setNavigationLoading} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
@@ -24,39 +24,35 @@ async function navigate(pathname: string, push = false) {
     let currentPath = location.pathname;
     let [newBasePath, newPathAnchor] = pathname.split('#');
 
-    startTransition(() => {
-      updateRoot(res, () => {
-        if (push) {
-          history.pushState(null, '', pathname);
-          push = false;
-        }
+    updateRoot(res, () => {
+      if (push) {
+        history.pushState(null, '', pathname);
+        push = false;
+      }
 
-        // Reset scroll if navigating to a different page without an anchor
-        if (currentPath !== newBasePath && !newPathAnchor) {
-          window.scrollTo(0, 0);
-        } else if (newPathAnchor) {
-          let element = document.getElementById(newPathAnchor);
-          if (element) {
-            element.scrollIntoView();
-          }
+      // Reset scroll if navigating to a different page without an anchor
+      if (currentPath !== newBasePath && !newPathAnchor) {
+        window.scrollTo(0, 0);
+      } else if (newPathAnchor) {
+        let element = document.getElementById(newPathAnchor);
+        if (element) {
+          element.scrollIntoView();
         }
+      }
 
-        queueMicrotask(() => {
-          window.dispatchEvent(new CustomEvent('rsc-navigation'));
-          setNavigationLoading(false);
-        });
+      queueMicrotask(() => {
+        window.dispatchEvent(new CustomEvent('rsc-navigation'));
+        setNavigationLoading(false);
       });
     });
   } catch {
     try {
       let errorRes = await fetchRSC<ReactElement>('/error.rsc');
-      startTransition(() => {
-        updateRoot(errorRes, () => {
-          if (push) {
-            history.pushState(null, '', '/error.html');
-          }
-          setNavigationLoading(false);
-        });
+      updateRoot(errorRes, () => {
+        if (push) {
+          history.pushState(null, '', '/error.html');
+        }
+        setNavigationLoading(false);
       });
     } catch {
       setNavigationLoading(false);

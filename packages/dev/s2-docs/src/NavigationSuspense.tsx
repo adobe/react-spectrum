@@ -2,7 +2,7 @@
 
 import type {Page} from '@parcel/rsc';
 import {PageSkeleton} from './PageSkeleton';
-import React, {Suspense} from 'react';
+import React, {Suspense, use} from 'react';
 
 let navigationPromise: Promise<void> | null = null;
 let navigationResolve: (() => void) | null = null;
@@ -54,7 +54,7 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
 
 function NavigationContent({children}: {children: React.ReactNode}) {
   if (navigationPromise) {
-    throw navigationPromise;
+    use(navigationPromise);
   }
   return <>{children}</>;
 }
