@@ -25,6 +25,7 @@ let reactSpectrumRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages
 
 let releasesDir = path.join(__dirname, '../packages/dev/docs/pages/releases');
 let releasesRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/releases');
+let releasesIndexPath = path.join(releasesRedirectsDir, 'index.mdx');
 
 // from the above paths, find all mdx files for components/hooks/top level docs
 let componentDocs = glob.sync('*/docs/*.mdx', {cwd: reactSpectrumDir});
@@ -136,3 +137,6 @@ releaseDocs.forEach(docPath => {
   let outputPath = path.join(releasesRedirectsDir, `${fileName}.mdx`);
   fs.writeFileSync(outputPath, createRedirectMdx(`/v3/releases/${fileName}.html`));
 });
+
+// generate redirect for releases index page
+fs.writeFileSync(releasesIndexPath, createRedirectMdx('/v3/releases/index.html'));
