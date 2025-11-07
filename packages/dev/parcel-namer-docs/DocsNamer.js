@@ -64,6 +64,13 @@ module.exports = new Namer({
 
       // For @internationalized, group by package name.
       if (parts[1] === '@internationalized') {
+        let packageName = parts[2];
+        // check if a redirect exists for this internationalized page
+        let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', 'internationalized', packageName, basename.replace('.html', '.mdx'));
+        if (fs.existsSync(redirectPath)) {
+          // put original in .unused directory to avoid conflict
+          return path.join('.unused', 'internationalized', packageName, ...parts.slice(4, -1), basename);
+        }
         return path.join(
           parts[1].replace(/^@/, ''),
           parts[2],

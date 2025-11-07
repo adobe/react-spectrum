@@ -27,12 +27,20 @@ let releasesDir = path.join(__dirname, '../packages/dev/docs/pages/releases');
 let releasesRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/releases');
 let releasesIndexPath = path.join(releasesRedirectsDir, 'index.mdx');
 
+let internationalizedDir = path.join(__dirname, '../packages/@internationalized');
+let internationalizedRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/internationalized');
+
+let blogDir = path.join(__dirname, '../packages/dev/docs/pages/blog');
+let blogRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/blog');
+
 // from the above paths, find all mdx files for components/hooks/top level docs
 let componentDocs = glob.sync('*/docs/*.mdx', {cwd: reactSpectrumDir});
 let devDocs = glob.sync('*.mdx', {cwd: reactSpectrumDevDocsDir});
 let reactAriaDevDocs = glob.sync('*.mdx', {cwd: reactAriaDevDocsDir});
 let reactAriaHooksDocs = glob.sync('*/docs/*.mdx', {cwd: reactAriaDir});
 let reactAriaComponentsDocs = glob.sync('docs/*.mdx', {cwd: reactAriaComponentsDir});
+let internationalizedDocs = glob.sync('*/docs/*.mdx', {cwd: internationalizedDir});
+let blogDocs = glob.sync('*.mdx', {cwd: blogDir});
 let releaseDocs = glob.sync('*.mdx', {cwd: releasesDir}).filter(f => f !== 'index.mdx');
 
 function createRedirectMdx(redirectTo) {
@@ -52,6 +60,13 @@ export default function Layout(props) {
 }
 `;
 }
+
+// create redirect directories
+fs.mkdirSync(reactSpectrumRedirectsDir, {recursive: true});
+fs.mkdirSync(reactAriaRedirectsDir, {recursive: true});
+fs.mkdirSync(releasesRedirectsDir, {recursive: true});
+fs.mkdirSync(internationalizedRedirectsDir, {recursive: true});
+fs.mkdirSync(blogRedirectsDir, {recursive: true});
 
 // generate redirects for rsp component docs
 componentDocs.forEach(docPath => {
@@ -140,3 +155,25 @@ releaseDocs.forEach(docPath => {
 
 // generate redirect for releases index page
 fs.writeFileSync(releasesIndexPath, createRedirectMdx('/v3/releases/index.html'));
+
+// generate redirects for internationalized packages
+internationalizedDocs.forEach(docPath => {
+  let fileName = path.basename(docPath, '.mdx');
+  // extract package name from path (date/number/etc)
+  let packageName = docPath.split('/')[0];
+  let outputPath = path.join(internationalizedRedirectsDir, packageName);
+  fs.mkdirSync(outputPath, {recursive: true});
+  let redirectPath = path.join(outputPath, `${fileName}.mdx`);
+  fs.writeFileSync(redirectPath, createRedirectMdx(`https://react-aria.adobe.com/internationalized/${packageName}/${fileName}.html`));
+});
+
+// generate redirect for internationalized index page
+let internationalizedIndexPath = path.join(internationalizedRedirectsDir, 'index.mdx');
+fs.writeFileSync(internationalizedIndexPath, createRedirectMdx('https://react-aria.adobe.com/internationalized/index.html'));
+
+// generate redirects for blog posts
+blogDocs.forEach(docPath => {
+  let fileName = path.basename(docPath, '.mdx');
+  let outputPath = path.join(blogRedirectsDir, `${fileName}.mdx`);
+  fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/blog/${fileName}.html`));
+});

@@ -610,6 +610,10 @@ export function BlogPostLayout(props) {
 }
 
 export function Time({date}) {
+  // redirect pages won't supply date
+  if (!date) {
+    return null;
+  }
   // treat date as local time rather than UTC
   let localDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   return (
