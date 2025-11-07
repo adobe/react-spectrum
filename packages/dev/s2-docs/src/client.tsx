@@ -1,6 +1,7 @@
 'use client-entry';
 
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
+import {getPrefetchedPromise} from './prefetch';
 import {type ReactElement} from 'react';
 import {setNavigationLoading} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
@@ -18,7 +19,13 @@ let updateRoot = hydrate({
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
   let loadingShown = false;
-  const fetchPromise = fetchRSC<ReactElement>(pathname.replace('.html', '.rsc'));
+  let [basePath] = pathname.split('#');
+  let rscPath = basePath.replace('.html', '.rsc');
+  
+  // Use prefetched result if available, otherwise fetch
+  const prefetchedPromise = getPrefetchedPromise(rscPath);
+  const fetchPromise = prefetchedPromise ?? fetchRSC<ReactElement>(rscPath);
+  
   const delayPromise = new Promise<void>(resolve => setTimeout(resolve, 50));
   
   // Race the fetch against a small delay to detect cached responses
