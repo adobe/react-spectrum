@@ -35,7 +35,18 @@ export function setNavigationLoading(loading: boolean, pathname?: string) {
   }
 }
 
-function normalizePathname(pathname: string, publicUrlPrefix: string): string {
+function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): string {
+  let pathname: string;
+  if (urlOrPathname.startsWith('http://') || urlOrPathname.startsWith('https://')) {
+    try {
+      pathname = new URL(urlOrPathname).pathname;
+    } catch {
+      pathname = urlOrPathname;
+    }
+  } else {
+    pathname = urlOrPathname;
+  }
+  
   const [basePathname] = pathname.split('?');
   const [cleanPathname] = basePathname.split('#');
   
@@ -62,8 +73,7 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
   let normalizedPathname = normalizePathname(pathname, publicUrlPrefix);
   
   const targetPage = pages.find(p => {
-    const pageUrl = p.url.split('?')[0].split('#')[0];
-    let normalizedPageUrl = normalizePathname(pageUrl, publicUrlPrefix);
+    let normalizedPageUrl = normalizePathname(p.url, publicUrlPrefix);
     
     return normalizedPageUrl === normalizedPathname || 
           normalizedPageUrl === normalizedPathname.replace(/\.html$/, '') ||
