@@ -93,7 +93,13 @@ devDocs.forEach(docPath => {
 let reactAriaCustomRedirects = {
   'accessibility': 'https://react-aria.adobe.com/concepts.html',
   'interactions': 'https://react-aria.adobe.com/concepts.html',
-  'internationalization': 'https://react-aria.adobe.com/concepts.html'
+  'internationalization': 'https://react-aria.adobe.com/concepts.html',
+  'ssr': 'https://react-aria.adobe.com/frameworks.html',
+  'routing': 'https://react-aria.adobe.com/frameworks.html',
+  // TODO: the below don't have a good equivalent so just linking to the home page
+  'advanced': 'https://react-aria.adobe.com/index.html',
+  'components': 'https://react-aria.adobe.com/index.html',
+  'why': 'https://react-aria.adobe.com/index.html'
 };
 
 function getReactAriaRedirectUrl(fileName) {
