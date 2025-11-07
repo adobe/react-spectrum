@@ -367,17 +367,6 @@ function Nav({currentPageName, pages}) {
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
   let currentPageIsIndex = INDEX_RE.test(currentPageName);
   let sectionIndex = './index.html';
-  let back = '../index.html';
-  // TODO: might need to handle the back button for going from /v3 to s2 new docs?
-  if (isBlog) {
-    sectionIndex = '/index.html';
-  } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
-    sectionIndex = '../index.html';
-    back = '../../index.html';
-  } else if (currentPageName === 'react-aria/examples/index.html') {
-    sectionIndex = '../index.html';
-    back = '../../index.html';
-  }
 
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
@@ -459,11 +448,6 @@ function Nav({currentPageName, pages}) {
   return (
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
-        {currentParts.length > 1 &&
-          <a href={back} className={docStyles.backBtn}>
-            <ChevronLeft aria-label="Back" />
-          </a>
-        }
         <a href={sectionIndex} className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
