@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';

@@ -81,12 +81,14 @@ module.exports = new Namer({
 
       if (parts[1] === 'react-aria-components') {
         // check if a redirect exists for this react-aria-components page
-        let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', 'react-aria', basename.replace('.html', '.mdx'));
+        // handle both top-level files and subdirectories like examples/
+        let subPath = parts.slice(3, -1);
+        let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', 'react-aria', ...subPath, basename.replace('.html', '.mdx'));
         if (fs.existsSync(redirectPath)) {
           // put original in .unused directory to avoid conflict
-          return path.join('.unused', 'react-aria', ...parts.slice(3, -1), basename);
+          return path.join('.unused', 'react-aria', ...subPath, basename);
         }
-        return path.join('react-aria', ...parts.slice(3, -1), basename);
+        return path.join('react-aria', ...subPath, basename);
       }
 
       // move @react-spectrum pages under /v3 aka components and stuff

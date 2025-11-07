@@ -39,6 +39,7 @@ let devDocs = glob.sync('*.mdx', {cwd: reactSpectrumDevDocsDir});
 let reactAriaDevDocs = glob.sync('*.mdx', {cwd: reactAriaDevDocsDir});
 let reactAriaHooksDocs = glob.sync('*/docs/*.mdx', {cwd: reactAriaDir});
 let reactAriaComponentsDocs = glob.sync('docs/*.mdx', {cwd: reactAriaComponentsDir});
+let reactAriaExamplesDocs = glob.sync('docs/examples/*.mdx', {cwd: reactAriaComponentsDir});
 let internationalizedDocs = glob.sync('*/docs/*.mdx', {cwd: internationalizedDir});
 let blogDocs = glob.sync('*.mdx', {cwd: blogDir});
 let releaseDocs = glob.sync('*.mdx', {cwd: releasesDir}).filter(f => f !== 'index.mdx');
@@ -87,6 +88,18 @@ devDocs.forEach(docPath => {
 // note that examples, interactions, internationalization, testing, DnD, styling, and
 // advanced customization are not in the /dev folder and thus handled elsewhere
 // also note that we don't include "hooks" since we wanna keep that "getting started"
+
+// custom redirect mappings for dev/aria pages and aria hooks
+let reactAriaCustomRedirects = {
+  'accessibility': 'https://react-aria.adobe.com/concepts.html',
+  'interactions': 'https://react-aria.adobe.com/concepts.html',
+  'internationalization': 'https://react-aria.adobe.com/concepts.html'
+};
+
+function getReactAriaRedirectUrl(fileName) {
+  return reactAriaCustomRedirects[fileName] || `https://react-aria.adobe.com/${fileName}.html`;
+}
+
 let reactAriaDevDocsToRedirect = [
   'index',
   'getting-started',
@@ -106,7 +119,7 @@ reactAriaDevDocs.forEach(docPath => {
 
   if (reactAriaDevDocsToRedirect.includes(fileName)) {
     let outputPath = path.join(reactAriaRedirectsDir, `${fileName}.mdx`);
-    fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/${fileName}.html`));
+    fs.writeFileSync(outputPath, createRedirectMdx(getReactAriaRedirectUrl(fileName)));
   }
 });
 
@@ -135,7 +148,7 @@ reactAriaHooksDocs.forEach(docPath => {
 
   if (category && removedCategories.includes(category)) {
     let outputPath = path.join(reactAriaRedirectsDir, `${fileName}.mdx`);
-    fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/${fileName}.html`));
+    fs.writeFileSync(outputPath, createRedirectMdx(getReactAriaRedirectUrl(fileName)));
   }
 });
 
@@ -143,7 +156,24 @@ reactAriaHooksDocs.forEach(docPath => {
 reactAriaComponentsDocs.forEach(docPath => {
   let fileName = path.basename(docPath, '.mdx');
   let outputPath = path.join(reactAriaRedirectsDir, `${fileName}.mdx`);
-  fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/${fileName}.html`));
+  fs.writeFileSync(outputPath, createRedirectMdx(getReactAriaRedirectUrl(fileName)));
+});
+
+// list of aria examples that have been carried over to new site. Others will just navigate to examples/index pages
+let examplesCustomRedirects = {
+  'framer-modal-sheet': 'https://react-aria.adobe.com/examples/sheet.html',
+  'list-view': 'https://react-aria.adobe.com/examples/list-view.html',
+  'ripple-button': 'https://react-aria.adobe.com/examples/ripple-button.html',
+  'swipeable-tabs': 'https://react-aria.adobe.com/examples/swipeable-tabs.html'
+};
+
+let examplesRedirectsDir = path.join(reactAriaRedirectsDir, 'examples');
+fs.mkdirSync(examplesRedirectsDir, {recursive: true});
+reactAriaExamplesDocs.forEach(docPath => {
+  let fileName = path.basename(docPath, '.mdx');
+  let outputPath = path.join(examplesRedirectsDir, `${fileName}.mdx`);
+  let redirectUrl = examplesCustomRedirects[fileName] || 'https://react-aria.adobe.com/examples/index.html';
+  fs.writeFileSync(outputPath, createRedirectMdx(redirectUrl));
 });
 
 // generate redirects for releases
