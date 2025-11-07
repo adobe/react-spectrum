@@ -3,9 +3,27 @@
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
 import {Link} from 'react-aria-components';
-import type {PageProps} from '@parcel/rsc';
+import type {Page, PageProps} from '@parcel/rsc';
 import {Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+
+export function PendingPageProvider({children, currentPage}: {children: React.ReactNode, currentPage: Page}) {
+  // Track pending navigation for optimistic UI updates
+  let [pendingPage, setPendingPage] = useState<Page | null>(null);
+  
+  // Reset pending state when navigation completes
+  useEffect(() => {
+    setPendingPage(null);
+  }, [currentPage.url]);
+
+  return (
+    <PendingPageContext.Provider value={pendingPage}>
+      <PendingNavContext.Provider value={setPendingPage}>
+        {children}
+      </PendingNavContext.Provider>
+    </PendingPageContext.Provider>
+  );
+}
 
 export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = getLibraryFromPage(currentPage);
@@ -30,6 +48,8 @@ export function Nav({pages, currentPage}: PageProps) {
   }
 
   let [maskSize, setMaskSize] = useState(0);
+  let pendingPage = usePendingPage();
+  let displayUrl = pendingPage?.url ?? currentPage.url;
 
   let sortedSections = [...sections].sort((a, b) => {
     if (a[0] === 'Getting started') {
@@ -77,7 +97,7 @@ export function Nav({pages, currentPage}: PageProps) {
               })
               .filter(page => !page.exports?.isSubpage)
               .map(page => (
-                <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+                <SideNavItem key={page.url}><SideNavLink href={page.url} page={page} isSelected={page.url === displayUrl}>{title(page)}</SideNavLink></SideNavItem>
             ))}
           </SideNav>
         </SideNavSection>
@@ -109,6 +129,12 @@ function SideNavSection({title, children}) {
 }
 
 const SideNavContext = createContext('');
+const PendingNavContext = createContext<((page: Page | null) => void) | null>(null);
+const PendingPageContext = createContext<Page | null>(null);
+
+export function usePendingPage() {
+  return useContext(PendingPageContext);
+}
 
 export function SideNav({children, isNested = false}) {
   return (
@@ -147,12 +173,20 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
+  let setPendingPage = useContext(PendingNavContext);
+  let {page, ...linkProps} = props;
+  
   return (
     <Link
-      {...props}
+      {...linkProps}
       ref={linkRef}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
+      onPress={() => {
+        if (setPendingPage && page) {
+          setPendingPage(page);
+        }
+      }}
       className={style({
         ...focusRing(),
         minHeight: 32,
