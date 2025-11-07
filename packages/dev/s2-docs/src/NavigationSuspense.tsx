@@ -35,15 +35,7 @@ export function setNavigationLoading(loading: boolean, pathname?: string) {
   }
 }
 
-function getPageInfo(pages: Page[], pathname: string | null): {title?: string, section?: string, hasToC?: boolean} {
-  if (!pathname) {
-    return {};
-  }
-  
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
-  let publicUrlPrefix = publicUrlPathname === '/' ? '/' : publicUrlPathname.replace(/\/$/, '');
-  
+function normalizePathname(pathname: string, publicUrlPrefix: string): string {
   const [basePathname] = pathname.split('?');
   const [cleanPathname] = basePathname.split('#');
   
@@ -55,13 +47,27 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
     }
   }
   
-  let normalizedPathname = pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
+  return pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
+}
+
+function getPageInfo(pages: Page[], pathname: string | null): {title?: string, section?: string, hasToC?: boolean} {
+  if (!pathname) {
+    return {};
+  }
+  
+  let publicUrl = process.env.PUBLIC_URL || '/';
+  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+  let publicUrlPrefix = publicUrlPathname === '/' ? '/' : publicUrlPathname.replace(/\/$/, '');
+  
+  let normalizedPathname = normalizePathname(pathname, publicUrlPrefix);
   
   const targetPage = pages.find(p => {
     const pageUrl = p.url.split('?')[0].split('#')[0];
-    return pageUrl === normalizedPathname || 
-          pageUrl === normalizedPathname.replace(/\.html$/, '') ||
-          pageUrl === normalizedPathname + '.html';
+    let normalizedPageUrl = normalizePathname(pageUrl, publicUrlPrefix);
+    
+    return normalizedPageUrl === normalizedPathname || 
+          normalizedPageUrl === normalizedPathname.replace(/\.html$/, '') ||
+          normalizedPageUrl === normalizedPathname + '.html';
   });
   
   if (!targetPage) {
