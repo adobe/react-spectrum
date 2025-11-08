@@ -88,11 +88,8 @@ export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePicke
    * @default 'react-aria-DatePicker'
    */
   className?: ClassNameOrFunction<DatePickerRenderProps>,
-  /**
-   * Whether the trigger remains pressed when the overlay is open.
-   * @default true
-   */
-  isTriggerPressedWhenOpen?: boolean
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
 }
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
@@ -100,11 +97,8 @@ export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDate
    * @default 'react-aria-DateRangePicker'
    */
   className?: ClassNameOrFunction<DateRangePickerRenderProps>,
-  /**
-   * Whether the trigger remains pressed when the overlay is open.
-   * @default true
-   */
-  isTriggerPressedWhenOpen?: boolean
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
 }
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
@@ -122,7 +116,6 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   [props, ref] = useContextProps(props, ref, DatePickerContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let {isTriggerPressedWhenOpen = true} = props;
   let state = useDatePickerState({
     ...props,
     validationBehavior
@@ -185,7 +178,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DatePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
-        [ButtonContext, {...buttonProps, isPressed: isTriggerPressedWhenOpen && state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
@@ -232,7 +225,6 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let {isTriggerPressedWhenOpen = true} = props;
   let state = useDateRangePickerState({
     ...props,
     validationBehavior
@@ -295,7 +287,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       values={[
         [DateRangePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
-        [ButtonContext, {...buttonProps, isPressed: isTriggerPressedWhenOpen && state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],

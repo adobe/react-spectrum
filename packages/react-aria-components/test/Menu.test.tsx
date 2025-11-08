@@ -489,9 +489,9 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 
-  it('should not apply isPressed state on trigger when expanded and isPressedWhenOpen is false', async () => {
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
     let {getByRole} = render(
-      <MenuTrigger isPressedWhenOpen={false}>
+      <MenuTrigger isTriggerUpWhenOpen>
         <Button aria-label="Menu">☰</Button>
         <Popover>
           <Menu>

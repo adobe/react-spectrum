@@ -32,7 +32,7 @@ export default {
       control: 'radio',
       options: ['single', 'multiple']
     },
-    isTriggerPressedWhenOpen: {
+    isTriggerUpWhenOpen: {
       control: 'boolean'
     }
   }

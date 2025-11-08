@@ -57,7 +57,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder' | 'isTriggerPressedWhenOpen'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder' | 'isTriggerUpWhenOpen'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -202,7 +202,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     <div>
       <AriaSelect
         {...pickerProps}
-        isTriggerPressedWhenOpen={false}
+        isTriggerUpWhenOpen
         aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>

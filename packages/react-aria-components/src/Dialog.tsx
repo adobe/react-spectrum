@@ -22,11 +22,8 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallb
 import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
-  /**
-   * Whether the trigger remains pressed when the overlay is open.
-   * @default true
-   */
-  isPressedWhenOpen?: boolean,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -57,7 +54,6 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
-  let {isPressedWhenOpen = true} = props;
 
   // Allows popover width to match trigger element
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);
@@ -92,7 +88,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={isPressedWhenOpen && state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>

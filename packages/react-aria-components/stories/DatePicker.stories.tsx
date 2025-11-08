@@ -47,7 +47,7 @@ export default {
       control: 'select',
       options: ['native', 'aria']
     },
-    isTriggerPressedWhenOpen: {
+    isTriggerUpWhenOpen: {
       control: 'boolean'
     }
   }

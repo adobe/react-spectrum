@@ -13,7 +13,7 @@
 import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps} from 'react-aria-components';
 import {ReactNode} from 'react';
 
-export type DialogTriggerProps = Omit<AriaDialogTriggerProps, 'isPressedWhenOpen'>;
+export type DialogTriggerProps = Omit<AriaDialogTriggerProps, 'isTriggerUpWhenOpen'>;
 
 /**
  * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
@@ -22,6 +22,6 @@ export type DialogTriggerProps = Omit<AriaDialogTriggerProps, 'isPressedWhenOpen
  */
 export function DialogTrigger(props: DialogTriggerProps): ReactNode {
   return (
-    <AriaDialogTrigger {...props} isPressedWhenOpen={false} />
+    <AriaDialogTrigger {...props} isTriggerUpWhenOpen />
   );
 }

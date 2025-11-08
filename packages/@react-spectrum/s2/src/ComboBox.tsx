@@ -78,7 +78,7 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | 'isTriggerPressedWhenOpen' | keyof GlobalDOMAttributes>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'defaultFilter' | 'allowsEmptyCollection' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -353,7 +353,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   return (
     <AriaComboBox
       {...comboBoxProps}
-      isTriggerPressedWhenOpen={false}
+      isTriggerUpWhenOpen
       allowsEmptyCollection
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({

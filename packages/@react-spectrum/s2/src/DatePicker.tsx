@@ -40,7 +40,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DatePickerProps<T extends DateValue> extends
-  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | 'isTriggerPressedWhenOpen' | keyof GlobalDOMAttributes>,
+  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
   Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
   StyleProps,
   SpectrumLabelableProps,
@@ -153,7 +153,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       ref={ref}
       isRequired={isRequired}
       {...dateFieldProps}
-      isTriggerPressedWhenOpen={false}
+      isTriggerUpWhenOpen
       style={UNSAFE_style}
       className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,

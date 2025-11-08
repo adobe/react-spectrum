@@ -52,9 +52,9 @@ describe('Dialog', () => {
     expect(dialog).toHaveAttribute('data-rac');
   });
 
-  it('should not apply isPressed state on trigger when expanded and isPressedWhenOpen is false', async () => {
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
     let {getByRole} = render(
-      <DialogTrigger isPressedWhenOpen={false}>
+      <DialogTrigger isTriggerUpWhenOpen>
         <Button>Delete…</Button>
         <Dialog>
           <Heading slot="title">Title</Heading>
