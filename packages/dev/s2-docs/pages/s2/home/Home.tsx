@@ -37,8 +37,7 @@ export function Home() {
       <main className={style({marginX: 'auto', paddingX: 40, maxWidth: 1600})}>
         <Section
           title="Build Once. Adapt Everywhere."
-          description="React Spectrum makes interfaces smarter, more flexible, and easier to maintain, while giving users a seamless experience no matter where they are.
-">
+          description="React Spectrum makes interfaces more accessible, flexible, and easier to maintain, while giving users a seamless experience no matter where they are.">
           <Feature
             title="Dark mode"
             description="Deliver effortless dark and light mode support, automatically. No extra styling required."
@@ -75,13 +74,14 @@ export function Home() {
             style={{gridColumn: 'span 2'}}>
           </Feature>
           <Feature
-            title="Adjustable font size"
-            description="Components automatically scale based on the users preferred font size..."
+            title="Adaptive font sizes"
+            description="Fonts scale autoamtically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
             style={{gridColumn: 'span 4'}}>
             <Rems />
           </Feature>
         </Section>
-        <Section title="Interactions" description="Stuff and things">
+        <Section title="Interactions"
+          description="Components respond instantly to user input, with smooth animations and transitions that feel natural and without extra code.">
           <Feature
             title="Press scaling"
             description="Description"
