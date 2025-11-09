@@ -36,31 +36,32 @@ export function Home() {
       </header>
       <main className={style({marginX: 'auto', paddingX: 40, maxWidth: 1600})}>
         <Section
-          title="Adaptive"
-          description="Stuff and things">
+          title="Build Once. Adapt Everywhere."
+          description="React Spectrum makes interfaces smarter, more flexible, and easier to maintain, while giving users a seamless experience no matter where they are.
+">
           <Feature
             title="Dark mode"
-            description="Description"
+            description="Deliver effortless dark and light mode support, automatically. No extra styling required."
             style={{gridColumn: 'span 4'}}>
             <DarkMode />
           </Feature>
           <Feature
             title="Touch friendly"
-            description="Components automatically scale to ensure large hit targets on touch devices..."
+            description="Components automatically scale adapt and adapt for touch or pointer input, ensuring a smooth experience on any device."
             style={{gridColumn: 'span 2'}}>
             <Mobile />
           </Feature>
           <Feature
-            title="Right-to-left"
-            description="Mirroring"
+            title="Global ready by default"
+            description="Automatically mirrors component layouts, and formats text for different languages, currencies, dates, and locales."
             style={{gridColumn: 'span 3'}}>
             <Provider locale="ar-AE" background="layer-1" styles={style({padding: 16, borderRadius: 'lg', overflow: 'clip', boxSizing: 'border-box', height: 300})}>
               <ExampleApp />
             </Provider>
           </Feature>
           <Feature
-            title="Reduce motion"
-            description="Toast video?"
+            title="Reduce motion options"
+            description="Component animations and transitions automatically adjust for users who prefer less motion, keeping your UI comfortable and inclusive."
             style={{gridColumn: 'span 3'}}>
           </Feature>
           <Feature
@@ -70,7 +71,7 @@ export function Home() {
           </Feature>
           <Feature
             title="High contrast mode"
-            description="Description"
+            description="Automatically adjust to high contrast mode, ensuring a clear and readable experience based on preference."
             style={{gridColumn: 'span 2'}}>
           </Feature>
           <Feature
