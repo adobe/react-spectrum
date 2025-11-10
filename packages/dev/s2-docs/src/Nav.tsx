@@ -5,7 +5,6 @@ import {getLibraryFromPage} from './library';
 import {Link} from 'react-aria-components';
 import type {Page, PageProps} from '@parcel/rsc';
 import {Picker, pressScale} from '@react-spectrum/s2';
-import {prefetchRoute} from './prefetch';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 
 export function PendingPageProvider({children, currentPage}: {children: React.ReactNode, currentPage: Page}) {
@@ -203,11 +202,6 @@ export function SideNavLink(props) {
       ref={linkRef}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
-      onPressStart={() => {
-        if (props.href) {
-          prefetchRoute(props.href);
-        }
-      }}
       onPress={() => {
         if (setPendingPage && page) {
           setPendingPage(page);

@@ -2,7 +2,7 @@
 
 import {clearPendingPage} from './Nav';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
-import {getPrefetchedPromise} from './prefetch';
+import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
 import {setNavigationLoading} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
@@ -112,6 +112,54 @@ async function navigate(pathname: string, push = false) {
     }
   }
 }
+
+// Prefetch routes on pointerover
+// Use a delay to avoid prefetching when quickly moving over multiple links.
+const PREFETCH_DELAY_MS = 100;
+let prefetchTimeout: ReturnType<typeof setTimeout> | null = null;
+let currentPrefetchLink: HTMLAnchorElement | null = null;
+
+function clearPrefetchTimeout() {
+  if (prefetchTimeout) {
+    clearTimeout(prefetchTimeout);
+    prefetchTimeout = null;
+  }
+  currentPrefetchLink = null;
+}
+
+document.addEventListener('pointerover', e => {
+  let link = (e.target as Element).closest('a');
+  let publicUrl = process.env.PUBLIC_URL || '/';
+  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+  
+  // Clear any pending prefetch
+  clearPrefetchTimeout();
+  
+  if (
+    link &&
+    link instanceof HTMLAnchorElement &&
+    link.href &&
+    (!link.target || link.target === '_self') &&
+    link.origin === location.origin &&
+    link.pathname !== location.pathname &&
+    !link.hasAttribute('download') &&
+    link.pathname.startsWith(publicUrlPathname)
+  ) {
+    currentPrefetchLink = link;
+    prefetchTimeout = setTimeout(() => {
+      prefetchRoute(link.pathname + link.search + link.hash);
+      prefetchTimeout = null;
+    }, PREFETCH_DELAY_MS);
+  }
+}, true);
+
+// Clear prefetch timeout when pointer leaves a link
+document.addEventListener('pointerout', e => {
+  let link = (e.target as Element).closest('a');
+  if (link && link === currentPrefetchLink) {
+    clearPrefetchTimeout();
+  }
+}, true);
 
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
