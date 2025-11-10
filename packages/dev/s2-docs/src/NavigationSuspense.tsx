@@ -8,6 +8,7 @@ let navigationPromise: Promise<void> | null = null;
 let navigationResolve: (() => void) | null = null;
 let targetPathname: string | null = null;
 let listeners = new Set<() => void>();
+let cachedSnapshot: {promise: Promise<void> | null, pathname: string | null} = {promise: null, pathname: null};
 
 function subscribe(callback: () => void) {
   listeners.add(callback);
@@ -15,7 +16,10 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot() {
-  return navigationPromise;
+  if (cachedSnapshot.promise !== navigationPromise || cachedSnapshot.pathname !== targetPathname) {
+    cachedSnapshot = {promise: navigationPromise, pathname: targetPathname};
+  }
+  return cachedSnapshot;
 }
 
 export function setNavigationLoading(loading: boolean, pathname?: string) {
@@ -30,7 +34,6 @@ export function setNavigationLoading(loading: boolean, pathname?: string) {
       navigationResolve();
       navigationResolve = null;
       navigationPromise = null;
-      targetPathname = null;
       listeners.forEach(callback => callback());
     }
   }
@@ -98,17 +101,17 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
 
 function NavigationContent({children}: {children: React.ReactNode}) {
   // Subscribe to navigation promise changes to ensure React re-renders when setNavigationLoading(true) is called.
-  const promise = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  if (promise) {
-    use(promise);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  if (snapshot.promise) {
+    use(snapshot.promise);
   }
   return <>{children}</>;
 }
 
 export function NavigationSuspense({children, pages}: {children: React.ReactNode, pages: Page[]}) {
   // Subscribe to get the latest targetPathname for skeleton page info
-  useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const pageInfo = getPageInfo(pages, targetPathname);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const pageInfo = getPageInfo(pages, snapshot.pathname);
   
   return (
     <Suspense fallback={<PageSkeleton title={pageInfo.title} section={pageInfo.section} hasToC={pageInfo.hasToC} />}>
