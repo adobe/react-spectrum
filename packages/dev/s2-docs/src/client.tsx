@@ -23,6 +23,8 @@ async function navigate(pathname: string, push = false) {
   let [basePath] = pathname.split('#');
   let rscPath = basePath.replace('.html', '.rsc');
   
+  window.dispatchEvent(new CustomEvent('rsc-navigation-start'));
+  
   // Use prefetched result if available, otherwise fetch
   const prefetchedPromise = getPrefetchedPromise(rscPath);
   const fetchPromise = prefetchedPromise ?? fetchRSC<ReactElement>(rscPath);

@@ -311,14 +311,14 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [filteredComponents, sections, selectedSectionId, searchValue]);
 
   useEffect(() => {
-    const handleNavigation = () => {
+    const handleNavigationStart = () => {
       setSearchValue('');
       onClose();
     };
 
-    window.addEventListener('rsc-navigation', handleNavigation);
+    window.addEventListener('rsc-navigation-start', handleNavigationStart);
     return () => {
-      window.removeEventListener('rsc-navigation', handleNavigation);
+      window.removeEventListener('rsc-navigation-start', handleNavigationStart);
     };
   }, [onClose]);
 
