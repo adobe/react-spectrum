@@ -1,3 +1,4 @@
+import {InstallCommand} from '../../src/InstallCommand';
 import {Layout} from '../../src/Layout';
 export default Layout;
 
@@ -5,9 +6,12 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/Table';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['data', 'grid'];
+export const relatedPages = [
+  {title: 'Testing', url: './Table/testing.html'}
+];
 
 # Table
 
@@ -89,7 +93,7 @@ export const tags = ['data', 'grid'];
 
 ## Content
 
-`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render

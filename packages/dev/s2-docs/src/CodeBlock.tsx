@@ -184,7 +184,7 @@ export function getFiles(files: string[]) {
     let contents = fs.readFileSync(file, 'utf8');
     fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
   }
-  
+
   return fileContents;
 }
 
