@@ -24,47 +24,12 @@ async function navigate(pathname: string, push = false) {
   let rscPath = basePath.replace('.html', '.rsc');
   
   window.dispatchEvent(new CustomEvent('rsc-navigation-start'));
+  setNavigationLoading(true, pathname);
+  loadingShown = true;
   
   // Use prefetched result if available, otherwise fetch
   const prefetchedPromise = getPrefetchedPromise(rscPath);
   const fetchPromise = prefetchedPromise ?? fetchRSC<ReactElement>(rscPath);
-  
-  const delayPromise = new Promise<void>(resolve => setTimeout(resolve, 50));
-  
-  // Race the fetch against a small delay to detect cached responses
-  // If fetch resolves before the delay, we won't show the skeleton
-  let raceResult: 'fast' | 'slow' | 'error' = 'slow';
-  try {
-    raceResult = await Promise.race([
-      fetchPromise.then(() => 'fast' as const).catch(() => 'error' as const),
-      delayPromise.then(() => 'slow' as const)
-    ]);
-  } catch {
-    raceResult = 'error';
-  }
-  
-  if (raceResult === 'slow') {
-    setNavigationLoading(true, pathname);
-    loadingShown = true;
-  }
-  
-  if (raceResult === 'error') {
-    clearPendingPage();
-    if (loadingShown) {
-      setNavigationLoading(false);
-    }
-    try {
-      let errorRes = await fetchRSC<ReactElement>('/error.rsc');
-      updateRoot(errorRes, () => {
-        if (push) {
-          history.pushState(null, '', '/error.html');
-        }
-      });
-    } catch {
-      ToastQueue.negative('Failed to load page. Check your connection and try again.');
-    }
-    return;
-  }
   
   try {
     let res = await fetchPromise;
