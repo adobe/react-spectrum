@@ -30,6 +30,7 @@ export function setNavigationLoading(loading: boolean, pathname?: string) {
       navigationResolve();
       navigationResolve = null;
       navigationPromise = null;
+      targetPathname = null;
       listeners.forEach(callback => callback());
     }
   }
@@ -61,6 +62,10 @@ function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): stri
   return pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
 }
 
+function getPageTitle(page: Page): string {
+  return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
+}
+
 function getPageInfo(pages: Page[], pathname: string | null): {title?: string, section?: string, hasToC?: boolean} {
   if (!pathname) {
     return {};
@@ -84,8 +89,7 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
     return {};
   }
   
-  // Extract the h1 title (same logic as getTitle but just the page title part)
-  const title = targetPage.tableOfContents?.[0]?.title ?? targetPage.name?.replace(/\.html$/, '');
+  const title = getPageTitle(targetPage);
   const section = (targetPage.exports?.section as string) || 'Components';
   const hasToC = !targetPage.exports?.hideNav && targetPage.tableOfContents?.[0]?.children && targetPage.tableOfContents?.[0]?.children?.length > 0;
   
