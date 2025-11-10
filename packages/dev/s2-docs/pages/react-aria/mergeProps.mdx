@@ -18,16 +18,11 @@ export const section = 'Utilities';
 
 <PageDescription>{docs.exports.mergeProps.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.mergeProps} links={docs.links} />
-
 ## Introduction
 
 `mergeProps` is a utility function that combines multiple props objects together in a smart way.
 This can be useful when you need to combine the results of multiple react-aria hooks onto a single
-element. For example, both hooks may return the same event handlers, class names, or ids, and only
-one of these can be applied. `mergeProps` handles combining these props together so that multiple
+element. `mergeProps` handles combining these props together so that multiple
 event handlers will be chained, multiple classes will be combined, and ids will be deduplicated.
 For all other props, the last prop object overrides all previous ones.
 
@@ -68,3 +63,7 @@ let merged = {
   }
 };
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.mergeProps} links={docs.links} />

@@ -11,7 +11,7 @@
  */
 
 import {act, render} from '@react-spectrum/test-utils-internal';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useCheckboxGroupState} from '../';
 
 describe('useCheckboxGroupState', () => {
@@ -107,7 +107,9 @@ describe('useCheckboxGroupState', () => {
     let setValue: (value: string[]) => void;
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo']});
-      setValue = state.setValue;
+      useEffect(() => {
+        setValue = state.setValue;
+      }, [state]);
       return <>{state.value.join(', ')}</>;
     }
     const {container} = render(<Test />);
@@ -128,7 +130,9 @@ describe('useCheckboxGroupState', () => {
 
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo'], onChange: onChangeSpy});
-      setValue = state.setValue;
+      useEffect(() => {
+        setValue = state.setValue;
+      }, [state]);
       return <>{state.value.join(', ')}</>;
     }
 
@@ -145,7 +149,9 @@ describe('useCheckboxGroupState', () => {
     let addValue: (value: string) => void;
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo']});
-      addValue = state.addValue;
+      useEffect(() => {
+        addValue = state.addValue;
+      }, [state]);
       return <>{state.value.join(', ')}</>;
     }
     const {container} = render(<Test />);
@@ -161,7 +167,9 @@ describe('useCheckboxGroupState', () => {
     let addValue: (value: string) => void;
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo']});
-      addValue = state.addValue;
+      useEffect(() => {
+        addValue = state.addValue;
+      }, [state]);
       return <>{state.value.join(', ')}</>;
     }
     const {container} = render(<Test />);
@@ -180,7 +188,9 @@ describe('useCheckboxGroupState', () => {
     let removeValue: (value: string) => void;
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo', 'qwe']});
-      removeValue = state.removeValue;
+      useEffect(() => {
+        removeValue = state.removeValue;
+      }, [state]);
       return <>{state.value.join(', ')}</>;
     }
     const {container} = render(<Test />);
@@ -196,7 +206,9 @@ describe('useCheckboxGroupState', () => {
     let toggleValue: (value: string) => void;
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo', 'qwe']});
-      toggleValue = state.toggleValue;
+      useEffect(() => {
+        toggleValue = state.toggleValue;
+      }, [state]);
       return <>{state.value.join(', ')}</>;
     }
     const {container} = render(<Test />);
@@ -218,7 +230,10 @@ describe('useCheckboxGroupState', () => {
     let toggleValue: (value: string) => void;
     function Test() {
       const state = useCheckboxGroupState({defaultValue: ['foo', 'qwe']});
-      toggleValue = state.toggleValue;
+      useEffect(() => {
+        toggleValue = state.toggleValue;
+      }, [state]);
+
       return <>{state.value.join(', ')}</>;
     }
     const {container} = render(<Test />);
@@ -239,10 +254,12 @@ describe('useCheckboxGroupState', () => {
 
     function Test() {
       const state = useCheckboxGroupState({isReadOnly: true, defaultValue: ['test']});
-      addValue = state.addValue;
-      removeValue = state.removeValue;
-      toggleValue = state.toggleValue;
-      setValue = state.setValue;
+      useEffect(() => {
+        addValue = state.addValue;
+        removeValue = state.removeValue;
+        toggleValue = state.toggleValue;
+        setValue = state.setValue;
+      }, [state]);
 
       return <>{state.value.join(', ')}</>;
     }
@@ -284,10 +301,12 @@ describe('useCheckboxGroupState', () => {
 
     function Test() {
       const state = useCheckboxGroupState({isDisabled: true, defaultValue: ['test']});
-      addValue = state.addValue;
-      removeValue = state.removeValue;
-      toggleValue = state.toggleValue;
-      setValue = state.setValue;
+      useEffect(() => {
+        addValue = state.addValue;
+        removeValue = state.removeValue;
+        toggleValue = state.toggleValue;
+        setValue = state.setValue;
+      }, [state]);
 
       return <>{state.value.join(', ')}</>;
     }

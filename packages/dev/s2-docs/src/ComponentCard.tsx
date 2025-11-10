@@ -146,6 +146,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'FileTrigger': FileTriggerSvg,
   'FocusScope': FocusScopeSvg,
   'Form': FormSvg,
+  'Forms': FormSvg,
   'GridList': ListViewSvg, // GridList -> ListView
   'Group': GroupSvg,
   'Icons': IconsSvg,

@@ -1,18 +1,17 @@
 'use client';
 
 import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
-import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator, useFilter} from 'react-aria-components';
+import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
-import {iconAliases} from './iconAliases.js';
-import {iconList, IconSearchSkeleton} from './IconSearchView';
+import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 // @ts-ignore
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
@@ -98,14 +97,15 @@ export function SearchMenu(props: SearchMenuProps) {
         const section: string = (page.exports?.section as string) || 'Components';
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
         const description: string = page.exports?.description;
-
+        const date: string | undefined = page.exports?.date;
         return {
           id: name,
           name: title,
           href: page.url,
           section,
           tags,
-          description
+          description,
+          date
         };
       });
 
@@ -141,18 +141,7 @@ export function SearchMenu(props: SearchMenuProps) {
   const [selectedSectionId, setSelectedSectionId] = useState<string>(() => currentPage.exports?.section?.toLowerCase() || 'components');
   const prevSearchWasEmptyRef = useRef<boolean>(true);
 
-  // Icon filter function
-  const {contains} = useFilter({sensitivity: 'base'});
-  const iconFilter = useCallback((textValue, inputValue) => {
-    // check if we're typing part of a category alias
-    for (const alias of Object.keys(iconAliases)) {
-      if (contains(alias, inputValue) && iconAliases[alias].includes(textValue)) {
-        return true;
-      }
-    }
-    // also compare for substrings in the icon's actual name
-    return textValue != null && contains(textValue, inputValue);
-  }, [contains]);
+  const iconFilter = useIconFilter();
 
   const filteredIcons = useMemo(() => {
     if (!searchValue.trim()) {
@@ -186,32 +175,42 @@ export function SearchMenu(props: SearchMenuProps) {
 
     const searchLower = searchValue.toLowerCase();
     const allItems = sections.flatMap(section => section.children);
-    
+
     // Filter items where name or tags start with search value
     const matchedItems = allItems.filter(item => {
       const nameMatch = item.name.toLowerCase().startsWith(searchLower);
       const tagMatch = item.tags.some(tag => tag.toLowerCase().startsWith(searchLower));
       return nameMatch || tagMatch;
     });
-    
+
     // Sort to prioritize name matches over tag matches
     const sortedItems = matchedItems.sort((a, b) => {
       const aNameMatch = a.name.toLowerCase().startsWith(searchLower);
       const bNameMatch = b.name.toLowerCase().startsWith(searchLower);
-      
+
+      if (a.date && b.date) {
+        let aDate = new Date(a.date);
+        let bDate = new Date(b.date);
+        return bDate.getTime() - aDate.getTime();
+      } else if (a.date && !b.date) {
+        return 1;
+      } else if (!a.date && b.date) {
+        return -1;
+      }
+
       if (aNameMatch && !bNameMatch) {
         return -1;
       }
       if (!aNameMatch && bNameMatch) {
         return 1;
       }
-      
+
       // If both match by name or both match by tag, maintain original order
       return 0;
     });
-    
+
     const resultsBySection = new Map<string, typeof transformedComponents>();
-    
+
     sortedItems.forEach(item => {
       const section = item.section || 'Components';
       if (!resultsBySection.has(section)) {
@@ -272,13 +271,23 @@ export function SearchMenu(props: SearchMenuProps) {
     } else {
       items = (filteredComponents.find(s => s.id === selectedSectionId)?.children) || [];
     }
-    
+
     // Sort to show "Introduction" first when search is empty
     if (searchValue.trim().length === 0) {
       items = [...items].sort((a, b) => {
         const aIsIntro = a.name === 'Introduction';
         const bIsIntro = b.name === 'Introduction';
-        
+
+        if (a.date && b.date) {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          return bDate.getTime() - aDate.getTime();
+        } else if (a.date && !b.date) {
+          return 1;
+        } else if (!a.date && b.date) {
+          return -1;
+        }
+
         if (aIsIntro && !bIsIntro) {
           return -1;
         }
@@ -288,7 +297,7 @@ export function SearchMenu(props: SearchMenuProps) {
         return 0;
       });
     }
-    
+
     return items;
   }, [filteredComponents, selectedSectionId, searchValue]);
 

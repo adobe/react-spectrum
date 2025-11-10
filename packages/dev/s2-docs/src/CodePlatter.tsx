@@ -105,7 +105,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
               <Tooltip>Open in…</Tooltip>
             </TooltipTrigger>
             <Menu hideLinkOutIcon>
-              {shareUrl && 
+              {shareUrl &&
                 <MenuItem
                   onAction={() => {
                     // Find previous heading element to get hash.
@@ -151,7 +151,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Download ZIP</Text>
                 </MenuItem>
               }
-              {registryUrl && 
+              {registryUrl &&
                 <MenuItem onAction={() => setShowShadcn(true)}>
                   <Prompt />
                   <Text>Install with shadcn</Text>
@@ -175,8 +175,8 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Open in StackBlitz</Text>
                 </MenuItem>
               }
-              {registryUrl && 
-                <MenuItem 
+              {registryUrl &&
+                <MenuItem
                   href={`https://v0.dev/chat/api/open?url=${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
@@ -188,7 +188,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
           </MenuTrigger>}
         </ActionButtonGroup>
       </Toolbar>
-      <div ref={codeRef}> 
+      <div ref={codeRef}>
         {children}
       </div>
       <DialogContainer onDismiss={() => setShowShadcn(false)}>
@@ -211,7 +211,8 @@ const pre = style({
   paddingEnd: '--code-padding-end',
   paddingY: '--code-padding-y',
   width: 'fit',
-  minWidth: 'full'
+  minWidth: 'full',
+  boxSizing: 'border-box'
 });
 
 export function Pre({children}) {
@@ -273,7 +274,7 @@ const V0 = createIcon(props => (
     <path
       d="M13.7688 19.0956L0 3.68759H5.53933L13.6231 12.7337V3.68759H17.7535V17.5746C17.7535 19.6705 15.1654 20.6584 13.7688 19.0956Z"
       fill="var(--iconPrimary)" />
-  </svg> 
+  </svg>
 ));
 
 const Flash = createIcon(props => (
