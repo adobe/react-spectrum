@@ -125,7 +125,7 @@ const swatchStyle = style({
   flexShrink: 0
 });
 
-const backgroundSwatches: Record<string, string> = {
+const backgroundSwatches = {
   'base': colorSwatch('base'),
   'layer-1': colorSwatch('layer-1'),
   'layer-2': colorSwatch('layer-2'),
@@ -185,7 +185,7 @@ const backgroundSwatches: Record<string, string> = {
   'disabled': colorSwatch('disabled')
 };
 
-const textSwatches: Record<string, string> = {
+const textSwatches = {
   'accent': colorSwatch('accent', 'color'),
   'neutral': colorSwatch('neutral', 'color'),
   'neutral-subdued': colorSwatch('neutral-subdued', 'color'),
@@ -223,7 +223,7 @@ const brownScale = getColorScale('brown');
 const silverScale = getColorScale('silver');
 const cinnamonScale = getColorScale('cinnamon');
 
-const scaleSwatches: Record<string, string> = {
+const scaleSwatches = {
   ...Object.fromEntries(accentScale),
   ...Object.fromEntries(informativeScale),
   ...Object.fromEntries(negativeScale),
