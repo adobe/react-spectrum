@@ -1,8 +1,9 @@
 'use client';
 
 import {ActionButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup} from '@react-spectrum/s2';
-import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator} from 'react-aria-components';
+import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider, Separator as RACSeparator, useFilter} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
+import {ColorSearchSkeleton, ColorSearchView, colorSections} from './ColorSearchView';
 import {ComponentCardView} from './ComponentCardView';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
@@ -11,7 +12,7 @@ import {type Library, TAB_DEFS} from './constants';
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 // @ts-ignore
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectableCollectionContext} from '../../../react-aria-components/src/RSPContexts';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
@@ -131,9 +132,14 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [transformedComponents]);
 
   const sectionTags = useMemo(() => sections, [sections]);
-  const iconTag = useMemo(() => {
+
+  // Resources search configuration (Icons, Colors, etc.)
+  const resourcesTags = useMemo(() => {
     if (selectedLibrary === 'react-spectrum') {
-      return [{id: 'icons', name: 'Icons'}];
+      return [
+        {id: 'icons', name: 'Icons'},
+        {id: 'colors', name: 'Colors'}
+      ];
     }
     return [];
   }, [selectedLibrary]);
@@ -150,23 +156,46 @@ export function SearchMenu(props: SearchMenuProps) {
     return iconList.filter(item => iconFilter(item.id, searchValue));
   }, [searchValue, iconFilter]);
 
+  const {contains} = useFilter({
+    sensitivity: 'base'
+  });
+
+  const colorFilter = useCallback((textValue, inputValue) => {
+    return textValue != null && contains(textValue, inputValue);
+  }, [contains]);
+
+  const filteredColors = useMemo(() => {
+    if (!searchValue.trim()) {
+      return colorSections;
+    }
+    
+    const searchLower = searchValue.toLowerCase();
+    return colorSections.map(section => ({
+      ...section,
+      items: section.items.filter(item => 
+        item.name.toLowerCase().includes(searchLower)
+      )
+    })).filter(section => section.items.length > 0);
+  }, [searchValue]);
+
   // Ensure selected section is valid for the current library
   const baseSectionIds = sectionTags.map(s => s.id);
-  const baseIconIds = iconTag.map(t => t.id);
-  const allBaseIds = [...baseSectionIds, ...baseIconIds];
-  const sectionIds = searchValue.trim().length > 0 && selectedSectionId !== 'icons' ? ['all', ...allBaseIds] : allBaseIds;
+  const resourcesIds = resourcesTags.map(t => t.id);
+  const allBaseIds = [...baseSectionIds, ...resourcesIds];
+  const isResourceSelected = selectedSectionId === 'icons' || selectedSectionId === 'colors';
+  const sectionIds = searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
   if (!selectedSectionId || !sectionIds.includes(selectedSectionId)) {
     setSelectedSectionId(sectionIds[0] || 'components');
   }
 
-  // When search starts, auto-select the All tag (unless Icons is selected).
+  // When search starts, auto-select the All tag (unless a Resource tag is selected)
   useEffect(() => {
     const isEmpty = searchValue.trim().length === 0;
-    if (prevSearchWasEmptyRef.current && !isEmpty && selectedSectionId !== 'icons') {
+    if (prevSearchWasEmptyRef.current && !isEmpty && !isResourceSelected) {
       setSelectedSectionId('all');
     }
     prevSearchWasEmptyRef.current = isEmpty;
-  }, [searchValue, selectedSectionId]);
+  }, [searchValue, isResourceSelected]);
 
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
@@ -228,12 +257,12 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [sections, searchValue]);
 
   const tags = useMemo(() => {
-    if (searchValue.trim().length > 0 && selectedSectionId !== 'icons') {
-      // When searching, prepend an All tag (unless Icons is selected)
+    if (searchValue.trim().length > 0 && !isResourceSelected) {
+      // When searching, prepend an All tag (unless a Resource tag is selected)
       return [{id: 'all', name: 'All'}, ...sectionTags];
     }
     return sectionTags;
-  }, [searchValue, sectionTags, selectedSectionId]);
+  }, [searchValue, sectionTags, isResourceSelected]);
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
     if (searchValue) {
@@ -257,12 +286,50 @@ export function SearchMenu(props: SearchMenuProps) {
     }
   }, []);
 
-  const handleIconSelectionChange = React.useCallback((keys: Iterable<Key>) => {
+  const handleResourceSelectionChange = React.useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
     if (firstKey) {
       setSelectedSectionId(firstKey);
     }
   }, []);
+
+  const getFilterFunction = React.useCallback(() => {
+    if (selectedSectionId === 'icons') {
+      return iconFilter;
+    }
+    if (selectedSectionId === 'colors') {
+      return colorFilter;
+    }
+    return undefined;
+  }, [selectedSectionId, iconFilter, colorFilter]);
+
+  const getResourceSelectedKeys = React.useCallback(() => {
+    if (selectedSectionId === 'icons') {
+      return ['icons'];
+    }
+    if (selectedSectionId === 'colors') {
+      return ['colors'];
+    }
+    return [];
+  }, [selectedSectionId]);
+
+  const renderResourceView = React.useCallback(() => {
+    if (selectedSectionId === 'icons') {
+      return (
+        <Suspense fallback={<IconSearchSkeleton />}>
+          <IconSearchView filteredItems={filteredIcons} />
+        </Suspense>
+      );
+    }
+    if (selectedSectionId === 'colors') {
+      return (
+        <Suspense fallback={<ColorSearchSkeleton />}>
+          <ColorSearchView filteredItems={filteredColors} />
+        </Suspense>
+      );
+    }
+    return null;
+  }, [selectedSectionId, filteredIcons, filteredColors]);
 
   const selectedItems = useMemo(() => {
     let items: typeof transformedComponents = [];
@@ -336,10 +403,11 @@ export function SearchMenu(props: SearchMenuProps) {
           ))}
         </TabList>
         {orderedTabs.map((tab, i) => {
-          const tabIconTag = tab.id === 'react-spectrum' ? [{id: 'icons', name: 'Icons'}] : [];
+          const tabResourcesTags = tab.id === 'react-spectrum' ? resourcesTags : [];
+          const hasAnyTags = tags.length > 0 || tabResourcesTags.length > 0;
           return (
             <TabPanel key={tab.id} id={tab.id}>
-              <Autocomplete filter={selectedSectionId === 'icons' ? iconFilter : undefined}>
+              <Autocomplete filter={getFilterFunction()}>
                 <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
                   <SearchField
                     value={searchValue}
@@ -354,14 +422,14 @@ export function SearchMenu(props: SearchMenuProps) {
                 <CloseButton onClose={onClose} />
 
                 <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
-                  {(tags.length > 0 || tabIconTag.length > 0) && (
+                  {hasAnyTags && (
                     <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
                       <SelectableCollectionContext.Provider value={null}>
                         <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 12})}>
                           {tags.length > 0 && (
                             <TagGroup
                               selectionMode="single"
-                              selectedKeys={selectedSectionId && selectedSectionId !== 'icons' ? [selectedSectionId] : []}
+                              selectedKeys={selectedSectionId && !isResourceSelected ? [selectedSectionId] : []}
                               onSelectionChange={handleSectionSelectionChange}
                               aria-label="Select section"
                               items={tags}>
@@ -372,16 +440,16 @@ export function SearchMenu(props: SearchMenuProps) {
                               )}
                             </TagGroup>
                           )}
-                          {tabIconTag.length > 0 && tags.length > 0 && (
+                          {tabResourcesTags.length > 0 && tags.length > 0 && (
                             <RACSeparator className={divider} />
                           )}
-                          {tabIconTag.length > 0 && (
+                          {tabResourcesTags.length > 0 && (
                             <TagGroup
                               selectionMode="single"
-                              selectedKeys={selectedSectionId === 'icons' ? ['icons'] : []}
-                              onSelectionChange={handleIconSelectionChange}
-                              aria-label="Icons"
-                              items={tabIconTag}>
+                              selectedKeys={getResourceSelectedKeys()}
+                              onSelectionChange={handleResourceSelectionChange}
+                              aria-label="Resources"
+                              items={tabResourcesTags}>
                               {(tag) => (
                                 <Tag key={tag.id} id={tag.id}>
                                   {tag.name}
@@ -393,11 +461,7 @@ export function SearchMenu(props: SearchMenuProps) {
                       </SelectableCollectionContext.Provider>
                     </div>
                   )}
-                  {selectedSectionId === 'icons' ? (
-                    <Suspense fallback={<IconSearchSkeleton />}>
-                      <IconSearchView filteredItems={filteredIcons} />
-                    </Suspense>
-                  ) : (
+                  {renderResourceView() || (
                     <ComponentCardView
                       onAction={() => {
                         setSearchValue('');
