@@ -381,7 +381,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
-    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key}, dragState);
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasAction: states.hasAction}, dragState);
   }
 
   let droppableItem: DroppableItemResult | null = null;

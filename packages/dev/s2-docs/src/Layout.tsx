@@ -9,6 +9,7 @@ import internationalizedFavicon from 'url:../assets/internationalized.ico';
 // @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
 import './anatomy.css';
+import ChevronRightIcon from '@react-spectrum/s2/icons/ChevronRight';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
@@ -18,12 +19,12 @@ import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library'
 import {getTextWidth} from './textWidth';
 import {H2, H3, H4} from './Headings';
 import Header from './Header';
-import {Link} from './Link';
+import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Link, TitleLink} from './Link';
 import {MobileHeader} from './MobileHeader';
 import {PickerItem, Provider} from '@react-spectrum/s2';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
 import {VersionBadge} from './VersionBadge';
 import {VisualExample} from './VisualExample';
@@ -63,6 +64,19 @@ const components = {
   ExampleList
 };
 
+const subPageComponents = (previousPage?: Page) => ({
+  ...components,
+  h1: ({children, ...props}) => (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+        <TitleLink href="./index.html">{previousPage?.exports?.title}</TitleLink>
+        <ChevronRightIcon styles={iconStyle({size: 'M'})} />
+      </div>
+      <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
+    </div>
+  )
+});
+
 function anchorId(children) {
   return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
 }
@@ -72,14 +86,14 @@ const getTitle = (currentPage: Page): string => {
   if (explicitTitle && explicitTitle !== currentPage.tableOfContents?.[0]?.title && explicitTitle !== currentPage.name) {
     return explicitTitle as string;
   }
-  
+
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   const pageTitle = currentPage.tableOfContents?.[0]?.title ?? currentPage.name;
-  
+
   if (currentPage.name === 'index.html' || currentPage.name.endsWith('/index.html')) {
     return library || 'React Spectrum';
   }
-  
+
   return library ? `${pageTitle} | ${library}` : pageTitle;
 };
 
@@ -133,6 +147,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let ogImage = getOgImageUrl(currentPage);
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
+  let isSubpage = currentPage.exports?.isSubpage;
+  let parentPage = pages.find(p => {
+    return p.url === currentPage.url.replace(/\/[^/]+\.html$/, '/index.html');
+  });
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -204,7 +222,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 0 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
+            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 1 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
@@ -243,7 +261,12 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 <article
                   className={articleStyles({isWithToC: hasToC})}>
                   {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {components})}
+                  {React.cloneElement(children, {
+                    components: isSubpage ?
+                      subPageComponents(parentPage) :
+                      components,
+                    pages
+                  })}
                 </article>
               </CodePlatterProvider>
               {hasToC && <aside
@@ -308,4 +331,15 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
       {c.children.length > 0 && renderMobileToc(c.children, seen)}
     </React.Fragment>);
   });
+}
+
+export function Time({date}: {date: string}) {
+  let dateObj = new Date(date);
+  return (
+    <time
+      dateTime={date}
+      className={style({font: 'detail'})}>
+      {dateObj.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+    </time>
+  );
 }

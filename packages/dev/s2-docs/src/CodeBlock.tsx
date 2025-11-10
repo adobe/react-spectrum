@@ -26,21 +26,27 @@ const example = style({
 const standaloneCode = style({
   '--code-padding-start': {
     type: 'paddingStart',
-    value: 32
+    value: {
+      default: 12,
+      lg: 32
+    }
   },
   '--code-padding-end': {
     type: 'paddingEnd',
-    value: 32
+    value: '--code-padding-start'
   },
   padding: '--code-padding-start',
-  marginY: 32,
+  marginY: {
+    default: 32,
+    ':is([data-example-switcher] *)': 0
+  },
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
   font: {
     default: 'code-xs',
     lg: 'code-sm'
   },
-  whiteSpace: 'pre-wrap'
+  overflow: 'auto'
 });
 
 interface CodeBlockProps extends VisualExampleProps {
@@ -50,7 +56,8 @@ interface CodeBlockProps extends VisualExampleProps {
   expanded?: boolean,
   hidden?: boolean,
   hideExampleCode?: boolean,
-  includeAllImports?: boolean
+  includeAllImports?: boolean,
+  showCoachMark?: boolean
 }
 
 export function CodeBlock({render, children, files, expanded, hidden, hideExampleCode, includeAllImports, ...props}: CodeBlockProps) {
@@ -63,7 +70,7 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
   if (!render) {
     return (
       <pre className={standaloneCode}>
-        <Code {...props}>{children}</Code>
+        <Code {...props} styles={style({display: 'block', width: 'fit', minWidth: 'full'})}>{children}</Code>
       </pre>
     );
   }
@@ -87,7 +94,8 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
   let content = hideExampleCode ? null : (
     <CodePlatter
       files={files ? getFiles(files) : undefined}
-      type={props.type}>
+      type={props.type}
+      showCoachMark={props.showCoachMark}>
       {code}
     </CodePlatter>
   );
@@ -98,7 +106,7 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
         component={render}
         align={props.align} />
       <div>
-        {files 
+        {files
           ? <Files files={includeAllImports ? findAllFiles(files) : files} maxLines={expanded ? Infinity : 6}>{content}</Files>
           : content}
       </div>

@@ -3,7 +3,7 @@ import {CodeLink} from './Link';
 import {CodeProps} from './VisualExampleClient';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
 import React, {ReactNode} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const property = style({color: 'indigo-1000'});
 const fn = style({color: 'red-1000'});
@@ -50,10 +50,11 @@ export interface ICodeProps {
   children: string,
   lang?: string,
   hideImports?: boolean,
-  links?: Links
+  links?: Links,
+  styles?: StyleString
 }
- 
-export function Code({children, lang, hideImports = true, links}: ICodeProps) {
+
+export function Code({children, lang, hideImports = true, links, styles}: ICodeProps) {
   if (lang) {
     // @ts-ignore
     let highlighted = highlightHast(children, Language[lang === 'json' ? 'JS' : lang.toUpperCase()]);
@@ -106,11 +107,25 @@ export function Code({children, lang, hideImports = true, links}: ICodeProps) {
         ];
       }
     }
-    
-    return <code>{renderChildren(lineNodes, '0', links)}</code>;
+
+    return <code className={styles} style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>{renderChildren(lineNodes, '0', links)}</code>;
   }
 
-  return <code className={style({font: {default: 'code-xs', lg: 'code-sm'}, backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
+  return (
+    <code
+      className={style({
+        font: {default: 'code-xs', lg: 'code-sm'},
+        backgroundColor: 'layer-1',
+        paddingX: 4,
+        borderWidth: 1,
+        borderColor: 'gray-100',
+        borderStyle: 'solid',
+        borderRadius: 'sm',
+        whiteSpace: 'pre-wrap'
+      })}>
+      {children}
+    </code>
+  );
 }
 
 function lines(node: HastNode) {
@@ -210,7 +225,7 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
     if (node.properties?.className === 'comment' && text(node) === '/* PROPS */') {
       return <CodeProps key={key} indent={indent} />;
     }
-    
+
     // CodeProps includes the indent and newlines in case there are no props to show.
     if (node.tagName === 'div' && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) && React.isValidElement(childArray[1]) && childArray[1].type === CodeProps) {
       children = childArray[1];

@@ -10,5 +10,6 @@
 
   .react-aria-DateInput {
     width: 100%;
+    padding-right: var(--spacing-10);
   }
 }
