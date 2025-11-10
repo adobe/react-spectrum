@@ -1227,8 +1227,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     onCancel?.();
   }, [onCancel]);
 
+  let isMobile = useMediaQuery('(hover: none) and (pointer: coarse)');
   // Can't differentiate between Dialog click outside dismissal and Escape key dismissal
-  let isMobile = !useMediaQuery('(any-pointer: fine)');
   let prevIsOpen = useRef(isOpen);
   useEffect(() => {
     let dialog = dialogRef.current?.UNSAFE_getDOMNode();
