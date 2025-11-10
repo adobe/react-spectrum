@@ -80,11 +80,11 @@ export function Home() {
             <Rems />
           </Feature>
         </Section>
-        <Section title="Interactions"
-          description="Components respond instantly to user input, with smooth animations and transitions that feel natural and without extra code.">
+        <Section title="Motion that makes sense"
+          description="Every interaction — from button presses to drag-and-drop — is polished, fast, and consistent across platforms. ">
           <Feature
             title="Press scaling"
-            description="Description"
+            description="Components respond instantly to user input, with smooth animations and transitions that feel natural and without extra code."
             style={{gridColumn: 'span 2'}}>
             
           </Feature>
@@ -95,16 +95,16 @@ export function Home() {
             
           </Feature>
         </Section>
-        <Section title="Everything you need to build beautiful apps" description="Stuff and things">
+        <Section title="Everything you need to build beautiful apps" description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on brand.">
           <Feature
             title="Icons"
-            description="Description"
+            description="Spectrum icon support for your product. Use the icon search to simplify finding the right icon the right experience."
             style={{gridColumn: 'span 3'}}>
             
           </Feature>
           <Feature
             title="Illustrations"
-            description="Description"
+            description="Rich illustrations that help bring your interface to life. Use the illustration search to find the right illustration for your product."
             style={{gridColumn: 'span 3'}}>
             
           </Feature>
