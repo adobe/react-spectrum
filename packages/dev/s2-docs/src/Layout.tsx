@@ -222,7 +222,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 0 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
+            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 1 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
             pages={pages}
             currentPage={currentPage} />
           <div className={style({display: 'flex', width: 'full'})}>
@@ -387,4 +387,15 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
       {c.children.length > 0 && renderMobileToc(c.children, seen)}
     </React.Fragment>);
   });
+}
+
+export function Time({date}: {date: string}) {
+  let dateObj = new Date(date);
+  return (
+    <time
+      dateTime={date}
+      className={style({font: 'detail'})}>
+      {dateObj.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+    </time>
+  );
 }
