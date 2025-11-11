@@ -1,0 +1,82 @@
+import {Layout} from '../../src/Layout';
+import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
+import {S2Colors} from '../../src/S2Colors';
+import {S2Typography} from '../../src/S2Typography';
+import {StyleMacroProperties} from '../../src/types';
+import {getPropertyDefinitions, getShorthandDefinitions} from '../../src/styleProperties';
+export default Layout;
+
+export const section = 'Components';
+export const tags = ['style', 'macro', 'spectrum', 'custom', 'values', 'reference'];
+export const description = 'Reference table for the style macro';
+
+# Style Macro
+
+The `style` macro supports a constrained set of values per property that conform to Spectrum 2.
+
+## Colors
+
+All Spectrum 2 color tokens are available across color properties (e.g., `backgroundColor`, `color`, `borderColor`).
+`baseColors` consists of the semantic and global colors listed below.
+
+<S2Colors />
+
+<StyleMacroProperties properties={getPropertyDefinitions('color')} />
+
+## Dimensions
+
+Spacing props like `margin` and `padding` accept values on a **4px grid**. These are specified in `px` and get converted to `rem`. In addition to numbers, these named options are available:
+
+- `edge-to-text` – default spacing between the edge of a control and its text. Relative to control height.
+- `pill` – default spacing between the edge of a pill-shaped control and its text. Relative to control height.
+- `text-to-control` – default spacing between text and a control (e.g., label and input). Scales with font size.
+- `text-to-visual` – default spacing between text and a visual element (e.g., icon). Scales with font size.
+
+Size props like `width` and `height` accept arbitrary pixel values. Values are converted to `rem` and multiplied by 1.25x on touch devices to increase hit targets.
+
+<StyleMacroProperties properties={getPropertyDefinitions('dimensions')} />
+
+## Text
+
+Spectrum 2 typography can be applied via the `font` [shorthand](#shorthands), which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+Note that `font` should be applied on a per element basis rather than globally so as to properly conform with Spectrum designs.
+
+```tsx
+<main>
+  <h1 className={style({font: 'heading-xl'})}>Heading</h1>
+  <p className={style({font: 'body'})}>Body</p>
+  <ul className={style({font: 'body-sm', fontWeight: 'bold'})}>
+    <li>List item</li>
+  </ul>
+</main>
+```
+
+Type scales include: UI, Body, Heading, Title, Detail, and Code. Each scale has a default and additional t-shirt sizes (e.g., `ui-sm`, `heading-2xl`, `code-xl`).
+
+<S2Typography />
+
+
+<StyleMacroProperties properties={getPropertyDefinitions('text')} />
+
+
+## Effects
+
+<StyleMacroProperties properties={getPropertyDefinitions('effects')} />
+
+## Layout
+
+<StyleMacroProperties properties={getPropertyDefinitions('layout')} />
+
+## Misc
+
+<StyleMacroProperties properties={getPropertyDefinitions('misc')} />
+
+## Shorthands
+
+Shorthands apply their provided value to commonly grouped properties.
+
+<StyleMacroProperties properties={getShorthandDefinitions('shorthand')} />
+
+## Conditions
+
+<StyleMacroProperties properties={getPropertyDefinitions('conditions')} />
