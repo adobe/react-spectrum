@@ -10,6 +10,7 @@ import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchRes
 import {OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import type {PageProps} from '@parcel/rsc';
 import React, {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {stripMarkdown} from './SearchMenu';
 import {useId} from '@react-aria/utils';
 
 
@@ -326,7 +327,7 @@ function MobileNav({pages, currentPage}: PageProps) {
 
     return filteredPages
       .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -335,7 +336,7 @@ function MobileNav({pages, currentPage}: PageProps) {
     let filteredPages = filterPages(allPages, searchValue);
     return filteredPages
       .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
   };
 
   let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
