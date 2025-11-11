@@ -340,24 +340,25 @@ export function SearchMenu(props: SearchMenuProps) {
           return (
             <TabPanel key={tab.id} id={tab.id}>
               <Autocomplete filter={selectedSectionId === 'icons' ? iconFilter : undefined}>
-                <div className={style({margin: 'auto', width: '[fit-content]', paddingBottom: 4})}>
-                  <SearchField
-                    value={searchValue}
-                    onChange={setSearchValue}
-                    ref={searchRef}
-                    size="L"
-                    aria-label={`Search ${tab.label}`}
-                    UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
-                    styles={style({width: '[500px]'})} />
-                </div>
+                <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
+                  <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
+                    <SearchField
+                      value={searchValue}
+                      onChange={setSearchValue}
+                      ref={searchRef}
+                      size="L"
+                      aria-label={`Search ${tab.label}`}
+                      placeholder={`Search ${tab.label}`}
+                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
+                      styles={style({width: 500})} />
+                  </div>
 
-                <CloseButton onClose={onClose} />
+                  <CloseButton onClose={onClose} />
 
-                <div className={style({height: 'full', overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
                   {(tags.length > 0 || tabIconTag.length > 0) && (
-                    <div className={style({position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'layer-2', paddingY: 8})}>
+                    <div className={style({flexShrink: 0, zIndex: 1, paddingTop: 16})}>
                       <SelectableCollectionContext.Provider value={null}>
-                        <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 12})}>
+                        <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 16})}>
                           {tags.length > 0 && (
                             <TagGroup
                               selectionMode="single"
@@ -399,10 +400,7 @@ export function SearchMenu(props: SearchMenuProps) {
                     </Suspense>
                   ) : (
                     <ComponentCardView
-                      onAction={() => {
-                        setSearchValue('');
-                        onClose();
-                      }}
+                      onAction={onClose}
                       items={selectedItems.map(item => ({
                         id: item.id,
                         name: item.name,
