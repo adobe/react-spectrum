@@ -6,25 +6,25 @@ import { useRef, useState } from "react";
 import { useMove } from "react-aria";
 // @ts-ignore
 import Nubbin from '../../../../../@react-spectrum/s2/ui-icons/S2_MoveHorizontalTableWidget.svg';
-import { ExampleApp } from "./ExampleApp";
+import { AppFrame, ExampleApp } from "./ExampleApp";
 
 export function DarkMode() {
   let containerRef = useRef(null);
   return (
     <div className={style({position: 'relative'})} style={{containerType: 'size', height: 350} as any} ref={containerRef}>
       <Resizable containerRef={containerRef}>
-        <Provider colorScheme="light" background="layer-1" styles={style({padding: 16, paddingBottom: 0, overflow: 'clip', boxSizing: 'border-box', borderStartRadius: 'lg', width: '100cqw', height: '100cqh'})}>
-          <ExampleApp />
+        <Provider colorScheme="light" styles={style({width: '100cqw', height: '100cqh'})}>
+          <AppFrame inert />
         </Provider>
       </Resizable>
-      <Provider colorScheme="dark" background="layer-1" styles={style({padding: 16, paddingBottom: 0, overflow: 'clip', boxSizing: 'border-box', position: 'absolute', inset: 0, borderRadius: 'lg'})}>
-        <ExampleApp />
+      <Provider colorScheme="dark" styles={style({position: 'absolute', inset: 0})}>
+        <AppFrame inert />
       </Provider>
     </div>
   );
 }
 
-function Resizable({children, containerRef}: any) {
+export function Resizable({children, containerRef}: any) {
   let [percent, setPercent] = useState(50);
   let pos = useRef(0);
   let {moveProps} = useMove({
@@ -42,7 +42,7 @@ function Resizable({children, containerRef}: any) {
   return (
     <>
       <div style={{width: percent + '%', overflow: 'clip', position: 'relative', zIndex: 2}}>
-        <div className={style({minWidth: 'max'})}>
+        <div>
           {children}
         </div>
       </div>
@@ -70,7 +70,10 @@ function Resizable({children, containerRef}: any) {
           className={style({
             width: 4,
             height: 'full',
-            backgroundColor: 'pink-700',
+            backgroundColor: {
+              default: 'pink-700',
+              forcedColors: 'Highlight'
+            },
             borderRadius: '[4px]'
           })} />
         <div
@@ -81,10 +84,16 @@ function Resizable({children, containerRef}: any) {
             translateY: '-50%',
             translateX: '-50%',
             scale: 1.5,
-            fill: 'pink-700',
+            fill: {
+              default: 'pink-700',
+              forcedColors: 'Highlight'
+            },
             '--iconPrimary': {
               type: 'fill',
-              value: 'white'
+              value: {
+                default: 'white',
+                forcedColors: 'HighlightText'
+              }
             }
           })}>
           <Nubbin />

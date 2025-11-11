@@ -1,21 +1,46 @@
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
 import { Fragment } from "react/jsx-runtime";
 import { Code } from "../../../src/Code";
 import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
-import { ExampleApp } from "./ExampleApp";
+import { AppFrame, ExampleApp } from "./ExampleApp";
 import { Provider } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
 import { ExampleApp2 } from "./ExampleApp2";
 import { Rems } from "./Rems";
+import { Collapsing } from "./Collapsing";
+import { PressAnimation } from "./Press";
+import { HCM } from "./HCM";
+import Lightbulb from '@react-spectrum/s2/illustrations/gradient/generic2/Lightbulb';
+import Phone from '@react-spectrum/s2/illustrations/gradient/generic2/Phone';
+import Translate from '@react-spectrum/s2/illustrations/gradient/generic2/Translate';
+import Animation from '@react-spectrum/s2/illustrations/gradient/generic2/Animation';
+import Accessibility from '@react-spectrum/s2/illustrations/gradient/generic2/Accessibility';
+import TextIcon from '@react-spectrum/s2/illustrations/gradient/generic2/Text';
+import Interaction from '@react-spectrum/s2/illustrations/gradient/generic2/Interaction';
+import Ruler from '@react-spectrum/s2/illustrations/gradient/generic2/Ruler';
+import Shapes from '@react-spectrum/s2/illustrations/gradient/generic2/Shapes';
+import Color from '@react-spectrum/s2/illustrations/gradient/generic2/Color';
+import CodeBrackets from '@react-spectrum/s2/illustrations/gradient/generic2/CodeBrackets';
+import Cursor from '@react-spectrum/s2/illustrations/gradient/generic2/Cursor';
+import IllustrationIcon from '@react-spectrum/s2/illustrations/gradient/generic2/Illustration';
+import Sparkles from '@react-spectrum/s2/illustrations/gradient/generic2/Sparkles';
+import Server from '@react-spectrum/s2/illustrations/gradient/generic2/Server';
+import SpeedFast from '@react-spectrum/s2/illustrations/gradient/generic2/SpeedFast';
+import VectorDraw from '@react-spectrum/s2/illustrations/gradient/generic2/VectorDraw';
+import Layers from '@react-spectrum/s2/illustrations/gradient/generic2/Layers';
+import { Icons, Illustrations } from "./Icons";
+import { Typography } from "./Typography";
+import { States } from "./States";
 
 const container = style({
-  backgroundColor: 'layer-2',
+  backgroundColor: 'layer-2/80',
   boxShadow: 'elevated',
   borderRadius: 'xl',
   padding: 32,
+  position: 'relative',
   overflow: 'clip'
 });
 
@@ -31,8 +56,10 @@ export function Home() {
         backgroundSize: '100%'
       }}>
       <header className={style({marginX: 'auto', paddingY: 96, maxWidth: 1024})}>
-        <h1 className={style({font: 'heading-3xl', margin: 0, color: 'white'})}>React Spectrum</h1>
-        <div style={{height: 400}}>Hero</div>
+        <h1 className={style({font: 'heading-3xl', marginTop: 0, marginBottom: 48, color: 'white'})}>React Spectrum</h1>
+        <div className={style({height: size(600)})}>
+          <ExampleApp />
+        </div>
       </header>
       <main className={style({marginX: 'auto', paddingX: 40, maxWidth: 1600})}>
         <Section
@@ -41,41 +68,50 @@ export function Home() {
           <Feature
             title="Dark mode"
             description="Deliver effortless dark and light mode support, automatically. No extra styling required."
+            illustration={<Lightbulb />}
             style={{gridColumn: 'span 4'}}>
             <DarkMode />
           </Feature>
           <Feature
             title="Touch friendly"
             description="Components automatically scale adapt and adapt for touch or pointer input, ensuring a smooth experience on any device."
+            illustration={<Interaction />}
             style={{gridColumn: 'span 2'}}>
             <Mobile />
           </Feature>
           <Feature
             title="Global ready by default"
             description="Automatically mirrors component layouts, and formats text for different languages, currencies, dates, and locales."
+            illustration={<Translate />}
             style={{gridColumn: 'span 3'}}>
-            <Provider locale="ar-AE" background="layer-1" styles={style({padding: 16, borderRadius: 'lg', overflow: 'clip', boxSizing: 'border-box', height: 300})}>
-              <ExampleApp />
+            <Provider locale="ar-AE" styles={style({height: 300})}>
+              <AppFrame />
             </Provider>
           </Feature>
           <Feature
             title="Reduce motion options"
             description="Component animations and transitions automatically adjust for users who prefer less motion, keeping your UI comfortable and inclusive."
+            illustration={<Animation />}
             style={{gridColumn: 'span 3'}}>
           </Feature>
           <Feature
             title="Space aware"
             description="TagGroup with collapsing"
+            illustration={<Ruler />}
             style={{gridColumn: 'span 6'}}>
+            <Collapsing />
           </Feature>
           <Feature
             title="High contrast mode"
             description="Automatically adjust to high contrast mode, ensuring a clear and readable experience based on preference."
+            illustration={<Accessibility />}
             style={{gridColumn: 'span 2'}}>
+            <HCM />
           </Feature>
           <Feature
             title="Adaptive font sizes"
             description="Fonts scale autoamtically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
+            illustration={<TextIcon />}
             style={{gridColumn: 'span 4'}}>
             <Rems />
           </Feature>
@@ -85,12 +121,14 @@ export function Home() {
           <Feature
             title="Press scaling"
             description="Components respond instantly to user input, with smooth animations and transitions that feel natural and without extra code."
+            illustration={<Interaction />}
             style={{gridColumn: 'span 2'}}>
-            
+            <PressAnimation />
           </Feature>
           <Feature
             title="Submenus"
             description="Description"
+            illustration={<Cursor />}
             style={{gridColumn: 'span 4'}}>
             
           </Feature>
@@ -99,14 +137,16 @@ export function Home() {
           <Feature
             title="Icons"
             description="Spectrum icon support for your product. Use the icon search to simplify finding the right icon the right experience."
+            illustration={<VectorDraw />}
             style={{gridColumn: 'span 3'}}>
-            
+            <Icons />
           </Feature>
           <Feature
             title="Illustrations"
             description="Rich illustrations that help bring your interface to life. Use the illustration search to find the right illustration for your product."
+            illustration={<IllustrationIcon />}
             style={{gridColumn: 'span 3'}}>
-            
+            <Illustrations />
           </Feature>
         </Section>
         <Section
@@ -116,6 +156,7 @@ export function Home() {
           <Feature
             title="Colors"
             description="Testing"
+            illustration={<Color />}
             style={{gridColumn: 'span 2'}}>
             <Pre><Code lang="ts">{`style({color: 'red-400'})`}</Code></Pre>
             <Colors />
@@ -129,8 +170,14 @@ export function Home() {
           <Feature
             title="Typography"
             description="Testing"
+            illustration={<TextIcon />}
             style={{gridColumn: 'span 2'}}>
-            <div
+            <Typography
+              titleLg={<Code lang="ts">{`style({font: 'title-lg'})`}</Code>}
+              titleSm={<Code lang="ts">{`style({font: 'title-sm'})`}</Code>}
+              detailSm={<Code lang="ts">{`style({font: 'detail-sm'})`}</Code>}
+              body={<Code lang="ts">{`style({font: 'body'})`}</Code>} />
+            {/* <div
               className={style({
                 backgroundColor: 'layer-1',
                 padding: 24,
@@ -150,38 +197,33 @@ export function Home() {
               <p className={style({font: 'detail'})}>Detail</p>
               <pre className={style({font: 'code-sm', textAlign: 'end'})}><Code lang="ts">{`style({font: 'ui'})`}</Code></pre>
               <p className={style({font: 'ui'})}>ui</p>
-            </div>
+            </div> */}
           </Feature>
           <Feature
             title="Object styles"
             description="Testing"
+            illustration={<Shapes />}
             style={{gridColumn: 'span 2'}}>
             <ObjectStyles />
           </Feature>
           <Feature
             title="Responsive design"
             description="Show media/container queries"
+            illustration={<Phone />}
             style={{gridColumn: 'span 3'}}>
             
           </Feature>
           <Feature
-            title="Conditional styles"
+            title="States and variants"
             description="Testing"
+            illustration={<Layers />}
             style={{gridColumn: 'span 3'}}>
-            <Pre><Code lang="tsx">{`import {Checkbox} from 'react-aria-components';
-
-<Checkbox
-  className={style({
-    backgroundColor: {
-      default: 'gray-100',
-      isHovered: 'gray-200',
-      isSelected: 'gray-900'
-    }
-  })} />`}</Code></Pre>
+            <States />
           </Feature>
           <Feature
             title="Reusable utilities"
             description="Macros are just functions, so you can create your own reusable style utilities."
+            illustration={<CodeBrackets />}
             style={{gridColumn: 'span 6'}}>
             <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {flexRow} from './style-utils' with {type: 'macro'};
@@ -198,19 +240,22 @@ const buttonStyle = style({
           <Feature
             title="AI-ready"
             description="MCP server..."
-            style={{gridColumn: 'span 3'}}>
+            illustration={<Sparkles />}
+            style={{gridColumn: 'span 2'}}>
               
           </Feature>
           <Feature
             title="SSR"
             description="and React Server Components"
-            style={{gridColumn: 'span 1'}}>
+            illustration={<Server />}
+            style={{gridColumn: 'span 2'}}>
               
           </Feature>
           <Feature
             title="Small bundle"
             description="CSS?"
-            style={{gridColumn: 'span 1'}}>
+            illustration={<SpeedFast />}
+            style={{gridColumn: 'span 2'}}>
               
           </Feature>
         </Section>
@@ -232,11 +277,18 @@ function Section({title, description, children}: any) {
   );
 }
 
-function Feature({title, description, children, style: styleProp}: any) {
+function Feature({title, description, illustration, children, style: styleProp}: any) {
   return (
     <section className={container} style={styleProp}>
-      <h3 className={style({font: 'heading', marginY: 0})}>{title}</h3>
-      <p className={style({font: 'body'})}>{description}</p>
+      <div className={style({display: 'flex', columnGap: 12, alignItems: 'start', marginBottom: 12})}>
+        <div style={{marginTop: -12, marginInlineStart: -12}}>
+          {illustration}
+        </div>
+        <div>
+          <h3 className={style({font: 'heading', marginY: 0})}>{title}</h3>
+          <p className={style({font: 'body-lg', marginY: 0})}>{description}</p>
+        </div>
+      </div>
       {children}
     </section>
   );
@@ -259,7 +311,17 @@ function Colors() {
   let pink = getColorScale('pink');
 
   let swatches = [red, orange, yellow, celery, green, seafoam, turquoise, cyan, blue, indigo, purple, fuchsia, magenta, pink].map((scale, i) => {
-    return <Fragment key={i}>{scale.map(([name, className]) => <div key={String(name)} className={String(className)} />)}</Fragment>
+    return (
+      <Fragment key={i}>
+        {scale.map(([name, className]) => (
+          <div
+            key={String(name)}
+            className={String(className)}
+            role="img"
+            aria-label={name as string} />
+        ))}
+      </Fragment>
+    )
   });
 
   return (
