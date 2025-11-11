@@ -48,6 +48,7 @@ export function SearchTagGroups({
           {sectionTags.length > 0 && (
             <div className={style({flexShrink: 0})}>
               <TagGroup
+                escapeKeyBehavior="none"
                 selectionMode="single"
                 selectedKeys={selectedTagId && !isResourceSelected ? [selectedTagId] : []}
                 onSelectionChange={onSectionSelectionChange}
@@ -68,6 +69,7 @@ export function SearchTagGroups({
           {resourceTags.length > 0 && (
             <div className={style({flexShrink: 0})}>
               <TagGroup
+                escapeKeyBehavior="none"
                 selectionMode="single"
                 selectedKeys={isResourceSelected && selectedTagId ? [selectedTagId] : []}
                 onSelectionChange={onResourceSelectionChange}
