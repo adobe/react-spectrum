@@ -165,6 +165,7 @@ const fieldGroupStyles = style({
   transition: 'default',
   borderColor: {
     default: baseColor('gray-300'),
+    forcedColors: 'ButtonBorder',
     isInvalid: baseColor('negative'),
     isFocusWithin: {
       default: 'gray-900',
@@ -176,10 +177,17 @@ const fieldGroupStyles = style({
       forcedColors: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25',
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: 'Field'
+  },
   color: {
     default: baseColor('neutral'),
-    isDisabled: 'disabled'
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   cursor: {
     default: 'text',

@@ -78,6 +78,7 @@ const slider = style({
   },
   color: {
     default: 'neutral-subdued',
+    forcedColors: 'ButtonText',
     isDisabled: 'disabled'
   },
   columnGap: {
@@ -250,10 +251,14 @@ export let thumb = style<SliderThumbRenderProps & {size: 'S' | 'M' | 'L' | 'XL',
     isDragging: 'gray-900',
     isDisabled: 'disabled',
     forcedColors: {
+      default: 'ButtonBorder',
       isDisabled: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25'
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: 'ButtonFace'
+  }
 });
 
 const trackStyling = {

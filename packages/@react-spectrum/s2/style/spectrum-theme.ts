@@ -63,16 +63,16 @@ const baseColors = {
   ...generateOverlayColorScale(),
 
   // High contrast mode.
-  Background: 'Background',
-  ButtonBorder: 'ButtonBorder',
-  ButtonFace: 'ButtonFace',
-  ButtonText: 'ButtonText',
-  Field: 'Field',
-  Highlight: 'Highlight',
-  HighlightText: 'HighlightText',
-  GrayText: 'GrayText',
+  Background: 'var(--hcm-background, Background)',
+  ButtonBorder: 'var(--hcm-buttonborder, ButtonBorder)',
+  ButtonFace: 'var(--hcm-buttonface, ButtonFace)',
+  ButtonText: 'var(--hcm-buttontext, ButtonText)',
+  Field: 'var(--hcm-field, Field)',
+  Highlight: 'var(--hcm-highlight, Highlight)',
+  HighlightText: 'var(--hcm-highlighttext, HighlightText)',
+  GrayText: 'var(--hcm-graytext, GrayText)',
   Mark: 'Mark',
-  LinkText: 'LinkText'
+  LinkText: 'var(--hcm-linktext, LinkText)'
 };
 
 // Resolves a color to its most basic form, following all aliases.
@@ -1030,7 +1030,8 @@ export const style = createTheme({
     }
   },
   conditions: {
-    forcedColors: '@media (forced-colors: active)',
+    // forcedColors: '@media (forced-colors: active)',
+    forcedColors: '@container style(--hcm: active)',
     // This detects touch primary devices as best as we can.
     // Ideally we'd use (pointer: course) but browser/device support is inconsistent.
     // Samsung Android devices claim to be mice at the hardware/OS level: (any-pointer: fine), (any-hover: hover), (hover: hover), and nothing for pointer.
