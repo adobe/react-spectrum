@@ -20,7 +20,8 @@ interface ComponentCardGridProps {
   size?: 'S' | 'M' | 'L',
   onAction?: (key: Key) => void,
   styles?: any,
-  renderEmptyState?: () => React.ReactNode
+  renderEmptyState?: () => React.ReactNode,
+  date?: string
 }
 
 export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAction, styles, renderEmptyState}: ComponentCardGridProps) {

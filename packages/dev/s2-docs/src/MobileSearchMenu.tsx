@@ -305,6 +305,15 @@ function MobileNav({pages, currentPage}: PageProps) {
     return matchedPages.sort((a, b) => {
       let aNameMatch = title(a).toLowerCase().startsWith(searchLower);
       let bNameMatch = title(b).toLowerCase().startsWith(searchLower);
+      if (a.date && b.date) {
+        let aDate = new Date(a.date);
+        let bDate = new Date(b.date);
+        return bDate.getTime() - aDate.getTime();
+      } else if (a.date && !b.date) {
+        return 1;
+      } else if (!a.date && b.date) {
+        return -1;
+      }
 
       if (aNameMatch && !bNameMatch) {
         return -1;
@@ -325,8 +334,10 @@ function MobileNav({pages, currentPage}: PageProps) {
     let filteredPages = filterPages(pages, searchValue);
 
     return filteredPages
-      .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
+      .sort((a, b) => {
+        return title(a).localeCompare(title(b));
+      })
+      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description, date: page.exports?.date}));
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -334,7 +345,21 @@ function MobileNav({pages, currentPage}: PageProps) {
     let allPages = Array.from(librarySections.values()).flat();
     let filteredPages = filterPages(allPages, searchValue);
     return filteredPages
-      .sort((a, b) => title(a).localeCompare(title(b)))
+      .sort((a, b) => {
+        console.log('getAllContent');
+        console.log('a', a);
+        console.log('b', b);
+        if (a.date && b.date) {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          return bDate.getTime() - aDate.getTime();
+        } else if (a.date && !b.date) {
+          return 1;
+        } else if (!a.date && b.date) {
+          return -1;
+        }
+        return title(a).localeCompare(title(b));
+      })
       .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
   };
 
@@ -352,8 +377,20 @@ function MobileNav({pages, currentPage}: PageProps) {
     // Sort to show "Introduction" first when search is empty
     if (searchValue.trim().length === 0) {
       items = [...items].sort((a, b) => {
+        console.log('getItemsForSelection');
+        console.log('a', a);
+        console.log('b', b);
         const aIsIntro = a.name === 'Introduction';
         const bIsIntro = b.name === 'Introduction';
+        if (a.date && b.date) {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          return bDate.getTime() - aDate.getTime();
+        } else if (a.date && !b.date) {
+          return 1;
+        } else if (!a.date && b.date) {
+          return -1;
+        }
 
         if (aIsIntro && !bIsIntro) {
           return -1;
