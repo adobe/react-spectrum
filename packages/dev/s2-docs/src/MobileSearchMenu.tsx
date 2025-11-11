@@ -377,6 +377,16 @@ function MobileNav({pages, currentPage}: PageProps) {
         const aIsIntro = a.name === 'Introduction';
         const bIsIntro = b.name === 'Introduction';
 
+        if (a.date && b.date) {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          return bDate.getTime() - aDate.getTime();
+        } else if (a.date && !b.date) {
+          return 1;
+        } else if (!a.date && b.date) {
+          return -1;
+        }
+
         if (aIsIntro && !bIsIntro) {
           return -1;
         }
