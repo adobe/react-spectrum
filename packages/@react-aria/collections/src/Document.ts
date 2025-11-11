@@ -431,6 +431,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     return true;
   }
 
+  setSSR(value: boolean): void {
+    this.isSSR = value;
+  }
+
   createElement(type: string): ElementNode<T> {
     return new ElementNode(type, this);
   }

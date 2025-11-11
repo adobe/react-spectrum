@@ -47,9 +47,16 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
 
   // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
   // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
+  return (
+    <CollectionBuilderInner createCollection={props.createCollection} content={props.content}>
+      {props.children}
+    </CollectionBuilderInner>
+  );
+}
 
-  // This is fine. CollectionDocumentContext never changes after mounting.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+function CollectionBuilderInner(props) {
+  // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
+  // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
   let {collection, document} = useCollectionDocument(props.createCollection);
   return (
     <>
@@ -80,7 +87,6 @@ function useSyncExternalStoreFallback<C>(subscribe: (onStoreChange: () => void) 
   // This is read immediately inside the wrapper, which also runs during render.
   // We just need a ref to avoid invalidating the callback itself, which
   // would cause React to re-run the callback more than necessary.
-  // eslint-disable-next-line rulesdir/pure-render
   isSSRRef.current = isSSR;
 
   let getSnapshotWrapper = useCallback(() => {
@@ -109,7 +115,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
     return collection;
   }, [document]);
   let getServerSnapshot = useCallback(() => {
-    document.isSSR = true;
+    document.setSSR(true);
     return document.getCollection();
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -132,8 +138,9 @@ function createCollectionNodeClass(type: string): CollectionNodeClass<any> {
 
 function useSSRCollectionNode<T extends Element>(CollectionNodeClass: CollectionNodeClass<T> | string, props: object, ref: ForwardedRef<T>, rendered?: any, children?: ReactNode, render?: (node: Node<any>) => ReactElement) {
   // To prevent breaking change, if CollectionNodeClass is a string, create a CollectionNodeClass using the string as the type
-  if (typeof CollectionNodeClass === 'string') {
-    CollectionNodeClass = createCollectionNodeClass(CollectionNodeClass);
+  let CollectionNodeClassLocal = CollectionNodeClass;
+  if (typeof CollectionNodeClassLocal === 'string') {
+    CollectionNodeClassLocal = createCollectionNodeClass(CollectionNodeClassLocal);
   }
 
   // During SSR, portals are not supported, so the collection children will be wrapped in an SSRContext.
@@ -142,15 +149,15 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   // collection by the time we need to use the collection to render to the real DOM.
   // After hydration, we switch to client rendering using the portal.
   let itemRef = useCallback((element: ElementNode<any> | null) => {
-    element?.setProps(props, ref, CollectionNodeClass, rendered, render);
-  }, [props, ref, rendered, render, CollectionNodeClass]);
+    element?.setProps(props, ref, CollectionNodeClassLocal, rendered, render);
+  }, [props, ref, rendered, render, CollectionNodeClassLocal]);
   let parentNode = useContext(SSRContext);
   if (parentNode) {
     // Guard against double rendering in strict mode.
     let element = parentNode.ownerDocument.nodesByProps.get(props);
     if (!element) {
-      element = parentNode.ownerDocument.createElement(CollectionNodeClass.type);
-      element.setProps(props, ref, CollectionNodeClass, rendered, render);
+      element = parentNode.ownerDocument.createElement(CollectionNodeClassLocal.type);
+      element.setProps(props, ref, CollectionNodeClassLocal, rendered, render);
       parentNode.appendChild(element);
       parentNode.ownerDocument.updateCollection();
       parentNode.ownerDocument.nodesByProps.set(props, element);
@@ -162,7 +169,7 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   }
 
   // @ts-ignore
-  return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
+  return <CollectionNodeClassLocal.type ref={itemRef}>{children}</CollectionNodeClassLocal.type>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

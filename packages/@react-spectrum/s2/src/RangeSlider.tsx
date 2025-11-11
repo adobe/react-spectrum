@@ -48,18 +48,18 @@ export const RangeSliderContext = createContext<ContextValue<Partial<RangeSlider
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
  */
-export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, outerRef: FocusableRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
+  let [propsWithContext, ref] = useSpectrumContextProps(props, outerRef, RangeSliderContext);
   let formContext = useContext(FormContext);
-  props = useFormProps(props);
+  let allProps = useFormProps(propsWithContext);
   let {
     labelPosition = 'top',
     size = 'M',
     isEmphasized,
     trackStyle = 'thin',
     thumbStyle = 'default'
-  } = props;
+  } = allProps;
   let lowerThumbRef = useRef(null);
   let upperThumbRef = useRef(null);
   let inputRef = useRef(null); // TODO: need to pass inputRef to SliderThumb when we release the next version of RAC 1.3.0
@@ -68,20 +68,20 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
   let {direction} = useLocale();
   let cssDirection = direction === 'rtl' ? 'right' : 'left';
   let defaultThumbValues: number[] | undefined = undefined;
-  if (props.defaultValue != null) {
-    defaultThumbValues = [props.defaultValue.start, props.defaultValue.end];
-  } else if (props.value == null) {
+  if (allProps.defaultValue != null) {
+    defaultThumbValues = [allProps.defaultValue.start, allProps.defaultValue.end];
+  } else if (allProps.value == null) {
     // make sure that useSliderState knows we have two handles
-    defaultThumbValues = [props.minValue ?? 0, props.maxValue ?? 100];
+    defaultThumbValues = [allProps.minValue ?? 0, allProps.maxValue ?? 100];
   }
 
   return (
     <SliderBase
-      {...props}
-      value={props.value ? [props.value.start, props.value.end] : undefined}
+      {...allProps}
+      value={allProps.value ? [allProps.value.start, allProps.value.end] : undefined}
       defaultValue={defaultThumbValues}
-      onChange={v => props.onChange?.({start: v[0], end: v[1]})}
-      onChangeEnd={v => props.onChangeEnd?.({start: v[0], end: v[1]})}
+      onChange={v => allProps.onChange?.({start: v[0], end: v[1]})}
+      onChangeEnd={v => allProps.onChangeEnd?.({start: v[0], end: v[1]})}
       sliderRef={domRef}>
       <SliderTrack
         className={track({size, labelPosition, isInForm: !!formContext})}>
@@ -97,8 +97,8 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
             <SliderThumb
               className={thumbContainer}
               index={0}
-              name={props.startName}
-              form={props.form}
+              name={allProps.startName}
+              form={allProps.form}
               aria-label={stringFormatter.format('slider.minimum')}
               ref={lowerThumbRef}
               style={(renderProps) => pressScale(lowerThumbRef, {
@@ -119,8 +119,8 @@ export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: 
             <SliderThumb
               className={thumbContainer}
               index={1}
-              name={props.endName}
-              form={props.form}
+              name={allProps.endName}
+              form={allProps.form}
               aria-label={stringFormatter.format('slider.maximum')}
               ref={upperThumbRef}
               style={(renderProps) => pressScale(upperThumbRef, {

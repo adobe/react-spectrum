@@ -626,9 +626,9 @@ describe('DateRangePicker', function () {
         } else {
           let localTime = today(getLocalTimeZone());
           expect(onChange).toHaveBeenCalledTimes(1);
-           
+
           expectPlaceholder(startDate, `${localTime.month}/1/${localTime.year}, 12:00 AM`);
-           
+
           expectPlaceholder(endDate, `${localTime.month}/2/${localTime.year}, 12:00 AM`);
         }
 
@@ -1528,7 +1528,7 @@ describe('DateRangePicker', function () {
       it('resets to defaultValue when submitting form action', async () => {
         function Test() {
           const [value, formAction] = React.useActionState(() => ({start: new CalendarDate(2025, 2, 3), end: new CalendarDate(2025, 4, 8)}), {start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
-          
+
           return (
             <form action={formAction}>
               <DateRangePicker startName="start" endName="end" label="Value" defaultValue={value} />
@@ -1536,13 +1536,13 @@ describe('DateRangePicker', function () {
             </form>
           );
         }
-  
+
         let {getByTestId} = render(<Test />);
         let start = document.querySelector('input[name=start]');
         let end = document.querySelector('input[name=end]');
         expect(start).toHaveValue('2020-02-03');
         expect(end).toHaveValue('2022-04-08');
-  
+
         let button = getByTestId('submit');
         await user.click(button);
         expect(start).toHaveValue('2025-02-03');

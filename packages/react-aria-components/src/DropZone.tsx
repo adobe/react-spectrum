@@ -68,27 +68,27 @@ export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDiv
 /**
  * A drop zone is an area into which one or multiple objects can be dragged and dropped.
  */
-export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
+export const DropZone = forwardRef(function DropZone(props: DropZoneProps, outerRef: ForwardedRef<HTMLDivElement>) {
   let {isDisabled = false} = props;
-  [props, ref] = useContextProps(props, ref, DropZoneContext);
+  let [allProps, ref] = useContextProps(props, outerRef, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
+  let {dropProps, dropButtonProps, isDropTarget} = useDrop({...allProps, ref: buttonRef, hasDropButton: true});
   let {buttonProps} = useButton(dropButtonProps || {}, buttonRef);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover(allProps);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
   let textId = useSlotId();
-  let ariaLabel = props['aria-label'] || stringFormatter.format('dropzoneLabel');
-  let messageId = props['aria-labelledby'];
+  let ariaLabel = allProps['aria-label'] || stringFormatter.format('dropzoneLabel');
+  let messageId = allProps['aria-labelledby'];
   let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
 
   let {clipboardProps} = useClipboard({
     isDisabled,
-    onPaste: (items) => props.onDrop?.({
+    onPaste: (items) => allProps.onDrop?.({
       type: 'drop',
       items,
       x: 0,
@@ -98,11 +98,11 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
   });
 
   let renderProps = useRenderProps({
-    ...props,
+    ...allProps,
     values: {isHovered, isFocused, isFocusVisible, isDropTarget, isDisabled},
     defaultClassName: 'react-aria-DropZone'
   });
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(allProps, {global: true});
   delete DOMProps.id;
 
   return (
@@ -113,7 +113,7 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
       {/* eslint-disable-next-line */}
       <div
         {...mergeProps(DOMProps, renderProps, dropProps, hoverProps)}
-        slot={props.slot || undefined}
+        slot={allProps.slot || undefined}
         ref={dropzoneRef}
         onClick={(e) => {
           let target = e.target as HTMLElement | null;
