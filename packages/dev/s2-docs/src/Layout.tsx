@@ -309,6 +309,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                             components,
                           pages
                         })}
+                        {currentPage.exports?.relatedPages && (
+                          <MobileRelatedPages pages={currentPage.exports.relatedPages} />
+                        )}
                       </article>
                     </NavigationSuspense>
                   </CodePlatterProvider>
@@ -345,6 +348,34 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   );
 }
 
+function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+  const P = components.p;
+  const Li = components.li;
+  const Ul = components.ul;
+
+  return (
+    <div
+      className={style({
+        display: {
+          default: 'block',
+          lg: 'none'
+        }
+      })}>
+      <H2>Related pages</H2>
+      <Ul>
+        {pages.map((page, i) => (
+          <Li key={i}>
+            <P>
+              <Link href={page.url}>
+                {page.title}
+              </Link>
+            </P>
+          </Li>
+        ))}
+      </Ul>
+    </div>
+  );
+}
 export function Time({date}: {date: string}) {
   let dateObj = new Date(date);
   return (

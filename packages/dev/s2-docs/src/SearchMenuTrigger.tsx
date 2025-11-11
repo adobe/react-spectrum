@@ -2,6 +2,7 @@
 
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {getLibraryFromPage, getLibraryLabel} from './library';
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
 import Search from '@react-spectrum/s2/icons/Search';
@@ -138,7 +139,8 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         className={({isHovered, isFocusVisible}) => style({
           height: 40,
           boxSizing: 'border-box',
-          paddingX: 'edge-to-text',
+          paddingStart: 'pill',
+          paddingEnd: 8,
           fontSize: 'ui-lg',
           borderRadius: 'full',
           borderWidth: 2,
@@ -177,6 +179,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             '--iconPrimary': {type: 'fill', value: 'currentColor'},
             flexShrink: 0
           }))} />
+        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(props.currentPage))}</span>
         <kbd
           className={style({
             marginStart: 'auto',

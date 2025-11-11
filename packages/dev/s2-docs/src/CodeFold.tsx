@@ -43,7 +43,7 @@ const more = style({
   height: 16,
   display: 'inline-flex',
   alignItems: 'center',
-  verticalAlign: 'top',
+  verticalAlign: 'middle',
   userSelect: 'none',
   '--iconPrimary': {
     type: 'fill',
