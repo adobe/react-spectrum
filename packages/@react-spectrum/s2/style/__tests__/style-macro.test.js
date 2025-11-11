@@ -319,17 +319,17 @@ describe('style-macro', () => {
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a, _.b;
 
-@layer _.b.l {
-  @media (forced-colors: active) {
-    .plb12 {
-      color: ButtonText;
+@layer _.b.OVIhfc {
+  @container style(--hcm: active) {
+    .pOVIhfc6LxY912 {
+      color: var(--hcm-buttontext, ButtonText);
     }
   }
 
 
-  @media (forced-colors: active) {
-    .ple12 {
-      color: HighlightText;
+  @container style(--hcm: active) {
+    .pOVIhfcgp5Dcd12 {
+      color: var(--hcm-highlighttext, HighlightText);
     }
   }
 }
@@ -337,8 +337,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb12"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12"');
+    expect(js({})).toMatchInlineSnapshot('"  pOVIhfc6LxY912"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  pOVIhfcgp5Dcd12"');
   });
 
   it('should expand shorthand properties to longhands', () => {
