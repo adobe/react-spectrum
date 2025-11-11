@@ -360,7 +360,7 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
 
   let domProps = isSelected
     ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
-    : renderProps;
+    : mergeProps(DOMProps, renderProps);
 
   return (
     <div
