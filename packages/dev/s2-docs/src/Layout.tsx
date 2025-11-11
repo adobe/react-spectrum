@@ -267,6 +267,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                       components,
                     pages
                   })}
+                  {currentPage.exports?.relatedPages && (
+                    <MobileRelatedPages pages={currentPage.exports.relatedPages} />
+                  )}
                 </article>
               </CodePlatterProvider>
               {hasToC && <aside
@@ -285,6 +288,9 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 })}>
                 <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
                 <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
+                {currentPage.exports?.relatedPages && (
+                  <RelatedPages pages={currentPage.exports.relatedPages} />
+                )}
               </aside>}
             </main>
           </div>
@@ -309,10 +315,60 @@ function Toc({toc}) {
   );
 }
 
+function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+  return (
+    <div className={style({paddingTop: 24})}>
+      <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Related pages</div>
+      <OnPageNav>
+        <SideNav>
+          {pages.map((page, i) => (
+            <SideNavItem key={i}>
+              <SideNavLink href={page.url}>{page.title}</SideNavLink>
+            </SideNavItem>
+          ))}
+        </SideNav>
+      </OnPageNav>
+    </div>
+  );
+}
+
+function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+  const P = components.p;
+  const Li = components.li;
+  const Ul = components.ul;
+
+  return (
+    <div
+      className={style({
+        display: {
+          default: 'block',
+          lg: 'none'
+        }
+      })}>
+      <H2>Related pages</H2>
+      <Ul>
+        {pages.map((page, i) => (
+          <Li key={i}>
+            <P>
+              <Link href={page.url}>
+                {page.title}
+              </Link>
+            </P>
+          </Li>
+        ))}
+      </Ul>
+    </div>
+  );
+}
+
 function MobileToc({toc, currentPage}) {
+  let relatedPages = currentPage.exports?.relatedPages;
   return (
     <MobileOnPageNav currentPage={currentPage}>
       {renderMobileToc(toc)}
+      {relatedPages && relatedPages.map((page, i) => (
+        <PickerItem key={`related-${i}`} id={page.url} href={page.url}>{page.title}</PickerItem>
+      ))}
     </MobileOnPageNav>
   );
 }
