@@ -293,6 +293,10 @@ function Nav({currentPageName, pages}) {
       if (currentDir === 'react-aria' && pageDir === 'react-stately') {
         return !INDEX_RE.test(p.name);
       }
+      // include react aria hooks under react stately
+      if (currentDir === 'react-stately' && pageDir === 'react-aria') {
+        return !INDEX_RE.test(p.name);
+      }
       return currentDir === pageDir && !INDEX_RE.test(p.name);
     }
 
@@ -391,7 +395,7 @@ function Nav({currentPageName, pages}) {
   };
 
   let sections = [];
-  if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
+  if ((currentPageName.startsWith('react-aria') || currentPageName.startsWith('react-stately')) && ENABLE_PAGE_TYPES) {
     let statelyPages = {};
     let ariaOtherPages = {};
 
@@ -400,7 +404,7 @@ function Nav({currentPageName, pages}) {
       let categoryPages = pagesByType.other[category];
 
       let statelyPagesInCategory = categoryPages.filter(p => p.name.startsWith('react-stately/'));
-      let ariaPagesInCategory = categoryPages.filter(p => !p.name.startsWith('react-stately/'));
+      let ariaPagesInCategory = categoryPages.filter(p => p.name.startsWith('react-aria/'));
 
       if (statelyPagesInCategory.length > 0) {
         statelyPages[category] = statelyPagesInCategory;
@@ -409,14 +413,16 @@ function Nav({currentPageName, pages}) {
         ariaOtherPages[category] = ariaPagesInCategory;
       }
     }
-    // we only want the hooks for now, so get rid of the top level ones and non component ones
+    // we only want the component hooks for now, so get rid of the top level pages and non component hooks
     // eslint-disable-next-line no-unused-vars
-    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = ariaOtherPages;
-    hooks = {...hooks, ...pagesByType.hook};
+    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...ariaHooks} = ariaOtherPages;
+    ariaHooks = {...ariaHooks, ...pagesByType.hook};
+
+    // same sidebar structure for both react-aria and react-stately, aria first then stately
     sections.push({
-      title: 'Hooks',
-      pages: hooks,
-      isActive: isActive(hooks)
+      title: 'React Aria',
+      pages: ariaHooks,
+      isActive: isActive(ariaHooks)
     });
     if (Object.keys(statelyPages).length > 0) {
       sections.push({
