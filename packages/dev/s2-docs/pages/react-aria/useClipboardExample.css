@@ -1,4 +1,4 @@
-[role=textbox] {
+.copy, .paste {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -10,13 +10,13 @@
   color: var(--color-white);
 }
 
-[role=textbox]:focus {
+.copy:focus, .paste:focus {
   outline: none;
   border-color: var(--focus-ring-color);
   box-shadow: 0 0 0 1px var(--focus-ring-color);
 }
 
-[role=textbox] kbd {
+.copy kbd, .paste kbd {
   display: inline-block;
   margin-left: 10px;
   padding: 0 4px;

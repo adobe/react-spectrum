@@ -10,8 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '../../src/Layout';
 export default Layout;
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
+
 export const section = 'Interactions';
 
 # useClipboard
@@ -46,7 +48,7 @@ function Copyable() {
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} className="copy"{...clipboardProps}>
       Hello world
       <kbd>⌘C</kbd>
     </div>
@@ -69,7 +71,7 @@ function Pasteable() {
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role="textbox" tabIndex={0} className="paste" {...clipboardProps}>
       {pasted || 'Paste here'}
       <kbd>⌘V</kbd>
     </div>
@@ -415,3 +417,11 @@ function Pasteable() {
 ## API
 
 <FunctionAPI function={docs.exports.useClipboard} links={docs.links} />
+
+### ClipboardProps
+
+<InterfaceType {...docs.exports.ClipboardProps} />
+
+### ClipboardResult
+
+<InterfaceType {...docs.exports.ClipboardResult} />
