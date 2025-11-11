@@ -10,7 +10,9 @@ governing permissions and limitations under the License. */}
 import {Layout} from '../../src/Layout';
 export default Layout;
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/i18n';
+import typeDocs from 'docs:@internationalized/number';
 
 export const section = 'Utilities';
 export const description = 'Implementing collections in React Aria';
@@ -59,3 +61,7 @@ function Currency({value, currency}) {
 ## API
 
 <FunctionAPI function={docs.exports.useNumberFormatter} links={docs.links} />
+
+### NumberFormatOptions
+
+<InterfaceType {...typeDocs.exports.NumberFormatOptions} />
