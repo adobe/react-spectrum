@@ -1,15 +1,25 @@
 'use client';
 
-import {ActionButton, Content, Heading, IllustratedMessage, SearchField} from '@react-spectrum/s2';
+import {ActionButton, SearchField} from '@react-spectrum/s2';
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
-import {filterAndSortSearchItems} from './searchUtils';
+import {
+  type ComponentItem,
+  createSearchOptions,
+  filterAndSortSearchItems,
+  getOrderedLibraries,
+  getPageTitle,
+  getResourceTags,
+  SearchEmptyState,
+  sortItemsForDisplay,
+  useFilteredIcons,
+  useSearchTagSelection,
+  useSectionTagsForDisplay
+} from './searchUtils';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
-import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
+import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
-// eslint-disable-next-line monorepo/no-internal-import
-import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 // @ts-ignore
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
@@ -63,15 +73,7 @@ export function SearchMenu(props: SearchMenuProps) {
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
   let [searchValue, setSearchValue] = useState(props.initialSearchValue);
 
-  const orderedTabs = useMemo(() => {
-    const allTabs = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, ...TAB_DEFS[id]}));
-    const currentTabIndex = allTabs.findIndex(tab => tab.id === currentLibrary);
-    if (currentTabIndex > 0) {
-      const currentTab = allTabs.splice(currentTabIndex, 1)[0];
-      allTabs.unshift(currentTab);
-    }
-    return allTabs;
-  }, [currentLibrary]);
+  const orderedTabs = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
 
   const searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
 
@@ -94,7 +96,7 @@ export function SearchMenu(props: SearchMenuProps) {
       .filter(page => page.url && page.url.endsWith('.html') && getLibraryFromUrl(page.url) === selectedLibrary && !page.exports?.hideFromSearch)
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
-        const title = page.tableOfContents?.[0]?.title || name;
+        const title = getPageTitle(page);
         const section: string = (page.exports?.section as string) || 'Components';
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
         const description: string = page.exports?.description;
@@ -131,43 +133,18 @@ export function SearchMenu(props: SearchMenuProps) {
     });
   }, [transformedComponents]);
 
-  const sectionTags = useMemo(() => sections, [sections]);
-  const iconTag = useMemo(() => {
-    if (selectedLibrary === 'react-spectrum') {
-      return [{id: 'icons', name: 'Icons'}];
-    }
-    return [];
-  }, [selectedLibrary]);
+  const sectionTags = useMemo(() => sections.map(s => ({id: s.id, name: s.name})), [sections]);
+  const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
 
-  const [selectedTagId, setSelectedTagId] = useState<string>(() => currentPage.exports?.section?.toLowerCase() || 'components');
-  const prevSearchWasEmptyRef = useRef<boolean>(true);
+  const [selectedTagId, setSelectedTagId] = useSearchTagSelection(
+    searchValue,
+    sectionTags,
+    resourceTags,
+    currentPage.exports?.section?.toLowerCase() || 'components'
+  );
 
+  const filteredIcons = useFilteredIcons(searchValue);
   const iconFilter = useIconFilter();
-
-  const filteredIcons = useMemo(() => {
-    if (!searchValue.trim()) {
-      return iconList;
-    }
-    return iconList.filter(item => iconFilter(item.id, searchValue));
-  }, [searchValue, iconFilter]);
-
-  // Ensure selected tag is valid for the current library
-  const baseSectionIds = sectionTags.map(s => s.id);
-  const baseIconIds = iconTag.map(t => t.id);
-  const allBaseIds = [...baseSectionIds, ...baseIconIds];
-  const sectionIds = searchValue.trim().length > 0 && selectedTagId !== 'icons' ? ['all', ...allBaseIds] : allBaseIds;
-  if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
-    setSelectedTagId(sectionIds[0] || 'components');
-  }
-
-  // When search starts, auto-select the All tag (unless Icons is selected).
-  useEffect(() => {
-    const isEmpty = searchValue.trim().length === 0;
-    if (prevSearchWasEmptyRef.current && !isEmpty && selectedTagId !== 'icons') {
-      setSelectedTagId('all');
-    }
-    prevSearchWasEmptyRef.current = isEmpty;
-  }, [searchValue, selectedTagId]);
 
   let filteredComponents = useMemo(() => {
     if (!searchValue) {
@@ -176,15 +153,7 @@ export function SearchMenu(props: SearchMenuProps) {
 
     const allItems = sections.flatMap(section => section.children);
 
-    const sortedItems = filterAndSortSearchItems(allItems, searchValue, {
-      getName: (item) => item.name,
-      getTags: (item) => item.tags,
-      getDate: (item) => item.date,
-      shouldUseDateSort: (item) => {
-        const section = item.section;
-        return section === 'Blog' || section === 'Releases';
-      }
-    });
+    const sortedItems = filterAndSortSearchItems(allItems, searchValue, createSearchOptions<ComponentItem>());
 
     const resultsBySection = new Map<string, typeof transformedComponents>();
 
@@ -204,13 +173,12 @@ export function SearchMenu(props: SearchMenuProps) {
       .filter(section => section.children.length > 0);
   }, [sections, searchValue]);
 
-  const sectionTagsForDisplay = useMemo(() => {
-    if (searchValue.trim().length > 0 && selectedTagId !== 'icons') {
-      // When searching, prepend an All tag (unless Icons is selected)
-      return [{id: 'all', name: 'All'}, ...sectionTags];
-    }
-    return sectionTags;
-  }, [searchValue, sectionTags, selectedTagId]);
+  const sectionTagsForDisplay = useSectionTagsForDisplay(
+    sections,
+    searchValue,
+    selectedTagId,
+    resourceTags.map(t => t.id)
+  );
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
     if (searchValue) {
@@ -232,14 +200,14 @@ export function SearchMenu(props: SearchMenuProps) {
     if (firstKey) {
       setSelectedTagId(firstKey);
     }
-  }, []);
+  }, [setSelectedTagId]);
 
   const handleIconSelectionChange = React.useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
     if (firstKey) {
       setSelectedTagId(firstKey);
     }
-  }, []);
+  }, [setSelectedTagId]);
 
   const selectedItems = useMemo(() => {
     let items: typeof transformedComponents = [];
@@ -249,31 +217,7 @@ export function SearchMenu(props: SearchMenuProps) {
       items = (filteredComponents.find(s => s.id === selectedTagId)?.children) || [];
     }
 
-    // Sort to show "Introduction" first when search is empty
-    if (searchValue.trim().length === 0) {
-      items = [...items].sort((a, b) => {
-        const aIsIntro = a.name === 'Introduction';
-        const bIsIntro = b.name === 'Introduction';
-
-        if (a.date && b.date) {
-          let aDate = new Date(a.date);
-          let bDate = new Date(b.date);
-          return bDate.getTime() - aDate.getTime();
-        } else if (a.date && !b.date) {
-          return 1;
-        } else if (!a.date && b.date) {
-          return -1;
-        }
-
-        if (aIsIntro && !bIsIntro) {
-          return -1;
-        }
-        if (!aIsIntro && bIsIntro) {
-          return 1;
-        }
-        return 0;
-      });
-    }
+    items = sortItemsForDisplay(items, searchValue);
 
     return items;
   }, [filteredComponents, selectedTagId, searchValue]);
@@ -325,7 +269,7 @@ export function SearchMenu(props: SearchMenuProps) {
           ))}
         </TabList>
         {orderedTabs.map((tab, i) => {
-          const tabIconTag = tab.id === 'react-spectrum' ? [{id: 'icons', name: 'Icons'}] : [];
+          const tabResourceTags = getResourceTags(tab.id);
           return (
             <TabPanel key={tab.id} id={tab.id}>
               <Autocomplete filter={selectedTagId === 'icons' ? iconFilter : undefined}>
@@ -346,7 +290,7 @@ export function SearchMenu(props: SearchMenuProps) {
 
                   <SearchTagGroups
                     sectionTags={sectionTagsForDisplay}
-                    resourceTags={tabIconTag}
+                    resourceTags={tabResourceTags}
                     selectedTagId={selectedTagId}
                     onSectionSelectionChange={handleSectionSelectionChange}
                     onResourceSelectionChange={handleIconSelectionChange} />
@@ -368,21 +312,7 @@ export function SearchMenu(props: SearchMenuProps) {
                         description: item.description
                       }))}
                       ariaLabel={selectedSectionName}
-                      renderEmptyState={() => (
-                        <IllustratedMessage styles={style({margin: 32})}>
-                          <NoSearchResults />
-                          <Heading>No results</Heading>
-                          {searchValue.trim().length > 0 ? (
-                            <Content>
-                              No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {tab.label}.
-                            </Content>
-                          ) : (
-                            <Content>
-                              No results found in {tab.label}.
-                            </Content>
-                          )}
-                        </IllustratedMessage>
-                      )} />
+                      renderEmptyState={() => <SearchEmptyState searchValue={searchValue} libraryLabel={tab.label} />} />
                   )}
                 </div>
               </Autocomplete>

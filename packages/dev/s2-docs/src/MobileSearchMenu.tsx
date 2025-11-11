@@ -2,14 +2,25 @@
 
 import {Autocomplete, Key, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {CloseButton, Content, Heading, IllustratedMessage, SearchField, TextContext} from '@react-spectrum/s2';
+import {CloseButton, SearchField, TextContext} from '@react-spectrum/s2';
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
-import {filterAndSortSearchItems} from './searchUtils';
+import {
+  filterAndSortSearchItems,
+  getOrderedLibraries,
+  getPageTitle,
+  getResourceTags,
+  SearchEmptyState,
+  type Section,
+  sortItemsForDisplay,
+  useFilteredIcons,
+  useSearchTagSelection,
+  useSectionTagsForDisplay
+} from './searchUtils';
 import {getLibraryFromPage} from './library';
-import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
-import {type Library, TAB_DEFS} from './constants';
-// eslint-disable-next-line monorepo/no-internal-import
-import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
+import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
+import {type Library} from './constants';
+// @ts-ignore
+import {Page} from '@parcel/rsc';
 import React, {lazy, ReactNode, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
@@ -174,7 +185,9 @@ function MobileTabList({children}: MobileTabListProps) {
         </RACTabList>
       </div>
       <div className={style({paddingEnd: 12, flexShrink: 0})}>
-        <CloseButton />
+        <Provider values={[[OverlayTriggerStateContext, null]]}>
+          <CloseButton onPress={() => {}} />
+        </Provider>
       </div>
     </div>
   );
@@ -190,7 +203,7 @@ function MobileTabPanel(props: Omit<RACTabPanelProps, 'children'> & {children: R
   );
 }
 
-export function MobileSearchMenu({pages, currentPage}) {
+export function MobileSearchMenu({pages, currentPage}: {pages: Page[], currentPage: Page}) {
   return (
     <MobileCustomDialog padding="none">
       <MobileNav pages={pages} currentPage={currentPage} />
@@ -212,11 +225,10 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
   );
 };
 
-function MobileNav({pages, currentPage}: PageProps) {
+function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
-  let prevSearchWasEmptyRef = useRef<boolean>(true);
   let scrollContainerRef = useRef<HTMLDivElement>(null);
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(getLibraryFromPage(currentPage));
 
@@ -232,42 +244,8 @@ function MobileNav({pages, currentPage}: PageProps) {
     return sectionsMap;
   }, [pages]);
 
-  let currentLibrarySectionArray = useMemo(() => {
-    let librarySections = getSectionsForLibrary(selectedLibrary);
-    let sectionArray = [...librarySections.keys()];
-    // Ensure order matches TagGroup: 'Components' first, then alphabetical
-    sectionArray.sort((a, b) => {
-      if (a === 'Components') {
-        return -1;
-      }
-      if (b === 'Components') {
-        return 1;
-      }
-      return a.localeCompare(b);
-    });
-    return sectionArray;
-  }, [getSectionsForLibrary, selectedLibrary]);
 
-  let [selectedSection, setSelectedSection] = useState<string | undefined>(() => {
-    const section = currentPage.exports?.section;
-    return section ? section.toLowerCase() : (currentLibrarySectionArray[0]?.toLowerCase() || 'components');
-  });
-
-  let getOrderedLibraries = () => {
-    let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label, icon: TAB_DEFS[id].icon}));
-    let currentLibId = getLibraryFromPage(currentPage);
-
-    // Move current library to first position
-    let currentLibraryIndex = allLibraries.findIndex(lib => lib.id === currentLibId);
-    if (currentLibraryIndex > 0) {
-      let currentLib = allLibraries.splice(currentLibraryIndex, 1)[0];
-      allLibraries.unshift(currentLib);
-    }
-
-    return allLibraries;
-  };
-
-  let libraries = getOrderedLibraries();
+  let libraries = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
 
   let handleSearchFocus = () => {
     setSearchFocused(true);
@@ -286,12 +264,12 @@ function MobileNav({pages, currentPage}: PageProps) {
     }
   };
 
-  let filterPages = (pages: any[], searchValue: string) => {
+  let filterPages = (pages: Page[], searchValue: string) => {
     return filterAndSortSearchItems(pages, searchValue, {
-      getName: (page) => title(page),
-      getTags: (page) => page.exports?.tags || [],
-      getDate: (page) => page.exports?.date,
-      shouldUseDateSort: (page) => {
+      getName: (page: Page) => getPageTitle(page),
+      getTags: (page: Page) => page.exports?.tags || [],
+      getDate: (page: Page) => page.exports?.date,
+      shouldUseDateSort: (page: Page) => {
         const section = page.exports?.section;
         return section === 'Blog' || section === 'Releases';
       }
@@ -305,8 +283,8 @@ function MobileNav({pages, currentPage}: PageProps) {
     let filteredPages = filterPages(pages, searchValue);
 
     return filteredPages
-      .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
+      .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
+      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: page.exports?.description}));
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -314,8 +292,8 @@ function MobileNav({pages, currentPage}: PageProps) {
     let allPages = Array.from(librarySections.values()).flat();
     let filteredPages = filterPages(allPages, searchValue);
     return filteredPages
-      .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url, description: page.exports?.description}));
+      .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
+      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: page.exports?.description}));
   };
 
   let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -327,7 +305,7 @@ function MobileNav({pages, currentPage}: PageProps) {
       items = getAllContent(libraryId, searchValue);
     } else {
       // Check if this is a resource tag (e.g., icons)
-      const libraryResourceTags = libraryId === 'react-spectrum' ? [{id: 'icons', name: 'Icons'}] : [];
+      const libraryResourceTags = getResourceTags(libraryId as Library);
       const libraryResourceTagIds = libraryResourceTags.map(t => t.id);
       if (libraryResourceTagIds.includes(section)) {
         // Resources are handled separately, return empty for now
@@ -339,21 +317,7 @@ function MobileNav({pages, currentPage}: PageProps) {
       items = getSectionContent(sectionName, libraryId, searchValue);
     }
 
-    // Sort to show "Introduction" first when search is empty
-    if (searchValue.trim().length === 0) {
-      items = [...items].sort((a, b) => {
-        const aIsIntro = a.name === 'Introduction';
-        const bIsIntro = b.name === 'Introduction';
-
-        if (aIsIntro && !bIsIntro) {
-          return -1;
-        }
-        if (!aIsIntro && bIsIntro) {
-          return 1;
-        }
-        return 0;
-      });
-    }
+    items = sortItemsForDisplay(items, searchValue);
 
     return items;
   };
@@ -378,62 +342,52 @@ function MobileNav({pages, currentPage}: PageProps) {
 
   let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
 
-  let sectionTags = useMemo(() => {
-    let base = currentLibrarySections.map(name => ({id: name.toLowerCase(), name}));
-    if (searchValue.trim().length > 0 && selectedSection !== 'icons') {
-      return [{id: 'all', name: 'All'}, ...base];
-    }
-    return base;
-  }, [currentLibrarySections, searchValue, selectedSection]);
+  const sectionsForDisplay: Section[] = useMemo(() => {
+    return currentLibrarySections.map(name => ({
+      id: name.toLowerCase(),
+      name,
+      children: []
+    }));
+  }, [currentLibrarySections]);
 
-  const resourceTags = useMemo(() => {
-    if (selectedLibrary === 'react-spectrum') {
-      return [{id: 'icons', name: 'Icons'}];
-    }
-    return [];
-  }, [selectedLibrary]);
+  const initialSelectedSection = useMemo(() => {
+    const section = currentPage.exports?.section;
+    const firstSection = currentLibrarySections[0]?.toLowerCase() || 'components';
+    return section ? section.toLowerCase() : firstSection;
+  }, [currentPage, currentLibrarySections]);
 
+  const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
+
+  const [selectedSection, setSelectedSection] = useSearchTagSelection(
+    searchValue,
+    sectionsForDisplay.map(s => ({id: s.id, name: s.name})),
+    resourceTags,
+    initialSelectedSection
+  );
+
+  const sectionTags = useSectionTagsForDisplay(
+    sectionsForDisplay,
+    searchValue,
+    selectedSection,
+    resourceTags.map(t => t.id)
+  );
+
+  const filteredIcons = useFilteredIcons(searchValue);
   const iconFilter = useIconFilter();
-
-  const filteredIcons = useMemo(() => {
-    if (!searchValue.trim()) {
-      return iconList;
-    }
-    return iconList.filter(item => iconFilter(item.id, searchValue));
-  }, [searchValue, iconFilter]);
-
-  // Ensure selected section is valid for the current library
-  const baseSectionIds = currentLibrarySections.map(s => s.toLowerCase());
-  const resourceTagIds = resourceTags.map(t => t.id);
-  const allBaseIds = [...baseSectionIds, ...resourceTagIds];
-  const isResourceSelected = selectedSection && resourceTagIds.includes(selectedSection);
-  const sectionIds = searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
-  if (!selectedSection || !sectionIds.includes(selectedSection)) {
-    setSelectedSection(allBaseIds[0] || 'components');
-  }
-
-  // Auto-select All when search starts (unless a resource is selected)
-  useEffect(() => {
-    let isEmpty = searchValue.trim().length === 0;
-    if (prevSearchWasEmptyRef.current && !isEmpty && !isResourceSelected) {
-      setSelectedSection('all');
-    }
-    prevSearchWasEmptyRef.current = isEmpty;
-  }, [searchValue, selectedSection, isResourceSelected]);
 
   let handleSectionSelectionChange = useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
     if (firstKey) {
       setSelectedSection(firstKey);
     }
-  }, []);
+  }, [setSelectedSection]);
 
   let handleResourceSelectionChange = useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
     if (firstKey) {
       setSelectedSection(firstKey);
     }
-  }, []);
+  }, [setSelectedSection]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -511,21 +465,7 @@ function MobileNav({pages, currentPage}: PageProps) {
                         items={getItemsForSelection(selectedSection, library.id, searchValue)}
                         ariaLabel="Pages"
                         size="S"
-                        renderEmptyState={() => (
-                          <IllustratedMessage styles={style({margin: 32})}>
-                            <NoSearchResults />
-                            <Heading>No results</Heading>
-                            {searchValue.trim().length > 0 ? (
-                              <Content>
-                                No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
-                              </Content>
-                            ) : (
-                              <Content>
-                                No results found in {selectedLibrary}.
-                              </Content>
-                            )}
-                          </IllustratedMessage>
-                        )} />
+                        renderEmptyState={() => <SearchEmptyState searchValue={searchValue} libraryLabel={library.label} />} />
                     )}
                   </div>
                 </Autocomplete>
@@ -538,6 +478,3 @@ function MobileNav({pages, currentPage}: PageProps) {
   );
 }
 
-function title(page) {
-  return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
-}
