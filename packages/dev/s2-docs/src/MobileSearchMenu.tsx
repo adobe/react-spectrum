@@ -1,15 +1,16 @@
 'use client';
 
+import {Autocomplete, Key, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {CloseButton, Content, Heading, IllustratedMessage, SearchField, Tag, TagGroup, TextContext} from '@react-spectrum/s2';
+import {CloseButton, Content, Heading, IllustratedMessage, SearchField, TextContext} from '@react-spectrum/s2';
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
 import {getLibraryFromPage} from './library';
+import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-import {OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
-import type {PageProps} from '@parcel/rsc';
-import React, {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {lazy, ReactNode, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
 
 
@@ -125,6 +126,8 @@ const mobileTabPanel = style({
   flexDirection: 'column',
   outlineStyle: 'none'
 });
+
+const IconSearchView = lazy(() => import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView})));
 
 const stickySearchContainer = style({
   width: 'full',
@@ -244,13 +247,10 @@ function MobileNav({pages, currentPage}: PageProps) {
     return sectionArray;
   }, [getSectionsForLibrary, selectedLibrary]);
 
-  let [selectedSection, setSelectedSection] = useState<string | undefined>(() => currentPage.exports?.section || currentLibrarySectionArray[0]);
-
-  // Ensure selected section is valid for the current library
-  const sectionIds = searchValue.trim().length > 0 ? ['all', ...currentLibrarySectionArray] : currentLibrarySectionArray;
-  if (!selectedSection || !sectionIds.includes(selectedSection)) {
-    setSelectedSection(currentLibrarySectionArray[0] || 'Components');
-  }
+  let [selectedSection, setSelectedSection] = useState<string | undefined>(() => {
+    const section = currentPage.exports?.section;
+    return section ? section.toLowerCase() : (currentLibrarySectionArray[0]?.toLowerCase() || 'components');
+  });
 
   let getOrderedLibraries = () => {
     let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label, icon: TAB_DEFS[id].icon}));
@@ -346,7 +346,17 @@ function MobileNav({pages, currentPage}: PageProps) {
     if (section === 'all') {
       items = getAllContent(libraryId, searchValue);
     } else {
-      items = getSectionContent(section, libraryId, searchValue);
+      // Check if this is a resource tag (e.g., icons)
+      const libraryResourceTags = libraryId === 'react-spectrum' ? [{id: 'icons', name: 'Icons'}] : [];
+      const libraryResourceTagIds = libraryResourceTags.map(t => t.id);
+      if (libraryResourceTagIds.includes(section)) {
+        // Resources are handled separately, return empty for now
+        return [];
+      }
+      // Convert lowercase ID back to section name for getSectionContent
+      const librarySections = getSectionNamesForLibrary(libraryId);
+      const sectionName = librarySections.find(s => s.toLowerCase() === section) || section;
+      items = getSectionContent(sectionName, libraryId, searchValue);
     }
 
     // Sort to show "Introduction" first when search is empty
@@ -388,28 +398,62 @@ function MobileNav({pages, currentPage}: PageProps) {
 
   let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
 
-  let tags = useMemo(() => {
-    let base = currentLibrarySections.map(name => ({id: name, name}));
-    if (searchValue.trim().length > 0) {
+  let sectionTags = useMemo(() => {
+    let base = currentLibrarySections.map(name => ({id: name.toLowerCase(), name}));
+    if (searchValue.trim().length > 0 && selectedSection !== 'icons') {
       return [{id: 'all', name: 'All'}, ...base];
     }
     return base;
-  }, [currentLibrarySections, searchValue]);
+  }, [currentLibrarySections, searchValue, selectedSection]);
 
-  // Auto-select All when search starts
+  const resourceTags = useMemo(() => {
+    if (selectedLibrary === 'react-spectrum') {
+      return [{id: 'icons', name: 'Icons'}];
+    }
+    return [];
+  }, [selectedLibrary]);
+
+  const iconFilter = useIconFilter();
+
+  const filteredIcons = useMemo(() => {
+    if (!searchValue.trim()) {
+      return iconList;
+    }
+    return iconList.filter(item => iconFilter(item.id, searchValue));
+  }, [searchValue, iconFilter]);
+
+  // Ensure selected section is valid for the current library
+  const baseSectionIds = currentLibrarySections.map(s => s.toLowerCase());
+  const resourceTagIds = resourceTags.map(t => t.id);
+  const allBaseIds = [...baseSectionIds, ...resourceTagIds];
+  const isResourceSelected = selectedSection && resourceTagIds.includes(selectedSection);
+  const sectionIds = searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
+  if (!selectedSection || !sectionIds.includes(selectedSection)) {
+    setSelectedSection(allBaseIds[0] || 'components');
+  }
+
+  // Auto-select All when search starts (unless a resource is selected)
   useEffect(() => {
     let isEmpty = searchValue.trim().length === 0;
-    if (prevSearchWasEmptyRef.current && !isEmpty) {
+    if (prevSearchWasEmptyRef.current && !isEmpty && !isResourceSelected) {
       setSelectedSection('all');
     }
     prevSearchWasEmptyRef.current = isEmpty;
-  }, [searchValue]);
+  }, [searchValue, selectedSection, isResourceSelected]);
 
+  let handleSectionSelectionChange = useCallback((keys: Iterable<Key>) => {
+    const firstKey = Array.from(keys)[0] as string;
+    if (firstKey) {
+      setSelectedSection(firstKey);
+    }
+  }, []);
 
-  let handleTagSelection = (keys: any) => {
-    let key = [...keys][0] as string;
-    setSelectedSection(key);
-  };
+  let handleResourceSelectionChange = useCallback((keys: Iterable<Key>) => {
+    const firstKey = Array.from(keys)[0] as string;
+    if (firstKey) {
+      setSelectedSection(firstKey);
+    }
+  }, []);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -430,7 +474,7 @@ function MobileNav({pages, currentPage}: PageProps) {
             if (!searchFocused) {
               let nextSections = getSectionNamesForLibrary(newLib);
               if (nextSections.length > 0) {
-                setSelectedSection(nextSections[0]);
+                setSelectedSection(nextSections[0].toLowerCase());
               }
             }
           }}>
@@ -446,56 +490,68 @@ function MobileNav({pages, currentPage}: PageProps) {
               ))}
             </MobileTabList>
           </div>
-          {libraries.map(library => (
-            <MobileTabPanel key={library.id} id={library.id}>
-              <div className={stickySearchContainer}>
-                <SearchField
-                  aria-label="Search"
-                  value={searchValue}
-                  onChange={handleSearchChange}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
-                  styles={style({marginX: 16})} />
-                <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
-                  <TagGroup
-                    aria-label="Navigation sections"
-                    selectionMode="single"
-                    selectedKeys={selectedSection ? [selectedSection] : []}
-                    disallowEmptySelection
-                    onSelectionChange={handleTagSelection}
-                    UNSAFE_style={{whiteSpace: 'nowrap'}}
-                    items={tags}>
-                    {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
-                  </TagGroup>
-                </div>
-              </div>
-              <div ref={scrollContainerRef} className={style({paddingX: 12})}>
-                <ComponentCardView
-                  onAction={() => {
-                    setSearchValue('');
-                    overlayTriggerState?.close();
-                  }}
-                  items={getItemsForSelection(selectedSection, library.id, searchValue)}
-                  ariaLabel="Pages"
-                  size="S"
-                  renderEmptyState={() => (
-                    <IllustratedMessage styles={style({margin: 32})}>
-                      <NoSearchResults />
-                      <Heading>No results</Heading>
-                      {searchValue.trim().length > 0 ? (
-                        <Content>
-                          No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
-                        </Content>
-                      ) : (
-                        <Content>
-                          No results found in {selectedLibrary}.
-                        </Content>
-                      )}
-                    </IllustratedMessage>
-                  )} />
-              </div>
-            </MobileTabPanel>
-          ))}
+          {libraries.map(library => {
+            const isIconsSelected = selectedSection === 'icons' && library.id === 'react-spectrum';
+            return (
+              <MobileTabPanel key={library.id} id={library.id}>
+                <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
+                  <div className={stickySearchContainer}>
+                    <SearchField
+                      aria-label="Search"
+                      value={searchValue}
+                      onChange={handleSearchChange}
+                      onFocus={handleSearchFocus}
+                      onBlur={handleSearchBlur}
+                      styles={style({marginX: 16})} />
+                    <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
+                      <SearchTagGroups
+                        sectionTags={sectionTags}
+                        resourceTags={resourceTags}
+                        selectedTagId={selectedSection}
+                        onSectionSelectionChange={handleSectionSelectionChange}
+                        onResourceSelectionChange={handleResourceSelectionChange}
+                        isMobile
+                        wrapperClassName={style({paddingTop: 0})}
+                        contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
+                    </div>
+                  </div>
+                  <div ref={scrollContainerRef} className={style({paddingX: 12, flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                    {isIconsSelected ? (
+                      <Suspense fallback={<IconSearchSkeleton />}>
+                        <IconSearchView 
+                          filteredItems={filteredIcons} 
+                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
+                      </Suspense>
+                    ) : (
+                      <ComponentCardView
+                        onAction={() => {
+                          setSearchValue('');
+                          overlayTriggerState?.close();
+                        }}
+                        items={getItemsForSelection(selectedSection, library.id, searchValue)}
+                        ariaLabel="Pages"
+                        size="S"
+                        renderEmptyState={() => (
+                          <IllustratedMessage styles={style({margin: 32})}>
+                            <NoSearchResults />
+                            <Heading>No results</Heading>
+                            {searchValue.trim().length > 0 ? (
+                              <Content>
+                                No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
+                              </Content>
+                            ) : (
+                              <Content>
+                                No results found in {selectedLibrary}.
+                              </Content>
+                            )}
+                          </IllustratedMessage>
+                        )} />
+                    )}
+                  </div>
+                </Autocomplete>
+              </MobileTabPanel>
+            );
+          })}
         </RACTabs>
       </div>
     </div>

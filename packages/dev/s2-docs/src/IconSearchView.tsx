@@ -124,16 +124,17 @@ const itemStyle = style({
 });
 
 interface IconSearchViewProps {
-  filteredItems: typeof iconList
+  filteredItems: typeof iconList,
+  listBoxClassName?: string
 }
 
-export function IconSearchView({filteredItems}: IconSearchViewProps) {
+export function IconSearchView({filteredItems, listBoxClassName}: IconSearchViewProps) {
   let {copiedId, handleCopyImport} = useCopyImport();
 
   return (
     <>
       <CopyInfoMessage />
-      <IconListBox items={filteredItems} copiedId={copiedId} onAction={handleCopyImport} />
+      <IconListBox items={filteredItems} copiedId={copiedId} onAction={handleCopyImport} listBoxClassName={listBoxClassName} />
     </>
   );
 }
@@ -218,7 +219,7 @@ export function IconSearchSkeleton() {
         <ListBox
           items={mockItems}
           layout="grid"
-          className={style({width: '100%', scrollPaddingY: 4})}>
+          className={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})}>
           {(item) => <SkeletonIconItem item={item} />}
         </ListBox>
       </Virtualizer>
