@@ -4,6 +4,7 @@ import {Autocomplete, Key, OverlayTriggerStateContext, Provider, Dialog as RACDi
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CloseButton, Content, Heading, IllustratedMessage, SearchField, TextContext} from '@react-spectrum/s2';
 import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
+import {filterAndSortSearchItems} from './searchUtils';
 import {getLibraryFromPage} from './library';
 import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
@@ -286,35 +287,14 @@ function MobileNav({pages, currentPage}: PageProps) {
   };
 
   let filterPages = (pages: any[], searchValue: string) => {
-    if (!searchValue.trim()) {
-      return pages;
-    }
-
-    let searchLower = searchValue.toLowerCase();
-
-    // Filter items where name or tags start with search value
-    let matchedPages = pages.filter(page => {
-      let pageTitle = title(page).toLowerCase();
-      let nameMatch = pageTitle.startsWith(searchLower);
-      let tags: string[] = page.exports?.tags || [];
-      let tagMatch = tags.some(tag => tag.toLowerCase().startsWith(searchLower));
-      return nameMatch || tagMatch;
-    });
-
-    // Sort to prioritize name matches over tag matches
-    return matchedPages.sort((a, b) => {
-      let aNameMatch = title(a).toLowerCase().startsWith(searchLower);
-      let bNameMatch = title(b).toLowerCase().startsWith(searchLower);
-
-      if (aNameMatch && !bNameMatch) {
-        return -1;
+    return filterAndSortSearchItems(pages, searchValue, {
+      getName: (page) => title(page),
+      getTags: (page) => page.exports?.tags || [],
+      getDate: (page) => page.exports?.date,
+      shouldUseDateSort: (page) => {
+        const section = page.exports?.section;
+        return section === 'Blog' || section === 'Releases';
       }
-      if (!aNameMatch && bNameMatch) {
-        return 1;
-      }
-
-      // If both match by name or both match by tag, maintain original order
-      return 0;
     });
   };
 

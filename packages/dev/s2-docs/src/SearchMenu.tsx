@@ -4,6 +4,7 @@ import {ActionButton, Content, Heading, IllustratedMessage, SearchField} from '@
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
+import {filterAndSortSearchItems} from './searchUtils';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {iconList, IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
@@ -173,40 +174,16 @@ export function SearchMenu(props: SearchMenuProps) {
       return sections;
     }
 
-    const searchLower = searchValue.toLowerCase();
     const allItems = sections.flatMap(section => section.children);
 
-    // Filter items where name or tags start with search value
-    const matchedItems = allItems.filter(item => {
-      const nameMatch = item.name.toLowerCase().startsWith(searchLower);
-      const tagMatch = item.tags.some(tag => tag.toLowerCase().startsWith(searchLower));
-      return nameMatch || tagMatch;
-    });
-
-    // Sort to prioritize name matches over tag matches
-    const sortedItems = matchedItems.sort((a, b) => {
-      const aNameMatch = a.name.toLowerCase().startsWith(searchLower);
-      const bNameMatch = b.name.toLowerCase().startsWith(searchLower);
-
-      if (a.date && b.date) {
-        let aDate = new Date(a.date);
-        let bDate = new Date(b.date);
-        return bDate.getTime() - aDate.getTime();
-      } else if (a.date && !b.date) {
-        return 1;
-      } else if (!a.date && b.date) {
-        return -1;
+    const sortedItems = filterAndSortSearchItems(allItems, searchValue, {
+      getName: (item) => item.name,
+      getTags: (item) => item.tags,
+      getDate: (item) => item.date,
+      shouldUseDateSort: (item) => {
+        const section = item.section;
+        return section === 'Blog' || section === 'Releases';
       }
-
-      if (aNameMatch && !bNameMatch) {
-        return -1;
-      }
-      if (!aNameMatch && bNameMatch) {
-        return 1;
-      }
-
-      // If both match by name or both match by tag, maintain original order
-      return 0;
     });
 
     const resultsBySection = new Map<string, typeof transformedComponents>();
