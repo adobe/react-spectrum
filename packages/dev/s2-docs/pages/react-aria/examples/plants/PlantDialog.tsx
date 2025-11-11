@@ -6,7 +6,7 @@ import {Dialog} from 'tailwind-starter/Dialog';
 import {DropZone} from 'tailwind-starter/DropZone';
 import {Form} from 'tailwind-starter/Form';
 import {getLocalTimeZone, today} from '@internationalized/date';
-import plants, {Plant} from '@react-spectrum/docs/pages/react-aria/home/plants';
+import plants, {Plant} from './plants';
 import {Select, SelectItem} from 'tailwind-starter/Select';
 import {TextField} from 'tailwind-starter/TextField';
 import {cycleIcon, getSunlight, sunIcons, wateringIcons} from './Labels';
