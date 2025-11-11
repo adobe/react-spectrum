@@ -367,7 +367,16 @@ function Nav({currentPageName, pages}) {
     }
   }
 
-  let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
+  let title;
+  if (currentParts.length > 1) {
+    // rename stately sidenav header button to aria so the sidebars are exactly the same
+    // between react aria and stately
+    if (currentPageName.startsWith('react-stately') || currentPageName.startsWith('react-aria')) {
+      title = 'React Aria';
+    } else if (currentPageName.startsWith('v3/')) {
+      title = 'React Spectrum v3';
+    }
+  }
   let currentPageIsIndex = INDEX_RE.test(currentPageName);
   let sectionIndex = './index.html';
 
