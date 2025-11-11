@@ -463,7 +463,7 @@ function TabPanelInner(props: TabPanelProps & {tabPanelRef: RefObject<HTMLDivEle
 
   let domProps = isSelected
     ? mergeProps(DOMProps, tabPanelProps, focusProps, renderProps)
-    : renderProps;
+    : mergeProps(DOMProps, renderProps);
 
   return (
     <div
