@@ -29,8 +29,8 @@ const args = parseArgs({
     'branch-api-dir': {
       type: 'string'
     },
-    'base-api-dir': {
-      type: 'string'
+    'compare-v3-s2': {
+      type: 'boolean'
     }
   }
 });
@@ -41,6 +41,86 @@ let allChanged = new Set();
 let dependantOnLinks = new Map();
 let currentlyProcessing = '';
 let depth = 0;
+
+// Style props from @react-spectrum/utils/src/styleProps.ts that should be excluded from diffs
+// These are baseStyleProps and viewStyleProps
+let stylePropsToExclude = new Set([
+  // baseStyleProps
+  'margin', 'marginStart', 'marginEnd', 'marginTop', 'marginBottom', 'marginX', 'marginY',
+  'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
+  'isHidden', 'alignSelf', 'justifySelf',
+  'position', 'zIndex', 'top', 'bottom', 'start', 'end', 'left', 'right',
+  'order', 'flex', 'flexGrow', 'flexShrink', 'flexBasis',
+  'gridArea', 'gridColumn', 'gridColumnEnd', 'gridColumnStart', 'gridRow', 'gridRowEnd', 'gridRowStart',
+  // viewStyleProps (additional to baseStyleProps)
+  'backgroundColor',
+  'borderWidth', 'borderStartWidth', 'borderEndWidth', 'borderLeftWidth', 'borderRightWidth',
+  'borderTopWidth', 'borderBottomWidth', 'borderXWidth', 'borderYWidth',
+  'borderColor', 'borderStartColor', 'borderEndColor', 'borderLeftColor', 'borderRightColor',
+  'borderTopColor', 'borderBottomColor', 'borderXColor', 'borderYColor',
+  'borderRadius', 'borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius',
+  'borderBottomEndRadius', 'borderTopLeftRadius', 'borderTopRightRadius',
+  'borderBottomLeftRadius', 'borderBottomRightRadius',
+  'padding', 'paddingStart', 'paddingEnd', 'paddingLeft', 'paddingRight',
+  'paddingTop', 'paddingBottom', 'paddingX', 'paddingY',
+  'overflow'
+]);
+
+// Mapping of S2 component names to their v3 package locations
+// Format: 'S2ComponentName': {package: '@react-spectrum/packagename', component: 'ComponentName'}
+let s2ToV3ComponentMap = {
+  'ActionButton': {package: '@react-spectrum/button', component: 'ActionButton'},
+  'ActionButtonGroup': {package: '@react-spectrum/actiongroup', component: 'ActionGroup'},
+  'ActionMenu': {package: '@react-spectrum/menu', component: 'ActionMenu'},
+  'AlertDialog': {package: '@react-spectrum/dialog', component: 'AlertDialog'},
+  'Breadcrumb': {package: '@react-spectrum/breadcrumbs', component: 'BreadcrumbItem'},
+  'CheckboxGroup': {package: '@react-spectrum/checkbox', component: 'CheckboxGroup'},
+  'ColorArea': {package: '@react-spectrum/color', component: 'ColorArea'},
+  'ColorField': {package: '@react-spectrum/color', component: 'ColorField'},
+  'ColorSlider': {package: '@react-spectrum/color', component: 'ColorSlider'},
+  'ColorWheel': {package: '@react-spectrum/color', component: 'ColorWheel'},
+  'Column': {package: '@react-spectrum/table', component: 'Column'},
+  'ComboBoxItem': {package: '@react-spectrum/combobox', component: 'Item'},
+  'ComboBoxSection': {package: '@react-spectrum/combobox', component: 'Section'},
+  'Content': {package: '@react-spectrum/view', component: 'Content'},
+  'DateField': {package: '@react-spectrum/datepicker', component: 'DateField'},
+  'DateRangePicker': {package: '@react-spectrum/datepicker', component: 'DateRangePicker'},
+  'DialogContainer': {package: '@react-spectrum/dialog', component: 'DialogContainer'},
+  'DialogTrigger': {package: '@react-spectrum/dialog', component: 'DialogTrigger'},
+  'Disclosure': {package: '@react-spectrum/accordion', component: 'Disclosure'},
+  'DisclosureHeader': {package: '@react-spectrum/accordion', component: 'DisclosureHeader'},
+  'DisclosurePanel': {package: '@react-spectrum/accordion', component: 'DisclosurePanel'},
+  'DisclosureTitle': {package: '@react-spectrum/accordion', component: 'DisclosureTitle'},
+  'Footer': {package: '@react-spectrum/view', component: 'Footer'},
+  'Header': {package: '@react-spectrum/view', component: 'Header'},
+  'Heading': {package: '@react-spectrum/text', component: 'Heading'},
+  'Keyboard': {package: '@react-spectrum/text', component: 'Keyboard'},
+  'MenuItem': {package: '@react-spectrum/menu', component: 'Item'},
+  'MenuSection': {package: '@react-spectrum/menu', component: 'Section'},
+  'PickerItem': {package: '@react-spectrum/picker', component: 'Item'},
+  'PickerSection': {package: '@react-spectrum/picker', component: 'Section'},
+  'ProgressBar': {package: '@react-spectrum/progress', component: 'ProgressBar'},
+  'ProgressCircle': {package: '@react-spectrum/progress', component: 'ProgressCircle'},
+  'RadioGroup': {package: '@react-spectrum/radio', component: 'RadioGroup'},
+  'RangeCalendar': {package: '@react-spectrum/calendar', component: 'RangeCalendar'},
+  'RangeSlider': {package: '@react-spectrum/slider', component: 'RangeSlider'},
+  'Row': {package: '@react-spectrum/table', component: 'Row'},
+  'Tab': {package: '@react-spectrum/tabs', component: 'Item'},
+  'TabList': {package: '@react-spectrum/tabs', component: 'TabList'},
+  'TabPanel': {package: '@react-spectrum/tabs', component: 'Item'},
+  'TableBody': {package: '@react-spectrum/table', component: 'TableBody'},
+  'TableHeader': {package: '@react-spectrum/table', component: 'TableHeader'},
+  'TableView': {package: '@react-spectrum/table', component: 'TableView'},
+  'TagGroup': {package: '@react-spectrum/tag', component: 'TagGroup'},
+  'TextArea': {package: '@react-spectrum/textfield', component: 'TextArea'},
+  'TimeField': {package: '@react-spectrum/datepicker', component: 'TimeField'},
+  'ToggleButton': {package: '@react-spectrum/button', component: 'ToggleButton'},
+  'ToggleButtonGroup': {package: '@react-spectrum/actiongroup', component: 'ActionGroup'},
+  'TooltipTrigger': {package: '@react-spectrum/tooltip', component: 'TooltipTrigger'},
+  'TreeView': {package: '@react-spectrum/tree', component: 'TreeView'},
+  'TreeViewItem': {package: '@react-spectrum/tree', component: 'TreeViewItem'},
+  'TreeViewItemContent': {package: '@react-spectrum/tree', component: 'TreeViewItemContent'}
+};
 
 compare().catch(err => {
   console.error(err.stack);
@@ -66,51 +146,180 @@ function readJsonSync(filePath) {
  */
 async function compare() {
   let branchDir = args.values['branch-api-dir'] || path.join(__dirname, '..', 'dist', 'branch-api');
-  let publishedDir = args.values['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
-  if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
-    console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`));
-    return;
-  }
-
-  let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
-  let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
   let pairs = [];
 
-  // find all matching pairs based on what's been published
-  for (let pubApi of publishedAPIs) {
-    let pubApiPath = pubApi.split(path.sep);
-    let pkgJson = readJsonSync(path.join('/', ...pubApiPath.slice(0, pubApiPath.length - 2), 'package.json'));
-    let name = pkgJson.name;
-    let sharedPath = path.join(name, 'dist', 'api.json');
-    let found = false;
-    for (let branchApi of branchAPIs) {
-      if (branchApi.includes(sharedPath)) {
-        found = true;
-        pairs.push({pubApi, branchApi});
-        break;
-      }
+  if (args.values['compare-v3-s2']) {
+    // Compare v3 vs s2 components within branch-api only
+    if (!fs.existsSync(branchDir)) {
+      console.log(chalk.redBright(`branchDir ${branchDir} does not exist`));
+      return;
     }
-    if (!found) {
-      pairs.push({pubApi, branchApi: null});
-    }
-  }
 
-  // don't care about private APIs, but we do care if we're about to publish a new one
-  for (let branchApi of branchAPIs) {
-    let branchApiPath = branchApi.split(path.sep);
-    let pkgJson = readJsonSync(path.join('/', ...branchApiPath.slice(0, branchApiPath.length - 2), 'package.json'));
-    let name = pkgJson.name;
-    let sharedPath = path.join(name, 'dist', 'api.json');
-    let found = false;
-    for (let pubApi of publishedAPIs) {
-      if (pubApi.includes(sharedPath)) {
-        found = true;
-        break;
+    let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
+
+    // Find the s2 API file
+    let s2Api = branchAPIs.find(api => api.includes('@react-spectrum/s2/dist/api.json'));
+    if (!s2Api) {
+      console.log(chalk.redBright('Could not find @react-spectrum/s2 API'));
+      return;
+    }
+
+    let s2ApiData = getAPI(s2Api);
+    let s2ComponentsWithoutMatch = [];
+    let v3ComponentsWithoutMatch = [];
+    let matchedV3Packages = new Set();
+
+    // For each export in s2, try to find matching v3 component
+    for (let exportName of Object.keys(s2ApiData.exports)) {
+      // Skip hooks (exports starting with 'use')
+      if (exportName.startsWith('use')) {
+        continue;
+      }
+
+      let exportItem = s2ApiData.exports[exportName];
+      // Only process components
+      if (exportItem?.type !== 'component') {
+        continue;
+      }
+
+      // Find matching v3 component package
+      let v3PackageName, v3ComponentName;
+
+      // Check if there's a custom mapping for this component
+      if (s2ToV3ComponentMap[exportName]) {
+        v3PackageName = s2ToV3ComponentMap[exportName].package;
+        v3ComponentName = s2ToV3ComponentMap[exportName].component;
+      } else {
+        // Default: use lowercase component name as package name
+        let componentName = exportName.toLowerCase();
+        v3PackageName = `@react-spectrum/${componentName}`;
+        v3ComponentName = exportName;
+      }
+
+      let v3Api = branchAPIs.find(api => api.includes(`${v3PackageName}/dist/api.json`));
+
+      if (v3Api) {
+        // Check if it's not a react-aria package
+        let v3PackageJson = readJsonSync(path.join(v3Api, '..', '..', 'package.json'));
+        if (!v3PackageJson.name.includes('@react-aria/')) {
+          pairs.push({
+            v3Api,
+            s2Api,
+            componentName: exportName,
+            v3PackageName: v3PackageJson.name,
+            v3ComponentName: v3ComponentName
+          });
+          matchedV3Packages.add(v3PackageJson.name);
+        }
+      } else {
+        s2ComponentsWithoutMatch.push(exportName);
       }
     }
-    let json = readJsonSync(path.join(branchApi, '..', '..', 'package.json'));
-    if (!found && !json.private) {
-      pairs.push({pubApi: null, branchApi});
+
+    // Find v3 @react-spectrum components that weren't matched
+    for (let apiPath of branchAPIs) {
+      if (!apiPath.includes('@react-spectrum/') || apiPath.includes('@react-spectrum/s2/')) {
+        continue;
+      }
+
+      let pkgJsonPath = path.join(apiPath, '..', '..', 'package.json');
+      if (!fs.existsSync(pkgJsonPath)) {
+        continue;
+      }
+
+      let pkgJson = readJsonSync(pkgJsonPath);
+
+      // Skip if not a react-spectrum package, or if it's react-aria
+      if (!pkgJson.name.startsWith('@react-spectrum/') || pkgJson.name.includes('@react-aria/')) {
+        continue;
+      }
+
+      // Skip if it was already matched
+      if (matchedV3Packages.has(pkgJson.name)) {
+        continue;
+      }
+
+      // Check if it has any component exports (not just hooks)
+      let apiData = getAPI(apiPath);
+      let hasComponentExport = Object.values(apiData.exports || {}).some(exp =>
+        exp?.type === 'component'
+      );
+
+      if (hasComponentExport) {
+        v3ComponentsWithoutMatch.push(pkgJson.name);
+      }
+    }
+
+    // Log unmatched components
+    if (s2ComponentsWithoutMatch.length > 0 || v3ComponentsWithoutMatch.length > 0) {
+      console.log('\n' + chalk.yellow('='.repeat(60)));
+      console.log(chalk.yellow.bold('Unmatched Components Report'));
+      console.log(chalk.yellow('='.repeat(60)));
+
+      if (s2ComponentsWithoutMatch.length > 0) {
+        console.log('\n' + chalk.cyan.bold(`S2 components without v3 match (${s2ComponentsWithoutMatch.length}):`));
+        s2ComponentsWithoutMatch.sort().forEach(name => {
+          console.log(chalk.cyan(`  - ${name}`));
+        });
+      }
+
+      if (v3ComponentsWithoutMatch.length > 0) {
+        console.log('\n' + chalk.magenta.bold(`v3 components without S2 match (${v3ComponentsWithoutMatch.length}):`));
+        v3ComponentsWithoutMatch.sort().forEach(name => {
+          console.log(chalk.magenta(`  - ${name}`));
+        });
+      }
+
+      console.log('\n' + chalk.green.bold(`Successfully matched: ${pairs.length} components`));
+      console.log(chalk.yellow('='.repeat(60)) + '\n');
+    }
+  } else {
+    // Original comparison logic: branch vs published
+    let publishedDir = args.values['base-api-dir'] || path.join(__dirname, '..', 'dist', 'base-api');
+    if (!(fs.existsSync(branchDir) && fs.existsSync(publishedDir))) {
+      console.log(chalk.redBright(`you must have both a branchDir ${branchDir} and baseDir ${publishedDir}`));
+      return;
+    }
+
+    let branchAPIs = fg.sync(`${branchDir}/**/api.json`);
+    let publishedAPIs = fg.sync(`${publishedDir}/**/api.json`);
+
+    // find all matching pairs based on what's been published
+    for (let pubApi of publishedAPIs) {
+      let pubApiPath = pubApi.split(path.sep);
+      let pkgJson = readJsonSync(path.join('/', ...pubApiPath.slice(0, pubApiPath.length - 2), 'package.json'));
+      let name = pkgJson.name;
+      let sharedPath = path.join(name, 'dist', 'api.json');
+      let found = false;
+      for (let branchApi of branchAPIs) {
+        if (branchApi.includes(sharedPath)) {
+          found = true;
+          pairs.push({pubApi, branchApi});
+          break;
+        }
+      }
+      if (!found) {
+        pairs.push({pubApi, branchApi: null});
+      }
+    }
+
+    // don't care about private APIs, but we do care if we're about to publish a new one
+    for (let branchApi of branchAPIs) {
+      let branchApiPath = branchApi.split(path.sep);
+      let pkgJson = readJsonSync(path.join('/', ...branchApiPath.slice(0, branchApiPath.length - 2), 'package.json'));
+      let name = pkgJson.name;
+      let sharedPath = path.join(name, 'dist', 'api.json');
+      let found = false;
+      for (let pubApi of publishedAPIs) {
+        if (pubApi.includes(sharedPath)) {
+          found = true;
+          break;
+        }
+      }
+      let json = readJsonSync(path.join(branchApi, '..', '..', 'package.json'));
+      if (!found && !json.private) {
+        pairs.push({pubApi: null, branchApi});
+      }
     }
   }
 
@@ -253,23 +462,92 @@ function getAPI(filePath) {
 // bulk of the logic, read the api files, rebuild the interfaces, diff those reconstructions
 function getDiff(pair) {
   let name;
-  if (pair.branchApi) {
-    name = pair.branchApi.replace(/.*branch-api/, '');
+  let publishedApi, branchApi, allExportNames;
+
+  if (args.values['compare-v3-s2']) {
+    // v3 vs s2 comparison
+    name = `${pair.componentName} (v3: ${pair.v3PackageName} vs s2)`;
+
+    if (args.values.package && !args.values.package.includes(pair.componentName)) {
+      return {diffs: [], name};
+    }
+
+    if (args.values.verbose) {
+      console.log(`diffing ${name}`);
+    }
+
+    // Get the v3 component API
+    let v3ApiData = getAPI(pair.v3Api);
+    // Get the s2 API and extract just the specific component
+    let s2ApiData = getAPI(pair.s2Api);
+
+    // Create filtered APIs with only the component we care about
+    publishedApi = {
+      exports: {},
+      links: v3ApiData.links || {}
+    };
+    branchApi = {
+      exports: {},
+      links: s2ApiData.links || {}
+    };
+
+    // Find the main export in v3 (usually the component name)
+    // In v3, the component might be the default export or match the package name
+    let v3ComponentName = pair.v3ComponentName || pair.componentName;
+    let v3ComponentData = null;
+
+    if (v3ApiData.exports[v3ComponentName]) {
+      v3ComponentData = v3ApiData.exports[v3ComponentName];
+    } else {
+      // Try to find it by looking for a component export
+      for (let [exportName, exportValue] of Object.entries(v3ApiData.exports)) {
+        if (exportValue?.type === 'component' && !exportName.startsWith('use')) {
+          v3ComponentData = exportValue;
+          v3ComponentName = exportName;
+          break;
+        }
+      }
+    }
+
+    // Use a common key for comparison (the S2 component name)
+    // Normalize the component name so both v3 and s2 use the same name
+    if (v3ComponentData) {
+      // Clone the component data and set the name to match the S2 component name
+      v3ComponentData = JSON.parse(JSON.stringify(v3ComponentData));
+      v3ComponentData.name = pair.componentName;
+      publishedApi.exports[pair.componentName] = v3ComponentData;
+    }
+
+    // Get the s2 component - also clone and normalize the name
+    let s2ComponentData = s2ApiData.exports[pair.componentName];
+    if (s2ComponentData) {
+      s2ComponentData = JSON.parse(JSON.stringify(s2ComponentData));
+      s2ComponentData.name = pair.componentName;
+      branchApi.exports[pair.componentName] = s2ComponentData;
+    }
+
+    allExportNames = [pair.componentName];
   } else {
-    name = pair.pubApi.replace(/.*published-api/, '');
+    // Original branch vs published comparison
+    if (pair.branchApi) {
+      name = pair.branchApi.replace(/.*branch-api/, '');
+    } else {
+      name = pair.pubApi.replace(/.*published-api/, '');
+    }
+
+    if (args.values.package && !args.values.package.includes(name)) {
+      return {diffs: [], name};
+    }
+    if (args.values.verbose) {
+      console.log(`diffing ${name}`);
+    }
+    publishedApi = pair.pubApi === null ? {exports: {}} : getAPI(pair.pubApi);
+    branchApi = pair.branchApi === null ? {exports: {}} : getAPI(pair.branchApi);
+    allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
   }
 
-  if (args.values.package && !args.values.package.includes(name)) {
-    return {diff: {}, name};
-  }
-  if (args.values.verbose) {
-    console.log(`diffing ${name}`);
-  }
-  let publishedApi = pair.pubApi === null ? {exports: {}} : getAPI(pair.pubApi);
-  let branchApi = pair.branchApi === null ? {exports: {}} : getAPI(pair.branchApi);
   let publishedInterfaces = rebuildInterfaces(publishedApi);
   let branchInterfaces = rebuildInterfaces(branchApi);
-  let allExportNames = [...new Set([...Object.keys(publishedApi.exports), ...Object.keys(branchApi.exports)])];
   let allInterfaces = [...new Set([...Object.keys(publishedInterfaces), ...Object.keys(branchInterfaces)])];
   let formattedPublishedInterfaces = '';
   let formattedBranchInterfaces = '';
@@ -281,7 +559,7 @@ function getDiff(pair) {
     if (args.values.interface && args.values.interface !== iname) {
       return;
     }
-    let simplifiedName = allExportNames[index];
+    let simplifiedName = allExportNames[index] || iname;
     let codeDiff = Diff.structuredPatch(iname, iname, formattedPublishedInterfaces[index], formattedBranchInterfaces[index], {newlineIsToken: true});
     if (args.values.verbose) {
       console.log(util.inspect(codeDiff, {depth: null}));
@@ -291,7 +569,7 @@ function getDiff(pair) {
     let lines = formattedPublishedInterfaces[index].split('\n');
     codeDiff.hunks.forEach(hunk => {
       if (hunk.oldStart > prevEnd) {
-        result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map((item, index) => ` ${item}`)];
+        result = [...result, ...lines.slice(prevEnd - 1, hunk.oldStart - 1).map(item => ` ${item}`)];
       }
       if (args.values.isCI) {
         result = [...result, ...hunk.lines];
@@ -309,14 +587,18 @@ function getDiff(pair) {
     });
     let joinedResult = '';
     if (codeDiff.hunks.length > 0) {
-      joinedResult = [...result, ...lines.slice(prevEnd).map((item, index) => ` ${item}`)].join('\n');
+      joinedResult = [...result, ...lines.slice(prevEnd).map(item => ` ${item}`)].join('\n');
     }
     if (args.values.isCI && result.length > 0) {
       joinedResult = `\`\`\`diff
 ${joinedResult}
 \`\`\``;
     }
-    diffs.push({iname, result: joinedResult, simplifiedName: `${name.replace('/dist/api.json', '')}:${simplifiedName}`});
+
+    let diffSimplifiedName = args.values['compare-v3-s2']
+      ? `${pair.componentName}`
+      : `${name.replace('/dist/api.json', '')}:${simplifiedName}`;
+    diffs.push({iname, result: joinedResult, simplifiedName: diffSimplifiedName});
   });
 
   return {diffs, name};
@@ -503,6 +785,13 @@ function rebuildInterfaces(json) {
           if (prop.access === 'private') {
             return;
           }
+          // Skip style props from baseStyleProps and viewStyleProps
+          if (stylePropsToExclude.has(prop.name)) {
+            if (args.values.verbose) {
+              console.log(chalk.gray(`  [FILTERED] Skipping style prop: ${prop.name} from ${key}`));
+            }
+            return;
+          }
           let name = prop.name;
           if (item.name === null) {
             name = key;
@@ -554,6 +843,13 @@ function rebuildInterfaces(json) {
       let funcInterface = {};
       Object.entries(item.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, property]) => {
         if (property.access === 'private' || property.access === 'protected') {
+          return;
+        }
+        // Skip style props from baseStyleProps and viewStyleProps
+        if (stylePropsToExclude.has(property.name)) {
+          if (args.values.verbose) {
+            console.log(chalk.gray(`  [FILTERED] Skipping style prop: ${property.name} from ${key}`));
+          }
           return;
         }
         let name = property.name;
