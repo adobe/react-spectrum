@@ -24,15 +24,30 @@ export function ScrollableToc({children}) {
     }
   }, [children]);
 
+  let maskImage: string | undefined;
+  if (topMaskSize > 0 || bottomMaskSize > 0) {
+    let parts: string[] = [];
+    if (topMaskSize > 0) {
+      parts.push('transparent 0px');
+      parts.push(`black ${topMaskSize}px`);
+    } else {
+      parts.push('black 0px');
+    }
+    if (bottomMaskSize > 0) {
+      parts.push(`black calc(100% - ${bottomMaskSize}px)`);
+      parts.push('transparent 100%');
+    } else {
+      parts.push('black 100%');
+    }
+    maskImage = `linear-gradient(to bottom, ${parts.join(', ')})`;
+  }
+
   return (
     <div
       ref={scrollRef}
       onScroll={e => updateMasks(e.currentTarget)}
       style={{
-        maskImage: [
-          topMaskSize > 0 ? `linear-gradient(to bottom, transparent, black ${topMaskSize}px)` : null,
-          bottomMaskSize > 0 ? `linear-gradient(to top, transparent, black ${bottomMaskSize}px)` : null
-        ].filter(Boolean).join(', ') || undefined
+        maskImage
       }}
       className={style({
         overflowY: 'auto',
