@@ -346,9 +346,6 @@ function MobileNav({pages, currentPage}: PageProps) {
     let filteredPages = filterPages(allPages, searchValue);
     return filteredPages
       .sort((a, b) => {
-        console.log('getAllContent');
-        console.log('a', a);
-        console.log('b', b);
         if (a.date && b.date) {
           let aDate = new Date(a.date);
           let bDate = new Date(b.date);
@@ -377,20 +374,8 @@ function MobileNav({pages, currentPage}: PageProps) {
     // Sort to show "Introduction" first when search is empty
     if (searchValue.trim().length === 0) {
       items = [...items].sort((a, b) => {
-        console.log('getItemsForSelection');
-        console.log('a', a);
-        console.log('b', b);
         const aIsIntro = a.name === 'Introduction';
         const bIsIntro = b.name === 'Introduction';
-        if (a.date && b.date) {
-          let aDate = new Date(a.date);
-          let bDate = new Date(b.date);
-          return bDate.getTime() - aDate.getTime();
-        } else if (a.date && !b.date) {
-          return 1;
-        } else if (!a.date && b.date) {
-          return -1;
-        }
 
         if (aIsIntro && !bIsIntro) {
           return -1;
