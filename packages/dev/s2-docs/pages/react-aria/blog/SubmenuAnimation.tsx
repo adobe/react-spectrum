@@ -114,21 +114,33 @@ export function SubmenuAnimation(): JSX.Element {
   }, []);
 
   return (
-    <div ref={ref} role="img" aria-label="Animation showing a submenu closing when the cursor leaves the trigger item to go to the submenu">
-      <svg
-        ref={mouseRef}
-        viewBox="0 0 12 19"
-        width={mouseWidth}
-        height={19}
-        aria-hidden="true"
-        style={{position: 'absolute', filter: 'drop-shadow(0 1px 1px #aaa)', transform: 'translate(-1000px, -1000px)'}}>
-        <g transform="matrix(1, 0, 0, 1, -150, -63.406998)">
-          <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd" />
-          <path d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z" fill="#fff" fillRule="evenodd" />
-          <path d="m157.751 79.416-1.844.774-3.1-7.374 1.841-.775Z" fillRule="evenodd" />
-          <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd" />
-        </g>
-      </svg>
+    <div
+      role="group"
+      aria-label="Example"
+      className={style({
+        backgroundColor: 'layer-1',
+        borderRadius: 'xl',
+        marginY: 32,
+        padding: {
+          default: 12,
+          lg: 24
+        }
+      })}>
+      <div ref={ref} role="img" aria-label="Animation showing a submenu closing when the cursor leaves the trigger item to go to the submenu">
+        <svg
+          ref={mouseRef}
+          viewBox="0 0 12 19"
+          width={mouseWidth}
+          height={19}
+          aria-hidden="true"
+          style={{position: 'absolute', filter: 'drop-shadow(0 1px 1px #aaa)', transform: 'translate(-1000px, -1000px)'}}>
+          <g transform="matrix(1, 0, 0, 1, -150, -63.406998)">
+            <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd" />
+            <path d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z" fill="#fff" fillRule="evenodd" />
+            <path d="m157.751 79.416-1.844.774-3.1-7.374 1.841-.775Z" fillRule="evenodd" />
+            <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd" />
+          </g>
+        </svg>
 
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -352,6 +364,7 @@ export function SubmenuAnimation(): JSX.Element {
             data-name="Option 2 arrow" />
         </g>
       </svg>
+      </div>
     </div>
   );
 }

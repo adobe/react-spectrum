@@ -80,7 +80,7 @@ function IconListBox({items, copiedId, onAction, listBoxClassName}: IconListBoxP
         onAction={(item) => onAction(item.toString())}
         items={items}
         layout="grid"
-        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4})}
+        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, overflow: 'auto'})}
         dependencies={[copiedId]}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
@@ -101,7 +101,7 @@ const itemStyle = style({
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
-    isFocused: 'gray-100',
+    isFocusVisible: 'gray-100',
     isSelected: 'neutral'
   },
   '--iconPrimary': {
@@ -161,7 +161,7 @@ function IconItem({item, isCopied = false}: {item: typeof iconList[number], isCo
 export function SkeletonIconItem({item}: {item: {id: string}}) {
   const PlaceholderIcon = Close;
   const ref = useRef(null);
-  
+
   const itemStyle = style({
     ...focusRing(),
     size: 'full',
@@ -190,11 +190,11 @@ export function SkeletonIconItem({item}: {item: {id: string}}) {
   });
 
   return (
-    <ListBoxItem 
-      id={item.id} 
-      value={item} 
-      textValue="skeleton" 
-      className={itemStyle} 
+    <ListBoxItem
+      id={item.id}
+      value={item}
+      textValue="skeleton"
+      className={itemStyle}
       ref={ref}>
       <PlaceholderIcon styles={iconStyle({size: 'XL'})} />
       <div

@@ -4,53 +4,27 @@ import {BundlerSwitcher, BundlerSwitcherItem} from '../../src/BundlerSwitcher';
 export default Layout;
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 
-export const section = 'Getting started';
-export const description = 'Getting started with React Spectrum';
+export const section = 'Components';
 import docs from 'docs:@react-spectrum/s2';
 
 # Provider
 
 <PageDescription>{docs.exports.Provider.description}</PageDescription>
 
-## Example
-
-```tsx render
+```tsx render docs={docs.exports.Provider} props={['colorScheme', 'background']} links={docs.links} type="s2"
 'use client';
-import {Provider} from '@react-spectrum/s2';
-import {Button} from '@react-spectrum/s2';
-
-function App() {
-  return (
-    <Provider background='base'>
-      <Button variant="accent">
-        Hello React Spectrum!
-      </Button>
-    </Provider>
-  );
-}
-```
-
-## Color Schemes
-By default, React Spectrum follows the operating system color scheme setting, supporting both light and dark mode. The colorScheme prop can be set on `<Provider>` to force the app to always render in a certain color scheme.
-
-```tsx render
-'use client';
-import {Provider} from '@react-spectrum/s2';
-import {ActionButton} from '@react-spectrum/s2';
+import {Button, Provider} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<div className={style({display: 'flex', gap: 12})}>
-  <Provider colorScheme="light">
-    <div className={style({backgroundColor: 'base', padding: 12})}>
-      <ActionButton>I'm a light button</ActionButton>
-    </div>
-  </Provider>
-  <Provider colorScheme="dark">
-    <div className={style({backgroundColor: 'elevated', padding: 12})}>
-      <ActionButton>I'm a dark button</ActionButton>
-    </div>
-  </Provider>
-</div>
+
+<Provider
+  /* PROPS */
+  styles={style({padding: 12})}
+>
+  <Button>
+    Hello React Spectrum!
+  </Button>
+</Provider>
 ```
 
 ## Locales
@@ -61,9 +35,6 @@ By default, React Spectrum chooses the locale matching the user’s browser/oper
   <YourApp />
 </Provider>
 ```
-
-{/* ### Breakpoints */}
-{/* TODO: Link to style macro docs about breakpoints */}
 
 ## Client side routing
 
@@ -87,6 +58,7 @@ When using SSR, the `<Provider>` component can be rendered as the root `<html>` 
 </Provider>
 ```
 
-## Props
+## API
 
+### Provider
 <PropTable component={docs.exports.Provider} links={docs.links} />

@@ -6,17 +6,15 @@ export default Layout;
 
 export const section = 'Guides';
 export const tags = ['style', 'macro', 'spectrum', 'custom'];
-export const description = 'Styling in React Spectrum';
+export const description = 'How to use the style macro.';
 
 # Styling
 
-React Spectrum includes a build-time `style` macro that generates atomic CSS and lets you apply Spectrum tokens directly in your components with type-safe autocompletion.
+<PageDescription>Learn how to use the `style` macro to apply Spectrum tokens directly in your components with type-safe autocompletion.</PageDescription>
 
 ## Style macro
 
-The `style` macro runs at build time and returns a class name for applying Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.). As can been seen below,
-the keys of the object passed to the `style` macro correspond to a CSS property, each paired with the property's desired value. See [here](./reference.html) for a full list
-of supported values.
+The `style` macro runs at build time and returns a class name that applies Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.). See the [reference](style-macro.html) for a full list of supported values.
 
 ```tsx
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -42,7 +40,7 @@ Colocating styles with your component code means:
   <Heading>Important Note</Heading>
   <Content>
     Due to the atomic nature of the generated CSS rules, it is strongly recommended that you follow the CSS optimization guide listed [below](#css-optimization).
-    Failure to do so can result in large number of duplicate rules and obtuse styling bugs.
+    Without these optimizations, the generated CSS may contain duplicate rules that affect bundle size and debugging.
   </Content>
 </InlineAlert>
 
@@ -97,7 +95,7 @@ import {Button} from '@react-spectrum/s2';
 
 ## Conditional styles
 
-Define conditional values as objects to handle media queries, UI states (hover/press), and variants. This keeps all values for a property together.
+Define conditional values such as media queries, UI states (e.g. hover, press), and style variants as objects. Conditional values are mutually exclusive: the last matching condition always wins.
 
 ```tsx
 <div
@@ -113,9 +111,9 @@ Define conditional values as objects to handle media queries, UI states (hover/p
 
 In the example above, the keys of the nested object now map out the "conditions" that govern the padding of the `div`. This translates to the following:
 
-- If the viewport is larger than `2560px`, as specified by a user defined [media query](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries), the padding of the `div` is set to `64px`.
-- If the viewport matches the `style` macro's predefined `lg` [breakpoint](./reference.html#conditions) (i.e. the viewport is larger than `1024px`), but does not exceed previous condition, the padding of the `div` is set to `32px`
-- Otherwise, default to a padding of `8px`.
+- If the viewport is larger than `2560px`, the padding is `64px`.
+- Else if the viewport matches the `lg` [breakpoint](style-macro.html#conditions) (`1024px`), the padding is `32px`.
+- Otherwise, the padding is `8px`.
 
 Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
 
@@ -196,14 +194,10 @@ const styles = style({
 
 ## Reusing styles
 
-Extract common styles into constants and spread them into `style` calls. These must be in the same file or imported from another file as a macro.
+Extract common styles into constants and spread them into `style` calls within the same file.
 
 ```tsx
-// style-utils.ts
-export const bannerBackground = () => 'blue-1000' as const;
-
 // component.tsx
-import {bannerBackground} from './style-utils' with {type: 'macro'};
 const horizontalStack = {
   display: 'flex',
   alignItems: 'center',
@@ -212,12 +206,11 @@ const horizontalStack = {
 
 const styles = style({
   ...horizontalStack,
-  backgroundColor: bannerBackground(),
   columnGap: 4
 });
 ```
 
-Create custom utilities by defining your own macros.
+Create custom utilities by defining your own macros as functions in a separate file.
 
 ```ts
 // style-utils.ts
@@ -280,7 +273,7 @@ const childStyle = style({
 
 ## CSS optimization
 
-The `style` macro relies on CSS bundling and minification for optimal output. Failure to perform this optimization will result in a suboptimal developer experience and obtuse styling bugs.
+The `style` macro relies on CSS bundling and minification for optimal output. Without these optimizations, the generated CSS may contain duplicate rules that affect bundle size and debugging.
 Follow these best practices:
 
 - Ensure styles are extracted into a CSS bundle; do not inject at runtime with `<style>` tags.
@@ -335,10 +328,28 @@ CSS resets are strongly discouraged. Global CSS selectors can unintentionally af
 @import "reset.css" layer(reset);
 ```
 
-## Developing with style macros
+## Custom components
 
-Since `style` macros are quite different from using `className`/`style` directly, many may find it initially challenging to debug and develop against.
-Below are some useful tools that may benefit your developer experience:
+If you want to build custom components that follow Spectrum styling, you can use the `style` macro with [React Aria Components](../react-aria/index.html).
+
+```tsx
+import {Checkbox} from 'react-aria-components';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Checkbox
+  className={style({
+    backgroundColor: {
+      default: 'gray-100',
+      isHovered: 'gray-200',
+      isSelected: 'gray-900'
+    }
+  })}
+/>
+```
+
+## Developer tools
+
+These tools improve the developer experience when using style macros:
 
 - The [atomic-css-devtools](https://github.com/astahmer/atomic-css-devtools) extension presents an inspected element's atomic CSS rules
 in a non-atomic format, making it easier to scan.
@@ -347,7 +358,7 @@ in a non-atomic format, making it easier to scan.
 the `style` macros for quick prototyping.
 
 - If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
-we have MCP servers for [React Aria](../react-aria/mcp.html) and [React Spectrum](./mcp.html) respectively that interface with the docs.
+we have MCP servers for [React Aria](../react-aria/mcp.html) and [React Spectrum](mcp.html) respectively that interface with the docs.
 
 ## FAQ
 

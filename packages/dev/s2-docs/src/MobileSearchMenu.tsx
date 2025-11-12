@@ -18,11 +18,12 @@ import {
 } from './searchUtils';
 import {getLibraryFromPage} from './library';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
-import {type Library} from './constants';
 // @ts-ignore
+import {type Library} from './constants';
 import {Page} from '@parcel/rsc';
 import React, {lazy, ReactNode, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
+import {stripMarkdown} from './SearchMenu';
 import {useId} from '@react-aria/utils';
 
 
@@ -284,7 +285,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
 
     return filteredPages
       .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: page.exports?.description}));
+      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -293,7 +294,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
     let filteredPages = filterPages(allPages, searchValue);
     return filteredPages
       .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: page.exports?.description}));
+      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
   };
 
   let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
