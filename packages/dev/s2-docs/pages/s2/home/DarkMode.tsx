@@ -11,13 +11,13 @@ import { AppFrame, ExampleApp } from "./ExampleApp";
 export function DarkMode() {
   let containerRef = useRef(null);
   return (
-    <div className={style({position: 'relative'})} style={{containerType: 'size', height: 350} as any} ref={containerRef}>
+    <div className={style({position: 'relative', borderRadius: 'lg', boxShadow: 'elevated'})} style={{containerType: 'size', height: 350} as any} ref={containerRef}>
       <Resizable containerRef={containerRef}>
-        <Provider colorScheme="light" styles={style({width: '100cqw', height: '100cqh'})}>
+        <Provider colorScheme="light" styles={style({width: '100cqw', height: '100cqh', borderRadius: 'lg', overflow: 'clip'})}>
           <AppFrame inert />
         </Provider>
       </Resizable>
-      <Provider colorScheme="dark" styles={style({position: 'absolute', inset: 0})}>
+      <Provider colorScheme="dark" styles={style({position: 'absolute', inset: 0, borderRadius: 'lg', overflow: 'clip'})}>
         <AppFrame inert />
       </Provider>
     </div>

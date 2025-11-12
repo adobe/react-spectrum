@@ -34,6 +34,7 @@ import Layers from '@react-spectrum/s2/illustrations/gradient/generic2/Layers';
 import { Icons, Illustrations } from "./Icons";
 import { Typography } from "./Typography";
 import { States } from "./States";
+import { useId } from "react";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -45,6 +46,7 @@ const container = style({
 });
 
 export function Home() {
+  let headingId = useId();
   return (
     <body
       className={style({
@@ -55,11 +57,11 @@ export function Home() {
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%'
       }}>
-      <header className={style({marginX: 'auto', paddingY: 96, maxWidth: 1024})}>
-        <h1 className={style({font: 'heading-3xl', marginTop: 0, marginBottom: 48, color: 'white'})}>React Spectrum</h1>
-        <div className={style({height: size(600)})}>
+      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingY: 96, maxWidth: 1024})}>
+        <h1 id={headingId} className={style({font: 'heading-3xl', marginTop: 0, marginBottom: 48, color: 'white'})}>React Spectrum</h1>
+        <section aria-label="Example app" className={style({height: size(600)})}>
           <ExampleApp />
-        </div>
+        </section>
       </header>
       <main className={style({marginX: 'auto', paddingX: 40, maxWidth: 1600})}>
         <Section
@@ -266,9 +268,10 @@ const buttonStyle = style({
 
 
 function Section({title, description, children}: any) {
+  let headingId = useId();
   return (
-    <section className={style({paddingY: 64})}>
-      <h2 className={style({font: 'heading-2xl', color: 'white'})}>{title}</h2>
+    <section aria-labelledby={headingId} className={style({paddingY: 64})}>
+      <h2 id={headingId} className={style({font: 'heading-2xl', color: 'white'})}>{title}</h2>
       <p className={style({font: 'body-2xl', color: 'white', maxWidth: '80%', marginBottom: 64})}>{description}</p>
       <div className={style({display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16})}>
         {children}
@@ -278,14 +281,15 @@ function Section({title, description, children}: any) {
 }
 
 function Feature({title, description, illustration, children, style: styleProp}: any) {
+  let headingId = useId();
   return (
-    <section className={container} style={styleProp}>
+    <section aria-labelledby={headingId} className={container} style={styleProp}>
       <div className={style({display: 'flex', columnGap: 12, alignItems: 'start', marginBottom: 12})}>
         <div style={{marginTop: -12, marginInlineStart: -12}}>
           {illustration}
         </div>
         <div>
-          <h3 className={style({font: 'heading', marginY: 0})}>{title}</h3>
+          <h3 id={headingId} className={style({font: 'heading', marginY: 0})}>{title}</h3>
           <p className={style({font: 'body-lg', marginY: 0})}>{description}</p>
         </div>
       </div>

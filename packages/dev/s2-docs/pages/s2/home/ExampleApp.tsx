@@ -11,10 +11,12 @@ import Edit from '@react-spectrum/s2/icons/Edit';
 import FolderAdd from '@react-spectrum/s2/icons/FolderAdd';
 import Share from '@react-spectrum/s2/icons/Share';
 import Download from '@react-spectrum/s2/icons/Download';
+import Settings from '@react-spectrum/s2/icons/Settings';
 import Tag from '@react-spectrum/s2/icons/Tag';
+import Org from '@react-spectrum/s2/icons/Buildings';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
 import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup} from '@react-spectrum/s2';
+import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem} from '@react-spectrum/s2';
 import {useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
 import { useRef, useState } from 'react';
@@ -53,6 +55,7 @@ export function ExampleApp() {
               src={detail.urls.regular}
               width={detail.width}
               height={detail.height}
+              alt={detail.description || detail.alt_description}
               UNSAFE_style={{
                 viewTransitionName: 'photo',
                 '--scale': `min(100cqw / ${detail.width}, 100cqh / ${detail.height})`,
@@ -85,7 +88,10 @@ export function AppFrame({children, inert, hidden}: any) {
         height: 'full',
         padding: 16,
         paddingBottom: 0,
-        borderRadius: 'lg', overflow: 'clip', boxSizing: 'border-box', boxShadow: 'elevated',
+        borderRadius: 'lg',
+        overflow: 'clip',
+        boxSizing: 'border-box',
+        boxShadow: 'elevated',
         backgroundColor: 'layer-1'
       })}>
       <div
@@ -96,25 +102,28 @@ export function AppFrame({children, inert, hidden}: any) {
           alignItems: 'center',
           width: 'full'
         })}>
-        <ActionButton isQuiet><MenuHamburger /></ActionButton>
+        <ActionButton isQuiet aria-label="Menu">
+          <MenuHamburger />
+        </ActionButton>
         <AdobeLogo size={24} />
         <span className={style({font: 'title'})}>{direction === 'rtl' ? 'طيف التفاعل' : 'React Spectrum'}</span>
         <div className={style({flexGrow: 1})}>
-          <SearchField placeholder={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'} styles={style({maxWidth: 300, marginX: 'auto'})} />
+          <SearchField
+            aria-label={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
+            placeholder={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
+            styles={style({maxWidth: 300, marginX: 'auto'})} />
         </div>
         <ActionButtonGroup>
-          <ActionButton isQuiet>
+          <ActionButton isQuiet aria-label="Help">
             <HelpCircle />
           </ActionButton>
-          <ActionButton isQuiet>
+          <ActionButton isQuiet aria-label="Notifications">
             <Bell />
           </ActionButton>
-          <ActionButton isQuiet>
+          <ActionButton isQuiet aria-label="Apps">
             <Apps />
           </ActionButton>
-          <ActionButton isQuiet>
-            <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
-          </ActionButton>
+          <AccountMenu />
         </ActionButtonGroup>
       </div>
       <div
@@ -124,21 +133,25 @@ export function AppFrame({children, inert, hidden}: any) {
           flexDirection: 'column',
           gap: 8
         })}>
-        <Button variant="accent" styles={style({marginBottom: 8})}>
+        <Button
+          variant="accent"
+          aria-label="Create"
+          styles={style({marginBottom: 8})}>
           <Add />
         </Button>
         <ToggleButtonGroup
           aria-label="Navigation"
           isQuiet
           orientation="vertical"
-          defaultSelectedKeys={['home']}>
-          <ToggleButton id="home">
+          defaultSelectedKeys={['home']}
+          disallowEmptySelection>
+          <ToggleButton id="home" aria-label="Home">
             <Home />
           </ToggleButton>
-          <ToggleButton id="files">
+          <ToggleButton id="files" aria-label="Files">
             <Folder />
           </ToggleButton>
-          <ToggleButton id="ideas">
+          <ToggleButton id="ideas" aria-label="Ideas">
             <Lightbulb />
           </ToggleButton>
         </ToggleButtonGroup>
@@ -237,7 +250,7 @@ function Example(props: any) {
     <CardView
       aria-label="Nature photos"
       size="S"
-      layout="grid"
+      layout="waterfall"
       selectionMode="multiple"
       // selectionStyle={list.selectedKeys === 'all' || list.selectedKeys.size > 0 ? 'checkbox' : 'highlight'}
       selectedKeys={list.selectedKeys}
@@ -308,28 +321,64 @@ function PhotoCard({item, onAction}: any) {
           flushSync(() => onAction([item, imgRef.current]));
         })
       }}>
-      {({size}) => (<>
-        <CardPreview>
-          <Image
-            ref={imgRef}
-            data-photo-id={item.id}
-            src={item.urls.regular}
-            width={item.width}
-            height={item.height}
-            styles={style({
-              width: 'full',
-              pointerEvents: 'none',
-              objectFit: 'cover'
-            })} />
-        </CardPreview>
-        {/* <Content>
-          <Text slot="title">{item.description || item.alt_description}</Text> */}
-          {/* <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-            <Avatar src={item.user.profile_image.small} size={size} />
-            <Text slot="description">{item.user.name}</Text>
-          </div> */}
-        {/* </Content> */}
-      </>)}
+      <CardPreview>
+        <Image
+          ref={imgRef}
+          data-photo-id={item.id}
+          src={item.urls.regular}
+          width={item.width}
+          height={item.height}
+          UNSAFE_style={{
+            aspectRatio:`${item.width} / ${item.height}`
+          }} />
+      </CardPreview>
     </Card>
+  );
+}
+
+export function AccountMenu() {
+  return (
+    <MenuTrigger>
+      <ActionButton isQuiet aria-label="Account">
+        <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
+      </ActionButton>
+      <Popover hideArrow placement="bottom end">
+        <div className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
+          <div className={style({display: 'flex', gap: 12, alignItems: 'center', marginX: 12})}>
+            <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
+            <div>
+              <div className={style({font: 'title'})}>Devon Govett</div>
+              <div className={style({font: 'ui'})}>user@example.com</div>
+              <Switch styles={style({marginTop: 4})}>Dark theme</Switch>
+            </div>
+          </div>
+          <Divider styles={style({marginX: 12})} />
+          <Menu aria-label="Account">
+            <MenuSection>
+              <SubmenuTrigger>
+                <MenuItem>
+                  <Org />
+                  <Text slot="label">Organization</Text>
+                  <Text slot="value">Adobe</Text>
+                </MenuItem>
+                <Menu selectionMode="single" selectedKeys={['adobe']}>
+                  <MenuItem id="adobe">Adobe</MenuItem>
+                  <MenuItem id="nike">Nike</MenuItem>
+                  <MenuItem id="apple">Apple</MenuItem>
+                </Menu>
+              </SubmenuTrigger>
+              <MenuItem>
+                <Settings />
+                <Text slot="label">Settings</Text>
+              </MenuItem>
+            </MenuSection>
+            <MenuSection>
+              <MenuItem>Legal notices</MenuItem>
+              <MenuItem>Sign out</MenuItem>
+            </MenuSection>
+          </Menu>
+        </div>
+      </Popover>
+    </MenuTrigger>
   );
 }

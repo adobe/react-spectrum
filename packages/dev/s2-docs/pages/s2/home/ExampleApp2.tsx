@@ -19,9 +19,10 @@ import AlignBottom from '@react-spectrum/s2/icons/AlignBottom';
 import Apps from '@react-spectrum/s2/icons/AppsAll';
 
 import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup} from '@react-spectrum/s2';
+import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button} from '@react-spectrum/s2';
 import { Key } from 'react-aria';
 import { useState } from 'react';
+import { AccountMenu } from './ExampleApp';
 
 export function ExampleApp2({onBack, children}: any) {
   let [selectedPanel, setPanel] = useState<Key | null>('properties');
@@ -66,24 +67,24 @@ export function ExampleApp2({onBack, children}: any) {
           },
           borderStyle: 'solid'
         })}>
-        <ActionButton isQuiet onPress={onBack}><ChevronLeft /></ActionButton>
+        <ActionButton isQuiet aria-label="Back" onPress={onBack}>
+          <ChevronLeft />
+        </ActionButton>
         <Breadcrumbs onAction={onBack}>
           <Breadcrumb>Your files</Breadcrumb>
           <Breadcrumb>July final draft</Breadcrumb>
         </Breadcrumbs>
         <ActionButtonGroup>
-          <ActionButton isQuiet>
+          <ActionButton isQuiet aria-label="Help">
             <HelpCircle />
           </ActionButton>
-          <ActionButton isQuiet>
+          <ActionButton isQuiet aria-label="Notifications">
             <Bell />
           </ActionButton>
-          <ActionButton isQuiet>
+          <ActionButton isQuiet aria-label="Apps">
             <Apps />
           </ActionButton>
-          <ActionButton isQuiet>
-            <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
-          </ActionButton>
+          <AccountMenu />
         </ActionButtonGroup>
       </div>
       <div
@@ -105,16 +106,16 @@ export function ExampleApp2({onBack, children}: any) {
           defaultSelectedKeys={['select']}
           isQuiet
           orientation="vertical">
-          <ToggleButton id="select">
+          <ToggleButton id="select" aria-label="Select">
             <Select />
           </ToggleButton>
-          <ToggleButton id="brush">
+          <ToggleButton id="brush" aria-label="Brush">
             <Brush />
           </ToggleButton>
-          <ToggleButton id="edit">
+          <ToggleButton id="pencil" aria-label="Pencil">
             <Edit />
           </ToggleButton>
-          <ToggleButton id="shapes">
+          <ToggleButton id="shapes" aria-label="Shapes">
             <Shapes />
           </ToggleButton>
         </ToggleButtonGroup>
@@ -255,7 +256,7 @@ function SkeletonCard() {
 
 function Layers() {
   return (
-    <TreeView styles={style({height: 'full'})} defaultExpandedKeys={['g1', 'g2']}>
+    <TreeView aria-label="Layers" styles={style({height: 'full'})} defaultExpandedKeys={['g1', 'g2']}>
       <Layer name="Group 1" id="g1">
         <Layer name="Layer 1" />
         <Layer name="Layer 2" />
@@ -281,7 +282,7 @@ function Layer({id, name, children}: any) {
 
 function Properties() {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 16})}>
+    <div role="group" aria-label="Properties" className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 16})}>
       <div className={style({font: 'title', color: 'ButtonText'})}>Position</div>
       <div className={style({display: 'flex', gap: 8})}>
         <TextField label="X" size="S" labelPosition="side" value="180px" />
@@ -293,25 +294,35 @@ function Properties() {
       </div>
       <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
         <div className={style({font: 'ui-sm', color: 'ButtonText'})}>Alignment</div>
-        <ToggleButtonGroup density="compact" size="S" defaultSelectedKeys={['left']} styles={style({gridColumnStart: 'field'})}>
-          <ToggleButton id="left">
+        <ToggleButtonGroup
+          aria-label="Horizontal alignment"
+          density="compact"
+          size="S"
+          defaultSelectedKeys={['left']}
+          styles={style({gridColumnStart: 'field'})}>
+          <ToggleButton id="left" aria-label="Left">
             <AlignLeft />
           </ToggleButton>
-          <ToggleButton id="center">
+          <ToggleButton id="center" aria-label="Center">
             <AlignCenter />
           </ToggleButton>
-          <ToggleButton id="right">
+          <ToggleButton id="right" aria-label="Right">
             <AlignRight />
           </ToggleButton>
         </ToggleButtonGroup>
-        <ToggleButtonGroup density="compact" size="S" defaultSelectedKeys={['middle']} styles={style({gridColumnStart: 'field'})}>
-          <ToggleButton id="top">
+        <ToggleButtonGroup
+          aria-label="Vertical alignment"
+          density="compact"
+          size="S"
+          defaultSelectedKeys={['middle']}
+          styles={style({gridColumnStart: 'field'})}>
+          <ToggleButton id="top" aria-label="Top">
             <AlignTop />
           </ToggleButton>
-          <ToggleButton id="middle">
+          <ToggleButton id="middle" aria-label="Middle">
             <AlignMiddle />
           </ToggleButton>
-          <ToggleButton id="bottom">
+          <ToggleButton id="bottom" aria-label="Bottom">
             <AlignBottom />
           </ToggleButton>
         </ToggleButtonGroup>
@@ -328,20 +339,71 @@ function Properties() {
 }
 
 function Comments() {
+  let [comments, setComments] = useState([
+    {
+      author: 'Nikolas Gibbons',
+      avatar: 'https://www.untitledui.com/images/avatars/nikolas-gibbons',
+      date: '2 hours ago',
+      body: 'Thanks for the feedback!'
+    },
+    {
+      author: 'Adriana Sullivan',
+      avatar: 'https://www.untitledui.com/images/avatars/adriana-sullivan',
+      date: 'July 14',
+      body: 'I love the colors! Can we add a little more pop?'
+    }
+  ]);
+
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, padding: 16})}>
-      <h3 className={style({font: 'title-lg', marginY: 0})}>Comments</h3>
-      <TextArea aria-label="Add a comment" placeholder="Add a comment" />
-      <Comment
-        author="Nikolas Gibbons"
-        avatar="https://www.untitledui.com/images/avatars/nikolas-gibbons"
-        date="2 hours ago"
-        body="Thanks for the feedback!" />
-      <Comment
-        author="Adriana Sullivan"
-        avatar="https://www.untitledui.com/images/avatars/adriana-sullivan"
-        date="July 14"
-        body="I love the colors! Can we add a little more pop?" />
+    <div role="group" aria-label="Comments" className={style({display: 'flex', flexDirection: 'column', gap: 16, padding: 16, height: 'full', boxSizing: 'border-box', contain: 'size'})}>
+      <h3 className={style({font: 'title-lg', color: {default: 'title', forcedColors: 'ButtonText'}, marginY: 0})}>Comments</h3>
+      <form
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          alignItems: 'end'
+        })}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+            e.currentTarget.requestSubmit();
+          }
+        }}
+        action={formData => {
+          setComments([
+            {
+              author: 'You',
+              avatar: 'https://i.imgur.com/xIe7Wlb.png',
+              date: 'Just now',
+              body: formData.get('comment')! as string
+            },
+            ...comments
+          ]);
+        }}>
+        <TextArea
+          aria-label="Add a comment"
+          placeholder="Add a comment"
+          name="comment"
+          isRequired
+          styles={style({width: 'full'})} />
+        <Button type="submit" size="S" variant="accent">Post</Button>
+      </form>
+      <div
+        className={style({
+          display: 'flex',
+          flexDirection: 'column',
+          rowGap: 16,
+          marginX: -16,
+          marginBottom: -16,
+          padding: 16,
+          overflow: 'auto',
+          flexGrow: 1,
+          minHeight: 0
+        })}>
+        {comments.map((comment, i) => (
+          <Comment key={i} {...comment} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -363,13 +425,13 @@ function Comment({author, avatar, date, body}: any) {
         alignItems: 'center'
       })}>
       <Avatar styles={style({gridArea: 'avatar'})} src={avatar} size={32} />
-      <span className={style({gridArea: 'name', font: 'title-sm', display: 'flex', alignItems: 'center', columnGap: 8})}>
+      <span className={style({gridArea: 'name', font: 'title-sm', color: {default: 'title', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
         {author}
       </span>
-      <span className={style({gridArea: 'date', font: 'detail-sm', display: 'flex', alignItems: 'center', columnGap: 8})}>
+      <span className={style({gridArea: 'date', font: 'detail-sm', color: {default: 'detail', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
         {date}
       </span>
-      <span className={style({gridArea: 'body', font: 'body', display: 'flex', alignItems: 'center', columnGap: 8})}>
+      <span className={style({gridArea: 'body', font: 'body', color: {default: 'body', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
         {body}
       </span>
     </div>
@@ -378,7 +440,7 @@ function Comment({author, avatar, date, body}: any) {
 
 function Assets() {
   return (
-    <div className={style({padding: 16, height: 'full', display: 'flex', flexDirection: 'column'})}>
+    <div role="group" aria-label="Assets" className={style({padding: 16, height: 'full', display: 'flex', flexDirection: 'column'})}>
       <div className={style({font: 'title'})}>Assets</div>
       <div
         className={style({
