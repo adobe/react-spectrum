@@ -13,6 +13,7 @@ import {
   getResourceTags,
   SearchEmptyState,
   sortItemsForDisplay,
+  sortSearchItems,
   useFilteredIcons,
   useSearchTagSelection,
   useSectionTagsForDisplay
@@ -213,11 +214,11 @@ export function SearchMenu(props: SearchMenuProps) {
     let items: typeof transformedComponents = [];
     if (searchValue.trim().length > 0 && selectedTagId === 'all') {
       items = filteredComponents.flatMap(s => s.children) || [];
+      items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
     } else {
       items = (filteredComponents.find(s => s.id === selectedTagId)?.children) || [];
+      items = sortItemsForDisplay(items, searchValue);
     }
-
-    items = sortItemsForDisplay(items, searchValue);
 
     return items;
   }, [filteredComponents, selectedTagId, searchValue]);
