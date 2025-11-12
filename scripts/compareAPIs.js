@@ -73,32 +73,32 @@ let s2ToV3ComponentMap = {
   'ActionButtonGroup': {package: '@react-spectrum/actiongroup', component: 'ActionGroup'},
   'ActionMenu': {package: '@react-spectrum/menu', component: 'ActionMenu'},
   'AlertDialog': {package: '@react-spectrum/dialog', component: 'AlertDialog'},
-  'Breadcrumb': {package: '@react-spectrum/breadcrumbs', component: 'BreadcrumbItem'},
+  'Breadcrumb': {package: '@react-stately/collections', component: 'Item'},
   'CheckboxGroup': {package: '@react-spectrum/checkbox', component: 'CheckboxGroup'},
   'ColorArea': {package: '@react-spectrum/color', component: 'ColorArea'},
   'ColorField': {package: '@react-spectrum/color', component: 'ColorField'},
   'ColorSlider': {package: '@react-spectrum/color', component: 'ColorSlider'},
   'ColorWheel': {package: '@react-spectrum/color', component: 'ColorWheel'},
   'Column': {package: '@react-spectrum/table', component: 'Column'},
-  'ComboBoxItem': {package: '@react-spectrum/combobox', component: 'Item'},
-  'ComboBoxSection': {package: '@react-spectrum/combobox', component: 'Section'},
+  'ComboBoxItem': {package: '@react-stately/collections', component: 'Item'},
+  'ComboBoxSection': {package: '@react-stately/collections', component: 'Section'},
   'Content': {package: '@react-spectrum/view', component: 'Content'},
   'DateField': {package: '@react-spectrum/datepicker', component: 'DateField'},
   'DateRangePicker': {package: '@react-spectrum/datepicker', component: 'DateRangePicker'},
   'DialogContainer': {package: '@react-spectrum/dialog', component: 'DialogContainer'},
   'DialogTrigger': {package: '@react-spectrum/dialog', component: 'DialogTrigger'},
   'Disclosure': {package: '@react-spectrum/accordion', component: 'Disclosure'},
-  'DisclosureHeader': {package: '@react-spectrum/accordion', component: 'DisclosureHeader'},
+  'DisclosureHeader': {package: '@react-spectrum/accordion', component: 'DisclosureTitle'},
   'DisclosurePanel': {package: '@react-spectrum/accordion', component: 'DisclosurePanel'},
   'DisclosureTitle': {package: '@react-spectrum/accordion', component: 'DisclosureTitle'},
   'Footer': {package: '@react-spectrum/view', component: 'Footer'},
   'Header': {package: '@react-spectrum/view', component: 'Header'},
   'Heading': {package: '@react-spectrum/text', component: 'Heading'},
   'Keyboard': {package: '@react-spectrum/text', component: 'Keyboard'},
-  'MenuItem': {package: '@react-spectrum/menu', component: 'Item'},
-  'MenuSection': {package: '@react-spectrum/menu', component: 'Section'},
-  'PickerItem': {package: '@react-spectrum/picker', component: 'Item'},
-  'PickerSection': {package: '@react-spectrum/picker', component: 'Section'},
+  'MenuItem': {package: '@react-stately/collections', component: 'Item'},
+  'MenuSection': {package: '@react-stately/collections', component: 'Section'},
+  'PickerItem': {package: '@react-stately/collections', component: 'Item'},
+  'PickerSection': {package: '@react-stately/collections', component: 'Section'},
   'ProgressBar': {package: '@react-spectrum/progress', component: 'ProgressBar'},
   'ProgressCircle': {package: '@react-spectrum/progress', component: 'ProgressCircle'},
   'RadioGroup': {package: '@react-spectrum/radio', component: 'RadioGroup'},
@@ -112,6 +112,7 @@ let s2ToV3ComponentMap = {
   'TableHeader': {package: '@react-spectrum/table', component: 'TableHeader'},
   'TableView': {package: '@react-spectrum/table', component: 'TableView'},
   'TagGroup': {package: '@react-spectrum/tag', component: 'TagGroup'},
+  'Tag': {package: '@react-stately/collections', component: 'Item'},
   'TextArea': {package: '@react-spectrum/textfield', component: 'TextArea'},
   'TimeField': {package: '@react-spectrum/datepicker', component: 'TimeField'},
   'ToggleButton': {package: '@react-spectrum/button', component: 'ToggleButton'},
@@ -324,10 +325,18 @@ async function compare() {
   }
 
   let allDiffs = {};
+  let skippedComparisons = [];
   for (let pair of pairs) {
-    let {diffs, name} = getDiff(pair);
-    if (diffs && diffs.length > 0) {
-      allDiffs[name] = diffs;
+    let result = getDiff(pair);
+    if (result.skipped) {
+      skippedComparisons.push({
+        name: result.name,
+        reason: result.reason,
+        componentName: pair.componentName,
+        v3Package: pair.v3PackageName
+      });
+    } else if (result.diffs && result.diffs.length > 0) {
+      allDiffs[result.name] = result.diffs;
     }
   }
 
@@ -387,6 +396,23 @@ ${changes.join('\n')}
     messages.forEach(message => {
       console.log(message);
     });
+  }
+
+  // Report skipped comparisons
+  if (skippedComparisons.length > 0) {
+    console.log('\n' + chalk.yellow('='.repeat(60)));
+    console.log(chalk.yellow.bold('Skipped Comparisons Report'));
+    console.log(chalk.yellow('='.repeat(60)));
+    console.log(chalk.yellow(`\n${skippedComparisons.length} component(s) could not be compared:\n`));
+
+    skippedComparisons.forEach(({componentName, v3Package, reason}) => {
+      console.log(chalk.cyan(`  ${componentName}:`));
+      console.log(chalk.gray(`    v3 package: ${v3Package}`));
+      console.log(chalk.gray(`    reason: ${reason}`));
+      console.log('');
+    });
+
+    console.log(chalk.yellow('='.repeat(60)) + '\n');
   }
 }
 
@@ -476,6 +502,10 @@ function getDiff(pair) {
       console.log(`diffing ${name}`);
     }
 
+    console.log(chalk.blue(`\nComparing ${pair.componentName}:`));
+    console.log(chalk.gray(`  v3 API: ${pair.v3Api}`));
+    console.log(chalk.gray(`  s2 API: ${pair.s2Api}`));
+
     // Get the v3 component API
     let v3ApiData = getAPI(pair.v3Api);
     // Get the s2 API and extract just the specific component
@@ -496,17 +526,16 @@ function getDiff(pair) {
     let v3ComponentName = pair.v3ComponentName || pair.componentName;
     let v3ComponentData = null;
 
+    console.log(chalk.gray(`  Looking for v3 component: ${v3ComponentName}`));
+    console.log(chalk.gray(`  Available v3 exports: ${Object.keys(v3ApiData.exports).join(', ')}`));
+
     if (v3ApiData.exports[v3ComponentName]) {
       v3ComponentData = v3ApiData.exports[v3ComponentName];
+      console.log(chalk.green(`  ✓ Found v3 component: ${v3ComponentName} (type: ${v3ComponentData?.type})`));
     } else {
-      // Try to find it by looking for a component export
-      for (let [exportName, exportValue] of Object.entries(v3ApiData.exports)) {
-        if (exportValue?.type === 'component' && !exportName.startsWith('use')) {
-          v3ComponentData = exportValue;
-          v3ComponentName = exportName;
-          break;
-        }
-      }
+      console.log(chalk.red(`  ✗ v3 component ${v3ComponentName} not found - skipping comparison`));
+      // Return empty diffs to skip this comparison
+      return {diffs: [], name, skipped: true, reason: 'v3 component not found'};
     }
 
     // Use a common key for comparison (the S2 component name)
@@ -519,11 +548,17 @@ function getDiff(pair) {
     }
 
     // Get the s2 component - also clone and normalize the name
+    console.log(chalk.gray(`  Looking for s2 component: ${pair.componentName}`));
     let s2ComponentData = s2ApiData.exports[pair.componentName];
     if (s2ComponentData) {
+      console.log(chalk.green(`  ✓ Found s2 component: ${pair.componentName} (type: ${s2ComponentData?.type})`));
       s2ComponentData = JSON.parse(JSON.stringify(s2ComponentData));
       s2ComponentData.name = pair.componentName;
       branchApi.exports[pair.componentName] = s2ComponentData;
+    } else {
+      console.log(chalk.red(`  ✗ s2 component ${pair.componentName} not found - skipping comparison`));
+      // Return empty diffs to skip this comparison
+      return {diffs: [], name, skipped: true, reason: 's2 component not found'};
     }
 
     allExportNames = [pair.componentName];
@@ -654,10 +689,36 @@ function processType(value) {
     return 'boolean';
   }
   if (value.type === 'union') {
-    return value.elements.map(processType).join(' | ');
+    // Sort union elements alphabetically for consistent output, with functions last
+    let elements = value.elements.map(processType);
+    elements.sort((a, b) => {
+      let aIsFunction = a.startsWith('(') && a.includes('=>');
+      let bIsFunction = b.startsWith('(') && b.includes('=>');
+      if (aIsFunction && !bIsFunction) {
+        return 1; // a comes after b
+      }
+      if (!aIsFunction && bIsFunction) {
+        return -1; // a comes before b
+      }
+      return a.localeCompare(b); // alphabetical if both are or aren't functions
+    });
+    return elements.join(' | ');
   }
   if (value.type === 'intersection') {
-    return `(${value.types.map(processType).join(' & ')})`;
+    // Sort intersection types alphabetically for consistent output, with functions last
+    let types = value.types.map(processType);
+    types.sort((a, b) => {
+      let aIsFunction = a.startsWith('(') && a.includes('=>');
+      let bIsFunction = b.startsWith('(') && b.includes('=>');
+      if (aIsFunction && !bIsFunction) {
+        return 1; // a comes after b
+      }
+      if (!aIsFunction && bIsFunction) {
+        return -1; // a comes before b
+      }
+      return a.localeCompare(b); // alphabetical if both are or aren't functions
+    });
+    return `(${types.join(' & ')})`;
   }
   if (value.type === 'application') {
     let name = value.base.name;
@@ -756,6 +817,77 @@ ${value.exact ? '\\}' : '}'}`;
   return `UNKNOWN: ${value.type}`;
 }
 
+// Helper to find a type by name in links or exports
+function findTypeByName(name, json) {
+  if (json.links) {
+    for (let linkId in json.links) {
+      if (json.links[linkId].name === name) {
+        return json.links[linkId];
+      }
+    }
+  }
+  if (json.exports && json.exports[name]) {
+    return json.exports[name];
+  }
+  return null;
+}
+
+// Helper function to resolve a props type by following links, identifiers, and applications
+function resolvePropsType(propsType, json) {
+  let maxDepth = 10;
+  let depth = 0;
+
+  while (depth < maxDepth) {
+    depth++;
+
+    // If it's a link, resolve it
+    if (propsType.type === 'link' && propsType.id && json.links && json.links[propsType.id]) {
+      propsType = json.links[propsType.id];
+      continue;
+    }
+
+    // If it's an application (like ItemProps<T>), try to get the base type
+    if (propsType.type === 'application' && propsType.base) {
+      if (propsType.base.type === 'link' && propsType.base.id && json.links && json.links[propsType.base.id]) {
+        propsType = json.links[propsType.base.id];
+        continue;
+      }
+      if (propsType.base.type === 'identifier' && propsType.base.name) {
+        let resolved = findTypeByName(propsType.base.name, json);
+        if (resolved) {
+          propsType = resolved;
+          continue;
+        }
+      }
+    }
+
+    // If the resolved type is a component, extract props from it
+    if (propsType.type === 'component' && propsType.props) {
+      propsType = propsType.props;
+      continue;
+    }
+
+    // If it's an identifier, try to resolve it
+    if (propsType.type === 'identifier' && propsType.name) {
+      let resolved = findTypeByName(propsType.name, json);
+      if (resolved) {
+        propsType = resolved;
+        continue;
+      }
+    }
+
+    // If we have properties, we're done
+    if ((propsType.type === 'object' || propsType.type === 'interface') && propsType.properties) {
+      break;
+    }
+
+    // Can't resolve further
+    break;
+  }
+
+  return propsType;
+}
+
 function rebuildInterfaces(json) {
   let exports = {};
   if (!json.exports) {
@@ -822,22 +954,93 @@ function rebuildInterfaces(json) {
       exports[name] = compInterface;
     } else if (item.type === 'function') {
       let funcInterface = {};
-      Object.entries(item.parameters).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, param]) => {
-        if (param.access === 'private') {
-          return;
+
+      // Check if this is a React component function with a props parameter
+      // In that case, extract the props from the parameter type instead of treating it as a function
+      let isReactComponent = false;
+      let propsParam = null;
+
+      if (item.parameters && item.parameters.length > 0) {
+        let firstParam = item.parameters[0];
+        // Check if it's a props parameter (has a value that's a link/identifier/object/application)
+        if (firstParam && firstParam.value &&
+            (firstParam.value.type === 'link' ||
+             firstParam.value.type === 'identifier' ||
+             firstParam.value.type === 'object' ||
+             firstParam.value.type === 'application')) {
+          isReactComponent = true;
+          propsParam = firstParam;
         }
-        let name = param.name;
-        let optional = param.optional;
-        let defaultVal = param.default;
-        let value = processType(param.value);
-        funcInterface[name] = {optional, defaultVal, value};
-      });
-      let returnVal = processType(item.return);
-      let name = item.name ?? key;
-      funcInterface['returnVal'] = returnVal;
-      if (item.typeParameters?.length > 0) {
-        funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
       }
+
+      if (isReactComponent && propsParam) {
+        // Extract props from the parameter type
+        let propsType = resolvePropsType(propsParam.value, json);
+
+        // If it's an object or interface type, extract properties
+        if (propsType.type === 'object' && propsType.properties) {
+          Object.entries(propsType.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, prop]) => {
+            if (prop.access === 'private') {
+              return;
+            }
+            // Skip style props from baseStyleProps and viewStyleProps
+            if (stylePropsToExclude.has(prop.name)) {
+              return;
+            }
+            let name = prop.name;
+            let optional = prop.optional;
+            let defaultVal = prop.default;
+            let value = processType(prop.value);
+            funcInterface[name] = {optional, defaultVal, value};
+          });
+        } else if (propsType.type === 'interface' && propsType.properties) {
+          Object.entries(propsType.properties).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, prop]) => {
+            if (prop.access === 'private' || prop.access === 'protected') {
+              return;
+            }
+            // Skip style props from baseStyleProps and viewStyleProps
+            if (stylePropsToExclude.has(prop.name)) {
+              return;
+            }
+            let name = prop.name;
+            let optional = prop.optional;
+            let defaultVal = prop.default;
+            let value = processType(prop.value);
+            funcInterface[name] = {optional, defaultVal, value};
+          });
+        } else {
+          // Fallback: treat as regular function parameter
+          let name = propsParam.name;
+          let optional = propsParam.optional;
+          let defaultVal = propsParam.default;
+          let value = processType(propsParam.value);
+          funcInterface[name] = {optional, defaultVal, value};
+        }
+
+        // Add type parameters if present
+        if (item.typeParameters?.length > 0) {
+          funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        }
+      } else {
+        // Regular function: process all parameters
+        Object.entries(item.parameters).sort((([keyA], [keyB]) => keyA > keyB ? 1 : -1)).forEach(([, param]) => {
+          if (param.access === 'private') {
+            return;
+          }
+          let name = param.name;
+          let optional = param.optional;
+          let defaultVal = param.default;
+          let value = processType(param.value);
+          funcInterface[name] = {optional, defaultVal, value};
+        });
+        let returnVal = processType(item.return);
+        funcInterface['returnVal'] = returnVal;
+        if (item.typeParameters?.length > 0) {
+          funcInterface['typeParameters'] = `<${item.typeParameters.map(processType).sort().join(', ')}>`;
+        }
+      }
+
+      let name = item.name ?? key;
       exports[name] = funcInterface;
     } else if (item.type === 'interface') {
       let funcInterface = {};
@@ -896,7 +1099,13 @@ function rebuildInterfaces(json) {
 }
 
 function formatProp([name, prop]) {
-  return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${prop.defaultVal != null ? ` = ${prop.defaultVal}` : ''}`;
+  let defaultValue = '';
+  if (prop.defaultVal != null) {
+    // Normalize default values to use single quotes instead of double quotes
+    let normalizedDefault = String(prop.defaultVal).replace(/"/g, "'");
+    defaultValue = ` = ${normalizedDefault}`;
+  }
+  return `  ${name}${prop.optional ? '?' : ''}: ${prop.value}${defaultValue}`;
 }
 
 function formatInterfaces(interfaces, allInterfaces) {
