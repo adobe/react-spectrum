@@ -17,6 +17,9 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getColorChannels} from '@react-stately/color';
 import {useState} from 'react';
 import type {ColorSpace} from 'react-aria-components';
+// @ts-ignore
+import intlMessages from './intl/*.json';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface ColorEditorProps {
   hideAlphaChannel?: boolean;
@@ -24,10 +27,11 @@ interface ColorEditorProps {
 
 function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
   let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
+  let formatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/color');
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <div style={{display: 'flex', gap: 8}}>
+      <div style={{display: 'flex', gap: 12}}>
         <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
         <ColorSlider colorSpace="hsb" channel="hue" orientation="vertical" />
         {!hideAlphaChannel && (
@@ -36,18 +40,18 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
       </div>
       <div className={style({display: 'flex', gap: 4})}>
         <Picker
-          aria-label={'color format'}
+          aria-label={formatter.format('colorFormat')}
           isQuiet
           styles={style({width: 70})}
           value={format}
           onChange={(key) => setFormat(key as typeof format)}>
-          <PickerItem id="hex">Hex</PickerItem>
-          <PickerItem id="rgb">RGB</PickerItem>
-          <PickerItem id="hsl">HSL</PickerItem>
-          <PickerItem id="hsb">HSB</PickerItem>
+          <PickerItem id="hex">{formatter.format('hex')}</PickerItem>
+          <PickerItem id="rgb">{formatter.format('rgb')}</PickerItem>
+          <PickerItem id="hsl">{formatter.format('hsl')}</PickerItem>
+          <PickerItem id="hsb">{formatter.format('hsb')}</PickerItem>
         </Picker>
         {format === 'hex'
-          ? <ColorField aria-label="Hex" />
+          ? <ColorField aria-label={formatter.format('hex')} />
           : getColorChannels(format).map(channel => (
               <ColorField key={channel} colorSpace={format} channel={channel} />
             ))}
