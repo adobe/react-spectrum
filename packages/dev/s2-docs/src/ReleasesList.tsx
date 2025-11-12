@@ -9,7 +9,7 @@ export function ReleasesList({pages}: {pages: Page[]}) {
     return new Date(b.exports?.date).getTime() - new Date(a.exports?.date).getTime();
   });
   return (
-    <article className={style({marginY: 40, display: 'flex', flexDirection: 'column', gap: 40, maxWidth: 600})}>
+    <article className={style({marginY: 40, display: 'flex', flexDirection: 'column', gap: 40})}>
       {releases.map(release => (
         <div key={release.name}>
           <header className={style({marginBottom: 12})}>
