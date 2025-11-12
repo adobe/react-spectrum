@@ -41,22 +41,21 @@ export function setNavigationLoading(loading: boolean, pathname?: string) {
 
 function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): string {
   let pathname: string;
-  if (urlOrPathname.startsWith('http://') || urlOrPathname.startsWith('https://')) {
-    try {
+  try {
+    if (urlOrPathname.startsWith('http://') || urlOrPathname.startsWith('https://')) {
       pathname = new URL(urlOrPathname).pathname;
-    } catch {
-      pathname = urlOrPathname;
+    } else {
+      pathname = new URL(urlOrPathname, location.href).pathname;
     }
-  } else {
-    pathname = urlOrPathname;
+  } catch {
+    const [basePathname] = urlOrPathname.split('?');
+    const [cleanPathname] = basePathname.split('#');
+    pathname = cleanPathname;
   }
   
-  const [basePathname] = pathname.split('?');
-  const [cleanPathname] = basePathname.split('#');
-  
-  let pathnameWithoutPrefix = cleanPathname;
-  if (publicUrlPrefix !== '/' && cleanPathname.startsWith(publicUrlPrefix)) {
-    pathnameWithoutPrefix = cleanPathname.slice(publicUrlPrefix.length);
+  let pathnameWithoutPrefix = pathname;
+  if (publicUrlPrefix !== '/' && pathname.startsWith(publicUrlPrefix)) {
+    pathnameWithoutPrefix = pathname.slice(publicUrlPrefix.length);
     if (!pathnameWithoutPrefix.startsWith('/')) {
       pathnameWithoutPrefix = '/' + pathnameWithoutPrefix;
     }
