@@ -7,6 +7,19 @@ import {type ReactElement} from 'react';
 import {setNavigationPromise} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
+let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
+  return (
+    link &&
+    link instanceof HTMLAnchorElement &&
+    link.href &&
+    (!link.target || link.target === '_self') &&
+    link.origin === location.origin &&
+    link.pathname !== location.pathname &&
+    !link.hasAttribute('download') &&
+    link.pathname.startsWith(pathname)
+  );
+};
+
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({
   // Intercept HMR window reloads, and do it with RSC instead.
@@ -148,16 +161,7 @@ document.addEventListener('pointerover', e => {
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (
-    link &&
-    link instanceof HTMLAnchorElement &&
-    link.href &&
-    (!link.target || link.target === '_self') &&
-    link.origin === location.origin &&
-    link.pathname !== location.pathname &&
-    !link.hasAttribute('download') &&
-    link.pathname.startsWith(publicUrlPathname)
-  ) {
+  if (link && isClientLink(link, publicUrlPathname)) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -182,16 +186,7 @@ document.addEventListener('focus', e => {
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (
-    link &&
-    link instanceof HTMLAnchorElement &&
-    link.href &&
-    (!link.target || link.target === '_self') &&
-    link.origin === location.origin &&
-    link.pathname !== location.pathname &&
-    !link.hasAttribute('download') &&
-    link.pathname.startsWith(publicUrlPathname)
-  ) {
+  if (link && isClientLink(link, publicUrlPathname)) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -215,13 +210,7 @@ document.addEventListener('click', e => {
   let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   if (
     link &&
-    link instanceof HTMLAnchorElement &&
-    link.href &&
-    (!link.target || link.target === '_self') &&
-    link.origin === location.origin &&
-    link.pathname !== location.pathname &&
-    !link.hasAttribute('download') &&
-    link.pathname.startsWith(publicUrlPathname) &&
+    isClientLink(link, publicUrlPathname) &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)
