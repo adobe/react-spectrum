@@ -5,27 +5,28 @@ import {getLibraryFromPage} from './library';
 import {Link} from 'react-aria-components';
 import type {Page, PageProps} from '@parcel/rsc';
 import {Picker, pressScale} from '@react-spectrum/s2';
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, startTransition, useContext, useEffect, useOptimistic, useRef, useState} from 'react';
 
 export function PendingPageProvider({children, currentPage}: {children: React.ReactNode, currentPage: Page}) {
-  // Track pending navigation for optimistic UI updates
-  let [pendingPage, setPendingPage] = useState<Page | null>(null);
-  
-  // Reset pending state when navigation completes
-  useEffect(() => {
-    setPendingPage(null);
-  }, [currentPage.url]);
+  let [displayPage, setDisplayPage] = useOptimistic(
+    currentPage,
+    (_, pendingPage: Page) => pendingPage
+  );
   
   useEffect(() => {
     const unsubscribe = subscribeToClearPendingPage(() => {
-      setPendingPage(null);
+      startTransition(() => {
+        setDisplayPage(currentPage);
+      });
     });
     return unsubscribe;
-  }, []);
+  }, [currentPage, setDisplayPage]);
+
+  let pendingPage = displayPage.url !== currentPage.url ? displayPage : null;
 
   return (
     <PendingPageContext.Provider value={pendingPage}>
-      <PendingNavContext.Provider value={setPendingPage}>
+      <PendingNavContext.Provider value={setDisplayPage}>
         {children}
       </PendingNavContext.Provider>
     </PendingPageContext.Provider>
@@ -204,7 +205,9 @@ export function SideNavLink(props) {
       style={pressScale(linkRef)}
       onPress={() => {
         if (setPendingPage && page) {
-          setPendingPage(page);
+          startTransition(() => {
+            setPendingPage(page);
+          });
         }
       }}
       className={style({
