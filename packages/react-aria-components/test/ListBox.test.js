@@ -1319,7 +1319,7 @@ describe('ListBox', () => {
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
-      
+
       // Verify we're no longer in drag mode
       options = getAllByRole('option');
       expect(options.filter(opt => opt.classList.contains('react-aria-DropIndicator'))).toHaveLength(0);
@@ -1861,4 +1861,38 @@ describe('ListBox', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  if (React.version.startsWith('19')) {
+    describe('Activity', () => {
+      function ActivityListbox(props) {
+        let [mode, setMode] = React.useState('hidden');
+
+        return (
+          <>
+            <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
+              Set {mode === 'hidden' ? 'visible' : 'hidden'}
+            </Button>
+
+            <React.Activity mode={mode}>
+              <p>List should be visible</p>
+
+              <ListBox aria-label="Activity Listbox">
+                <ListBoxItem>Item 1</ListBoxItem>
+                <ListBoxItem>Item 2</ListBoxItem>
+                <ListBoxItem>Item 3</ListBoxItem>
+                <ListBoxItem>Item 4</ListBoxItem>
+                <ListBoxItem>Item 5</ListBoxItem>
+              </ListBox>
+            </React.Activity>
+          </>
+        );
+      }
+      it('should support activity', async () => {
+        let {getAllByRole, getByRole} = render(<ActivityListbox />);
+        let button = getByRole('button');
+        await user.click(button);
+        expect(getAllByRole('option')).toHaveLength(5);
+      });
+    });
+  }
 });

@@ -176,10 +176,10 @@
     "postcss": "^8.4.24",
     "postcss-custom-properties": "^13.2.0",
     "postcss-import": "^15.1.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-frame-component": "^5.0.0",
-    "react-test-renderer": "^19.1.0",
+    "react-test-renderer": "^19.2.0",
     "recast": "^0.23",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
@@ -213,8 +213,6 @@
     "react-refresh": "0.9.0",
     "browserslist": "4.24.0",
     "caniuse-lite": "1.0.30001563",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
     "recast": "0.23.6",
     "ast-types": "0.16.1",
     "svgo": "^3",
@@ -228,8 +226,7 @@
     "remark-mdx": "patch:remark-mdx@npm%3A2.0.0-rc.2#~/.yarn/patches/remark-mdx-npm-2.0.0-rc.2-7a71234e1f.patch",
     "remark-parse": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch",
     "lightningcss": "1.30.1",
-    "react-server-dom-parcel": "canary",
-    "react-test-renderer": "19.1.0"
+    "react-server-dom-parcel": "canary"
   },
   "@parcel/transformer-css": {
     "cssModules": {
