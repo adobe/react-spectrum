@@ -4,7 +4,7 @@ import {clearPendingPage} from './Nav';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
-import {setNavigationLoading} from './NavigationSuspense';
+import {setNavigationPromise} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
 // Hydrate initial RSC payload embedded in the HTML.
@@ -19,65 +19,66 @@ let updateRoot = hydrate({
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
-  let loadingShown = false;
   let [basePath] = pathname.split('#');
   let rscPath = basePath.replace('.html', '.rsc');
   
-  window.dispatchEvent(new CustomEvent('rsc-navigation-start'));
-  setNavigationLoading(true, pathname);
-  loadingShown = true;
-  
-  // Use prefetched result if available, otherwise fetch
-  const prefetchedPromise = getPrefetchedPromise(rscPath);
-  const fetchPromise = prefetchedPromise ?? fetchRSC<ReactElement>(rscPath);
-  
-  try {
-    let res = await fetchPromise;
-    let currentPath = location.pathname;
-    let [newBasePath, newPathAnchor] = pathname.split('#');
-
-    updateRoot(res, () => {
-      if (push) {
-        history.pushState(null, '', pathname);
-        push = false;
-      }
-
-      // Reset scroll if navigating to a different page without an anchor
-      if (currentPath !== newBasePath && !newPathAnchor) {
-        window.scrollTo(0, 0);
-      } else if (newPathAnchor) {
-        let element = document.getElementById(newPathAnchor);
-        if (element) {
-          element.scrollIntoView();
-        }
-      }
-
-      queueMicrotask(() => {
-        window.dispatchEvent(new CustomEvent('rsc-navigation'));
-        if (loadingShown) {
-          setNavigationLoading(false);
-        }
-      });
-    });
-  } catch {
-    clearPendingPage();
+  const navigationPromise = (async () => {
+    window.dispatchEvent(new CustomEvent('rsc-navigation-start'));
+    
+    // Use prefetched result if available, otherwise fetch
+    const prefetchedPromise = getPrefetchedPromise(rscPath);
+    const fetchPromise = prefetchedPromise ?? fetchRSC<ReactElement>(rscPath);
+    
     try {
-      let errorRes = await fetchRSC<ReactElement>('/error.rsc');
-      updateRoot(errorRes, () => {
-        if (push) {
-          history.pushState(null, '', '/error.html');
-        }
-        if (loadingShown) {
-          setNavigationLoading(false);
-        }
+      let res = await fetchPromise;
+      let currentPath = location.pathname;
+      let [newBasePath, newPathAnchor] = pathname.split('#');
+
+      // Return a promise that resolves after updateRoot callback completes
+      await new Promise<void>((resolve) => {
+        updateRoot(res, () => {
+          if (push) {
+            history.pushState(null, '', pathname);
+            push = false;
+          }
+
+          // Reset scroll if navigating to a different page without an anchor
+          if (currentPath !== newBasePath && !newPathAnchor) {
+            window.scrollTo(0, 0);
+          } else if (newPathAnchor) {
+            let element = document.getElementById(newPathAnchor);
+            if (element) {
+              element.scrollIntoView();
+            }
+          }
+
+          queueMicrotask(() => {
+            window.dispatchEvent(new CustomEvent('rsc-navigation'));
+            resolve();
+          });
+        });
       });
-    } catch {
-      if (loadingShown) {
-        setNavigationLoading(false);
+    } catch (error) {
+      clearPendingPage();
+      try {
+        let errorRes = await fetchRSC<ReactElement>('/error.rsc');
+        await new Promise<void>((resolve) => {
+          updateRoot(errorRes, () => {
+            if (push) {
+              history.pushState(null, '', '/error.html');
+            }
+            resolve();
+          });
+        });
+      } catch {
+        ToastQueue.negative('Failed to load page. Check your connection and try again.');
+        throw error; // Re-throw to keep promise rejected
       }
-      ToastQueue.negative('Failed to load page. Check your connection and try again.');
     }
-  }
+  })();
+  
+  // Store the promise for NavigationSuspense to use
+  setNavigationPromise(navigationPromise, pathname);
 }
 
 // Prefetch routes on pointerover

@@ -5,7 +5,6 @@ import {PageSkeleton} from './PageSkeleton';
 import React, {Suspense, use, useSyncExternalStore} from 'react';
 
 let navigationPromise: Promise<void> | null = null;
-let navigationResolve: (() => void) | null = null;
 let targetPathname: string | null = null;
 let listeners = new Set<() => void>();
 let cachedSnapshot: {promise: Promise<void> | null, pathname: string | null} = {promise: null, pathname: null};
@@ -22,21 +21,20 @@ function getSnapshot() {
   return cachedSnapshot;
 }
 
-export function setNavigationLoading(loading: boolean, pathname?: string) {
-  if (loading) {
-    targetPathname = pathname || null;
-    navigationPromise = new Promise(resolve => {
-      navigationResolve = resolve;
+export function setNavigationPromise(promise: Promise<void> | null, pathname?: string) {
+  targetPathname = pathname || null;
+  navigationPromise = promise;
+  
+  if (promise) {
+    promise.finally(() => {
+      if (navigationPromise === promise) {
+        navigationPromise = null;
+        listeners.forEach(callback => callback());
+      }
     });
-    listeners.forEach(callback => callback());
-  } else {
-    if (navigationResolve) {
-      navigationResolve();
-      navigationResolve = null;
-      navigationPromise = null;
-      listeners.forEach(callback => callback());
-    }
   }
+  
+  listeners.forEach(callback => callback());
 }
 
 function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): string {
@@ -99,7 +97,7 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
 }
 
 function NavigationContent({children}: {children: React.ReactNode}) {
-  // Subscribe to navigation promise changes to ensure React re-renders when setNavigationLoading(true) is called.
+  // Subscribe to navigation promise changes to ensure React re-renders when setNavigationPromise() is called.
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   if (snapshot.promise) {
     use(snapshot.promise);
