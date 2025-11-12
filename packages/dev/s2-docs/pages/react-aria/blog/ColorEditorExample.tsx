@@ -30,8 +30,8 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
   let formatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/color');
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <div style={{display: 'flex', gap: 12}}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4, minWidth: 380})}>
+      <div className={style({display: 'flex', gap: 12})}>
         <ColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
         <ColorSlider colorSpace="hsb" channel="hue" orientation="vertical" />
         {!hideAlphaChannel && (
@@ -51,12 +51,12 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
           <PickerItem id="hsb">{formatter.format('hsb')}</PickerItem>
         </Picker>
         {format === 'hex'
-          ? <ColorField aria-label={formatter.format('hex')} />
+          ? <ColorField styles={style({width: 120})} aria-label={formatter.format('hex')} />
           : getColorChannels(format).map(channel => (
-              <ColorField key={channel} colorSpace={format} channel={channel} />
+              <ColorField styles={style({width: 70})} key={channel} colorSpace={format} channel={channel} />
             ))}
         {!hideAlphaChannel && (
-          <ColorField channel="alpha" />
+          <ColorField styles={style({width: 70})} channel="alpha" />
         )}
       </div>
     </div>
@@ -65,16 +65,29 @@ function ColorEditor({hideAlphaChannel = false}: ColorEditorProps) {
 
 export function ColorEditorExample() {
   return (
-    <ColorPicker defaultValue="#5100FF">
-      {({color}) => (
-        <>
-          <ColorEditor />
-          <div style={{display: 'flex', gap: 8, alignItems: 'center', marginTop: 16}}>
-            <ColorSwatch color={color} size="L" />
-            <span style={{fontSize: 16, fontWeight: 500}}>{color.getColorName(navigator.language || 'en-US')}</span>
+    <div
+      role="group"
+      aria-label="Example"
+      className={style({
+        backgroundColor: 'layer-1',
+        borderRadius: 'xl',
+        marginY: 32,
+        padding: {
+          default: 12,
+          lg: 24
+        }
+      })}>
+      <ColorPicker defaultValue="#5100FF">
+        {({color}) => (
+          <div className={style({display: 'flex', flexWrap: 'wrap', gap: 24})}>
+            <ColorEditor />
+            <div className={style({display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16})}>
+              <ColorSwatch color={color} size="L" />
+              <span className={style({font: 'body'})}>{color.getColorName(navigator.language || 'en-US')}</span>
+            </div>
           </div>
-        </>
-      )}
-    </ColorPicker>
+        )}
+      </ColorPicker>
+    </div>
   );
 }
