@@ -3,10 +3,11 @@ import CopyButton from './CopyButton';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import {RefObject, useEffect, useState} from 'react';
+import {RefObject} from 'react';
+import {useLocalStorage} from './useLocalStorage';
 
 export function ShadcnCommand({registryUrl, preRef}: {registryUrl: string, preRef?: RefObject<HTMLPreElement | null>}) {
-  let [packageManager, setPackageManager] = useState<Key>('npm');
+  let [packageManager, setPackageManager] = useLocalStorage('packageManager', 'npm');
   let command = packageManager;
   if (packageManager === 'npm') {
     command = 'npx';
@@ -14,16 +15,8 @@ export function ShadcnCommand({registryUrl, preRef}: {registryUrl: string, preRe
     command = 'pnpm dlx';
   }
 
-  useEffect(() => {
-    let value = localStorage.getItem('packageManager');
-    if (value) {
-      setPackageManager(value);
-    }
-  }, []);
-
   let onSelectionChange = (value: Key) => {
-    setPackageManager(value);
-    localStorage.setItem('packageManager', String(value));
+    setPackageManager(String(value));
   };
 
   let cmd = `${command} shadcn@latest add ${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`;

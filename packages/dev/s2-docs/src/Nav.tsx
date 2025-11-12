@@ -11,7 +11,7 @@ export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = getLibraryFromPage(currentPage);
   let sections = new Map();
   for (let page of pages) {
-    if (page.exports?.hideNav) {
+    if (page.exports?.hideNav || page.exports?.omitFromNav) {
       continue;
     }
 
@@ -75,6 +75,7 @@ export function Nav({pages, currentPage}: PageProps) {
                 }
                 return title(a).localeCompare(title(b));
               })
+              .filter(page => !page.exports?.isSubpage)
               .map(page => (
                 <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
             ))}

@@ -19,12 +19,7 @@ export function ReleasesList({pages}: {pages: Page[]}) {
           <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(release.exports?.description, {})}</p>
         </div>
       ))}
-      <div>
-        <header className={style({marginBottom: 12})}>
-          <h2 className={style({font: 'heading-lg', margin: 0})}><Link href="https://react-spectrum.adobe.com/releases/index.html">Archived releases</Link></h2>
-        </header>
-        <p className={style({font: 'body', margin: 0})}>For all previous releases or React Spectrum v3, see the <Link href="https://react-spectrum.adobe.com/releases/index.html">Archived releases</Link> page.</p>
-      </div>
+      <p className={style({font: 'body', margin: 0})}>For all previous releases or React Spectrum v3, see the <Link href="https://react-spectrum.adobe.com/releases/index.html">Archived releases</Link> page.</p>
     </article>
   );
 }

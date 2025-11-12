@@ -24,20 +24,6 @@ export function Step({children}) {
         listStyleType: 'none',
         position: 'relative'
       })}>
-      {/* <div
-        className={style({
-          display: {
-            default: 'block',
-            ':is(:last-child > *)': 'none'
-          },
-          position: 'absolute',
-          top: 'calc(1lh + 16px)',
-          left: 'calc(-1lh / 2 - 8px)',
-          bottom: -24,
-          width: 2,
-          borderRadius: 'full',
-          backgroundColor: 'gray-400'
-        })} /> */}
       {children}
     </li>
   );
