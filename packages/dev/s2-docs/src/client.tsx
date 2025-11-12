@@ -41,7 +41,7 @@ async function navigate(pathname: string, push = false) {
   
   // Cancel any in-flight navigation
   if (currentAbortController) {
-    currentAbortController.abort();
+    currentAbortController.abort('Aborting due to new navigation');
   }
   
   // Create a new abort controller for this navigation
