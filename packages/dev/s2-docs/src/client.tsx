@@ -15,12 +15,26 @@ let updateRoot = hydrate({
   }
 });
 
+// Track the current navigation to prevent race conditions
+let currentNavigationId = 0;
+let currentAbortController: AbortController | null = null;
+
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
   let [basePath] = pathname.split('#');
   let rscPath = basePath.replace('.html', '.rsc');
+  
+  // Cancel any in-flight navigation
+  if (currentAbortController) {
+    currentAbortController.abort();
+  }
+  
+  // Create a new abort controller for this navigation
+  const abortController = new AbortController();
+  currentAbortController = abortController;
+  const navigationId = ++currentNavigationId;
   
   const navigationPromise = (async () => {
     window.dispatchEvent(new CustomEvent('rsc-navigation-start'));
@@ -31,6 +45,18 @@ async function navigate(pathname: string, push = false) {
     
     try {
       let res = await fetchPromise;
+      
+      // Check if this navigation is still current before updating
+      if (navigationId !== currentNavigationId) {
+        // A newer navigation has started, ignore this result
+        return;
+      }
+      
+      // Check if this navigation was aborted
+      if (abortController.signal.aborted) {
+        return;
+      }
+      
       let currentPath = location.pathname;
       let [newBasePath, newPathAnchor] = pathname.split('#');
 
@@ -59,9 +85,25 @@ async function navigate(pathname: string, push = false) {
         });
       });
     } catch (error) {
+      // Check if this navigation was aborted
+      if (abortController.signal.aborted) {
+        return;
+      }
+      
+      // Check if this navigation is still current
+      if (navigationId !== currentNavigationId) {
+        return;
+      }
+      
       clearPendingPage();
       try {
         let errorRes = await fetchRSC<ReactElement>('/error.rsc');
+        
+        // Check again if still current after error fetch
+        if (navigationId !== currentNavigationId || abortController.signal.aborted) {
+          return;
+        }
+        
         await new Promise<void>((resolve) => {
           updateRoot(errorRes, () => {
             if (push) {
@@ -71,7 +113,10 @@ async function navigate(pathname: string, push = false) {
           });
         });
       } catch {
-        ToastQueue.negative('Failed to load page. Check your connection and try again.');
+        // Only show error toast if this is still the current navigation
+        if (navigationId === currentNavigationId && !abortController.signal.aborted) {
+          ToastQueue.negative('Failed to load page. Check your connection and try again.');
+        }
         throw error; // Re-throw to keep promise rejected
       }
     }
