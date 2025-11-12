@@ -17,6 +17,10 @@ import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
 
+export function stripMarkdown(description: string | undefined) {
+  return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
+}
+
 export const divider = style({
   marginY: 8,
   marginStart: -8,
@@ -96,7 +100,7 @@ export function SearchMenu(props: SearchMenuProps) {
         const title = page.tableOfContents?.[0]?.title || name;
         const section: string = (page.exports?.section as string) || 'Components';
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
-        const description: string = page.exports?.description;
+        const description: string = stripMarkdown(page.exports?.description);
         const date: string | undefined = page.exports?.date;
         return {
           id: name,
