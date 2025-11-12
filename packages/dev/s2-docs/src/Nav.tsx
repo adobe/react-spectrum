@@ -137,7 +137,7 @@ function SideNavSection({title, children}) {
 }
 
 const SideNavContext = createContext('');
-const PendingNavContext = createContext<((page: Page | null) => void) | null>(null);
+const PendingNavContext = createContext<React.Dispatch<Page> | null>(null);
 const PendingPageContext = createContext<Page | null>(null);
 
 let clearPendingPageListeners = new Set<() => void>();
