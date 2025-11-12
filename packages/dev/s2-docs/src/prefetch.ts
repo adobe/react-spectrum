@@ -3,22 +3,21 @@
 import {fetchRSC} from '@parcel/rsc/client';
 import {type ReactElement} from 'react';
 
-const prefetchedRoutes = new Set<string>();
 const prefetchPromises = new Map<string, Promise<ReactElement>>();
 
 export function prefetchRoute(pathname: string) {
   let [basePath] = pathname.split('#');
   let rscPath = basePath.replace('.html', '.rsc');
   
-  // Skip if already prefetched or currently prefetching
-  if (prefetchedRoutes.has(rscPath) || prefetchPromises.has(rscPath)) {
+  // Skip if currently prefetching
+  if (prefetchPromises.has(rscPath)) {
     return;
   }
   
   // Start prefetch and cache the promise
   const prefetchPromise = fetchRSC<ReactElement>(rscPath)
     .then(res => {
-      prefetchedRoutes.add(rscPath);
+      // Remove from cache once resolved (rely on browser cache for subsequent requests)
       prefetchPromises.delete(rscPath);
       return res;
     })
