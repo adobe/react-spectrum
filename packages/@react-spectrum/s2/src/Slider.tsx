@@ -282,6 +282,7 @@ export let upperTrack = style<{isDisabled?: boolean, trackStyle: 'thin' | 'thick
   position: 'absolute',
   backgroundColor: {
     default: 'gray-300',
+    forcedColors: 'ButtonFace',
     isDisabled: 'disabled'
   },
   translateY: '-50%',

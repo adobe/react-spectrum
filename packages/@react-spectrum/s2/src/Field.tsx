@@ -241,7 +241,10 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
         backgroundColor: 'transparent',
         color: {
           default: 'inherit',
-          '::placeholder': 'gray-600'
+          '::placeholder': {
+            default: 'gray-600',
+            forcedColors: 'GrayText'
+          }
         },
         fontFamily: 'inherit',
         fontSize: 'inherit',

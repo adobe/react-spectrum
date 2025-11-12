@@ -177,7 +177,10 @@ const treeRow = style({
   width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
-  color: 'body',
+  color: {
+    default: 'body',
+    forcedColors: 'ButtonText'
+  },
   outlineStyle: 'none',
   cursor: {
     default: 'default',
