@@ -17,6 +17,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
 import {Byline} from '../../../src/BlogList';
+import {ColorEditorExample} from './ColorEditorExample';
 
 export const tags = ['color picker', 'color', 'internationalization', 'localization', 'components', 'accessibility', 'react spectrum', 'react'];
 export const description = 'Recently, we released a suite of color picker components in React Aria and React Spectrum. Since colors are inherently visual, ensuring these components are accessible to users with visual impairments presented a significant challenge. In this post, we\'ll discuss how we developed an algorithm that generates clear color descriptions for screen readers in multiple languages, while minimizing bundle size.';
@@ -157,23 +158,7 @@ The order that the hue, chroma, and lightness descriptors are combined varies by
 
 Check out the color picker below to see the results of this algorithm:
 
-```tsx render
-'use client';
-import {ColorPicker} from 'react-aria-components';
-import {ColorSwatch} from '@react-spectrum/s2';
-
-// TODO: No ColorEditor in S2
-<ColorPicker label="Fill" defaultValue="#5100FF">
-  {({color}) =>
-    <div style={{display: 'flex', flexWrap: 'wrap', gap: 24}}>
-      <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-        <ColorSwatch size="L" />
-        <span>{color.getColorName(navigator.language || 'en-US')}</span>
-      </div>
-    </div>
-  }
-</ColorPicker>
-```
+<ColorEditorExample />
 
 ## Final result
 
