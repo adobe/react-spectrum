@@ -174,6 +174,40 @@ document.addEventListener('pointerout', e => {
   }
 }, true);
 
+document.addEventListener('focus', e => {
+  let link = (e.target as Element).closest('a');
+  let publicUrl = process.env.PUBLIC_URL || '/';
+  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+  
+  // Clear any pending prefetch
+  clearPrefetchTimeout();
+  
+  if (
+    link &&
+    link instanceof HTMLAnchorElement &&
+    link.href &&
+    (!link.target || link.target === '_self') &&
+    link.origin === location.origin &&
+    link.pathname !== location.pathname &&
+    !link.hasAttribute('download') &&
+    link.pathname.startsWith(publicUrlPathname)
+  ) {
+    currentPrefetchLink = link;
+    prefetchTimeout = setTimeout(() => {
+      prefetchRoute(link.pathname + link.search + link.hash);
+      prefetchTimeout = null;
+    }, PREFETCH_DELAY_MS);
+  }
+}, true);
+
+// Clear prefetch timeout when focus leaves a link
+document.addEventListener('blur', e => {
+  let link = (e.target as Element).closest('a');
+  if (link && link === currentPrefetchLink) {
+    clearPrefetchTimeout();
+  }
+}, true);
+
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
   let link = (e.target as Element).closest('a');
