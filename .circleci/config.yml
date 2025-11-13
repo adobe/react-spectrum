@@ -816,6 +816,14 @@ jobs:
           at: /tmp/dist
       - aws-cli/install
       - aws-s3/sync:
+          arguments: |
+            --cache-control "public, max-age=300, stale-while-revalidate=300"
+            --include "*.{html,rsc,txt,json,md}"
+          from: /tmp/dist/production/docs
+          to: s3://react-spectrum-prod
+      - aws-s3/sync:
+          arguments: |
+            --exclude "*.{html,rsc,txt,json,md}"
           from: /tmp/dist/production/docs
           to: s3://react-spectrum-prod
 
