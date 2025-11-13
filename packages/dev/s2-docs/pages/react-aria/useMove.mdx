@@ -131,15 +131,20 @@ function Example() {
 }
 ```
 
-## Usage
 
-`useMove` returns props that you should spread onto the target element:
+## API
+
+<FunctionAPI function={docs.exports.useMove} links={docs.links} />
+
+### MoveEvents
+
+<InterfaceType {...typesDocs.exports.MoveEvents} />
+
+### MoveResult
 
 <InterfaceType {...docs.exports.MoveResult} />
 
-`useMove` supports the following event handlers:
-
-<InterfaceType {...typesDocs.exports.MoveEvents} />
+### MoveEvent
 
 Each of these handlers is fired with a `MoveEvent`, which exposes information about the target and the
 type of event that triggered the interaction.

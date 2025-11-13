@@ -16,7 +16,7 @@ const preview = style({
 
 export function StarterKits() {
   return (
-    <section className={style({display: 'flex', columnGap: 16, flexWrap: 'wrap'})}>
+    <section className={style({display: 'flex', gap: 16, flexWrap: 'wrap'})}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
         <Card href={`../react-aria-starter.${gitHash}.zip`}>
           <div className={style({display: 'flex', alignItems: 'center'})}>

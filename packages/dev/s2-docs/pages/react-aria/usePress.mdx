@@ -96,15 +96,15 @@ function Example() {
 
 <FunctionAPI function={docs.exports.usePress} links={docs.links} />
 
-### Usage
+### PressEvents
 
-`usePress` returns props that you should spread onto the target element, along with the current press state:
+<InterfaceType {...typesDocs.exports.PressEvents} />
+
+### PressResult
 
 <InterfaceType {...docs.exports.PressResult} />
 
-`usePress` supports the following event handlers:
-
-<InterfaceType {...typesDocs.exports.PressEvents} />
+### PressEvent
 
 Each of these handlers is fired with a `PressEvent`, which exposes information about the target and the
 type of event that triggered the interaction.

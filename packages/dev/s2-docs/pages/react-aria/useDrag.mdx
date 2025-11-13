@@ -11,8 +11,10 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 import {GroupedPropTable} from '../../src/PropTable';
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
+
 export const section = 'Interactions';
 
 # useDrag
@@ -306,3 +308,11 @@ function Draggable() {
 ## API
 
 <FunctionAPI function={docs.exports.useDrag} links={docs.links} />
+
+### DragOptions
+
+<InterfaceType {...docs.exports.DragOptions} />
+
+### DragResult
+
+<InterfaceType {...docs.exports.DragResult} />
