@@ -186,9 +186,6 @@ export function SearchMenu(props: SearchMenuProps) {
   );
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
-    if (searchValue) {
-      setSearchValue('');
-    }
     setSelectedLibrary(key as typeof selectedLibrary);
     // Focus main search field of the newly selected tab
     setTimeout(() => {
@@ -198,7 +195,7 @@ export function SearchMenu(props: SearchMenuProps) {
         searchRef.current.focus();
       }
     }, 10);
-  }, [searchValue]);
+  }, []);
 
   const handleSectionSelectionChange = React.useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
