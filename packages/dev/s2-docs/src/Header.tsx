@@ -1,8 +1,7 @@
 'use client';
 
-import {ActionButton, Badge, Text} from '@react-spectrum/s2';
+import {ActionButton} from '@react-spectrum/s2';
 // @ts-ignore
-import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
@@ -61,14 +60,6 @@ export default function Header(props: PageProps) {
     }
   };
 
-  const ChevronDownIcon = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} {...props}>
-      <path
-        fill="var(--iconPrimary, #222)"
-        d="M3.755 7.243a.748.748 0 0 1 1.06-.02l5.183 4.986 5.197-4.999a.749.749 0 1 1 1.04 1.08l-5.717 5.5a.747.747 0 0 1-1.04 0L3.776 8.303a.746.746 0 0 1-.02-1.06Z" />
-    </svg>
-  );
-
   return (
     <>
       <header className={style({width: 'full', display: {default: 'none', lg: 'flex'}, justifyContent: 'center'})}>
@@ -87,10 +78,20 @@ export default function Header(props: PageProps) {
               aria-controls={searchOpen ? searchMenuId : undefined}
               size="XL"
               isQuiet
-              onPress={openSearchMenu}
+              onPress={() => {
+                let library = getLibraryFromPage(currentPage);
+                let subdirectory = 's2';
+                if (library === 'internationalized' || library === 'react-aria') {
+                  // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
+                  subdirectory = 'react-aria';
+
+                }
+                const url = new URL(`/${subdirectory}/index.html`, window.location.origin);
+                window.location.assign(url.href);
+              }}
               onKeyDown={handleActionButtonKeyDown}
               // @ts-ignore
-              onHoverStart={() => preloadSearchMenu()}
+              // onHoverStart={() => preloadSearchMenu()}
               UNSAFE_style={{paddingInlineStart: 10}}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
@@ -100,7 +101,6 @@ export default function Header(props: PageProps) {
                   {getButtonText(currentPage)}
                 </span>
               </div>
-              <ChevronDownIcon className={style({width: 18})} />
             </ActionButton>
           </div>
           <SearchMenuTrigger
@@ -111,10 +111,39 @@ export default function Header(props: PageProps) {
             isSearchOpen={searchOpen}
             overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <Badge variant="indigo" size="M" styles={style({marginEnd: 8})}>
-              <BetaApp />
-              <Text>Beta Preview</Text>
-            </Badge>
+            <ActionButton 
+              isQuiet 
+              onPress={() => {
+                let library = getLibraryFromPage(currentPage);
+                let subdirectory = 's2';
+                if (library !== 'react-spectrum') {
+                  subdirectory = library;
+                }
+                let url = new URL(`/${subdirectory}/getting-started.html`, window.location.origin);
+                // TODO: once react spectrum and react-aria are on separate domains, we should be able to use this relative path instead
+                // const url = new URL('/getting-started.html', window.location.origin);
+                window.location.assign(url.pathname);
+              }}>Docs</ActionButton>
+            <ActionButton 
+              isQuiet 
+              onPress={() => {
+                let library = getLibraryFromPage(currentPage);
+                let subdirectory = 's2';
+                if (library !== 'react-spectrum') {
+                  subdirectory = library;
+                }
+                let url = new URL(`/${subdirectory}/releases/index.html`, window.location.origin);
+                // TODO: once react spectrum and react-aria are on separate domains, we should be able to use this relative path instead
+                // const releasesUrl = new URL('/releases/index.html', window.location.origin);
+                window.location.assign(url.pathname);
+              }}>Releases</ActionButton>
+            <ActionButton 
+              isQuiet 
+              onPress={() => {
+                let url = new URL('/react-aria/blog/index.html', window.location.origin);
+                // TODO: once react spectrum and react-aria are on separate domains, we should be able to use this relative path instead
+                window.location.assign(url.pathname);
+              }}>Blog</ActionButton>
             <MarkdownMenu url={currentPage.url} />
             <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
               <GithubLogo />

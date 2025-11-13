@@ -39,7 +39,7 @@ interface SearchMenuProps {
   pages: Page[],
   currentPage: Page,
   onClose: () => void,
-  overlayId: string,
+  overlayId?: string,
   initialSearchValue: string
 }
 
@@ -138,7 +138,12 @@ export function SearchMenu(props: SearchMenuProps) {
     return [];
   }, [selectedLibrary]);
 
-  const [selectedSectionId, setSelectedSectionId] = useState<string>(() => currentPage.exports?.section?.toLowerCase() || 'components');
+  let initialSelectedSection = currentPage.exports?.section?.toLowerCase() || 'components';
+  // If you're on the React Aria homepage and you open the search menu via the Explore components button, open up to the Components tag
+  if (initialSelectedSection === 'overview' && currentPage.exports?.title === 'Home') {
+    initialSelectedSection = 'components';
+  }
+  const [selectedSectionId, setSelectedSectionId] = useState<string>(initialSelectedSection);
   const prevSearchWasEmptyRef = useRef<boolean>(true);
 
   const iconFilter = useIconFilter();
