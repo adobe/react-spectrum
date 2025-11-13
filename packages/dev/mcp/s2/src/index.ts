@@ -11,7 +11,7 @@ import {z} from 'zod';
   try {
     const arg = (process.argv[2] || '').trim();
     if (arg === '--help' || arg === '-h' || arg === 'help') {
-      console.log('Usage: npx @react-spectrum/mcp\n\nStarts the MCP server for React Spectrum (S2) documentation.');
+      console.log('Usage: npx @react-spectrum/mcp@latest\n\nStarts the MCP server for React Spectrum (S2) documentation.');
       process.exit(0);
     }
 

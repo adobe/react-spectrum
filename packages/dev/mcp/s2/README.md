@@ -9,7 +9,7 @@ The `@react-spectrum/mcp` package provides a [Model Context Protocol (MCP)](http
 Simply run the server using npx:
 
 ```bash
-npx @react-spectrum/mcp
+npx @react-spectrum/mcp@latest
 ```
 
 ### Using with an MCP client
@@ -21,7 +21,7 @@ Add the server to your MCP client configuration (the exact file and schema may d
   "mcpServers": {
     "React Spectrum (S2)": {
       "command": "npx",
-      "args": ["@react-spectrum/mcp"]
+      "args": ["@react-spectrum/mcp@latest"]
     }
   }
 }
@@ -32,7 +32,7 @@ Add the server to your MCP client configuration (the exact file and schema may d
 
 #### Click the button to install:
 
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=React%20Spectrum%20(S2)&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJAcmVhY3Qtc3BlY3RydW0vbWNwIl19)
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=React%20Spectrum%20(S2)&config=eyJjb21tYW5kIjoibnB4IEByZWFjdC1zcGVjdHJ1bS9tY3BAbGF0ZXN0In0%3D)
 
 Or follow the MCP install [guide](https://docs.cursor.com/en/context/mcp#installing-mcp-servers) and use the standard config above.
 
@@ -43,14 +43,14 @@ Or follow the MCP install [guide](https://docs.cursor.com/en/context/mcp#install
 
 #### Click the button to install:
 
-[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](vscode:mcp/install?%7B%22name%22%3A%22React%20Spectrum%20(S2)%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22%40react-spectrum%2Fmcp%22%5D%7D)
+[<img src="https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20Server&color=0098FF" alt="Install in VS Code">](vscode:mcp/install?%7B%22name%22%3A%22React%20Spectrum%20(S2)%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22%40react-spectrum%2Fmcp%40latest%22%5D%7D)
 
 #### Or install manually:
 
 Follow the MCP install [guide](https://code.visualstudio.com/docs/copilot/chat/mcp-servers#_add-an-mcp-server) and use the standard config above. You can also add the server using the VS Code CLI:
 
 ```bash
-code --add-mcp '{"name":"React Spectrum (S2)","command":"npx","args":["@react-spectrum/mcp"]}'
+code --add-mcp '{"name":"React Spectrum (S2)","command":"npx","args":["@react-spectrum/mcp@latest"]}'
 ```
 
 </details>
@@ -61,7 +61,7 @@ code --add-mcp '{"name":"React Spectrum (S2)","command":"npx","args":["@react-sp
 Use the Claude Code CLI to add the server:
 
 ```bash
-claude mcp add react-spectrum-s2 npx @react-spectrum/mcp
+claude mcp add react-spectrum-s2 npx @react-spectrum/mcp@latest
 ```
 For more information, see the [Claude Code MCP documentation](https://docs.claude.com/en/docs/claude-code/mcp).
 </details>
@@ -74,7 +74,7 @@ Create or edit the configuration file `~/.codex/config.toml` and add:
 ```toml
 [mcp_servers.react-spectrum-s2]
 command = "npx"
-args = ["@react-spectrum/mcp"]
+args = ["@react-spectrum/mcp@latest"]
 ```
 
 For more information, see the [Codex MCP documentation](https://github.com/openai/codex/blob/main/docs/config.md#mcp_servers).
@@ -87,7 +87,7 @@ For more information, see the [Codex MCP documentation](https://github.com/opena
 Use the Gemini CLI to add the server:
 
 ```bash
-gemini mcp add react-spectrum-s2 npx @react-spectrum/mcp
+gemini mcp add react-spectrum-s2 npx @react-spectrum/mcp@latest
 ```
 
 For more information, see the [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md#how-to-set-up-your-mcp-server).

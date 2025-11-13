@@ -8,7 +8,7 @@ import {startServer} from '../../shared/src/server.js';
   try {
     const arg = (process.argv[2] || '').trim();
     if (arg === '--help' || arg === '-h' || arg === 'help') {
-      console.log('Usage: npx @react-aria/mcp\n\nStarts the MCP server for React Aria documentation.');
+      console.log('Usage: npx @react-aria/mcp@latest\n\nStarts the MCP server for React Aria documentation.');
       process.exit(0);
     }
     await startServer('react-aria', '0.1.0');
