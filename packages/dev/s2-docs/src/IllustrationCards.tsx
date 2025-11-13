@@ -1,7 +1,7 @@
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
-import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
+import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
@@ -100,7 +100,7 @@ let handleCopyImport = (id: string, variant: string, gradientStyle: string) => {
   navigator.clipboard.writeText(importText).then(() => {
     // noop
   }).catch(() => {
-    // noop
+    ToastQueue.negative('Failed to copy import statement.');
   });
 };
 

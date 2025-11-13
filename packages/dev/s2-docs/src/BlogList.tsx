@@ -10,7 +10,7 @@ export function BlogList({pages}: {pages: Page[]}) {
   });
 
   return (
-    <article className={style({marginY: 40, display: 'flex', flexDirection: 'column', gap: 40, maxWidth: 600})}>
+    <article className={style({marginY: 40, display: 'flex', flexDirection: 'column', gap: 40})}>
       {blogPosts.map(post => (
         <div key={post.name}>
           <header className={style({marginBottom: 12})}>
@@ -26,7 +26,7 @@ export function BlogList({pages}: {pages: Page[]}) {
 
 export function Byline({author, authorLink, date}: {author?: string, authorLink?: string, date: string}) {
   let formattedDate = new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
-  
+
   return (
     <div className={style({font: 'detail'})}>
       {author && (
@@ -39,4 +39,3 @@ export function Byline({author, authorLink, date}: {author?: string, authorLink?
     </div>
   );
 }
-
