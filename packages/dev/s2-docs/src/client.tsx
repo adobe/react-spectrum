@@ -243,3 +243,35 @@ document.addEventListener('click', e => {
 window.addEventListener('popstate', () => {
   navigate(location.pathname + location.search + location.hash);
 });
+
+function scrollToCurrentHash() {
+  if (!location.hash || location.hash === '#') {
+    return;
+  }
+
+  let anchorId = location.hash.slice(1);
+  try {
+    anchorId = decodeURIComponent(anchorId);
+  } catch {
+    // Fall back to raw hash
+  }
+
+  if (!anchorId) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    let element = document.getElementById(anchorId);
+    if (element) {
+      element.scrollIntoView();
+    }
+  });
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  scrollToCurrentHash();
+} else {
+  window.addEventListener('DOMContentLoaded', () => {
+    scrollToCurrentHash();
+  }, {once: true});
+}
