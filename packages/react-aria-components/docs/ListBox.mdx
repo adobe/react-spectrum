@@ -415,6 +415,7 @@ ListBox supports custom keyboard event handling on individual items via the `onK
 
 ```tsx example
 import {useListData} from 'react-stately';
+import type {Key} from 'react-aria-components';
 
 function Example() {
   let list = useListData({
@@ -427,7 +428,7 @@ function Example() {
     ]
   });
 
-  let handleKeyDown = (key: React.Key) => (e: React.KeyboardEvent) => {
+  let handleKeyDown = (key: Key) => (e: React.KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
       list.remove(key);

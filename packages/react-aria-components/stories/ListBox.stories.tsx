@@ -832,7 +832,7 @@ export const ListBoxWithKeyboardDelete: ListBoxStory = () => {
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column',alignItems: 'center', gap: 12}}>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12}}>
       <div style={{padding: 12, background: '#f0f0f0', borderRadius: 4}}>
         Press <Keyboard>Delete</Keyboard> or <Keyboard>Backspace</Keyboard> to remove the focused item.
       </div>
