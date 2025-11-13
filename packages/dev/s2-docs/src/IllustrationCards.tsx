@@ -25,7 +25,7 @@ const itemStyle = style({
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
-    isFocused: 'gray-100',
+    isFocusVisible: 'gray-100',
     isSelected: 'neutral'
   },
   font: 'ui-sm',
@@ -122,7 +122,7 @@ function useCopyImport(variant: string, gradientStyle: string) {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
-    let importText = variant === 'gradient' ? 
+    let importText = variant === 'gradient' ?
       `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
       `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
     navigator.clipboard.writeText(importText).then(() => {
