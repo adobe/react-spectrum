@@ -12,7 +12,7 @@
 
 import {ClearSlots, SlotProvider, useSlotProps} from '../';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
-import React, {StrictMode, useRef} from 'react';
+import React, {StrictMode, useEffect, useRef} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import userEvent from '@testing-library/user-event';
@@ -25,11 +25,13 @@ describe('Slots', function () {
   });
 
   function Component(props) {
-    results = useSlotProps(props, 'slotname');
-    props = results;
+    let internalResults = useSlotProps(props, 'slotname');
+    useEffect(() => {
+      results = internalResults;
+    }, [internalResults]);
     let ref = useRef();
-    let {pressProps} = usePress({onPress: props.onPress, ref});
-    let id = useId(props.id);
+    let {pressProps} = usePress({onPress: internalResults.onPress, ref});
+    let id = useId(internalResults.id);
     return <button id={id} {...pressProps} ref={ref}>push me</button>;
   }
 
@@ -174,7 +176,10 @@ describe('Slots', function () {
     function SlotsUseSlotId() {
       let id1 = useId();
       let id2 = useId();
-      id = useRef(id2).current;
+      let id3 = useRef(id2);
+      useEffect(() => {
+        id = id3.current;
+      }, [id3]);
 
       return (
         <>
@@ -228,12 +233,12 @@ describe('Slots', function () {
     );
 
     let renderCountBeforeRerender = renderCount;
-    
+
     // Trigger a rerender with the same stable props
     rerender(
       <FullComponentTree slots={slots} />
     );
-    
+
     expect(renderCount).toEqual(renderCountBeforeRerender);
   });
 
@@ -277,12 +282,12 @@ describe('Slots', function () {
     );
 
     let renderCountBeforeRerender = renderCount;
-    
+
     // Trigger a rerender with the same stable props
     rerender(
       <FullComponentTree slots={slots} />
     );
-    
+
     expect(renderCount).toEqual(renderCountBeforeRerender);
   });
 });

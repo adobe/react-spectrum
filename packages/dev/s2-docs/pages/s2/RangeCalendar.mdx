@@ -88,13 +88,15 @@ import type {AnyCalendarDate} from '@internationalized/date';
 import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
 import {RangeCalendar} from '@react-spectrum/s2';
 
-export default (
-  <RangeCalendar
-    firstDayOfWeek="sun"
-    ///- begin highlight -///
-    createCalendar={() => new Custom454()} />
-    ///- end highlight -///
-);
+export default function Example() {
+  return (
+    <RangeCalendar
+      firstDayOfWeek="sun"
+      ///- begin highlight -///
+      createCalendar={() => new Custom454()} />
+      ///- end highlight -///
+  );
+}
 
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
@@ -197,6 +199,7 @@ Use the `focusedValue` or `defaultFocusedValue` prop to control which date is fo
 "use client";
 import {RangeCalendar, ActionButton} from '@react-spectrum/s2';
 import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -204,7 +207,7 @@ function Example() {
   let [focusedDate, setFocusedDate] = useState(defaultDate);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
+    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
       <ActionButton onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
         Today
       </ActionButton>

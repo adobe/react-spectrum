@@ -3,7 +3,7 @@
 import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
-import {CodePlatter, Pre} from './CodePlatter';
+import {CodePlatter, Pre, ShareUrlProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
 import {flushSync} from 'react-dom';
@@ -93,12 +93,34 @@ export function VisualExampleClient({component, name, importSource, controls, ch
       }
       setProps(newProps);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  let searchParams = new URLSearchParams();
+  let exampleType = useContext(ExampleSwitcherContext);
+  if (exampleType) {
+    searchParams.set('exampleType', String(exampleType));
+  }
+
+  for (let prop in props) {
+    let value = props[prop];
+    if (
+      value != null &&
+      controls[prop] != null &&
+      (controls[prop].default == null || value !== controls[prop].default)
+    ) {
+      searchParams.set(prop, JSON.stringify(value));
+    }
+  }
+
+  let url = '?' + searchParams.toString();
 
   return (
     <Context.Provider value={{component, name, importSource, controls, props, setProps, propsObject}}>
       <div hidden ref={ref} />
-      {children}
+      <ShareUrlProvider value={url}>
+        {children}
+      </ShareUrlProvider>
     </Context.Provider>
   );
 }
@@ -145,32 +167,12 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
 
 interface CodeOutputProps {
   code?: ReactNode,
-  files?: {[name: string]: string},
   type?: 'vanilla' | 'tailwind' | 's2',
-  registryUrl?: string
+  showCoachMark?: boolean
 }
 
-export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
+export function CodeOutput({code, type, showCoachMark}: CodeOutputProps) {
   let {name, importSource, props, controls, propsObject} = useContext(Context);
-  let searchParams = new URLSearchParams();
-
-  let exampleType = useContext(ExampleSwitcherContext);
-  if (exampleType) {
-    searchParams.set('exampleType', String(exampleType));
-  }
-
-  for (let prop in props) {
-    let value = props[prop];
-    if (
-      value != null &&
-      controls[prop] != null &&
-      (controls[prop].default == null || value !== controls[prop].default)
-    ) {
-      searchParams.set(prop, JSON.stringify(value));
-    }
-  }
-
-  let url = '?' + searchParams.toString();
 
   if (propsObject) {
     props = {[propsObject]: props};
@@ -178,7 +180,7 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 
   code ||= (
     <Pre>
-      <code>
+      <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
         {importSource ? renderImports(name, importSource, props) : null}
         {renderElement(name, props, controls)}
       </code>
@@ -186,7 +188,7 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   );
 
   return (
-    <CodePlatter shareUrl={url} files={files} type={type} registryUrl={registryUrl}>
+    <CodePlatter type={type} showCoachMark={showCoachMark}>
       {code}
     </CodePlatter>
   );
@@ -477,8 +479,8 @@ function UnionControl({control, value, onChange, isPicker = false}) {
       <Picker
         label={control.name}
         contextualHelp={<PropContextualHelp control={control} />}
-        selectedKey={value == null && control.optional && !control.default ? '__none' : value}
-        onSelectionChange={v => onChange(v === '__none' ? null : v)}
+        value={value == null && control.optional && !control.default ? '__none' : value}
+        onChange={v => onChange(v === '__none' ? null : v)}
         styles={style({width: 130})}>
         {control.optional && !control.default ? <PickerItem id="__none">Default</PickerItem> : null}
         {control.value.elements.filter(e => e.value).map(element => (
@@ -587,8 +589,8 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
       <Picker
         label={control.name}
         contextualHelp={<PropContextualHelp control={control} />}
-        selectedKey={value?.style || 'decimal'}
-        onSelectionChange={id => {
+        value={value?.style || 'decimal'}
+        onChange={id => {
           switch (id) {
             case 'decimal':
               onChange({style: 'decimal'});
@@ -621,8 +623,8 @@ function NumberFormatControl({control, value, onChange}: ControlProps) {
         {value?.style === 'decimal' && (
           <Picker
             label="Sign Display"
-            selectedKey={value?.signDisplay ?? 'auto'}
-            onSelectionChange={signDisplay => onChange({...value, signDisplay})}
+            value={value?.signDisplay ?? 'auto'}
+            onChange={signDisplay => onChange({...value, signDisplay})}
             styles={style({width: 130})}>
             <PickerItem id="auto">Auto</PickerItem>
             <PickerItem id="always">Always</PickerItem>
@@ -892,11 +894,11 @@ function LocaleControl({control, value, onChange}: ControlProps) {
 
   return (
     <>
-      <Picker label="Locale" items={locales} selectedKey={lang} onSelectionChange={updateLocale}>
+      <Picker label="Locale" items={locales} value={lang} onChange={updateLocale}>
         {item => <PickerItem id={item.value}>{item.label}</PickerItem>}
       </Picker>
       {extension === 'calendar' && (
-        <Picker label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
+        <Picker label="Calendar" value={calendar} onChange={updateCalendar}>
           <PickerSection>
             <Header>
               <Heading>Preferred</Heading>
@@ -916,7 +918,7 @@ function LocaleControl({control, value, onChange}: ControlProps) {
         </Picker>
       )}
       {extension === 'numberingSystem' && (
-        <Picker label="Numbering system" selectedKey={numberingSystem} onSelectionChange={updateNumberingSystem}>
+        <Picker label="Numbering system" value={numberingSystem} onChange={updateNumberingSystem}>
           <PickerItem id="latn">Latin</PickerItem>
           <PickerItem id="arab">Arabic</PickerItem>
           <PickerItem id="hanidec">Hanidec</PickerItem>

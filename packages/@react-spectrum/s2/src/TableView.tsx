@@ -50,12 +50,14 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
+import {ButtonGroup} from './ButtonGroup';
 import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
+import {CustomDialog, DialogContainer} from '..';
 import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
 import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
@@ -67,11 +69,12 @@ import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -122,7 +125,7 @@ export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledB
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple'}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -291,6 +294,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onResizeEnd: propsOnResizeEnd,
     onAction,
     onLoadMore,
+    selectionMode = 'none',
     ...otherProps
   } = props;
 
@@ -315,11 +319,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     loadingState,
     onLoadMore,
     isInResizeMode,
-    setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode,
+    selectionMode
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
-  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+  let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -362,6 +367,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isQuiet
             })}
             selectionBehavior="toggle"
+            selectionMode={selectionMode}
             onRowAction={onAction}
             {...otherProps}
             selectedKeys={selectedKeys}
@@ -516,7 +522,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends Omit<RACColumnProps, keyof GlobalDOMAttributes> {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -1014,7 +1020,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1053,6 +1059,34 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
   );
 });
 
+
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+  ...commonCellStyles,
+  color: {
+    default: baseColor('neutral'),
+    isSaving: baseColor('neutral-subdued')
+  },
+  paddingY: centerPadding(),
+  boxSizing: 'border-box',
+  height: 'calc(100% - 1px)', // so we don't overlap the border of the next cell
+  width: 'full',
+  fontSize: controlFont(),
+  alignItems: 'center',
+  display: 'flex',
+  borderStyle: {
+    default: 'none',
+    isDivider: 'solid'
+  },
+  borderEndWidth: {
+    default: 0,
+    isDivider: 1
+  },
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  }
+});
+
 let editPopover = style({
   ...colorScheme(),
   '--s2-container-bg': {
@@ -1083,17 +1117,23 @@ let editPopover = style({
 }, getAllowedOverrides());
 
 interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
+  /** The component which will handle editing the cell. For example, a `TextField` or a `Picker`. */
   renderEditing: () => ReactNode,
+  /** Whether the cell is currently being saved. */
   isSaving?: boolean,
-  onSubmit: () => void,
-  onCancel: () => void
+  /** Handler that is called when the value has been changed and is ready to be saved. */
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => void,
+  /** Handler that is called when the user cancels the edit. */
+  onCancel?: () => void,
+  /** The action to submit the form to. Only available in React 19+. */
+  action?: string | FormHTMLAttributes<HTMLFormElement>['action']
 }
 
 /**
- * An exditable cell within a table row.
+ * An editable cell within a table row.
  */
 export const EditableCell = forwardRef(function EditableCell(props: EditableCellProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {children, showDivider = false, textValue, ...otherProps} = props;
+  let {children, showDivider = false, textValue, isSaving, ...otherProps} = props;
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useObjectRef(ref);
   textValue ||= typeof children === 'string' ? children : undefined;
@@ -1101,10 +1141,11 @@ export const EditableCell = forwardRef(function EditableCell(props: EditableCell
   return (
     <RACCell
       ref={domRef}
-      className={renderProps => cell({
+      className={renderProps => editableCell({
         ...renderProps,
         ...tableVisualOptions,
-        isDivider: showDivider
+        isDivider: showDivider,
+        isSaving
       })}
       textValue={textValue}
       {...otherProps}>
@@ -1128,7 +1169,7 @@ const nonTextInputTypes = new Set([
 ]);
 
 function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
-  let {children, align, renderEditing, isSaving, onSubmit, onCancel, isFocusVisible, cellRef} = props;
+  let {children, align, renderEditing, isSaving, onSubmit, isFocusVisible, cellRef, action, onCancel} = props;
   let [isOpen, setIsOpen] = useState(false);
   let popoverRef = useRef<HTMLDivElement>(null);
   let formRef = useRef<HTMLFormElement>(null);
@@ -1137,6 +1178,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
   let [verticalOffset, setVerticalOffset] = useState(0);
   let tableVisualOptions = useContext(InternalTableContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
 
   let {density} = useContext(InternalTableContext);
   let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
@@ -1180,11 +1222,32 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     }
   }, [isOpen]);
 
-  // Cancel, don't save the value
-  let cancel = () => {
+  let cancel = useCallback(() => {
     setIsOpen(false);
-    onCancel();
-  };
+    onCancel?.();
+  }, [onCancel]);
+
+  let isMobile = !useMediaQuery('(hover: hover) and (pointer: fine)');
+  // Can't differentiate between Dialog click outside dismissal and Escape key dismissal
+  let prevIsOpen = useRef(isOpen);
+  useEffect(() => {
+    let dialog = dialogRef.current?.UNSAFE_getDOMNode();
+    if (isOpen && dialog && !prevIsOpen.current) {
+      let handler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          cancel();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      };
+      dialog.addEventListener('keydown', handler);
+      prevIsOpen.current = isOpen;
+      return () => {
+        dialog.removeEventListener('keydown', handler);
+      };
+    }
+    prevIsOpen.current = isOpen;
+  }, [isOpen, cancel]);
 
   return (
     <Provider
@@ -1202,6 +1265,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
               styles: style({
                 // TODO: really need access to display here instead, but not possible right now
                 // will be addressable with displayOuter
+                // Could use `hidden` attribute instead of css, but I don't have access to much of this state at the moment
                 visibility: {
                   default: 'hidden',
                   isForcedVisible: 'visible',
@@ -1221,53 +1285,81 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
         values={[
           [ActionButtonContext, null]
         ]}>
-        <RACPopover
-          isOpen={isOpen}
-          onOpenChange={setIsOpen}
-          ref={popoverRef}
-          shouldCloseOnInteractOutside={() => {
-            if (!popoverRef.current?.contains(document.activeElement)) {
+        {!isMobile && (
+          <RACPopover
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+            ref={popoverRef}
+            shouldCloseOnInteractOutside={() => {
+              if (!popoverRef.current?.contains(document.activeElement)) {
+                return false;
+              }
+              formRef.current?.requestSubmit();
               return false;
-            }
-            formRef.current?.requestSubmit();
-            return false;
-          }}
-          triggerRef={cellRef}
-          aria-label={stringFormatter.format('table.editCell')}
-          offset={verticalOffset}
-          placement="bottom start"
-          style={{
-            minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
-            maxWidth: `${tableWidth}px`,
-            // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
-            zIndex: undefined
-          }}
-          className={editPopover}>
-          <Provider
-            values={[
-              [OverlayTriggerStateContext, null]
-            ]}>
-            <Form
-              ref={formRef}
-              onSubmit={(e) => {
-                e.preventDefault();
-                onSubmit();
-                setIsOpen(false);
-              }}
-              className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
-              style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
-              {renderEditing()}
-              <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
-                <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
-                <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
-              </div>
-            </Form>
-          </Provider>
-        </RACPopover>
+            }}
+            triggerRef={cellRef}
+            aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}
+            offset={verticalOffset}
+            placement="bottom start"
+            style={{
+              minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
+              maxWidth: `${tableWidth}px`,
+              // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+              zIndex: undefined
+            }}
+            className={editPopover}>
+            <Provider
+              values={[
+                [OverlayTriggerStateContext, null]
+              ]}>
+              <Form
+                ref={formRef}
+                action={action}
+                onSubmit={(e) => {
+                  onSubmit?.(e);
+                  setIsOpen(false);
+                }}
+                className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
+                style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
+                {renderEditing()}
+                <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
+                  <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
+                  <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
+                </div>
+              </Form>
+            </Provider>
+          </RACPopover>
+        )}
+        {isMobile && (
+          <DialogContainer onDismiss={() => formRef.current?.requestSubmit()}>
+            {isOpen && (
+              <CustomDialog
+                ref={dialogRef}
+                isDismissible
+                isKeyboardDismissDisabled
+                aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}>
+                <Form
+                  ref={formRef}
+                  action={action}
+                  onSubmit={(e) => {
+                    onSubmit?.(e);
+                    setIsOpen(false);
+                  }}
+                  className={style({width: 'full', display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16})}>
+                  {renderEditing()}
+                  <ButtonGroup align="end" styles={style({alignSelf: 'end'})}>
+                    <SpectrumButton onPress={cancel} variant="secondary" fillStyle="outline">Cancel</SpectrumButton>
+                    <SpectrumButton type="submit" variant="accent">Save</SpectrumButton>
+                  </ButtonGroup>
+                </Form>
+              </CustomDialog>
+            )}
+          </DialogContainer>
+        )}
       </Provider>
     </Provider>
   );
-}
+};
 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
@@ -1366,6 +1458,9 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
+        // The `spread` otherProps must be after className in Cell.
+        // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>

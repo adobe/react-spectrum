@@ -40,10 +40,11 @@ import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement, useCallback, useRef, useState} from 'react';
+import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
+import {useEffectEvent} from '@react-aria/utils';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 
 let onActionFunc = action('onAction');
@@ -1460,24 +1461,15 @@ interface EditableTableProps extends TableViewProps {}
 export const EditableTable: StoryObj<EditableTableProps> = {
   render: function EditableTable(props) {
     let columns = editableColumns;
-    let [editableItems, setEditableItems] = useState(defaultItems);
-    let intermediateValue = useRef<any>(null);
+    let data = useListData({initialItems: defaultItems});
 
-    let onChange = useCallback((id: Key, columnId: Key) => {
-      let value = intermediateValue.current;
+    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+      let value = values[columnId];
       if (value === null) {
         return;
       }
-      intermediateValue.current = null;
-      setEditableItems(prev => {
-        let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value} : i);
-        return newItems;
-      });
-    }, []);
-
-    let onIntermediateChange = useCallback((value: any) => {
-      intermediateValue.current = value;
-    }, []);
+      data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
+    }, [data]);
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
@@ -1487,26 +1479,31 @@ export const EditableTable: StoryObj<EditableTableProps> = {
               <Column {...column}>{column.name}</Column>
             )}
           </TableHeader>
-          <TableBody items={editableItems}>
+          <TableBody items={data.items}>
             {item => (
               <Row id={item.id} columns={columns}>
                 {(column) => {
                   if (column.id === 'fruits') {
                     return (
                       <EditableCell
+                        aria-label={`Edit ${item[column.id]} in ${column.name}`}
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
-                            aria-label="Edit fruit"
+                            name={column.id! as string}
+                            aria-label="Fruit name edit field"
                             autoFocus
                             validate={value => value.length > 0 ? null : 'Fruit name is required'}
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
-                            defaultValue={item[column.id!]}
-                            onChange={value => onIntermediateChange(value)} />
+                            defaultValue={item[column.id!]} />
                         )}>
                         <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
                           {item[column.id]}
@@ -1521,8 +1518,12 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
@@ -1530,7 +1531,7 @@ export const EditableTable: StoryObj<EditableTableProps> = {
                             autoFocus
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                             defaultValue={item[column.id!]}
-                            onChange={value => onIntermediateChange(value)}>
+                            name={column.id! as string}>
                             <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
                             <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
                             <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
@@ -1567,48 +1568,44 @@ export const EditableTable: StoryObj<EditableTableProps> = {
 
 export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
   render: function EditableTable(props) {
+    let delay = 5000;
     let columns = editableColumns;
-    let [editableItems, setEditableItems] = useState(defaultItems);
-    let intermediateValue = useRef<any>(null);
+    let data = useListData({initialItems: defaultItems});
 
-    // Replace all of this with real API calls, this is purely demonstrative.
-    let saveItem = useCallback((id: Key, columnId: Key, prevValue: any) => {
-      let succeeds = Math.random() > 0.5;
-      if (succeeds) {
-        setEditableItems(prev => prev.map(i => i.id === id ? {...i, isSaving: {...i.isSaving, [columnId]: false}} : i));
-      } else {
-        setEditableItems(prev => prev.map(i => i.id === id ? {...i, [columnId]: prevValue, isSaving: {...i.isSaving, [columnId]: false}} : i));
-      }
+    let saveItem = useEffectEvent((id: Key, columnId: Key) => {
+      let prevItem = data.getItem(id)!;
+      data.update(id, {...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}});
       currentRequests.current.delete(id);
-    }, []);
-    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>, prevValue: any}>>(new Map());
-    let onChange = useCallback((id: Key, columnId: Key) => {
-      let value = intermediateValue.current;
+    });
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
+    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+      let value = values[columnId];
       if (value === null) {
         return;
       }
-      intermediateValue.current = null;
       let alreadySaving = currentRequests.current.get(id);
       if (alreadySaving) {
         // remove and cancel the previous request
         currentRequests.current.delete(id);
         clearTimeout(alreadySaving.request);
       }
-      setEditableItems(prev => {
-        let prevValue = prev.find(i => i.id === id)?.[columnId];
-        let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value, isSaving: {...i.isSaving, [columnId]: true}} : i);
-        // set a timeout between 0 and 10s
-        let timeout = setTimeout(() => {
-          saveItem(id, columnId, alreadySaving?.prevValue ?? prevValue);
-        }, Math.random() * 10000);
-        currentRequests.current.set(id, {request: timeout, prevValue});
-        return newItems;
-      });
-    }, [saveItem]);
+      let prevItem = data.getItem(id)!;
+      data.update(id, {...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}});
+    }, [data]);
 
-    let onIntermediateChange = useCallback((value: any) => {
-      intermediateValue.current = value;
-    }, []);
+    useEffect(() => {
+      // if any item is saving and we don't have a request for it, start a timer to commit it
+      for (const item of data.items) {
+        for (const columnId in item.isSaving) {
+          if (item.isSaving[columnId] && !currentRequests.current.has(item.id)) {
+            let timeout = setTimeout(() => {
+              saveItem(item.id, columnId);
+            }, delay);
+            currentRequests.current.set(item.id, {request: timeout});
+          }
+        }
+      }
+    }, [data, delay]);
 
     return (
       <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
@@ -1618,17 +1615,22 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
               <Column {...column}>{column.name}</Column>
             )}
           </TableHeader>
-          <TableBody items={editableItems}>
+          <TableBody items={data.items}>
             {item => (
               <Row id={item.id} columns={columns}>
                 {(column) => {
                   if (column.id === 'fruits') {
                     return (
                       <EditableCell
+                        aria-label={`Edit ${item[column.id]} in ${column.name}`}
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <TextField
@@ -1637,7 +1639,7 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                             validate={value => value.length > 0 ? null : 'Fruit name is required'}
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                             defaultValue={item[column.id!]}
-                            onChange={value => onIntermediateChange(value)} />
+                            name={column.id! as string} />
                         )}>
                         <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
                       </EditableCell>
@@ -1648,8 +1650,12 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                       <EditableCell
                         align={column.align}
                         showDivider={column.showDivider}
-                        onSubmit={() => onChange(item.id, column.id!)}
-                        onCancel={() => {}}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
                         isSaving={item.isSaving[column.id!]}
                         renderEditing={() => (
                           <Picker
@@ -1657,7 +1663,7 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
                             autoFocus
                             styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                             defaultValue={item[column.id!]}
-                            onChange={value => onIntermediateChange(value)}>
+                            name={column.id! as string}>
                             <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
                             <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
                             <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>

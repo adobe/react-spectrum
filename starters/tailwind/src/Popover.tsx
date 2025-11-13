@@ -28,10 +28,7 @@ const styles = tv({
 });
 
 export function Popover({ children, showArrow, className, ...props }: PopoverProps) {
-  let popoverContext = useSlottedContext(PopoverContext)!;
-  let isSubmenu = popoverContext?.trigger === 'SubmenuTrigger';
   let offset = showArrow ? 12 : 8;
-  offset = isSubmenu ? offset - 6 : offset;
   return (
     <AriaPopover
       offset={offset}
