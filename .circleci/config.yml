@@ -13,6 +13,10 @@ parameters:
     type: string
     default: ""
 
+orbs:
+  aws-cli: circleci/aws-cli@5.4.1
+  aws-s3: circleci/aws-s3@4.1
+
 executors:
   rsp:
     docker:
@@ -805,6 +809,16 @@ jobs:
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
 
+  deploy-s3:
+    executor: rsp
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - aws-s3/sync:
+          from: /tmp/dist/production/docs
+          to: s3://react-spectrum-prod
+
   comment:
     executor: rsp
     steps:
@@ -1015,6 +1029,16 @@ workflows:
           filters:
             branches:
               only: main
+          requires:
+            - docs-production
+
+  prod-docs-aws:      
+    jobs:
+      - install
+      - docs-production:
+          requires:
+            - install
+      - deploy-s3:
           requires:
             - docs-production
 
