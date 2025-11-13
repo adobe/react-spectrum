@@ -409,6 +409,46 @@ By default, link items in a ListBox are not selectable, and only perform navigat
 
 The `<ListBoxItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
+## Custom keyboard handling
+
+ListBox supports custom keyboard event handling on individual items via the `onKeyDown` prop on `ListBoxItem`. This enables you to implement additional keyboard interactions beyond the built-in selection and navigation behavior, such as deleting items with the <Keyboard>Backspace</Keyboard> or <Keyboard>Delete</Keyboard> keys.
+
+```tsx example
+import {useListData} from 'react-stately';
+
+function Example() {
+  let list = useListData({
+    initialItems: [
+      {id: 1, name: 'Item 1'},
+      {id: 2, name: 'Item 2'},
+      {id: 3, name: 'Item 3'},
+      {id: 4, name: 'Item 4'},
+      {id: 5, name: 'Item 5'}
+    ]
+  });
+
+  let handleKeyDown = (key: React.Key) => (e: React.KeyboardEvent) => {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      list.remove(key);
+    }
+  };
+
+  return (
+    <ListBox
+      aria-label="ListBox with delete support"
+      selectionMode="single"
+      items={list.items}>
+      {item => (
+        <ListBoxItem onKeyDown={handleKeyDown(item.id)}>
+          {item.name}
+        </ListBoxItem>
+      )}
+    </ListBox>
+  );
+}
+```
+
 ## Sections
 
 ListBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `ListBoxSection` element. A `<Header>` element may also be included to label the section.
