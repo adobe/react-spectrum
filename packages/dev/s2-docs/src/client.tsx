@@ -14,7 +14,7 @@ let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
     link.href &&
     (!link.target || link.target === '_self') &&
     link.origin === location.origin &&
-    link.pathname !== location.pathname &&
+    (link.pathname !== location.pathname || link.hash) &&
     !link.hasAttribute('download') &&
     link.pathname.startsWith(pathname)
   );
@@ -36,7 +36,23 @@ let currentAbortController: AbortController | null = null;
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
-  let [basePath] = pathname.split('#');
+  let [basePath, pathAnchor] = pathname.split('#');
+  let currentPath = location.pathname;
+  let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
+  
+  if (isSamePageAnchor) {
+    if (push) {
+      history.pushState(null, '', pathname);
+    }
+    
+    // Scroll to the anchor
+    let element = document.getElementById(pathAnchor);
+    if (element) {
+      element.scrollIntoView();
+    }
+    return;
+  }
+  
   let rscPath = basePath.replace('.html', '.rsc');
   
   // Cancel any in-flight navigation
