@@ -154,7 +154,7 @@ function clearPrefetchTimeout() {
 }
 
 document.addEventListener('pointerover', e => {
-  let link = (e.target as Element).closest('a');
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   let publicUrl = process.env.PUBLIC_URL || '/';
   let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   
@@ -172,14 +172,14 @@ document.addEventListener('pointerover', e => {
 
 // Clear prefetch timeout when pointer leaves a link
 document.addEventListener('pointerout', e => {
-  let link = (e.target as Element).closest('a');
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (link && link === currentPrefetchLink) {
     clearPrefetchTimeout();
   }
 }, true);
 
 document.addEventListener('focus', e => {
-  let link = (e.target as Element).closest('a');
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   let publicUrl = process.env.PUBLIC_URL || '/';
   let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   
@@ -197,7 +197,7 @@ document.addEventListener('focus', e => {
 
 // Clear prefetch timeout when focus leaves a link
 document.addEventListener('blur', e => {
-  let link = (e.target as Element).closest('a');
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (link && link === currentPrefetchLink) {
     clearPrefetchTimeout();
   }
@@ -205,7 +205,7 @@ document.addEventListener('blur', e => {
 
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
-  let link = (e.target as Element).closest('a');
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   let publicUrl = process.env.PUBLIC_URL || '/';
   let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   if (
