@@ -25,6 +25,9 @@ export function prefetchRoute(pathname: string) {
       prefetchPromises.delete(rscPath);
       return Promise.reject<ReactElement>(new Error('Prefetch failed'));
     });
+
+  // Silently handle prefetch failures
+  prefetchPromise.catch(() => {});
   
   prefetchPromises.set(rscPath, prefetchPromise);
 }
