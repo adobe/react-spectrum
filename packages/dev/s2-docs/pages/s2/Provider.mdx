@@ -2,59 +2,33 @@ import {Layout} from '../../src/Layout';
 import {InstallCommand} from '../../src/InstallCommand';
 import {BundlerSwitcher, BundlerSwitcherItem} from '../../src/BundlerSwitcher';
 export default Layout;
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
 
-export const section = 'Overview';
-export const description = 'Getting started with React Spectrum';
+export const section = 'Components';
 import docs from 'docs:@react-spectrum/s2';
 
 # Provider
 
 <PageDescription>{docs.exports.Provider.description}</PageDescription>
 
-## Example
-
-```tsx render
+```tsx render docs={docs.exports.Provider} props={['colorScheme', 'background']} links={docs.links} type="s2"
 'use client';
-import {Provider} from '@react-spectrum/s2';
-import {Button} from '@react-spectrum/s2';
-
-function App() {
-  return (
-    <Provider background='base'>
-      <Button variant="accent">
-        Hello React Spectrum!
-      </Button>
-    </Provider>
-  );
-}
-```
-
-## Color Schemes
-By default, React Spectrum follows the operating system color scheme setting, supporting both light and dark mode. The colorScheme prop can be set on `<Provider>` to force the app to always render in a certain color scheme.
-
-```tsx render
-'use client';
-import {Provider} from '@react-spectrum/s2';
-import {ActionButton} from '@react-spectrum/s2';
+import {Button, Provider} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<div className={style({display: 'flex', gap: 12})}>
-  <Provider colorScheme="light">
-    <div className={style({backgroundColor: 'base', padding: 12})}>
-      <ActionButton>I'm a light button</ActionButton>
-    </div>
-  </Provider>
-  <Provider colorScheme="dark">
-    <div className={style({backgroundColor: 'elevated', padding: 12})}>
-      <ActionButton>I'm a dark button</ActionButton>
-    </div>
-  </Provider>
-</div>
+
+<Provider
+  /* PROPS */
+  styles={style({padding: 12})}
+>
+  <Button>
+    Hello React Spectrum!
+  </Button>
+</Provider>
 ```
 
 ## Locales
-By default, React Spectrum chooses the locale matching the user’s browser/operating system language, but this can be overridden with the locale prop if you have an application specific setting. This prop accepts a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code. A list of supported locales is available [here](Concepts.html#supported-locales)
+By default, React Spectrum chooses the locale matching the user’s browser/operating system language, but this can be overridden with the locale prop if you have an application specific setting. This prop accepts a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
 
 ```tsx
 <Provider locale="en-US">
@@ -62,8 +36,49 @@ By default, React Spectrum chooses the locale matching the user’s browser/oper
 </Provider>
 ```
 
-{/* ### Breakpoints */}
-{/* TODO: Link to style macro docs about breakpoints */}
+<Disclosure isQuiet>
+  <DisclosureTitle>Supported Locales</DisclosureTitle>
+  <DisclosurePanel>
+  <ul style={{columnWidth: 200, paddingLeft: 16, fontFamily: 'adobe-clean-spectrum-vf'}}>
+    <li>Arabic (United Arab Emirates)</li>
+    <li>Bulgarian (Bulgaria)</li>
+    <li>Chinese (Simplified)</li>
+    <li>Chinese (Traditional)</li>
+    <li>Croatian (Croatia)</li>
+    <li>Czech (Czech Republic)</li>
+    <li>Danish (Denmark)</li>
+    <li>Dutch (Netherlands)</li>
+    <li>English (Great Britain)</li>
+    <li>English (United States)</li>
+    <li>Estonian (Estonia)</li>
+    <li>Finnish (Finland)</li>
+    <li>French (Canada)</li>
+    <li>French (France)</li>
+    <li>German (Germany)</li>
+    <li>Greek (Greece)</li>
+    <li>Hebrew (Israel)</li>
+    <li>Hungarian (Hungary)</li>
+    <li>Italian (Italy)</li>
+    <li>Japanese (Japan)</li>
+    <li>Korean (Korea)</li>
+    <li>Latvian (Latvia)</li>
+    <li>Lithuanian (Lithuania)</li>
+    <li>Norwegian (Norway)</li>
+    <li>Polish (Poland)</li>
+    <li>Portuguese (Brazil)</li>
+    <li>Romanian (Romania)</li>
+    <li>Russian (Russia)</li>
+    <li>Serbian (Serbia)</li>
+    <li>Slovakian (Slovakia)</li>
+    <li>Slovenian (Slovenia)</li>
+    <li>Spanish (Spain)</li>
+    <li>Swedish (Sweden)</li>
+    <li>Turkish (Turkey)</li>
+    <li>Ukrainian (Ukraine)</li>
+  </ul>
+  </DisclosurePanel>
+</Disclosure>
+
 
 ## Client side routing
 
@@ -87,6 +102,7 @@ When using SSR, the `<Provider>` component can be rendered as the root `<html>` 
 </Provider>
 ```
 
-## Props
+## API
 
+### Provider
 <PropTable component={docs.exports.Provider} links={docs.links} />

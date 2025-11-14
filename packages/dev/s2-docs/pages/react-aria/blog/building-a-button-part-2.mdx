@@ -45,7 +45,7 @@ The first thing that may come to mind when you think about implementing a hover 
 
 On touch devices, `:hover` is emulated for backward compatibility with older apps that weren't designed with touch in mind. Depending on the browser, `:hover` might never match, might match only while the user is touching an element, or may be sticky and act more like focus. On iOS for example, tapping once on an element shows the hover style, and tapping away from the element removes it.
 
-<video src={hoverVideoUrl} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} />
+<video src={hoverVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 This is not how you'd usually expect a button to behave, but browsers need to do this kind of emulation for apps that may only show or hide content on hover (e.g. navigation menus). If they did not, then perhaps this content would not be accessible at all to touch users. Unfortunately, there is no built-in way of opting out of this behavior, so we need to find another way to apply our hover styles.
 
@@ -77,7 +77,7 @@ We've wrapped all of this behavior into the [useHover](../useHover.html) hook in
 
 The [Button](../../s2/Button.html) component, and all other components in React Spectrum that support hover states, use the [useHover](../useHover.html) hook to handle interactions, and apply a CSS class when they are hovered. This ensures that hover states are only applied when interacting with a mouse, which avoids unexpected behavior on touch devices.
 
-<video src={hoveriPadVideoUrl} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} />
+<video src={hoveriPadVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 Try a live example for yourself in our [Button](../../s2/Button.html) docs!
 
@@ -86,4 +86,3 @@ Try a live example for yourself in our [Button](../../s2/Button.html) docs!
 As we've seen, cross-device interactions are difficult to handle across so many different types of devices. Even "simple" components like buttons are much more complicated than they seem at first. If you're building your own button component, I'd recommend checking out the [useButton](https://react-spectrum.adobe.com/react-aria/useButton.html) and [useHover](../useHover.html) hooks, which will help ensure that everything works as expected across a wide variety of devices.
 
 In the [next part](building-a-button-part-3.html) of this series, we'll cover how React Spectrum and React Aria handle focus behavior across devices and browsers.
-

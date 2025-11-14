@@ -17,6 +17,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
 import {Byline} from '../../../src/BlogList';
+import {ColorEditorExample} from './ColorEditorExample';
 
 export const hideNav = true;
 export const tags = ['color picker', 'color', 'internationalization', 'localization', 'components', 'accessibility', 'react spectrum', 'react'];
@@ -38,7 +39,7 @@ Accessibility is at the core of all of our work on the React Spectrum team, and 
 
 Our initial implementation followed the typical ARIA patterns such as [slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/) to implement ColorArea, ColorSlider, and ColorWheel, and [listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) to implement ColorSwatchPicker. This provided good support for mouse, touch, and keyboard input, but the screen reader experience left something to be desired. Out of the box, screen readers would only announce raw channel values like “Red: 182, Green: 96, Blue: 38”. I don’t know about you, but I can’t imagine what color that is just by hearing those numbers!
 
-<video src={initialVideoUrl} style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={initialVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
 
 ## Improving screen reader announcements
 
@@ -158,23 +159,7 @@ The order that the hue, chroma, and lightness descriptors are combined varies by
 
 Check out the color picker below to see the results of this algorithm:
 
-```tsx render
-'use client';
-import {ColorPicker} from 'react-aria-components';
-import {ColorSwatch} from '@react-spectrum/s2';
-
-// TODO: No ColorEditor in S2
-<ColorPicker label="Fill" defaultValue="#5100FF">
-  {({color}) =>
-    <div style={{display: 'flex', flexWrap: 'wrap', gap: 24}}>
-      <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-        <ColorSwatch size="L" />
-        <span>{color.getColorName(navigator.language || 'en-US')}</span>
-      </div>
-    </div>
-  }
-</ColorPicker>
-```
+<ColorEditorExample />
 
 ## Final result
 
@@ -182,6 +167,6 @@ After developing this algorithm to generate color descriptions, we integrated it
 
 The video below shows interacting with a ColorArea with color descriptions. You can also try it yourself with a screen reader in the example above.
 
-<video src={finalVideoUrl} style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={finalVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
 
 Check out our [ColorPicker](../ColorPicker.html) components in React Aria to build accessible, customizable, and styleable color pickers in your own applications.

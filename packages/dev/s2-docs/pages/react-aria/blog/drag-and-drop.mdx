@@ -43,7 +43,7 @@ We are excited to announce the release of drag and drop support in [React Aria](
 - **Interoperability** – Drag data can be provided in multiple data formats for compatibility with many targets and external applications via the native HTML drag and drop API. Drag and drop integrates with multiple selection to allow dragging many objects at once.
 - **Customizability** – Interactions such as hit testing, keyboard navigation, and drop operations can be customized, as well as UIs for drag previews and drop indicators.
 
-<video src={heroVideo} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={heroVideo} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 ## Introduction
 
@@ -65,13 +65,13 @@ For mouse and touch screen users, React Aria uses the native [HTML drag and drop
 
 In addition to native drag and drop, we have also implemented keyboard and screen reader accessible interactions from scratch. Keyboard users can focus a draggable element and press the `Enter` key to start dragging it. This enters a drag and drop mode across the whole page, which allows the user to press `Tab` to navigate only between drop targets that accept the dragged data, while skipping over all other elements. This reduces the number of elements on the page that must be traversed to find a drop target, and removes the guess work often found with other alternatives such as copy and paste. Once a target is chosen, pressing the `Enter` key again performs the drop.
 
-<video src={dndKeyboard} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={dndKeyboard} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 For screen reader users, the interactions are similar. We've taken great care to include prompts and announcements to help guide the user through the process, which adapt to the device, and are localized into over 30 languages. Drag sources and drop targets include ARIA descriptions indicating that the user can press `Enter` or double tap to drag or drop, depending on their device. We also use an ARIA live region to announce when a drag starts, with instructions on how to navigate and perform a drop, and to announce when a drop is completed successfully or canceled by the user.
 
 In addition, while in drag and drop mode, all elements other than valid drop targets are hidden from screen readers. Desktop screen reader users can use the `Tab` key to navigate as described earlier, but touch screen readers navigate by swiping through elements using a virtual cursor, and double tapping to drop. Hiding all non-drop target elements makes it much easier to find valid places to drop, without needing to swipe through potentially hundreds of unrelated elements.
 
-<video src={dndMobile} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}}>
+<video src={dndMobile} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}}>
   <track src={dndMobileVTT} default kind="captions" label="English Captions" srcLang="en-us" type="text/vtt" />
 </video>
 
@@ -117,4 +117,3 @@ You can use our React Aria hooks standalone, or integrate with existing collecti
 For React Spectrum, the [useDragAndDrop](../../s2/dnd.html) hook can be used to enable drag and drop in the components that support it. This returns an object containing implementations of the React Aria hooks used to implement drag and drop, keeping bundle size small when drag and drop is unused. Currently support is limited to [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html), but we will be adding drag and drop to other components soon.
 
 We hope these new hooks help make accessible drag and drop interactions easier to build, and we can't wait to see what you create!
-

@@ -38,11 +38,11 @@ Internationalization is a core feature of our Date and Time components. We suppo
 
 In a [previous blog post](date-and-time-pickers-for-all.html#date-fields), we discussed the reasoning behind the component structure of our date and time components. In short, we designed these components to render individually focusable segments for each date and time unit, eliminating the challenges of parsing various date formats — an issue commonly encountered with free-form text fields. Since the date and time format is automatically determined based on the user's locale, the user only needs to fill in the values without worrying about the appropriate separators or the order. This made for a smoother, more intuitive experience for the user, removing the guesswork associated with formatting and parsing dates in various locales.
 
-<video src={localeVideoURL} muted controls aria-label="Example of a React Spectrum DateField component in various locales" style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={localeVideoURL} muted controls aria-label="Example of a React Spectrum DateField component in various locales" style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 ## Unicode Bidirectional Algorithm
 
-To format the segments according to the user locale, we relied on the [Intl.DateTimeFormat API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to help localize our dates and flexbox to handle the layout. Flexbox conveniently handled the right-to-left layouts by mirroring the segment order provided by the API which typically works well for RTL languages. However, in some cases, it is more complex. RTL languages often have bidirectional text, meaning it contains a mix of right-to-left and left-to-right elements. For example, in Arabic and Hebrew, numbers are always written from left-to-right. In cases where numbers are combined with text, the general flow proceeds right to left, but the numbers are written from left to right. 
+To format the segments according to the user locale, we relied on the [Intl.DateTimeFormat API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to help localize our dates and flexbox to handle the layout. Flexbox conveniently handled the right-to-left layouts by mirroring the segment order provided by the API which typically works well for RTL languages. However, in some cases, it is more complex. RTL languages often have bidirectional text, meaning it contains a mix of right-to-left and left-to-right elements. For example, in Arabic and Hebrew, numbers are always written from left-to-right. In cases where numbers are combined with text, the general flow proceeds right to left, but the numbers are written from left to right.
 
 We found that dates behave bidirectionally in right-to-left languages and just mirroring the segment order was too simplistic for this complex behavior. As a result, some of our date fields were formatted incorrectly. For instance, in Hebrew (`he-IL`), the proper numeric date format should be `DD.MM.YYYY`, but our date component was displaying `YYYY.MM.DD`. This issue varied across different RTL languages for date fields, but for time fields, we observed a consistent problem across all RTL languages where time segments were flipped, rendering `MM:HH` instead of the correct `HH:MM` format.
 
@@ -56,11 +56,11 @@ Below is an example of how the dates were being formatted based on user-entered 
 
 <RTLActualPlaceholder role="img" aria-label="SVG diagram showing RTL actual placeholder issue" />
 
-<video src={placeholderVideoURL} muted controls aria-label="Demo of the date segments shifting when backspacing" style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={placeholderVideoURL} muted controls aria-label="Demo of the date segments shifting when backspacing" style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 ## TimeFields
 
-We first addressed time fields since they were easier to fix. As mentioned earlier, the segments in time fields for RTL languages were flipped. We learned that regardless of locale, all time fields should follow the `HH:MM` format. Knowing this, we could apply a direction of left-to-right (LTR) on the numeric values across all segments in a time field. We could do this by wrapping the time field in a [`<bdo>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/bdo) tag and setting the `dir` attribute to `ltr` which would override the current text direction from `rtl` to `ltr`. 
+We first addressed time fields since they were easier to fix. As mentioned earlier, the segments in time fields for RTL languages were flipped. We learned that regardless of locale, all time fields should follow the `HH:MM` format. Knowing this, we could apply a direction of left-to-right (LTR) on the numeric values across all segments in a time field. We could do this by wrapping the time field in a [`<bdo>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/bdo) tag and setting the `dir` attribute to `ltr` which would override the current text direction from `rtl` to `ltr`.
 
 However, instead of changing the DOM structure and introducing potential side effects, we chose to use the [LRI (left-to-right isolate) Unicode character](https://www.w3.org/International/questions/qa-bidi-unicode-controls) to encapsulate the time segments and force an LTR direction. This sets the text direction to `ltr` and isolates the time field from the surrounding text. Adding this Unicode character is the equivalent of wrapping the time segments in a `<bdo>` tag but offers several advantages. Since the character is invisible, there are no visual changes, and by adding it as a sibling to the segments, we avoided major structural changes to the DOM. Additionally, by enforcing a LTR direction, we no longer had to worry about whether the time field consisted of placeholders or numeric values. Lastly, it ensured that when a date field included a time, that the time field appeared in the correct order with respect to the date field (e.g. `8:45 1/31/2025` instead of `1/31/2025 8:45`).
 
@@ -82,9 +82,9 @@ Below is a simplified code example of how we utilize Unicode characters to enfor
 
 ## DateFields
 
-Date fields, on the other hand, were much more complicated to solve in comparsion. Since we were relying on `display: flex` to format the date segments, the resulting format appeared to mirror the order in which the segments were stored, as returned by [DateFormatter](../../internationalized/date/DateFormatter.html#dateformatter). This suggested that we could apply a similar approach to what we used for time fields — forcing a left-to-right direction on the date segments. 
+Date fields, on the other hand, were much more complicated to solve in comparsion. Since we were relying on `display: flex` to format the date segments, the resulting format appeared to mirror the order in which the segments were stored, as returned by [DateFormatter](../../internationalized/date/DateFormatter.html#dateformatter). This suggested that we could apply a similar approach to what we used for time fields — forcing a left-to-right direction on the date segments.
 
-However, this assumption proved too broad. In some locales, such as Arabic (`ar-AE`), the date segments were already correctly formatted. In particular, we found that in Arabic, the separators between date segments contained [right-to-left marks](https://en.wikipedia.org/wiki/Implicit_directional_marks) which were returned by the `Intl.DateTimeFormat` API. This causes the separators to be positioned to the left of the preceding text. When we tried enforcing a left-to-right direction like we did in time field using the same solution, the date field was formatted as `2 2022/ 12/` instead of `2022/12/2` due to the presence of the right-to-left marks interfering with the LRI Unicode. In contrast, Hebrew did not have such markers. Therefore, we had to adopt a different approach that accounted for these variations. 
+However, this assumption proved too broad. In some locales, such as Arabic (`ar-AE`), the date segments were already correctly formatted. In particular, we found that in Arabic, the separators between date segments contained [right-to-left marks](https://en.wikipedia.org/wiki/Implicit_directional_marks) which were returned by the `Intl.DateTimeFormat` API. This causes the separators to be positioned to the left of the preceding text. When we tried enforcing a left-to-right direction like we did in time field using the same solution, the date field was formatted as `2 2022/ 12/` instead of `2022/12/2` due to the presence of the right-to-left marks interfering with the LRI Unicode. In contrast, Hebrew did not have such markers. Therefore, we had to adopt a different approach that accounted for these variations.
 
 ```tsx
 // An example of a date field in ar-AE
@@ -95,7 +95,7 @@ However, this assumption proved too broad. In some locales, such as Arabic (`ar-
   {/*- end highlight -*/}
   <span aria-label="month">11</span>
   {/*- begin highlight -*/}
-  <span>&rlm;/</span>  
+  <span>&rlm;/</span>
   {/*- end highlight -*/}
   <span aria-label="year">2020</span>
 </div>
@@ -128,18 +128,18 @@ After fixing the formatting, we also needed to update the keyboard navigation. P
   <span aria-label="day">3</span>
   <span>.</span>
   <span aria-label="month">11</span>
-  <span>.</span>  
+  <span>.</span>
   <span aria-label="year">2020</span>
   <span>,</span>
   <span aria-label="hour">8</span>
-  <span>:</span>  
+  <span>:</span>
   <span aria-label="minute">45</span>
 </div>
 ```
 
-Below is an example of a date field in Hebrew with the correct date format but incorrect keyboard navigation. Pressing the left arrow key should navigate you to the segment to the immediate left, while the right arrow key should navigate you to the segment to the immediate right. 
+Below is an example of a date field in Hebrew with the correct date format but incorrect keyboard navigation. Pressing the left arrow key should navigate you to the segment to the immediate left, while the right arrow key should navigate you to the segment to the immediate right.
 
-<video src={keyboardVideoURL} muted controls aria-label="Demo of keyboard navigation prior to fixes" style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={keyboardVideoURL} muted controls aria-label="Demo of keyboard navigation prior to fixes" style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 As a result, we updated the keyboard navigation in right-to-left langauges to calculate the distance between the currently focused segment and other segments to identify the closest node based on whether the left or right arrow key was pressed, rather than reying on the DOM order.
 
@@ -148,4 +148,3 @@ As a result, we updated the keyboard navigation in right-to-left langauges to ca
 As you can see, formatting dates correctly is quite challenging, especially in right-to-left languages. Fortunately, tools like the Unicode Bidirectional Algorithm help with formatting so we don't have to handle everything manually. However, as we discovered with this bug, it doesn't always work as expected and unexpected factors can interfere with it.
 
 After extensive testing, we developed a solution that ensures proper formatting for users of [React Spectrum](../../s2/DateField.html), [React Aria Components](../DateField.html), and our [hooks](https://react-spectrum.adobe.com/react-aria/useDateField.html#usedatefield). If you haven't tried our date and time components yet, we encourage you to check them out! And if you're already using them, be sure to update to at least the March 2025 release to ensure correct formatting in right-to-left languages and to make the appropriate changes noted in the [release notes](https://react-spectrum.adobe.com/releases/2025-03-05.html#date-and-time-formatting-in-rtl-languages)!
-

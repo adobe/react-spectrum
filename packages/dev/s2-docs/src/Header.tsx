@@ -7,7 +7,6 @@ import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
 import {Link} from 'react-aria-components';
-import {MarkdownMenu} from './MarkdownMenu';
 // @ts-ignore
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
@@ -169,7 +168,6 @@ export default function Header(props: PageProps) {
             <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
-            <MarkdownMenu url={currentPage.url} />
             <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
               <GithubLogo />
             </ActionButton>

@@ -45,7 +45,7 @@ There are many aspects of focus management, and perhaps we will cover more in fu
 
 An important feature for keyboard users is a **focus ring**. This is a visual affordance for the currently focused element, which allows a keyboard user to know which element they are currently on. It may only be visible when navigating with a keyboard, however, so as not to distract mouse and touchscreen users.
 
-<video src={focusRingVideoUrl} loop autoPlay muted style={{maxWidth: 'min(100%, 640px)', display: 'block', margin: '20px auto'}} />
+<video src={focusRingVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 As you can see in the above video, the focus ring appears around each button when it receives keyboard focus, but when the user interacts with a mouse it does not appear. To implement this, we attach global event listeners for pointer, keyboard, and focus events at the document level and keep track of the most recent input modality that the user was interacting with. If the user most recently interacted with a keyboard or assistive technology, we show the focus ring, otherwise we do not show it.
 
@@ -80,4 +80,3 @@ This focus normalization behavior is implemented by the [usePress](../usePress.h
 ## Conclusion
 
 In this series, you've seen how complicated even "simple" components like buttons can be when you consider all of the interactions they can support. React Aria aims to simplify this complexity and provide consistent behavior out of the box, while giving you complete rendering and styling control for your own components. This lets you focus on your unique design requirements, and build high quality components much faster. If you're working on a design system, check it out!
-

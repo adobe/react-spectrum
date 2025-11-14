@@ -5,7 +5,34 @@ import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {typ
 import {getLibraryFromPage} from './library';
 import {Link} from 'react-aria-components';
 import type {Page, PageProps} from '@parcel/rsc';
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {Picker, pressScale} from '@react-spectrum/s2';
+import React, {createContext, startTransition, useContext, useEffect, useOptimistic, useRef, useState} from 'react';
+
+export function PendingPageProvider({children, currentPage}: {children: React.ReactNode, currentPage: Page}) {
+  let [displayPage, setDisplayPage] = useOptimistic(
+    currentPage,
+    (_, pendingPage: Page) => pendingPage
+  );
+  
+  useEffect(() => {
+    const unsubscribe = subscribeToClearPendingPage(() => {
+      startTransition(() => {
+        setDisplayPage(currentPage);
+      });
+    });
+    return unsubscribe;
+  }, [currentPage, setDisplayPage]);
+
+  let pendingPage = displayPage.url !== currentPage.url ? displayPage : null;
+
+  return (
+    <PendingPageContext.Provider value={pendingPage}>
+      <PendingNavContext.Provider value={setDisplayPage}>
+        {children}
+      </PendingNavContext.Provider>
+    </PendingPageContext.Provider>
+  );
+}
 
 type SectionValue = Page[] | Map<string, Page[]>;
 
@@ -62,6 +89,8 @@ export function Nav({pages, currentPage}: PageProps) {
   }
 
   let [maskSize, setMaskSize] = useState(0);
+  let pendingPage = usePendingPage();
+  let displayUrl = pendingPage?.url ?? currentPage.url;
 
   let sortedSections = [...sections].sort((a, b) => {
     if (a[0] === 'Overview') {
@@ -95,7 +124,7 @@ export function Nav({pages, currentPage}: PageProps) {
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
         paddingX: 12,
-        minWidth: 200,
+        width: 200,
         display: {
           default: 'none',
           lg: 'block'
@@ -224,8 +253,27 @@ function SideNavSection({title, children}) {
 }
 
 const SideNavContext = createContext('');
+const PendingNavContext = createContext<React.Dispatch<Page> | null>(null);
+const PendingPageContext = createContext<Page | null>(null);
 
-export function SideNav({children}) {
+let clearPendingPageListeners = new Set<() => void>();
+
+function subscribeToClearPendingPage(callback: () => void): () => void {
+  clearPendingPageListeners.add(callback);
+  return () => {
+    void clearPendingPageListeners.delete(callback);
+  };
+}
+
+export function clearPendingPage() {
+  clearPendingPageListeners.forEach(callback => callback());
+}
+
+export function usePendingPage() {
+  return useContext(PendingPageContext);
+}
+
+export function SideNav({children, isNested = false}) {
   return (
     <ul
       className={style({
@@ -235,13 +283,17 @@ export function SideNav({children}) {
           default: 0,
           ':is(li > ul)': 16
         },
+        paddingTop: {
+          default: 0,
+          isNested: 8
+        },
         margin: 0,
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
         width: 'full',
         boxSizing: 'border-box'
-      })}>
+      })({isNested})}>
       {children}
     </ul>
   );
@@ -258,12 +310,22 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
+  let setPendingPage = useContext(PendingNavContext);
+  let {page, ...linkProps} = props;
+  
   return (
     <Link
-      {...props}
+      {...linkProps}
       ref={linkRef}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
+      onPress={() => {
+        if (setPendingPage && page) {
+          startTransition(() => {
+            setPendingPage(page);
+          });
+        }
+      }}
       className={style({
         ...focusRing(),
         minHeight: 32,

@@ -85,7 +85,7 @@ function BidirectionalDnDListBox(props) {
       style={{width: 300, height: 300, overflow: 'auto'}}>
       {item => (
         <ListBoxItem textValue={item.name} style={{display: 'flex', alignItems: 'center', gap: 8, flexDirection: 'row', justifyContent: 'flex-start'}}>
-          {item.type === 'folder' ? <Folder /> : <File />}
+          {item.type === 'folder' ? <Folder size={16} /> : <File size={16} />}
           <span>{item.name}</span>
         </ListBoxItem>
       )}
