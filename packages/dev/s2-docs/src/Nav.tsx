@@ -3,35 +3,11 @@
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
+import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
 import type {Page, PageProps} from '@parcel/rsc';
-import React, {createContext, startTransition, useContext, useEffect, useOptimistic, useRef, useState} from 'react';
-
-export function PendingPageProvider({children, currentPage}: {children: React.ReactNode, currentPage: Page}) {
-  let [displayPage, setDisplayPage] = useOptimistic(
-    currentPage,
-    (_, pendingPage: Page) => pendingPage
-  );
-  
-  useEffect(() => {
-    const unsubscribe = subscribeToClearPendingPage(() => {
-      startTransition(() => {
-        setDisplayPage(currentPage);
-      });
-    });
-    return unsubscribe;
-  }, [currentPage, setDisplayPage]);
-
-  let pendingPage = displayPage.url !== currentPage.url ? displayPage : null;
-
-  return (
-    <PendingPageContext.Provider value={pendingPage}>
-      <PendingNavContext.Provider value={setDisplayPage}>
-        {children}
-      </PendingNavContext.Provider>
-    </PendingPageContext.Provider>
-  );
-}
+import {Picker, pressScale} from '@react-spectrum/s2';
+import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
 
 type SectionValue = Page[] | Map<string, Page[]>;
 
@@ -88,7 +64,8 @@ export function Nav({pages, currentPage}: PageProps) {
   }
 
   let [maskSize, setMaskSize] = useState(0);
-  let pendingPage = usePendingPage();
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
   let displayUrl = pendingPage?.url ?? currentPage.url;
 
   let sortedSections = [...sections].sort((a, b) => {
@@ -252,24 +229,10 @@ function SideNavSection({title, children}) {
 }
 
 const SideNavContext = createContext('');
-const PendingNavContext = createContext<React.Dispatch<Page> | null>(null);
-const PendingPageContext = createContext<Page | null>(null);
 
-let clearPendingPageListeners = new Set<() => void>();
-
-function subscribeToClearPendingPage(callback: () => void): () => void {
-  clearPendingPageListeners.add(callback);
-  return () => {
-    void clearPendingPageListeners.delete(callback);
-  };
-}
-
-export function clearPendingPage() {
-  clearPendingPageListeners.forEach(callback => callback());
-}
-
-export function usePendingPage() {
-  return useContext(PendingPageContext);
+export function usePendingPage(pages: Page[]): Page | null {
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
 }
 
 export function SideNav({children, isNested = false}) {
@@ -309,8 +272,7 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
-  let setPendingPage = useContext(PendingNavContext);
-  let {page, ...linkProps} = props;
+  let {...linkProps} = props;
   
   return (
     <Link
@@ -318,13 +280,6 @@ export function SideNavLink(props) {
       ref={linkRef}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
-      onPress={() => {
-        if (setPendingPage && page) {
-          startTransition(() => {
-            setPendingPage(page);
-          });
-        }
-      }}
       className={style({
         ...focusRing(),
         minHeight: 32,
