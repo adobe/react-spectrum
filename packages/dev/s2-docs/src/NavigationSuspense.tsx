@@ -2,19 +2,21 @@
 
 import type {Page} from '@parcel/rsc';
 import {PageSkeleton} from './PageSkeleton';
-import React, {Suspense, use, useSyncExternalStore} from 'react';
+import React, {Suspense, use, useEffect, useState, useSyncExternalStore} from 'react';
+
+const SKELETON_DELAY = 150;
 
 let navigationPromise: Promise<void> | null = null;
 let targetPathname: string | null = null;
 let listeners = new Set<() => void>();
 let cachedSnapshot: {promise: Promise<void> | null, pathname: string | null} = {promise: null, pathname: null};
 
-function subscribe(callback: () => void) {
+export function subscribe(callback: () => void) {
   listeners.add(callback);
   return () => listeners.delete(callback);
 }
 
-function getSnapshot() {
+export function getSnapshot() {
   if (cachedSnapshot.promise !== navigationPromise || cachedSnapshot.pathname !== targetPathname) {
     cachedSnapshot = {promise: navigationPromise, pathname: targetPathname};
   }
@@ -66,9 +68,9 @@ function getPageTitle(page: Page): string {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
-function getPageInfo(pages: Page[], pathname: string | null): {title?: string, section?: string, hasToC?: boolean} {
+export function getPageFromPathname(pages: Page[], pathname: string | null): Page | null {
   if (!pathname) {
-    return {};
+    return null;
   }
   
   let publicUrl = process.env.PUBLIC_URL || '/';
@@ -85,6 +87,12 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
           normalizedPageUrl === normalizedPathname + '.html';
   });
   
+  return targetPage ?? null;
+}
+
+function getPageInfo(pages: Page[], pathname: string | null): {title?: string, section?: string, hasToC?: boolean} {
+  const targetPage = getPageFromPathname(pages, pathname);
+  
   if (!targetPage) {
     return {};
   }
@@ -99,9 +107,22 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
 function NavigationContent({children}: {children: React.ReactNode}) {
   // Subscribe to navigation promise changes to ensure React re-renders when setNavigationPromise() is called.
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  if (snapshot.promise) {
-    use(snapshot.promise);
+  let [delayedPromise, setDelayedPromise] = useState<Promise<void> | null>(null);
+  useEffect(() => {
+    let promise = snapshot.promise;
+    if (!promise) {
+      return;
+    }
+    let timeout = setTimeout(() => {
+      setDelayedPromise(promise);
+    }, SKELETON_DELAY);
+    return () => clearTimeout(timeout);
+  }, [snapshot]);
+
+  if (delayedPromise) {
+    use(delayedPromise);
   }
+
   return <>{children}</>;
 }
 
