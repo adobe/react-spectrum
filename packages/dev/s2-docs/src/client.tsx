@@ -32,6 +32,9 @@ let updateRoot = hydrate({
 let currentNavigationId = 0;
 let currentAbortController: AbortController | null = null;
 
+// Delay before showing skeleton loader
+const SKELETON_DELAY_MS = 150;
+
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
@@ -151,8 +154,17 @@ async function navigate(pathname: string, push = false) {
     }
   })();
   
-  // Store the promise for NavigationSuspense to use
-  setNavigationPromise(navigationPromise, pathname);
+  const skeletonTimeout = setTimeout(() => {
+    // Only show skeleton if navigation takes longer than SKELETON_DELAY_MS
+    // This prevents flashing the skeleton for fast/cached navigation.
+    if (navigationId === currentNavigationId && !abortController.signal.aborted) {
+      setNavigationPromise(navigationPromise, pathname);
+    }
+  }, SKELETON_DELAY_MS);
+
+  navigationPromise.finally(() => {
+    clearTimeout(skeletonTimeout);
+  });
 }
 
 // Prefetch routes on pointerover
