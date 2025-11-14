@@ -1861,4 +1861,20 @@ describe('ListBox', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('onKeyDown', () => {
+    it('should call onKeyDown handler when key is pressed on item', () => {
+      let onKeyDown = jest.fn();
+      let {getAllByRole} = renderListbox({}, {onKeyDown});
+      let options = getAllByRole('option');
+
+      fireEvent.keyDown(options[0], {key: 'Delete'});
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+      expect(onKeyDown.mock.calls[0][0]).toHaveProperty('key', 'Delete');
+
+      fireEvent.keyDown(options[1], {key: 'Backspace'});
+      expect(onKeyDown).toHaveBeenCalledTimes(2);
+      expect(onKeyDown.mock.calls[1][0]).toHaveProperty('key', 'Backspace');
+    });
+  });
 });
