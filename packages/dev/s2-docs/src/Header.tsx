@@ -1,16 +1,17 @@
 'use client';
 
-import {ActionButton} from '@react-spectrum/s2';
+import {ActionButton, pressScale} from '@react-spectrum/s2';
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
 import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
+import {Link} from 'react-aria-components';
 import {MarkdownMenu} from './MarkdownMenu';
 // @ts-ignore
 import {PageProps} from '@parcel/rsc';
-import React, {CSSProperties, useId, useState} from 'react';
+import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 function getButtonText(currentPage) {
   return getLibraryLabel(getLibraryFromPage(currentPage));
@@ -20,10 +21,48 @@ function getButtonIcon(currentPage) {
   return getLibraryIcon(getLibraryFromPage(currentPage));
 }
 
+const libraryStyles = style({
+  ...focusRing(),
+  paddingX: 12, 
+  display: 'flex',
+  textDecoration: 'none',
+  minHeight: 48,
+  borderRadius: 'lg',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  }
+});
+
+const linkStyles = style({
+  ...focusRing(),
+  font: 'ui',
+  textDecoration: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  },
+  height: 32,
+  paddingX: 'edge-to-text',
+  display: 'flex',
+  alignItems: 'center',
+  borderRadius: 'lg'
+});
+
 export default function Header(props: PageProps) {
   const {pages, currentPage} = props;
   const [searchOpen, setSearchOpen] = useState(false);
   const searchMenuId = useId();
+  let ref = useRef(null);
+  let docsRef = useRef(null);
+  let releasesRef = useRef(null);
+  let blogRef = useRef(null);
 
   let openSearchMenu = async () => {
     if (!document.startViewTransition) {
@@ -60,6 +99,32 @@ export default function Header(props: PageProps) {
     }
   };
 
+  let library = getLibraryFromPage(currentPage);
+  let subdirectory = 's2';
+  if (library === 'internationalized' || library === 'react-aria') {
+    // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
+    subdirectory = 'react-aria';
+  }
+
+  let homepage = '';
+  let docs = '';
+  let release = '';
+  let blog = '';
+  for (let page of pages) {
+    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
+      homepage = page.url;
+    }
+    if (page.name.includes(subdirectory) && page.name.includes('getting-started.html')) {
+      docs = page.url;
+    }
+    if (page.name.includes(subdirectory) && page.name.includes('index.html') && page.name.includes('releases')) {
+      release = page.url;
+    }
+    if (page.name.includes('react-aria') && page.name.includes('index.html') && page.name.includes('blog')) {
+      blog = page.url;
+    }
+  }
+
   return (
     <>
       <header className={style({width: 'full', display: {default: 'none', lg: 'flex'}, justifyContent: 'center'})}>
@@ -72,27 +137,17 @@ export default function Header(props: PageProps) {
             alignItems: 'center'
           })}>
           <div className={style({justifySelf: 'start'})}>
-            <ActionButton
+            <Link
               aria-label="Open menu and search"
               aria-expanded={searchOpen}
               aria-controls={searchOpen ? searchMenuId : undefined}
-              size="XL"
-              isQuiet
-              onPress={() => {
-                let library = getLibraryFromPage(currentPage);
-                let subdirectory = 's2';
-                if (library === 'internationalized' || library === 'react-aria') {
-                  // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
-                  subdirectory = 'react-aria';
-
-                }
-                const url = new URL(`/${subdirectory}/index.html`, window.location.origin);
-                window.location.assign(url.href);
-              }}
+              href={homepage}
               onKeyDown={handleActionButtonKeyDown}
               // @ts-ignore
               // onHoverStart={() => preloadSearchMenu()}
-              UNSAFE_style={{paddingInlineStart: 10}}>
+              ref={ref}
+              style={pressScale(ref)}
+              className={renderProps => libraryStyles({...renderProps})}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
                   {getButtonIcon(currentPage)}
@@ -101,7 +156,7 @@ export default function Header(props: PageProps) {
                   {getButtonText(currentPage)}
                 </span>
               </div>
-            </ActionButton>
+            </Link>
           </div>
           <SearchMenuTrigger
             pages={pages}
@@ -111,39 +166,9 @@ export default function Header(props: PageProps) {
             isSearchOpen={searchOpen}
             overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <ActionButton 
-              isQuiet 
-              onPress={() => {
-                let library = getLibraryFromPage(currentPage);
-                let subdirectory = 's2';
-                if (library !== 'react-spectrum') {
-                  subdirectory = library;
-                }
-                let url = new URL(`/${subdirectory}/getting-started.html`, window.location.origin);
-                // TODO: once react spectrum and react-aria are on separate domains, we should be able to use this relative path instead
-                // const url = new URL('/getting-started.html', window.location.origin);
-                window.location.assign(url.pathname);
-              }}>Docs</ActionButton>
-            <ActionButton 
-              isQuiet 
-              onPress={() => {
-                let library = getLibraryFromPage(currentPage);
-                let subdirectory = 's2';
-                if (library !== 'react-spectrum') {
-                  subdirectory = library;
-                }
-                let url = new URL(`/${subdirectory}/releases/index.html`, window.location.origin);
-                // TODO: once react spectrum and react-aria are on separate domains, we should be able to use this relative path instead
-                // const releasesUrl = new URL('/releases/index.html', window.location.origin);
-                window.location.assign(url.pathname);
-              }}>Releases</ActionButton>
-            <ActionButton 
-              isQuiet 
-              onPress={() => {
-                let url = new URL('/react-aria/blog/index.html', window.location.origin);
-                // TODO: once react spectrum and react-aria are on separate domains, we should be able to use this relative path instead
-                window.location.assign(url.pathname);
-              }}>Blog</ActionButton>
+            <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
+            <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
+            <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
             <MarkdownMenu url={currentPage.url} />
             <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
               <GithubLogo />

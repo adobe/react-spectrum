@@ -216,7 +216,7 @@ function isIntroduction(page) {
 
 function SideNavSection({title, children}) {
   return (
-    <section className={style({marginBottom: 24})}>
+    <section className={style({marginBottom: 16})}>
       <div className={style({font: 'ui-sm', color: 'gray-600', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>{title}</div>
       {children}
     </section>
