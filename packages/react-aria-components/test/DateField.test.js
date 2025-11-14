@@ -493,7 +493,6 @@ describe('DateField', () => {
     let segments = getAllByRole('spinbutton');
     expect(focusableRef.current).toBe(segments[0]);
 
-    // Programmatically focus the first segment
     act(() => {
       focusableRef.current.focus();
     });
