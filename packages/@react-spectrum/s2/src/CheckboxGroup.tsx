@@ -94,6 +94,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
       }, props.styles)}>
       {({isDisabled, isInvalid}) => (<>
         <FieldLabel
+          includeNecessityIndicatorInAccessibilityName
           isDisabled={isDisabled}
           isRequired={props.isRequired}
           size={size}
