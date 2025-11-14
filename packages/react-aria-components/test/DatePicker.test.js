@@ -353,7 +353,6 @@ describe('DatePicker', () => {
     let segments = within(group).getAllByRole('spinbutton');
     expect(focusableRef.current).toBe(segments[0]);
 
-    // Programmatically focus the first segment
     act(() => {
       focusableRef.current.focus();
     });
