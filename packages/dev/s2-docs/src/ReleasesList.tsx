@@ -9,7 +9,7 @@ export function ReleasesList({pages}: {pages: Page[]}) {
     return new Date(b.exports?.date).getTime() - new Date(a.exports?.date).getTime();
   });
   return (
-    <article className={style({marginY: 40, display: 'flex', flexDirection: 'column', gap: 40, maxWidth: 600})}>
+    <article className={style({marginY: 40, display: 'flex', flexDirection: 'column', gap: 40})}>
       {releases.map(release => (
         <div key={release.name}>
           <header className={style({marginBottom: 12})}>
@@ -19,7 +19,7 @@ export function ReleasesList({pages}: {pages: Page[]}) {
           <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(release.exports?.description, {})}</p>
         </div>
       ))}
-      <p className={style({font: 'body', margin: 0})}>For all previous releases or React Spectrum v3, see the <Link href="https://react-spectrum.adobe.com/releases/index.html">Archived releases</Link> page.</p>
+      <p className={style({font: 'body', margin: 0})}>For all previous releases of React Spectrum v3, see the <Link href="https://react-spectrum.adobe.com/releases/index.html">Archived releases</Link> page.</p>
     </article>
   );
 }

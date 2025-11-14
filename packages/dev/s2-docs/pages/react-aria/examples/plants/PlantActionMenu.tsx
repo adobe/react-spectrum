@@ -1,7 +1,7 @@
 import {Button} from 'tailwind-starter/Button';
 import {Mail, MoreHorizontal, PencilIcon, ShareIcon, StarIcon, TrashIcon, Twitter} from 'lucide-react';
 import {Menu, MenuItem, MenuTrigger, SubmenuTrigger} from 'tailwind-starter/Menu';
-import { Plant } from '@react-spectrum/docs/pages/react-aria/home/plants';
+import {Plant} from './plants';
 
 interface PlantActionMenuProps {
   item: Plant,

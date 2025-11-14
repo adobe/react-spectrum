@@ -2,16 +2,17 @@
 
 import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
+import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
-import type {PageProps} from '@parcel/rsc';
+import type {Page, PageProps} from '@parcel/rsc';
 import {Picker, pressScale} from '@react-spectrum/s2';
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
 
 export function Nav({pages, currentPage}: PageProps) {
   let currentLibrary = getLibraryFromPage(currentPage);
   let sections = new Map();
   for (let page of pages) {
-    if (page.exports?.hideNav) {
+    if (page.exports?.hideNav || page.exports?.omitFromNav) {
       continue;
     }
 
@@ -30,6 +31,9 @@ export function Nav({pages, currentPage}: PageProps) {
   }
 
   let [maskSize, setMaskSize] = useState(0);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
+  let displayUrl = pendingPage?.url ?? currentPage.url;
 
   let sortedSections = [...sections].sort((a, b) => {
     if (a[0] === 'Getting started') {
@@ -54,7 +58,7 @@ export function Nav({pages, currentPage}: PageProps) {
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
         paddingX: 12,
-        minWidth: 180,
+        width: 200,
         display: {
           default: 'none',
           lg: 'block'
@@ -77,7 +81,7 @@ export function Nav({pages, currentPage}: PageProps) {
               })
               .filter(page => !page.exports?.isSubpage)
               .map(page => (
-                <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+                <SideNavItem key={page.url}><SideNavLink href={page.url} page={page} isSelected={page.url === displayUrl}>{title(page)}</SideNavLink></SideNavItem>
             ))}
           </SideNav>
         </SideNavSection>
@@ -110,7 +114,12 @@ function SideNavSection({title, children}) {
 
 const SideNavContext = createContext('');
 
-export function SideNav({children}) {
+export function usePendingPage(pages: Page[]): Page | null {
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
+}
+
+export function SideNav({children, isNested = false}) {
   return (
     <ul
       className={style({
@@ -120,13 +129,17 @@ export function SideNav({children}) {
           default: 0,
           ':is(li > ul)': 16
         },
+        paddingTop: {
+          default: 0,
+          isNested: 8
+        },
         margin: 0,
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
         width: 'full',
         boxSizing: 'border-box'
-      })}>
+      })({isNested})}>
       {children}
     </ul>
   );
@@ -143,9 +156,11 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
+  let {...linkProps} = props;
+  
   return (
     <Link
-      {...props}
+      {...linkProps}
       ref={linkRef}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}

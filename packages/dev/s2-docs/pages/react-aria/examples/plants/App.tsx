@@ -7,7 +7,7 @@ import {DialogTrigger, Heading, Key, Selection, SortDescriptor, TooltipTrigger} 
 import {Dialog} from 'tailwind-starter/Dialog';
 import {Menu, MenuItem, MenuTrigger} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
-import plants, {Plant} from '@react-spectrum/docs/pages/react-aria/home/plants';
+import plants, {Plant} from './plants';
 import {Popover} from 'tailwind-starter/Popover';
 import React, {useState} from 'react';
 import {SearchField} from 'tailwind-starter/SearchField';
@@ -19,7 +19,7 @@ import {PlantTable} from './PlantTable';
 import {PlantDialog} from './PlantDialog';
 import {PlantList} from './PlantList';
 
-export function App(): React.ReactNode {
+export default function App(): React.ReactNode {
   let [allItems, setAllItems] = useState<Plant[]>(() => plants.map(p => ({...p, isFavorite: false})));
   let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'common_name',
