@@ -351,27 +351,7 @@ describe('DatePicker', () => {
 
     let group = getByRole('group');
     let segments = within(group).getAllByRole('spinbutton');
-    // focusableRef should point to the first editable segment
     expect(focusableRef.current).toBe(segments[0]);
-  });
-
-  it('should focus first segment when calling focus() on focusableRef', () => {
-    let focusableRef = React.createRef();
-    let {getByRole} = render(
-      <DatePicker>
-        <Label>Birth date</Label>
-        <Group>
-          <DateInput focusableRef={focusableRef}>
-            {(segment) => <DateSegment segment={segment} />}
-          </DateInput>
-          <Button>▼</Button>
-        </Group>
-      </DatePicker>
-    );
-
-    let group = getByRole('group');
-    let segments = within(group).getAllByRole('spinbutton');
-    expect(document.activeElement).not.toBe(segments[0]);
 
     // Programmatically focus the first segment
     act(() => {
