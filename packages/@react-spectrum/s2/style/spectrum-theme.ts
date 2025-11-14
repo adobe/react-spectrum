@@ -434,7 +434,7 @@ let durationValue = (value: number | string) => typeof value === 'number' ? valu
 const fontWeightBase = {
   normal: '400',
   medium: {
-    default: '500',
+    default: '500'
   },
   bold: {
     default: '700',
@@ -442,7 +442,7 @@ const fontWeightBase = {
   },
   'extra-bold': {
     default: '800',
-    ':lang(ja, ko, zh)': '700', // Adobe Clean Han uses 700 as the extra bold weight.
+    ':lang(ja, ko, zh)': '700' // Adobe Clean Han uses 700 as the extra bold weight.
   },
   black: '900'
 } as const;
