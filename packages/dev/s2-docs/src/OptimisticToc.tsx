@@ -43,8 +43,8 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
   });
 }
 
-export function OptimisticToc({currentPage}: {currentPage: Page}) {
-  let pendingPage = usePendingPage();
+export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
+  let pendingPage = usePendingPage(pages);
   let displayPage = pendingPage ?? currentPage;
   
   return (
@@ -61,8 +61,8 @@ export function OptimisticToc({currentPage}: {currentPage: Page}) {
   );
 }
 
-export function OptimisticMobileToc({currentPage}: {currentPage: Page}) {
-  let pendingPage = usePendingPage();
+export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
+  let pendingPage = usePendingPage(pages);
   let displayPage = pendingPage ?? currentPage;
   
   if ((displayPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {

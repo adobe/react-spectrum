@@ -1,5 +1,5 @@
 import {ExampleList} from './ExampleList';
-import {Nav, PendingPageProvider} from '../src/Nav';
+import {Nav} from '../src/Nav';
 import {OptimisticMobileToc, OptimisticToc} from './OptimisticToc';
 import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
@@ -254,93 +254,91 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             }
           })}>
           <Header pages={pages} currentPage={currentPage} />
-          <PendingPageProvider currentPage={currentPage}>
-            <MobileHeader
-              toc={<OptimisticMobileToc currentPage={currentPage} />}
-              pages={pages}
-              currentPage={currentPage} />
-            <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
-              {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
-              <main
-                key={currentPage.url}
-                style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
+          <MobileHeader
+            toc={<OptimisticMobileToc currentPage={currentPage} pages={pages} />}
+            pages={pages}
+            currentPage={currentPage} />
+          <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
+            {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
+            <main
+              key={currentPage.url}
+              style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
+              className={style({
+                isolation: 'isolate',
+                backgroundColor: 'base',
+                padding: {
+                  default: 12,
+                  lg: 40
+                },
+                borderRadius: {
+                  default: 'none',
+                  lg: 'xl'
+                },
+                boxShadow: {
+                  lg: 'emphasized'
+                },
+                width: 'full',
+                boxSizing: 'border-box',
+                flexGrow: 1,
+                display: 'flex',
+                justifyContent: 'space-between',
+                position: 'relative',
+                height: {
+                  lg: '[calc(100vh - 72px)]'
+                },
+                overflow: {
+                  lg: 'auto'
+                }
+              })}>
+              <div
                 className={style({
-                  isolation: 'isolate',
-                  backgroundColor: 'base',
-                  padding: {
-                    default: 12,
-                    lg: 40
-                  },
-                  borderRadius: {
-                    default: 'none',
-                    lg: 'xl'
-                  },
-                  boxShadow: {
-                    lg: 'emphasized'
-                  },
-                  width: 'full',
-                  boxSizing: 'border-box',
-                  flexGrow: 1,
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  position: 'relative',
+                  flexDirection: 'column',
+                  flexGrow: 1,
+                  width: 'full'
+                })}>
+                <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                  <NavigationSuspense pages={pages}>
+                    <article
+                      className={articleStyles({isWithToC: hasToC})}>
+                      {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
+                      {React.cloneElement(children, {
+                        components: isSubpage ?
+                          subPageComponents(parentPage) :
+                          components,
+                        pages
+                      })}
+                      {currentPage.exports?.relatedPages && (
+                        <MobileRelatedPages pages={currentPage.exports.relatedPages} />
+                      )}
+                    </article>
+                  </NavigationSuspense>
+                </CodePlatterProvider>
+                <Footer />
+              </div>
+              {hasToC && <aside
+                className={style({
+                  position: 'sticky',
+                  top: 0,
                   height: {
+                    default: 'fit',
                     lg: '[calc(100vh - 72px)]'
                   },
-                  overflow: {
-                    lg: 'auto'
-                  }
+                  paddingY: 32,
+                  paddingX: 4,
+                  boxSizing: 'border-box',
+                  width: 180,
+                  flexShrink: 0,
+                  display: {
+                    default: 'none',
+                    lg: 'flex'
+                  },
+                  flexDirection: 'column'
                 })}>
-                <div
-                  className={style({
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexGrow: 1,
-                    width: 'full'
-                  })}>
-                  <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
-                    <NavigationSuspense pages={pages}>
-                      <article
-                        className={articleStyles({isWithToC: hasToC})}>
-                        {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                        {React.cloneElement(children, {
-                          components: isSubpage ?
-                            subPageComponents(parentPage) :
-                            components,
-                          pages
-                        })}
-                        {currentPage.exports?.relatedPages && (
-                          <MobileRelatedPages pages={currentPage.exports.relatedPages} />
-                        )}
-                      </article>
-                    </NavigationSuspense>
-                  </CodePlatterProvider>
-                  <Footer />
-                </div>
-                {hasToC && <aside
-                  className={style({
-                    position: 'sticky',
-                    top: 0,
-                    height: {
-                      default: 'fit',
-                      lg: '[calc(100vh - 72px)]'
-                    },
-                    paddingY: 32,
-                    paddingX: 4,
-                    boxSizing: 'border-box',
-                    width: 180,
-                    flexShrink: 0,
-                    display: {
-                      default: 'none',
-                      lg: 'flex'
-                    },
-                    flexDirection: 'column'
-                  })}>
-                  <OptimisticToc currentPage={currentPage} />
-                </aside>}
-              </main>
-            </div>
-          </PendingPageProvider>
+                <OptimisticToc currentPage={currentPage} pages={pages} />
+              </aside>}
+            </main>
+          </div>
         </div>
         <ToastContainer placement="bottom" />
       </body>

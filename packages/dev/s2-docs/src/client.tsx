@@ -1,6 +1,5 @@
 'use client-entry';
 
-import {clearPendingPage} from './Nav';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
@@ -127,7 +126,6 @@ async function navigate(pathname: string, push = false) {
         return;
       }
       
-      clearPendingPage();
       try {
         let errorRes = await fetchRSC<ReactElement>('/error.rsc');
         
