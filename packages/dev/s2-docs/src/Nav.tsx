@@ -6,7 +6,6 @@ import {getLibraryFromPage} from './library';
 import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
 import type {Page, PageProps} from '@parcel/rsc';
-import {Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
 
 type SectionValue = Page[] | Map<string, Page[]>;

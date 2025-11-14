@@ -1,6 +1,5 @@
 'use client';
 
-import {ActionButton, pressScale} from '@react-spectrum/s2';
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
 import {flushSync} from 'react-dom';
@@ -9,6 +8,7 @@ import GithubLogo from './icons/GithubLogo';
 import {Link} from 'react-aria-components';
 // @ts-ignore
 import {PageProps} from '@parcel/rsc';
+import {pressScale} from '@react-spectrum/s2';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 
@@ -62,7 +62,7 @@ const linkStyles = style({
 const iconStyles = style({
   ...linkStyle,
   paddingX: space(6)
-})
+});
 
 export default function Header(props: PageProps) {
   const {pages, currentPage} = props;
@@ -178,7 +178,7 @@ export default function Header(props: PageProps) {
             <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
-            <Link aria-label="React Spectrum GitHub repo" className={renderProps => iconStyles({...renderProps})} href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo/></Link>
+            <Link aria-label="React Spectrum GitHub repo" className={renderProps => iconStyles({...renderProps})} href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></Link>
           </div>
         </div>
       </header>
