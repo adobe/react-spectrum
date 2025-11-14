@@ -12,8 +12,6 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
-import {Key} from '@react-types/shared';
-import {Keyboard} from '@react-spectrum/text';
 import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
@@ -810,44 +808,4 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
   );
 };
 
-export const ListBoxWithKeyboardDelete: ListBoxStory = () => {
-  let initialItems = [
-    {id: 1, name: 'Item 1'},
-    {id: 2, name: 'Item 2'},
-    {id: 3, name: 'Item 3'},
-    {id: 4, name: 'Item 4'},
-    {id: 5, name: 'Item 5'}
-  ];
-
-  let list = useListData({
-    initialItems
-  });
-
-  let handleKeyDown = (key: Key) => (e: React.KeyboardEvent) => {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      e.preventDefault();
-      list.remove(key);
-      action('onDelete')(key);
-    }
-  };
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12}}>
-      <div style={{padding: 12, background: '#f0f0f0', borderRadius: 4}}>
-        Press <Keyboard>Delete</Keyboard> or <Keyboard>Backspace</Keyboard> to remove the focused item.
-      </div>
-      <ListBox
-        className={styles.menu}
-        aria-label="ListBox with delete support"
-        selectionMode="single"
-        items={list.items}>
-        {item => (
-          <MyListBoxItem onKeyDown={handleKeyDown(item.id)}>
-            {item.name}
-          </MyListBoxItem>
-        )}
-      </ListBox>
-    </div>
-  );
-};
 
