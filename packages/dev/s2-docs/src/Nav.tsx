@@ -5,7 +5,6 @@ import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {typ
 import {getLibraryFromPage} from './library';
 import {Link} from 'react-aria-components';
 import type {Page, PageProps} from '@parcel/rsc';
-import {Picker, pressScale} from '@react-spectrum/s2';
 import React, {createContext, startTransition, useContext, useEffect, useOptimistic, useRef, useState} from 'react';
 
 export function PendingPageProvider({children, currentPage}: {children: React.ReactNode, currentPage: Page}) {
@@ -124,7 +123,7 @@ export function Nav({pages, currentPage}: PageProps) {
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
         paddingX: 12,
-        width: 200,
+        minWidth: 200,
         display: {
           default: 'none',
           lg: 'block'
@@ -153,7 +152,7 @@ export function Nav({pages, currentPage}: PageProps) {
                       .filter(page => !page.exports?.isSubpage)
                       .map(page => (
                         <SideNavItem key={page.url}>
-                          <SideNavLink href={page.url} isSelected={page.url === currentPage.url}>
+                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayUrl}>
                             {title(page)}
                           </SideNavLink>
                         </SideNavItem>
@@ -217,7 +216,7 @@ export function Nav({pages, currentPage}: PageProps) {
           );
         }
         return (
-          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components'} styles={style({minWidth: 180, width: 180})}>
+          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components'} styles={style({minWidth: 185})}>
             <DisclosureTitle>{name}</DisclosureTitle>
             <DisclosurePanel>
               <div className={style({paddingStart: space(18)})}>{nav}</div>
