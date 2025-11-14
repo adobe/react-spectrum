@@ -478,4 +478,61 @@ describe('DateField', () => {
     expect(segements[1]).toHaveTextContent('dd');
     expect(segements[2]).toHaveTextContent('yyyy');
   });
+
+  it('should support focusableRef', () => {
+    let focusableRef = React.createRef();
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput focusableRef={focusableRef}>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    // focusableRef should point to the first editable segment (month in en-US)
+    expect(focusableRef.current).toBe(segments[0]);
+  });
+
+  it('should focus first segment when calling focus() on focusableRef', () => {
+    let focusableRef = React.createRef();
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput focusableRef={focusableRef}>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    expect(document.activeElement).not.toBe(segments[0]);
+
+    // Programmatically focus the first segment
+    act(() => {
+      focusableRef.current.focus();
+    });
+
+    expect(document.activeElement).toBe(segments[0]);
+  });
+
+  it('should support focusableRef with different locales', () => {
+    let focusableRef = React.createRef();
+    let {getAllByRole} = render(
+      <I18nProvider locale="zh-CN">
+        <DateField>
+          <Label>Birth date</Label>
+          <DateInput focusableRef={focusableRef}>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    // In zh-CN, year comes first
+    expect(focusableRef.current).toBe(segments[0]);
+    expect(segments[0]).toHaveAttribute('data-type', 'year');
+  });
 });
