@@ -257,8 +257,7 @@ export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRen
    */
   className?: ClassNameOrFunction<DateInputRenderProps>,
   /**
-   * A ref for the first focusable date segment. Useful for programmatically focusing the input,
-   * for example when using with react-hook-form.
+   * A ref for the first focusable date segment.
    */
   focusableRef?: ForwardedRef<HTMLElement>,
   children: (segment: IDateSegment) => ReactElement
