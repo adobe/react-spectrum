@@ -77,6 +77,7 @@ export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, 
 export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, HTMLDivElement>>(null);
 export const DateFieldStateContext = createContext<DateFieldState | null>(null);
 export const TimeFieldStateContext = createContext<TimeFieldState | null>(null);
+const DateInputFocusableRefContext = createContext<ForwardedRef<HTMLElement> | null>(null);
 
 /**
  * A date field allows users to enter and edit date and time values using a keyboard.
@@ -255,6 +256,11 @@ export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRen
    * @default 'react-aria-DateInput'
    */
   className?: ClassNameOrFunction<DateInputRenderProps>,
+  /**
+   * A ref for the first focusable date segment. Useful for programmatically focusing the input,
+   * for example when using with react-hook-form.
+   */
+  focusableRef?: ForwardedRef<HTMLElement>,
   children: (segment: IDateSegment) => ReactElement
 }
 
@@ -296,15 +302,18 @@ const DateInputStandalone = forwardRef((props: DateInputProps, ref: ForwardedRef
 });
 
 const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTMLDivElement>) => {
-  let {className, children} = props;
+  let {className, children, focusableRef, ...otherProps} = props;
   let dateFieldState = useContext(DateFieldStateContext);
   let timeFieldState = useContext(TimeFieldStateContext);
   let state = dateFieldState ?? timeFieldState!;
 
   return (
-    <>
+    <Provider
+      values={[
+        [DateInputFocusableRefContext, focusableRef || null]
+      ]}>
       <Group
-        {...props}
+        {...otherProps}
         ref={ref}
         slot={props.slot || undefined}
         className={className ?? 'react-aria-DateInput'}
@@ -314,7 +323,7 @@ const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTML
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </Group>
       <Input />
-    </>
+    </Provider>
   );
 });
 
@@ -378,7 +387,13 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let dateFieldState = useContext(DateFieldStateContext);
   let timeFieldState = useContext(TimeFieldStateContext);
   let state = dateFieldState ?? timeFieldState!;
-  let domRef = useObjectRef(ref);
+  let focusableRef = useContext(DateInputFocusableRefContext);
+
+  // If this is the first editable segment and focusableRef is provided, use it
+  let isFirstEditableSegment = segment.isEditable &&
+    segment.type === state.segments.find(s => s.isEditable)?.type;
+
+  let domRef = useObjectRef((isFirstEditableSegment && focusableRef) ? focusableRef : ref);
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: state.isDisabled || segment.type === 'literal'});
