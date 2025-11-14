@@ -5,7 +5,7 @@ import { useState } from 'react';
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/S2_Icon_[A-D]*.svg';
 import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
-import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic2/[A-E]*.tsx';
+import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic1/[A-E]*.tsx';
 import { IllustrationContext } from '@react-spectrum/s2';
 
 export function Icons() {

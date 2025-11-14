@@ -10,19 +10,29 @@ import LayersIcon from '@react-spectrum/s2/icons/Layers';
 import PropertiesIcon from '@react-spectrum/s2/icons/Properties';
 import CommentIcon from '@react-spectrum/s2/icons/Comment';
 import Asset from '@react-spectrum/s2/icons/Asset';
-import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
-import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
-import AlignRight from '@react-spectrum/s2/icons/AlignRight';
-import AlignTop from '@react-spectrum/s2/icons/AlignTop';
-import AlignMiddle from '@react-spectrum/s2/icons/AlignMiddle';
-import AlignBottom from '@react-spectrum/s2/icons/AlignBottom';
 import Apps from '@react-spectrum/s2/icons/AppsAll';
+import TextBold from '@react-spectrum/s2/icons/TextBold';
+import TextItalic from '@react-spectrum/s2/icons/TextItalic';
+import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
+import TextStrikeThrough from '@react-spectrum/s2/icons/TextStrikeThrough';
+import TextSubscript from '@react-spectrum/s2/icons/TextSubscript';
+import TextSuperscript from '@react-spectrum/s2/icons/TextSuperscript';
+import TextAlignLeft from '@react-spectrum/s2/icons/TextAlignLeft';
+import TextAlignCenter from '@react-spectrum/s2/icons/TextAlignCenter';
+import TextAlignRight from '@react-spectrum/s2/icons/TextAlignRight';
+import TextAlignJustify from '@react-spectrum/s2/icons/TextAlignJustify';
+import {size, style} from "@react-spectrum/s2/style" with {type: 'macro'};
+import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button, Form, ComboBoxItem, ComboBox, NumberField, Picker, PickerItem, Accordion, Disclosure, DisclosureHeader, DisclosureTitle, DisclosurePanel, Divider} from '@react-spectrum/s2';
+import {Key} from 'react-aria';
+import {createContext, useContext, useState} from 'react';
+import {AccountMenu} from './ExampleApp';
 
-import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button} from '@react-spectrum/s2';
-import { Key } from 'react-aria';
-import { useState } from 'react';
-import { AccountMenu } from './ExampleApp';
+export const FilterContext = createContext({
+  brightness: 52,
+  contrast: -47,
+  saturation: 28,
+  onChange: (v: any) => {}
+});
 
 export function ExampleApp2({onBack, children}: any) {
   let [selectedPanel, setPanel] = useState<Key | null>('properties');
@@ -97,7 +107,7 @@ export function ExampleApp2({onBack, children}: any) {
             default: 'layer-1',
             forcedColors: 'Background'
           },
-          padding: 16,
+          padding: 8,
           boxSizing: 'border-box'
         })}>
         <ToggleButtonGroup
@@ -105,6 +115,7 @@ export function ExampleApp2({onBack, children}: any) {
           selectionMode="single"
           defaultSelectedKeys={['select']}
           isQuiet
+          isEmphasized
           orientation="vertical">
           <ToggleButton id="select" aria-label="Select">
             <Select />
@@ -140,7 +151,8 @@ export function ExampleApp2({onBack, children}: any) {
           },
           overflow: 'clip',
           transition: {
-            isTransitioning: 'all'
+            isTransitioning: 'all',
+            '@media (prefers-reduced-motion: reduce)': 'none'
           },
           transitionDuration: {
             isTransitioning: 300
@@ -188,7 +200,7 @@ export function ExampleApp2({onBack, children}: any) {
             default: 'layer-1',
             forcedColors: 'Background'
           },
-          padding: 16,
+          padding: 8,
           boxSizing: 'border-box',
           borderWidth: 0,
           borderStartWidth: 2,
@@ -202,7 +214,7 @@ export function ExampleApp2({onBack, children}: any) {
           aria-label="Panels"
           orientation="vertical"
           isQuiet
-          selectedKeys={panel ? [panel] : []}
+          selectedKeys={selectedPanel ? [selectedPanel] : []}
           onSelectionChange={keys => {
             let key = [...keys][0];
             setPanel(key as string);
@@ -281,59 +293,92 @@ function Layer({id, name, children}: any) {
 }
 
 function Properties() {
+  let {brightness, contrast, saturation, onChange} = useContext(FilterContext);
   return (
-    <div role="group" aria-label="Properties" className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 16})}>
-      <div className={style({font: 'title', color: 'ButtonText'})}>Position</div>
-      <div className={style({display: 'flex', gap: 8})}>
-        <TextField label="X" size="S" labelPosition="side" value="180px" />
-        <TextField label="Y" size="S" labelPosition="side" value="25px" />
-      </div>
-      <div className={style({display: 'flex', gap: 8})}>
-        <TextField label="W" size="S" labelPosition="side" value="300px" />
-        <TextField label="H" size="S" labelPosition="side" value="32px" />
-      </div>
-      <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
-        <div className={style({font: 'ui-sm', color: 'ButtonText'})}>Alignment</div>
-        <ToggleButtonGroup
-          aria-label="Horizontal alignment"
-          density="compact"
-          size="S"
-          defaultSelectedKeys={['left']}
-          styles={style({gridColumnStart: 'field'})}>
-          <ToggleButton id="left" aria-label="Left">
-            <AlignLeft />
-          </ToggleButton>
-          <ToggleButton id="center" aria-label="Center">
-            <AlignCenter />
-          </ToggleButton>
-          <ToggleButton id="right" aria-label="Right">
-            <AlignRight />
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <ToggleButtonGroup
-          aria-label="Vertical alignment"
-          density="compact"
-          size="S"
-          defaultSelectedKeys={['middle']}
-          styles={style({gridColumnStart: 'field'})}>
-          <ToggleButton id="top" aria-label="Top">
-            <AlignTop />
-          </ToggleButton>
-          <ToggleButton id="middle" aria-label="Middle">
-            <AlignMiddle />
-          </ToggleButton>
-          <ToggleButton id="bottom" aria-label="Bottom">
-            <AlignBottom />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </div>
-      <div className={style({font: 'title', color: 'ButtonText', marginTop: 16})}>Appearance</div>
-      <Slider label="Opacity" labelPosition="side" size="S" defaultValue={50} />
-      <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>
-        <TextField label="Fill" size="S" labelPosition="side" value="#FF0000" styles={style({flexGrow: 1})} />
-        <TextField label="Stroke" size="S" labelPosition="side" value="#3449B4" styles={style({flexGrow: 1})} />
-      </div>
-      <Checkbox isDisabled size="S" isSelected>Antialiased</Checkbox>
+    <div role="group" aria-label="Properties" className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 8})}>
+      <Accordion density="compact" isQuiet allowsMultipleExpanded defaultExpandedKeys={['filters', 'text']}>
+        <Disclosure id="filters">
+          <DisclosureTitle>Filters</DisclosureTitle>
+          <DisclosurePanel>
+            <Form labelPosition="side" size="S" UNSAFE_style={{gap: 8}}>
+              <Slider label="Brightness" minValue={-100} maxValue={100} fillOffset={0} formatOptions={{signDisplay: 'exceptZero'}} defaultValue={brightness} onChange={brightness => onChange({brightness, contrast, saturation})} />
+              <Slider label="Contrast" minValue={-100} maxValue={100} fillOffset={0} formatOptions={{signDisplay: 'exceptZero'}} defaultValue={contrast} onChange={contrast => onChange({brightness, contrast, saturation})} />
+              <Slider label="Saturation" minValue={-100} maxValue={100} fillOffset={0} formatOptions={{signDisplay: 'exceptZero'}} defaultValue={saturation} onChange={saturation => onChange({brightness, contrast, saturation})} />
+            </Form>
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="text">
+          <DisclosureTitle>Text</DisclosureTitle>
+          <DisclosurePanel>
+            <Form size="S" UNSAFE_style={{gap: 8}}>
+              <div className={style({display: 'flex', gap: 8, alignItems: 'center', gridColumnStart: 'span 2'})}>
+              <ComboBox aria-label="Font family" defaultSelectedKey={2} styles={style({ flexGrow: 2 })}>
+                <ComboBoxItem>Open Sans</ComboBoxItem>
+                <ComboBoxItem id={2}>Adobe Clean</ComboBoxItem>
+                <ComboBoxItem>Helvetica</ComboBoxItem>
+                <ComboBoxItem>Times New Roman</ComboBoxItem>
+                <ComboBoxItem>Comic Sans</ComboBoxItem>
+              </ComboBox>
+                <NumberField aria-label="Font size" defaultValue={14} styles={style({ flexGrow: 1 })} />
+              </div>
+              <div className={style({display: 'flex', gap: 4, justifyContent: 'space-between', alignItems: 'center', gridColumnStart: 'span 2'})}>
+                <ToggleButtonGroup
+                  aria-label="Font style"
+                  density="compact"
+                  size="S"
+                  selectionMode="multiple"
+                  defaultSelectedKeys={['bold']}>
+                  <ToggleButton id="bold" aria-label="Bold">
+                    <TextBold />
+                  </ToggleButton>
+                  <ToggleButton id="italic" aria-label="Italic">
+                    <TextItalic />
+                  </ToggleButton>
+                  <ToggleButton id="underline" aria-label="Underline">
+                    <TextUnderline />
+                  </ToggleButton>
+                  <ToggleButton id="strike" aria-label="Strikethrough">
+                    <TextStrikeThrough />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                <ToggleButtonGroup
+                  aria-label="Font style"
+                  density="compact"
+                  size="S"
+                  selectionMode="single">
+                  <ToggleButton id="sub" aria-label="Subscript">
+                    <TextSubscript />
+                  </ToggleButton>
+                  <ToggleButton id="super" aria-label="Superscript">
+                    <TextSuperscript />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                <ToggleButtonGroup
+                  aria-label="Text align"
+                  density="compact"
+                  size="S"
+                  selectionMode="single"
+                  defaultSelectedKeys={['left']}
+                  disallowEmptySelection>
+                  <ToggleButton id="left" aria-label="Left">
+                    <TextAlignLeft />
+                  </ToggleButton>
+                  <ToggleButton id="center" aria-label="Center">
+                    <TextAlignCenter />
+                  </ToggleButton>
+                  <ToggleButton id="right" aria-label="Right">
+                    <TextAlignRight />
+                  </ToggleButton>
+                  <ToggleButton id="justify" aria-label="Justify">
+                    <TextAlignJustify />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+              <Checkbox isSelected isDisabled>Wrap</Checkbox>
+            </Form>
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
     </div>
   );
 }
@@ -441,7 +486,7 @@ function Comment({author, avatar, date, body}: any) {
 function Assets() {
   return (
     <div role="group" aria-label="Assets" className={style({padding: 16, height: 'full', display: 'flex', flexDirection: 'column'})}>
-      <div className={style({font: 'title'})}>Assets</div>
+      <div className={style({font: 'title-lg'})}>Assets</div>
       <div
         className={style({
           display: 'grid',

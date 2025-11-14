@@ -14,13 +14,15 @@ import Download from '@react-spectrum/s2/icons/Download';
 import Settings from '@react-spectrum/s2/icons/Settings';
 import Tag from '@react-spectrum/s2/icons/Tag';
 import Org from '@react-spectrum/s2/icons/Buildings';
+import ViewGridFluid from '@react-spectrum/s2/icons/ViewGridFluid';
+import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
 import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem} from '@react-spectrum/s2';
-import {useLocale} from 'react-aria';
+import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {Key, useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
-import { useRef, useState } from 'react';
-import { ExampleApp2 } from './ExampleApp2';
+import { useEffect, useRef, useState } from 'react';
+import { ExampleApp2, FilterContext } from './ExampleApp2';
 import { flushSync } from 'react-dom';
 
 export function ExampleApp() {
@@ -31,42 +33,62 @@ export function ExampleApp() {
       <AppFrame hidden={!!detail}>
         <Example onAction={setDetail} />
       </AppFrame>
-      {detail && img && 
-        <ExampleApp2 onBack={() => {
-          document.startViewTransition(async () => {
-            flushSync(() => setDetail([]));
-            img.style.viewTransitionName = 'photo';
-          }).ready.then(() => {
-            img.style.viewTransitionName = '';
-          });
-        }}>
-          <div
-            className={style({
-              size: 'full',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'clip'
-            })}
-            style={{
-              containerType: 'size'
-            } as any}>
-            <Image
-              src={detail.urls.regular}
-              width={detail.width}
-              height={detail.height}
-              alt={detail.description || detail.alt_description}
-              UNSAFE_style={{
-                viewTransitionName: 'photo',
-                '--scale': `min(100cqw / ${detail.width}, 100cqh / ${detail.height})`,
-                width: `calc(${detail.width} * var(--scale))`,
-                height: `calc(${detail.height} * var(--scale))`
-              } as any} />
-          </div>
-        </ExampleApp2>
+      {detail && img &&
+        <Detail detail={detail} img={img} setDetail={setDetail} />
       }
     </>
   )
+}
+
+function Detail({detail, img, setDetail}: any) {
+  let [filters, setFilters] = useState({
+    brightness: 0,
+    contrast: 0,
+    saturation: 0
+  });
+
+  return (
+    <FilterContext value={{...filters, onChange: setFilters}}>
+      <ExampleApp2 onBack={() => {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          setDetail([]);
+          return;
+        }
+
+        document.startViewTransition(async () => {
+          flushSync(() => setDetail([]));
+          img.style.viewTransitionName = 'photo';
+        }).ready.then(() => {
+          img.style.viewTransitionName = '';
+        });
+      }}>
+        <div
+          className={style({
+            size: 'full',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'clip'
+          })}
+          style={{
+            containerType: 'size'
+          } as any}>
+          <Image
+            src={detail.urls.regular}
+            width={detail.width}
+            height={detail.height}
+            alt={detail.description || detail.alt_description}
+            UNSAFE_style={{
+              viewTransitionName: 'photo',
+              '--scale': `min(100cqw / ${detail.width}, 100cqh / ${detail.height})`,
+              width: `calc(${detail.width} * var(--scale))`,
+              height: `calc(${detail.height} * var(--scale))`,
+              filter: `${filters.brightness ? `brightness(${filters.brightness + 100}%)` : ''} ${filters.contrast ? `contrast(${filters.contrast + 100}%)` : ''} ${filters.saturation ? `saturate(${filters.saturation + 100}%)` : ''}`
+            } as any} />
+        </div>
+      </ExampleApp2>
+    </FilterContext>
+  );
 }
 
 export function AppFrame({children, inert, hidden}: any) {
@@ -170,35 +192,37 @@ export function AppFrame({children, inert, hidden}: any) {
           minHeight: 0,
           boxSizing: 'border-box'
         })}>
-        <div className={style({font: 'heading', marginBottom: 8})}>{direction === 'rtl' ? 'مؤخرًا' : 'Recents'}</div>
-        {children || <div
-          className={style({
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(128px, 1fr))',
-            gridTemplateRows: 'min-content',
-            justifyContent: 'space-between',
-            gap: 16,
-            marginTop: 16
-          })}>
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>}
+        {children || <>
+          <div className={style({font: 'heading', marginBottom: 8})}>{direction === 'rtl' ? 'مؤخرًا' : 'Recents'}</div>
+          <div
+            className={style({
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(128px, 1fr))',
+              gridTemplateRows: 'min-content',
+              justifyContent: 'space-between',
+              gap: 16,
+              marginTop: 16
+            })}>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </>}
       </div>
     </div>
   )
@@ -231,6 +255,8 @@ export function SkeletonCard() {
 }
 
 function Example(props: any) {
+  let [layout, setLayout] = useState<'waterfall' | 'grid'>('waterfall');
+  let {direction} = useLocale();
   let list = useAsyncList<any, number | null>({
     async load({signal, cursor, items}) {
       let page = cursor || 1;
@@ -247,74 +273,89 @@ function Example(props: any) {
   });
 
   return (
-    <CardView
-      aria-label="Nature photos"
-      size="S"
-      layout="waterfall"
-      selectionMode="multiple"
-      // selectionStyle={list.selectedKeys === 'all' || list.selectedKeys.size > 0 ? 'checkbox' : 'highlight'}
-      selectedKeys={list.selectedKeys}
-      onSelectionChange={list.setSelectedKeys}
-      variant="quiet"
-      loadingState={list.loadingState}
-      onLoadMore={list.loadMore}
-      styles={style({flexGrow: 1, minHeight: 0, maxHeight: 500, marginX: -12})}
-      renderActionBar={() => {
-        return (
-          <ActionBar isEmphasized>
-            <ActionButton>
-              <Edit />
-              <Text>Edit</Text>
-            </ActionButton>
-            <ActionButton>
-              <FolderAdd />
-              <Text>Add to</Text>
-            </ActionButton>
-            <ActionButton>
-              <Share />
-              <Text>Share</Text>
-            </ActionButton>
-            <ActionButton>
-              <Download />
-              <Text>Download</Text>
-            </ActionButton>
-            <ActionButton>
-              <Tag />
-              <Text>Keywords</Text>
-            </ActionButton>
-          </ActionBar>
-        );
-      }}>
-      <Collection items={list.items}>
-        {item => <PhotoCard item={item} onAction={props.onAction} />}
-      </Collection>
-      {(list.loadingState === 'loading' || list.loadingState === 'loadingMore') && (
-        <SkeletonCollection>
-          {() => (
-            <PhotoCard
-              item={{
-                id: Math.random(),
-                user: {name: 'Placeholder name', profile_image: {small: ''}},
-                urls: {regular: ''},
-                description: 'This is a fake description. Kinda long so it wraps to a new line.',
-                alt_description: '',
-                width: 400,
-                height: 200 + Math.max(0, Math.round(Math.random() * 400))
-              }} />
-          )}
-        </SkeletonCollection>
-      )}
-    </CardView>
+    <>
+      <div className={style({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8})}>
+        <div className={style({font: 'heading'})}>{direction === 'rtl' ? 'الصور' : 'Photos'}</div>
+        <SegmentedControl selectedKey={layout} onSelectionChange={setLayout as any}>
+          <SegmentedControlItem id="waterfall"><ViewGridFluid /></SegmentedControlItem>
+          <SegmentedControlItem id="grid"><ViewGrid /></SegmentedControlItem>
+        </SegmentedControl>
+      </div>
+      <CardView
+        aria-label="Nature photos"
+        size="S"
+        layout={layout}
+        // selectionMode="multiple"
+        // selectionStyle={list.selectedKeys === 'all' || list.selectedKeys.size > 0 ? 'checkbox' : 'highlight'}
+        selectedKeys={list.selectedKeys}
+        onSelectionChange={list.setSelectedKeys}
+        variant="quiet"
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}
+        styles={style({flexGrow: 1, minHeight: 0, maxHeight: 500, marginX: -12})}
+        renderActionBar={() => {
+          return (
+            <ActionBar isEmphasized>
+              <ActionButton>
+                <Edit />
+                <Text>Edit</Text>
+              </ActionButton>
+              <ActionButton>
+                <FolderAdd />
+                <Text>Add to</Text>
+              </ActionButton>
+              <ActionButton>
+                <Share />
+                <Text>Share</Text>
+              </ActionButton>
+              <ActionButton>
+                <Download />
+                <Text>Download</Text>
+              </ActionButton>
+              <ActionButton>
+                <Tag />
+                <Text>Keywords</Text>
+              </ActionButton>
+            </ActionBar>
+          );
+        }}>
+        <Collection items={list.items} dependencies={[layout]}>
+          {item => <PhotoCard item={item} layout={layout} onAction={props.onAction} />}
+        </Collection>
+        {(list.loadingState === 'loading' || list.loadingState === 'loadingMore') && (
+          <SkeletonCollection>
+            {() => (
+              <PhotoCard
+                item={{
+                  id: Math.random(),
+                  user: {name: 'Placeholder name', profile_image: {small: ''}},
+                  urls: {regular: ''},
+                  description: 'This is a fake description. Kinda long so it wraps to a new line.',
+                  alt_description: '',
+                  width: 400,
+                  height: 200 + Math.max(0, Math.round(Math.random() * 400))
+                }}
+                layout={layout} />
+            )}
+          </SkeletonCollection>
+        )}
+      </CardView>
+    </>
   );
 }
 
-function PhotoCard({item, onAction}: any) {
+function PhotoCard({item, layout, onAction}: any) {
   let imgRef = useRef<HTMLImageElement | null>(null);
   return (
     <Card
       id={item.id}
       textValue={item.description || item.alt_description}
       onAction={() => {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          onAction([item, imgRef.current]);
+          return;
+        }
+
         imgRef.current!.style.viewTransitionName = 'photo';
         document.startViewTransition(() => {
           imgRef.current!.style.viewTransitionName = '';
@@ -329,7 +370,7 @@ function PhotoCard({item, onAction}: any) {
           width={item.width}
           height={item.height}
           UNSAFE_style={{
-            aspectRatio:`${item.width} / ${item.height}`
+            aspectRatio: layout === 'waterfall' ? `${item.width} / ${item.height}` : undefined
           }} />
       </CardPreview>
     </Card>

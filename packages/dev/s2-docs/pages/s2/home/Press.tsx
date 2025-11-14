@@ -38,6 +38,8 @@ export function PressAnimation(): ReactNode {
     };
   }, []));
 
+  // Checkbox and then submit button
+
   // switch-background-animation 12s ease-in-out 500ms
   return (
     <>
@@ -62,7 +64,7 @@ export function PressAnimation(): ReactNode {
           <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd" />
         </g>
       </svg>
-      <Button variant="accent" UNSAFE_style={{animation: 'press-animation 4s ease-in-out'}}>Action</Button>
+      <Button variant="accent" size="XL" UNSAFE_style={{animation: 'press-animation 4s ease-in-out'}}>Action</Button>
     </>
   );
 }

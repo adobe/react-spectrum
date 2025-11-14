@@ -96,13 +96,13 @@ export function Home() {
             illustration={<Animation />}
             style={{gridColumn: 'span 3'}}>
           </Feature>
-          <Feature
+          {/* <Feature
             title="Space aware"
             description="TagGroup with collapsing"
             illustration={<Ruler />}
             style={{gridColumn: 'span 6'}}>
             <Collapsing />
-          </Feature>
+          </Feature> */}
           <Feature
             title="High contrast mode"
             description="Automatically adjust to high contrast mode, ensuring a clear and readable experience based on preference."
@@ -209,13 +209,6 @@ export function Home() {
             <ObjectStyles />
           </Feature>
           <Feature
-            title="Responsive design"
-            description="Show media/container queries"
-            illustration={<Phone />}
-            style={{gridColumn: 'span 3'}}>
-            
-          </Feature>
-          <Feature
             title="States and variants"
             description="Testing"
             illustration={<Layers />}
@@ -226,7 +219,7 @@ export function Home() {
             title="Reusable utilities"
             description="Macros are just functions, so you can create your own reusable style utilities."
             illustration={<CodeBrackets />}
-            style={{gridColumn: 'span 6'}}>
+            style={{gridColumn: 'span 3'}}>
             <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {flexRow} from './style-utils' with {type: 'macro'};
             
@@ -234,6 +227,13 @@ const buttonStyle = style({
   ...focusRing(),
   ...flexRow(4)
 })`}</Code></Pre>
+          </Feature>
+          <Feature
+            title="Responsive design"
+            description="Show media/container queries"
+            illustration={<Phone />}
+            style={{gridColumn: 'span 6'}}>
+            
           </Feature>
         </Section>
         <Section
