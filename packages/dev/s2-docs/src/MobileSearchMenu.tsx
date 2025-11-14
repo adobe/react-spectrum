@@ -363,7 +363,8 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
     searchValue,
     sectionsForDisplay.map(s => ({id: s.id, name: s.name})),
     resourceTags,
-    initialSelectedSection
+    initialSelectedSection,
+    currentPage.exports?.title
   );
 
   const sectionTags = useSectionTagsForDisplay(
