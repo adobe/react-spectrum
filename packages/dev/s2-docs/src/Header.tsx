@@ -1,7 +1,7 @@
 'use client';
 
 import {ActionButton, pressScale} from '@react-spectrum/s2';
-import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
 import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
@@ -33,10 +33,11 @@ const libraryStyles = style({
       ...baseColor('gray-100'),
       default: 'transparent'
     }
-  }
+  },
+  marginStart: space(14)
 });
 
-const linkStyles = style({
+const linkStyle = {
   ...focusRing(),
   font: 'ui',
   textDecoration: 'none',
@@ -52,7 +53,16 @@ const linkStyles = style({
   display: 'flex',
   alignItems: 'center',
   borderRadius: 'lg'
+} as const;
+
+const linkStyles = style({
+  ...linkStyle
 });
+
+const iconStyles = style({
+  ...linkStyle,
+  paddingX: space(6)
+})
 
 export default function Header(props: PageProps) {
   const {pages, currentPage} = props;
@@ -168,9 +178,7 @@ export default function Header(props: PageProps) {
             <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
-            <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
-              <GithubLogo />
-            </ActionButton>
+            <Link aria-label="React Spectrum GitHub repo" className={renderProps => iconStyles({...renderProps})} href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo/></Link>
           </div>
         </div>
       </header>
