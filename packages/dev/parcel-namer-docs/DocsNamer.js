@@ -59,6 +59,15 @@ module.exports = new Namer({
           }
         }
 
+        // for root-level pages check if a redirect exists
+        if (devPath.length === 0) {
+          let redirectPath = path.join(options.projectRoot, 'packages', 'dev', 'docs', 'pages', 'redirects', parts[parts.length - 1]);
+          if (fs.existsSync(redirectPath)) {
+            // put original in .unused directory to avoid conflict
+            return path.join('.unused', basename);
+          }
+        }
+
         return path.join(...devPath, basename);
       }
 

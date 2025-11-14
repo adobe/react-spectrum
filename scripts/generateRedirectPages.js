@@ -33,6 +33,8 @@ let internationalizedRedirectsDir = path.join(__dirname, '../packages/dev/docs/p
 let blogDir = path.join(__dirname, '../packages/dev/docs/pages/blog');
 let blogRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects/blog');
 
+let rootLevelRedirectsDir = path.join(__dirname, '../packages/dev/docs/pages/redirects');
+
 // from the above paths, find all mdx files for components/hooks/top level docs
 let componentDocs = glob.sync('*/docs/*.mdx', {cwd: reactSpectrumDir});
 let devDocs = glob.sync('*.mdx', {cwd: reactSpectrumDevDocsDir});
@@ -68,6 +70,7 @@ fs.mkdirSync(reactAriaRedirectsDir, {recursive: true});
 fs.mkdirSync(releasesRedirectsDir, {recursive: true});
 fs.mkdirSync(internationalizedRedirectsDir, {recursive: true});
 fs.mkdirSync(blogRedirectsDir, {recursive: true});
+fs.mkdirSync(rootLevelRedirectsDir, {recursive: true});
 
 // generate redirects for rsp component docs
 componentDocs.forEach(docPath => {
@@ -212,4 +215,17 @@ blogDocs.forEach(docPath => {
   let fileName = path.basename(docPath, '.mdx');
   let outputPath = path.join(blogRedirectsDir, `${fileName}.mdx`);
   fs.writeFileSync(outputPath, createRedirectMdx(`https://react-aria.adobe.com/blog/${fileName}.html`));
+});
+
+// generate redirects for special root-level pages
+let rootLevelRedirects = {
+  'architecture': 'https://react-spectrum.adobe.com/index.html',
+  'contribute': 'https://github.com/adobe/react-spectrum?tab=contributing-ov-file#contribute',
+  // TODO: where to put this? Add something later perhaps
+  'Support': 'https://github.com/adobe/react-spectrum/issues'
+};
+
+Object.entries(rootLevelRedirects).forEach(([fileName, redirectUrl]) => {
+  let outputPath = path.join(rootLevelRedirectsDir, `${fileName}.mdx`);
+  fs.writeFileSync(outputPath, createRedirectMdx(redirectUrl));
 });
