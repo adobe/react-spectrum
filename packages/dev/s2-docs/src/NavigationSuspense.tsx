@@ -2,7 +2,9 @@
 
 import type {Page} from '@parcel/rsc';
 import {PageSkeleton} from './PageSkeleton';
-import React, {Suspense, use, useSyncExternalStore} from 'react';
+import React, {Suspense, use, useEffect, useState, useSyncExternalStore} from 'react';
+
+const SKELETON_DELAY = 150;
 
 let navigationPromise: Promise<void> | null = null;
 let targetPathname: string | null = null;
@@ -105,9 +107,22 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
 function NavigationContent({children}: {children: React.ReactNode}) {
   // Subscribe to navigation promise changes to ensure React re-renders when setNavigationPromise() is called.
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  if (snapshot.promise) {
-    use(snapshot.promise);
+  let [delayedPromise, setDelayedPromise] = useState<Promise<void> | null>(null);
+  useEffect(() => {
+    let promise = snapshot.promise;
+    if (!promise) {
+      return;
+    }
+    let timeout = setTimeout(() => {
+      setDelayedPromise(promise);
+    }, SKELETON_DELAY);
+    return () => clearTimeout(timeout);
+  }, [snapshot]);
+
+  if (delayedPromise) {
+    use(delayedPromise);
   }
+
   return <>{children}</>;
 }
 

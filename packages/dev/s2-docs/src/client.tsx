@@ -13,7 +13,6 @@ let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
     link.href &&
     (!link.target || link.target === '_self') &&
     link.origin === location.origin &&
-    (link.pathname !== location.pathname || link.hash) &&
     !link.hasAttribute('download') &&
     link.pathname.startsWith(pathname)
   );
@@ -30,9 +29,6 @@ let updateRoot = hydrate({
 // Track the current navigation to prevent race conditions
 let currentNavigationId = 0;
 let currentAbortController: AbortController | null = null;
-
-// Delay before showing skeleton loader
-const SKELETON_DELAY_MS = 150;
 
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
@@ -152,17 +148,7 @@ async function navigate(pathname: string, push = false) {
     }
   })();
   
-  const skeletonTimeout = setTimeout(() => {
-    // Only show skeleton if navigation takes longer than SKELETON_DELAY_MS
-    // This prevents flashing the skeleton for fast/cached navigation.
-    if (navigationId === currentNavigationId && !abortController.signal.aborted) {
-      setNavigationPromise(navigationPromise, pathname);
-    }
-  }, SKELETON_DELAY_MS);
-
-  navigationPromise.finally(() => {
-    clearTimeout(skeletonTimeout);
-  });
+  setNavigationPromise(navigationPromise, pathname);
 }
 
 // Prefetch routes on pointerover
@@ -187,7 +173,7 @@ document.addEventListener('pointerover', e => {
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname)) {
+  if (link && isClientLink(link, publicUrlPathname) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -212,7 +198,7 @@ document.addEventListener('focus', e => {
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname)) {
+  if (link && isClientLink(link, publicUrlPathname) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
