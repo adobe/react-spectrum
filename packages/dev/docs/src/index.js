@@ -25,3 +25,4 @@ export * from './PostListing';
 export * from './PageDescription';
 export * from './StateTable';
 export * from './ContextTable';
+export * from './RedirectLayout';
