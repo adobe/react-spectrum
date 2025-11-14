@@ -186,9 +186,6 @@ export function SearchMenu(props: SearchMenuProps) {
   );
 
   const handleTabSelectionChange = React.useCallback((key: Key) => {
-    if (searchValue) {
-      setSearchValue('');
-    }
     setSelectedLibrary(key as typeof selectedLibrary);
     // Focus main search field of the newly selected tab
     setTimeout(() => {
@@ -198,7 +195,7 @@ export function SearchMenu(props: SearchMenuProps) {
         searchRef.current.focus();
       }
     }, 10);
-  }, [searchValue]);
+  }, []);
 
   const handleSectionSelectionChange = React.useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
@@ -275,6 +272,10 @@ export function SearchMenu(props: SearchMenuProps) {
         </TabList>
         {orderedTabs.map((tab, i) => {
           const tabResourceTags = getResourceTags(tab.id);
+          const selectedResourceTag = tabResourceTags.find(tag => tag.id === selectedTagId);
+          const placeholderText = selectedResourceTag 
+            ? `Search ${selectedResourceTag.name}` 
+            : `Search ${tab.label}`;
           return (
             <TabPanel key={tab.id} id={tab.id}>
               <Autocomplete filter={selectedTagId === 'icons' ? iconFilter : undefined}>
@@ -286,7 +287,7 @@ export function SearchMenu(props: SearchMenuProps) {
                       ref={searchRef}
                       size="L"
                       aria-label={`Search ${tab.label}`}
-                      placeholder={`Search ${tab.label}`}
+                      placeholder={placeholderText}
                       UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
                       styles={style({width: 500})} />
                   </div>
