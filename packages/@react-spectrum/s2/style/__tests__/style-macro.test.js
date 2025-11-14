@@ -319,18 +319,14 @@ describe('style-macro', () => {
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a, _.b;
 
-@layer _.b.OVIhfc {
-  @container style(--hcm: active) {
-    .pOVIhfc6LxY912 {
-      color: var(--hcm-buttontext, ButtonText);
-    }
+@layer _.b {
+  .pOVIhfc6LxY912:is([data-hcm] *) {
+    color: var(--hcm-buttontext, ButtonText);
   }
 
 
-  @container style(--hcm: active) {
-    .pOVIhfcgp5Dcd12 {
-      color: var(--hcm-highlighttext, HighlightText);
-    }
+  .pOVIhfcgp5Dcd12:is([data-hcm] *) {
+    color: var(--hcm-highlighttext, HighlightText);
   }
 }
 
