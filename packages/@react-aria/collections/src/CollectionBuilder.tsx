@@ -47,9 +47,10 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
 
   // Otherwise, render a hidden copy of the children so that we can build the collection before constructing the state.
   // This should always come before the real DOM content so we have built the collection by the time it renders during SSR.
+  return <CollectionBuilderCreateHiddenTree {...props} />;
+}
 
-  // This is fine. CollectionDocumentContext never changes after mounting.
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+function CollectionBuilderCreateHiddenTree<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>) {
   let {collection, document} = useCollectionDocument(props.createCollection);
   return (
     <>
