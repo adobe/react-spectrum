@@ -122,5 +122,7 @@ export interface RangeCalendarState<T extends DateValue = DateValue> extends Cal
   /** Whether the user is currently dragging over the calendar. */
   readonly isDragging: boolean,
   /** Sets whether the user is dragging over the calendar. */
-  setDragging(isDragging: boolean): void
+  setDragging(isDragging: boolean): void,
+  /** Clears the current selection. */
+  clearSelection(): void
 }
