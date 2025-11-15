@@ -930,6 +930,8 @@ export const style = createTheme({
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
     contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
+    containerType: ['normal', 'size', 'inline-size', 'scroll-state'] as const,
+    containerName: new ArbitraryProperty<string>('containerName'),
     boxSizing: ['border-box', 'content-box'] as const,
     tableLayout: ['auto', 'fixed'] as const,
     captionSide: ['top', 'bottom'] as const,
@@ -1041,6 +1043,7 @@ export const style = createTheme({
     // Windows tablet matches the same as iPhone. No difference when a mouse is connected.
     // Windows touch laptop matches same as macOS: (any-pointer: fine), (pointer: fine), (any-hover: hover), (hover: hover).
     touch: '@media not ((hover: hover) and (pointer: fine))',
+    xs: `@media (min-width: ${(480 / 16)}rem)`,
     sm: `@media (min-width: ${(640 / 16)}rem)`,
     md: `@media (min-width: ${(768 / 16)}rem)`,
     lg: `@media (min-width: ${(1024 / 16)}rem)`,

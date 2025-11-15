@@ -125,7 +125,11 @@ const buttonStyles = style({
   font: 'heading',
   color: {
     default: baseColor('neutral'),
-    isDisabled: 'disabled'
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   fontWeight: 'bold',
   fontSize: {

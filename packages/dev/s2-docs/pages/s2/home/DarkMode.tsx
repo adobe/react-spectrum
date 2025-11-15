@@ -1,9 +1,9 @@
 'use client';
 
 import { Provider } from "@react-spectrum/s2";
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { focusRing, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { useRef, useState } from "react";
-import { useMove } from "react-aria";
+import { mergeProps, useFocusRing, useMove } from "react-aria";
 // @ts-ignore
 import Nubbin from '../../../../../@react-spectrum/s2/ui-icons/S2_MoveHorizontalTableWidget.svg';
 import { AppFrame, ExampleApp } from "./ExampleApp";
@@ -11,29 +11,60 @@ import { AppFrame, ExampleApp } from "./ExampleApp";
 export function DarkMode() {
   let containerRef = useRef(null);
   return (
-    <div className={style({position: 'relative', borderRadius: 'lg', boxShadow: 'elevated'})} style={{containerType: 'size', height: 350} as any} ref={containerRef}>
-      <Resizable containerRef={containerRef}>
-        <Provider colorScheme="light" styles={style({width: '100cqw', height: '100cqh', borderRadius: 'lg', overflow: 'clip'})}>
+    <div
+      className={style({
+        position: 'relative',
+        borderRadius: 'lg',
+        boxShadow: 'elevated',
+        containerType: 'size',
+        height: 350,
+        margin: {
+          default: -16,
+          sm: 0
+        },
+        marginTop: 0,
+        borderTopStartRadius: {
+            default: 'none',
+            sm: 'lg'
+        },
+        '--app-frame-radius-top': {
+          type: 'borderTopStartRadius',
+          value: {
+            default: 'none',
+            sm: 'lg'
+          }
+        },
+        '--app-frame-shadow': {
+          type: 'boxShadow',
+          value: 'none'
+        }
+      })}
+      ref={containerRef}>
+      <Resizable containerRef={containerRef} isClipped>
+        <Provider colorScheme="light" styles={style({width: '100cqw', height: '100cqh'})}>
           <AppFrame inert />
         </Provider>
       </Resizable>
-      <Provider colorScheme="dark" styles={style({position: 'absolute', inset: 0, borderRadius: 'lg', overflow: 'clip'})}>
+      <Provider colorScheme="dark" styles={style({position: 'absolute', inset: 0})}>
         <AppFrame inert />
       </Provider>
     </div>
   );
 }
 
-export function Resizable({children, containerRef}: any) {
+export function Resizable({children, containerRef, isClipped, minWidth = 0}: any) {
   let [percent, setPercent] = useState(50);
+  let ref = useRef<HTMLDivElement | null>(null);
   let pos = useRef(0);
+  let {focusProps, isFocusVisible} = useFocusRing();
   let {moveProps} = useMove({
-    onMoveStart(e) {
-      pos.current = containerRef.current!.getBoundingClientRect().width * percent / 100;
+    onMoveStart() {
+      pos.current = ref.current!.getBoundingClientRect().width;
     },
     onMove(e) {
       let newPos = pos.current + (e.pointerType === 'keyboard' ? (e.deltaX || -e.deltaY) * 20 : e.deltaX);
-      let percent = Math.max(0, Math.min(100, newPos / containerRef.current!.getBoundingClientRect().width * 100));
+      let constrainedPos = Math.max(minWidth, newPos);
+      let percent = Math.max(0, Math.min(100, constrainedPos / containerRef.current!.getBoundingClientRect().width * 100));
       setPercent(percent);
       pos.current = newPos;
     }
@@ -41,13 +72,20 @@ export function Resizable({children, containerRef}: any) {
 
   return (
     <>
-      <div style={{width: percent + '%', overflow: 'clip', position: 'relative', zIndex: 2}}>
-        <div>
-          {children}
-        </div>
+      <div
+        ref={ref}
+        style={{
+          height: '100%',
+          minWidth: minWidth,
+          width: percent + '%',
+          overflow: isClipped ? 'clip' : undefined,
+          position: 'relative',
+          zIndex: 2
+        }}>
+        {children}
       </div>
       <div
-        {...moveProps}
+        {...mergeProps(focusProps, moveProps)}
         role="separator"
         tabIndex={0}
         aria-valuemin={0}
@@ -61,10 +99,11 @@ export function Resizable({children, containerRef}: any) {
           marginX: -12,
           cursor: 'col-resize',
           zIndex: 4,
-          outlineStyle: 'none'
+          outlineStyle: 'none',
+          touchAction: 'none'
         })}
         style={{
-          left: percent + '%'
+          left: `max(${minWidth}px, ${percent}%)`
         }}>
         <div
           className={style({
@@ -78,12 +117,13 @@ export function Resizable({children, containerRef}: any) {
           })} />
         <div
           className={style({
+            ...focusRing(),
+            borderRadius: 'full',
             position: 'absolute',
             top: '50%',
             left: '50%',
             translateY: '-50%',
             translateX: '-50%',
-            scale: 1.5,
             fill: {
               default: 'pink-700',
               forcedColors: 'Highlight'
@@ -95,8 +135,8 @@ export function Resizable({children, containerRef}: any) {
                 forcedColors: 'HighlightText'
               }
             }
-          })}>
-          <Nubbin />
+          })({isFocusVisible})}>
+          <Nubbin className={style({display: 'block', size: 24})} />
         </div>
       </div>
     </>

@@ -21,13 +21,24 @@ export function Rems() {
         })} />
       <div
         className={style({
-          borderRadius: 'lg',
-          overflow: 'clip',
           boxSizing: 'border-box',
           height: 350,
-          marginTop: 16
-        })} style={{'--rem': value + 'px'} as any}>
-        <ExampleApp2 />
+          margin: {
+            default: -16,
+            sm: 0
+          },
+          marginTop: 16,
+          containerType: 'inline-size',
+          '--app-frame-radius-top': {
+            type: 'borderTopStartRadius',
+            value: {
+              default: 'none',
+              sm: 'lg'
+            }
+          }
+        })}
+        style={{'--rem': value + 'px'} as any}>
+        <ExampleApp2 showPanel />
       </div>
     </>
   );

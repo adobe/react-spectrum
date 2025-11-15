@@ -35,12 +35,17 @@ import { Icons, Illustrations } from "./Icons";
 import { Typography } from "./Typography";
 import { States } from "./States";
 import { useId } from "react";
+import { Responsive } from "./Responsive";
+import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 
 const container = style({
   backgroundColor: 'layer-2/80',
   boxShadow: 'elevated',
   borderRadius: 'xl',
-  padding: 32,
+  padding: {
+    default: 16,
+    sm: 32
+  },
   position: 'relative',
   overflow: 'clip'
 });
@@ -57,13 +62,13 @@ export function Home() {
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%'
       }}>
-      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingY: 96, maxWidth: 1024})}>
+      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: 16, paddingY: 96, maxWidth: 1024})}>
         <h1 id={headingId} className={style({font: 'heading-3xl', marginTop: 0, marginBottom: 48, color: 'white'})}>React Spectrum</h1>
-        <section aria-label="Example app" className={style({height: size(600)})}>
+        <section aria-label="Example app" className={style({height: 'calc(100dvh - 24px)', maxHeight: size(600)})}>
           <ExampleApp />
         </section>
       </header>
-      <main className={style({marginX: 'auto', paddingX: 40, maxWidth: 1600})}>
+      <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600})}>
         <Section
           title="Build Once. Adapt Everywhere."
           description="React Spectrum makes interfaces more accessible, flexible, and easier to maintain, while giving users a seamless experience no matter where they are.">
@@ -71,22 +76,39 @@ export function Home() {
             title="Dark mode"
             description="Deliver effortless dark and light mode support, automatically. No extra styling required."
             illustration={<Lightbulb />}
-            style={{gridColumn: 'span 4'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <DarkMode />
           </Feature>
           <Feature
             title="Touch friendly"
             description="Components automatically scale adapt and adapt for touch or pointer input, ensuring a smooth experience on any device."
             illustration={<Interaction />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <Mobile />
           </Feature>
           <Feature
             title="Global ready by default"
             description="Automatically mirrors component layouts, and formats text for different languages, currencies, dates, and locales."
             illustration={<Translate />}
-            style={{gridColumn: 'span 3'}}>
-            <Provider locale="ar-AE" styles={style({height: 300})}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
+            <Provider
+              locale="ar-AE"
+              styles={style({
+                height: 300,
+                containerType: 'inline-size',
+                margin: {
+                  default: -16,
+                  sm: 0
+                },
+                marginTop: 0,
+                '--app-frame-radius-top': {
+                  type: 'borderTopStartRadius',
+                  value: {
+                    default: 'none',
+                    sm: 'lg'
+                  }
+                }
+              })}>
               <AppFrame />
             </Provider>
           </Feature>
@@ -94,7 +116,7 @@ export function Home() {
             title="Reduce motion options"
             description="Component animations and transitions automatically adjust for users who prefer less motion, keeping your UI comfortable and inclusive."
             illustration={<Animation />}
-            style={{gridColumn: 'span 3'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
           </Feature>
           {/* <Feature
             title="Space aware"
@@ -107,14 +129,14 @@ export function Home() {
             title="High contrast mode"
             description="Automatically adjust to high contrast mode, ensuring a clear and readable experience based on preference."
             illustration={<Accessibility />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <HCM />
           </Feature>
           <Feature
             title="Adaptive font sizes"
             description="Fonts scale autoamtically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
             illustration={<TextIcon />}
-            style={{gridColumn: 'span 4'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <Rems />
           </Feature>
         </Section>
@@ -124,14 +146,14 @@ export function Home() {
             title="Press scaling"
             description="Components respond instantly to user input, with smooth animations and transitions that feel natural and without extra code."
             illustration={<Interaction />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <PressAnimation />
           </Feature>
           <Feature
             title="Submenus"
             description="Description"
             illustration={<Cursor />}
-            style={{gridColumn: 'span 4'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             
           </Feature>
         </Section>
@@ -140,14 +162,14 @@ export function Home() {
             title="Icons"
             description="Spectrum icon support for your product. Use the icon search to simplify finding the right icon the right experience."
             illustration={<VectorDraw />}
-            style={{gridColumn: 'span 3'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Icons />
           </Feature>
           <Feature
             title="Illustrations"
             description="Rich illustrations that help bring your interface to life. Use the illustration search to find the right illustration for your product."
             illustration={<IllustrationIcon />}
-            style={{gridColumn: 'span 3'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Illustrations />
           </Feature>
         </Section>
@@ -159,7 +181,7 @@ export function Home() {
             title="Colors"
             description="Testing"
             illustration={<Color />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <Pre><Code lang="ts">{`style({color: 'red-400'})`}</Code></Pre>
             <Colors />
           </Feature>
@@ -173,12 +195,8 @@ export function Home() {
             title="Typography"
             description="Testing"
             illustration={<TextIcon />}
-            style={{gridColumn: 'span 2'}}>
-            <Typography
-              titleLg={<Code lang="ts">{`style({font: 'title-lg'})`}</Code>}
-              titleSm={<Code lang="ts">{`style({font: 'title-sm'})`}</Code>}
-              detailSm={<Code lang="ts">{`style({font: 'detail-sm'})`}</Code>}
-              body={<Code lang="ts">{`style({font: 'body'})`}</Code>} />
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
+            <Typography />
             {/* <div
               className={style({
                 backgroundColor: 'layer-1',
@@ -205,21 +223,21 @@ export function Home() {
             title="Object styles"
             description="Testing"
             illustration={<Shapes />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ObjectStyles />
           </Feature>
           <Feature
             title="States and variants"
             description="Testing"
             illustration={<Layers />}
-            style={{gridColumn: 'span 3'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <States />
           </Feature>
           <Feature
             title="Reusable utilities"
             description="Macros are just functions, so you can create your own reusable style utilities."
             illustration={<CodeBrackets />}
-            style={{gridColumn: 'span 3'}}>
+            styles={style({gridColumnStart: {default: 'span 6', xl: 'span 3'}})}>
             <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {flexRow} from './style-utils' with {type: 'macro'};
             
@@ -233,7 +251,7 @@ const buttonStyle = style({
             description="Show media/container queries"
             illustration={<Phone />}
             style={{gridColumn: 'span 6'}}>
-            
+            <Responsive />
           </Feature>
         </Section>
         <Section
@@ -243,21 +261,21 @@ const buttonStyle = style({
             title="AI-ready"
             description="MCP server..."
             illustration={<Sparkles />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
           <Feature
             title="SSR"
             description="and React Server Components"
             illustration={<Server />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
           <Feature
             title="Small bundle"
             description="CSS?"
             illustration={<SpeedFast />}
-            style={{gridColumn: 'span 2'}}>
+            styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
         </Section>
@@ -280,11 +298,11 @@ function Section({title, description, children}: any) {
   );
 }
 
-function Feature({title, description, illustration, children, style: styleProp}: any) {
+function Feature({title, description, illustration, children, style: styleProp, styles = ''}: any) {
   let headingId = useId();
   return (
-    <section aria-labelledby={headingId} className={container} style={styleProp}>
-      <div className={style({display: 'flex', columnGap: 12, alignItems: 'start', marginBottom: 12})}>
+    <section aria-labelledby={headingId} className={mergeStyles(container, styles)} style={styleProp}>
+      <div className={style({display: 'flex', flexDirection: {default: 'column', sm: 'row'}, gap: 12, alignItems: 'start', marginBottom: 12})}>
         <div style={{marginTop: -12, marginInlineStart: -12}}>
           {illustration}
         </div>
@@ -299,20 +317,20 @@ function Feature({title, description, illustration, children, style: styleProp}:
 }
 
 function Colors() {
-  let red = getColorScale('red');
-  let orange = getColorScale('orange');
-  let yellow = getColorScale('yellow');
-  let celery = getColorScale('celery');
-  let green = getColorScale('green');
-  let seafoam = getColorScale('seafoam');
-  let turquoise = getColorScale('turquoise');
-  let cyan = getColorScale('cyan');
-  let blue = getColorScale('blue');
-  let indigo = getColorScale('indigo');
-  let purple = getColorScale('purple');
-  let fuchsia = getColorScale('fuchsia');
-  let magenta = getColorScale('magenta');
-  let pink = getColorScale('pink');
+  let red = getColorScale('red', 16);
+  let orange = getColorScale('orange', 16);
+  let yellow = getColorScale('yellow', 16);
+  let celery = getColorScale('celery', 16);
+  let green = getColorScale('green', 16);
+  let seafoam = getColorScale('seafoam', 16);
+  let turquoise = getColorScale('turquoise', 16);
+  let cyan = getColorScale('cyan', 16);
+  let blue = getColorScale('blue', 16);
+  let indigo = getColorScale('indigo', 16);
+  let purple = getColorScale('purple', 16);
+  let fuchsia = getColorScale('fuchsia', 16);
+  let magenta = getColorScale('magenta', 16);
+  let pink = getColorScale('pink', 16);
 
   let swatches = [red, orange, yellow, celery, green, seafoam, turquoise, cyan, blue, indigo, purple, fuchsia, magenta, pink].map((scale, i) => {
     return (
@@ -332,7 +350,7 @@ function Colors() {
     <div
       className={style({
         display: 'grid',
-        gridTemplateColumns: 'repeat(16, 1fr)',
+        gridTemplateColumns: 'repeat(16, min-content)',
         gap: 4
       })}>
       {swatches}

@@ -8,17 +8,29 @@ export function HCM() {
       data-hcm
       style={{'--hcm-highlight': 'rgb(26, 235, 255)', '--hcm-highlighttext': 'black', '--hcm-buttonface': 'black', '--hcm-buttontext': 'white', '--hcm-buttonborder': 'white', '--hcm-graytext': 'rgb(63, 242, 63)', '--hcm-field': 'black', '--hcm-background': 'black', '--hcm-linktext': 'yellow'} as any}
       className={style({
-        borderRadius: 'lg',
-        overflow: 'clip',
         boxSizing: 'border-box',
         height: 350,
+        margin: {
+          default: -16,
+          sm: 0
+        },
         marginTop: 16,
-        marginStart: -96,
+        marginStart: {
+          default: -16,
+          sm: -96
+        },
         display: 'flex',
-        justifyContent: 'end'
+        justifyContent: 'end',
+        '--app-frame-radius-top': {
+          type: 'borderTopStartRadius',
+          value: {
+            default: 'none',
+            sm: 'lg'
+          }
+        }
       })}>
-      <div className={style({width: '200%'})}>
-        <ExampleApp2 />
+      <div className={style({flexShrink: 0, width: {default: '100%', sm: '200%'}, containerType: 'inline-size'})}>
+        <ExampleApp2 showPanel />
       </div>
     </div>
   )

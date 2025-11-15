@@ -16,8 +16,9 @@ import Tag from '@react-spectrum/s2/icons/Tag';
 import Org from '@react-spectrum/s2/icons/Buildings';
 import ViewGridFluid from '@react-spectrum/s2/icons/ViewGridFluid';
 import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
+import Search from '@react-spectrum/s2/icons/Search';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
-import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import {Key, useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
@@ -25,18 +26,22 @@ import { useEffect, useRef, useState } from 'react';
 import { ExampleApp2, FilterContext } from './ExampleApp2';
 import { flushSync } from 'react-dom';
 
+const XS = `@container (min-width: ${480 / 16}rem)`;
+const SM = `@container (min-width: ${(640 / 16)}rem)`;
+const MD = `@container (min-width: ${(768 / 16)}rem)`;
+
 export function ExampleApp() {
   let [[detail, img] = [], setDetail] = useState<[any, HTMLImageElement] | []>([]);
 
   return (
-    <>
+    <div className={style({containerType: 'inline-size', height: 'full'})}>
       <AppFrame hidden={!!detail}>
         <Example onAction={setDetail} />
       </AppFrame>
       {detail && img &&
         <Detail detail={detail} img={img} setDetail={setDetail} />
       }
-    </>
+    </div>
   )
 }
 
@@ -100,26 +105,44 @@ export function AppFrame({children, inert, hidden}: any) {
       style={hidden ? {visibility: 'hidden', position: 'absolute'} : undefined}
       className={style({
         display: 'grid',
-        gridTemplateAreas: [
-          'toolbar toolbar',
-          'sidebar content'
-        ],
+        gridTemplateAreas: {
+          default: [
+            'toolbar',
+            'content'
+          ],
+          [SM]: [
+            'toolbar toolbar',
+            'sidebar content'
+          ]
+        },
         gridTemplateRows: ['auto', '1fr'],
-        gridTemplateColumns: ['auto', '1fr'],
-        gap: 16,
+        gridTemplateColumns: {
+          default: ['minmax(0, 1fr)'],
+          [SM]: ['auto', 'minmax(0, 1fr)']
+        },
         height: 'full',
-        padding: 16,
-        paddingBottom: 0,
-        borderRadius: 'lg',
+        '--radius': {
+          type: 'borderTopStartRadius',
+          value: 'lg'
+        },
+        borderRadius: '--radius',
+        borderTopRadius: 'var(--app-frame-radius-top, var(--radius))',
         overflow: 'clip',
         boxSizing: 'border-box',
-        boxShadow: 'elevated',
-        backgroundColor: 'layer-1'
+        '--shadow': {
+          type: 'boxShadow',
+          value: 'elevated'
+        },
+        boxShadow: 'var(--app-frame-shadow, var(--shadow))',
+        backgroundColor: 'layer-1',
+        isolation: 'isolate'
       })}>
       <div
         className={style({
           gridArea: 'toolbar',
           display: 'flex',
+          padding: 16,
+          boxSizing: 'border-box',
           gap: 16,
           alignItems: 'center',
           width: 'full'
@@ -127,33 +150,84 @@ export function AppFrame({children, inert, hidden}: any) {
         <ActionButton isQuiet aria-label="Menu">
           <MenuHamburger />
         </ActionButton>
-        <AdobeLogo size={24} />
-        <span className={style({font: 'title'})}>{direction === 'rtl' ? 'طيف التفاعل' : 'React Spectrum'}</span>
-        <div className={style({flexGrow: 1})}>
+        <AdobeLogo size={24} className={style({flexShrink: 0})} />
+        <span
+          className={style({
+            font: 'title',
+            display: {
+              default: 'none',
+              [SM]: 'inline'
+            }
+          })}>
+            {direction === 'rtl' ? 'طيف التفاعل' : 'React Spectrum'}
+        </span>
+        <div
+          className={style({
+            flexGrow: 1,
+            display: {
+              default: 'none',
+              [MD]: 'block'
+            }
+          })}>
           <SearchField
             aria-label={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
             placeholder={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
-            styles={style({maxWidth: 300, marginX: 'auto'})} />
+            styles={style({
+              maxWidth: 472,
+              minWidth: 272,
+              marginX: 'auto'
+            })} />
         </div>
+        <div
+          className={style({
+            flexGrow: 1,
+            display: {
+              default: 'block',
+              [MD]: 'none'
+            }
+          })} />
         <ActionButtonGroup>
-          <ActionButton isQuiet aria-label="Help">
-            <HelpCircle />
-          </ActionButton>
-          <ActionButton isQuiet aria-label="Notifications">
-            <Bell />
-          </ActionButton>
-          <ActionButton isQuiet aria-label="Apps">
-            <Apps />
-          </ActionButton>
+          <div
+            className={style({
+              display: {
+                default: 'contents',
+                [MD]: 'none'
+              }
+            })}>
+            <ActionButton isQuiet aria-label="Search">
+              <Search />
+            </ActionButton>
+          </div>
+          <div
+            className={style({
+              display: {
+                default: 'none',
+                [XS]: 'contents'
+              }
+            })}>
+            <ActionButton isQuiet aria-label="Help">
+              <HelpCircle />
+            </ActionButton>
+            <ActionButton isQuiet aria-label="Notifications">
+              <Bell />
+            </ActionButton>
+            <ActionButton isQuiet aria-label="Apps">
+              <Apps />
+            </ActionButton>
+          </div>
           <AccountMenu />
         </ActionButtonGroup>
       </div>
       <div
         className={style({
           gridArea: 'sidebar',
-          display: 'flex',
+          display: {
+            default: 'none',
+            [SM]: 'flex'
+          },
           flexDirection: 'column',
-          gap: 8
+          gap: 8,
+          paddingX: 16
         })}>
         <Button
           variant="accent"
@@ -183,8 +257,15 @@ export function AppFrame({children, inert, hidden}: any) {
           gridArea: 'content',
           backgroundColor: 'base',
           boxShadow: 'elevated',
-          borderRadius: 'xl',
+          borderRadius: {
+            default: 'none',
+            [SM]: 'xl'
+          },
           borderBottomRadius: 'none',
+          marginEnd: {
+            default: 0,
+            [SM]: 16
+          },
           padding: 20,
           paddingBottom: 0,
           display: 'flex',
@@ -225,7 +306,7 @@ export function AppFrame({children, inert, hidden}: any) {
         </>}
       </div>
     </div>
-  )
+  );
 }
 
 const text = style({

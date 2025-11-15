@@ -21,11 +21,14 @@ import TextAlignLeft from '@react-spectrum/s2/icons/TextAlignLeft';
 import TextAlignCenter from '@react-spectrum/s2/icons/TextAlignCenter';
 import TextAlignRight from '@react-spectrum/s2/icons/TextAlignRight';
 import TextAlignJustify from '@react-spectrum/s2/icons/TextAlignJustify';
-import {size, style} from "@react-spectrum/s2/style" with {type: 'macro'};
+import {size, space, style} from "@react-spectrum/s2/style" with {type: 'macro'};
 import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button, Form, ComboBoxItem, ComboBox, NumberField, Picker, PickerItem, Accordion, Disclosure, DisclosureHeader, DisclosureTitle, DisclosurePanel, Divider} from '@react-spectrum/s2';
 import {Key} from 'react-aria';
-import {createContext, useContext, useState} from 'react';
+import {createContext, useContext, useRef, useState} from 'react';
 import {AccountMenu} from './ExampleApp';
+import { useResizeObserver } from '@react-aria/utils';
+import { flushSync } from 'react-dom';
+import { Comment } from './Typography';
 
 export const FilterContext = createContext({
   brightness: 52,
@@ -34,26 +37,67 @@ export const FilterContext = createContext({
   onChange: (v: any) => {}
 });
 
-export function ExampleApp2({onBack, children}: any) {
+const SM_BREAK = 640 / 16;
+const SM = `@container (width >= ${SM_BREAK}rem)`;
+
+export function ExampleApp2({onBack, children, showPanel}: any) {
   let [selectedPanel, setPanel] = useState<Key | null>('properties');
   let [transitioning, setTransitioning] = useState<Key | null>(null);
   let panel = selectedPanel || transitioning;
+  let [isLarge, setLarge] = useState(true);
+  let ref = useRef<HTMLDivElement | null>(null);
+  useResizeObserver({
+    ref,
+    onResize() {
+      let width = ref.current!.getBoundingClientRect().width;
+      let rem = parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+      let breakpoint = width / rem;
+      flushSync(() => {
+        let matches = breakpoint >= SM_BREAK;
+        setLarge(matches);
+        if (!showPanel && selectedPanel && isLarge && !matches) {
+          setPanel(null);
+        }
+      });
+    },
+  });
 
   return (
     <div
+      ref={ref}
       className={style({
         display: 'grid',
-        gridTemplateAreas: [
-          'toolbar toolbar toolbar toolbar',
-          'sidebar content assets panels'
-        ],
-        gridTemplateRows: ['auto', '1fr'],
-        gridTemplateColumns: ['auto', '1fr', 'auto', 'auto'],
+        gridTemplateAreas: {
+          default: [
+            'toolbar toolbar',
+            'content content',
+            'assets assets',
+            'panels panels'
+          ],
+          [SM]: [
+            'toolbar toolbar toolbar toolbar',
+            'sidebar content assets panels'
+          ]
+        },
+        gridTemplateRows: {
+          default: ['auto', '1fr', 'auto', 'auto'],
+          [SM]: ['auto', '1fr']
+        },
+        gridTemplateColumns: {
+          default: ['minmax(0, 1fr)', 'minmax(0, 1fr)'],
+          [SM]: ['auto', '1fr', 'auto', 'auto']
+        },
         height: 'full',
-        borderRadius: 'lg',
+        '--radius': {
+          type: 'borderTopStartRadius',
+          value: 'lg'
+        },
+        borderRadius: '--radius',
+        borderTopRadius: 'var(--app-frame-radius-top, var(--radius))',
         overflow: 'clip',
         boxSizing: 'border-box',
         boxShadow: 'elevated',
+        position: 'relative'
       })}>
       <div
         className={style({
@@ -75,40 +119,70 @@ export function ExampleApp2({onBack, children}: any) {
             default: 'gray-200',
             forcedColors: 'ButtonBorder'
           },
-          borderStyle: 'solid'
+          borderStyle: 'solid',
+          maxWidth: 'full',
+          overflowX: 'auto'
         })}>
         <ActionButton isQuiet aria-label="Back" onPress={onBack}>
           <ChevronLeft />
         </ActionButton>
-        <Breadcrumbs onAction={onBack}>
-          <Breadcrumb>Your files</Breadcrumb>
-          <Breadcrumb>July final draft</Breadcrumb>
-        </Breadcrumbs>
+        <div className={style({flexGrow: 1, overflow: 'auto'})}>
+          <Breadcrumbs onAction={onBack}>
+            <Breadcrumb>Your files</Breadcrumb>
+            <Breadcrumb>July final draft</Breadcrumb>
+          </Breadcrumbs>
+        </div>
         <ActionButtonGroup>
-          <ActionButton isQuiet aria-label="Help">
-            <HelpCircle />
-          </ActionButton>
-          <ActionButton isQuiet aria-label="Notifications">
-            <Bell />
-          </ActionButton>
-          <ActionButton isQuiet aria-label="Apps">
-            <Apps />
-          </ActionButton>
+          <div
+            className={style({
+              display: {
+                default: 'none',
+                [SM]: 'contents'
+              }
+            })}>
+            <ActionButton isQuiet aria-label="Help">
+              <HelpCircle />
+            </ActionButton>
+            <ActionButton isQuiet aria-label="Notifications">
+              <Bell />
+            </ActionButton>
+            <ActionButton isQuiet aria-label="Apps">
+              <Apps />
+            </ActionButton>
+          </div>
           <AccountMenu />
         </ActionButtonGroup>
       </div>
       <div
         className={style({
           gridArea: 'sidebar',
-          display: 'flex',
+          display: {
+            default: 'none',
+            [SM]: 'flex'
+          },
           flexDirection: 'column',
           gap: 8,
           backgroundColor: {
             default: 'layer-1',
             forcedColors: 'Background'
           },
-          padding: 8,
-          boxSizing: 'border-box'
+          padding: 16,
+          boxSizing: 'border-box',
+          borderWidth: 0,
+          borderTopWidth: {
+            default: 2,
+            [SM]: 0
+          },
+          borderEndWidth: {
+            default: 0,
+            [SM]: 2
+          },
+          borderColor: {
+            default: 'gray-200',
+            forcedColors: 'ButtonBorder'
+          },
+          borderStyle: 'solid',
+          overflow: 'auto'
         })}>
         <ToggleButtonGroup
           aria-label="Tools"
@@ -116,7 +190,7 @@ export function ExampleApp2({onBack, children}: any) {
           defaultSelectedKeys={['select']}
           isQuiet
           isEmphasized
-          orientation="vertical">
+          orientation={isLarge ? 'vertical' : 'horizontal'}>
           <ToggleButton id="select" aria-label="Select">
             <Select />
           </ToggleButton>
@@ -146,10 +220,19 @@ export function ExampleApp2({onBack, children}: any) {
         className={style({
           gridArea: 'assets',
           width: {
-            default: 300,
-            isCollapsed: 0
+            default: 'full',
+            [SM]: {
+              default: 300,
+              isCollapsed: 0
+            }
           },
-          overflow: 'clip',
+          height: {
+            default: {
+              default: 200,
+              isCollapsed: 0
+            },
+            [SM]: 'auto'
+          },
           transition: {
             isTransitioning: 'all',
             '@media (prefers-reduced-motion: reduce)': 'none'
@@ -167,7 +250,13 @@ export function ExampleApp2({onBack, children}: any) {
               default: 'layer-1',
               forcedColors: 'Background'
             }
-          }
+          },
+          position: {
+            default: 'absolute',
+            [SM]: 'static'
+          },
+          bottom: 0,
+          insetEnd: 0
         })({isCollapsed: !selectedPanel, isTransitioning: !!transitioning})}
         onTransitionEnd={() => {
           setTransitioning(null);
@@ -175,11 +264,22 @@ export function ExampleApp2({onBack, children}: any) {
         {panel && 
           <div
             className={style({
-              width: 300,
+              width: {
+                default: 'full',
+                [SM]: 300
+              },
               height: 'full',
+              overflow: 'auto',
               boxSizing: 'border-box',
               borderWidth: 0,
-              borderStartWidth: 2,
+              borderStartWidth: {
+                default: 0,
+                [SM]: 2
+              },
+              borderTopWidth: {
+                default: 2,
+                [SM]: 0
+              },
               borderColor: {
                 default: 'gray-200',
                 forcedColors: 'ButtonBorder'
@@ -200,19 +300,28 @@ export function ExampleApp2({onBack, children}: any) {
             default: 'layer-1',
             forcedColors: 'Background'
           },
-          padding: 8,
+          padding: 16,
           boxSizing: 'border-box',
           borderWidth: 0,
-          borderStartWidth: 2,
+          borderStartWidth: {
+            default: 0,
+            [SM]: 2
+          },
+          borderTopWidth: {
+            default: 2,
+            [SM]: 0
+          },
           borderColor: {
             default: 'gray-200',
             forcedColors: 'ButtonBorder'
           },
-          borderStyle: 'solid'
+          borderStyle: 'solid',
+          overflow: 'auto'
         })}>
         <ToggleButtonGroup
           aria-label="Panels"
-          orientation="vertical"
+          orientation={isLarge ? 'vertical' : 'horizontal'}
+          styles={style({marginX: 'auto', width: 'fit'})}
           isQuiet
           selectedKeys={selectedPanel ? [selectedPanel] : []}
           onSelectionChange={keys => {
@@ -237,7 +346,7 @@ export function ExampleApp2({onBack, children}: any) {
         </ToggleButtonGroup>
       </div>
     </div>
-  )
+  );
 }
 
 const text = style({
@@ -321,7 +430,17 @@ function Properties() {
               </ComboBox>
                 <NumberField aria-label="Font size" defaultValue={14} styles={style({ flexGrow: 1 })} />
               </div>
-              <div className={style({display: 'flex', gap: 4, justifyContent: 'space-between', alignItems: 'center', gridColumnStart: 'span 2'})}>
+              <div
+                className={style({
+                  display: 'flex',
+                  gap: 4,
+                  justifyContent: {
+                    default: 'start',
+                    [SM]: 'space-between'
+                  },
+                  alignItems: 'center',
+                  gridColumnStart: 'span 2'
+                })}>
                 <ToggleButtonGroup
                   aria-label="Font style"
                   density="compact"
@@ -395,7 +514,13 @@ function Comments() {
       author: 'Adriana Sullivan',
       avatar: 'https://www.untitledui.com/images/avatars/adriana-sullivan',
       date: 'July 14',
-      body: 'I love the colors! Can we add a little more pop?'
+      body: 'Transitions are smooth! Could we speed them up just a bit?'
+    },
+    {
+      author: 'Frank Whitaker',
+      avatar: 'https://www.untitledui.com/images/avatars/frank-whitaker?',
+      date: 'July 13',
+      body: 'Love the direction. Could we simplify the header a bit more?'
     }
   ]);
 
@@ -437,7 +562,7 @@ function Comments() {
         className={style({
           display: 'flex',
           flexDirection: 'column',
-          rowGap: 16,
+          rowGap: 20,
           marginX: -16,
           marginBottom: -16,
           padding: 16,
@@ -453,39 +578,9 @@ function Comments() {
   );
 }
 
-function Comment({author, avatar, date, body}: any) {
-  return (
-    <div
-      className={style({
-        display: 'grid',
-        gridTemplateAreas: [
-          'avatar name',
-          'avatar date',
-          '. .',
-          'body body'
-        ],
-        gridTemplateColumns: ['auto', '1fr'],
-        gridTemplateRows: ['auto', 'auto', 8, 'auto'],
-        columnGap: 8,
-        alignItems: 'center'
-      })}>
-      <Avatar styles={style({gridArea: 'avatar'})} src={avatar} size={32} />
-      <span className={style({gridArea: 'name', font: 'title-sm', color: {default: 'title', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
-        {author}
-      </span>
-      <span className={style({gridArea: 'date', font: 'detail-sm', color: {default: 'detail', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
-        {date}
-      </span>
-      <span className={style({gridArea: 'body', font: 'body', color: {default: 'body', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
-        {body}
-      </span>
-    </div>
-  )
-}
-
 function Assets() {
   return (
-    <div role="group" aria-label="Assets" className={style({padding: 16, height: 'full', display: 'flex', flexDirection: 'column'})}>
+    <div role="group" aria-label="Assets" className={style({padding: 16, boxSizing: 'border-box', height: 'full', display: 'flex', flexDirection: 'column'})}>
       <div className={style({font: 'title-lg'})}>Assets</div>
       <div
         className={style({

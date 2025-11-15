@@ -15,27 +15,72 @@ export function States() {
     <div
       className={style({
         display: 'grid',
-        gridTemplateAreas: [
-          'props divider code',
-          'preview divider code'
-        ],
-        gridTemplateColumns: ['1fr', 'min-content', 'max-content'],
-        gridTemplateRows: ['auto', '1fr'],
-        columnGap: 24,
+        gridTemplateAreas: {
+          default: [
+            'props',
+            'preview',
+            'divider',
+            'code'
+          ],
+          xl: [
+            'props divider code',
+            'preview divider code'
+          ]
+        },
+        gridTemplateColumns: {
+          default: ['1fr'],
+          xl: ['1fr', 'min-content', 'max-content']
+        },
+        gridTemplateRows: {
+          xl: ['auto', '1fr']
+        },
+        columnGap: {
+          default: 0,
+          xl: 24
+        },
+        rowGap: {
+          default: 24,
+          xl: 0
+        },
         alignItems: 'center',
         backgroundColor: 'layer-2',
-        borderRadius: 'lg',
+        borderRadius: {
+          default: 'none',
+          sm: 'lg'
+        },
         boxShadow: 'emphasized',
-        padding: 24
+        padding: 24,
+        margin: {
+          default: -16,
+          sm: 0
+        },
+        marginTop: 0
       })}>
-      <div className={style({gridArea: 'props', display: 'flex', alignItems: 'center', columnGap: 16})}>
-        <Picker label="Variant" labelPosition="side" value={variant} onChange={key => setVariant(key as any)}>
+      <div
+        className={style({
+          gridArea: 'props',
+          display: 'flex',
+          alignItems: 'center',
+          columnGap: 16
+        })}>
+        <Picker
+          label="Variant"
+          labelPosition="side"
+          value={variant}
+          onChange={key => setVariant(key as any)}
+          styles={style({width: 150})}>
           <PickerItem id="accent">accent</PickerItem>
           <PickerItem id="negative">negative</PickerItem>
         </Picker>
         <Checkbox isSelected={isDisabled} onChange={setDisabled}>Disabled</Checkbox>
       </div>
-      <div className={style({gridArea: 'preview', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+      <div
+        className={style({
+          gridArea: 'preview',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        })}>
         <Button
           ref={ref}
           onPressChange={setPressed}
@@ -51,6 +96,7 @@ export function States() {
             borderStyle: 'none',
             borderRadius: 'pill',
             transition: 'default',
+            disableTapHighlight: true,
             backgroundColor: {
               variant: {
                 accent: {
@@ -75,7 +121,18 @@ export function States() {
         </Button>
       </div>
       <Divider orientation="vertical" styles={style({gridArea: 'divider'})} />
-      <pre className={style({font: 'code-sm', marginY: 0, gridArea: 'code'})}>
+      <pre
+        className={style({
+          font: 'code-sm',
+          marginY: 0,
+          gridArea: 'code',
+          overflow: 'auto',
+          margin: {
+            default: -16,
+            sm: 0
+          },
+          marginTop: 0
+        })}>
         <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
           {'<'}<span className={styles.function}>Button</span>{'\n  '}
           <span className={styles.property}>className</span>{'={'}<span className={styles.variable}>states</span>{' => '}<span className={styles.function}>style</span>{'({\n    '}

@@ -19,7 +19,13 @@ export function Mobile() {
   return (
     <div
       className={style({
-        size: 'full',
+        height: 'full',
+        maxWidth: 464,
+        minHeight: 300,
+        marginX: {
+          default: -16,
+          sm: 'auto'
+        },
         backgroundSize: 'cover',
         contain: 'size'
       })}
@@ -36,7 +42,7 @@ export function Mobile() {
         })}
         style={{
           maskImage: `url(${iphoneMask.split('?')[0]}), linear-gradient(#fff 0 0)`,
-          maskSize: 'cover',
+          maskSize: '100%',
           maskComposite: 'exclude',
           padding: '8%',
         }}>
