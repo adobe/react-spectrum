@@ -172,6 +172,10 @@ export class HebrewCalendar implements Calendar {
     return getDaysInMonth(date.year, date.month);
   }
 
+  getMaxDays(): number {
+    return 30;
+  }
+
   getMonthsInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 13 : 12;
   }
