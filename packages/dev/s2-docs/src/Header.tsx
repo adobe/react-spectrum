@@ -1,6 +1,6 @@
 'use client';
 
-import {Badge, Text} from '@react-spectrum/s2';
+import {Badge, pressScale, Text} from '@react-spectrum/s2';
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
 import BetaApp from '@react-spectrum/s2/icons/BetaApp';
@@ -10,7 +10,6 @@ import GithubLogo from './icons/GithubLogo';
 import {Link} from 'react-aria-components';
 // @ts-ignore
 import {PageProps} from '@parcel/rsc';
-import {pressScale} from '@react-spectrum/s2';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 
