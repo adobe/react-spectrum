@@ -109,6 +109,15 @@ describe('ComboBox', () => {
     expect(button).toHaveAttribute('data-pressed');
   });
 
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestComboBox isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support filtering sections', async () => {
     let tree = render(
       <ComboBox>
