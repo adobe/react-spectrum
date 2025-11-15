@@ -51,5 +51,11 @@ export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
 export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';
+export {getOffsetType} from './getOffsetType';
+export {getScrollLeft, getScrollTop, setScrollLeft, setScrollTop} from './getScrollOffset';
+export {useScrollObserver} from './useScrollObserver';
+export {useScrollView} from './useScrollView';
 
+export type {ScrollObserverProps} from './useScrollObserver';
+export type {ScrollViewProps, ScrollViewAria} from './useScrollView';
 export type {LoadMoreSentinelProps} from './useLoadMoreSentinel';

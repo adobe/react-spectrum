@@ -14,9 +14,8 @@ import {Collection, Key} from '@react-types/shared';
 import {InvalidationContext} from './types';
 import {Layout} from './Layout';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Rect} from './Rect';
+import {Rect, Size} from '@react-stately/utils';
 import {ReusableView} from './ReusableView';
-import {Size} from './Size';
 import {Virtualizer} from './Virtualizer';
 
 // During SSR, React emits a warning when calling useLayoutEffect.

@@ -76,3 +76,11 @@ export const isAndroid: () => boolean = cached(function () {
 export const isFirefox: () => boolean = cached(function () {
   return testUserAgent(/Firefox/i);
 });
+
+export const isReactAct: () => boolean = cached(function () {
+  // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+  // https://github.com/reactwg/react-18/discussions/102
+  return typeof global.IS_REACT_ACT_ENVIRONMENT === 'boolean' 
+    ? global.IS_REACT_ACT_ENVIRONMENT 
+    : typeof jest !== 'undefined';
+});
