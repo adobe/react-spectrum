@@ -55,7 +55,7 @@ interface SearchMenuProps {
   pages: Page[],
   currentPage: Page,
   onClose: () => void,
-  overlayId: string,
+  overlayId?: string,
   initialSearchValue: string
 }
 
@@ -145,7 +145,8 @@ export function SearchMenu(props: SearchMenuProps) {
     searchValue,
     sectionTags,
     resourceTags,
-    currentPage.exports?.section?.toLowerCase() || 'components'
+    currentPage.exports?.section?.toLowerCase() || 'components',
+    currentPage.exports?.title
   );
 
   const filteredIcons = useFilteredIcons(searchValue);

@@ -20,8 +20,9 @@ import {Popover} from 'tailwind-starter/Popover';
 import {Button} from 'tailwind-starter/Button';
 import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
 import reactAriaFavicon from 'url:../../assets/react-aria.ico';
+import SearchMenuWrapper from '../../src/SearchMenuWrapper';
 
-export const section = 'Getting started';
+export const section = 'Overview';
 export const title = 'Home';
 export const hideFromSearch = true;
 
@@ -102,7 +103,7 @@ export const hideFromSearch = true;
 
         <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
           <a href="getting-started.html" className="no-underline bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95">Get Started</a>
-          <a href="components.html" className="no-underline bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95">Explore Components</a>
+          <SearchMenuWrapper pages={props.pages} currentPage={props.currentPage} />
         </div>
 
         <div className="relative pt-10 md:pt-20 md:mt-20">
