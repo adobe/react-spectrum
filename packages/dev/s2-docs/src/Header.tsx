@@ -1,7 +1,9 @@
 'use client';
 
+import {Badge, Text} from '@react-spectrum/s2';
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
+import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
@@ -175,6 +177,10 @@ export default function Header(props: PageProps) {
             isSearchOpen={searchOpen}
             overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
+            <Badge variant="indigo" size="M" styles={style({marginEnd: 8})}>
+              <BetaApp />
+              <Text>Beta Preview</Text>
+            </Badge>
             <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
