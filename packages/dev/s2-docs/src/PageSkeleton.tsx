@@ -1,8 +1,8 @@
 'use client';
 
 import {getTextWidth} from './textWidth';
+import {Image, Skeleton, Text} from '@react-spectrum/s2';
 import React from 'react';
-import {Skeleton, Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const h1 = style({
@@ -34,27 +34,28 @@ const skeletonH2 = style({
   width: '40%'
 });
 
-const skeletonVisualExample = style({
-  backgroundColor: 'layer-1',
-  padding: {
-    default: 12,
-    lg: 24
-  },
-  marginTop: {
-    default: 20
-  },
-  borderRadius: 'xl',
-  width: 'full',
-  boxSizing: 'border-box',
-  minHeight: {
-    default: 200,
-    lg: 300
-  }
-});
-
 function SkeletonVisualExample() {
   return (
-    <div className={skeletonVisualExample} />
+    <Image
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E"
+      styles={style({
+        padding: {
+          default: 12,
+          lg: 24
+        },
+        marginTop: {
+          default: 20
+        },
+        borderRadius: 'xl',
+        width: 'full',
+        boxSizing: 'border-box',
+        height: {
+          default: 200,
+          lg: 300
+        },
+        objectFit: 'cover'
+      })}
+      alt="Loading example" />
   );
 }
 

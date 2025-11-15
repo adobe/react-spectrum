@@ -1,6 +1,5 @@
 'use client-entry';
 
-import {clearPendingPage} from './Nav';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
@@ -14,7 +13,6 @@ let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
     link.href &&
     (!link.target || link.target === '_self') &&
     link.origin === location.origin &&
-    (link.pathname !== location.pathname || link.hash) &&
     !link.hasAttribute('download') &&
     link.pathname.startsWith(pathname)
   );
@@ -124,7 +122,6 @@ async function navigate(pathname: string, push = false) {
         return;
       }
       
-      clearPendingPage();
       try {
         let errorRes = await fetchRSC<ReactElement>('/error.rsc');
         
@@ -151,7 +148,6 @@ async function navigate(pathname: string, push = false) {
     }
   })();
   
-  // Store the promise for NavigationSuspense to use
   setNavigationPromise(navigationPromise, pathname);
 }
 
@@ -177,7 +173,7 @@ document.addEventListener('pointerover', e => {
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname)) {
+  if (link && isClientLink(link, publicUrlPathname) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -202,7 +198,7 @@ document.addEventListener('focus', e => {
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname)) {
+  if (link && isClientLink(link, publicUrlPathname) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
