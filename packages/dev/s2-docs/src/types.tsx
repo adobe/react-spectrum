@@ -13,6 +13,7 @@
 import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
 import {Code, styles as codeStyles} from './Code';
 import {ColorLink, Link as SpectrumLink} from './Link';
+import {Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
 import {getDoc} from 'globals-docs';
 import Markdown from 'markdown-to-jsx';
 import React, {ReactNode} from 'react';
@@ -731,26 +732,6 @@ const styleMacroTypeLinks = {
   }
 };
 
-interface StyleMacroTypePopoverProps {
-  typeName: string,
-  description: ReactNode,
-  body?: ReactNode,
-  link?: string
-}
-
-function StyleMacroTypePopover({typeName, description, body}: StyleMacroTypePopoverProps) {
-  return (
-    <TypePopover name={typeName}>
-      <>
-        <p className={style({font: 'body'})}>
-          {description}
-        </p>
-        {body}
-      </>
-    </TypePopover>
-  );
-}
-
 interface StyleMacroPropertyDefinition {
   values: string[],
   additionalTypes?: string[],
@@ -765,32 +746,25 @@ interface StyleMacroPropertiesProps {
 
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   let propertyNames = Object.keys(properties);
-  let hasMapping = Object.values(properties).some(p => p.mapping);
 
   return (
-    <Table>
-      <TableHeader>
-        <tr>
-          <TableColumn>Property</TableColumn>
-          <TableColumn>Values</TableColumn>
-          {hasMapping && <TableColumn>Mapping</TableColumn>}
-        </tr>
-      </TableHeader>
-      <TableBody>
-        {propertyNames.map((propertyName, index) => {
-          let propDef = properties[propertyName];
-          let values = propDef.values;
-          let links = propDef.links || {};
+    <div className={style({display: 'flex', flexDirection: 'column'})}>
+      {propertyNames.map((propertyName, index) => {
+        let propDef = properties[propertyName];
+        let values = propDef.values;
+        let links = propDef.links || {};
 
-          return (
-            <React.Fragment key={index}>
-              <TableRow>
-                <TableCell role="rowheader" hideBorder={!!propDef.description}>
-                  <code className={codeStyle}>
-                    <span className={codeStyles.attribute}>{propertyName}</span>
-                  </code>
-                </TableCell>
-                <TableCell hideBorder={!!propDef.description}>
+        return (
+          <Disclosure key={index}>
+            <DisclosureTitle>
+              <code className={codeStyle}>
+                <span className={codeStyles.attribute}>{propertyName}</span>
+              </code>
+            </DisclosureTitle>
+            <DisclosurePanel>
+              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+                <div>
+                  <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
                   <code className={codeStyle}>
                     {values.map((value, i) => (
                       <React.Fragment key={i}>
@@ -813,46 +787,60 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                       return (
                         <React.Fragment key={`type-${i}`}>
                           {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
-                          {/* eslint-disable-next-line no-nested-ternary */}
-                          {typeLink ? (
-                            // only if the type link has a description and/or body do we want to render the type popover
-                            // this is to make things like baseColor
-                            typeLink.link && !typeLink.description && !typeLink.body ? (
-                              <ColorLink href={typeLink.link} type="variable">{typeName}</ColorLink>
-                            ) : (
-                              <StyleMacroTypePopover
-                                typeName={typeName}
-                                description={typeLink.description}
-                                body={typeLink.body} />
-                            )
-                          ) : undefined}
+                          {typeLink?.link && !typeLink.description && !typeLink.body ? (
+                            <ColorLink href={typeLink.link} type="variable">{typeName}</ColorLink>
+                          ) : (
+                            <span className={codeStyles.variable}>{typeName}</span>
+                          )}
                         </React.Fragment>
                       );
                     })}
                   </code>
-                </TableCell>
-                {hasMapping && (
-                  <TableCell hideBorder={!!propDef.description}>
+                </div>
+                {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
+                  let typeLink = styleMacroTypeLinks[typeName];
+                  if (typeLink?.description || typeLink?.body) {
+                    return (
+                      <div key={`type-desc-${i}`}>
+                        <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
+                          <code className={codeStyle}>
+                            <span className={codeStyles.variable}>{typeName}</span>
+                          </code>
+                        </h4>
+                        {typeLink.description && (
+                          <p className={style({font: 'body', marginBottom: 8})}>
+                            {typeLink.description}
+                          </p>
+                        )}
+                        {typeLink.body}
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+                {propDef.mapping && (
+                  <div>
+                    <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Maps to</h4>
                     <code className={codeStyle}>
-                      {propDef.mapping?.map((mappedProp, i) => (
+                      {propDef.mapping.map((mappedProp, i) => (
                         <React.Fragment key={i}>
                           {i > 0 && <Punctuation>{', '}</Punctuation>}
                           <span className={codeStyles.attribute}>{mappedProp}</span>
                         </React.Fragment>
                       ))}
                     </code>
-                  </TableCell>
+                  </div>
                 )}
-              </TableRow>
-              {propDef.description && (
-                <TableRow>
-                  <TableCell colSpan={hasMapping ? 3 : 2}>{propDef.description}</TableCell>
-                </TableRow>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </TableBody>
-    </Table>
+                {propDef.description && (
+                  <div className={style({font: 'body'})}>
+                    {propDef.description}
+                  </div>
+                )}
+              </div>
+            </DisclosurePanel>
+          </Disclosure>
+        );
+      })}
+    </div>
   );
 }
