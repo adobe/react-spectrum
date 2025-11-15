@@ -75,7 +75,7 @@ const TreeExampleStatic = (args: TreeViewProps<any>): ReactElement => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView
       {...args}
-      disabledKeys={['projects-1']}
+      disabledKeys={['projects-1', 'projects-2']}
       aria-label="test static tree"
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
