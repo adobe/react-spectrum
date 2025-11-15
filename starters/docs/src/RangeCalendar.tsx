@@ -7,7 +7,8 @@ import {
   RangeCalendarProps as AriaRangeCalendarProps,
   Text,
   composeRenderProps,
-  CalendarCellProps
+  CalendarCellProps,
+  CalendarCarousel
 } from 'react-aria-components';
 import {Button} from './Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
@@ -30,9 +31,11 @@ export function RangeCalendar<T extends DateValue>(
           <Heading />
           <Button slot="next" variant="quiet"><ChevronRight size={18} /></Button>
         </header>
-        <CalendarGrid>
-          {(date) => <CalendarCell date={date} />}
-        </CalendarGrid>
+        <CalendarCarousel>
+          <CalendarGrid>
+            {(date) => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </CalendarCarousel>
         {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
       </AriaRangeCalendar>
     )

@@ -23,7 +23,10 @@ const example = style({
   padding: {
     default: 12,
     lg: 24
-  }
+  },
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 24
 });
 
 const standaloneCode = style({

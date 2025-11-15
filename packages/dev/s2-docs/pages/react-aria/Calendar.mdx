@@ -185,7 +185,7 @@ Set the `visibleDuration` prop and render multiple `CalendarGrid` elements to di
 
 ```tsx render docs={docs.exports.Calendar} links={docs.links} props={['visibleDuration', 'pageBehavior', 'firstDayOfWeek']} initialProps={{visibleDuration: {months: 2}}} wide
 "use client";
-import {Calendar, Heading} from 'react-aria-components';
+import {Calendar, Heading, CalendarCarousel} from 'react-aria-components';
 import {CalendarGrid, CalendarCell} from 'vanilla-starter/Calendar';
 import {Button} from 'vanilla-starter/Button';
 import {useDateFormatter} from 'react-aria';
@@ -206,29 +206,38 @@ function Example(props) {
       ///- begin highlight -///
       /* PROPS */
       ///- end highlight -///
-      style={{display: 'flex', gap: 12, overflow: 'auto'}}
     >
       {({state}) => (
-        [...Array(props.visibleDuration.months).keys()].map(i => (
-          <div key={i} style={{flex: 1}}>
-            <header style={{minHeight: 32}}>
-              {i === 0 && 
-                <Button slot="previous" variant="quiet">
-                  <ChevronLeft />
-                </Button>
-              }
-              <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
-              {i === props.visibleDuration.months - 1 && 
-                <Button slot="next" variant="quiet">
-                  <ChevronRight />
-                </Button>
-              }
-            </header>
-            <CalendarGrid offset={{months: i}}>
-              {date => <CalendarCell date={date} />}
-            </CalendarGrid>
+        <>
+          <div style={{display: 'flex', gap: 12, width: '100%'}}>
+            {[...Array(props.visibleDuration.months).keys()].map(i => (
+              <header key={i} style={{flex: 1, minHeight: 32}}>
+                {i === 0 && 
+                  <Button slot="previous" variant="quiet">
+                    <ChevronLeft />
+                  </Button>
+                }
+                <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
+                {i === props.visibleDuration.months - 1 && 
+                  <Button slot="next" variant="quiet">
+                    <ChevronRight />
+                  </Button>
+                }
+              </header>
+            ))}
           </div>
-        ))
+          <CalendarCarousel>
+            <div style={{display: 'flex', gap: 12}}>
+              {[...Array(props.visibleDuration.months).keys()].map(i => (
+                <div key={i} style={{flex: 1}}>
+                  <CalendarGrid offset={{months: i}}>
+                    {date => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </div>
+              ))}
+            </div>
+          </CalendarCarousel>
+        </>
       )}
     </Calendar>
   );
@@ -306,19 +315,21 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
   role="img"
   aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
-```tsx links={{Calendar: '#calendar', Button: 'Button.html', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+```tsx links={{Calendar: '#calendar', Button: 'Button.html', CalendarCarousel: '#calendarcarousel', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
 <Calendar>
   <Button slot="previous" />
   <Heading />
   <Button slot="next" />
-  <CalendarGrid>
-    <CalendarGridHeader>
-      {day => <CalendarHeaderCell />}
-    </CalendarGridHeader>
-    <CalendarGridBody>
-      {date => <CalendarCell date={date} />}
-    </CalendarGridBody>
-  </CalendarGrid>
+  <CalendarCarousel> (optional)
+    <CalendarGrid>
+      <CalendarGridHeader>
+        {day => <CalendarHeaderCell />}
+      </CalendarGridHeader>
+      <CalendarGridBody>
+        {date => <CalendarCell date={date} />}
+      </CalendarGridBody>
+    </CalendarGrid>
+  </CalendarCarousel>
   <Text slot="errorMessage" />
 </Calendar>
 ```
@@ -326,6 +337,10 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 ### Calendar
 
 <PropTable component={docs.exports.Calendar} links={docs.links} showDescription />
+
+### CalendarCarousel
+
+<PropTable component={docs.exports.CalendarCarousel} links={docs.links} showDescription />
 
 ### CalendarGrid
 
