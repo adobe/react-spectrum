@@ -1861,4 +1861,18 @@ describe('ListBox', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('onKeyDown', () => {
+    it('should call onKeyDown handler when key is pressed on item', async () => {
+      let onKeyDown = jest.fn();
+      renderListbox({}, {onKeyDown});
+
+      await user.tab();
+      await user.keyboard('{Delete}');
+      expect(onKeyDown).toHaveBeenCalledTimes(1);
+
+      await user.keyboard('{Backspace}');
+      expect(onKeyDown).toHaveBeenCalledTimes(2);
+    });
+  });
 });
