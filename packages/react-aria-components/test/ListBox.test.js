@@ -1863,15 +1863,15 @@ describe('ListBox', () => {
   });
 
   describe('onKeyDown', () => {
-    it('should call onKeyDown handler when key is pressed on item', () => {
+    it('should call onKeyDown handler when key is pressed on item', async () => {
       let onKeyDown = jest.fn();
-      let {getAllByRole} = renderListbox({}, {onKeyDown});
-      let options = getAllByRole('option');
+      renderListbox({}, {onKeyDown});
 
-      fireEvent.keyDown(options[0], {key: 'Delete'});
+      await user.tab();
+      await user.keyboard('{Delete}');
       expect(onKeyDown).toHaveBeenCalledTimes(1);
 
-      fireEvent.keyDown(options[1], {key: 'Backspace'});
+      await user.keyboard('{Backspace}');
       expect(onKeyDown).toHaveBeenCalledTimes(2);
     });
   });
