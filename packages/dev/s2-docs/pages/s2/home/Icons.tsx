@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 // @ts-ignore
-import icons from '/packages/@react-spectrum/s2/s2wf-icons/S2_Icon_[A-D]*.svg';
+import icons from '/packages/@react-spectrum/s2/s2wf-icons/S2_Icon_[A-F]*.svg';
 import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
-import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic1/[A-E]*.tsx';
+import illustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic1/[A-G]*.tsx';
 import { IllustrationContext } from '@react-spectrum/s2';
 
 export function Icons() {
@@ -21,7 +21,7 @@ export function Illustrations() {
 }
 
 function IconGrid({icons, size, radius = 4 * size, intensity = 0.5}: any) {
-  let [cols, setCols] = useState(22);
+  let [width, setWidth] = useState(0);
   let [pos, setPos] = useState<{x: number, y: number} | null>(null);
   let [transition, setTransition] = useState(true);
 
@@ -29,18 +29,19 @@ function IconGrid({icons, size, radius = 4 * size, intensity = 0.5}: any) {
     <div
       className={style({
         display: 'grid',
+        marginTop: 32,
+        justifyContent: 'space-between'
       })}
-      ref={el => {
-        if (el) {
-          setCols(Math.floor(el.getBoundingClientRect().width / size));
-        }
-      }}
       style={{
-        gridTemplateColumns: `repeat(auto-fit, ${size}px)`,
-        gridAutoRows: size
+        gridTemplateColumns: `repeat(auto-fit, calc(${size}px * var(--s2-scale, 1)))`,
+        gridAutoRows: `calc(${size}px * var(--s2-scale, 1))`,
+        // Display 6 rows of 32px icons
+        maxHeight: `calc(${Math.floor(32 * 6 / size) * size}px * var(--s2-scale, 1))`,
+        overflow: 'clip'
       }}
       onPointerEnter={e => {
         if (e.pointerType === 'mouse') {
+          setWidth(e.currentTarget.getBoundingClientRect().width);
           setTransition(true);
           setTimeout(() => {
             setTransition(false);
@@ -66,9 +67,12 @@ function IconGrid({icons, size, radius = 4 * size, intensity = 0.5}: any) {
         let scale = 1;
         let opacity = 1;
         if (pos) {
+          let cols = Math.floor(width / size);
           let row = Math.floor(i / cols);
           let col = i % cols;
-          let cx = col * size + size / 2;
+          let gap = (width - (cols * size)) / (cols - 1);
+          let colWidth = size + gap;
+          let cx = col * colWidth + size / 2;
           let cy = row * size + size / 2;
           let dx = pos.x - cx;
           let dy = pos.y - cy;
@@ -81,6 +85,11 @@ function IconGrid({icons, size, radius = 4 * size, intensity = 0.5}: any) {
         return (
           <div
             key={i}
+            className={style({
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            })}
             style={{
               scale,
               opacity,

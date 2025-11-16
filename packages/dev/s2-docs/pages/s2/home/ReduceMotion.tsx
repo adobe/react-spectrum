@@ -27,7 +27,10 @@ export function ReduceMotion() {
           overflow: 'clip',
           backgroundColor: 'layer-2',
           boxShadow: 'elevated',
-          borderRadius: 'lg',
+          borderRadius: {
+            default: 'none',
+            sm: 'lg'
+          },
           padding: 32,
           display: 'flex',
           flexDirection: {
@@ -43,7 +46,12 @@ export function ReduceMotion() {
             sm: 'center'
           },
           gap: 16,
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          margin: {
+            default: -16,
+            sm: 0
+          },
+          marginTop: 0
         })}>
         <Button
           size="L"
