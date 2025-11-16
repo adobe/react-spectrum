@@ -236,7 +236,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
     // Clear focused key when input value changes and display filtered collection again.
     if (inputValue !== lastValue) {
-      selectionManager.setFocusedKey(null);
+      const firstKey = filteredCollection.getFirstKey();
+      if(firstKey) selectionManager.setFocusedKey(firstKey);
       setShowAllItems(false);
 
       // Set selectedKey to null when the user clears the input.
