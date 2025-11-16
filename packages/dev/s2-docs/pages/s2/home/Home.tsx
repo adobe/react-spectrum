@@ -6,7 +6,7 @@ import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
-import { Provider } from "@react-spectrum/s2";
+import { LinkButton, Provider } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
 import { ExampleApp2 } from "./ExampleApp2";
 import { Rems } from "./Rems";
@@ -63,8 +63,13 @@ export function Home() {
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%'
       }}>
-      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: 16, paddingY: 96, maxWidth: 1024})}>
-        <h1 id={headingId} className={style({font: 'heading-3xl', marginTop: 0, marginBottom: 48, color: 'white'})}>React Spectrum</h1>
+      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
+        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>React Spectrum</h1>
+        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>Subtitle</p>
+        <div className={style({display: 'flex', gap: 16, marginTop: 32, marginBottom: 56})}>
+          <LinkButton size="XL" staticColor="white" href="getting-started.html">Get started</LinkButton>
+          <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum.html">Explore components</LinkButton>
+        </div>
         <section aria-label="Example app" className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
           <ExampleApp />
         </section>

@@ -29,7 +29,7 @@ export function States() {
         },
         gridTemplateColumns: {
           default: ['1fr'],
-          xl: ['1fr', 'min-content', 'max-content']
+          xl: ['minmax(max-content, 1fr)', 'min-content', 'minmax(0, max-content)']
         },
         gridTemplateRows: {
           xl: ['auto', '1fr']

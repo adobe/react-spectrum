@@ -1,6 +1,7 @@
 import {ExampleList} from './ExampleList';
-import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
-import type {Page, PageProps, TocNode} from '@parcel/rsc';
+import {Nav} from '../src/Nav';
+import {OptimisticMobileToc, OptimisticToc} from './OptimisticToc';
+import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
 // @ts-ignore
 import '../src/client';
@@ -9,11 +10,13 @@ import internationalizedFavicon from 'url:../assets/internationalized.ico';
 // @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
 import './anatomy.css';
+import './footer.css';
 import ChevronRightIcon from '@react-spectrum/s2/icons/ChevronRight';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
+import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {getTextWidth} from './textWidth';
@@ -22,7 +25,7 @@ import Header from './Header';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link, TitleLink} from './Link';
 import {MobileHeader} from './MobileHeader';
-import {PickerItem, Provider} from '@react-spectrum/s2';
+import {NavigationSuspense} from './NavigationSuspense';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {TypeLink} from './types';
@@ -76,10 +79,6 @@ const subPageComponents = (previousPage?: Page) => ({
     </div>
   )
 });
-
-function anchorId(children) {
-  return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
-}
 
 const getTitle = (currentPage: Page): string => {
   const explicitTitle = (currentPage as any).pageTitle || currentPage.exports?.pageTitle;
@@ -138,6 +137,36 @@ let articleStyles = style({
   width: 'full',
   height: 'fit'
 });
+
+function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer
+      className={style({
+        marginTop: 32,
+        paddingY: 12
+      })}>
+      <Divider size="S" />
+      <ul
+        className={style({
+          display: 'flex',
+          justifyContent: 'end',
+          flexWrap: 'wrap',
+          paddingX: 12,
+          margin: 0,
+          marginTop: 16,
+          font: 'body-2xs',
+          listStyleType: 'none'
+        })}>
+        <li>Copyright © {year} Adobe. All rights reserved.</li>
+        <li><Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">Privacy</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">Terms of Use</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">Cookies</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">Do not sell my personal information</Link></li>
+      </ul>
+    </footer>
+  );
+}
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
@@ -218,14 +247,18 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             gap: {
               default: 0,
               lg: 12
+            },
+            minHeight: {
+              default: 'screen',
+              lg: 'auto'
             }
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 1 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
+            toc={<OptimisticMobileToc currentPage={currentPage} pages={pages} />}
             pages={pages}
             currentPage={currentPage} />
-          <div className={style({display: 'flex', width: 'full'})}>
+          <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
             {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
             <main
               key={currentPage.url}
@@ -257,78 +290,59 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   lg: 'auto'
                 }
               })}>
-              <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
-                <article
-                  className={articleStyles({isWithToC: hasToC})}>
-                  {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {
-                    components: isSubpage ?
-                      subPageComponents(parentPage) :
-                      components,
-                    pages
-                  })}
-                  {currentPage.exports?.relatedPages && (
-                    <MobileRelatedPages pages={currentPage.exports.relatedPages} />
-                  )}
-                </article>
-              </CodePlatterProvider>
+              <div
+                className={style({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flexGrow: 1,
+                  width: 'full'
+                })}>
+                <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                  <NavigationSuspense pages={pages}>
+                    <article
+                      className={articleStyles({isWithToC: hasToC})}>
+                      {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
+                      {React.cloneElement(children, {
+                        components: isSubpage ?
+                          subPageComponents(parentPage) :
+                          components,
+                        pages
+                      })}
+                      {currentPage.exports?.relatedPages && (
+                        <MobileRelatedPages pages={currentPage.exports.relatedPages} />
+                      )}
+                    </article>
+                  </NavigationSuspense>
+                </CodePlatterProvider>
+                <Footer />
+              </div>
               {hasToC && <aside
                 className={style({
                   position: 'sticky',
                   top: 0,
-                  height: 'fit',
-                  maxHeight: 'screen',
-                  overflow: 'auto',
+                  height: {
+                    default: 'fit',
+                    lg: '[calc(100vh - 72px)]'
+                  },
                   paddingY: 32,
+                  paddingX: 4,
                   boxSizing: 'border-box',
+                  width: 180,
+                  flexShrink: 0,
                   display: {
                     default: 'none',
-                    lg: 'block'
-                  }
+                    lg: 'flex'
+                  },
+                  flexDirection: 'column'
                 })}>
-                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-                {currentPage.exports?.relatedPages && (
-                  <RelatedPages pages={currentPage.exports.relatedPages} />
-                )}
+                <OptimisticToc currentPage={currentPage} pages={pages} />
               </aside>}
             </main>
           </div>
         </div>
+        <ToastContainer placement="bottom" />
       </body>
     </Provider>
-  );
-}
-
-function Toc({toc}) {
-  return (
-    <OnPageNav>
-      <SideNav>
-        {toc.map((c, i) => (
-          <SideNavItem key={i}>
-            <SideNavLink href={'#' + anchorId(c.title)}>{c.title}</SideNavLink>
-            {c.children.length > 0 && <Toc toc={c.children} />}
-          </SideNavItem>
-        ))}
-      </SideNav>
-    </OnPageNav>
-  );
-}
-
-function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
-  return (
-    <div className={style({paddingTop: 24})}>
-      <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Related pages</div>
-      <OnPageNav>
-        <SideNav>
-          {pages.map((page, i) => (
-            <SideNavItem key={i}>
-              <SideNavLink href={page.url}>{page.title}</SideNavLink>
-            </SideNavItem>
-          ))}
-        </SideNav>
-      </OnPageNav>
-    </div>
   );
 }
 
@@ -360,35 +374,6 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
     </div>
   );
 }
-
-function MobileToc({toc, currentPage}) {
-  let relatedPages = currentPage.exports?.relatedPages;
-  return (
-    <MobileOnPageNav currentPage={currentPage}>
-      {renderMobileToc(toc)}
-      {relatedPages && relatedPages.map((page, i) => (
-        <PickerItem key={`related-${i}`} id={page.url} href={page.url}>{page.title}</PickerItem>
-      ))}
-    </MobileOnPageNav>
-  );
-}
-
-function renderMobileToc(toc: TocNode[], seen = new Map()) {
-  return toc.map((c) => {
-    let href = c.level === 1 ? '#top' : '#' + anchorId(c.title);
-    if (seen.has(href)) {
-      seen.set(href, seen.get(href) + 1);
-      href += '-' + seen.get(href);
-    } else {
-      seen.set(href, 1);
-    }
-    return (<React.Fragment key={href}>
-      <PickerItem id={href} href={href}>{c.title}</PickerItem>
-      {c.children.length > 0 && renderMobileToc(c.children, seen)}
-    </React.Fragment>);
-  });
-}
-
 export function Time({date}: {date: string}) {
   let dateObj = new Date(date);
   return (

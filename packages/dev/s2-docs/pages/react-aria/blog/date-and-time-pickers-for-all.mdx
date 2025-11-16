@@ -44,7 +44,7 @@ In building these components, we have focused on the following areas:
 - **Accessibility** – All of our date and time picker components have been tested across desktop and mobile devices, and with many different input methods including mouse, touch, and keyboard. We have worked hard to ensure screen reader announcements are clear and consistent.
 - **Customizability** – As with all of React Aria, our hooks give you full control over the rendering and styling of your components, while letting us handle the internationalization and accessibility challenges for you. We have examples using many different styling libraries, such as Tailwind CSS, Styled Components, CSS modules, and Chakra UI.
 
-<video src={datepickerVideo} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={datepickerVideo} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 ## User experience
 
@@ -66,7 +66,7 @@ We took a different approach, and followed the lead of native date picker UIs on
 
 This approach has benefits for internationalization and accessibility, as well as usability on mobile. For internationalization, individual segments avoid the problem of parsing dates in various formats entirely. The date format is automatically determined based on the locale, and the user only needs to fill in the values and not worry about messing up the separators or getting the order wrong. Each segment is also individually labeled for accessibility, so users always know which field they are on (e.g. "year", "month", "day", etc.). This is much easier to use for screen reader users than a plain text field where the expected format is unknown. Finally, on mobile, we can take advantage of the numeric software keyboard, which is nicer to use than a full QWERTY keyboard.
 
-<video src={datepickerScreenReader} loop autoPlay muted style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}} />
+<video src={datepickerScreenReader} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 The [useDateField](https://react-spectrum.adobe.com/react-aria/useDateField.html) and [useTimeField](https://react-spectrum.adobe.com/react-aria/useTimeField.html) hooks (or the [DateField](../../s2/DateField.html) and [TimeField](../../s2/TimeField.html) React Spectrum components) may be used standalone in cases where the user is likely to already know the date they need to enter, or the date is far in the past or future, e.g. a birthday or passport expiration date. In these cases, browsing through a calendar UI to find a date is tedious, and entering the date with a keyboard is much more efficient.
 
@@ -84,7 +84,7 @@ For range calendars, we also ensure that the selected date range is clearly comm
 
 Another important area we considered with our calendar components was mobile. With touch screen readers, users access each control on screen using swipe gestures to move a virtual cursor forward and backward. Because of this, calendars can be quite tedious to navigate because they contain so many elements, especially when multiple months are displayed at once. We made sure to provide context when a user enters a calendar of the whole range of visible dates, and included an extra visually hidden "next" button at the end of the dates so a user doesn't need to swipe all the way back to the start to navigate to the next month. The column headers are also skipped to improve ease of navigation, since the day names are already included in the label of each cell.
 
-<video src={calendarMobileScreenReader + '#t=0.1'} preload="metadata" controls aria-label="Demo of the Calendar component using VoiceOver on iOS" style={{maxHeight: '600px', maxWidth: 'min(100%, 700px)', display: 'block', margin: '40px auto'}}>
+<video src={calendarMobileScreenReader + '#t=0.1'} preload="metadata" controls aria-label="Demo of the Calendar component using VoiceOver on iOS" style={{maxHeight: '600px', width: '100%', display: 'block', margin: '40px auto'}}>
   <track src={calendarMobileScreenReaderVTT} default kind="captions" label="English Captions" srcLang="en-us" type="text/vtt" />
 </video>
 
@@ -189,4 +189,3 @@ See [the docs](../../internationalized/date/ZonedDateTime.html#setting-fields) f
 Correctly manipulating dates and times is *really hard*. Making assumptions about calendar systems, time zones, locales, date and time arithmetic, etc. is a recipe for bugs when users around the world interact with your app. [@internationalized/date](../../internationalized/date/index.html) provides a library of objects and functions that help handle these differences and allow you to manipulate dates from all users consistently. It is a completely independent library, so even if you aren't using React Aria, React Spectrum, or even React, you can still take advantage of it for all your date and time manipulation needs!
 
 In addition, React Aria hooks such as [useDatePicker](https://react-spectrum.adobe.com/react-aria/useNumberField.html) and [useCalendar](https://react-spectrum.adobe.com/react-aria/useCalendar.html) can help you build international and accessible date and time picking components with completely customizable styles. We've been working on these components for a [long time](https://x.com/devongovett/status/1136402636754673664), and we really hope you like them!
-

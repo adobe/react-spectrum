@@ -19,12 +19,18 @@ import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
 import Search from '@react-spectrum/s2/icons/Search';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
 import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup} from '@react-spectrum/s2';
 import {Key, useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
 import { useEffect, useRef, useState } from 'react';
 import { ExampleApp2, FilterContext } from './ExampleApp2';
 import { flushSync } from 'react-dom';
+import DropToUpload from '@react-spectrum/s2/illustrations/gradient/generic2/DropToUpload';
+import AIGenerateImage from '@react-spectrum/s2/illustrations/gradient/generic2/AIGenerateImage';
+import Document from '@react-spectrum/s2/illustrations/gradient/generic2/Document';
+import ImageStack from '@react-spectrum/s2/illustrations/gradient/generic2/ImageStack';
+// @ts-ignore
+import banner from 'url:./banner.png?as=webp';
 
 const XS = `@container (min-width: ${480 / 16}rem)`;
 const SM = `@container (min-width: ${(640 / 16)}rem)`;
@@ -37,6 +43,7 @@ export function ExampleApp() {
     <div className={style({containerType: 'inline-size', height: 'full'})}>
       <AppFrame hidden={!!detail}>
         <Example onAction={setDetail} />
+        {/* <HomePage /> */}
       </AppFrame>
       {detail && img &&
         <Detail detail={detail} img={img} setDetail={setDetail} />
@@ -502,5 +509,82 @@ export function AccountMenu() {
         </div>
       </Popover>
     </MenuTrigger>
+  );
+}
+
+function HomePage() {
+  return (
+    <div className={style({ display: 'flex', flexDirection: 'column', size: 'full', overflow: 'auto' })}>
+      <div className={style({ paddingX: 32, marginBottom: 32, boxSizing: 'border-box', display: { default: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'center' })} style={{ aspectRatio: '1280/322', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundImage: `url(${banner})` }}>
+        <h2 className={style({ font: { default: 'heading', lg: 'heading-lg' }, color: 'black' })}>Find faster with semantic search</h2>
+        <p className={style({ font: { default: 'body', lg: 'body-lg' }, color: 'black', marginTop: 0, marginBottom: 32 })}>Quickly find visuals, words, sounds, and more in your media.</p>
+        <Button size="L" staticColor="black">Watch tutorial</Button>
+      </div>
+      <h1 className={style({ font: 'title-lg' })}>Start something new</h1>
+      <div className={style({display: 'flex', gap: 16})}>
+        <DropZone styles={style({flexGrow: 2, flexShrink: 0})}>
+          <IllustratedMessage orientation="horizontal" size="S">
+            <DropToUpload />
+            <Heading>
+              Drag and drop your file
+            </Heading>
+            <Content>
+              Or, select a file from your computer
+            </Content>
+            <ButtonGroup>
+              <Button fillStyle="outline">Select files</Button>
+            </ButtonGroup>
+          </IllustratedMessage>
+        </DropZone>
+        <Card href="#">
+          <CardPreview>
+            <div
+              className={style({
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              })}>
+              <AIGenerateImage />
+            </div>
+          </CardPreview>
+          <Content>
+            <Text slot="title">Generate an image</Text>
+            <Text slot="description">Create an image from text</Text>
+          </Content>
+        </Card>
+        <Card href="#">
+          <CardPreview>
+            <div
+              className={style({
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              })}>
+              <Document />
+            </div>
+          </CardPreview>
+          <Content>
+            <Text slot="title">Start from scratch</Text>
+            <Text slot="description">Create a blank document</Text>
+          </Content>
+        </Card>
+        <Card href="#">
+          <CardPreview>
+            <div
+              className={style({
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              })}>
+              <ImageStack />
+            </div>
+          </CardPreview>
+          <Content>
+            <Text slot="title">Browse images</Text>
+            <Text slot="description">Edit an existing image</Text>
+          </Content>
+        </Card>
+      </div>
+    </div>
   );
 }

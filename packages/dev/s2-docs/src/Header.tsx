@@ -6,7 +6,6 @@ import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {MarkdownMenu} from './MarkdownMenu';
 // @ts-ignore
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useState} from 'react';
@@ -115,7 +114,6 @@ export default function Header(props: PageProps) {
               <BetaApp />
               <Text>Beta Preview</Text>
             </Badge>
-            <MarkdownMenu url={currentPage.url} />
             <ActionButton aria-label="React Spectrum GitHub repo" size="L" isQuiet onPress={() => window.open('https://github.com/adobe/react-spectrum', '_blank', 'noopener,noreferrer')}>
               <GithubLogo />
             </ActionButton>
