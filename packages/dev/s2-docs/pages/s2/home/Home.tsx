@@ -37,6 +37,7 @@ import { States } from "./States";
 import { useId } from "react";
 import { Responsive } from "./Responsive";
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
+import { ReduceMotion } from "./ReduceMotion";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -64,7 +65,7 @@ export function Home() {
       }}>
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: 16, paddingY: 96, maxWidth: 1024})}>
         <h1 id={headingId} className={style({font: 'heading-3xl', marginTop: 0, marginBottom: 48, color: 'white'})}>React Spectrum</h1>
-        <section aria-label="Example app" className={style({height: 'calc(100dvh - 24px)', maxHeight: size(600)})}>
+        <section aria-label="Example app" className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
           <ExampleApp />
         </section>
       </header>
@@ -117,6 +118,7 @@ export function Home() {
             description="Component animations and transitions automatically adjust for users who prefer less motion, keeping your UI comfortable and inclusive."
             illustration={<Animation />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
+            <ReduceMotion />
           </Feature>
           {/* <Feature
             title="Space aware"
