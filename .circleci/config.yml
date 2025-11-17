@@ -401,7 +401,7 @@ jobs:
           command: |
             yarn test:parcel
             mkdir -p dist
-            yarn compare:apis --isCI
+            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" | tee dist/ts-diff.txt
 
       - persist_to_workspace:
           root: dist
