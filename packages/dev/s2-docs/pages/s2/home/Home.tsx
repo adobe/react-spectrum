@@ -36,6 +36,7 @@ import { useId } from "react";
 import { Responsive } from "./Responsive";
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 import { ReduceMotion } from "./ReduceMotion";
+import { Colors } from "./Colors";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -189,8 +190,7 @@ export function Home() {
             description="Testing"
             illustration={<Color />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
-            <Pre><Code lang="ts">{`style({color: 'red-400'})`}</Code></Pre>
-            <Colors />
+            <ColorScales />
           </Feature>
           {/* <Feature
             title="Spacing"
@@ -374,44 +374,23 @@ function Feature({title, description, illustration, children, style: styleProp, 
   );
 }
 
-function Colors() {
-  let red = getColorScale('red', 16);
-  let orange = getColorScale('orange', 16);
-  let yellow = getColorScale('yellow', 16);
-  let celery = getColorScale('celery', 16);
-  let green = getColorScale('green', 16);
-  let seafoam = getColorScale('seafoam', 16);
-  let turquoise = getColorScale('turquoise', 16);
-  let cyan = getColorScale('cyan', 16);
-  let blue = getColorScale('blue', 16);
-  let indigo = getColorScale('indigo', 16);
-  let purple = getColorScale('purple', 16);
-  let fuchsia = getColorScale('fuchsia', 16);
-  let magenta = getColorScale('magenta', 16);
-  let pink = getColorScale('pink', 16);
+function ColorScales() {
+  const size = 'auto';
+  let red = getColorScale('red', size);
+  let orange = getColorScale('orange', size);
+  let yellow = getColorScale('yellow', size);
+  let celery = getColorScale('celery', size);
+  let green = getColorScale('green', size);
+  let seafoam = getColorScale('seafoam', size);
+  let turquoise = getColorScale('turquoise', size);
+  let cyan = getColorScale('cyan', size);
+  let blue = getColorScale('blue', size);
+  let indigo = getColorScale('indigo', size);
+  let purple = getColorScale('purple', size);
+  let fuchsia = getColorScale('fuchsia', size);
+  let magenta = getColorScale('magenta', size);
+  let pink = getColorScale('pink', size);
 
-  let swatches = [red, orange, yellow, celery, green, seafoam, turquoise, cyan, blue, indigo, purple, fuchsia, magenta, pink].map((scale, i) => {
-    return (
-      <Fragment key={i}>
-        {scale.map(([name, className]) => (
-          <div
-            key={String(name)}
-            className={String(className)}
-            role="img"
-            aria-label={name as string} />
-        ))}
-      </Fragment>
-    )
-  });
-
-  return (
-    <div
-      className={style({
-        display: 'grid',
-        gridTemplateColumns: 'repeat(16, min-content)',
-        gap: 4
-      })}>
-      {swatches}
-    </div>
-  )
+  let scales = [red, orange, yellow, celery, green, seafoam, turquoise, cyan, blue, indigo, purple, fuchsia, magenta, pink];
+  return <Colors scales={scales} />
 }
