@@ -91,7 +91,7 @@ let card = style({
     isHovered: 'elevated',
     isFocusVisible: 'elevated',
     isSelected: 'elevated',
-    forcedColors: '[inset 0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
+    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
     variant: {
       tertiary: {
         // Render border with box-shadow to avoid affecting layout.
@@ -99,7 +99,7 @@ let card = style({
         isHovered: `[0 0 0 2px ${color('gray-200')}]`,
         isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
         isSelected: 'none',
-        forcedColors: '[inset 0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
+        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
       },
       quiet: 'none'
     }

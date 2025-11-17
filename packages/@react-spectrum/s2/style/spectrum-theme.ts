@@ -1026,7 +1026,7 @@ export const style = createTheme({
   },
   conditions: {
     // forcedColors: '@media (forced-colors: active)',
-    forcedColors: ':is([data-hcm] *)',
+    forcedColors: ':is([data-hcm], [data-hcm] *)',
     // This detects touch primary devices as best as we can.
     // Ideally we'd use (pointer: course) but browser/device support is inconsistent.
     // Samsung Android devices claim to be mice at the hardware/OS level: (any-pointer: fine), (any-hover: hover), (hover: hover), and nothing for pointer.

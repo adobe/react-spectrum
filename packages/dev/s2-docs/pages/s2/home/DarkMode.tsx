@@ -80,7 +80,7 @@ export function Resizable({children, containerRef, isClipped, minWidth = 0}: any
           width: percent + '%',
           overflow: isClipped ? 'clip' : undefined,
           position: 'relative',
-          zIndex: 2
+          zIndex: isClipped ? 2 : undefined
         }}>
         {children}
       </div>
@@ -98,12 +98,12 @@ export function Resizable({children, containerRef, isClipped, minWidth = 0}: any
           paddingX: 12,
           marginX: -12,
           cursor: 'col-resize',
-          zIndex: 4,
           outlineStyle: 'none',
           touchAction: 'none'
         })}
         style={{
-          left: `max(${minWidth}px, ${percent}%)`
+          left: `max(${minWidth}px, ${percent}%)`,
+          zIndex: isClipped ? 4 : undefined,
         }}>
         <div
           className={style({

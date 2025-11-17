@@ -18,11 +18,11 @@ import ViewGridFluid from '@react-spectrum/s2/icons/ViewGridFluid';
 import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
 import Search from '@react-spectrum/s2/icons/Search';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
-import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup} from '@react-spectrum/s2';
-import {Key, useLocale} from 'react-aria';
+import {style} from "@react-spectrum/s2/style" with {type: 'macro'};
+import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup, Provider} from '@react-spectrum/s2';
+import {useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { ExampleApp2, FilterContext } from './ExampleApp2';
 import { flushSync } from 'react-dom';
 import DropToUpload from '@react-spectrum/s2/illustrations/gradient/generic2/DropToUpload';
@@ -31,6 +31,9 @@ import Document from '@react-spectrum/s2/illustrations/gradient/generic2/Documen
 import ImageStack from '@react-spectrum/s2/illustrations/gradient/generic2/ImageStack';
 // @ts-ignore
 import banner from 'url:./banner.png?as=webp';
+import {useMediaQuery} from '@react-spectrum/utils';
+import { PopoverContext } from 'react-aria-components';
+import { HCMContext } from './HCM';
 
 const XS = `@container (min-width: ${480 / 16}rem)`;
 const SM = `@container (min-width: ${(640 / 16)}rem)`;
@@ -49,7 +52,7 @@ export function ExampleApp() {
         <Detail detail={detail} img={img} setDetail={setDetail} />
       }
     </div>
-  )
+  );
 }
 
 function Detail({detail, img, setDetail}: any) {
@@ -103,216 +106,243 @@ function Detail({detail, img, setDetail}: any) {
   );
 }
 
+const ColorSchemeContext = createContext<{colorScheme: 'light' | 'dark' | null, setColorScheme: (s: 'light' | 'dark' | null) => void}>({
+  colorScheme: null,
+  setColorScheme() {}
+});
+
+
+export function ColorSchemeProvider({children}: any) {
+  let [colorScheme, setColorScheme] = useState<'light' | 'dark' | null>(null);
+
+  useEffect(() => {
+    let m = matchMedia('(prefers-color-scheme: dark)');
+    let onChange = () => setColorScheme(null);
+    m.addEventListener('change', onChange);
+    return () => m.removeEventListener('change', onChange);
+  }, []);
+
+  return (
+    <ColorSchemeContext value={{colorScheme, setColorScheme}}>
+      <Provider colorScheme={colorScheme || undefined} styles={style({display: 'contents'})}>
+        {children}
+      </Provider>
+    </ColorSchemeContext>
+  );
+}
+
 export function AppFrame({children, inert, hidden}: any) {
   let {direction} = useLocale();
 
   return (
-    <div
-      inert={inert || hidden}
-      style={hidden ? {visibility: 'hidden', position: 'absolute'} : undefined}
-      className={style({
-        display: 'grid',
-        gridTemplateAreas: {
-          default: [
-            'toolbar',
-            'content'
-          ],
-          [SM]: [
-            'toolbar toolbar',
-            'sidebar content'
-          ]
-        },
-        gridTemplateRows: ['auto', '1fr'],
-        gridTemplateColumns: {
-          default: ['minmax(0, 1fr)'],
-          [SM]: ['auto', 'minmax(0, 1fr)']
-        },
-        height: 'full',
-        '--radius': {
-          type: 'borderTopStartRadius',
-          value: 'lg'
-        },
-        borderRadius: '--radius',
-        borderTopRadius: 'var(--app-frame-radius-top, var(--radius))',
-        overflow: 'clip',
-        boxSizing: 'border-box',
-        '--shadow': {
-          type: 'boxShadow',
-          value: 'elevated'
-        },
-        boxShadow: 'var(--app-frame-shadow, var(--shadow))',
-        backgroundColor: 'layer-1',
-        isolation: 'isolate'
-      })}>
+    <ColorSchemeProvider>
       <div
+        inert={inert || hidden}
+        style={hidden ? {visibility: 'hidden', position: 'absolute'} : undefined}
         className={style({
-          gridArea: 'toolbar',
-          display: 'flex',
-          padding: 16,
+          display: 'grid',
+          gridTemplateAreas: {
+            default: [
+              'toolbar',
+              'content'
+            ],
+            [SM]: [
+              'toolbar toolbar',
+              'sidebar content'
+            ]
+          },
+          gridTemplateRows: ['auto', '1fr'],
+          gridTemplateColumns: {
+            default: ['minmax(0, 1fr)'],
+            [SM]: ['auto', 'minmax(0, 1fr)']
+          },
+          height: 'full',
+          '--radius': {
+            type: 'borderTopStartRadius',
+            value: 'lg'
+          },
+          borderRadius: '--radius',
+          borderTopRadius: 'var(--app-frame-radius-top, var(--radius))',
+          overflow: 'clip',
           boxSizing: 'border-box',
-          gap: 16,
-          alignItems: 'center',
-          width: 'full'
+          '--shadow': {
+            type: 'boxShadow',
+            value: 'elevated'
+          },
+          boxShadow: 'var(--app-frame-shadow, var(--shadow))',
+          backgroundColor: 'layer-1',
+          isolation: 'isolate'
         })}>
-        <ActionButton isQuiet aria-label="Menu">
-          <MenuHamburger />
-        </ActionButton>
-        <AdobeLogo size={24} className={style({flexShrink: 0})} />
-        <span
-          className={style({
-            font: 'title',
-            display: {
-              default: 'none',
-              [SM]: 'inline'
-            }
-          })}>
-            {direction === 'rtl' ? 'طيف التفاعل' : 'React Spectrum'}
-        </span>
         <div
           className={style({
-            flexGrow: 1,
-            display: {
-              default: 'none',
-              [MD]: 'block'
-            }
+            gridArea: 'toolbar',
+            display: 'flex',
+            padding: 16,
+            boxSizing: 'border-box',
+            gap: 16,
+            alignItems: 'center',
+            width: 'full'
           })}>
-          <SearchField
-            aria-label={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
-            placeholder={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
-            styles={style({
-              maxWidth: 472,
-              minWidth: 272,
-              marginX: 'auto'
+          <ActionButton isQuiet aria-label="Menu">
+            <MenuHamburger />
+          </ActionButton>
+          <AdobeLogo size={24} className={style({flexShrink: 0})} />
+          <span
+            className={style({
+              font: 'title',
+              display: {
+                default: 'none',
+                [SM]: 'inline'
+              }
+            })}>
+              {direction === 'rtl' ? 'طيف التفاعل' : 'React Spectrum'}
+          </span>
+          <div
+            className={style({
+              flexGrow: 1,
+              display: {
+                default: 'none',
+                [MD]: 'block'
+              }
+            })}>
+            <SearchField
+              aria-label={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
+              placeholder={direction === 'rtl' ? 'البحث عن الصور' : 'Search photos'}
+              styles={style({
+                maxWidth: 472,
+                minWidth: 272,
+                marginX: 'auto'
+              })} />
+          </div>
+          <div
+            className={style({
+              flexGrow: 1,
+              display: {
+                default: 'block',
+                [MD]: 'none'
+              }
             })} />
+          <ActionButtonGroup>
+            <div
+              className={style({
+                display: {
+                  default: 'contents',
+                  [MD]: 'none'
+                }
+              })}>
+              <ActionButton isQuiet aria-label="Search">
+                <Search />
+              </ActionButton>
+            </div>
+            <div
+              className={style({
+                display: {
+                  default: 'none',
+                  [XS]: 'contents'
+                }
+              })}>
+              <ActionButton isQuiet aria-label="Help">
+                <HelpCircle />
+              </ActionButton>
+              <ActionButton isQuiet aria-label="Notifications">
+                <Bell />
+              </ActionButton>
+              <ActionButton isQuiet aria-label="Apps">
+                <Apps />
+              </ActionButton>
+            </div>
+            <AccountMenu />
+          </ActionButtonGroup>
         </div>
         <div
           className={style({
-            flexGrow: 1,
+            gridArea: 'sidebar',
             display: {
-              default: 'block',
-              [MD]: 'none'
-            }
-          })} />
-        <ActionButtonGroup>
-          <div
-            className={style({
-              display: {
-                default: 'contents',
-                [MD]: 'none'
-              }
-            })}>
-            <ActionButton isQuiet aria-label="Search">
-              <Search />
-            </ActionButton>
-          </div>
-          <div
-            className={style({
-              display: {
-                default: 'none',
-                [XS]: 'contents'
-              }
-            })}>
-            <ActionButton isQuiet aria-label="Help">
-              <HelpCircle />
-            </ActionButton>
-            <ActionButton isQuiet aria-label="Notifications">
-              <Bell />
-            </ActionButton>
-            <ActionButton isQuiet aria-label="Apps">
-              <Apps />
-            </ActionButton>
-          </div>
-          <AccountMenu />
-        </ActionButtonGroup>
+              default: 'none',
+              [SM]: 'flex'
+            },
+            flexDirection: 'column',
+            gap: 8,
+            paddingX: 16
+          })}>
+          <Button
+            variant="accent"
+            aria-label="Create"
+            styles={style({marginBottom: 8})}>
+            <Add />
+          </Button>
+          <ToggleButtonGroup
+            aria-label="Navigation"
+            isQuiet
+            orientation="vertical"
+            defaultSelectedKeys={['home']}
+            disallowEmptySelection>
+            <ToggleButton id="home" aria-label="Home">
+              <Home />
+            </ToggleButton>
+            <ToggleButton id="files" aria-label="Files">
+              <Folder />
+            </ToggleButton>
+            <ToggleButton id="ideas" aria-label="Ideas">
+              <Lightbulb />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </div>
+        <div
+          className={style({
+            gridArea: 'content',
+            backgroundColor: 'base',
+            boxShadow: 'elevated',
+            borderRadius: {
+              default: 'none',
+              [SM]: 'xl'
+            },
+            borderBottomRadius: 'none',
+            marginEnd: {
+              default: 0,
+              [SM]: 16
+            },
+            padding: 20,
+            paddingBottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: 0,
+            boxSizing: 'border-box'
+          })}>
+          {children || <>
+            <div className={style({font: 'heading', marginBottom: 8})}>{direction === 'rtl' ? 'مؤخرًا' : 'Recents'}</div>
+            <div
+              className={style({
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(128px, 1fr))',
+                gridTemplateRows: 'min-content',
+                justifyContent: 'space-between',
+                gap: 16,
+                marginTop: 16
+              })}>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          </>}
+        </div>
       </div>
-      <div
-        className={style({
-          gridArea: 'sidebar',
-          display: {
-            default: 'none',
-            [SM]: 'flex'
-          },
-          flexDirection: 'column',
-          gap: 8,
-          paddingX: 16
-        })}>
-        <Button
-          variant="accent"
-          aria-label="Create"
-          styles={style({marginBottom: 8})}>
-          <Add />
-        </Button>
-        <ToggleButtonGroup
-          aria-label="Navigation"
-          isQuiet
-          orientation="vertical"
-          defaultSelectedKeys={['home']}
-          disallowEmptySelection>
-          <ToggleButton id="home" aria-label="Home">
-            <Home />
-          </ToggleButton>
-          <ToggleButton id="files" aria-label="Files">
-            <Folder />
-          </ToggleButton>
-          <ToggleButton id="ideas" aria-label="Ideas">
-            <Lightbulb />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </div>
-      <div
-        className={style({
-          gridArea: 'content',
-          backgroundColor: 'base',
-          boxShadow: 'elevated',
-          borderRadius: {
-            default: 'none',
-            [SM]: 'xl'
-          },
-          borderBottomRadius: 'none',
-          marginEnd: {
-            default: 0,
-            [SM]: 16
-          },
-          padding: 20,
-          paddingBottom: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: 0,
-          boxSizing: 'border-box'
-        })}>
-        {children || <>
-          <div className={style({font: 'heading', marginBottom: 8})}>{direction === 'rtl' ? 'مؤخرًا' : 'Recents'}</div>
-          <div
-            className={style({
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(128px, 1fr))',
-              gridTemplateRows: 'min-content',
-              justifyContent: 'space-between',
-              gap: 16,
-              marginTop: 16
-            })}>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </div>
-        </>}
-      </div>
-    </div>
+    </ColorSchemeProvider>
   );
 }
 
@@ -466,49 +496,69 @@ function PhotoCard({item, layout, onAction}: any) {
 }
 
 export function AccountMenu() {
+  let {locale} = useLocale();
+  let {colorScheme, setColorScheme} = useContext(ColorSchemeContext);
+  let prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
+  let isDark = colorScheme == null ? prefersDark : colorScheme === 'dark';
   return (
     <MenuTrigger>
       <ActionButton isQuiet aria-label="Account">
         <Avatar src="https://i.imgur.com/xIe7Wlb.png" />
       </ActionButton>
-      <Popover hideArrow placement="bottom end">
-        <div className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
-          <div className={style({display: 'flex', gap: 12, alignItems: 'center', marginX: 12})}>
-            <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
-            <div>
-              <div className={style({font: 'title'})}>Devon Govett</div>
-              <div className={style({font: 'ui'})}>user@example.com</div>
-              <Switch styles={style({marginTop: 4})}>Dark theme</Switch>
+      <PopoverContextProvider>
+        <Popover hideArrow placement="bottom end">
+          <div className={style({paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12})}>
+            <div className={style({display: 'flex', gap: 12, alignItems: 'center', marginX: 12})}>
+              <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
+              <div>
+                <div className={style({font: 'title', color: {default: 'title', forcedColors: 'ButtonText'}})}>Devon Govett</div>
+                <div className={style({font: 'ui', color: {default: 'body', forcedColors: 'ButtonText'}})}>user@example.com</div>
+                <Switch isSelected={isDark} onChange={isSelected => setColorScheme(isSelected ? 'dark' : 'light')} styles={style({marginTop: 4})}>
+                  {locale === 'ar-AE' ? 'المظهر الداكن' : 'Dark theme'}
+                </Switch>
+              </div>
             </div>
-          </div>
-          <Divider styles={style({marginX: 12})} />
-          <Menu aria-label="Account">
-            <MenuSection>
-              <SubmenuTrigger>
+            <Divider styles={style({marginX: 12})} />
+            <Menu aria-label="Account">
+              <MenuSection>
+                <SubmenuTrigger>
+                  <MenuItem>
+                    <Org />
+                    <Text slot="label">{locale === 'ar-AE' ? 'منظمة' : 'Organization'}</Text>
+                    <Text slot="value">Adobe</Text>
+                  </MenuItem>
+                  <PopoverContextProvider>
+                    <Menu selectionMode="single" selectedKeys={['adobe']}>
+                      <MenuItem id="adobe">Adobe</MenuItem>
+                      <MenuItem id="nike">Nike</MenuItem>
+                      <MenuItem id="apple">Apple</MenuItem>
+                    </Menu>
+                  </PopoverContextProvider>
+                </SubmenuTrigger>
                 <MenuItem>
-                  <Org />
-                  <Text slot="label">Organization</Text>
-                  <Text slot="value">Adobe</Text>
+                  <Settings />
+                  <Text slot="label">{locale === 'ar-AE' ? 'إعدادات' : 'Settings'}</Text>
                 </MenuItem>
-                <Menu selectionMode="single" selectedKeys={['adobe']}>
-                  <MenuItem id="adobe">Adobe</MenuItem>
-                  <MenuItem id="nike">Nike</MenuItem>
-                  <MenuItem id="apple">Apple</MenuItem>
-                </Menu>
-              </SubmenuTrigger>
-              <MenuItem>
-                <Settings />
-                <Text slot="label">Settings</Text>
-              </MenuItem>
-            </MenuSection>
-            <MenuSection>
-              <MenuItem>Legal notices</MenuItem>
-              <MenuItem>Sign out</MenuItem>
-            </MenuSection>
-          </Menu>
-        </div>
-      </Popover>
+              </MenuSection>
+              <MenuSection>
+                <MenuItem>{locale === 'ar-AE' ? 'الإشعارات القانونية' : 'Legal notices'}</MenuItem>
+                <MenuItem>{locale === 'ar-AE' ? 'تسجيل الخروج' : 'Sign out'}</MenuItem>
+              </MenuSection>
+            </Menu>
+          </div>
+        </Popover>
+      </PopoverContextProvider>
     </MenuTrigger>
+  );
+}
+
+function PopoverContextProvider({children}: any) {
+  let value = useContext(PopoverContext) as any;
+  let hcm = useContext(HCMContext) as any;
+  return (
+    <PopoverContext value={{...value, ...hcm, style: {...value?.style, ...hcm?.style}}}>
+      {children}
+    </PopoverContext>
   );
 }
 

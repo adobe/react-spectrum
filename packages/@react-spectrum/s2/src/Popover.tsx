@@ -64,7 +64,10 @@ let popover = style({
   ...colorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
-    value: 'layer-2'
+    value: {
+      default: 'layer-2',
+      forcedColors: 'Background'
+    }
   },
   backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',

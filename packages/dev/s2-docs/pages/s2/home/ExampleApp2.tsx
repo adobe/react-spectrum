@@ -25,7 +25,7 @@ import {size, space, style} from "@react-spectrum/s2/style" with {type: 'macro'}
 import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button, Form, ComboBoxItem, ComboBox, NumberField, Picker, PickerItem, Accordion, Disclosure, DisclosureHeader, DisclosureTitle, DisclosurePanel, Divider} from '@react-spectrum/s2';
 import {Key} from 'react-aria';
 import {createContext, useContext, useRef, useState} from 'react';
-import {AccountMenu} from './ExampleApp';
+import {AccountMenu, ColorSchemeProvider} from './ExampleApp';
 import { useResizeObserver } from '@react-aria/utils';
 import { flushSync } from 'react-dom';
 import { Comment } from './Typography';
@@ -63,289 +63,292 @@ export function ExampleApp2({onBack, children, showPanel}: any) {
   });
 
   return (
-    <div
-      ref={ref}
-      className={style({
-        display: 'grid',
-        gridTemplateAreas: {
-          default: [
-            'toolbar toolbar',
-            'content content',
-            'assets assets',
-            'panels panels'
-          ],
-          [SM]: [
-            'toolbar toolbar toolbar toolbar',
-            'sidebar content assets panels'
-          ]
-        },
-        gridTemplateRows: {
-          default: ['auto', '1fr', 'auto', 'auto'],
-          [SM]: ['auto', '1fr']
-        },
-        gridTemplateColumns: {
-          default: ['minmax(0, 1fr)', 'minmax(0, 1fr)'],
-          [SM]: ['auto', '1fr', 'auto', 'auto']
-        },
-        height: 'full',
-        '--radius': {
-          type: 'borderTopStartRadius',
-          value: 'lg'
-        },
-        borderRadius: '--radius',
-        borderTopRadius: 'var(--app-frame-radius-top, var(--radius))',
-        overflow: 'clip',
-        boxSizing: 'border-box',
-        boxShadow: 'elevated',
-        position: 'relative'
-      })}>
+    <ColorSchemeProvider>
       <div
+        ref={ref}
         className={style({
-          gridArea: 'toolbar',
-          backgroundColor: {
-            default: 'layer-1',
-            forcedColors: 'Background'
+          display: 'grid',
+          gridTemplateAreas: {
+            default: [
+              'toolbar toolbar',
+              'content content',
+              'assets assets',
+              'panels panels'
+            ],
+            [SM]: [
+              'toolbar toolbar toolbar toolbar',
+              'sidebar content assets panels'
+            ]
           },
-          display: 'flex',
-          gap: 16,
-          alignItems: 'center',
-          width: 'full',
+          gridTemplateRows: {
+            default: ['max-content', '1fr', 'auto', 'auto'],
+            [SM]: ['max-content', '1fr']
+          },
+          gridTemplateColumns: {
+            default: ['minmax(0, 1fr)', 'minmax(0, 1fr)'],
+            [SM]: ['auto', '1fr', 'auto', 'auto']
+          },
           height: 'full',
-          padding: 16,
+          '--radius': {
+            type: 'borderTopStartRadius',
+            value: 'lg'
+          },
+          borderRadius: '--radius',
+          borderTopRadius: 'var(--app-frame-radius-top, var(--radius))',
+          overflow: 'clip',
           boxSizing: 'border-box',
-          borderWidth: 0,
-          borderBottomWidth: 2,
-          borderColor: {
-            default: 'gray-200',
-            forcedColors: 'ButtonBorder'
-          },
-          borderStyle: 'solid',
-          maxWidth: 'full',
-          overflowX: 'auto'
+          boxShadow: 'elevated',
+          position: 'relative',
+          isolation: 'isolate'
         })}>
-        <ActionButton isQuiet aria-label="Back" onPress={onBack}>
-          <ChevronLeft />
-        </ActionButton>
-        <div className={style({flexGrow: 1, overflow: 'auto'})}>
-          <Breadcrumbs onAction={onBack}>
-            <Breadcrumb>Your files</Breadcrumb>
-            <Breadcrumb>July final draft</Breadcrumb>
-          </Breadcrumbs>
-        </div>
-        <ActionButtonGroup>
-          <div
-            className={style({
-              display: {
-                default: 'none',
-                [SM]: 'contents'
-              }
-            })}>
-            <ActionButton isQuiet aria-label="Help">
-              <HelpCircle />
-            </ActionButton>
-            <ActionButton isQuiet aria-label="Notifications">
-              <Bell />
-            </ActionButton>
-            <ActionButton isQuiet aria-label="Apps">
-              <Apps />
-            </ActionButton>
-          </div>
-          <AccountMenu />
-        </ActionButtonGroup>
-      </div>
-      <div
-        className={style({
-          gridArea: 'sidebar',
-          display: {
-            default: 'none',
-            [SM]: 'flex'
-          },
-          flexDirection: 'column',
-          gap: 8,
-          backgroundColor: {
-            default: 'layer-1',
-            forcedColors: 'Background'
-          },
-          padding: 16,
-          boxSizing: 'border-box',
-          borderWidth: 0,
-          borderTopWidth: {
-            default: 2,
-            [SM]: 0
-          },
-          borderEndWidth: {
-            default: 0,
-            [SM]: 2
-          },
-          borderColor: {
-            default: 'gray-200',
-            forcedColors: 'ButtonBorder'
-          },
-          borderStyle: 'solid',
-          overflow: 'auto'
-        })}>
-        <ToggleButtonGroup
-          aria-label="Tools"
-          selectionMode="single"
-          defaultSelectedKeys={['select']}
-          isQuiet
-          isEmphasized
-          orientation={isLarge ? 'vertical' : 'horizontal'}>
-          <ToggleButton id="select" aria-label="Select">
-            <Select />
-          </ToggleButton>
-          <ToggleButton id="brush" aria-label="Brush">
-            <Brush />
-          </ToggleButton>
-          <ToggleButton id="pencil" aria-label="Pencil">
-            <Edit />
-          </ToggleButton>
-          <ToggleButton id="shapes" aria-label="Shapes">
-            <Shapes />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </div>
-      <div
-        className={style({
-          gridArea: 'content',
-          backgroundColor: {
-            default: 'pasteboard',
-            forcedColors: 'Background'
-          },
-          contain: 'size'
-        })}>
-        {children}
-      </div>
-      <div
-        className={style({
-          gridArea: 'assets',
-          width: {
-            default: 'full',
-            [SM]: {
-              default: 300,
-              isCollapsed: 0
-            }
-          },
-          height: {
-            default: {
-              default: 200,
-              isCollapsed: 0
-            },
-            [SM]: 'auto'
-          },
-          transition: {
-            isTransitioning: 'all',
-            '@media (prefers-reduced-motion: reduce)': 'none'
-          },
-          transitionDuration: {
-            isTransitioning: 300
-          },
-          backgroundColor: {
-            default: 'layer-1',
-            forcedColors: 'Background'
-          },
-          '--s2-container-bg': {
-            type: 'backgroundColor',
-            value: {
+        <div
+          className={style({
+            gridArea: 'toolbar',
+            backgroundColor: {
               default: 'layer-1',
               forcedColors: 'Background'
-            }
-          },
-          position: {
-            default: 'absolute',
-            [SM]: 'static'
-          },
-          bottom: 0,
-          insetEnd: 0
-        })({isCollapsed: !selectedPanel, isTransitioning: !!transitioning})}
-        onTransitionEnd={() => {
-          setTransitioning(null);
-        }}>
-        {panel && 
-          <div
-            className={style({
-              width: {
-                default: 'full',
-                [SM]: 300
-              },
-              height: 'full',
-              overflow: 'auto',
-              boxSizing: 'border-box',
-              borderWidth: 0,
-              borderStartWidth: {
-                default: 0,
-                [SM]: 2
-              },
-              borderTopWidth: {
-                default: 2,
-                [SM]: 0
-              },
-              borderColor: {
-                default: 'gray-200',
-                forcedColors: 'ButtonBorder'
-              },
-              borderStyle: 'solid'
-            })}>
-            {panel === 'layers' && <Layers />}
-            {panel === 'properties' && <Properties />}
-            {panel === 'comments' && <Comments />}
-            {panel === 'assets' && <Assets />}
+            },
+            display: 'flex',
+            gap: 16,
+            alignItems: 'center',
+            width: 'full',
+            height: 'full',
+            padding: 16,
+            boxSizing: 'border-box',
+            borderWidth: 0,
+            borderBottomWidth: 2,
+            borderColor: {
+              default: 'gray-200',
+              forcedColors: 'ButtonBorder'
+            },
+            borderStyle: 'solid',
+            maxWidth: 'full',
+            overflowX: 'auto'
+          })}>
+          <ActionButton isQuiet aria-label="Back" onPress={onBack}>
+            <ChevronLeft />
+          </ActionButton>
+          <div className={style({flexGrow: 1, overflow: 'auto'})}>
+            <Breadcrumbs onAction={onBack}>
+              <Breadcrumb>Your files</Breadcrumb>
+              <Breadcrumb>July final draft</Breadcrumb>
+            </Breadcrumbs>
           </div>
-        }
-      </div>
-      <div
-        className={style({
-          gridArea: 'panels',
-          backgroundColor: {
-            default: 'layer-1',
-            forcedColors: 'Background'
-          },
-          padding: 16,
-          boxSizing: 'border-box',
-          borderWidth: 0,
-          borderStartWidth: {
-            default: 0,
-            [SM]: 2
-          },
-          borderTopWidth: {
-            default: 2,
-            [SM]: 0
-          },
-          borderColor: {
-            default: 'gray-200',
-            forcedColors: 'ButtonBorder'
-          },
-          borderStyle: 'solid',
-          overflow: 'auto'
-        })}>
-        <ToggleButtonGroup
-          aria-label="Panels"
-          orientation={isLarge ? 'vertical' : 'horizontal'}
-          styles={style({marginX: 'auto', width: 'fit'})}
-          isQuiet
-          selectedKeys={selectedPanel ? [selectedPanel] : []}
-          onSelectionChange={keys => {
-            let key = [...keys][0];
-            setPanel(key as string);
-            if (key == null || panel == null) {
-              setTransitioning(key || panel);
-            }
+          <ActionButtonGroup>
+            <div
+              className={style({
+                display: {
+                  default: 'none',
+                  [SM]: 'contents'
+                }
+              })}>
+              <ActionButton isQuiet aria-label="Help">
+                <HelpCircle />
+              </ActionButton>
+              <ActionButton isQuiet aria-label="Notifications">
+                <Bell />
+              </ActionButton>
+              <ActionButton isQuiet aria-label="Apps">
+                <Apps />
+              </ActionButton>
+            </div>
+            <AccountMenu />
+          </ActionButtonGroup>
+        </div>
+        <div
+          className={style({
+            gridArea: 'sidebar',
+            display: {
+              default: 'none',
+              [SM]: 'flex'
+            },
+            flexDirection: 'column',
+            gap: 8,
+            backgroundColor: {
+              default: 'layer-1',
+              forcedColors: 'Background'
+            },
+            padding: 16,
+            boxSizing: 'border-box',
+            borderWidth: 0,
+            borderTopWidth: {
+              default: 2,
+              [SM]: 0
+            },
+            borderEndWidth: {
+              default: 0,
+              [SM]: 2
+            },
+            borderColor: {
+              default: 'gray-200',
+              forcedColors: 'ButtonBorder'
+            },
+            borderStyle: 'solid',
+            overflow: 'auto'
+          })}>
+          <ToggleButtonGroup
+            aria-label="Tools"
+            selectionMode="single"
+            defaultSelectedKeys={['select']}
+            isQuiet
+            isEmphasized
+            orientation={isLarge ? 'vertical' : 'horizontal'}>
+            <ToggleButton id="select" aria-label="Select">
+              <Select />
+            </ToggleButton>
+            <ToggleButton id="brush" aria-label="Brush">
+              <Brush />
+            </ToggleButton>
+            <ToggleButton id="pencil" aria-label="Pencil">
+              <Edit />
+            </ToggleButton>
+            <ToggleButton id="shapes" aria-label="Shapes">
+              <Shapes />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </div>
+        <div
+          className={style({
+            gridArea: 'content',
+            backgroundColor: {
+              default: 'pasteboard',
+              forcedColors: 'Background'
+            },
+            contain: 'size'
+          })}>
+          {children}
+        </div>
+        <div
+          className={style({
+            gridArea: 'assets',
+            width: {
+              default: 'full',
+              [SM]: {
+                default: 300,
+                isCollapsed: 0
+              }
+            },
+            height: {
+              default: {
+                default: 200,
+                isCollapsed: 0
+              },
+              [SM]: 'auto'
+            },
+            transition: {
+              isTransitioning: 'all',
+              '@media (prefers-reduced-motion: reduce)': 'none'
+            },
+            transitionDuration: {
+              isTransitioning: 300
+            },
+            backgroundColor: {
+              default: 'layer-1',
+              forcedColors: 'Background'
+            },
+            '--s2-container-bg': {
+              type: 'backgroundColor',
+              value: {
+                default: 'layer-1',
+                forcedColors: 'Background'
+              }
+            },
+            position: {
+              default: 'absolute',
+              [SM]: 'static'
+            },
+            bottom: 0,
+            insetEnd: 0
+          })({isCollapsed: !selectedPanel, isTransitioning: !!transitioning})}
+          onTransitionEnd={() => {
+            setTransitioning(null);
           }}>
-          <ToggleButton id="layers" aria-label="Layers">
-            <LayersIcon />
-          </ToggleButton>
-          <ToggleButton id="properties" aria-label="Properties">
-            <PropertiesIcon />
-          </ToggleButton>
-          <ToggleButton id="comments" aria-label="Comments">
-            <CommentIcon />
-          </ToggleButton>
-          <ToggleButton id="assets" aria-label="Assets">
-            <Asset />
-          </ToggleButton>
-        </ToggleButtonGroup>
+          {panel && 
+            <div
+              className={style({
+                width: {
+                  default: 'full',
+                  [SM]: 300
+                },
+                height: 'full',
+                overflow: 'auto',
+                boxSizing: 'border-box',
+                borderWidth: 0,
+                borderStartWidth: {
+                  default: 0,
+                  [SM]: 2
+                },
+                borderTopWidth: {
+                  default: 2,
+                  [SM]: 0
+                },
+                borderColor: {
+                  default: 'gray-200',
+                  forcedColors: 'ButtonBorder'
+                },
+                borderStyle: 'solid'
+              })}>
+              {panel === 'layers' && <Layers />}
+              {panel === 'properties' && <Properties />}
+              {panel === 'comments' && <Comments />}
+              {panel === 'assets' && <Assets />}
+            </div>
+          }
+        </div>
+        <div
+          className={style({
+            gridArea: 'panels',
+            backgroundColor: {
+              default: 'layer-1',
+              forcedColors: 'Background'
+            },
+            padding: 16,
+            boxSizing: 'border-box',
+            borderWidth: 0,
+            borderStartWidth: {
+              default: 0,
+              [SM]: 2
+            },
+            borderTopWidth: {
+              default: 2,
+              [SM]: 0
+            },
+            borderColor: {
+              default: 'gray-200',
+              forcedColors: 'ButtonBorder'
+            },
+            borderStyle: 'solid',
+            overflow: 'auto'
+          })}>
+          <ToggleButtonGroup
+            aria-label="Panels"
+            orientation={isLarge ? 'vertical' : 'horizontal'}
+            styles={style({marginX: 'auto', width: 'fit'})}
+            isQuiet
+            selectedKeys={selectedPanel ? [selectedPanel] : []}
+            onSelectionChange={keys => {
+              let key = [...keys][0];
+              setPanel(key as string);
+              if (key == null || panel == null) {
+                setTransitioning(key || panel);
+              }
+            }}>
+            <ToggleButton id="layers" aria-label="Layers">
+              <LayersIcon />
+            </ToggleButton>
+            <ToggleButton id="properties" aria-label="Properties">
+              <PropertiesIcon />
+            </ToggleButton>
+            <ToggleButton id="comments" aria-label="Comments">
+              <CommentIcon />
+            </ToggleButton>
+            <ToggleButton id="assets" aria-label="Assets">
+              <Asset />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </div>
       </div>
-    </div>
+    </ColorSchemeProvider>
   );
 }
 
@@ -428,7 +431,7 @@ function Properties() {
                 <ComboBoxItem>Times New Roman</ComboBoxItem>
                 <ComboBoxItem>Comic Sans</ComboBoxItem>
               </ComboBox>
-                <NumberField aria-label="Font size" defaultValue={14} styles={style({ flexGrow: 1 })} />
+              <NumberField aria-label="Font size" defaultValue={14} styles={style({ flexGrow: 1 })} />
               </div>
               <div
                 className={style({
@@ -589,7 +592,9 @@ function Assets() {
           gridTemplateRows: 'min-content',
           justifyContent: 'space-between',
           gap: 12,
-          marginTop: 16,
+          margin: -16,
+          marginTop: 0,
+          padding: 16,
           flexGrow: 1,
           minHeight: 0,
           contain: 'size',
