@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Does not affect unimplemented collections 1`] = `
-"import {Item, ActionBarContainer, ActionBar, ListView, ListBox} from '@adobe/react-spectrum';
+"import { Item, ActionBarContainer, ActionBar, ListBox } from '@adobe/react-spectrum';
 import {SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {StepList} from '@react-spectrum/steplist';
+
+import { ListView } from "@react-spectrum/s2";
 
 <div>
   <SearchAutocomplete>
