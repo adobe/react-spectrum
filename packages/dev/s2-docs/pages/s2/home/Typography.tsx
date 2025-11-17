@@ -84,13 +84,13 @@ export function Comment({author, avatar, date, body}: any) {
         alignItems: 'center'
       })}>
       <Avatar styles={style({gridArea: 'avatar'})} src={avatar} size={32} />
-      <span className={style({gridArea: 'name', font: 'title-sm', display: 'flex', alignItems: 'center', columnGap: 8})}>
+      <span className={style({gridArea: 'name', font: 'title-sm', color: {default: 'title', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
         {author}
       </span>
-      <span className={style({gridArea: 'date', font: 'detail-sm', display: 'flex', alignItems: 'center', columnGap: 8})}>
+      <span className={style({gridArea: 'date', font: 'detail-sm', color: {default: 'detail', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
         {date}
       </span>
-      <span className={style({gridArea: 'body', font: 'body', display: 'flex', alignItems: 'center', columnGap: 8})}>
+      <span className={style({gridArea: 'body', font: 'body', color: {default: 'body', forcedColors: 'ButtonText'}, display: 'flex', alignItems: 'center', columnGap: 8})}>
         {body}
       </span>
     </div>

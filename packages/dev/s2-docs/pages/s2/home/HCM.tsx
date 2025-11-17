@@ -42,7 +42,8 @@ export function HCM() {
             default: 'none',
             sm: 'lg'
           }
-        }
+        },
+        forcedColorAdjust: 'none'
       })}>
       <div className={style({flexShrink: 0, width: {default: '100%', sm: '200%'}, containerType: 'inline-size'})}>
         <HCMContext value={{'data-hcm': true, style: hcm}}>

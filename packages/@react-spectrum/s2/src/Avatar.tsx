@@ -76,7 +76,8 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
   } = props;
   const domProps = filterDOMProps(otherProps);
 
-  let remSize = `calc(${size / 16} * var(--rem, 1rem))`;
+  // In the docs build, we need to be able to simulate font scaling.
+  let remSize = process.env.DOCS_ENV ? `calc(${size / 16} * var(--rem, 1rem))` : `${size / 16}rem`;
   let isLarge = size >= 64;
   return (
     <Image

@@ -23,8 +23,22 @@ function pxToRem(px: string | number) {
   if (typeof px === 'string') {
     px = parseFloat(px);
   }
-  // return px / 16 + 'rem';
-  return `calc(${px / 16} * var(--rem, 1rem))`;
+
+  // In the docs, we need to be able to simulate font size adjustment.
+  if (process.env.DOCS_ENV) {
+    return `calc(${px / 16} * var(--rem, 1rem))`;
+  }
+
+  return px / 16 + 'rem';
+}
+
+function hcmColor(color: string) {
+  // In the docs, HCM colors can be simulated.
+  if (process.env.DOCS_ENV) {
+    return `var(--hcm-${color.toLowerCase()}, ${color})`;
+  }
+
+  return color;
 }
 
 const baseColors = {
@@ -63,16 +77,17 @@ const baseColors = {
   ...generateOverlayColorScale(),
 
   // High contrast mode.
-  Background: 'var(--hcm-background, Background)',
-  ButtonBorder: 'var(--hcm-buttonborder, ButtonBorder)',
-  ButtonFace: 'var(--hcm-buttonface, ButtonFace)',
-  ButtonText: 'var(--hcm-buttontext, ButtonText)',
-  Field: 'var(--hcm-field, Field)',
-  Highlight: 'var(--hcm-highlight, Highlight)',
-  HighlightText: 'var(--hcm-highlighttext, HighlightText)',
-  GrayText: 'var(--hcm-graytext, GrayText)',
-  Mark: 'Mark',
-  LinkText: 'var(--hcm-linktext, LinkText)'
+  // In the docs these can be simulated via variables.
+  Background: hcmColor('Background'),
+  ButtonBorder: hcmColor('ButtonBorder'),
+  ButtonFace: hcmColor('ButtonFace'),
+  ButtonText: hcmColor('ButtonText'),
+  Field: hcmColor('Field'),
+  Highlight: hcmColor('Highlight'),
+  HighlightText: hcmColor('HighlightText'),
+  GrayText: hcmColor('GrayText'),
+  Mark: hcmColor('Mark'),
+  LinkText: hcmColor('LinkText')
 };
 
 // Resolves a color to its most basic form, following all aliases.
@@ -762,7 +777,7 @@ export const style = createTheme({
       if (typeof value === 'number') {
         return {
           '--fs': `pow(1.125, ${value})`,
-          fontSize: `round(${fontSizeCalc} / 16 * var(--rem, 1rem), 1px)`
+          fontSize: `round(${fontSizeCalc} / 16 * ${process.env.DOCS_ENV ? 'var(--rem, 1rem)' : '1rem'}, 1px)`
         } as CSSProperties;
       }
 
@@ -1025,8 +1040,8 @@ export const style = createTheme({
     }
   },
   conditions: {
-    // forcedColors: '@media (forced-colors: active)',
-    forcedColors: ':is([data-hcm], [data-hcm] *)',
+    // In the docs we need to be able to simulate HCM.
+    forcedColors: process.env.DOCS_ENV ? ['@media (forced-colors: active)', ':is([data-hcm], [data-hcm] *)'] : '@media (forced-colors: active)',
     // This detects touch primary devices as best as we can.
     // Ideally we'd use (pointer: course) but browser/device support is inconsistent.
     // Samsung Android devices claim to be mice at the hardware/OS level: (any-pointer: fine), (any-hover: hover), (hover: hover), and nothing for pointer.
