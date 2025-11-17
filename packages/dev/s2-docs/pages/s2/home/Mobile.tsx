@@ -19,13 +19,11 @@ export function Mobile() {
   return (
     <div
       className={style({
-        height: 'full',
+        size: 'full',
         maxWidth: 464,
         minHeight: 300,
-        marginX: {
-          default: -16,
-          sm: 'auto'
-        },
+        marginX: 'auto',
+        marginBottom: -40,
         backgroundSize: 'cover',
         contain: 'size'
       })}
