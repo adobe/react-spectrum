@@ -466,13 +466,6 @@ export const spacingTypeValues = {
 };
 
 
-// TODO: delete and remove old logic that uses this
-// a mapping of value to relative links that should be replaced in place
-// opted NOT to link to Fonts from 'ui', 'code', etc since the visual example
-// is so close to the area in the table where those are rendered
-const relativeLinks: {[key: string]: string} = {
-  'baseColors': '#colors'
-};
 
 // a mapping of value to mdn links that should be replaced in place
 const mdnTypeLinks: {[key: string]: string} = {
@@ -543,8 +536,6 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
 
         if (mdnTypeLinks[value]) {
           links[value] = {href: mdnTypeLinks[value]};
-        } else if (relativeLinks[value]) {
-          links[value] = {href: relativeLinks[value], isRelative: true};
         }
       }
     }
@@ -573,8 +564,6 @@ export function getShorthandDefinitions(): {[key: string]: StyleMacroPropertyDef
 
       if (mdnTypeLinks[value]) {
         links[value] = {href: mdnTypeLinks[value]};
-      } else if (relativeLinks[value]) {
-        links[value] = {href: relativeLinks[value], isRelative: true};
       }
     }
 

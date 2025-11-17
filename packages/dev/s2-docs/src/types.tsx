@@ -12,6 +12,7 @@
 
 import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
 import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
+import {BackgroundColorsDisclosure, GlobalColorsDisclosure, SemanticColorsDisclosure, TextColorsDisclosure} from './S2Colors';
 import {Code, styles as codeStyles} from './Code';
 import {ColorLink, Link as SpectrumLink} from './Link';
 import {getDoc} from 'globals-docs';
@@ -737,6 +738,15 @@ const styleMacroValueDesc = {
   'pill': {
     description: 'Default spacing between the edge of a pill-shaped control and its text. Relative to control height.'
   },
+  'baseColors': {
+    description: <><code>baseColors</code> consists of the following values below:</>,
+    body: (
+      <>
+        <SemanticColorsDisclosure />
+        <GlobalColorsDisclosure />
+      </>
+    )
+  },
   'fontSize': {
     body: <S2Typography />
   },
@@ -800,10 +810,10 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                 <div>
                   <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
                   <code className={codeStyle}>
-                    {values.map((value, i) => (
-                      <React.Fragment key={i}>
-                        {i > 0 && <Punctuation>{' | '}</Punctuation>}
-                        {links[value] ? (
+                    {values.map((value, i) => {
+                      let content;
+                      if (links[value]) {
+                        content = (
                           <ColorLink
                             href={links[value].href}
                             type="variable"
@@ -811,11 +821,20 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                             target={links[value].isRelative ? undefined : '_blank'}>
                             {value}
                           </ColorLink>
-                        ) : (
-                          <span className={codeStyles.string}>'{value}'</span>
-                        )}
-                      </React.Fragment>
-                    ))}
+                        );
+                      } else if (value === 'baseColors') {
+                        content = <span className={codeStyles.variable}>{value}</span>;
+                      } else {
+                        content = <span className={codeStyles.string}>'{value}'</span>;
+                      }
+
+                      return (
+                        <React.Fragment key={i}>
+                          {i > 0 && <Punctuation>{' | '}</Punctuation>}
+                          {content}
+                        </React.Fragment>
+                      );
+                    })}
                     {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
                     {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
                       return (
@@ -831,6 +850,7 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                   let valueDesc = styleMacroValueDesc[value];
                   // special case handling for font and spacing specific value descriptions so they don't get rendered for
                   // other properties that may include the same values (e.g. heading in Colors)
+                  // skip baseColors here as it will be rendered after
                   let shouldShowDescription = false;
                   if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
                     shouldShowDescription = true;
@@ -861,8 +881,23 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                 })}
                 {/* show S2Typography for "fontSize" property and "font" shorthand specificatlly */}
                 {(propertyName === 'fontSize' || propertyName === 'font') && (
+                  <S2Typography />
+                )}
+                {propertyName === 'color' && (
+                  <TextColorsDisclosure />
+                )}
+                {propertyName === 'backgroundColor' && (
+                  <BackgroundColorsDisclosure />
+                )}
+                {/* show baseColors description after color and background color for clarity since it comes at the end of the values list */}
+                {values.includes('baseColors') && styleMacroValueDesc['baseColors'] && (
                   <div>
-                    <S2Typography />
+                    {styleMacroValueDesc['baseColors'].description && (
+                      <p className={style({font: 'body', marginBottom: 8})}>
+                        {styleMacroValueDesc['baseColors'].description}
+                      </p>
+                    )}
+                    {styleMacroValueDesc['baseColors'].body}
                   </div>
                 )}
                 {/* for the types that have descriptions, we add them below with the associated descriptions and/or mappings */}
