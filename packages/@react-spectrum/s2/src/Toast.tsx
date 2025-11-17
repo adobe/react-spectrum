@@ -515,8 +515,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           // so that adding/removing a toast cross fades instead of transitioning the position.
           // This works because the toasts are seen as separate elements instead of the same one when their index changes.
           viewTransitionName: toast.key + (props.reduceMotion ? '-' + index : ''),
-          viewTransitionClass: [toastCss.toast, toastCss['background-toast']].map(c => CSS.escape(c)).join(' '),
-          viewTransitionGroup: 'nearest'
+          viewTransitionClass: [toastCss.toast, toastCss['background-toast']].map(c => CSS.escape(c)).join(' ')
         }}
         className={toastCss.toast + toastStyle({variant: toast.content.variant || 'info', index, isExpanded})}
         ref={fixSafariTransform} />
@@ -530,8 +529,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
       style={{
         zIndex: visibleToasts.length - index - 1,
         viewTransitionName: toast.key,
-        viewTransitionClass: [toastCss.toast, !isMain ? toastCss['background-toast'] : '', toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' '),
-        viewTransitionGroup: 'nearest'
+        viewTransitionClass: [toastCss.toast, !isMain ? toastCss['background-toast'] : '', toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
       }}
       className={renderProps => toastCss.toast + toastStyle({
         ...renderProps,
