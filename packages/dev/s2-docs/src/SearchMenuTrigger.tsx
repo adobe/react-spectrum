@@ -172,7 +172,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             isFocusVisible: 2
           }
         })({isHovered, isFocusVisible})}
-        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none'} as CSSProperties}>
+        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none', visibility: isSearchOpen ? 'hidden' : 'visible'} as CSSProperties}>
         <Search
           UNSAFE_className={String(style({
             size: fontRelative(20),
