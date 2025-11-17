@@ -59,9 +59,7 @@ export function Provider(props: ProviderProps): JSX.Element {
   let result = <ProviderInner {...props} />;
   let parentColorScheme = useContext(ColorSchemeContext);
   let colorScheme = props.colorScheme || parentColorScheme;
-  if (colorScheme !== parentColorScheme) {
-    result = <ColorSchemeContext.Provider value={colorScheme}>{result}</ColorSchemeContext.Provider>;
-  }
+  result = <ColorSchemeContext.Provider value={colorScheme}>{result}</ColorSchemeContext.Provider>;
 
   if (props.locale) {
     result = <I18nProvider locale={props.locale}>{result}</I18nProvider>;
