@@ -1,4 +1,4 @@
-import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { linearGradient, size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
 import { Fragment } from "react/jsx-runtime";
 import { Code } from "../../../src/Code";
@@ -6,11 +6,9 @@ import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
-import { LinkButton, Provider } from "@react-spectrum/s2";
+import { LinkButton, Provider, Tab, TabList, TabPanel, Tabs } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
-import { ExampleApp2 } from "./ExampleApp2";
 import { Rems } from "./Rems";
-import { Collapsing } from "./Collapsing";
 import { PressAnimation } from "./Press";
 import { HCM } from "./HCM";
 import Lightbulb from '@react-spectrum/s2/illustrations/gradient/generic2/Lightbulb';
@@ -48,7 +46,9 @@ const container = style({
     sm: 32
   },
   position: 'relative',
-  overflow: 'clip'
+  overflow: 'clip',
+  display: 'flex',
+  flexDirection: 'column'
 });
 
 export function Home() {
@@ -66,7 +66,7 @@ export function Home() {
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
         <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>React Spectrum</h1>
         <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>Subtitle</p>
-        <div className={style({display: 'flex', gap: 16, marginTop: 32, marginBottom: 56})}>
+        <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 56})}>
           <LinkButton size="XL" staticColor="white" href="getting-started.html">Get started</LinkButton>
           <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum.html">Explore components</LinkButton>
         </div>
@@ -245,13 +245,64 @@ export function Home() {
             description="Macros are just functions, so you can create your own reusable style utilities."
             illustration={<CodeBrackets />}
             styles={style({gridColumnStart: {default: 'span 6', xl: 'span 3'}})}>
-            <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {flexRow} from './style-utils' with {type: 'macro'};
+            <div className={style({display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1, justifyContent: 'space-between'})}>
+            <div
+              className={style({
+                backgroundColor: 'layer-2',
+                boxShadow: 'elevated',
+                padding: {
+                  default: 16,
+                  sm: 24
+                },
+                borderRadius: {
+                  default: 'none',
+                  sm: 'lg'
+                },
+                overflow: 'auto',
+                marginX: {
+                  default: -16,
+                  sm: 0
+                }
+              })}>
+              <h4 className={style({font: 'title', marginTop: 0})}>Button.tsx</h4>
+              <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {hstack} from './style-utils' with {type: 'macro'};
             
 const buttonStyle = style({
   ...focusRing(),
-  ...flexRow(4)
-})`}</Code></Pre>
+  ...hstack(4)
+});`}</Code></Pre>
+            </div>
+            <div
+              className={style({
+                backgroundColor: 'layer-2',
+                boxShadow: 'elevated',
+                padding: {
+                  default: 16,
+                  sm: 24
+                },
+                borderRadius: {
+                  default: 'none',
+                  sm: 'lg'
+                },
+                overflow: 'auto',
+                margin: {
+                  default: -16,
+                  sm: 0
+                },
+                marginTop: 0
+              })}>
+              <h4 className={style({font: 'title', marginTop: 0})}>style-utils.ts</h4>
+              <Pre><Code lang="tsx">{`export function hstack(gap: number) {
+  return {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap
+  };
+}`}</Code></Pre>
+            </div>
+            </div>
           </Feature>
           <Feature
             title="Responsive design"
