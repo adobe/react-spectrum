@@ -153,8 +153,6 @@ export default function Header(props: PageProps) {
               aria-controls={searchOpen ? searchMenuId : undefined}
               href={homepage}
               onKeyDown={handleActionButtonKeyDown}
-              // @ts-ignore
-              // onHoverStart={() => preloadSearchMenu()}
               ref={ref}
               style={{...pressScale(ref), visibility: searchOpen ? 'hidden' : 'visible'} as CSSProperties}
               className={renderProps => libraryStyles({...renderProps})}>
