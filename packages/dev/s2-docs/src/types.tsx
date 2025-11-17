@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
 import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
 import {Code, styles as codeStyles} from './Code';
 import {ColorLink, Link as SpectrumLink} from './Link';
-import {Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
 import {getDoc} from 'globals-docs';
 import Markdown from 'markdown-to-jsx';
 import React, {ReactNode} from 'react';
+import {S2Typography} from './S2Typography';
 import {spacingTypeValues} from './styleProperties';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
@@ -697,7 +698,7 @@ function TemplateLiteral({elements}: TTemplate) {
   );
 }
 
-const styleMacroTypeLinks = {
+const styleMacroValueDesc = {
   'baseSpacing': {
     description: 'Base spacing values in pixels, following a 4px grid. Will be converted to rem.',
     body: (
@@ -724,6 +725,39 @@ const styleMacroTypeLinks = {
       </code>
     )
   },
+  'text-to-control': {
+    description: 'Default spacing between text and a control (e.g., label and input). Scales with font size.'
+  },
+  'text-to-visual': {
+    description: 'Default spacing between text and a visual element (e.g., icon). Scales with font size.'
+  },
+  'edge-to-text': {
+    description: 'Default spacing between the edge of a control and its text. Relative to control height.'
+  },
+  'pill': {
+    description: 'Default spacing between the edge of a pill-shaped control and its text. Relative to control height.'
+  },
+  'fontSize': {
+    body: <S2Typography />
+  },
+  'ui': {
+    description: 'Use within interactive UI components.'
+  },
+  'heading': {
+    description: 'Use for headings in content pages.'
+  },
+  'title': {
+    description: 'Use for titles within UI components such as cards or panels.'
+  },
+  'body': {
+    description: 'Use for the content of pages that are primarily text.'
+  },
+  'detail': {
+    description: 'Use for less important metadata.'
+  },
+  'code': {
+    description: 'Use for source code.'
+  },
   'LengthPercentage': {
     description: <>A CSS length value with percentage or viewport units. e.g. <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code></>
   },
@@ -748,14 +782,14 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   let propertyNames = Object.keys(properties);
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column'})}>
+    <Accordion allowsMultipleExpanded>
       {propertyNames.map((propertyName, index) => {
         let propDef = properties[propertyName];
         let values = propDef.values;
         let links = propDef.links || {};
 
         return (
-          <Disclosure key={index}>
+          <Disclosure key={index} id={propertyName}>
             <DisclosureTitle>
               <code className={codeStyle}>
                 <span className={codeStyles.attribute}>{propertyName}</span>
@@ -782,23 +816,58 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                         )}
                       </React.Fragment>
                     ))}
+                    {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
                     {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                      let typeLink = styleMacroTypeLinks[typeName];
                       return (
                         <React.Fragment key={`type-${i}`}>
                           {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
-                          {typeLink?.link && !typeLink.description && !typeLink.body ? (
-                            <ColorLink href={typeLink.link} type="variable">{typeName}</ColorLink>
-                          ) : (
-                            <span className={codeStyles.variable}>{typeName}</span>
-                          )}
+                          <span className={codeStyles.variable}>{typeName}</span>
                         </React.Fragment>
                       );
                     })}
                   </code>
                 </div>
+                {values.map((value, i) => {
+                  let valueDesc = styleMacroValueDesc[value];
+                  // special case handling for font and spacing specific value descriptions so they don't get rendered for
+                  // other properties that may include the same values (e.g. heading in Colors)
+                  let shouldShowDescription = false;
+                  if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
+                    shouldShowDescription = true;
+                  } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
+                    shouldShowDescription = true;
+                  } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
+                    shouldShowDescription = true;
+                  }
+
+                  if (shouldShowDescription && (valueDesc?.description || valueDesc?.body)) {
+                    return (
+                      <div key={`value-desc-${i}`}>
+                        <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
+                          <code className={codeStyle}>
+                            <span className={codeStyles.string}>'{value}'</span>
+                          </code>
+                        </h4>
+                        {valueDesc.description && (
+                          <p className={style({font: 'body', marginBottom: 8})}>
+                            {valueDesc.description}
+                          </p>
+                        )}
+                        {valueDesc.body}
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+                {/* show S2Typography for "fontSize" property and "font" shorthand specificatlly */}
+                {(propertyName === 'fontSize' || propertyName === 'font') && (
+                  <div>
+                    <S2Typography />
+                  </div>
+                )}
+                {/* for the types that have descriptions, we add them below with the associated descriptions and/or mappings */}
                 {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                  let typeLink = styleMacroTypeLinks[typeName];
+                  let typeLink = styleMacroValueDesc[typeName];
                   if (typeLink?.description || typeLink?.body) {
                     return (
                       <div key={`type-desc-${i}`}>
@@ -841,6 +910,6 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
           </Disclosure>
         );
       })}
-    </div>
+    </Accordion>
   );
 }
