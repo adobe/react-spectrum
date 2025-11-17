@@ -1,50 +1,120 @@
 'use client';
-import {animationQueue, useIntersectionObserver} from '@react-spectrum/docs/pages/react-aria/home/utils';
-import {flushSync} from 'react-dom';
-import React, {ReactNode, useCallback, useRef, useState} from 'react';
-import {Button} from '@react-spectrum/s2';
-import './Press.css';
-import { lightDark, style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import {animate, useIntersectionObserver} from '@react-spectrum/docs/pages/react-aria/home/utils';
+import {ReactNode, RefObject, useCallback, useRef, useState} from 'react';
+import {Button, Checkbox} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {FocusableRefValue} from '@react-types/shared';
+
+const pos = (x: number) => `calc(${x / 16}rem * var(--s2-scale, 1))`;
+const translate = (x: number, y: number) => `translate(${pos(x)}, ${pos(y)})`;
 
 export function PressAnimation(): ReactNode {
   let ref = useRef(null);
-  let [isAnimating, setAnimating] = useState(false);
-  // let [isSelected, setSelected] = useState(true);
+  let mouseRef = useRef<SVGSVGElement>(null);
+  let checkboxRef = useRef<FocusableRefValue<HTMLLabelElement>>(null);
+  let buttonRef = useRef<FocusableRefValue<HTMLButtonElement>>(null);
+  let [isChecked, setChecked] = useState(false);
 
   useIntersectionObserver(ref, useCallback(() => {
-    let job = {
-      isCanceled: false,
-      async run() {
-        flushSync(() => {
-          setAnimating(true);
-        });
-        let animation = document.getAnimations()
-          .find(anim => anim instanceof CSSAnimation && anim.animationName === 'touch-animation');
-        try {
-          await animation?.finished;
-        } catch {
-          // ignore abort errors.
+    let cancel =  animate([
+      {
+        time: 500,
+        perform() {}
+      },
+      {
+        time: 700,
+        perform() {
+          mouseRef.current!.animate({
+            transform: [
+              translate(-50, 150),
+              translate(10, 10)
+            ]
+          }, {duration: 1000, fill: 'forwards', easing: 'ease-in-out'});
         }
-        setAnimating(false);
-      }
-    };
-
-    animationQueue.next(job);
+      },
+      {
+        time: 500,
+        perform() {
+          pointer(checkboxRef, 'pointerover');
+        }
+      },
+      {
+        time: 300,
+        perform() {
+          pointer(checkboxRef, 'pointerdown');
+        }
+      },
+      {
+        time: 500,
+        perform() {
+          pointer(checkboxRef, 'pointerup');
+        }
+      },
+      {
+        time: 450,
+        perform() {
+          mouseRef.current!.animate({
+            transform: [
+              translate(10, 10),
+              translate(200, 10)
+            ]
+          }, {duration: 1000, fill: 'forwards', easing: 'ease-in-out'});
+        }
+      },
+      {
+        time: 200,
+        perform() {
+          pointer(checkboxRef, 'pointerout');
+        }
+      },
+      {
+        time: 500,
+        perform() {
+          pointer(buttonRef, 'pointerover');
+        }
+      },
+      {
+        time: 300,
+        perform() {
+          pointer(buttonRef, 'pointerdown');
+        }
+      },
+      {
+        time: 500,
+        perform() {
+          pointer(buttonRef, 'pointerup');
+        }
+      },
+      {
+        time: 200,
+        perform() {
+          mouseRef.current!.animate({
+            transform: [
+              translate(200, 10),
+              translate(250, 150)
+            ]
+          }, {duration: 1000, fill: 'forwards', easing: 'ease-in-out'});
+        }
+      },
+      {
+        time: 100,
+        perform() {
+          buttonRef.current?.UNSAFE_getDOMNode()!.dispatchEvent(new PointerEvent('pointerout', {pointerType: 'mouse', pointerId: 1, bubbles: true, detail: 1}));
+        }
+      },
+    ]);
 
     return () => {
-      job.isCanceled = true;
-      setAnimating(false);
-      // setSelected(true);
+      cancel();
+      setChecked(false);
+      mouseRef.current!.getAnimations().forEach(a => a.cancel());
     };
   }, []));
 
-  // Checkbox and then submit button
-
-  // switch-background-animation 12s ease-in-out 500ms
   return (
-    <>
-      {/* <Finger isAnimating={true} /> */}
+    <div ref={ref} className={style({display: 'flex', columnGap: 32, alignItems: 'center', marginX: 'auto', marginTop: 20, width: 'fit'})}>
       <svg
+        ref={mouseRef}
         viewBox="0 0 12 19"
         width={12}
         height={19}
@@ -53,9 +123,7 @@ export function PressAnimation(): ReactNode {
           position: 'absolute',
           zIndex: 10,
           filter: 'drop-shadow(0 1px 1px #aaa)',
-          transform: 'translate(30px, 15px)',
-          translate: '-50px 150px',
-          animation: 'mouse-animation 4s ease-in-out'
+          transform: 'translate(-50px, 150px)'
         }}>
         <g transform="matrix(1, 0, 0, 1, -150, -63.406998)">
           <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd" />
@@ -64,39 +132,12 @@ export function PressAnimation(): ReactNode {
           <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd" />
         </g>
       </svg>
-      <Button variant="accent" size="XL" UNSAFE_style={{animation: 'press-animation 4s ease-in-out'}}>Action</Button>
-    </>
+      <Checkbox ref={checkboxRef} size="XL" isSelected={isChecked} onChange={setChecked}>Accept terms</Checkbox>
+      <Button ref={buttonRef} variant="accent" size="XL">Submit</Button>
+    </div>
   );
 }
 
-// const Finger2 = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLDivElement | null>) => {
-//   return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:bg-[Highlight]! forced-colors:mix-blend-normal!" {...props} />;
-// });
-
-function Finger({isAnimating}: any) {
-  return (
-    <div
-      style={{animation: isAnimating ? 'touch-animation 2s ease-in-out infinite' : undefined}}
-      className={style({
-        zIndex: 10,
-        pointerEvents: 'none',
-        position: 'absolute',
-        width: 40,
-        height: 40,
-        borderRadius: 'full',
-        borderStyle: 'solid',
-        borderColor: lightDark('black/80', 'white/80'),
-        backgroundColor: lightDark('black/80', 'white/80'),
-        mixBlendMode: 'difference',
-        opacity: 0,
-        '--hover-opacity': {
-          type: 'opacity',
-          value: 0.15
-        },
-        '--pressed-opacity': {
-          type: 'opacity',
-          value: 0.3
-        }
-      })} />
-  );
+function pointer(ref: RefObject<FocusableRefValue<HTMLElement> | null>, type: string) {
+  ref.current?.UNSAFE_getDOMNode()!.dispatchEvent(new PointerEvent(type, {pointerType: 'mouse', pointerId: 1, bubbles: true, detail: 1}));
 }
