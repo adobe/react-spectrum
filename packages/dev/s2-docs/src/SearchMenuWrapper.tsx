@@ -92,7 +92,8 @@ export default function SearchMenuWrapper({pages, currentPage}) {
             pages={pages}
             currentPage={currentPage}
             onClose={closeSearchMenu}
-            initialSearchValue="" />
+            initialSearchValue=""
+            isSearchOpen={searchOpen} />
         </Modal>
       </ModalOverlay>
     </DialogTrigger>
