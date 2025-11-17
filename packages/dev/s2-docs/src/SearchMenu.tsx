@@ -56,7 +56,8 @@ interface SearchMenuProps {
   currentPage: Page,
   onClose: () => void,
   overlayId?: string,
-  initialSearchValue: string
+  initialSearchValue: string,
+  isSearchOpen: boolean
 }
 
 function CloseButton({onClose}: {onClose: () => void}) {
@@ -72,7 +73,7 @@ function CloseButton({onClose}: {onClose: () => void}) {
 }
 
 export function SearchMenu(props: SearchMenuProps) {
-  let {pages, currentPage, onClose, overlayId} = props;
+  let {pages, currentPage, onClose, overlayId, isSearchOpen} = props;
 
   const currentLibrary = getLibraryFromPage(currentPage);
   let [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
@@ -258,11 +259,11 @@ export function SearchMenu(props: SearchMenuProps) {
           {orderedTabs.map((tab, i) => (
             <Tab key={tab.id} id={tab.id}>
               <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                <div style={{viewTransitionName: i === 0 ? 'search-menu-icon' : 'none'} as CSSProperties}>
+                <div style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
                   {tab.icon}
                 </div>
                 <div>
-                  <span style={{viewTransitionName: i === 0 ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-2xl'})}>
+                  <span style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-2xl'})}>
                     {tab.label}
                   </span>
                   <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
@@ -289,7 +290,7 @@ export function SearchMenu(props: SearchMenuProps) {
                       size="L"
                       aria-label={`Search ${tab.label}`}
                       placeholder={placeholderText}
-                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: i === 0 ? 'search-menu-search-field' : 'none'} as CSSProperties}
+                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-search-field' : 'none'} as CSSProperties}
                       styles={style({width: 500})} />
                   </div>
 

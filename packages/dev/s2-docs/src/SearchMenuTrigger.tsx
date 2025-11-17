@@ -206,7 +206,8 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             currentPage={props.currentPage}
             onClose={onClose}
             overlayId={overlayId}
-            initialSearchValue={initialSearchValue} />
+            initialSearchValue={initialSearchValue}
+            isSearchOpen={isSearchOpen} />
         </Modal>
       </ModalOverlay>
     </div>
