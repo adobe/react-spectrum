@@ -104,7 +104,7 @@ export default function SearchMenuWrapper({pages, currentPage}) {
       </div>
       <div className={style({display: {default: 'flex', lg: 'none'}})}>
         <DialogTrigger>
-          <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95">Explore Components</Button>
+          <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-default">Explore Components</Button>
           <S2Modal size="fullscreenTakeover">
             <MobileSearchMenu pages={pages} currentPage={currentPage} />
           </S2Modal>
