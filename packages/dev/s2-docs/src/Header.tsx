@@ -154,7 +154,7 @@ export default function Header(props: PageProps) {
               href={homepage}
               onKeyDown={handleActionButtonKeyDown}
               ref={ref}
-              style={{...pressScale(ref), visibility: searchOpen ? 'hidden' : 'visible'} as CSSProperties}
+              style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
