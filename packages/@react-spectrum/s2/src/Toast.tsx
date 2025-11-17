@@ -17,7 +17,7 @@ import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
-import {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, isWebKit, useEvent} from '@react-aria/utils';
 import {flushSync} from 'react-dom';
@@ -392,7 +392,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
     globalReduceMotion = reduceMotion;
     return () => {
       globalReduceMotion = oldGlobalReduceMotion;
-    }
+    };
   }, [reduceMotion]);
 
   return (

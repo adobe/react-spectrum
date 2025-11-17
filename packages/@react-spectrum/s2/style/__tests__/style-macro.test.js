@@ -320,12 +320,12 @@ describe('style-macro', () => {
 "@layer _.a, _.b;
 
 @layer _.b {
-  .pOVIhfc6LxY912:is([data-hcm] *) {
+  .pOVIhfc6LxY912:is([data-hcm], [data-hcm] *) {
     color: var(--hcm-buttontext, ButtonText);
   }
 
 
-  .pOVIhfcgp5Dcd12:is([data-hcm] *) {
+  .pOVIhfcgp5Dcd12:is([data-hcm], [data-hcm] *) {
     color: var(--hcm-highlighttext, HighlightText);
   }
 }
