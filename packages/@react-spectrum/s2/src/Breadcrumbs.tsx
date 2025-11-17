@@ -62,9 +62,9 @@ interface BreadcrumbsStyleProps {
   // TODO: showRoot?: boolean,
 }
 
-export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
-  children: ReactNode
+  children: ReactNode | ((item: T) => ReactNode)
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
