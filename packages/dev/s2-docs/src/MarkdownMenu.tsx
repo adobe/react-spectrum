@@ -38,9 +38,11 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
     }
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       try {
-        let response = await fetch(mdUrl);
-        let markdown = await response.text();
-        await navigator.clipboard.writeText(markdown);
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            ['text/plain']: fetch(mdUrl).then(res => res.text())
+          })
+        ]);
         setIsCopied(true);
         timeout.current = setTimeout(() => setIsCopied(false), 2000);
       } catch {
