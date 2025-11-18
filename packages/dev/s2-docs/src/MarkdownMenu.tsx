@@ -15,6 +15,7 @@ interface MarkdownMenuProps {
 export function MarkdownMenu({url}: MarkdownMenuProps) {
   let mdUrl = (url ?? '').replace(/\.html?$/i, '') + '.md';
   let [isCopied, setIsCopied] = useState(false);
+  let [isPending, setPending] = useState(false);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   let pageUrl = typeof window !== 'undefined' && url ? new URL(url, window.location.origin).href : url ?? '';
@@ -38,20 +39,25 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
     }
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       try {
-        let response = await fetch(mdUrl);
-        let markdown = await response.text();
-        await navigator.clipboard.writeText(markdown);
+        setPending(true);
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            ['text/plain']: fetch(mdUrl).then(res => res.text())
+          })
+        ]);
         setIsCopied(true);
         timeout.current = setTimeout(() => setIsCopied(false), 2000);
       } catch {
         ToastQueue.negative('Failed to copy markdown.');
+      } finally {
+        setPending(false);
       }
     }
   }, [mdUrl]);
 
   return (
     <div className={style({display: 'flex', justifyContent: 'space-between', paddingX: 4, paddingBottom: 16})}>
-      <ActionButton isQuiet size="M" onPress={handleCopy}>
+      <ActionButton isQuiet size="M" onPress={handleCopy} isPending={isPending}>
         {isCopied ? <CheckmarkCircle /> : <Copy />}
         <Text>Copy for LLM</Text>
       </ActionButton>

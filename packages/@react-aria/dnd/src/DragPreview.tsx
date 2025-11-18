@@ -74,7 +74,7 @@ React.forwardRef(function DragPreview(props: DragPreviewProps, ref: ForwardedRef
   }
 
   return (
-    <div style={{zIndex: -100, position: 'absolute', top: 0, left: -100000}} ref={domRef}>
+    <div style={{zIndex: -100, position: 'fixed', top: 0, left: -100000}} ref={domRef}>
       {children}
     </div>
   );
