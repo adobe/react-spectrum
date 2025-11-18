@@ -1,5 +1,5 @@
 import {ExampleList} from './ExampleList';
-import {Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
+import {Nav} from '../src/Nav';
 import {OptimisticMobileToc, OptimisticToc} from './OptimisticToc';
 import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
