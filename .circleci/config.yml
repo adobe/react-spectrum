@@ -833,15 +833,15 @@ jobs:
           at: /tmp/dist
       - aws-cli/install
       - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --include *.{html,txt,json,md}
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --include *.{html,txt,json,md} --exclude *
           from: /tmp/dist/production/docs
           to: s3://react-spectrum-prod
       - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --include *.rsc
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --include *.rsc --exclude *
           from: /tmp/dist/production/docs
           to: s3://react-spectrum-prod
       - aws-s3/sync:
-          arguments: --exclude *.{html,rsc,txt,json,md}
+          arguments: --include * --exclude *.{html,rsc,txt,json,md}
           from: /tmp/dist/production/docs
           to: s3://react-spectrum-prod
 
