@@ -428,6 +428,11 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
           </div>
           {libraries.map(library => {
             const isIconsSelected = selectedSection === 'icons' && library.id === 'react-spectrum';
+            const libraryResourceTags = getResourceTags(library.id);
+            const selectedResourceTag = libraryResourceTags.find(tag => tag.id === selectedSection);
+            const placeholderText = selectedResourceTag 
+              ? `Search ${selectedResourceTag.name}` 
+              : `Search ${library.label}`;
             return (
               <MobileTabPanel key={library.id} id={library.id}>
                 <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
@@ -438,6 +443,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
                       onChange={handleSearchChange}
                       onFocus={handleSearchFocus}
                       onBlur={handleSearchBlur}
+                      placeholder={placeholderText}
                       styles={style({marginX: 16})} />
                     <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
                       <SearchTagGroups
