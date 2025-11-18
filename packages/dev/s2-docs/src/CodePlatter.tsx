@@ -179,7 +179,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
               }
               {registryUrl &&
                 <MenuItem
-                  href={`https://v0.dev/chat/api/open?url=${registryUrl}`}
+                  href={`https://v0.dev/chat/api/open?url=${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
                   <V0 />
