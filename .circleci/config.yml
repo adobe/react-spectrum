@@ -13,6 +13,10 @@ parameters:
     type: string
     default: ""
 
+orbs:
+  aws-cli: circleci/aws-cli@5.4.1
+  aws-s3: circleci/aws-s3@4.1
+
 executors:
   rsp:
     docker:
@@ -822,6 +826,25 @@ jobs:
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.html" --content-type "text/html; charset=utf-8" --cache-control "max-age=300"
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.rsc" --content-type "text/x-component; charset=utf-8" --cache-control "max-age=300"
 
+  deploy-s3:
+    executor: rsp
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --include *.{html,txt,json,md}
+          from: /tmp/dist/production/docs
+          to: s3://react-spectrum-prod
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --include *.rsc
+          from: /tmp/dist/production/docs
+          to: s3://react-spectrum-prod
+      - aws-s3/sync:
+          arguments: --exclude *.{html,rsc,txt,json,md}
+          from: /tmp/dist/production/docs
+          to: s3://react-spectrum-prod
+
   comment:
     executor: rsp
     steps:
@@ -1049,6 +1072,12 @@ workflows:
           requires:
             - install
       - deploy-production:
+          filters:
+            branches:
+              only: beta-docs
+          requires:
+            - docs-beta
+      - deploy-s3:
           filters:
             branches:
               only: beta-docs
