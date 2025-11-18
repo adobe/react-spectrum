@@ -28,8 +28,8 @@ export function ComboBox<T extends object>(
     <AriaComboBox {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
       <Label>{label}</Label>
       <FieldGroup>
-        <Input />
-        <FieldButton className="w-6 mr-1 rounded-sm outline-offset-0">
+        <Input className="ps-3 pe-1" />
+        <FieldButton className="w-6 mr-1 outline-offset-0">
           <ChevronDown aria-hidden className="w-4 h-4" />
         </FieldButton>
       </FieldGroup>
