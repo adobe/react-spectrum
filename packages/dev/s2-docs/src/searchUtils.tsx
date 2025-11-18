@@ -237,10 +237,6 @@ export function useSearchTagSelection(
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue, isResourceSelected]);
 
-  if (selectedTagId === 'overview' && title === 'Home') {
-    setSelectedTagId('components');
-  }
-
   return [selectedTagId, setSelectedTagId] as const;
 }
 
