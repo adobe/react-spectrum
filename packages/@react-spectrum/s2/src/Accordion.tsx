@@ -23,7 +23,7 @@ import {
 } from './Disclosure';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
-import React, {createContext, forwardRef, ReactNode, ReactNode} from 'react';
+import React, {createContext, forwardRef, ReactNode} from 'react';
 import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
