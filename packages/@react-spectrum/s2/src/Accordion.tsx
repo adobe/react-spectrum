@@ -85,7 +85,7 @@ export interface AccordionItemProps extends DisclosureProps {
   children: ReactNode
 }
 /**
- * A accordion item is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A accordion item is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
  */
 export const AccordionItem = forwardRef(function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
   return <Disclosure {...props} ref={ref} />;
