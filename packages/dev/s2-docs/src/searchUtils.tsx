@@ -207,8 +207,7 @@ export function useSearchTagSelection(
   searchValue: string,
   sectionTags: Tag[],
   resourceTags: Tag[],
-  initialTagId: string,
-  title: string
+  initialTagId: string
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
   const prevSearchWasEmptyRef = useRef<boolean>(true);
@@ -236,10 +235,6 @@ export function useSearchTagSelection(
     }
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue, isResourceSelected]);
-
-  if (selectedTagId === 'overview' && title === 'Home') {
-    setSelectedTagId('components');
-  }
 
   return [selectedTagId, setSelectedTagId] as const;
 }
