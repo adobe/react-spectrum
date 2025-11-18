@@ -1,11 +1,14 @@
+// @ts-ignore
+import assets from 'url:../pages/**/*.{png,jpg,svg}';
+import {cache, ReactNode} from 'react';
 import {Code, ICodeProps} from './Code';
-import {CodePlatter, Pre} from './CodePlatter';
+import {CodePlatter, FileProvider, Pre} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExpandableCode} from './ExpandableCode';
+import {findPackageJSON} from 'module';
 import fs from 'fs';
 import {highlight, Language} from 'tree-sitter-highlight';
 import path from 'path';
-import {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Tab, TabList, TabPanel, Tabs} from '@react-spectrum/s2';
 import {VisualExample, VisualExampleProps} from './VisualExample';
@@ -52,32 +55,35 @@ const standaloneCode = style({
 interface CodeBlockProps extends VisualExampleProps {
   render?: ReactNode,
   children: string,
+  dir?: string,
   files?: string[],
   expanded?: boolean,
   hidden?: boolean,
-  hideExampleCode?: boolean,
   includeAllImports?: boolean,
   showCoachMark?: boolean
 }
 
-export function CodeBlock({render, children, files, expanded, hidden, hideExampleCode, includeAllImports, ...props}: CodeBlockProps) {
+export function CodeBlock({render, children, dir, files, expanded, hidden, includeAllImports, ...props}: CodeBlockProps) {
   if (hidden) {
     return null;
   }
 
-  children = children.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+  let displayCode = children.replace(/(vanilla-starter|tailwind-starter)\//g, './');
 
   if (!render) {
     return (
       <pre className={standaloneCode}>
-        <Code {...props} styles={style({display: 'block', width: 'fit', minWidth: 'full'})}>{children}</Code>
+        <Code {...props} styles={style({display: 'block', width: 'fit', minWidth: 'full'})}>{displayCode}</Code>
       </pre>
     );
   }
 
+  let resolveFrom = path.resolve('pages', dir || (props.type === 's2' ? 's2' : 'react-aria'), 'index.tsx');
+  let downloadFiles = getExampleFiles(resolveFrom, children, props.type);
+
   let code = (
     <TruncatedCode maxLines={expanded ? Infinity : 6} {...props}>
-      {children}
+      {displayCode}
     </TruncatedCode>
   );
 
@@ -87,17 +93,19 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
         {...props}
         component={render}
         files={files}
+        downloadFiles={downloadFiles}
         code={code} />
     );
   }
 
-  let content = hideExampleCode ? null : (
-    <CodePlatter
-      files={files ? getFiles(files) : undefined}
-      type={props.type}
-      showCoachMark={props.showCoachMark}>
-      {code}
-    </CodePlatter>
+  let content = (
+    <FileProvider value={downloadFiles}>
+      <CodePlatter
+        type={props.type}
+        showCoachMark={props.showCoachMark}>
+        {code}
+      </CodePlatter>
+    </FileProvider>
   );
 
   return (
@@ -106,9 +114,14 @@ export function CodeBlock({render, children, files, expanded, hidden, hideExampl
         component={render}
         align={props.align} />
       <div>
-        {files
-          ? <Files files={includeAllImports ? findAllFiles(files) : files} maxLines={expanded ? Infinity : 6}>{content}</Files>
-          : content}
+        {files ?
+          <Files
+            files={includeAllImports ? findAllFiles(files) : files}
+            maxLines={expanded ? Infinity : 6}
+            type={props.type}>
+            {content}
+          </Files>
+        : content}
       </div>
     </div>
   );
@@ -148,84 +161,148 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   );
 }
 
-export function Files({children, files, defaultSelected, maxLines}: {children?: ReactNode, files: string[], defaultSelected?: string, maxLines?: number}) {
-  let allFiles = getFiles(files);
+export function Files({children, files, type, defaultSelected, maxLines}: {children?: ReactNode, files: string[], type?: 'vanilla' | 'tailwind' | 's2', defaultSelected?: string, maxLines?: number}) {
   return (
     <Tabs
       key={files.join('|')}
       aria-label="Files"
       defaultSelectedKey={defaultSelected || (children ? 'example' : undefined)}
-      density="compact">
+      density="compact"
+      data-files>
       <TabList styles={style({marginBottom: 20})}>
         {children && <Tab id="example">Example</Tab>}
         {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
       </TabList>
-      {children && <TabPanel id="example">{children}</TabPanel>}
-      {files.map(file => <TabPanel key={file} id={file}><File filename={file} maxLines={maxLines} files={allFiles} /></TabPanel>)}
+      {children && <TabPanel id="example" shouldForceMount data-example>{children}</TabPanel>}
+      {files.map(file => <TabPanel key={file} id={file}><File filename={file} maxLines={maxLines} type={type} /></TabPanel>)}
     </Tabs>
   );
 }
 
-export function File({filename, maxLines, files}: {filename: string, maxLines?: number, files?: {[name: string]: string}}) {
-  let contents = fs.readFileSync(path.isAbsolute(filename) ? filename : '../../../' + filename, 'utf8').replace(/(vanilla-starter|tailwind-starter)\//g, './');
+const readFile = cache((file: string) => fs.readFileSync(file, 'utf8'));
+
+export function File({filename, maxLines, type}: {filename: string, maxLines?: number, type?: 'vanilla' | 'tailwind' | 's2'}) {
+  let contents = readFile(path.isAbsolute(filename) ? filename : path.resolve('../../../', filename)).replace(/(vanilla-starter|tailwind-starter)\//g, './');
   return (
-    <CodePlatter files={files}>
+    <CodePlatter type={type}>
       <TruncatedCode lang={path.extname(filename).slice(1)} hideImports={false} maxLines={maxLines}>{contents}</TruncatedCode>
     </CodePlatter>
   );
 }
 
 // Reads files, parses imports, and loads recursively.
-export function getFiles(files: string[]) {
-  files = findAllFiles(files);
+export function getFiles(files: string[], type: string | undefined, npmDeps = {}) {
   let fileContents = {};
-  for (let file of files) {
+  for (let file of findAllFiles(files, npmDeps)) {
     let name = path.basename(file);
-    let contents = fs.readFileSync(file, 'utf8');
-    fileContents[name] = contents.replace(/(vanilla-starter|tailwind-starter)\//g, './');
+    let contents = readFile(file);
+    fileContents[name] = contents
+      .replace(/(vanilla-starter|tailwind-starter)\//g, './')
+      .replace(/import (.*?) from ['"]url:(.*?)['"]/g, (_, name, specifier) => {
+        return `const ${name} = '${resolveUrl(specifier, file)}'`;
+      });
   }
 
-  return fileContents;
+  if (type === 'tailwind' && !fileContents['index.css']) {
+    fileContents['index.css'] = readFile(path.resolve('../../../starters/tailwind/src/index.css'));
+  }
+
+  return {files: fileContents, deps: npmDeps};
 }
 
-function findAllFiles(files: string[]) {
+function findAllFiles(files: string[], npmDeps = {}) {
+  files = files.map(file => path.isAbsolute(file) ? file : path.resolve('../../../', file));
+
   let queue: string[] = [...files];
-  let allFiles = new Map();
+  let allFiles = new Set<string>();
   for (let i = 0; i < queue.length; i++) {
-    let file = path.isAbsolute(queue[i]) ? queue[i] : path.resolve('../../../' + queue[i]);
-    if (path.extname(file) === '') {
-      if (fs.existsSync(file + '.tsx')) {
-        file += '.tsx';
-      } else if (fs.existsSync(file + '.ts')) {
-        file += '.ts';
-      }
-    }
+    let file = queue[i];
+    let contents = readFile(file);
+    allFiles.add(file);
 
-    let name = path.basename(file);
-    let contents = fs.readFileSync(file, 'utf8');
-    allFiles.set(name, file);
-
-    for (let [, specifier] of contents.matchAll(/import(?:.|\n)+?['"](.+)['"]/g)) {
-      specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
-      if (!/^(\.|starters)/.test(specifier)) {
-        continue;
-      }
-
-      let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : specifier;
-      if (!allFiles.has(path.basename(resolved))) {
-        queue.push(resolved);
+    let deps = parseFile(file, contents, npmDeps);
+    for (let dep of deps) {
+      if (!allFiles.has(dep)) {
+        queue.push(dep);
       }
     }
   }
 
-  let providedFiles = files.map(f => {
-    let name = path.basename(f);
-    let res = allFiles.get(name)!;
-    allFiles.delete(name);
-    return res;
-  });
+  let addedFiles = [...allFiles.values()].filter(f => !files.includes(f)).sort();
+  return [...files, ...addedFiles];
+}
 
-  let addedFiles = [...allFiles.values()].sort();
+function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
+  let deps = new Set<string>();
+  for (let [, specifier] of contents.matchAll(/import (?:.|\n)*?['"](.+?)['"]/g)) {
+    specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
 
-  return [...providedFiles, ...addedFiles];
+    if (specifier.startsWith('url:')) {
+      urls[specifier] = resolveUrl(specifier.slice(4), file);
+      continue;
+    }
+
+    if (!/^(\.|starters)/.test(specifier)) {
+      let dep = specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
+      npmDeps[dep] ??= '^' + getPackageVersion(dep);
+      continue;
+    }
+
+    let resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file), specifier) : path.resolve('../../../' + specifier);
+    if (path.extname(resolved) === '') {
+      if (fs.existsSync(resolved + '.tsx')) {
+        resolved += '.tsx';
+      } else if (fs.existsSync(resolved + '.ts')) {
+        resolved += '.ts';
+      }
+    }
+
+    deps.add(resolved);
+  }
+
+  return deps;
+}
+
+function getExampleFiles(file: string, contents: string, type: string | undefined) {
+  let npmDeps = {};
+  let urls = {};
+  let fileDeps = parseFile(file, contents, npmDeps, urls);
+  let {files} = getFiles([...fileDeps], type, npmDeps);
+  return {files, deps: npmDeps, urls};
+}
+
+let packageVersionCache = new Map<string, string>();
+function getPackageVersion(pkg: string) {
+  let version = packageVersionCache.get(pkg);
+  if (version) {
+    return version;
+  }
+
+  let p = findPackageJSON(pkg, __filename);
+  if (p) {
+    let json = JSON.parse(fs.readFileSync(p, 'utf8'));
+    packageVersionCache.set(pkg, json.version);
+    return json.version;
+  } else {
+    throw new Error('Could not find package.json for ' + pkg);
+  }
+}
+
+function resolveUrl(specifier: string, file: string) {
+  let relative = path.relative(path.resolve('pages'), path.dirname(file)).split(/[/\\]/);
+  let cur = assets;
+  for (let part of [...relative, ...specifier.slice(2).split('/')]) {
+    let p = part.split('.');
+    cur = cur[p[0]];
+    if (!cur) {
+      throw new Error('Could not resolve URL ' + specifier);
+    }
+
+    if (p[1]) {
+      cur = cur[p[1]];
+    }
+  }
+
+  let publicUrl = process.env.PUBLIC_URL || 'http://localhost:1234';
+  return publicUrl + cur;
 }

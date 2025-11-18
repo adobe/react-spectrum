@@ -727,13 +727,13 @@ function remarkDocsComponentsToMarkdown() {
       }
 
       // Render an unordered list of icon names.
-      if (name === 'IconCards') {
+      if (name === 'IconsPageSearch') {
         const iconList = getIconNames();
         const listMarkdown = iconList.length 
           ? iconList.map(iconName => `- ${iconName}`).join('\n') 
           : '> Icon list could not be generated.';
-        const iconCardsNode = unified().use(remarkParse).parse(listMarkdown);
-        parent.children.splice(index, 1, ...iconCardsNode.children);
+        const iconListNode = unified().use(remarkParse).parse(listMarkdown);
+        parent.children.splice(index, 1, ...iconListNode.children);
         return index;
       }
 

@@ -5,11 +5,11 @@ export default Layout;
 import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
 
 export const section = 'Guides';
-export const description = 'Styling in React Aria';
+export const description = 'How to style React Aria components.';
 
 # Styling
 
-<PageDescription>React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling solution.</PageDescription>
+<PageDescription>React Aria does not include any styles by default. Learn how to build custom designs to fit your application or design system using any styling solution.</PageDescription>
 
 ## Class names
 
@@ -33,7 +33,7 @@ A custom `className` can also be specified on any component. This overrides the 
 
 ## States
 
-Components often support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using data attributes, which are like custom pseudo classes.
+React Aria exposes UI states such as pressed, hovered, and selected using data attributes, which are like custom pseudo classes.
 
 ```css
 .react-aria-ListBoxItem[data-selected] {
@@ -45,7 +45,7 @@ Components often support multiple UI states (e.g. pressed, hovered, selected, et
 }
 ```
 
-React Aria includes states such as `data-hovered` and `data-pressed` which are similar to CSS pseudo classes such as `:hover` and `:active`, but work consistently between mouse, touch, and keyboard modalities. You can read more about this in our [blog post series](https://react-spectrum.adobe.com/blog/building-a-button-part-1.html) and our [Interactions](https://react-spectrum.adobe.com/react-aria/interactions.html) overview.
+React Aria includes states such as `data-hovered` and `data-pressed` which are similar to CSS pseudo classes such as `:hover` and `:active`, but work consistently between mouse, touch, and keyboard modalities. You can read more about this in our [blog post series](https://react-spectrum.adobe.com/blog/building-a-button-part-1.html) and our [Interactions](quality.html#interactions) overview.
 
 ## Render props
 
@@ -113,7 +113,7 @@ Some patterns include multiple instances of the same component, for example the 
 
 ## CSS variables
 
-Some components provide CSS variables that you can use in your styling code. For example, the [Select](Select.html) component provides a `--trigger-width` variable on the popover. You can use this to make the width of the popover match the width of the button.
+Some components provide CSS variables that you can use in your styling code. For example, [Popover](Popover.html) provides a `--trigger-width` variable, which can be used to make the width of the popover match the width of its trigger.
 
 ```css
 .react-aria-Popover {
@@ -123,7 +123,7 @@ Some components provide CSS variables that you can use in your styling code. For
 
 ## Tailwind CSS
 
-[Tailwind CSS](https://tailwindcss.com) is a utility-first CSS framework for rapid styling that works great with React Aria Components. To access [states](#states), you can use [data attributes](https://tailwindcss.com/docs/hover-focus-and-other-states#data-attributes) as modifiers:
+When using Tailwind, use [data attributes](https://tailwindcss.com/docs/hover-focus-and-other-states#data-attributes) as modifiers:
 
 ```jsx
 <ListBoxItem className="data-[selected]:bg-blue-400 data-[disabled]:bg-gray-100">
@@ -147,7 +147,7 @@ Alternatively, you can use [render props](#render-props) to control which Tailwi
 To access [CSS variables](#css-variables), use Tailwind's [arbitrary value](https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values) syntax.
 
 ```jsx
-<Popover className="w-[--trigger-width]">
+<Popover className="w-(--trigger-width)">
   {/* ... */}
 </Popover>
 ```
@@ -182,7 +182,7 @@ module.exports = {
   </DisclosurePanel>
 </Disclosure>
 
-With the plugin installed, you can now access all states without the `data-` prefix. If you have the [Tailwind VSCode Extension](https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code) installed, you'll also get autocomplete for all states in your editor.
+With the plugin installed, you can access all states without the `data-` prefix. If you have the [Tailwind VSCode Extension](https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code) installed, you'll also get autocomplete for all states in your editor.
 
 ```jsx
 <ListBoxItem className="selected:bg-blue-400 disabled:bg-gray-100">
@@ -202,7 +202,7 @@ Boolean states such as `data-pressed` can be styled with `pressed:` like this:
 
 ### Non-boolean states
 
-Non-boolean states follow the `{name}-{value}` pattern, so you can style an element with `data-orientation="vertical"` using `orientation-vertical:`.
+Non-boolean states follow the `{name}-{value}` pattern. For example, an element with `data-orientation="vertical"` can be styled using `orientation-vertical:`.
 
 ```jsx
 <Tabs className="orientation-vertical:flex-row">
@@ -263,7 +263,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Animation
 
-React Aria Components supports both [CSS transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions) and [keyframe animations](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes), and works with JavaScript animation libraries like [Framer Motion](https://www.framer.com/motion/).
+React Aria Components supports both [CSS transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions) and [keyframe animations](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes), and works with JavaScript animation libraries like [Motion](https://motion.dev/).
 
 ### CSS transitions
 
@@ -333,9 +333,9 @@ For more complex animations, you can also apply CSS keyframe animations using th
 
 Note that unlike CSS transitions, keyframe animations are not interruptible. If the user opens and closes an overlay quickly, the animation may appear to jump to the ending state before the next animation starts.
 
-### Tailwind CSS
+### Tailwind
 
-If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate) plugin. This includes utilities for building common animations such as fading, sliding, and zooming.
+If you are using Tailwind, we recommend using the [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate) plugin. This includes utilities for building common animations such as fading, sliding, and zooming.
 
 ```jsx
 <Popover className="data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out">
@@ -345,15 +345,15 @@ If you are using Tailwind CSS, we recommend using the [tailwindcss-animate](http
 
 ### Motion
 
-[Motion](https://motion.dev) and other JavaScript animation libraries can also be used with React Aria Components. Use the [motion](https://motion.dev/docs/react-motion-component#custom-components) function to create a wrapper component that adds support for Motion's animation props.
+[Motion](https://motion.dev) and other JavaScript animation libraries can also be used with React Aria Components. Use [motion.create](https://motion.dev/docs/react-motion-component#custom-components) to create a wrapper component that adds support for Motion's animation props.
 
 ```tsx
 import {Modal, ModalOverlay} from 'react-aria-components';
 import {motion} from 'motion/react';
 
 // Create Motion wrappers.
-const MotionModal = motion(Modal);
-const MotionModalOverlay = motion(ModalOverlay);
+const MotionModal = motion.create(Modal);
+const MotionModalOverlay = motion.create(ModalOverlay);
 ```
 
 This enables using props like [animate](https://motion.dev/docs/react-motion-component#animation) with React Aria Components.
@@ -413,15 +413,13 @@ function Example() {
 }
 ```
 
-**Note**: Motion's `AnimatePresence` component may not work with React Aria overlays in all cases, so the example shown above is the recommended approach for exit animations.
-
 The [AnimatePresence](https://motion.dev/docs/react-animate-presence) component allows you to animate when items are added or removed in collection components. Use `array.map` to create children, and make sure each child has a unique `key` in addition to an `id` to ensure Motion can track it.
 
 ```tsx
 import {GridList, GridListItem} from 'react-aria-components';
 import {motion, AnimatePresence} from 'motion/react';
 
-const MotionItem = motion(GridListItem);
+const MotionItem = motion.create(GridListItem);
 
 <GridList>
   <AnimatePresence>

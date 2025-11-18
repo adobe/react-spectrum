@@ -32,3 +32,9 @@ body {
     --text-3xl: calc(1.875rem * 1.125);
   }
 }
+
+@layer utilities {
+  .font-spectrum {
+    font-family: "adobe-clean-spectrum-vf", system-ui, sans-serif;
+  }
+}
