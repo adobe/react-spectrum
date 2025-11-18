@@ -26,6 +26,8 @@ interface StatusLightStyleProps {
   /**
    * The variant changes the color of the status light.
    * When status lights have a semantic meaning, they should use the variant for semantic colors.
+   *
+   * @default 'neutral'
    */
   variant: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
   /**
