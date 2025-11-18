@@ -1364,8 +1364,8 @@ describe('useDrag and useDrop', function () {
             top: 0,
             x: 0,
             y: 0,
-            width: this.style.position === 'absolute' ? 20 : 100,
-            height: this.style.position === 'absolute' ? 20 : 50
+            width: this.style.position === 'fixed' ? 20 : 100,
+            height: this.style.position === 'fixed' ? 20 : 50
           };
         });
 
@@ -1391,8 +1391,8 @@ describe('useDrag and useDrop', function () {
             top: 0,
             x: 0,
             y: 0,
-            width: this.style.position === 'absolute' ? 20 : 100,
-            height: this.style.position === 'absolute' ? 20 : 50
+            width: this.style.position === 'fixed' ? 20 : 100,
+            height: this.style.position === 'fixed' ? 20 : 50
           };
         });
 
