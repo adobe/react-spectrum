@@ -83,7 +83,6 @@ export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pa
   );
 }
 
-// TODO: test this post refactor
 function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
   return (
     <div className={style({paddingTop: 24})}>

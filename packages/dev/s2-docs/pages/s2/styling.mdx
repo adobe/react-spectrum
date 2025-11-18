@@ -206,7 +206,6 @@ const horizontalStack = {
 
 const styles = style({
   ...horizontalStack,
-  backgroundColor: bannerBackground(),
   columnGap: 4
 });
 ```
@@ -280,8 +279,6 @@ Follow these best practices:
 - Ensure styles are extracted into a CSS bundle; do not inject at runtime with `<style>` tags.
 - Use a CSS minifier like `lightningcss` to deduplicate common rules (consider in dev for easier debugging).
 - Bundle all CSS for S2 components and style macros into a single CSS bundle rather than code splitting to avoid duplicate rules across chunks.
-
-**Failure to perform this optimization will result in a suboptimal developer experience and obtuse styling bugs.**
 
 ### Parcel
 
