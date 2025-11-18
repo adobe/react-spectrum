@@ -153,10 +153,8 @@ export default function Header(props: PageProps) {
               aria-controls={searchOpen ? searchMenuId : undefined}
               href={homepage}
               onKeyDown={handleActionButtonKeyDown}
-              // @ts-ignore
-              // onHoverStart={() => preloadSearchMenu()}
               ref={ref}
-              style={pressScale(ref)}
+              style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
                 <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
