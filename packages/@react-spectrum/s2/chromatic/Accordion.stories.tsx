@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
+import {Accordion, AccordionItem, AccordionItemHeader, AccordionItemPanel, AccordionItemTitle, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
@@ -155,6 +155,66 @@ export const WithActionButton: Story = {
               <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
             </DisclosurePanel>
           </Disclosure>
+        </Accordion>
+      </div>
+    );
+  }
+};
+
+export const WithAccordionItem: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Accordion {...args}>
+          <AccordionItem id="files">
+            <AccordionItemTitle>
+              Files
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              Files content
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem id="people">
+            <AccordionItemTitle>
+              People
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
+            </AccordionItemPanel>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    );
+  }
+};
+
+export const WithAccordionItemAndActionButton: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Accordion {...args}>
+          <AccordionItem id="files">
+            <AccordionItemHeader>
+              <AccordionItemTitle>
+                Files
+              </AccordionItemTitle>
+              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
+            </AccordionItemHeader>
+            <AccordionItemPanel>
+              Files content
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem id="people">
+            <AccordionItemHeader>
+              <AccordionItemTitle>
+                People
+              </AccordionItemTitle>
+              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
+            </AccordionItemHeader>
+            <AccordionItemPanel>
+              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
+            </AccordionItemPanel>
+          </AccordionItem>
         </Accordion>
       </div>
     );

@@ -12,7 +12,7 @@
 
 'use client';
 
-export {Accordion, AccordionContext} from './Accordion';
+export {Accordion, AccordionContext, AccordionItem, AccordionItemContext, AccordionItemHeader, AccordionItemTitle, AccordionItemPanel} from './Accordion';
 export {ActionBar, ActionBarContext} from './ActionBar';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionButtonGroup, ActionButtonGroupContext} from './ActionButtonGroup';
@@ -96,7 +96,7 @@ export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 export {parseColor} from 'react-aria-components';
 
-export type {AccordionProps} from './Accordion';
+export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps} from './Accordion';
 export type {ActionBarProps} from './ActionBar';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionButtonGroupProps} from './ActionButtonGroup';

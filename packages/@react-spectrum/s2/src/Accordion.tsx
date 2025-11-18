@@ -11,7 +11,16 @@
  */
 
 import {ContextValue, DisclosureGroup, DisclosureGroupProps, SlotProps} from 'react-aria-components';
-import {DisclosureContext} from './Disclosure';
+import {
+  Disclosure,
+  DisclosureContext,
+  DisclosureHeader,
+  DisclosurePanel,
+  DisclosurePanelProps,
+  DisclosureProps,
+  DisclosureTitle,
+  DisclosureTitleProps
+} from './Disclosure';
 import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef} from 'react';
@@ -69,4 +78,62 @@ export const Accordion = forwardRef(function Accordion(props: AccordionProps, re
       </DisclosureGroup>
     </DisclosureContext.Provider>
   );
+});
+
+/**
+ * Props for the AccordionItem component.
+ */
+export interface AccordionItemProps extends DisclosureProps {}
+
+/**
+ * An accordion item is a collapsible section of content within an accordion.
+ * It is composed of a header with a heading and trigger button, and a panel that contains the content.
+ *
+ * This component wraps Disclosure to provide API stability.
+ */
+export const AccordionItem = forwardRef(function AccordionItem(props: AccordionItemProps, ref: DOMRef<HTMLDivElement>) {
+  return <Disclosure {...props} ref={ref} />;
+});
+
+/**
+ * Context for AccordionItem components.
+ */
+export const AccordionItemContext = DisclosureContext;
+
+/**
+ * Props for the AccordionItemTitle component.
+ */
+export interface AccordionItemTitleProps extends DisclosureTitleProps {}
+
+/**
+ * An accordion item title consisting of a heading and a trigger button to expand/collapse the panel.
+ */
+export const AccordionItemTitle = forwardRef(function AccordionItemTitle(props: AccordionItemTitleProps, ref: DOMRef<HTMLDivElement>) {
+  return <DisclosureTitle {...props} ref={ref} />;
+});
+
+/**
+ * Props for the AccordionItemHeader component.
+ */
+export interface AccordionItemHeaderProps extends UnsafeStyles, DOMProps {
+  children: React.ReactNode
+}
+
+/**
+ * A wrapper element for the accordion item title that can contain other elements not part of the trigger.
+ */
+export const AccordionItemHeader = forwardRef(function AccordionItemHeader(props: AccordionItemHeaderProps, ref: DOMRef<HTMLDivElement>) {
+  return <DisclosureHeader {...props} ref={ref} />;
+});
+
+/**
+ * Props for the AccordionItemPanel component.
+ */
+export interface AccordionItemPanelProps extends DisclosurePanelProps {}
+
+/**
+ * An accordion item panel is a collapsible section of content that is hidden until the accordion item is expanded.
+ */
+export const AccordionItemPanel = forwardRef(function AccordionItemPanel(props: AccordionItemPanelProps, ref: DOMRef<HTMLDivElement>) {
+  return <DisclosurePanel {...props} ref={ref} />;
 });
