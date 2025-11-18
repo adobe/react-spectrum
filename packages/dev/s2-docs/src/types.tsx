@@ -807,45 +807,66 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
             </DisclosureTitle>
             <DisclosurePanel>
               <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-                <div>
-                  <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
-                  <code className={codeStyle}>
-                    {values.map((value, i) => {
-                      let content;
-                      if (links[value]) {
-                        content = (
-                          <ColorLink
-                            href={links[value].href}
-                            type="variable"
-                            rel={links[value].isRelative ? undefined : 'noreferrer'}
-                            target={links[value].isRelative ? undefined : '_blank'}>
-                            {value}
-                          </ColorLink>
-                        );
-                      } else if (value === 'baseColors') {
-                        content = <span className={codeStyles.variable}>{value}</span>;
-                      } else {
-                        content = <span className={codeStyles.string}>'{value}'</span>;
-                      }
+                {/* for color and backgroundColor, skip values list and render disclosures directly since the contents of the disclosures cover the mapped values */}
+                {(() => {
+                  if (propertyName === 'color') {
+                    return (
+                      <Accordion allowsMultipleExpanded>
+                        <TextColorsDisclosure />
+                        {styleMacroValueDesc['baseColors'].body}
+                      </Accordion>
+                    );
+                  }
+                  if (propertyName === 'backgroundColor') {
+                    return (
+                      <Accordion allowsMultipleExpanded>
+                        <BackgroundColorsDisclosure />
+                        {styleMacroValueDesc['baseColors'].body}
+                      </Accordion>
+                    );
+                  }
+                  return (
+                    <div>
+                      <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                      <code className={codeStyle}>
+                        {values.map((value, i) => {
+                          let content;
+                          if (links[value]) {
+                            content = (
+                              <ColorLink
+                                href={links[value].href}
+                                type="variable"
+                                rel={links[value].isRelative ? undefined : 'noreferrer'}
+                                target={links[value].isRelative ? undefined : '_blank'}>
+                                {value}
+                              </ColorLink>
+                            );
+                          } else if (value === 'baseColors') {
+                            content = <span className={codeStyles.variable}>{value}</span>;
+                          } else {
+                            content = <span className={codeStyles.string}>'{value}'</span>;
+                          }
 
-                      return (
-                        <React.Fragment key={i}>
-                          {i > 0 && <Punctuation>{' | '}</Punctuation>}
-                          {content}
-                        </React.Fragment>
-                      );
-                    })}
-                    {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
-                    {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                      return (
-                        <React.Fragment key={`type-${i}`}>
-                          {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
-                          <span className={codeStyles.variable}>{typeName}</span>
-                        </React.Fragment>
-                      );
-                    })}
-                  </code>
-                </div>
+                          return (
+                            <React.Fragment key={i}>
+                              {i > 0 && <Punctuation>{' | '}</Punctuation>}
+                              {content}
+                            </React.Fragment>
+                          );
+                        })}
+                        {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
+                        {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
+                          return (
+                            <React.Fragment key={`type-${i}`}>
+                              {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
+                              <span className={codeStyles.variable}>{typeName}</span>
+                            </React.Fragment>
+                          );
+                        })}
+                      </code>
+                    </div>
+                  );
+                })()}
                 {values.map((value, i) => {
                   let valueDesc = styleMacroValueDesc[value];
                   // special case handling for font and spacing specific value descriptions so they don't get rendered for
@@ -883,14 +904,8 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                 {(propertyName === 'fontSize' || propertyName === 'font') && (
                   <S2Typography />
                 )}
-                {propertyName === 'color' && (
-                  <TextColorsDisclosure />
-                )}
-                {propertyName === 'backgroundColor' && (
-                  <BackgroundColorsDisclosure />
-                )}
-                {/* show baseColors description after color and background color for clarity since it comes at the end of the values list */}
-                {values.includes('baseColors') && styleMacroValueDesc['baseColors'] && (
+                {/* for other color property names show baseColors description since the value list is displayed still */}
+                {values.includes('baseColors') && styleMacroValueDesc['baseColors'] && (propertyName !== 'color' && propertyName !== 'backgroundColor') && (
                   <div>
                     {styleMacroValueDesc['baseColors'].description && (
                       <p className={style({font: 'body', marginBottom: 8})}>
