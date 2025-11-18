@@ -67,6 +67,7 @@ export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: P
 export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
   let pendingPage = usePendingPage(pages);
   let displayPage = pendingPage ?? currentPage;
+  let relatedPages = currentPage.exports?.relatedPages;
 
   if ((displayPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {
     return null;
@@ -75,6 +76,9 @@ export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pa
   return (
     <MobileOnPageNav currentPage={currentPage}>
       {renderMobileToc(displayPage.tableOfContents ?? [])}
+      {relatedPages && relatedPages.map((page, i) => (
+        <PickerItem key={`related-${i}`} id={page.url} href={page.url}>{page.title}</PickerItem>
+      ))}
     </MobileOnPageNav>
   );
 }
