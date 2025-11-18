@@ -283,18 +283,31 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
 
     let filteredPages = filterPages(pages, searchValue);
 
-    return filteredPages
-      .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
+    let items = filteredPages.map(page => ({
+      id: page.url.replace(/^\//, ''),
+      name: getPageTitle(page),
+      href: page.url,
+      description: stripMarkdown(page.exports?.description),
+      date: page.exports?.date
+    }));
+
+    return sortItemsForDisplay(items, searchValue);
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
     let librarySections = getSectionsForLibrary(libraryId);
     let allPages = Array.from(librarySections.values()).flat();
     let filteredPages = filterPages(allPages, searchValue);
-    return filteredPages
-      .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
+    
+    let items = filteredPages.map(page => ({
+      id: page.url.replace(/^\//, ''),
+      name: getPageTitle(page),
+      href: page.url,
+      description: stripMarkdown(page.exports?.description),
+      date: page.exports?.date
+    }));
+
+    return sortItemsForDisplay(items, searchValue);
   };
 
   let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
