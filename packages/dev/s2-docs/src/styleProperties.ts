@@ -465,8 +465,6 @@ export const spacingTypeValues = {
   negativeSpacing: negativeBaseSpacingValues
 };
 
-
-
 // a mapping of value to mdn links that should be replaced in place
 const mdnTypeLinks: {[key: string]: string} = {
   'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
