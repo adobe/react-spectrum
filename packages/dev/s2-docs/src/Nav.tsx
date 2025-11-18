@@ -192,7 +192,7 @@ export function Nav({pages, currentPage}: PageProps) {
           );
         }
         return (
-          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components'} styles={style({minWidth: 185})}>
+          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section} styles={style({minWidth: 185})}>
             <DisclosureTitle>{name}</DisclosureTitle>
             <DisclosurePanel>
               <div className={style({paddingStart: space(18)})}>{nav}</div>
