@@ -209,10 +209,10 @@ describe('RangeCalendar', () => {
       const {getAllByRole} = render(
         <RangeCalendar visibleMonths={3} defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2020, 2, 10)}} selectionAlignment={alignment} />
       );
-  
+
       let grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
-  
+
       expect(grids[0]).toHaveAttribute('aria-label', expected[0]);
       expect(grids[1]).toHaveAttribute('aria-label', expected[1]);
       expect(grids[2]).toHaveAttribute('aria-label', expected[2]);
@@ -1541,6 +1541,64 @@ describe('RangeCalendar', () => {
 
       expect(announce).toHaveBeenCalledTimes(1);
       expect(announce).toHaveBeenCalledWith('March 5 BC');
+    });
+  });
+
+  describe('pointer events', () => {
+    beforeAll(() => {
+      jest.setSystemTime(new Date('2025-11-01'));
+    });
+
+    it('should select the last hovered date when pointerUpOutsideAction is "select"', async () => {
+      const onChange = jest.fn();
+
+      let {getByText, getAllByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          pointerUpOutsideAction="select" />
+      );
+
+      await user.click(getByText('25'));
+      await user.hover(getByText('20'));
+
+      await user.click(getAllByText('November 2025')[0]);
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2025, 11, 20), end: new CalendarDate(2025, 11, 25)});
+    });
+
+    it('should clear the selection when pointerUpOutsideAction is "clear"', async () => {
+      const onChange = jest.fn();
+      let {getByText, getAllByText} = render(
+        <RangeCalendar
+          onChange={onChange}
+          pointerUpOutsideAction="clear" />
+      );
+
+      await user.click(getByText('25'));
+      await user.hover(getByText('20'));
+
+      await user.click(getAllByText('November 2025')[0]);
+
+      expect(onChange).toHaveBeenCalledTimes(0);
+    });
+
+    it('should reset to the initial range when pointerUpOutsideAction is "reset"', async () => {
+      const onChange = jest.fn();
+      let {getByText, getAllByText} = render(
+        <RangeCalendar
+          start={new CalendarDate(2025, 11, 13)}
+          end={new CalendarDate(2025, 11, 15)}
+          onChange={onChange}
+          pointerUpOutsideAction="reset" />
+      );
+
+      await user.click(getByText('25'));
+      await user.hover(getByText('20'));
+
+      await user.click(getAllByText('November 2025')[0]);
+
+      expect(onChange).toHaveBeenCalledTimes(0);
     });
   });
 });
