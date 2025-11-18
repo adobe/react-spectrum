@@ -7,6 +7,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
+export const tags = ['dialog', 'popup', 'overlay'];
+
 # Modal
 
 <PageDescription>{docs.exports.Modal.description}</PageDescription>
@@ -17,8 +19,9 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   import {DialogTrigger, Heading} from 'react-aria-components';
   import {Modal} from 'vanilla-starter/Modal';
   import {Dialog} from 'vanilla-starter/Dialog';
-  import {Button} from 'vanilla-starter/Button';
+  import {Form} from 'vanilla-starter/Form';
   import {TextField} from 'vanilla-starter/TextField';
+  import {Button} from 'vanilla-starter/Button';
 
   function Example(props) {
     return (
@@ -26,12 +29,16 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
         <Button>Sign up…</Button>
         <Modal {...props}/* PROPS */>
           <Dialog>
-            <form>
-              <Heading slot="title">Sign up</Heading>
-              <TextField autoFocus label="First Name" />
-              <TextField label="Last Name" />
-              <Button slot="close">Submit</Button>
-            </form>
+            <Heading slot="title">Subscribe to our newsletter</Heading>
+            <p>Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
+            <Form>
+              <TextField autoFocus label="Name" placeholder="Enter your full name" />
+              <TextField label="Email" placeholder="Enter your email" />
+              <div style={{display: 'flex', gap: 8, alignSelf: 'end'}}>
+                <Button slot="close" variant="secondary">Cancel</Button>
+                <Button slot="close">Subscribe</Button>
+              </div>
+            </Form>
           </Dialog>
         </Modal>
       </DialogTrigger>
@@ -44,8 +51,9 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
   import {DialogTrigger, Heading} from 'react-aria-components';
   import {Modal} from 'tailwind-starter/Modal';
   import {Dialog} from 'tailwind-starter/Dialog';
-  import {Button} from 'tailwind-starter/Button';
+  import {Form} from 'tailwind-starter/Form';
   import {TextField} from 'tailwind-starter/TextField';
+  import {Button} from 'tailwind-starter/Button';
 
   function Example(props) {
     return (
@@ -53,12 +61,12 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
         <Button>Sign up…</Button>
         <Modal {...props}/* PROPS */>
           <Dialog>
-            <form>
+            <Form>
               <Heading slot="title">Sign up</Heading>
               <TextField autoFocus label="First Name" />
               <TextField label="Last Name" />
-              <Button slot="close">Submit</Button>
-            </form>
+              <Button slot="close" className="self-end">Submit</Button>
+            </Form>
           </Dialog>
         </Modal>
       </DialogTrigger>
@@ -121,7 +129,7 @@ function Example() {
 
 ## Custom trigger
 
-`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -157,6 +165,10 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
+## Examples
+
+<ExampleList tag="modal" pages={props.pages} />
+
 ## API
 
 <Anatomy />
@@ -180,16 +192,17 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 <PropTable component={docs.exports.Modal} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Modal" properties={docs.exports.ModalRenderProps.properties} />
-
 ### ModalOverlay
 
-<PropTable component={docs.exports.ModalOverlay} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-ModalOverlay" properties={docs.exports.ModalRenderProps.properties} />
+<PropTable
+  component={docs.exports.ModalOverlay}
+  links={docs.links}
+  showDescription
+  cssVariables={{
+    '--visual-viewport-height': 'The height of the [Visual Viewport](https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API), i.e. space above the software keyboard.',
+    '--page-height': 'The height of the `<body>` element. Useful for sizing the modal backdrop.'
+  }} />
 
 ### Dialog
 
 <PropTable component={docs.exports.Dialog} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-Dialog" properties={docs.exports.DialogRenderProps.properties} />

@@ -124,7 +124,8 @@ describe('Button', () => {
   it('should support press state', async () => {
     let onPress = jest.fn();
     let onClick = jest.fn();
-    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick}>Test</Button>);
+    let onClickCapture = jest.fn();
+    let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress} onClick={onClick} onClickCapture={onClickCapture}>Test</Button>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
@@ -140,6 +141,7 @@ describe('Button', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support disabled state', () => {
@@ -319,6 +321,7 @@ describe('Button', () => {
     function TestComponent(props) {
       let [pending, setPending] = useState(false);
       return (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <form
           onSubmit={(e) => {
             // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending

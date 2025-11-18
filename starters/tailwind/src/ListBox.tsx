@@ -21,7 +21,7 @@ export function ListBox<T extends object>(
   { children, ...props }: ListBoxProps<T>
 ) {
   return (
-    <AriaListBox {...props} className={composeTailwindRenderProps(props.className, 'outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg')}>
+    <AriaListBox {...props} className={composeTailwindRenderProps(props.className, 'outline-0 p-1 w-[200px] bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg font-sans')}>
       {children}
     </AriaListBox>
   );
@@ -54,7 +54,7 @@ export function ListBoxItem(props: ListBoxItemProps) {
 }
 
 export const dropdownItemStyles = tv({
-  base: 'group flex items-center gap-4 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-sm forced-color-adjust-none',
+  base: 'group flex items-center gap-4 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-sm forced-color-adjust-none no-underline [&[href]]:cursor-pointer',
   variants: {
     isDisabled: {
       false: 'text-gray-900 dark:text-zinc-100',
@@ -96,7 +96,7 @@ export interface DropdownSectionProps<T> extends SectionProps<T> {
 
 export function DropdownSection<T extends object>(props: DropdownSectionProps<T>) {
   return (
-    <ListBoxSection className="first:-mt-[5px] after:content-[''] after:block after:h-[5px]">
+    <ListBoxSection className="first:-mt-[5px] after:content-[''] after:block after:h-[5px] last:after:hidden">
       <Header className="text-sm font-semibold text-gray-500 dark:text-zinc-300 px-4 py-1 truncate sticky -top-[5px] -mt-px -mx-1 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 border-y border-y-gray-200 dark:border-y-zinc-700 [&+*]:mt-1">{props.title}</Header>
       <Collection items={props.items}>
         {props.children}

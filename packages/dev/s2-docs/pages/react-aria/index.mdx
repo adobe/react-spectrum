@@ -1,0 +1,649 @@
+import '../../tailwind/home.global.css';
+import '../../src/client';
+import '@react-spectrum/docs/src/syntax-highlight.css';
+import {Keyboard} from '@react-spectrum/docs/pages/react-aria/home/Keyboard';
+import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink, Scrollable, Section} from '@react-spectrum/docs/pages/react-aria/home/components';
+import {CodeBlockBase as CodeBlock} from '../../src/CodeBlock';
+import {ExampleApp} from '@react-spectrum/docs/pages/react-aria/home/ExampleApp';
+import {Styles} from '@react-spectrum/docs/pages/react-aria/home/Styles';
+import {KanbanBoard} from '@react-spectrum/docs/pages/react-aria/home/KanbanExample';
+import {SwitchAnimation} from '@react-spectrum/docs/pages/react-aria/home/SwitchAnimation';
+import {MouseAnimation} from '@react-spectrum/docs/pages/react-aria/home/MouseAnimation';
+import {ListBoxExample} from '@react-spectrum/docs/pages/react-aria/home/ListBoxExample';
+import {FocusExample} from '@react-spectrum/docs/pages/react-aria/home/FocusExample';
+import {A11y} from '@react-spectrum/docs/pages/react-aria/home/A11y';
+import {I18n} from '@react-spectrum/docs/pages/react-aria/home/I18n';
+import {PaginatedCarousel} from '@react-spectrum/docs/pages/react-aria/home/PaginatedCarousel';
+import {ArrowRight, CircleUser} from 'lucide-react';
+import {TextField} from 'tailwind-starter/TextField';
+import {Popover} from 'tailwind-starter/Popover';
+import {Button} from 'tailwind-starter/Button';
+import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
+import reactAriaFavicon from 'url:../../assets/react-aria.ico';
+import SearchMenuWrapper from '../../src/SearchMenuWrapper';
+
+export const section = 'Overview';
+export const title = 'Home';
+export const hideFromSearch = true;
+
+<html>
+  <head>
+    <meta charSet="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href={reactAriaFavicon} />
+    <title>React Aria</title>
+    <meta rel="preload" as="font" href="https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3" crossOrigin="" />
+    <meta name="description" content="Craft world-class accessible components with custom styles." />
+    <meta name="keywords" content="accessibility,components,react,headless,style-free" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+    <meta property="og:title" content="React Aria" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={props.currentPage.url} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:description" content="Craft world-class accessible components with custom styles." />
+    <meta property="og:locale" content="en_US" />
+    <link rel="canonical" href={props.currentPage.url} />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{__html: JSON.stringify(
+        {
+          '@context': 'http://schema.org',
+          '@type': 'Article',
+          author: 'Adobe Inc',
+          headline: 'React Aria',
+          description: 'Craft world-class accessible components with custom styles.',
+          image: ogImage,
+          publisher: {
+            '@type': 'Organization',
+            url: 'https://www.adobe.com',
+            name: 'Adobe',
+            logo: 'https://www.adobe.com/favicon.ico'
+          }
+        }
+      )}} />
+  </head>
+  <body className="m-0">
+    <header className="relative header-background">
+      <nav className="absolute top-4 left-4 right-4 flex justify-between gap-4">
+        <a href="." className="no-underline inline-flex items-center gap-4 font-bold px-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 dark:text-white/80 ring-1 ring-black/5 focus-ring dark:outline-white">
+          <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" height="22">
+            <polygon points="19,0 30,0 30,26" />
+            <polygon points="11.1,0 0,0 0,26" />
+            <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
+          </svg>
+          <h2 className="text-lg m-0 text-black dark:text-white/80">React Aria</h2>
+        </a>
+
+        <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 font-semibold ring-1 ring-black/5">
+          <a href={props.pages.filter(page => page.name.includes('react-aria') && page.name.includes('blog') && page.name.includes('index.html'))[0].url} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Blog</a>
+          <a href={props.pages.filter(page => page.name.includes('react-aria') && page.name.includes('releases') && page.name.includes('index.html'))[0].url}className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Releases</a>
+          <a href={props.pages.filter(page => page.name.includes('s2') && !page.name.includes('releases') && page.name.includes('index.html'))[0].url}className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
+          <a href={props.pages.filter(page => page.name.includes('internationalized') && page.name.includes('date') && page.name.includes('index.html'))[0].url} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Internationalized</a>
+          <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="no-underline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">
+            <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
+              <path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+          </a>
+          <a href="https://npmjs.com/react-aria-components" target="_blank" title="NPM" className="no-underline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">
+            <svg viewBox="0 0 27.23 27.23" aria-hidden="true" height="22" fill="currentColor">
+              <rect width="27.23" height="27.23" rx="2" mask="url(#npm-mask)" />
+              <mask id="npm-mask">
+                <rect width="27.23" height="27.23" rx="2" fill="white" />
+                <polygon fill="black" points="5.8 21.75 13.66 21.75 13.67 9.98 17.59 9.98 17.58 21.76 21.51 21.76 21.52 6.06 5.82 6.04 5.8 21.75" />
+              </mask>
+            </svg>
+          </a>
+        </div>
+      </nav>
+
+      <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60">
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold m-0 mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Craft world-class accessible components with custom styles.</GradientText></h1>
+        <p className="m-0 text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-3xl mx-auto [text-wrap:balance]">Over 50 components with built-in behavior, adaptive interactions, top-tier accessibility, and internationalization out of the box, ready for your styles.</p>
+
+        <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
+          <a href="getting-started.html" className="no-underline bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-pointer">Get Started</a>
+          <SearchMenuWrapper pages={props.pages} currentPage={props.currentPage} />
+        </div>
+
+        <div className="relative pt-10 md:pt-20 md:mt-20">
+          <Window toolbar={<AddressBar>https://your-app.com</AddressBar>} className="h-[450px] max-w-[600px] mx-auto">
+            <div className="flex-1 overflow-auto bg-white dark:bg-zinc-800/90 backdrop-blur-2xl backdrop-saturate-200">
+              <ExampleApp />
+            </div>
+          </Window>
+          <svg viewBox="0 0 832 450" width={832} className="absolute top-0 left-[50%] -translate-x-[50%] z-20 pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none hidden md:block">
+            <defs>
+              <marker
+                id="arrow"
+                viewBox="0 0 6 6"
+                refX={3}
+                refY={3}
+                markerWidth={6}
+                markerHeight={6}
+                orient="auto-start-reverse"
+                className="fill-slate-500 dark:fill-white">
+                <circle r={3} cx={3} cy={3} />
+              </marker>
+            </defs>
+            <Arrow href="Popover.html" points="310,50 310,132 383,132 383,142" textX={290} y={41}>Popover</Arrow>
+            <Arrow href="Tooltip.html" points="522,50 522,132 427,132 427,142" textX={504} y={41}>Tooltip</Arrow>
+            <g transform="translate(0 80)">
+              <Arrow href="SearchField.html" textX={28} x1={88} x2={132} y={80}>SearchField</Arrow>
+              <Arrow href="Table.html" textX={58} x1={88} x2={132} y={170}>Table</Arrow>
+              <Arrow href="Modal.html" textX={748} x1={700} x2={742} y={80} marker="markerStart">Modal</Arrow>
+            </g>
+            <g transform="translate(0 80)" id="hideOnScroll" className="transition duration-300">
+              <Arrow href="Checkbox.html" textX={36} x1={88} x2={142} y={294}>Checkbox</Arrow>
+              <Arrow href="ToggleButton.html" textX={20} x1={88} x2={180} y={362}>ToggleButton</Arrow>
+              <Arrow href="Menu.html" textX={748} x1={690} x2={744} y={180} marker="markerStart">Menu</Arrow>
+            </g>
+          </svg>
+        </div>
+      </section>
+    </header>
+
+    <main className="max-w-6xl mx-auto">
+
+    <Section className="pink-gradient-background">
+      <h2><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-linear-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
+      <p className="m-0">React Aria is style-free out of the box, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.</p>
+      <LearnMoreLink href="styling.html" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
+
+      <Styles>
+
+        ```tsx
+        <DatePicker>
+          <Label>Date Planted</Label>
+          <Group>
+            <DateInput>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+            <Button><CalendarIcon /></Button>
+          </Group>
+          <Popover>
+            <Dialog>
+              <Calendar>
+                <Button slot="previous"><LeftIcon /></Button>
+                <Heading />
+                <Button slot="next"><RightIcon /></Button>
+                <CalendarGrid>
+                  {date => <CalendarCell date={date} />}
+                </CalendarGrid>
+              </Calendar>
+            </Dialog>
+          </Popover>
+        </DatePicker>
+        ```
+
+        ```css
+        /* Consistent default classes for each component */
+        .react-aria-DatePicker {
+          /* ... */
+
+          .react-aria-Group {
+            border: 2px solid var(--gray-300);
+          }
+        }
+
+        .react-aria-CalendarCell {
+          color: var(--gray-900);
+
+          /* Style interactive states with data attributes */
+          &[data-pressed] {
+            background: var(--gray-100);
+          }
+
+          &[data-selected] {
+            color: var(--gray-50);
+            background: var(--blue-600);
+          }
+        }
+        ```
+
+        ```tsx
+        <ComboBox className="group flex ...">
+          <Label>Assignee</Label>
+          {/* Tailwind plugin for all UI states. */}
+          <Group className="... focus-visible:outline-blue-600">
+            <Input className="flex-1 ..." />
+            <Button className="... pressed:bg-gray-100">
+              <ChevronsUpDownIcon />
+            </Button>
+          </Group>
+          {/* Built-in entry and exit animation states. */}
+          <Popover className="w-(--trigger-width) ... entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+            <ListBox items={people}>
+              {item => (
+                <ListBoxItem textValue={item.name} className="group text-gray-900 ... focus:bg-blue-600 focus:text-white">
+                  {/* Use render props to customize children based on state. */}
+                  {({ isSelected }) => <>
+                    <img alt="" src={item.avatar} />
+                    <span className="... font-normal group-selected:font-semibold">{item.name}</span>
+                    {isSelected &&
+                      <CheckIcon />
+                    }
+                  </>}
+                </ListBoxItem>
+              )}
+            </ListBox>
+          </Popover>
+        </ComboBox>
+        ```
+
+        ```tsx
+        const StyledSlider = styled(Slider)`
+          display: grid;
+          /* ... */
+        `;
+
+        const StyledSliderTrack = styled(SliderTrack)`
+          background: var(--gray-300);
+        `;
+
+        const StyledSliderThumb = styled(SliderThumb)`
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: var(--gray-50);
+          border: 2px solid var(--gray-600);
+
+          &[data-dragging] {
+            background: var(--gray-600);
+          }
+        `;
+
+        <StyledSlider defaultValue={30}>
+          <Label>Opacity</Label>
+          <SliderOutput />
+          <StyledSliderTrack>
+            <StyledSliderThumb />
+          </StyledSliderTrack>
+        </StyledSlider>
+        ```
+
+        ```tsx
+        import {Button} from 'react-aria-components';
+        import {styled} from '../styled-system/jsx';
+
+        const StyledButton = styled(Button, {
+          base: {
+            /* ... */
+          },
+          variants: {
+            variant: {
+              primary: {
+                background: 'blue.600',
+                '&[data-pressed]': {
+                  background: 'blue.700',
+                }
+              },
+              secondary: {
+                background: 'gray.300',
+                '&[data-pressed]': {
+                  background: 'gray.400',
+                }
+              }
+            }
+          }
+        });
+
+        <StyledButton variant="primary">
+          Initiate launch sequence…
+        </StyledButton>
+        ```
+
+      </Styles>
+    </Section>
+
+    <Section className="red-gradient-background">
+      <h2><span className="bg-clip-text bg-linear-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
+      <p className="m-0">Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation, table column resizing, and a ton more.</p>
+      <LearnMoreLink href="dnd.html" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
+      <KanbanBoard />
+    </Section>
+
+    <Section className="cyan-gradient-background">
+      <h2><GradientText>High quality</GradientText> <span className="bg-clip-text bg-linear-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
+      <p className="m-0">React Aria ensures a great experience for users, no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
+      <LearnMoreLink href="quality.html#interactions" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
+
+      <PaginatedCarousel className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar" paginationClassName="md:hidden">
+        <Card>
+          <CardTitle>Touch optimized.</CardTitle>
+          <CardDescription>Micro-interactions like dragging off to cancel a press, long pressing to select, preventing text selection on interactive elements, scroll locking, and multi-touch handling make your app feel native.</CardDescription>
+
+          <div className="flex-1 flex items-center justify-center -mb-6 will-change-transform">
+            <SwitchAnimation />
+          </div>
+        </Card>
+
+        <Card>
+          <CardTitle>Mouse enhanced.</CardTitle>
+          <CardDescription>Hover interactions only apply when using a mouse – no sticky touch hover states. Mouse features like double click, scroll wheel, tooltips, and cursor feedback enhance your app on desktop.</CardDescription>
+
+          <div className="flex-1 flex items-center justify-center will-change-transform">
+            <MouseAnimation />
+          </div>
+        </Card>
+
+        <Card>
+          <CardTitle>Keyboard friendly.</CardTitle>
+          <CardDescription>Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</CardDescription>
+
+          <div className="mt-8 flex gap-2 sm:gap-4 items-center">
+            <Keyboard />
+            <ListBoxExample />
+          </div>
+        </Card>
+
+        <Card className="[&>:last-child]:flex-1">
+          <CardTitle>Focus managed.</CardTitle>
+          <CardDescription>Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</CardDescription>
+          <FocusExample />
+        </Card>
+      </PaginatedCarousel>
+    </Section>
+
+    <Section className="blue-gradient-background">
+      <h2><span className="bg-clip-text bg-linear-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
+      <p className="m-0">React Aria is designed with accessibility as a top priority, and battle tested in production applications. All components are built to work across a wide variety of devices and assistive technologies to ensure the best experience possible for all users.</p>
+      <LearnMoreLink href="quality.html#accessibility" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
+
+      <div className="grid gap-y-6 gap-x-20 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-center">
+        <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-1/2 iphone-frame md:order-4">
+          <div className="w-full h-full bg-white dark:bg-zinc-900 box-border p-[8%] pb-[11%] iphone-mask *:h-full">
+            <A11y />
+          </div>
+        </div>
+
+        <Card className="md:w-80">
+          <CardTitle>ARIA Semantics.</CardTitle>
+          <CardDescription>Components implement semantics and keyboard behavior according to the W3C <a href="https://www.w3.org/WAI/ARIA/apg/" target="_blank">ARIA Authoring Practices Guide</a>. React Aria builds on this foundation with real-world testing and device support.</CardDescription>
+        </Card>
+
+        <Card className="md:w-80">
+          <CardTitle>Mobile ready.</CardTitle>
+          <CardDescription>All behaviors work without a keyboard, ensuring touch screen reader users have full access. Additional features such as hidden dismiss buttons in dialogs enable a great experience for mobile users.</CardDescription>
+        </Card>
+
+        <Card className="md:w-80">
+          <CardTitle>Tested. Like, really.</CardTitle>
+          <CardDescription>All components are extensively tested using many popular screen readers and devices. React Aria normalizes differing behavior between browsers and assistive technologies to ensure all users have equal access.</CardDescription>
+        </Card>
+      </div>
+    </Section>
+
+    <Section className="orange-gradient-background">
+      <h2><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-linear-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
+      <p className="m-0">React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 5 numbering systems, right-to-left layout, and more.</p>
+      <LearnMoreLink href="quality.html#internationalization" className="text-orange-700 dark:text-orange-600 hover:bg-orange-400/[15%]" />
+      <I18n />
+    </Section>
+
+    <Section className="green-gradient-background">
+      <h2><span className="bg-clip-text bg-linear-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
+      <p className="m-0">React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with a built-in DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the low-level Hook-based API. Mix and match as needed.</p>
+      <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
+
+    <PaginatedCarousel className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] lg:grid-cols-2 lg:auto-rows-[1rem] -mx-8 px-8 lg:px-12 lg:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" paginationClassName="max-w-3xl lg:hidden">
+      <Card className="lg:row-end-[span_13]">
+        <CardTitle>Reuse styles.</CardTitle>
+        <CardDescription>React Aria's API is designed around composition, enabling you to share common components between patterns, or even use them standalone. No need to duplicate styling code.</CardDescription>
+
+        <Scrollable className="relative flex-1 -mx-6 -mb-6 mt-6 [&_pre]:m-0 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm isolate rounded-b-2xl">
+
+          <div className="highlight-tags [--delay:2.5s] h-full *:h-full cross-fade [--fade-from:1] [--fade-to:0]">
+            <div className="hidden md:contents">
+              ```tsx
+              <Select>
+                <Label>Permissions</Label>
+                <Button>
+                  <SelectValue />
+                  <span>▼</span>
+                </Button>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>Read Only</ListBoxItem>
+                    <ListBoxItem>Edit</ListBoxItem>
+                    <ListBoxItem>Admin</ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </Select>
+              ```
+            </div>
+            <div className="contents md:hidden">
+              ```tsx
+              <Select>
+                <Label>
+                  Permissions
+                </Label>
+                <Button>
+                  <SelectValue />
+                  <span>▼</span>
+                </Button>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>
+                      Read Only
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Edit
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Admin
+                    </ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </Select>
+              ```
+            </div>
+          </div>
+          <div className="absolute top-0 left-0 highlight-tags cross-fade">
+            <div className="hidden md:contents">
+              ```tsx
+              <ComboBox>
+                <Label>Permissions</Label>
+                <Group>
+                  <Input />
+                  <Button>▼</Button>
+                </Group>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>Read Only</ListBoxItem>
+                    <ListBoxItem>Edit</ListBoxItem>
+                    <ListBoxItem>Admin</ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </ComboBox>
+              ```
+            </div>
+            <div className="contents md:hidden">
+              ```tsx
+              <ComboBox>
+                <Label>
+                  Permissions
+                </Label>
+                <Group>
+                  <Input />
+                  <Button>▼</Button>
+                </Group>
+                <Popover>
+                  <ListBox>
+                    <ListBoxItem>
+                      Read Only
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Edit
+                    </ListBoxItem>
+                    <ListBoxItem>
+                      Admin
+                    </ListBoxItem>
+                  </ListBox>
+                </Popover>
+              </ComboBox>
+              ```
+            </div>
+          </div>
+        </Scrollable>
+      </Card>
+
+      <Card className="lg:row-end-[span_17]">
+        <CardTitle>Build custom patterns.</CardTitle>
+        <CardDescription>Use the exported contexts for each component to build your own custom patterns with compositional APIs just like React Aria's built-in components.</CardDescription>
+
+        <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 *:h-full [&_pre]:m-0 [&_.source]:pl-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
+
+    ```tsx
+    // A Stepper component with customizable buttons.
+    function Stepper({children}) {
+      let [value, setValue] = useState(0);
+
+      return (
+        <ButtonContext.Provider value={{
+          slots: {
+            decrement: {onPress: () => setValue(value - 1)},
+            increment: {onPress: () => setValue(value + 1)}
+          }
+        }}>
+          <TextContext.Provider value={{children: value}}>
+            {children}
+          </TextContext.Provider>
+        </ButtonContext.Provider>
+      );
+    }
+
+    <Stepper>
+      <Button slot="decrement">-</Button>
+      <Text />
+      <Button slot="increment">+</Button>
+    </Stepper>
+    ```
+
+        </Scrollable>
+      </Card>
+
+      <Card className="lg:row-end-[span_22]">
+        <CardTitle>Customize component parts.</CardTitle>
+        <CardDescription>React Aria's contexts let you extend components with new features, or even replace individual parts with totally custom implementations.</CardDescription>
+
+        <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 max-h-[30rem] lg:max-h-none [--code-padding:--spacing(6)] [&_pre]:m-0 [&_.source]:px-6 lg:[&_.source]:text-[13px] code-mask rounded-b-2xl">
+
+    ```tsx
+    // Add a clear button to a DatePicker.
+    function DatePickerClearButton() {
+      let state = useContext(DatePickerStateContext);
+
+      return (
+        <Button
+          slot={null}
+          aria-label="Clear"
+          onPress={() => state.setValue(null)}>
+          ✕
+        </Button>
+      );
+    }
+
+    <DatePicker>
+      <Label>Date</Label>
+      <Group>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+        <DatePickerClearButton />
+        <Button>▼</Button>
+      </Group>
+      <Popover>
+        <Dialog>
+          <Calendar>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid>
+              {date => <CalendarCell date={date} />}
+            </CalendarGrid>
+          </Calendar>
+        </Dialog>
+      </Popover>
+    </DatePicker>
+    ```
+
+        </Scrollable>
+      </Card>
+
+      <Card className="lg:row-end-[span_18]">
+        <CardTitle>Get complete control with hooks.</CardTitle>
+        <CardDescription>Drop down to the low-level Hook-based API to intercept events, override behavior, customize DOM elements, and much more. Mix and match components and hooks as needed.</CardDescription>
+
+        <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 *:h-full [--code-padding:--spacing(6)] [&_pre]:m-0 [&_.source]:px-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
+
+    ```tsx
+    import {useCalendarGrid} from 'react-aria';
+
+    // Custom calendar that displays one week at a time.
+    function WeekCalendarGrid(props) {
+      let state = useContext(CalendarStateContext);
+      let {gridProps} = useCalendarGrid(props, state);
+
+      return (
+        <table {...gridProps}>
+          <tbody>
+            <tr>
+              {state.getDatesInWeek(0).map((date, i) =>
+                <CalendarCell key={i} date={date} />
+              )}
+            </tr>
+          </tbody>
+        </table>
+      );
+    }
+
+    <Calendar visibleDuration={{weeks: 1}}>
+      <Button slot="previous">◀</Button>
+      <WeekCalendarGrid />
+      <Button slot="next">▶</Button>
+    </Calendar>
+    ```
+
+          </Scrollable>
+        </Card>
+      </PaginatedCarousel>
+    </Section>
+
+    <section className="max-w-6xl mx-auto px-8 md:px-20 pb-20">
+      <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
+
+      <div className="grid md:grid-cols-3 gap-6">
+        <a href="getting-started.html" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
+          <CardTitle>Install and Setup <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
+          <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
+        </a>
+
+        <a href="components.html" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
+          <CardTitle>View Components <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
+          <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
+        </a>
+
+        <a href="examples/index.html" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
+          <CardTitle>Explore Examples <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
+          <CardDescription>Check out some fully styled examples showing what is possible with React Aria.</CardDescription>
+        </a>
+      </div>
+    </section>
+
+    </main>
+
+    <footer className="max-w-6xl mx-auto text-[11px] box-border px-8 md:px-20 py-4">
+      <hr className="border-0 border-b border-gray-300 dark:border-zinc-700 m-0 mb-2" />
+      <ul className="flex flex-wrap gap-1 lg:justify-end text-zinc-500 dark:text-zinc-400 list-none">
+        <li>Copyright © {new Date().getFullYear()} Adobe. All rights reserved.</li>
+        <li><a href="//www.adobe.com/privacy.html" target="_blank" className="underline text-zinc-500 dark:text-zinc-400">Privacy</a><span className="ml-1">/</span></li>
+        <li><a href="//www.adobe.com/legal/terms.html" target="_blank" className="underline text-zinc-500 dark:text-zinc-400">Terms of Use</a><span className="ml-1">/</span></li>
+        <li><a href="//www.adobe.com/privacy/cookies.html" target="_blank" className="underline text-zinc-500 dark:text-zinc-400">Cookies</a><span className="ml-1">/</span></li>
+        <li><a href="//www.adobe.com/privacy/ca-rights.html" target="_blank" className="underline text-zinc-500 dark:text-zinc-400">Do not sell my personal information</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>

@@ -4,6 +4,8 @@ export default Layout;
 import {SearchField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['input'];
+
 # SearchField
 
 <PageDescription>{docs.exports.SearchField.description}</PageDescription>
@@ -12,9 +14,10 @@ import docs from 'docs:@react-spectrum/s2';
   component={SearchField}
   docs={docs.exports.SearchField}
   links={docs.links}
-  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
-    label: 'Search'
+    label: 'Search',
+    placeholder: 'Search documents'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -26,22 +29,24 @@ Use the `value` or `defaultValue` prop to set the text value, and `onChange` to 
 ```tsx render
 "use client";
 import {SearchField} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
   let [search, setSearch] = useState('');
   let [submittedSearch, setSubmittedSearch] = useState('');
-  
+
   return (
     <div>
       <SearchField
         label="Search"
+        placeholder="Search documents"
         ///- begin highlight -///
         value={search}
         onChange={setSearch}
         onSubmit={setSubmittedSearch} />
       {/*- end highlight -*/}
-      <pre style={{fontSize: 12}}>
+      <pre className={style({font: 'body'})}>
         Value: {search}{'\n'}
         Submitted value: {submittedSearch}
       </pre>
@@ -64,6 +69,7 @@ function Example(props) {
       <SearchField
         {...props}
         label="Search"
+        placeholder="Search documents"
         ///- begin highlight -///
         name="search"
         /* PROPS */

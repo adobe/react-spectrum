@@ -1,0 +1,40 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../../../../starters/tailwind/src/*.{ts,tsx}";
+@source "../pages/**/*.mdx";
+@plugin 'tailwindcss-react-aria-components';
+@plugin 'tailwindcss-animate';
+@source "../../docs/pages/react-aria/home/*.tsx";
+@import "../../docs/pages/react-aria/home/home.css";
+
+@font-face {
+  font-family: "adobe-clean-spectrum-vf";
+  src: url("https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3") format("woff2"), url("https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/d?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3") format("woff"), url("https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/a?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: normal;
+}
+
+body {
+  font-family: "adobe-clean-spectrum-vf", system-ui, sans-serif;
+}
+
+@media (min-resolution: 200dpi) {
+  :root {
+    --spacing: calc(0.25rem * 1.25);
+    --text-xs: calc(0.75rem * 1.125);
+    --text-sm: calc(0.875rem * 1.125);
+    --text-base: calc(1rem * 1.125);
+    --text-lg: calc(1.125rem * 1.125);
+    --text-xl: calc(1.25rem * 1.125);
+    --text-2xl: calc(1.5rem * 1.125);
+    --text-3xl: calc(1.875rem * 1.125);
+  }
+}
+
+@layer utilities {
+  .font-spectrum {
+    font-family: "adobe-clean-spectrum-vf", system-ui, sans-serif;
+  }
+}

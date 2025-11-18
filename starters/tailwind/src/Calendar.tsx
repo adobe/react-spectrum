@@ -16,11 +16,11 @@ import {
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { Button } from './Button';
-import { focusRing } from './utils';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'w-9 h-9 m-px text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none',
+  base: 'w-9 h-9 text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none',
   variants: {
     isSelected: {
       false: 'text-zinc-900 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700 pressed:bg-gray-200 dark:pressed:bg-zinc-600',
@@ -40,9 +40,9 @@ export function Calendar<T extends DateValue>(
   { errorMessage, ...props }: CalendarProps<T>
 ) {
   return (
-    <AriaCalendar {...props}>
+    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans')}>
       <CalendarHeader />
-      <CalendarGrid>
+      <CalendarGrid className="border-spacing-0">
         <CalendarGridHeader />
         <CalendarGridBody>
           {(date) => <CalendarCell date={date} className={cellStyles} />}
@@ -57,13 +57,13 @@ export function CalendarHeader() {
   let {direction} = useLocale();
 
   return (
-    <header className="flex items-center gap-1 pb-4 px-1 w-full">
-      <Button variant="icon" slot="previous">
-        {direction === 'rtl' ? <ChevronRight aria-hidden /> : <ChevronLeft aria-hidden />}
+    <header className="flex items-center gap-1 pb-4 px-1 border-box">
+      <Button variant="secondary" slot="previous">
+        {direction === 'rtl' ? <ChevronRight aria-hidden size={18} /> : <ChevronLeft aria-hidden size={18} />}
       </Button>
-      <Heading className="flex-1 font-sans font-semibold text-xl text-center mx-2 text-zinc-900 dark:text-zinc-200" />
-      <Button variant="icon" slot="next">
-        {direction === 'rtl' ? <ChevronLeft aria-hidden /> : <ChevronRight aria-hidden />}
+      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-lg text-center mx-2 text-zinc-900 dark:text-zinc-200" />
+      <Button variant="secondary" slot="next">
+        {direction === 'rtl' ? <ChevronLeft aria-hidden size={18} /> : <ChevronRight aria-hidden size={18} />}
       </Button>
     </header>
   );

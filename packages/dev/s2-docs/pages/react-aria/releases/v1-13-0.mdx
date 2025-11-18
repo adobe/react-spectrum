@@ -1,0 +1,219 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+import {ReleasedVersions} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'October 2, 2025';
+export const title = 'v1.13.0';
+export const description = 'Happy fall! This release brings some long-awaited features, including multi-selection in React Aria Select and enhanced animation support across our components. For example, Disclosure now provides CSS variables to easily animate expanding and collapsing. We\'ve also added a new `<SelectionIndicator>` component that can be used within components that support single selection to animate selection changes. In addition, we have significantly improved the behavior of scrolling modals on iOS 26. Lastly, `onAction` can now be used on a `ComboBoxItem`, enabling you to add a “create” option.'
+export const isSubpage = true;
+
+# v1.13.0
+<Time date={date} />
+
+Happy fall! This release brings some long-awaited features, including multi-selection in [React Aria Select](../Select.html#multiple-selection) and enhanced animation support across our components. For example, [Disclosure](../Disclosure.html) now provides CSS variables to easily animate expanding and collapsing. We’ve also added a new `<SelectionIndicator>` component that can be used within components that support single selection such as [Tabs](../Tabs.html) and [ToggleButtonGroup](../ToggleButtonGroup.html#animation) to animate selection changes. In addition, we have significantly improved the behavior of scrolling modals on iOS 26. Lastly, `onAction` can now be used on a [`ComboBoxItem`](../ComboBox.html#item-actions), enabling you to add a “create” option.
+
+As always, thank you to our community for their support and contributions!
+
+**Multi-Selection in React Aria Select:**
+
+To support multi-selection in React Aria Select, we are updating the API from `selectedKey` to  `value`, matching the React `select` API. The deprecated API is supported for backward compatibility, but only supports single selection. Please see our [docs](../Select.html#multiple-selection) for more on how to implement multi-selection.
+
+## Enhancements
+* Calendar
+  * Add `selectionAlignment` prop to Calendar components - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8752)
+* Combobox
+  * Support `onAction` on ComboBox items - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8910), [PR](https://github.com/adobe/react-spectrum/pull/8947)
+* Disclosure
+  * Add support for disclosure animation for React Aria Disclosure - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8867)
+* Select
+  * Add support for multiple selection to React Aria Select - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8734), [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/8880)
+* Miscellaneous
+  * Add support for animated selection indicators - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8876)
+* Modals
+  * Improve behavior of modals on iOS 26 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8888), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8948)
+  * Allow pinch zooming and text selection in React Aria Modals on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8922)
+
+## Fixes
+* Collection
+  * Prevent crash in React Aria collections when used with Suspense and `useTransition` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8835)
+  * Fix collection dirty node tracking with Suspense - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8892)
+* Date and Time
+  * Fix the day the week starts with when specifiying `ISO 8601` in the locale - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8815), [PR](https://github.com/adobe/react-spectrum/pull/8877)
+  * Fix date parsing when there are seconds in the offset - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8900)
+  * Ensure `isReadonly` applies to all non-literal date segments - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/7969)
+  * Add `isReadOnly` to the render props in React Aria DateField/DatePicker - [@Mr-Heidari](https://github.com/Mr-Heidari) - [PR](https://github.com/adobe/react-spectrum/pull/8818)
+* Disclosure
+  * Don't display `DisclosurePanel` content when it is not expanded and disabled - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8893)
+* Focus Management
+  * Fix keyboard navigation to skip over hidden inputs to next available input - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8794)
+  * Fix unexpected `onBlur` events in React Aria Checkbox and Radio - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8567)
+* GridList
+  * Fix accessibiilty violations in GridList sections - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8932)
+* Layout and Positioning
+  * Make `scrollIntoView` respect `scroll-margin` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8715)
+  * Fix `DOMLayoutDelegate` miscalculation of item & visible rects - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8696)
+  * Fix overlay positioning when animation starts on first render - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8789)
+* Menu
+  * Show checkboxes for selected items when `ContextualHelpTrigger` `isUnavailable` is set to false - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8921)
+* NumberField
+  * Pass `disabled` prop to hidden input in React Aria NumberField - [@tklepzig](https://github.com/tklepzig) - [PR](https://github.com/adobe/react-spectrum/pull/8706)
+* Tree
+  * Speed up flattening when expandening keys in Tree Collection - [@snowystinger](https://github.com/snowystinger) = [PR](https://github.com/adobe/react-spectrum/pull/8774)
+* Miscellaneous
+  * Avoid triggering `onClick` on disabled links - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/8828)
+
+## Docs
+* Clarify React Aria Toast close button placement - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8923)
+
+## Under Construction
+* Autocomplete
+  * Automatically detect if wrapped collection supports virtual focus - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8862)
+  * Properly allow user to keyboard edit the Autocomplete input field when collection becomes empty - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8861)
+
+## Released packages
+
+```json
+ - react-aria@3.44.0
+ - react-aria-components@1.13.0
+ - react-stately@3.42.0
+ - @internationalized/date@3.10.0
+ - @react-aria/actiongroup@3.7.21
+ - @react-aria/autocomplete@3.0.0-rc.3
+ - @react-aria/breadcrumbs@3.5.29
+ - @react-aria/button@3.14.2
+ - @react-aria/calendar@3.9.2
+ - @react-aria/checkbox@3.16.2
+ - @react-aria/collections@3.0.0
+ - @react-aria/color@3.1.2
+ - @react-aria/combobox@3.14.0
+ - @react-aria/datepicker@3.15.2
+ - @react-aria/dialog@3.5.31
+ - @react-aria/disclosure@3.1.0
+ - @react-aria/dnd@3.11.3
+ - @react-aria/focus@3.21.2
+ - @react-aria/form@3.1.2
+ - @react-aria/grid@3.14.5
+ - @react-aria/gridlist@3.14.1
+ - @react-aria/i18n@3.12.13
+ - @react-aria/interactions@3.25.6
+ - @react-aria/label@3.7.22
+ - @react-aria/landmark@3.0.7
+ - @react-aria/link@3.8.6
+ - @react-aria/listbox@3.15.0
+ - @react-aria/menu@3.19.3
+ - @react-aria/meter@3.4.27
+ - @react-aria/numberfield@3.12.2
+ - @react-aria/overlays@3.30.0
+ - @react-aria/progress@3.4.27
+ - @react-aria/radio@3.12.2
+ - @react-aria/searchfield@3.8.9
+ - @react-aria/select@3.17.0
+ - @react-aria/selection@3.26.0
+ - @react-aria/separator@3.4.13
+ - @react-aria/slider@3.8.2
+ - @react-aria/spinbutton@3.6.19
+ - @react-aria/steplist@3.0.0-alpha.22
+ - @react-aria/switch@3.7.8
+ - @react-aria/table@3.17.8
+ - @react-aria/tabs@3.10.8
+ - @react-aria/tag@3.7.2
+ - @react-aria/test-utils@1.0.0-beta.1
+ - @react-aria/textfield@3.18.2
+ - @react-aria/toast@3.0.8
+ - @react-aria/toggle@3.12.2
+ - @react-aria/toolbar@3.0.0-beta.21
+ - @react-aria/tooltip@3.8.8
+ - @react-aria/tree@3.1.4
+ - @react-aria/utils@3.31.0
+ - @react-aria/virtualizer@4.1.10
+ - @react-aria/visually-hidden@3.8.28
+ - @react-stately/calendar@3.9.0
+ - @react-stately/checkbox@3.7.2
+ - @react-stately/collections@3.12.8
+ - @react-stately/color@3.9.2
+ - @react-stately/combobox@3.12.0
+ - @react-stately/data@3.14.1
+ - @react-stately/datepicker@3.15.2
+ - @react-stately/disclosure@3.0.8
+ - @react-stately/dnd@3.7.1
+ - @react-stately/form@3.2.2
+ - @react-stately/grid@3.11.6
+ - @react-stately/layout@4.5.1
+ - @react-stately/list@3.13.1
+ - @react-stately/menu@3.9.8
+ - @react-stately/numberfield@3.10.2
+ - @react-stately/overlays@3.6.20
+ - @react-stately/radio@3.11.2
+ - @react-stately/searchfield@3.5.16
+ - @react-stately/select@3.8.0
+ - @react-stately/selection@3.20.6
+ - @react-stately/slider@3.7.2
+ - @react-stately/steplist@3.0.0-alpha.18
+ - @react-stately/table@3.15.1
+ - @react-stately/tabs@3.8.6
+ - @react-stately/toggle@3.9.2
+ - @react-stately/tooltip@3.5.8
+ - @react-stately/tree@3.9.3
+ - @react-stately/virtualizer@4.4.4
+ - @react-types/actionbar@3.1.19
+ - @react-types/actiongroup@3.4.21
+ - @react-types/autocomplete@3.0.0-alpha.35
+ - @react-types/avatar@3.0.19
+ - @react-types/badge@3.1.21
+ - @react-types/breadcrumbs@3.7.17
+ - @react-types/button@3.14.1
+ - @react-types/buttongroup@3.3.21
+ - @react-types/calendar@3.8.0
+ - @react-types/card@3.0.0-alpha.40
+ - @react-types/checkbox@3.10.2
+ - @react-types/color@3.1.2
+ - @react-types/combobox@3.13.9
+ - @react-types/contextualhelp@3.2.22
+ - @react-types/datepicker@3.13.2
+ - @react-types/dialog@3.5.22
+ - @react-types/divider@3.3.21
+ - @react-types/form@3.7.16
+ - @react-types/grid@3.3.6
+ - @react-types/illustratedmessage@3.3.21
+ - @react-types/image@3.5.2
+ - @react-types/label@3.9.15
+ - @react-types/layout@3.3.27
+ - @react-types/link@3.6.5
+ - @react-types/list@3.2.34
+ - @react-types/listbox@3.7.4
+ - @react-types/menu@3.10.5
+ - @react-types/meter@3.4.13
+ - @react-types/numberfield@3.8.15
+ - @react-types/overlays@3.9.2
+ - @react-types/progress@3.5.16
+ - @react-types/provider@3.8.13
+ - @react-types/radio@3.9.2
+ - @react-types/searchfield@3.6.6
+ - @react-types/select@3.11.0
+ - @react-types/shared@3.32.1
+ - @react-types/slider@3.8.2
+ - @react-types/statuslight@3.3.21
+ - @react-types/switch@3.5.15
+ - @react-types/table@3.13.4
+ - @react-types/tabs@3.3.19
+ - @react-types/text@3.3.21
+ - @react-types/textfield@3.12.6
+ - @react-types/tooltip@3.4.21
+ - @react-types/view@3.4.21
+ - @react-types/well@3.3.21
+```

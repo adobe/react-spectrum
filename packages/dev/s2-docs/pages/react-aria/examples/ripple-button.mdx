@@ -1,0 +1,61 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import '../../../tailwind/tailwind.css';
+import {ComponentList} from '../../../src/ComponentCard';
+
+export const hideNav = true;
+export const section = 'Examples';
+export const keywords = ['react-aria', 'example', 'button', 'tailwind'];
+export const description = 'A button with an animated ripple effect styled with Tailwind CSS.';
+
+# Ripple Button
+
+<PageDescription>A [Button](../Button.html) with an animated ripple effect styled with [Tailwind CSS](https://tailwindcss.com/).</PageDescription>
+
+```tsx render type="tailwind" expanded dir="react-aria/examples" files={['packages/dev/s2-docs/pages/react-aria/examples/ripple.css']}
+"use client";
+import {Button} from 'react-aria-components';
+import {useState} from 'react';
+import {Plane} from 'lucide-react';
+import './ripple.css';
+
+function RippleButton(props) {
+  let [coords, setCoords] = useState(null);
+  return (
+    <Button
+      onPress={(e) => {
+        setCoords({x: e.x, y: e.y});
+      }}
+      className={`
+        relative overflow-hidden [-webkit-tap-highlight-color:transparent]
+        inline-flex items-center justify-center rounded-md bg-black/50 bg-clip-padding border border-white/20 px-6 py-4 font-sans text-white text-base
+        hover:bg-black/60 pressed:bg-black/70 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75
+      `}>
+      {coords && (
+        <div
+          key={`${coords.x},${coords.y}`}
+          className="absolute h-8 w-8 rounded-full opacity-100 bg-white/60"
+          style={{
+            animation: 'ripple 600ms linear forwards',
+            left: coords.x - 15,
+            top: coords.y - 15
+          }}
+          onAnimationEnd={() => setCoords(null)} />)}
+      <span className="flex items-center gap-4">{props.children}</span>
+    </Button>
+  );
+}
+
+<div className="bg-linear-to-r from-teal-300 to-cyan-500 box-border p-12 w-full rounded-lg flex justify-center">
+  <RippleButton><Plane size={24} /> Book flight</RippleButton>
+</div>
+```
+
+## Components
+
+<ComponentList
+  pages={props.pages}
+  components={[
+    'react-aria/Button.html'
+  ]} />

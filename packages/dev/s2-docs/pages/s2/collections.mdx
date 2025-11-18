@@ -1,0 +1,332 @@
+import {Layout} from '../../src/Layout';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+export default Layout;
+
+export const section = 'Guides';
+export const tags = ['lists'];
+export const description = 'How to load and render collections.';
+
+# Collections
+
+<PageDescription>Many components display a collection of items, and provide functionality such as keyboard navigation, and selection. Learn how to load and render collections using React Spectrums's compositional API.</PageDescription>
+
+## Static collections
+
+A **static collection** is a collection that does not change over time (e.g. hard coded). This is common for components like menus where the items are built into the application rather than user data.
+
+```tsx render type="s2"
+"use client";
+import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <ActionButton>Menu</ActionButton>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <MenuItem>Edit</MenuItem>
+    <MenuItem>Delete</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+### Sections
+
+Sections or groups of items can be constructed by wrapping the items in a section element. A `<Header>` can also be rendered within a section to provide a section title.
+
+<ExampleSwitcher type="component" examples={['Menu', 'Picker']}>
+
+```tsx render type="s2"
+"use client";
+import {Menu, MenuTrigger, MenuItem, MenuSection, ActionButton, Header, Heading} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <ActionButton>Menu</ActionButton>
+  <Menu>
+    {/*- begin highlight -*/}
+    <MenuSection>
+      <Header>
+        <Heading>Styles</Heading>
+      </Header>
+      {/*- end highlight -*/}
+      <MenuItem>Bold</MenuItem>
+      <MenuItem>Underline</MenuItem>
+    </MenuSection>
+    <MenuSection>
+      <Header>
+        <Heading>Align</Heading>
+      </Header>
+      <MenuItem>Left</MenuItem>
+      <MenuItem>Middle</MenuItem>
+      <MenuItem>Right</MenuItem>
+    </MenuSection>
+  </Menu>
+</MenuTrigger>
+```
+
+```tsx render type="s2"
+"use client";
+import {Picker, PickerSection, PickerItem, Header, Heading} from '@react-spectrum/s2';
+
+<Picker label="Text style">
+  {/*- begin highlight -*/}
+  <PickerSection>
+    <Header>
+      <Heading>Styles</Heading>
+    </Header>
+    {/*- end highlight -*/}
+    <PickerItem id="bold">Bold</PickerItem>
+    <PickerItem id="underline">Underline</PickerItem>
+  </PickerSection>
+  <PickerSection>
+    <Header>
+      <Heading>Align</Heading>
+    </Header>
+    <PickerItem id="left">Left</PickerItem>
+    <PickerItem id="middle">Middle</PickerItem>
+    <PickerItem id="right">Right</PickerItem>
+  </PickerSection>
+</Picker>
+```
+
+</ExampleSwitcher>
+
+## Dynamic collections
+
+A **dynamic collection** is a collection that is based on external data, for example from an API. In addition, it may change over time as items are added, updated, or removed from the collection by a user.
+
+Use the `items` prop to provide an array of objects, and a function to render each item as the `children`. This is similar to using `array.map` to render the children, but automatically memoizes the rendering of each item to improve performance.
+
+```tsx render type="s2"
+"use client";
+import {TagGroup, Tag, ActionButton, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import AddIcon from '@react-spectrum/s2/icons/Add';
+import {useState} from 'react';
+
+function Example() {
+  let [animals, setAnimals] = useState([
+    {id: 1, name: 'Aardvark'},
+    {id: 2, name: 'Kangaroo'},
+    {id: 3, name: 'Snake'}
+  ]);
+
+  let addItem = () => {
+    setAnimals([
+      ...animals,
+      {id: animals.length + 1, name: 'Lion'}
+    ]);
+  };
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 32, width: 320})}>
+      {/*- begin highlight -*/}
+      <TagGroup label="Animals" items={animals}>
+        {item => <Tag>{item.name}</Tag>}
+      </TagGroup>
+      {/*- end highlight -*/}
+      <ActionButton onPress={addItem} styles={style({alignSelf: 'start'})}>
+        <AddIcon />
+        <Text>Add item</Text>
+      </ActionButton>
+    </div>
+  );
+}
+```
+
+<InlineAlert variant="informative">
+  <Heading>useListData</Heading>
+  <Content>For convenience, React Spectrum provides a built-in [useListData](https://react-spectrum.adobe.com/react-stately/useListData.html) hook to manage state for an immutable list of items. It includes methods to add, remove, update, and re-order items, and manage corresponding selection state. See the docs for more details.</Content>
+</InlineAlert>
+
+### Unique ids
+
+All items in a collection must have a unique id, which is used for [selection](selection.html) and to track item updates. By default, React Spectrum looks for an `id` property on each object in the `items` array. You can also specify an `id` prop when rendering each item. This example uses `item.name` as the `id`.
+
+```tsx
+let animals = [
+  {name: 'Aardvark'},
+  {name: 'Kangaroo'},
+  {name: 'Snake'}
+];
+
+<Picker label="Animals" items={animals}>
+  {item => (
+    /*- begin highlight -*/
+    <PickerItem id={item.name}>
+    {/*- end highlight -*/}
+      {item.name}
+    </PickerItem>
+  )}
+</Picker>
+```
+
+<InlineAlert variant="notice">
+  <Heading>React keys</Heading>
+  <Content>React Spectrum automatically sets the React `key` using `id`. If using `array.map`, you'll need to set both `key` and `id`.</Content>
+</InlineAlert>
+
+### Dependencies
+
+Dynamic collections are automatically memoized to improve performance. Rendered item elements are cached based on the object identity of the list item. If rendering an item depends on additional external state, the `dependencies` prop must be provided. This invalidates rendered elements similar to dependencies in React's `useMemo` hook.
+
+```tsx render type="s2"
+"use client";
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {ToggleButtonGroup, ToggleButton} from '@react-spectrum/s2';
+import {useState} from 'react';
+
+const items = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', image: 'https://img.pokemondb.net/sprites/home/normal/2x/avif/charizard.avif'},
+  {id: 2, name: 'Blastoise', type: 'Water', image: 'https://img.pokemondb.net/sprites/home/normal/2x/avif/blastoise.avif'},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', image: 'https://img.pokemondb.net/sprites/home/normal/2x/avif/venusaur.avif'},
+  {id: 4, name: 'Pikachu', type: 'Electric', image: 'https://img.pokemondb.net/sprites/home/normal/2x/avif/pikachu.avif'}
+];
+
+export default function Example() {
+  let [showType, setShowType] = useState(false);
+
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 320, alignItems: 'center'})}>
+      <ToggleButtonGroup
+        aria-label="Display options"
+        selectionMode="multiple"
+        selectedKeys={showType ? ['type'] : []}
+        onSelectionChange={keys => setShowType(keys.has('type'))}
+      >
+        <ToggleButton id="type">Show type</ToggleButton>
+      </ToggleButtonGroup>
+      <CardView
+        aria-label="Pokemon"
+        items={items}
+        selectionMode="multiple"
+        /*- begin highlight -*/
+        dependencies={[showType]}
+        /*- end highlight -*/
+        styles={style({width: 'full', height: 420})}
+      >
+        {item => (
+          <AssetCard textValue={item.name}>
+            <CardPreview>
+              <Image src={item.image} />
+            </CardPreview>
+            <Content>
+              <Text slot="title">{item.name}</Text>
+              {/*- begin highlight -*/}
+              {showType && <Text slot="description">{item.type}</Text>}
+              {/*- end highlight -*/}
+            </Content>
+          </AssetCard>
+        )}
+      </CardView>
+    </div>
+  );
+}
+```
+
+Note that adding dependencies will result in the _entire_ list being invalidated when a dependency changes. To avoid this and invalidate only an individual item, update the item object itself rather than accessing external state.
+
+### Combining collections
+
+To combine multiple sources of data, or mix static and dynamic items, use the `<Collection>` component.
+
+```tsx render type="s2"
+"use client";
+import {Picker, PickerSection, PickerItem, Header, Heading, Collection} from '@react-spectrum/s2';
+
+let animals = [
+  {id: 1, species: 'Aardvark'},
+  {id: 2, species: 'Kangaroo'},
+  {id: 3, species: 'Snake'}
+];
+
+let people = [
+  {id: 4, name: 'David'},
+  {id: 5, name: 'Mike'},
+  {id: 6, name: 'Jane'}
+];
+
+<Picker label="Select an item">
+  <PickerSection>
+    <Header>
+      <Heading>Animals</Heading>
+    </Header>
+    {/*- begin highlight -*/}
+    <Collection items={animals}>
+      {item => <PickerItem id={item.species}>{item.species}</PickerItem>}
+    </Collection>
+    {/*- end highlight -*/}
+  </PickerSection>
+  <PickerSection>
+    <Header>
+      <Heading>People</Heading>
+    </Header>
+    <Collection items={people}>
+      {item => <PickerItem id={item.name}>{item.name}</PickerItem>}
+    </Collection>
+  </PickerSection>
+</Picker>
+```
+
+<InlineAlert variant="notice">
+  <Heading>Globally unique ids</Heading>
+  <Content>Unlike React keys which must only be unique within each element, the `id` prop must be globally unique across all sections. In the above example, the ids of `animals` and `people` do not conflict.</Content>
+</InlineAlert>
+
+## Asynchronous loading
+
+Data can be loaded asynchronously using any data fetching library. [useAsyncList](https://react-spectrum.adobe.com/react-stately/useAsyncList.html) is a built-in option.
+
+Many components support infinite scrolling via the `loadingState` and `onLoadMore` props. These trigger loading of additional pages of items automatically as the user scrolls.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  /*- begin focus -*/
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      let res = await fetch(
+        cursor || `https://pokeapi.co/api/v2/pokemon`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+  /*- end focus -*/
+
+  return (
+    <TableView
+      aria-label="Pokemon"
+      selectionMode="single"
+      ///- begin highlight -///
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}
+      ///- end highlight -///
+      styles={style({width: 'full', height: 320})}
+    >
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {(item) => (
+          <Row id={item.name}>
+            <Cell>{item.name}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```

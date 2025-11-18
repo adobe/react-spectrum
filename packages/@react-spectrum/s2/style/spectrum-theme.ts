@@ -12,7 +12,7 @@
 
 import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
 import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
-import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, rawColorToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, shadowToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -330,7 +330,7 @@ const padding = {
   ...relativeSpacing
 };
 
-export function size(this: MacroContext | void, px: number): string {
+export function size(this: MacroContext | void, px: number): `calc(${string})` {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
@@ -434,8 +434,7 @@ let durationValue = (value: number | string) => typeof value === 'number' ? valu
 const fontWeightBase = {
   normal: '400',
   medium: {
-    default: '500',
-    ':lang(ar, he)': '600' // Myriad does not have a 500 weight
+    default: '500'
   },
   bold: {
     default: '700',
@@ -443,8 +442,7 @@ const fontWeightBase = {
   },
   'extra-bold': {
     default: '800',
-    ':lang(ja, ko, zh)': '700', // Adobe Clean Han uses 700 as the extra bold weight.
-    ':lang(ar, he)': '700' // Myriad does not have a 800 weight
+    ':lang(ja, ko, zh)': '700' // Adobe Clean Han uses 700 as the extra bold weight.
   },
   black: '900'
 } as const;
@@ -466,8 +464,8 @@ const fontWeight = {
 } as const;
 
 const i18nFonts = {
-  ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
-  ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
+  ':lang(ar)': 'adobe-clean-arabic, myriad-arabic, ui-sans-serif, system-ui, sans-serif',
+  ':lang(he)': 'adobe-clean-hebrew, myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
   ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
   ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
   ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
@@ -760,16 +758,17 @@ export const style = createTheme({
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
     fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
-      return {
-        '--fs': `pow(1.125, ${value})`,
-        fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
-      };
+      if (typeof value === 'number') {
+        return {
+          '--fs': `pow(1.125, ${value})`,
+          fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
+        } as CSSProperties;
+      }
+
+      return {fontSize: value};
     }, fontSize),
     fontWeight: new ExpandedProperty<keyof typeof fontWeight>(['fontWeight', 'fontVariationSettings', 'fontSynthesisWeight'], (value) => {
       return {
-        // Set font-variation-settings in addition to font-weight to work around typekit issue.
-        // (This was fixed, but leaving for backward compatibility for now.)
-        fontVariationSettings: value === 'inherit' ? 'inherit' : `"wght" ${value}`,
         fontWeight: value as any,
         fontSynthesisWeight: 'none'
       };
@@ -779,19 +778,15 @@ export const style = createTheme({
       ui: {
         // Calculate line-height based on font size.
         default: lineHeightCalc,
-        // Arabic and hebrew use the old line-height for now since they are on Myriad instead of Adobe Clean.
-        ':lang(ar, he)': getToken('line-height-100'),
         // CJK fonts use a larger line-height.
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('line-height-200')
       },
       heading: {
         default: lineHeightCalc,
-        ':lang(ar, he)': getToken('line-height-100'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('heading-cjk-line-height')
       },
       title: {
         default: lineHeightCalc,
-        ':lang(ar, he)': getToken('line-height-100'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('title-cjk-line-height')
       },
       body: {
@@ -801,7 +796,6 @@ export const style = createTheme({
       },
       detail: {
         default: lineHeightCalc,
-        ':lang(ar, he)': getToken('line-height-100'),
         ':lang(ja, ko, zh, zh-Hant, zh-Hans, zh-CN, zh-SG)': getToken('detail-cjk-line-height')
       },
       code: {
@@ -828,21 +822,22 @@ export const style = createTheme({
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
-    wordBreak: ['normal', 'break-all', 'keep-all'] as const,
+    wordBreak: ['normal', 'break-all', 'keep-all', 'break-word'] as const,
     overflowWrap: ['normal', 'anywhere', 'break-word'] as const,
     boxDecorationBreak: ['slice', 'clone'] as const,
 
     // effects
     boxShadow: {
-      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')}`,
-      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')}`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
+      emphasized: shadowToken('drop-shadow-emphasized').join(', '),
+      elevated: shadowToken('drop-shadow-elevated').join(', '),
+      dragged: shadowToken('drop-shadow-dragged').join(', '),
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')})`,
-      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')})`,
-      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
+      // layer order is reversed for filter property. filters are applied in the order they are specified.
+      emphasized: shadowToken('drop-shadow-emphasized').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      elevated: shadowToken('drop-shadow-elevated').reverse().map(s => `drop-shadow(${s})`).join(' '),
+      dragged: shadowToken('drop-shadow-dragged').reverse().map(s => `drop-shadow(${s})`).join(' '),
       none: 'none'
     },
     borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),

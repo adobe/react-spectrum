@@ -1,0 +1,365 @@
+import {Layout} from '../../src/Layout';
+import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
+import {S2StyleProperties} from '../../src/S2StyleProperties';
+import {S2FAQ} from '../../src/S2FAQ';
+export default Layout;
+
+export const section = 'Guides';
+export const tags = ['style', 'macro', 'spectrum', 'custom'];
+export const description = 'How to use the style macro.';
+
+# Styling
+
+<PageDescription>Learn how to use the `style` macro to apply Spectrum tokens directly in your components with type-safe autocompletion.</PageDescription>
+
+## Style macro
+
+The `style` macro runs at build time and returns a class name that applies Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.). See the [reference](style-macro.html) for a full list of supported values.
+
+```tsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<div className={style({backgroundColor: 'red-400', color: 'white'})}>
+  {/* ... */}
+</div>
+```
+
+Atomic output keeps your bundle small and scales well as your app grows. Each property/value pair is emitted once and reused everywhere.
+
+```css
+.bJ { background-color: #ffbcb4 }
+.ac { color: #fff }
+```
+
+Colocating styles with your component code means:
+
+- Develop more efficiently – no switching files or writing selectors.
+- Refactor with confidence – changes are isolated; deleting a component removes its styles.
+
+<InlineAlert variant="informative">
+  <Heading>Important Note</Heading>
+  <Content>
+    Due to the atomic nature of the generated CSS rules, it is strongly recommended that you follow the CSS optimization guide listed [below](#css-optimization).
+    Without these optimizations, the generated CSS may contain duplicate rules that affect bundle size and debugging.
+  </Content>
+</InlineAlert>
+
+## Spectrum components
+
+The `styles` prop accepts a limited set of CSS properties, including layout, spacing, sizing, and positioning. Other styles such as colors and internal padding cannot be customized within Spectrum components.
+
+```tsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from '@react-spectrum/s2';
+
+<Button styles={style({marginStart: 8})}>Edit</Button>
+```
+
+### Supported CSS properties
+
+<S2StyleProperties properties={[
+  'margin',
+  'marginStart',
+  'marginEnd',
+  'marginTop',
+  'marginBottom',
+  'marginX',
+  'marginY',
+  'width',
+  'minWidth',
+  'maxWidth',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  'gridArea',
+  'gridRow',
+  'gridRowStart',
+  'gridRowEnd',
+  'gridColumn',
+  'gridColumnStart',
+  'gridColumnEnd',
+  'position',
+  'zIndex',
+  'top',
+  'bottom',
+  'inset',
+  'insetX',
+  'insetY',
+  'insetStart',
+  'insetEnd',
+  'visibility'
+]} />
+
+## Conditional styles
+
+Define conditional values such as media queries, UI states (e.g. hover, press), and style variants as objects. Conditional values are mutually exclusive: the last matching condition always wins.
+
+```tsx
+<div
+  className={style({
+    padding: {
+      default: 8,
+      lg: 32,
+      '@media (min-width: 2560px)': 64
+    }
+  })}
+/>
+```
+
+In the example above, the keys of the nested object now map out the "conditions" that govern the padding of the `div`. This translates to the following:
+
+- If the viewport is larger than `2560px`, the padding is `64px`.
+- Else if the viewport matches the `lg` [breakpoint](style-macro.html#conditions) (`1024px`), the padding is `32px`.
+- Otherwise, the padding is `8px`.
+
+Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
+
+### Runtime conditions
+
+When runtime conditions are detected (e.g., variants, UI states), the macro returns a function to resolve styles at runtime.
+
+```tsx
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const styles = style({
+  backgroundColor: {
+    variant: {
+      primary: 'accent',
+      secondary: 'neutral'
+    }
+  }
+});
+
+function MyComponent({variant}: {variant: 'primary' | 'secondary'}) {
+  return <div className={styles({variant})} />
+}
+```
+
+Boolean conditions starting with `is` or `allows` can be used directly without nesting:
+
+```tsx
+const styles = style({
+  backgroundColor: {
+    default: 'gray-100',
+    isSelected: 'gray-900',
+    allowsRemoving: 'gray-400'
+  }
+});
+
+<div className={styles({isSelected: true})} />
+```
+
+Runtime conditions work well with render props in React Aria Components. If you inline styles, you’ll get autocomplete for available conditions.
+
+```tsx
+import {Checkbox} from 'react-aria-components';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Checkbox
+  className={style({
+    backgroundColor: {
+      default: 'gray-100',
+      isHovered: 'gray-200',
+      isSelected: 'gray-900'
+    }
+  })}
+/>
+```
+
+### Nesting conditions
+
+Nest conditions to apply styles when multiple conditions are true. Conditions at the same level are mutually exclusive; order determines precedence.
+
+```tsx
+const styles = style({
+  backgroundColor: {
+    default: 'gray-25',
+    isSelected: {
+      default: 'neutral',
+      isEmphasized: 'accent',
+      forcedColors: 'Highlight',
+      isDisabled: {
+        default: 'gray-400',
+        forcedColors: 'GrayText'
+      }
+    }
+  }
+});
+
+<div className={styles({isSelected, isEmphasized, isDisabled})} />
+```
+
+## Reusing styles
+
+Extract common styles into constants and spread them into `style` calls within the same file.
+
+```tsx
+// component.tsx
+const horizontalStack = {
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: 8
+} as const;
+
+const styles = style({
+  ...horizontalStack,
+  columnGap: 4
+});
+```
+
+Create custom utilities by defining your own macros as functions in a separate file.
+
+```ts
+// style-utils.ts
+export function horizontalStack(gap: number) {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: gap
+  } as const;
+}
+```
+
+Usage:
+
+```tsx
+// component.tsx
+import {horizontalStack} from './style-utils' with {type: 'macro'};
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const styles = style({
+  ...horizontalStack(4),
+  backgroundColor: 'base'
+});
+```
+
+### Built-in utilities
+
+Use `focusRing()` to add the standard Spectrum focus ring.
+
+```tsx
+"use client";
+import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button} from '@react-spectrum/s2';
+
+const buttonStyle = style({
+  ...focusRing(),
+  // ...other styles
+});
+
+<Button styles={buttonStyle}>Press me</Button>
+```
+
+## Setting CSS variables
+
+CSS variables can be directly defined in a `style` macro, allowing child elements to then access them in their own styles.
+A `type` should be provided to specify the CSS property type the `value` represents.
+
+```tsx
+const parentStyle = style({
+  '--rowBackgroundColor': {
+    type: 'backgroundColor',
+    value: 'gray-400'
+  }
+});
+
+const childStyle = style({
+  backgroundColor: '--rowBackgroundColor'
+});
+```
+
+## CSS optimization
+
+The `style` macro relies on CSS bundling and minification for optimal output. Without these optimizations, the generated CSS may contain duplicate rules that affect bundle size and debugging.
+Follow these best practices:
+
+- Ensure styles are extracted into a CSS bundle; do not inject at runtime with `<style>` tags.
+- Use a CSS minifier like `lightningcss` to deduplicate common rules (consider in dev for easier debugging).
+- Bundle all CSS for S2 components and style macros into a single CSS bundle rather than code splitting to avoid duplicate rules across chunks.
+
+### Parcel
+
+Parcel supports macros out of the box and optimizes CSS with [Lightning CSS](https://lightningcss.dev). You can bundle all S2 and macro CSS into a single file using [manual shared bundles](https://parceljs.org/features/code-splitting/#manual-shared-bundles).
+
+```js
+// package.json
+{
+  "@parcel/bundler-default": {
+    "manualSharedBundles": [
+      {
+        "name": "s2-styles",
+        "assets": [
+          "**/@react-spectrum/s2/**",
+          // Update this glob as needed to match your source files.
+          "src/**/*.{js,jsx,ts,tsx}"
+        ],
+        "types": ["css"]
+      }
+    ]
+  }
+}
+```
+
+### Webpack
+
+- Use [MiniCssExtractPlugin](https://webpack.js.org/plugins/mini-css-extract-plugin/) to extract styles. Do not use `style-loader`.
+- Use [CssMinimizerWebpackPlugin](https://webpack.js.org/plugins/css-minimizer-webpack-plugin/) with [Lightning CSS](https://lightningcss.dev) to optimize CSS (optionally in development).
+- Use [SplitChunksPlugin](https://webpack.js.org/plugins/split-chunks-plugin/) to bundle all S2 and macro CSS into a single bundle.
+
+See the [webpack example](https://github.com/adobe/react-spectrum/blob/main/examples/s2-webpack-5-example/webpack.config.js) for a full configuration.
+
+### Vite
+
+- Configure `cssMinify` to use [Lightning CSS](https://lightningcss.dev).
+- Configure Rollup to combine all S2 and macro CSS into a single bundle using [`output.manualChunks`](https://rollupjs.org/configuration-options/#output-manualchunks).
+
+See the [Vite example](https://github.com/adobe/react-spectrum/blob/main/examples/s2-vite-project/vite.config.ts) for full configuration options.
+
+## CSS Resets
+
+CSS resets are strongly discouraged. Global CSS selectors can unintentionally affect elements that were not intended to have their styles be modified, leading to style clashes. Since Spectrum 2 uses [CSS Cascade Layers](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers), global CSS outside a `@layer` will override S2's CSS. Therefore, if you cannot remove your CSS reset, it must be placed in a lower layer. This can be done by declaring your reset layer before the `_` layer used by S2.
+
+```css
+/* App.css */
+@layer reset, _;
+@import "reset.css" layer(reset);
+```
+
+## Custom components
+
+If you want to build custom components that follow Spectrum styling, you can use the `style` macro with [React Aria Components](../react-aria/index.html).
+
+```tsx
+import {Checkbox} from 'react-aria-components';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<Checkbox
+  className={style({
+    backgroundColor: {
+      default: 'gray-100',
+      isHovered: 'gray-200',
+      isSelected: 'gray-900'
+    }
+  })}
+/>
+```
+
+## Developer tools
+
+These tools improve the developer experience when using style macros:
+
+- The [atomic-css-devtools](https://github.com/astahmer/atomic-css-devtools) extension presents an inspected element's atomic CSS rules
+in a non-atomic format, making it easier to scan.
+
+- This [sandbox](https://codesandbox.io/p/devbox/react-spectrum-s2-style-macro-template-h6fpsq) is preconfigured to support React Spectrum S2, React Aria Components, and
+the `style` macros for quick prototyping.
+
+- If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
+we have MCP servers for [React Aria](../react-aria/mcp.html) and [React Spectrum](mcp.html) respectively that interface with the docs.
+
+## FAQ
+
+<S2FAQ />

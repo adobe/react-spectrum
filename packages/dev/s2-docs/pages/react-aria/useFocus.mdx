@@ -1,0 +1,85 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/interactions';
+import {InterfaceType} from '../../src/types';
+export const section = 'Interactions';
+
+# useFocus
+
+<PageDescription>{docs.exports.useFocus.description}</PageDescription>
+
+## Features
+
+`useFocus` handles focus interactions for an element. Unlike React's built-in focus events,
+`useFocus` does not fire focus events for child elements of the target. This matches DOM
+behavior where focus events do not bubble. This is similar to
+the [:focus](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus) pseudo class
+in CSS.
+
+To handle focus events on descendants of an element, see [useFocusWithin](useFocusWithin.html).
+
+## Example
+
+This example shows a simple input element that handles focus events with `useFocus` and logs them to a list below.
+
+```tsx render
+"use client";
+
+import React from 'react';
+import {useFocus} from '@react-aria/interactions';
+
+function Example() {
+  let [events, setEvents] = React.useState([]);
+  let {focusProps} = useFocus({
+    onFocus: e => setEvents(
+      events => [...events, 'focus']
+    ),
+    onBlur: e => setEvents(
+      events => [...events, 'blur']
+    ),
+    onFocusChange: isFocused => setEvents(
+      events => [...events, `focus change: ${isFocused}`]
+    )
+  });
+
+  return (
+    <>
+      <label htmlFor="example">Example</label>
+      <input
+        {...focusProps}
+        id="example" />
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## API
+
+<FunctionAPI function={docs.exports.useFocus} links={docs.links} />
+
+### FocusProps
+
+<InterfaceType {...docs.exports.FocusProps} />
+
+### FocusResult
+
+<InterfaceType {...docs.exports.FocusResult} />
+
+

@@ -8,6 +8,8 @@ import {NumberField as TailwindNumberField} from 'tailwind-starter/NumberField';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/numberfield/docs/anatomy.svg';
 
+export const tags = ['input'];
+
 # NumberField
 
 <PageDescription>{docs.exports.NumberField.description}</PageDescription>
@@ -114,7 +116,7 @@ Use the `name` prop to submit the raw number value (not a formatted string) to t
 "use client";
 import {NumberField} from 'vanilla-starter/NumberField';
 import {Button} from 'vanilla-starter/Button';
-import {Form} from 'react-aria-components';
+import {Form} from 'vanilla-starter/Form';;
 
 <Form>
   <NumberField label="Width" name="width" isRequired />
@@ -142,5 +144,3 @@ import {Form} from 'react-aria-components';
 ### NumberField
 
 <PropTable component={docs.exports.NumberField} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-NumberField" properties={docs.exports.NumberFieldRenderProps.properties} />

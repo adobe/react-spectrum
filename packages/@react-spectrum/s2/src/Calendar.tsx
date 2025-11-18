@@ -52,7 +52,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface CalendarProps<T extends DateValue>
-  extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles' | keyof GlobalDOMAttributes>,
+  extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles' | 'children' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.
@@ -284,6 +284,9 @@ const selectionSpanStyles = style({
   forcedColorAdjust: 'none'
 });
 
+/**
+ * Calendars display a grid of days in one or more months and allow users to select a single date.
+ */
 export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CalendarContext);
   let {

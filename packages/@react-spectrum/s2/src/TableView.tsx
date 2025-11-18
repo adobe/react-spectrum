@@ -113,7 +113,7 @@ export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledB
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple'}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -282,6 +282,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onResizeEnd: propsOnResizeEnd,
     onAction,
     onLoadMore,
+    selectionMode = 'none',
     ...otherProps
   } = props;
 
@@ -306,11 +307,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     loadingState,
     onLoadMore,
     isInResizeMode,
-    setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode,
+    selectionMode
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
-  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+  let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -353,6 +355,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isQuiet
             })}
             selectionBehavior="toggle"
+            selectionMode={selectionMode}
             onRowAction={onAction}
             {...otherProps}
             selectedKeys={selectedKeys}
@@ -458,12 +461,11 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: '[6px]',
-  pointerEvents: 'none'
+  borderRadius: '[6px]'
 } as const;
 
 function CellFocusRing() {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({
@@ -508,7 +510,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends Omit<RACColumnProps, keyof GlobalDOMAttributes> {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -1006,7 +1008,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1142,6 +1144,9 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
+        // The `spread` otherProps must be after className in Cell.
+        // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
           <Checkbox isEmphasized slot="selection" />
         </Cell>

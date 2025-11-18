@@ -1,0 +1,41 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'May 17, 2024';
+export const title = 'v0.1.0';
+export const description = 'Version 0.1.0 introduces the first version of Spectrum 2, including new Badge, ComboBox, Meter, and Picker components.';
+export const isSubpage = true;
+
+# v0.1.0
+<Time date={date} />
+
+Version 0.1.0 introduces the first version of Spectrum 2, including new Badge, ComboBox, Meter, and Picker components.
+
+## New components
+* [Badge](../Badge.html)
+* [ComboBox](../ComboBox.html)
+* [Meter](../Meter.html)
+* [Picker](../Picker.html)
+
+## Updates
+* [TagGroup](../TagGroup.html) now supports avatars, images, error message and description help text, and improved hover/focus styling
+* Updated React Aria Components to v1.2.0
+* Fixed global styles such as CSS resets from applying to Spectrum 2 elements. Note that any CSS rule referenced from an `UNSAFE_className` prop must now be wrapped in `@layer UNSAFE_overrides`. See [the docs](../styling.html##unsafe-style-overrides) for more details.
+* The `style` macro will now error if it is called without importing `with {type: 'macro'}`. Previously it would fail to apply styles silently. This should help with debugging.
+
+See the updated [API changelog](../migrating.html) for a full list of changes since RSP v3.

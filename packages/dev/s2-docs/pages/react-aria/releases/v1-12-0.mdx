@@ -1,0 +1,223 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'August 25, 2025';
+export const title = 'v1.12.0';
+export const description = 'Summer might be winding down but we\'re definitely not! Back with another release, we have added support for origin-aware overlay animations in Popover and Tooltip, which enable scale transitions to appear as if they are emerging from the trigger. We have also advanced Autocomplete to RC, and added support for filtering GridList, Table, and TagGroup (virtual focus support is still to come). Section support in GridList has also been added as an alpha, laying the groundwork for similar support in Tree and Table.';
+export const isSubpage = true;
+
+# v1.12.0
+<Time date={date} />
+
+Summer might be winding down but we're definitely not! Back with another release, we have added support for origin-aware overlay animations in [Popover](../Popover.html) and [Tooltip](../Tooltip.html), which enable scale transitions to appear as if they are emerging from the trigger. We have also advanced Autocomplete to RC, and added support for filtering GridList, Table, and TagGroup (virtual focus support is still to come). Section support in [GridList](../GridList.html#sections) has also been added as an alpha, laying the groundwork for similar support in Tree and Table.
+
+As always, a big thank you to everyone in the community for your feedback and contributions! ❤️
+
+## Enhancements
+* Button
+  * Allow `aria-disabled` on Button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8756)
+* Collection:
+  * Add additional selection methods to `useListData` - [@rbuzatto](https://github.com/rbuzatto) - [PR](https://github.com/adobe/react-spectrum/pull/8656)
+  * Add `maxHorizontalSpace` prop to `GridLayout` and `WaterfallLayout` - [@e-krebs](https://github.com/e-krebs) - [PR](https://github.com/adobe/react-spectrum/pull/8654), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8731)
+  * Implement filtering on a per CollectionNode basis  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8641), [PR](https://github.com/adobe/react-spectrum/pull/8762)
+* Drag and Drop:
+  * Pass item objects to `useDragAndDrop` `getItems` in addition to `keys` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8711)
+* Miscellaneous:
+  * Add `onscrollend` event listener to ScrollView - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/8573)
+  * Add support for origin-aware overlay animations - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8681), [PR](https://github.com/adobe/react-spectrum/pull/8757)
+
+## Fixes
+* ComboBox:
+  * Ensure that React Aria ComboBox's empty state is rendered when items aren't directly provided to the ComboBox - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8720)
+* Date and Time:
+  * Add `firstDayOfWeek` and `pageBehavior` to `calendarProps` in `useDatePicker` and `useDateRangePicker` - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8587), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8649)
+  * Restore date segment autoadvance when typing leading zeros - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8684)
+  * Add DatePicker placeholder for Norwegian Bokmål - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8742)
+  * Allow user to reset timezone - [@jasonvarga](https://github.com/jasonvarga) - [PR](https://github.com/adobe/react-spectrum/pull/8054)
+  * Fallback to `en-US` when locale resolution fails - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/8589)
+* Drag and Drop:
+  * Call `clearData` in `useDrag` and `onDragStart` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8683)
+* Tabs:
+  * Warn users when Tab components are in the wrong order - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8508)
+  * Fix backward compatibility with old versions of `@types/react` in Tabs - [@MukulAppDev](https://github.com/MukulAppDev) - [PR](https://github.com/adobe/react-spectrum/pull/8651)
+* TagGroup:
+  * Add role to React Aria TagGroup when there are no items - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8723)
+* Tooltip:
+  * Allow user to set `containerPadding` in React Aria Tooltip - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8625)
+  * Prevent `useTooltipTrigger` from setting `tabIndex` - [@abeljohn](https://github.com/abeljohn) - [PR](https://github.com/adobe/react-spectrum/pull/8622)
+* Menu:
+  * Fix pressing `Enter` key to trigger Menu item links - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8721)
+  * Properly close all Submenu levels when root Menu item is focused and retain focus on hovered Menu items - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8666)
+* Number Parser:
+  * Fix currency parsing in Swiss locale - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8546)
+* Miscellaneous:
+  * Export `isRTL` utility function - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8619)
+  * Prevent extraneous re-render in SSR when locale is provided to `useLocale` - [@herkulano](https://github.com/herkulano) - [PR](https://github.com/adobe/react-spectrum/pull/8524)
+  * Avoid showing placeholder warning on every render - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8682)
+  * Fix `:active` selector in `tailwindcss-react-aria-components` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8680)
+  * Replace deprecated `mozInputSource` check for virtual click detection - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8677)
+  * Support backcompatibility for `react-aria/util` versions referencing `UNSTABLE_useLoadMoreSentinel` API - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8710)
+  * Export `VisuallyHidden` in `react-aria-component` package - [@nami8824](https://github.com/nami8824) - [PR](https://github.com/adobe/react-spectrum/pull/8676)
+  * Update element focusablity checks so that keyboard navigation can skip over specific non-focusable elements - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8642)
+  * Properly clean up `inert` on elements when nested non modal dialogs and popovers close at the same time - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/8739)
+
+## Docs
+* Update the React Aria Command-Palette example to fix SSR - [@souporserious](https://github.com/souporserious) - [PR](https://github.com/adobe/react-spectrum/pull/8638)
+* Update `framer-motion` version in React Aria examples - [@Shubhdeep12](https://github.com/Shubhdeep12) - [PR](https://github.com/adobe/react-spectrum/pull/8586)
+* Fix React Aria Tree doc examples - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8698), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8736)
+* Add a `trigger-anchor-point` example - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8764)
+* Update Drag and drop docs to include new `getItems` API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8769)
+
+## Under Construction
+* GridList
+  * Support Sections and Headers in React Aria GridList - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8667)
+  * Add React Aria GridList Section docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/8749)
+
+## Released packages
+
+```json
+ - react-aria@3.43.0
+ - react-aria-components@1.12.0
+ - react-stately@3.41.0
+ - @internationalized/date@3.9.0
+ - @internationalized/number@3.6.5
+ - @react-aria/actiongroup@3.7.20
+ - @react-aria/autocomplete@3.0.0-rc.0
+ - @react-aria/breadcrumbs@3.5.28
+ - @react-aria/button@3.14.1
+ - @react-aria/calendar@3.9.1
+ - @react-aria/checkbox@3.16.1
+ - @react-aria/collections@3.0.0-rc.5
+ - @react-aria/color@3.1.1
+ - @react-aria/combobox@3.13.1
+ - @react-aria/datepicker@3.15.1
+ - @react-aria/dialog@3.5.29
+ - @react-aria/disclosure@3.0.8
+ - @react-aria/dnd@3.11.1
+ - @react-aria/focus@3.21.1
+ - @react-aria/form@3.1.1
+ - @react-aria/grid@3.14.4
+ - @react-aria/gridlist@3.14.0
+ - @react-aria/i18n@3.12.12
+ - @react-aria/interactions@3.25.5
+ - @react-aria/label@3.7.21
+ - @react-aria/landmark@3.0.6
+ - @react-aria/link@3.8.5
+ - @react-aria/listbox@3.14.8
+ - @react-aria/menu@3.19.1
+ - @react-aria/meter@3.4.26
+ - @react-aria/numberfield@3.12.1
+ - @react-aria/overlays@3.29.0
+ - @react-aria/progress@3.4.26
+ - @react-aria/radio@3.12.1
+ - @react-aria/searchfield@3.8.8
+ - @react-aria/select@3.16.1
+ - @react-aria/selection@3.25.1
+ - @react-aria/separator@3.4.12
+ - @react-aria/slider@3.8.1
+ - @react-aria/spinbutton@3.6.18
+ - @react-aria/steplist@3.0.0-alpha.21
+ - @react-aria/switch@3.7.7
+ - @react-aria/table@3.17.7
+ - @react-aria/tabs@3.10.7
+ - @react-aria/tag@3.7.1
+ - @react-aria/textfield@3.18.1
+ - @react-aria/toast@3.0.7
+ - @react-aria/toggle@3.12.1
+ - @react-aria/toolbar@3.0.0-beta.20
+ - @react-aria/tooltip@3.8.7
+ - @react-aria/tree@3.1.3
+ - @react-aria/utils@3.30.1
+ - @react-aria/virtualizer@4.1.9
+ - @react-aria/visually-hidden@3.8.27
+ - @react-stately/calendar@3.8.4
+ - @react-stately/checkbox@3.7.1
+ - @react-stately/collections@3.12.7
+ - @react-stately/color@3.9.1
+ - @react-stately/combobox@3.11.1
+ - @react-stately/data@3.14.0
+ - @react-stately/datepicker@3.15.1
+ - @react-stately/disclosure@3.0.7
+ - @react-stately/dnd@3.7.0
+ - @react-stately/form@3.2.1
+ - @react-stately/grid@3.11.5
+ - @react-stately/layout@4.5.0
+ - @react-stately/list@3.13.0
+ - @react-stately/menu@3.9.7
+ - @react-stately/numberfield@3.10.1
+ - @react-stately/overlays@3.6.19
+ - @react-stately/radio@3.11.1
+ - @react-stately/searchfield@3.5.15
+ - @react-stately/select@3.7.1
+ - @react-stately/selection@3.20.5
+ - @react-stately/slider@3.7.1
+ - @react-stately/steplist@3.0.0-alpha.17
+ - @react-stately/table@3.15.0
+ - @react-stately/tabs@3.8.5
+ - @react-stately/toggle@3.9.1
+ - @react-stately/tooltip@3.5.7
+ - @react-stately/tree@3.9.2
+ - @react-stately/virtualizer@4.4.3
+ - @react-types/actionbar@3.1.18
+ - @react-types/actiongroup@3.4.20
+ - @react-types/autocomplete@3.0.0-alpha.34
+ - @react-types/avatar@3.0.18
+ - @react-types/badge@3.1.20
+ - @react-types/breadcrumbs@3.7.16
+ - @react-types/button@3.14.0
+ - @react-types/buttongroup@3.3.20
+ - @react-types/calendar@3.7.4
+ - @react-types/card@3.0.0-alpha.39
+ - @react-types/checkbox@3.10.1
+ - @react-types/color@3.1.1
+ - @react-types/combobox@3.13.8
+ - @react-types/contextualhelp@3.2.21
+ - @react-types/datepicker@3.13.1
+ - @react-types/dialog@3.5.21
+ - @react-types/divider@3.3.20
+ - @react-types/form@3.7.15
+ - @react-types/grid@3.3.5
+ - @react-types/illustratedmessage@3.3.20
+ - @react-types/image@3.5.1
+ - @react-types/label@3.9.14
+ - @react-types/layout@3.3.26
+ - @react-types/link@3.6.4
+ - @react-types/list@3.2.31
+ - @react-types/listbox@3.7.3
+ - @react-types/menu@3.10.4
+ - @react-types/meter@3.4.12
+ - @react-types/numberfield@3.8.14
+ - @react-types/overlays@3.9.1
+ - @react-types/progress@3.5.15
+ - @react-types/provider@3.8.12
+ - @react-types/radio@3.9.1
+ - @react-types/searchfield@3.6.5
+ - @react-types/select@3.10.1
+ - @react-types/shared@3.32.0
+ - @react-types/slider@3.8.1
+ - @react-types/statuslight@3.3.20
+ - @react-types/switch@3.5.14
+ - @react-types/table@3.13.3
+ - @react-types/tabs@3.3.18
+ - @react-types/text@3.3.20
+ - @react-types/textfield@3.12.5
+ - @react-types/tooltip@3.4.20
+ - @react-types/view@3.4.20
+ - @react-types/well@3.3.20
+ - tailwindcss-react-aria-components@2.0.1
+```

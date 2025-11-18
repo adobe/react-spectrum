@@ -10,12 +10,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@parcel/config-default": "^2.13.1",
-    "@parcel/core": "^2.13.1",
-    "@parcel/resolver-storybook": ">=0.0.0",
-    "@parcel/transformer-js": "^2.13.1",
-    "@parcel/transformer-react-refresh-wrap": "^2.13.1",
-    "@parcel/transformer-storybook": ">=0.0.2"
+    "@parcel/config-default": "^2.16.1",
+    "@parcel/core": "^2.16.1",
+    "@parcel/resolver-storybook": "^0.0.0",
+    "@parcel/transformer-js": "^2.16.1",
+    "@parcel/transformer-react-refresh-wrap": "^2.16.1",
+    "@parcel/transformer-storybook": "^0.0.2"
   },
   "scripts": {
     "build": "true",

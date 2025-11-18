@@ -34,7 +34,7 @@ import {useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayTriggerState} from 'react-stately';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
-export interface ToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
+export interface ToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children' | 'style' | 'className'> {
   /**
    * Placement of the toast container on the page.
    * @default "bottom"
@@ -68,10 +68,7 @@ function startViewTransition(fn: () => void, type: string) {
   if ('startViewTransition' in document) {
     // Safari doesn't support :active-view-transition-type() yet, so we fall back to a class on the html element.
     document.documentElement.classList.add(toastCss[type]);
-    let viewTransition = document.startViewTransition({
-      update: () => flushSync(fn),
-      types: [toastCss[type]]
-    });
+    let viewTransition = document.startViewTransition(() => flushSync(fn));
 
     viewTransition.ready.catch(() => {});
     viewTransition.finished.then(() => {
@@ -296,7 +293,10 @@ const toastContent = style({
   alignItems: 'baseline',
   gridArea: 'content',
   cursor: 'default',
-  width: 'fit'
+  width: 'fit',
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
+  minWidth: 0
 });
 
 const controls = style({
@@ -490,7 +490,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           width: '100%',
           translate: `0 0 ${(-12 * index) / 16}rem`,
           // Only 3 toasts are visible in the stack at once, but all toasts are in the DOM.
-          // This allows view transitions to smoothly animate them from where they would be 
+          // This allows view transitions to smoothly animate them from where they would be
           // in the collapsed stack to their final position in the expanded list.
           opacity: index >= 3 ? 0 : 1,
           zIndex: visibleToasts.length - index - 1,
@@ -528,7 +528,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
-        {!isExpanded && visibleToasts.length > 1 && 
+        {!isExpanded && visibleToasts.length > 1 &&
           <ActionButton
             isQuiet
             staticColor="white"

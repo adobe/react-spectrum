@@ -1,0 +1,33 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@internationalized/number';
+
+export const section = 'Numbers';
+export const group = 'Internationalized';
+
+# NumberFormatter
+
+<PageDescription>{docs.exports.NumberFormatter.description}</PageDescription>
+
+## Introduction
+
+`NumberFormatter` is a wrapper around the native [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) API. It exposes the same API, but works around several browser bugs and provides polyfills for newer features. These are currently:
+
+* A polyfill for the `signDisplay` option.
+* A polyfill for the `unit` style, currently only for the `degree` unit in the `narrow` style
+
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) for full details on how to use the API.
+
+## Interface
+
+<ClassAPI links={docs.links} class={docs.exports.NumberFormatter} />

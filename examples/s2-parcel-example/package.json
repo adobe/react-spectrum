@@ -1,7 +1,7 @@
 {
   "packageManager": "yarn@4.2.2",
   "devDependencies": {
-    "parcel": "^2.13.0",
+    "parcel": "^2.16.1",
     "process": "^0.11.10"
   },
   "dependencies": {
@@ -21,7 +21,9 @@
           "**/@react-spectrum/s2/**",
           "src/**/*.{js,jsx,ts,tsx}"
         ],
-        "types": ["css"]
+        "types": [
+          "css"
+        ]
       }
     ]
   }

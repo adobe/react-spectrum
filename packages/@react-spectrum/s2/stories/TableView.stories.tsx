@@ -32,7 +32,7 @@ import {categorizeArgTypes, getActionArgs} from './utils';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta, StoryObj} from '@storybook/react';
-import {ReactElement, useState} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';

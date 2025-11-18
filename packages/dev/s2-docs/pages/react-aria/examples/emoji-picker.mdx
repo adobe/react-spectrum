@@ -1,0 +1,78 @@
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import {ComponentList} from '../../../src/ComponentCard';
+
+export const hideNav = true;
+export const section = 'Examples';
+export const keywords = ['react-aria', 'example', 'select', 'popover', 'autocomplete', 'search', 'searchfield', 'virtualizer', 'listbox'];
+export const description = 'With autocomplete, virtualized scrolling, and keyboard navigation.';
+
+# Emoji Picker
+
+<PageDescription>An emoji picker with autocomplete, virtualized scrolling, and arrow key navigation.</PageDescription>
+
+```tsx render dir="react-aria/examples" files={['packages/dev/s2-docs/pages/react-aria/examples/EmojiPicker.css']} type="vanilla" expanded includeAllImports
+"use client";
+import {Autocomplete, GridLayout, ListBox, ListBoxItem, Select, SelectValue, Size, useFilter, Virtualizer} from 'react-aria-components';
+import {Button} from 'vanilla-starter/Button';
+import {Popover} from 'vanilla-starter/Popover';
+import {SearchField} from 'vanilla-starter/SearchField';
+import _emojis from 'emojibase-data/en/compact.json';
+import './EmojiPicker.css';
+
+const emojis = _emojis.filter((e) => !e.label.startsWith('regional indicator'));
+
+export default function EmojiPicker() {
+  let {contains} = useFilter({ sensitivity: 'base' });
+
+  return (
+    <Select aria-label="Emoji" className="emoji-picker" defaultValue="🥳">
+      <Button variant="secondary">
+        <SelectValue />
+      </Button>
+      <Popover placement="bottom" className="emoji-picker-popover">
+        <Autocomplete filter={contains}>
+          <SearchField aria-label="Search" placeholder="Search emoji" autoFocus />
+          <Virtualizer
+            layout={GridLayout}
+            layoutOptions={{
+              minItemSize: new Size(32, 32),
+              maxItemSize: new Size(32, 32),
+              minSpace: new Size(4, 4),
+              preserveAspectRatio: true,
+            }}>
+            <ListBox className="emoji-list" items={emojis} aria-label="Emoji list" layout="grid">
+              {(item) => <EmojiItem id={item.unicode} item={item} />}
+            </ListBox>
+          </Virtualizer>
+        </Autocomplete>
+      </Popover>
+    </Select>
+  );
+}
+
+function EmojiItem({ id, item }: { id: string; item: (typeof emojis)[0] }) {
+  return (
+    <ListBoxItem
+      id={id}
+      value={item}
+      textValue={item.label + (item.tags || []).join(' ')}
+      className="emoji-item">
+      {item.unicode}
+    </ListBoxItem>
+  );
+}
+```
+
+## Components
+
+<ComponentList
+  pages={props.pages}
+  components={[
+    'react-aria/ListBox.html',
+    'react-aria/Popover.html',
+    'react-aria/SearchField.html',
+    'react-aria/Select.html',
+    'react-aria/Virtualizer.html'
+  ]} />

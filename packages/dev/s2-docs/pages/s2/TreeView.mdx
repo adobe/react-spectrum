@@ -4,6 +4,8 @@ export default Layout;
 import {TreeView, TreeViewItem, TreeViewItemContent, Collection, Text, ActionMenu, MenuItem} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['hierarchy', 'data', 'nested'];
+
 # TreeView
 
 <PageDescription>{docs.exports.TreeView.description}</PageDescription>
@@ -297,11 +299,11 @@ function Example(props) {
   let [selected, setSelected] = useState<Selection>(new Set());
 
   return (
-    <div>
+    <div className={style({width: 'full'})}>
       <TreeView
         {...props}
         aria-label="Pokemon evolution"
-        styles={style({height: 250, width: 300})}
+        styles={style({height: 250, width: 'full', maxWidth: 300})}
         ///- begin highlight -///
         /* PROPS */
         selectedKeys={selected}

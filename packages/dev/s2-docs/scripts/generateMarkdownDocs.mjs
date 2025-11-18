@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import * as babel from '@babel/parser';
+import {fileURLToPath} from 'url';
 import fs from 'fs';
 import glob from 'fast-glob';
 import path from 'path';
@@ -10,12 +12,20 @@ import remarkStringify from 'remark-stringify';
 import {unified} from 'unified';
 import {visit} from 'unist-util-visit';
 
-const REPO_ROOT = '../../../';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const S2_SRC_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/src');
 const RAC_SRC_ROOT = path.join(REPO_ROOT, 'packages/react-aria-components/src');
-const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT];
+const INTL_SRC_ROOT = path.join(REPO_ROOT, 'packages/@internationalized');
+const COMPONENT_SRC_ROOTS = [S2_SRC_ROOT, RAC_SRC_ROOT, INTL_SRC_ROOT];
 const S2_DOCS_PAGES_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/pages');
 const DIST_ROOT = path.join(REPO_ROOT, 'packages/dev/s2-docs/dist');
+const LICENSE_COMMENT_REGEX = /^\s*\{\/\*[\s\S]*?Copyright\s+20\d{2}\s+Adobe[\s\S]*?\*\/\}\s*/;
+const S2_ICON_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/s2wf-icons');
+const S2_ILLUSTRATION_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/spectrum-illustrations');
+
+let iconNamesCache = null;
+let illustrationNamesCache = null;
 
 // Pre-load a ts-morph project so we can query type information.
 const project = new Project({
@@ -24,12 +34,260 @@ const project = new Project({
 });
 
 /**
- * Resolve the absolute path to a component source file given its name.
+ * Clean type text by removing import statements and duplicate type parameters.
  */
+function cleanTypeText(t) {
+  // Remove import statements from type strings.
+  let cleaned = t.replace(/import\(["'][^)]*["']\)\./g, '');
+  // Remove duplicate type parameters.
+  cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
+  return cleaned;
+}
+
+function getIconNames() {
+  if (iconNamesCache) {
+    return iconNamesCache;
+  }
+
+  try {
+    const files = fs.readdirSync(S2_ICON_ROOT);
+    const names = new Set();
+
+    for (const fileName of files) {
+      if (!fileName.toLowerCase().endsWith('.svg')) {
+        continue;
+      }
+
+      const normalized = fileName.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1');
+      const cleaned = normalized.trim();
+      if (cleaned) {
+        names.add(cleaned);
+      }
+    }
+
+    iconNamesCache = Array.from(names).sort((a, b) => a.localeCompare(b));
+  } catch {
+    iconNamesCache = [];
+  }
+
+  return iconNamesCache;
+}
+
+function getIllustrationNames() {
+  if (illustrationNamesCache) {
+    return illustrationNamesCache;
+  }
+
+  try {
+    const names = new Set();
+    const directories = ['linear', 'gradient/generic1', 'gradient/generic2'];
+
+    for (const dir of directories) {
+      const illustrationPath = path.join(S2_ILLUSTRATION_ROOT, dir);
+      if (!fs.existsSync(illustrationPath)) {
+        continue;
+      }
+
+      const files = fs.readdirSync(illustrationPath);
+      for (const fileName of files) {
+        if (fileName.endsWith('.tsx')) {
+          // Extract name without extension
+          const name = fileName.replace(/\.tsx$/, '');
+          names.add(name);
+        }
+      }
+    }
+
+    illustrationNamesCache = Array.from(names).sort((a, b) => a.localeCompare(b));
+  } catch {
+    illustrationNamesCache = [];
+  }
+
+  return illustrationNamesCache;
+}
+
+function parseExpression(expr, file) {
+  try {
+    const ast = babel.parse(expr, {
+      sourceType: 'module',
+      plugins: ['jsx', 'typescript']
+    });
+    
+    if (ast.program.body.length > 0 && ast.program.body[0].type === 'ExpressionStatement') {
+      return evaluateNode(ast.program.body[0].expression, file);
+    }
+    
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function evaluateNode(node, file) {
+  if (!node) {
+    return null;
+  }
+
+  switch (node.type) {
+    case 'StringLiteral':
+      return node.value;
+    
+    case 'NumericLiteral':
+      return node.value;
+    
+    case 'BooleanLiteral':
+      return node.value;
+    
+    case 'NullLiteral':
+      return null;
+    
+    case 'ArrayExpression':
+      return node.elements.map(el => evaluateNode(el, file)).filter(v => v !== null);
+    
+    case 'ObjectExpression': {
+      const obj = {};
+      for (const prop of node.properties) {
+        if (prop.type === 'ObjectProperty') {
+          const key = prop.key.type === 'Identifier' ? prop.key.name : evaluateNode(prop.key, file);
+          obj[key] = evaluateNode(prop.value, file);
+        }
+      }
+      return obj;
+    }
+    
+    case 'Identifier':
+      // For identifiers, return the name as a string
+      return node.name;
+    
+    case 'JSXElement':
+    case 'JSXFragment': {
+      // For JSX elements, extract text content
+      return extractJSXText(node, file);
+    }
+    
+    case 'JSXText':
+      return node.value;
+    
+    case 'MemberExpression': {
+      // Handle member expressions like docs.exports.GregorianCalendar.description
+      const object = evaluateNode(node.object, file);
+      const property = node.computed ? evaluateNode(node.property, file) : (node.property.name || node.property.value);
+      return `${object}.${property}`;
+    }
+    
+    default:
+      return null;
+  }
+}
+
+function extractTypeLinkName(node) {
+  const typeAttr = node.openingElement?.attributes?.find(
+    attr => attr.type === 'JSXAttribute' && attr.name?.name === 'type'
+  );
+  if (!typeAttr || typeAttr.value?.type !== 'JSXExpressionContainer') {
+    return '';
+  }
+  
+  const expr = typeAttr.value.expression;
+  if (expr.type !== 'MemberExpression') {
+    return '';
+  }
+  
+  // Extract the last property name (e.g., GregorianCalendar from docs.exports.GregorianCalendar)
+  return expr.property?.name || '';
+}
+
+function extractDescriptionFromExpression(node, file) {
+  if (node.type !== 'MemberExpression') {
+    return null;
+  }
+  
+  // Check if the outermost property is "description"
+  if (node.property?.name !== 'description') {
+    return null;
+  }
+  
+  // Now check if the object is a member expression with pattern: *.exports.ComponentName
+  const obj = node.object;
+  if (obj?.type !== 'MemberExpression') {
+    return null;
+  }
+  
+  // Get the component name (the rightmost property before .description)
+  const componentName = obj.property?.name;
+  
+  // Check if the parent is .exports
+  if (obj.object?.type === 'MemberExpression' && obj.object.property?.name === 'exports' && componentName && file) {
+    const desc = getComponentDescription(componentName, file);
+    return desc;
+  }
+  
+  return null;
+}
+
+function extractJSXText(node, file) {
+  if (!node) {
+    return '';
+  }
+
+  // Handle JSXElement
+  if (node.type === 'JSXElement') {
+    const elementName = node.openingElement?.name?.name;
+    
+    // For TypeLink, try to extract the type name
+    if (elementName === 'TypeLink') {
+      return extractTypeLinkName(node);
+    }
+    
+    // For other elements like <p>, extract children text
+    if (node.children) {
+      return node.children
+        .map(child => extractJSXText(child, file))
+        .filter(text => text && text.trim())
+        .join('');
+    }
+  }
+  
+  // Handle JSXText
+  if (node.type === 'JSXText') {
+    return node.value.trim();
+  }
+  
+  // Handle JSXExpressionContainer
+  if (node.type === 'JSXExpressionContainer') {
+    const desc = extractDescriptionFromExpression(node.expression, file);
+    if (desc) {
+      return desc;
+    }
+    
+    if (node.expression.type === 'MemberExpression') {
+      return '[description]';
+    }
+    
+    return evaluateNode(node.expression, file) || '';
+  }
+  
+  // Handle JSXFragment
+  if (node.type === 'JSXFragment') {
+    if (node.children) {
+      return node.children
+        .map(child => extractJSXText(child, file))
+        .filter(text => text && text.trim())
+        .join('');
+    }
+  }
+  
+  return '';
+}
+
 function resolveComponentPath(componentName, file) {
   let roots = COMPONENT_SRC_ROOTS;
-  if (file?.path && file.path.includes(path.join('pages', 'react-aria'))) {
-    roots = [RAC_SRC_ROOT, S2_SRC_ROOT];
+  if (file?.path) {
+    if (file.path.includes(path.join('pages', 'react-aria'))) {
+      roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+    } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+    }
   }
 
   for (let root of roots) {
@@ -49,7 +307,7 @@ function resolveComponentPath(componentName, file) {
   const matches = glob.sync(roots.map(r => path.posix.join(r, `**/${componentName}.{ts,tsx}`)), {
     absolute: true,
     suppressErrors: true,
-    deep: 3
+    deep: 5
   });
   const resolved = matches[0] || null;
   global.__componentPathCache.set(componentName, resolved);
@@ -71,27 +329,44 @@ function getComponentDescription(componentName, file) {
   const exportedDecl = source.getExportedDeclarations().get(componentName)?.[0];
   const possibleNodes = [exportedDecl, source.getVariableDeclaration(componentName), source.getFunction(componentName), source.getClass(componentName)];
 
+  let firstNodeDesc = null;
   for (let node of possibleNodes.filter(Boolean)) {
     let current = node;
+    let isDirectNode = true;
     while (current) {
       let docs = typeof current.getJsDocs === 'function' ? current.getJsDocs() : [];
-      if (docs?.length) {
-        const desc = docs[0].getDescription().trim();
-        if (desc) {
-          const regex = new RegExp(`\\b${componentName}\\b`, 'i');
-          // eslint-disable-next-line max-depth
-          if (regex.test(desc)) {
-            return desc;
-          }
-          var fallbackDesc = fallbackDesc || desc;
-        }
+      if (!docs?.length) {
+        isDirectNode = false;
+        current = current.getParent?.();
+        continue;
       }
+      
+      const desc = docs[0].getDescription().trim();
+      if (!desc) {
+        isDirectNode = false;
+        current = current.getParent?.();
+        continue;
+      }
+      
+      // If this is the direct node (not a parent), return its description immediately
+      if (isDirectNode) {
+        return desc;
+      }
+      
+      // Otherwise, check if the description mentions the component name
+      const regex = new RegExp(`\\b${componentName}\\b`, 'i');
+      if (regex.test(desc)) {
+        return desc;
+      }
+      
+      firstNodeDesc = firstNodeDesc || desc;
+      isDirectNode = false;
       current = current.getParent?.();
     }
   }
 
-  if (typeof fallbackDesc === 'string') {
-    return fallbackDesc;
+  if (typeof firstNodeDesc === 'string') {
+    return firstNodeDesc;
   }
 
   const allJsDocs = source.getDescendants().flatMap(d => d.getJsDocs?.() || []);
@@ -118,7 +393,14 @@ function generatePropTable(componentName, file) {
 
   // Fallback: deep search for the interface declaration if resolveComponentPath failed.
   if (!componentPath) {
-    const roots = (file?.path && file.path.includes(path.join('pages', 'react-aria'))) ? [RAC_SRC_ROOT, S2_SRC_ROOT] : COMPONENT_SRC_ROOTS;
+    let roots = COMPONENT_SRC_ROOTS;
+    if (file?.path) {
+      if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      }
+    }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
     // Also scan other packages if not found in component roots.
     patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
@@ -126,7 +408,7 @@ function generatePropTable(componentName, file) {
     const matches = glob.sync(patterns, {
       absolute: true,
       suppressErrors: true,
-      deep: 4
+      deep: 5
     }).filter(p => {
       try {
         const txt = fs.readFileSync(p, 'utf8');
@@ -189,7 +471,14 @@ function generateInterfaceTable(interfaceName, file) {
 
   // Fallback: deep search for interface declaration if resolveComponentPath failed.
   if (!ifacePath) {
-    const roots = (file?.path && file.path.includes(path.join('pages', 'react-aria'))) ? [RAC_SRC_ROOT, S2_SRC_ROOT] : COMPONENT_SRC_ROOTS;
+    let roots = COMPONENT_SRC_ROOTS;
+    if (file?.path) {
+      if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      }
+    }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
     // Also scan other packages if not found in component roots.
     patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
@@ -197,7 +486,7 @@ function generateInterfaceTable(interfaceName, file) {
     const matches = glob.sync(patterns, {
       absolute: true,
       suppressErrors: true,
-      deep: 4
+      deep: 5
     }).filter(p => {
       try {
         const txt = fs.readFileSync(p, 'utf8');
@@ -220,33 +509,128 @@ function generateInterfaceTable(interfaceName, file) {
   const propSymbols = ifaceDecl.getType().getProperties();
   if (!propSymbols.length) {return null;}
 
-  const rows = propSymbols.map((sym) => {
+  // Separate properties and methods
+  const properties = [];
+  const methods = [];
+
+  for (const sym of propSymbols) {
     const name = sym.getName();
-    const type = cleanTypeText(sym.getTypeAtLocation(ifaceDecl).getText(ifaceDecl));
     const decl = sym.getDeclarations()?.[0];
+    
+    // Skip private and protected members
+    if (decl) {
+      const modifiers = decl.getModifiers?.() || [];
+      const isPrivate = modifiers.some(m => m.getText() === 'private');
+      const isProtected = modifiers.some(m => m.getText() === 'protected');
+      if (isPrivate || isProtected) {
+        continue;
+      }
+    }
+
+    const type = sym.getTypeAtLocation(ifaceDecl);
+    const callSignatures = type.getCallSignatures();
+    
     let description = '';
+    let defVal = '';
+    let optional = false;
+
     if (decl && typeof decl.getJsDocs === 'function') {
       const docsArr = decl.getJsDocs();
       if (docsArr.length) {
         description = docsArr[0].getDescription().replace(/\n+/g, ' ').trim();
+        const defaultTag = docsArr[0].getTags().find((t) => t.getTagName() === 'default');
+        if (defaultTag) {
+          defVal = defaultTag.getCommentText();
+        }
       }
     }
 
-    return {name, type, description};
-  });
+    if (decl && decl.hasQuestionToken?.()) {
+      optional = true;
+    }
 
-  if (!rows.length) {return null;}
+    // Check if this is a method (has call signatures)
+    if (callSignatures.length > 0) {
+      const sig = callSignatures[0];
+      const params = sig.getParameters();
+      const returnType = cleanTypeText(sig.getReturnType().getText());
+      
+      const paramStrs = params.map(p => {
+        const pDecl = p.getDeclarations()?.[0];
+        const pName = p.getName();
+        const pType = cleanTypeText(p.getDeclaredType().getText());
+        const pOptional = pDecl?.hasQuestionToken?.() ? '?' : '';
+        return `${pName}${pOptional}: ${pType}`;
+      });
 
-  const header = '| Name | Type | Description |\n|------|------|-------------|';
-  const body = rows
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((r) => {
-      const typeStr = `\`${r.type}\``;
-      return `| \`${r.name}\` | ${typeStr} | ${r.description || '—'} |`;
-    })
-    .join('\n');
+      const signature = `${name}(${paramStrs.join(', ')}): ${returnType}`;
+      methods.push({name, signature, description});
+    } else {
+      const typeText = cleanTypeText(type.getText(ifaceDecl));
+      properties.push({name, type: typeText, description, defVal, optional});
+    }
+  }
 
-  return `${header}\n${body}`;
+  if (!properties.length && !methods.length) {return null;}
+
+  const sections = [];
+
+  // Render properties section
+  if (properties.length > 0) {
+    if (methods.length > 0) {
+      sections.push('### Properties\n');
+    }
+
+    // Check if we need a Default column
+    const hasDefaults = properties.some(p => !!p.defVal);
+    
+    // Sort properties so required ones are shown first
+    const sortedProps = properties.sort((a, b) => {
+      if (!a.optional && b.optional) {
+        return -1;
+      }
+      if (a.optional && !b.optional) {
+        return 1;
+      }
+      return 0;
+    });
+
+    if (hasDefaults) {
+      sections.push('| Name | Type | Default | Description |');
+      sections.push('|------|------|---------|-------------|');
+      sortedProps.forEach(r => {
+        const nameStr = r.optional ? `\`${r.name}\`` : `\`${r.name}\` *`;
+        const typeStr = `\`${r.type}\``;
+        const defStr = r.defVal || '—';
+        sections.push(`| ${nameStr} | ${typeStr} | ${defStr} | ${r.description || '—'} |`);
+      });
+    } else {
+      sections.push('| Name | Type | Description |');
+      sections.push('|------|------|-------------|');
+      sortedProps.forEach(r => {
+        const nameStr = r.optional ? `\`${r.name}\`` : `\`${r.name}\` *`;
+        const typeStr = `\`${r.type}\``;
+        sections.push(`| ${nameStr} | ${typeStr} | ${r.description || '—'} |`);
+      });
+    }
+    sections.push('');
+  }
+
+  // Render methods section
+  if (methods.length > 0) {
+    if (properties.length > 0) {
+      sections.push('### Methods\n');
+    }
+
+    methods.forEach(m => {
+      sections.push(`#### \`${m.signature}\`\n`);
+      if (m.description) {
+        sections.push(`${m.description}\n`);
+      }
+    });
+  }
+
+  return sections.join('\n');
 }
 
 /**
@@ -269,6 +653,159 @@ function remarkDocsComponentsToMarkdown() {
     const relatedTypes = new Set();
     visit(tree, ['mdxJsxFlowElement', 'mdxJsxTextElement'], (node, index, parent) => {
       const name = node.name;
+      if (name === 'InstallCommand') {
+        const pkgAttr = node.attributes?.find(a => a.name === 'pkg');
+        if (!pkgAttr) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        let pkg = '';
+        if (pkgAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          pkg = pkgAttr.value.value.replace(/['"`]/g, '').trim();
+        } else if (typeof pkgAttr.value === 'string') {
+          pkg = pkgAttr.value.trim();
+        }
+
+        if (!pkg) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const flagsAttr = node.attributes?.find(a => a.name === 'flags');
+        let flags = '';
+        if (flagsAttr) {
+          if (flagsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            flags = flagsAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof flagsAttr.value === 'string') {
+            flags = flagsAttr.value.trim();
+          }
+        }
+
+        const commandText = `npm install ${pkg}${flags ? ' ' + flags : ''}`.trim();
+
+        const codeNode = {
+          type: 'code',
+          lang: 'bash',
+          meta: '',
+          value: commandText
+        };
+
+        parent.children.splice(index, 1, codeNode);
+        return index;
+      }
+
+      // Render a simple command snippet.
+      if (name === 'Command') {
+        const commandAttr = node.attributes?.find(a => a.name === 'command');
+        if (!commandAttr) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        let command = '';
+        if (commandAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          command = commandAttr.value.value.replace(/['"`]/g, '').trim();
+        } else if (typeof commandAttr.value === 'string') {
+          command = commandAttr.value.trim();
+        }
+
+        if (!command) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const codeNode = {
+          type: 'code',
+          lang: 'bash',
+          meta: '',
+          value: command
+        };
+
+        parent.children.splice(index, 1, codeNode);
+        return index;
+      }
+
+      // Render an unordered list of icon names.
+      if (name === 'IconsPageSearch') {
+        const iconList = getIconNames();
+        const listMarkdown = iconList.length 
+          ? iconList.map(iconName => `- ${iconName}`).join('\n') 
+          : '> Icon list could not be generated.';
+        const iconListNode = unified().use(remarkParse).parse(listMarkdown);
+        parent.children.splice(index, 1, ...iconListNode.children);
+        return index;
+      }
+
+      // Render an unordered list of illustration names.
+      if (name === 'IllustrationCards') {
+        const illustrationList = getIllustrationNames();
+        const listMarkdown = illustrationList.length 
+          ? illustrationList.map(illustrationName => `- ${illustrationName}`).join('\n') 
+          : '> Illustration list could not be generated.';
+        const illustrationCardsNode = unified().use(remarkParse).parse(listMarkdown);
+        parent.children.splice(index, 1, ...illustrationCardsNode.children);
+        return index;
+      }
+
+      // Render a table of icon colors.
+      if (name === 'IconColors') {
+        const colorsAttr = node.attributes?.find(a => a.name === 'colors');
+        let colorList = [];
+        
+        if (colorsAttr && colorsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const expr = colorsAttr.value.value;
+          const parsed = parseExpression(expr, file);
+          if (Array.isArray(parsed)) {
+            colorList = parsed.filter(c => typeof c === 'string');
+          }
+        }
+
+        if (colorList.length > 0) {
+          const header = ['| Color |', '|-------|'];
+          const rows = colorList.map(color => `| ${color} |`);
+          const tableMarkdown = `${header.join('\n')}\n${rows.join('\n')}`;
+          const iconColorsNode = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...iconColorsNode.children);
+        } else {
+          // If no colors found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+
+      // Render a table of icon sizes.
+      if (name === 'IconSizes') {
+        const sizesAttr = node.attributes?.find(a => a.name === 'sizes');
+        let sizeList = [];
+        
+        if (sizesAttr && sizesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const expr = sizesAttr.value.value;
+          const parsed = parseExpression(expr, file);
+          if (Array.isArray(parsed)) {
+            sizeList = parsed
+              .filter(item => typeof item === 'object' && item.size && item.pixels)
+              .map(item => ({
+                size: String(item.size),
+                pixels: String(item.pixels)
+              }));
+          }
+        }
+
+        if (sizeList.length > 0) {
+          const header = ['| Size | Pixels |', '|------|--------|'];
+          const rows = sizeList.map(({size, pixels}) => `| ${size} | ${pixels} |`);
+          const tableMarkdown = `${header.join('\n')}\n${rows.join('\n')}`;
+          const iconSizesNode = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...iconSizesNode.children);
+        } else {
+          // If no sizes found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+
+      // Render a text node with the component description.
       if (name === 'PageDescription') {
         // Assume first child is expression "docs.exports.Component.description".
         const exprNode = node.children?.find((c) => c.type === 'mdxFlowExpression' || c.type === 'mdxTextExpression');
@@ -278,7 +815,6 @@ function remarkDocsComponentsToMarkdown() {
             const desc = getComponentDescription(m[1], file);
             if (desc) {
               // Replace with normal paragraph node.
-              // eslint-disable-next-line max-depth
               if (node.type === 'mdxJsxFlowElement') {
                 parent.children[index] = {
                   type: 'paragraph',
@@ -313,6 +849,8 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
+
+      // Render a table of props.
       if (name === 'PropTable') {
         const compAttr = node.attributes?.find((a) => a.name === 'component');
         if (compAttr && compAttr.value?.type === 'mdxJsxAttributeValueExpression') {
@@ -329,21 +867,46 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
-      
-      if (name === 'ExampleSwitcher') {
-        // Helper to evaluate a simple JS expression (arrays/objects, literals).
-        const evalExpression = (expr) => {
-          try {
-            return Function(`"use strict"; return (${expr});`)();
-          } catch {
-            return null;
-          }
-        };
 
+      // Render a table of props.
+      if (name === 'GroupedPropTable') {
+        // GroupedPropTable uses spread attributes like {...docs.exports.TypeName}
+        const spreadAttr = node.attributes?.find(a => a.type === 'mdxJsxExpressionAttribute');
+        let typeName = null;
+        
+        if (spreadAttr && spreadAttr.value) {
+          const m = spreadAttr.value.match(/\.\.\.docs\.exports\.([\w$]+)/);
+          if (m) {
+            typeName = m[1];
+          }
+        }
+
+        if (!typeName) {
+          // Could not determine type, remove node
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        // Generate interface table (GroupedPropTable typically displays interfaces)
+        const table = generateInterfaceTable(typeName, file);
+        if (table) {
+          const tableTree = unified().use(remarkParse).parse(table);
+          parent.children.splice(index, 1, ...tableTree.children);
+          return index + tableTree.children.length;
+        }
+
+        // Fallback: remove node
+        parent.children.splice(index, 1);
+        return index;
+      }
+
+      // Render all code examples.
+      if (name === 'ExampleSwitcher') {
         const examplesAttr = node.attributes?.find(a => a.name === 'examples');
         let exampleTitles = [];
         if (examplesAttr && examplesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-          exampleTitles = evalExpression(examplesAttr.value.value) || [];
+          const parsed = parseExpression(examplesAttr.value.value, file);
+          exampleTitles = Array.isArray(parsed) ? parsed : [];
         }
 
         // Fallback default titles when none were provided.
@@ -372,7 +935,8 @@ function remarkDocsComponentsToMarkdown() {
           let fileList = [];
           if (filesAttr) {
             if (filesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-              fileList = evalExpression(filesAttr.value.value) || [];
+              const parsed = parseExpression(filesAttr.value.value, file);
+              fileList = Array.isArray(parsed) ? parsed : [];
             } else if (Array.isArray(filesAttr.value)) {
               fileList = filesAttr.value;
             }
@@ -406,16 +970,47 @@ function remarkDocsComponentsToMarkdown() {
         return index + newNodes.length;
       }
 
-      // Handle standalone VisualExample, generate a minimal snippet
-      if (name === 'VisualExample') {
-        const evalExpression = (expr) => {
-          try {
-            return Function(`"use strict"; return (${expr});`)();
-          } catch {
-            return null;
+      // Render code for each bundler.
+      if (name === 'BundlerSwitcher') {
+        const bundlerItems = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'BundlerSwitcherItem');
+        const newNodes = [];
+
+        const extractLabel = (itemNode) => {
+          const labelAttr = itemNode.attributes?.find(a => a.name === 'label');
+          if (!labelAttr) {return null;}
+
+          if (labelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            return labelAttr.value.value.replace(/['"`]/g, '').trim();
           }
+
+          if (typeof labelAttr.value === 'string') {
+            return labelAttr.value.trim();
+          }
+
+          return null;
         };
 
+        bundlerItems.forEach((itemNode) => {
+          const label = extractLabel(itemNode) || 'Configuration';
+
+          newNodes.push({
+            type: 'heading',
+            depth: 3,
+            children: [{type: 'text', value: label}]
+          });
+
+          const itemChildren = (itemNode.children || []).filter(child => child.type !== 'text' || child.value.trim() !== '');
+          if (itemChildren.length) {
+            newNodes.push(...itemChildren);
+          }
+        });
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
+      }
+
+      // Render a simple code snippet.
+      if (name === 'VisualExample') {
         const componentAttr = node.attributes?.find(a => a.name === 'component');
         const importSourceAttr = node.attributes?.find(a => a.name === 'importSource');
         const initialPropsAttr = node.attributes?.find(a => a.name === 'initialProps');
@@ -436,7 +1031,8 @@ function remarkDocsComponentsToMarkdown() {
 
         let initialProps = {};
         if (initialPropsAttr && initialPropsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-          initialProps = evalExpression(initialPropsAttr.value.value) || {};
+          const parsed = parseExpression(initialPropsAttr.value.value, file);
+          initialProps = (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
         }
 
         const {children: childrenProp, ...otherProps} = initialProps;
@@ -481,7 +1077,104 @@ function remarkDocsComponentsToMarkdown() {
         return index + 1;
       }
 
-      // Remove unsupported components.
+      // Render the version.
+      if (name === 'VersionBadge') {
+        const versionAttr = node.attributes?.find(a => a.name === 'version');
+        let version = '';
+        
+        if (versionAttr) {
+          if (versionAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            version = versionAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof versionAttr.value === 'string') {
+            version = versionAttr.value.trim();
+          }
+        }
+
+        if (version) {
+          parent.children[index] = {type: 'text', value: `(${version})`};
+        } else {
+          // No version, just remove the badge
+          parent.children.splice(index, 1);
+          return index;
+        }
+        return;
+      }
+
+      // Render markdown links.
+      if (name === 'Link' || name === 'LinkButton') {
+        const hrefAttr = node.attributes?.find(a => a.name === 'href');
+        let href = '';
+        
+        if (hrefAttr) {
+          if (hrefAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            href = hrefAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof hrefAttr.value === 'string') {
+            href = hrefAttr.value.trim();
+          }
+        }
+
+        // Check for aria-label attribute first
+        const ariaLabelAttr = node.attributes?.find(a => a.name === 'aria-label');
+        let ariaLabel = '';
+        
+        if (ariaLabelAttr) {
+          if (ariaLabelAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            ariaLabel = ariaLabelAttr.value.value.replace(/['"`]/g, '').trim();
+          } else if (typeof ariaLabelAttr.value === 'string') {
+            ariaLabel = ariaLabelAttr.value.trim();
+          }
+        }
+
+        // Extract text content from children
+        const extractText = (children) => {
+          if (!children) {return '';}
+          return children
+            .map(child => {
+              if (child.type === 'text' || child.type === 'mdxText') {
+                return child.value;
+              }
+              if (child.children) {
+                return extractText(child.children);
+              }
+              return '';
+            })
+            .join('');
+        };
+
+        const childrenText = extractText(node.children);
+        const linkText = ariaLabel || childrenText || href;
+
+        if (href) {
+          const linkNode = {
+            type: 'link',
+            url: href,
+            children: [{type: 'text', value: linkText}]
+          };
+          
+          // If this is a flow element (block-level), wrap in paragraph to preserve spacing
+          if (node.type === 'mdxJsxFlowElement') {
+            parent.children[index] = {
+              type: 'paragraph',
+              children: [linkNode]
+            };
+          } else {
+            parent.children[index] = linkNode;
+          }
+        } else {
+          // No href, just convert to plain text
+          if (node.type === 'mdxJsxFlowElement') {
+            parent.children[index] = {
+              type: 'paragraph',
+              children: [{type: 'text', value: linkText}]
+            };
+          } else {
+            parent.children[index] = {type: 'text', value: linkText};
+          }
+        }
+        return;
+      }
+
+      // Remove components we can't render as markdown.
       if (['Anatomy'].includes(name)) {
         parent.children.splice(index, 1);
         return index;
@@ -510,6 +1203,205 @@ function remarkDocsComponentsToMarkdown() {
         parent.children[index] = {type: 'text', value: ''};
         return index;
       }
+
+      // Render an unordered list of style properties.
+      if (name === 'S2StyleProperties') {
+        const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
+        let propertyList = [];
+        
+        if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const expr = propertiesAttr.value.value;
+          const parsed = parseExpression(expr, file);
+          if (Array.isArray(parsed)) {
+            propertyList = parsed.filter(p => typeof p === 'string');
+          }
+        }
+
+        if (propertyList.length > 0) {
+          // Generate markdown bullet list with inline code
+          const listItems = propertyList.map(prop => `- \`${prop}\``).join('\n');
+          const listNode = unified().use(remarkParse).parse(listItems);
+          parent.children.splice(index, 1, ...listNode.children);
+          return index + listNode.children.length;
+        } else {
+          // If no properties found, remove the node
+          parent.children.splice(index, 1);
+        }
+        return index;
+      }
+
+      // Render a table of S2 colors.
+      if (name === 'S2Colors') {
+        const colorSections = [
+          {
+            title: 'Background colors',
+            description: 'The backgroundColor property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.',
+            colors: [
+              'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
+              'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
+              'negative', 'negative-subtle', 'informative', 'informative-subtle',
+              'positive', 'positive-subtle', 'notice', 'notice-subtle',
+              'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
+              'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
+              'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
+              'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
+              'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle',
+              'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
+              'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
+              'brown', 'brown-subtle', 'silver', 'silver-subtle', 'disabled'
+            ]
+          },
+          {
+            title: 'Text colors',
+            description: 'The color property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.',
+            colors: [
+              'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
+              'heading', 'title', 'body', 'detail', 'code'
+            ]
+          },
+          {
+            title: 'Semantic colors',
+            description: 'The following values are available across all color properties. Prefer to use semantic colors over global colors when they represent a specific meaning.',
+            scales: ['accent-color', 'informative-color', 'negative-color', 'notice-color', 'positive-color']
+          },
+          {
+            title: 'Global colors',
+            description: 'The following values are available across all color properties.',
+            scales: [
+              'gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery',
+              'green', 'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia',
+              'magenta', 'pink', 'turquoise', 'brown', 'silver', 'cinnamon'
+            ]
+          }
+        ];
+
+        const newNodes = [];
+        for (const section of colorSections) {
+          // Add heading
+          newNodes.push({
+            type: 'heading',
+            depth: 4,
+            children: [{type: 'text', value: section.title}]
+          });
+
+          // Add description
+          newNodes.push({
+            type: 'paragraph',
+            children: [{type: 'text', value: section.description}]
+          });
+
+          // Add color list
+          if (section.colors) {
+            const listItems = section.colors.map(color => `- \`${color}\``).join('\n');
+            const listNode = unified().use(remarkParse).parse(listItems);
+            newNodes.push(...listNode.children);
+          } else if (section.scales) {
+            // For scales, note that they include numbered variants (e.g., gray-100, gray-200, etc.)
+            const scaleNote = section.scales.map(scale => {
+              const baseName = scale.replace(/-color$/, '');
+              // Gray scale includes 25, 50, 75, while others start at 100
+              if (baseName === 'gray') {
+                return `- \`${baseName}\` scale (e.g., \`${baseName}-25\`, \`${baseName}-50\`, \`${baseName}-75\`, \`${baseName}-100\`, ..., \`${baseName}-1600\`)`;
+              }
+              return `- \`${baseName}\` scale (e.g., \`${baseName}-100\`, \`${baseName}-200\`, ..., \`${baseName}-1600\`)`;
+            }).join('\n');
+            const scaleNode = unified().use(remarkParse).parse(scaleNote);
+            newNodes.push(...scaleNode.children);
+          }
+        }
+
+        parent.children.splice(index, 1, ...newNodes);
+        return index + newNodes.length;
+      }
+
+      // Render a markdown table.
+      if (name === 'StaticTable') {
+        const headersAttr = node.attributes?.find(a => a.name === 'headers');
+        const rowsAttr = node.attributes?.find(a => a.name === 'rows');
+        const codeColumnsAttr = node.attributes?.find(a => a.name === 'codeColumns');
+
+        let headers = [];
+        let rows = [];
+        let codeColumns = [];
+
+        if (headersAttr && headersAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const parsed = parseExpression(headersAttr.value.value, file);
+          headers = Array.isArray(parsed) ? parsed : [];
+        }
+
+        if (rowsAttr && rowsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const parsed = parseExpression(rowsAttr.value.value, file);
+          rows = Array.isArray(parsed) ? parsed : [];
+        }
+
+        if (codeColumnsAttr && codeColumnsAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const parsed = parseExpression(codeColumnsAttr.value.value, file);
+          codeColumns = Array.isArray(parsed) ? parsed : [];
+        }
+
+        // Helper to extract text content from cell values
+        const extractCellText = (cell) => {
+          if (cell === null || cell === undefined) {
+            return '';
+          }
+          if (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') {
+            return String(cell);
+          }
+          // If it's an object (could be a parsed JSX element or other structure), try to get meaningful text
+          if (typeof cell === 'object') {
+            // Check if it has a 'children' property (common in parsed objects)
+            if (cell.children) {
+              return extractCellText(cell.children);
+            }
+            // If it's an array, join the elements
+            if (Array.isArray(cell)) {
+              return cell.map(extractCellText).join('');
+            }
+            // Otherwise, try to get some representation
+            return JSON.stringify(cell);
+          }
+          return String(cell);
+        };
+
+        if (headers.length > 0 && rows.length > 0) {
+          // Build markdown table
+          const headerRow = headers.map(h => extractCellText(h));
+          const separator = headers.map(() => '------');
+          
+          const bodyRows = rows.map(row => {
+            if (!Array.isArray(row)) {return [];}
+            return row.map((cell, colIdx) => {
+              let text = extractCellText(cell);
+              // Apply code formatting if this column is in codeColumns
+              if (codeColumns.includes(colIdx)) {
+                // If not already wrapped in backticks, wrap it
+                if (!text.startsWith('`')) {
+                  text = `\`${text}\``;
+                }
+              }
+              // Escape pipe characters in cells
+              text = text.replace(/\|/g, '\\|');
+              return text;
+            });
+          });
+
+          const tableMarkdown = [
+            `| ${headerRow.join(' | ')} |`,
+            `| ${separator.join(' | ')} |`,
+            ...bodyRows.map(row => `| ${row.join(' | ')} |`)
+          ].join('\n');
+
+          const tableTree = unified().use(remarkParse).parse(tableMarkdown);
+          parent.children.splice(index, 1, ...tableTree.children);
+          return index + tableTree.children.length;
+        }
+
+        // If we couldn't build the table, remove the node
+        parent.children.splice(index, 1);
+        return index;
+      }
+      
+      // Render a markdown table.
       if (name === 'StateTable') {
         // Extract interface name from properties attribute
         const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
@@ -571,9 +1463,71 @@ function remarkDocsComponentsToMarkdown() {
         parent.children.splice(index, 1);
         return index;
       }
+      
+      if (name === 'ClassAPI') {
+        // Extract class name from class attribute
+        const classAttr = node.attributes?.find(a => a.name === 'class');
+        let className = null;
+        if (classAttr && classAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const m = classAttr.value.value.match(/docs\.exports\.([\w$]+)/);
+          if (m) {
+            className = m[1];
+          }
+        }
+
+        if (!className) {
+          // Could not determine class, remove node
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        // Generate method table and property table for the class
+        const table = generateClassAPITable(className, file);
+        if (table) {
+          const tableTree = unified().use(remarkParse).parse(table);
+          parent.children.splice(index, 1, ...tableTree.children);
+          return index + tableTree.children.length;
+        }
+
+        // Fallback: remove node
+        parent.children.splice(index, 1);
+        return index;
+      }
+      
+      if (name === 'InterfaceType') {
+        // InterfaceType uses spread attributes like {...docs.exports.TypeName}
+        // We need to look for spread attributes
+        const spreadAttr = node.attributes?.find(a => a.type === 'mdxJsxExpressionAttribute');
+        let typeName = null;
+        
+        if (spreadAttr && spreadAttr.value) {
+          const m = spreadAttr.value.match(/\.\.\.docs\.exports\.([\w$]+)/);
+          if (m) {
+            typeName = m[1];
+          }
+        }
+
+        if (!typeName) {
+          // Could not determine type, remove node
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        // Generate interface table
+        const table = generateInterfaceTable(typeName, file);
+        if (table) {
+          const tableTree = unified().use(remarkParse).parse(table);
+          parent.children.splice(index, 1, ...tableTree.children);
+          return index + tableTree.children.length;
+        }
+
+        // Fallback: remove node
+        parent.children.splice(index, 1);
+        return index;
+      }
     });
 
-    // Clean up code block language specifiers. E.g. "tsx render" -> "tsx"
+    // Clean up code block language specifiers (e.g. "tsx render" -> "tsx").
     visit(tree, 'code', (node) => {
       if (node.meta) {
         node.meta = '';
@@ -629,28 +1583,173 @@ function remarkDocsComponentsToMarkdown() {
 }
 
 /**
- * Recursively find all MDX files in a directory.
+ * Generate markdown documentation for a class, including its methods and properties.
  */
-async function getMdxFiles(dir) {
-  let entries = await fs.promises.readdir(dir, {withFileTypes: true});
-  let files = [];
-  for (let entry of entries) {
-    let fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files = files.concat(await getMdxFiles(fullPath));
-    } else if (entry.isFile() && /\.mdx?$/.test(entry.name)) {
-      files.push(fullPath);
+function generateClassAPITable(className, file) {
+  let classPath = resolveComponentPath(className, file);
+  
+  if (!classPath) {
+    // Fallback: deep search for class declaration
+    let roots = COMPONENT_SRC_ROOTS;
+    if (file?.path) {
+      if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      }
+    }
+    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
+    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
+
+    const matches = glob.sync(patterns, {
+      absolute: true,
+      suppressErrors: true,
+      deep: 5
+    }).filter(p => {
+      try {
+        const txt = fs.readFileSync(p, 'utf8');
+        return new RegExp(`class\\s+${className}\\b`).test(txt);
+      } catch {
+        return false;
+      }
+    });
+    classPath = matches[0] || null;
+  }
+
+  if (!classPath) {
+    return null;
+  }
+
+  const source = project.addSourceFileAtPathIfExists(classPath);
+  if (!source) {
+    return null;
+  }
+
+  const classDecl = source.getClass(className);
+  if (!classDecl) {
+    return null;
+  }
+
+  const sections = [];
+
+  // Generate constructor documentation if available
+  const constructors = classDecl.getConstructors();
+  if (constructors.length > 0) {
+    const ctor = constructors[0];
+    const params = ctor.getParameters();
+    
+    if (params.length > 0) {
+      sections.push('### Constructor\n');
+      const rows = params.map(param => {
+        const name = param.getName();
+        const type = cleanTypeText(param.getType().getText(param));
+        let description = '';
+        
+        const ctorDocs = ctor.getJsDocs();
+        if (ctorDocs.length > 0) {
+          const paramTag = ctorDocs[0].getTags().find(t => t.getTagName() === 'param' && t.getName?.() === name);
+          if (paramTag) {
+            description = paramTag.getCommentText() || '';
+          }
+        }
+        
+        return {name, type, description};
+      });
+
+      sections.push('| Parameter | Type | Description |');
+      sections.push('|-----------|------|-------------|');
+      rows.forEach(r => {
+        sections.push(`| \`${r.name}\` | \`${r.type}\` | ${r.description || '—'} |`);
+      });
+      sections.push('');
     }
   }
-  return files;
-}
 
-function cleanTypeText(t) {
-  // Remove import statements from type strings.
-  let cleaned = t.replace(/import\(["'][^)]*["']\)\./g, '');
-  // Remove duplicate type parameters.
-  cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
-  return cleaned;
+  // Generate methods documentation
+  const methods = classDecl.getMethods().filter(m => {
+    const scope = m.getScope();
+    return scope === undefined || scope === 1; // public methods only
+  });
+
+  if (methods.length > 0) {
+    sections.push('### Methods\n');
+    
+    for (const method of methods) {
+      const methodName = method.getName();
+      const params = method.getParameters();
+      const returnType = cleanTypeText(method.getReturnType().getText(method));
+      
+      // Build method signature
+      const paramStrs = params.map(p => {
+        const pName = p.getName();
+        const pType = cleanTypeText(p.getType().getText(p));
+        const optional = p.hasQuestionToken() ? '?' : '';
+        return `${pName}${optional}: ${pType}`;
+      });
+      
+      const signature = `${methodName}(${paramStrs.join(', ')}): ${returnType}`;
+      sections.push(`#### \`${signature}\`\n`);
+      
+      // Get method description
+      const methodDocs = method.getJsDocs();
+      if (methodDocs.length > 0) {
+        const desc = methodDocs[0].getDescription().trim();
+        if (desc) {
+          sections.push(`${desc}\n`);
+        }
+        
+        // Document parameters
+        const paramTags = methodDocs[0].getTags().filter(t => t.getTagName() === 'param');
+        if (paramTags.length > 0) {
+          sections.push('**Parameters:**\n');
+          paramTags.forEach(tag => {
+            const pName = tag.getName?.();
+            const pDesc = tag.getCommentText() || '';
+            if (pName) {
+              sections.push(`- \`${pName}\`: ${pDesc}`);
+            }
+          });
+          sections.push('');
+        }
+        
+        // Document return value
+        const returnTag = methodDocs[0].getTags().find(t => t.getTagName() === 'returns' || t.getTagName() === 'return');
+        if (returnTag) {
+          const returnDesc = returnTag.getCommentText() || '';
+          if (returnDesc) {
+            sections.push(`**Returns:** ${returnDesc}\n`);
+          }
+        }
+      }
+    }
+  }
+
+  // Generate properties documentation
+  const properties = classDecl.getProperties().filter(p => {
+    const scope = p.getScope();
+    return scope === undefined || scope === 1; // public properties only
+  });
+
+  if (properties.length > 0) {
+    sections.push('### Properties\n');
+    sections.push('| Property | Type | Description |');
+    sections.push('|----------|------|-------------|');
+    
+    properties.forEach(prop => {
+      const propName = prop.getName();
+      const propType = cleanTypeText(prop.getType().getText(prop));
+      let description = '';
+      
+      const propDocs = prop.getJsDocs();
+      if (propDocs.length > 0) {
+        description = propDocs[0].getDescription().replace(/\n+/g, ' ').trim();
+      }
+      
+      sections.push(`| \`${propName}\` | \`${propType}\` | ${description || '—'} |`);
+    });
+  }
+
+  return sections.length > 0 ? sections.join('\n') : null;
 }
 
 /**
@@ -664,13 +1763,17 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
   // If not found, fall back to searching all component roots.
   if (!componentPath) {
     let roots = COMPONENT_SRC_ROOTS;
-    if (file?.path && file.path.includes(path.join('pages', 'react-aria'))) {
-      roots = [RAC_SRC_ROOT, S2_SRC_ROOT];
+    if (file?.path) {
+      if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      }
     }
     const matches = glob.sync(roots.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
       absolute: true,
       suppressErrors: true,
-      deep: 4
+      deep: 5
     }).filter(p => fs.readFileSync(p, 'utf8').includes(`interface ${renderPropsName}`));
     componentPath = matches[0] || null;
   }
@@ -760,14 +1863,21 @@ function generateFunctionOptionsTable(functionName, file) {
 
   if (!funcPath) {
     // Fallback deep search similar to other helpers.
-    const roots = (file?.path && file.path.includes(path.join('pages', 'react-aria'))) ? [RAC_SRC_ROOT, S2_SRC_ROOT] : COMPONENT_SRC_ROOTS;
+    let roots = COMPONENT_SRC_ROOTS;
+    if (file?.path) {
+      if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      }
+    }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
     patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
 
     const matches = glob.sync(patterns, {
       absolute: true,
       suppressErrors: true,
-      deep: 4
+      deep: 5
     }).filter(p => {
       try {
         const txt = fs.readFileSync(p, 'utf8');
@@ -836,22 +1946,141 @@ function generateFunctionOptionsTable(functionName, file) {
   return null;
 }
 
-/* *
+/**
+ * Generate llms.txt file for a specific library.
+ */
+function generateLibraryLlmsTxt(lib, files) {
+  if (!files.length) {
+    return;
+  }
+
+  const titleMap = {
+    's2': 'React Spectrum (S2) Documentation',
+    'react-aria': 'React Aria Components Documentation',
+    'internationalized': 'Internationalized Documentation'
+  };
+  
+  const summaryMap = {
+    's2': 'Plain-text markdown documentation for React Spectrum S2 components.',
+    'react-aria': 'Plain-text markdown documentation for React Aria components.',
+    'internationalized': 'Plain-text markdown documentation for internationalized date, time, and number utilities.'
+  };
+
+  const title = titleMap[lib] || `${lib} documentation`;
+  const summary = summaryMap[lib] || '';
+
+  let txt = `# ${title}\n\n`;
+  if (summary) {
+    txt += `> ${summary}\n\n`;
+  }
+
+  txt += '## Documentation\n';
+  const sorted = files.sort((a, b) => a.heading.localeCompare(b.heading));
+  for (const doc of sorted) {
+    if (doc.description) {
+      txt += `- [${doc.heading}](${lib}/${doc.path}): ${doc.description}\n`;
+    } else {
+      txt += `- [${doc.heading}](${lib}/${doc.path})\n`;
+    }
+  }
+
+  const libDistDir = path.join(DIST_ROOT, lib);
+  fs.mkdirSync(libDistDir, {recursive: true});
+  const llmsPath = path.join(libDistDir, 'llms.txt');
+  fs.writeFileSync(llmsPath, txt.trim() + '\n', 'utf8');
+  console.log('Generated', path.relative(REPO_ROOT, llmsPath));
+}
+
+/**
+ * Generate root llms.txt file that includes all documentation.
+ */
+function generateRootLlmsTxt(docsByLibrary) {
+  let txt = '# React Spectrum Libraries\n\n';
+  txt += '> Complete documentation for React Spectrum libraries including React Spectrum (S2), React Aria, and Internationalized.\n\n';
+
+  // Add root-level documentation
+  if (docsByLibrary['root'].length > 0) {
+    txt += '## Getting Started\n';
+    const sorted = docsByLibrary['root'].sort((a, b) => a.heading.localeCompare(b.heading));
+    for (const doc of sorted) {
+      if (doc.description) {
+        txt += `- [${doc.heading}](${doc.path}): ${doc.description}\n`;
+      } else {
+        txt += `- [${doc.heading}](${doc.path})\n`;
+      }
+    }
+    txt += '\n';
+  }
+
+  // Add S2 documentation
+  if (docsByLibrary['s2'].length > 0) {
+    txt += '## React Spectrum (S2)\n';
+    const sorted = docsByLibrary['s2'].sort((a, b) => a.heading.localeCompare(b.heading));
+    for (const doc of sorted) {
+      if (doc.description) {
+        txt += `- [${doc.heading}](s2/${doc.path}): ${doc.description}\n`;
+      } else {
+        txt += `- [${doc.heading}](s2/${doc.path})\n`;
+      }
+    }
+    txt += '\n';
+  }
+
+  // Add React Aria documentation
+  if (docsByLibrary['react-aria'].length > 0) {
+    txt += '## React Aria Components\n';
+    const sorted = docsByLibrary['react-aria'].sort((a, b) => a.heading.localeCompare(b.heading));
+    for (const doc of sorted) {
+      if (doc.description) {
+        txt += `- [${doc.heading}](react-aria/${doc.path}): ${doc.description}\n`;
+      } else {
+        txt += `- [${doc.heading}](react-aria/${doc.path})\n`;
+      }
+    }
+    txt += '\n';
+  }
+
+  // Add Internationalized documentation
+  if (docsByLibrary['internationalized'].length > 0) {
+    txt += '## Internationalized\n';
+    const sorted = docsByLibrary['internationalized'].sort((a, b) => a.heading.localeCompare(b.heading));
+    for (const doc of sorted) {
+      if (doc.description) {
+        txt += `- [${doc.heading}](internationalized/${doc.path}): ${doc.description}\n`;
+      } else {
+        txt += `- [${doc.heading}](internationalized/${doc.path})\n`;
+      }
+    }
+    txt += '\n';
+  }
+
+  const llmsPath = path.join(DIST_ROOT, 'llms.txt');
+  fs.writeFileSync(llmsPath, txt.trim() + '\n', 'utf8');
+  console.log('Generated', path.relative(REPO_ROOT, llmsPath));
+}
+
+/**
  * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of each file.
  * React-specific JSX elements such as <PageDescription> and <PropTable> are replaced with plain markdown equivalents so
  * that the resulting *.md files can be consumed by LLMs.
  */
 async function main() {
-  const mdxFiles = await getMdxFiles(S2_DOCS_PAGES_ROOT);
+  const mdxFiles = await glob('**/*.mdx', {
+    cwd: S2_DOCS_PAGES_ROOT,
+    absolute: true
+  });
 
-  // Collect generated markdown filenames for each library so we can build llms.txt files.
+  // Collect generated markdown filenames and headings for each library so we can build llms.txt files.
   const docsByLibrary = {
-    's2': new Set(),
-    'react-aria': new Set()
+    's2': [],
+    'react-aria': [],
+    'internationalized': [],
+    'root': []
   };
 
   for (const filePath of mdxFiles) {
-    const mdContent = fs.readFileSync(filePath, 'utf8');
+    const rawContent = fs.readFileSync(filePath, 'utf8');
+    const mdContent = rawContent.replace(LICENSE_COMMENT_REGEX, '');
     const processor = unified()
       .use(remarkParse)
       .use(remarkMdx)
@@ -871,52 +2100,52 @@ async function main() {
     fs.writeFileSync(outPath, markdown, 'utf8');
     console.log('Generated', path.relative(REPO_ROOT, outPath));
 
+    // Extract the main heading from the markdown
+    let heading = null;
+    const headingMatch = markdown.match(/^#\s+(.+)$/m);
+    if (headingMatch) {
+      heading = headingMatch[1].trim();
+    }
+
+    // Extract the description (first paragraph after heading)
+    let description = null;
+    const descriptionMatch = markdown.match(/^#\s+.+$\n\n(.+?)(?:\n\n|$)/m);
+    if (descriptionMatch) {
+      description = descriptionMatch[1].trim();
+    }
+
     // Track markdown files by library (first path segment e.g. "s2/Button.mdx" -> "s2").
     const relativePathParts = relativePath.split(path.sep);
-    const libKey = relativePathParts[0];
+    const relativeOutPath = path.relative(DIST_ROOT, outPath);
+    let libKey;
+    let filePathForIndex;
+    
+    if (relativePathParts.length === 1) {
+      // Root-level file like index.mdx
+      libKey = 'root';
+      filePathForIndex = path.basename(outPath);
+    } else {
+      libKey = relativePathParts[0];
+      // For nested files like internationalized/date/index.md, use the .md path
+      filePathForIndex = relativeOutPath.replace(new RegExp(`^${libKey}[\\\\/]`), '');
+    }
+    
     if (docsByLibrary[libKey]) {
-      docsByLibrary[libKey].add(path.basename(outPath));
+      docsByLibrary[libKey].push({
+        path: filePathForIndex,
+        heading: heading || filePathForIndex.replace(/\.md$/, ''),
+        description: description || null
+      });
     }
   }
 
-  // Generate llms.txt for each library.
-  const makeLlmsTxt = (lib, files) => {
-    if (!files.size) {return;}
+  // Generate library-specific llms.txt files
+  generateLibraryLlmsTxt('s2', docsByLibrary['s2']);
+  generateLibraryLlmsTxt('react-aria', docsByLibrary['react-aria']);
+  generateLibraryLlmsTxt('internationalized', docsByLibrary['internationalized']);
 
-    const titleMap = {
-      's2': 'React Spectrum S2 Documentation',
-      'react-aria': 'React Aria Components Documentation'
-    };
-    
-    const summaryMap = {
-      's2': 'Plain-text markdown documentation for React Spectrum S2 components.',
-      'react-aria': 'Plain-text markdown documentation for React Aria components.'
-    };
-
-    const title = titleMap[lib] || `${lib} documentation`;
-    const summary = summaryMap[lib] || '';
-
-    let txt = `# ${title}\n\n`;
-    if (summary) {
-      txt += `> ${summary}\n\n`;
-    }
-
-    txt += '## Documentation\n';
-    const sorted = Array.from(files).sort((a, b) => a.localeCompare(b));
-    for (const file of sorted) {
-      const display = file.replace(/\.md$/, '');
-      txt += `- [${display}](${lib}/${file})\n`;
-    }
-
-    const libDistDir = path.join(DIST_ROOT, lib);
-    fs.mkdirSync(libDistDir, {recursive: true});
-    const llmsPath = path.join(libDistDir, 'llms.txt');
-    fs.writeFileSync(llmsPath, txt.trim() + '\n', 'utf8');
-    console.log('Generated', path.relative(REPO_ROOT, llmsPath));
-  };
-
-  makeLlmsTxt('s2', docsByLibrary['s2']);
-  makeLlmsTxt('react-aria', docsByLibrary['react-aria']);
+  // Generate root llms.txt that includes all documentation
+  generateRootLlmsTxt(docsByLibrary);
 }
 
 main().catch((err) => {

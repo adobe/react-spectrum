@@ -1,0 +1,35 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'August 26, 2025';
+export const title = 'v0.11.0';
+export const description = 'Version 0.11.0 introduces the new SelectBoxGroup component (alpha), fixes ComboBox empty state rendering, improves Picker dropdown styling, and adds support for custom tab layouts with collapse behavior.';
+export const isSubpage = true;
+
+# v0.11.0
+<Time date={date} />
+
+Version 0.11.0 introduces the new SelectBoxGroup component (alpha), fixes ComboBox empty state rendering, improves Picker dropdown styling, and adds support for custom tab layouts with collapse behavior.
+
+## New Components
+* [SelectBoxGroup](../SelectBoxGroup.html)
+
+## Updates
+* [ComboBox](../ComboBox.html): Fix empty state rendering when no items match the current query
+* [Picker](../Picker.html): Fix erroneous dropdown outline when opening the Picker via click
+* [Tabs](../Tabs.html): Support collapse behavior on Tabs when customizing the layout

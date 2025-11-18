@@ -1,17 +1,18 @@
-/* eslint-disable rulesdir/imports */
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+// eslint-disable-next-line monorepo/no-internal-import
+import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
+import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+// @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
-// @ts-ignore
-import gradientIllustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
 import {illustrationAliases} from './illustrationAliases.js';
-// @ts-ignore
-import linearIllustrations from '/packages/@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
+import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+// eslint-disable-next-line monorepo/no-internal-import
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
-import {pressScale, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {Suspense, use, useCallback, useEffect, useRef, useState} from 'react';
 
 type IllustrationItemType = {
   id: string,
@@ -24,7 +25,7 @@ const itemStyle = style({
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
-    isFocused: 'gray-100',
+    isFocusVisible: 'gray-100',
     isSelected: 'neutral'
   },
   font: 'ui-sm',
@@ -53,36 +54,19 @@ export function IllustrationCards() {
     return textValue != null && contains(textValue, inputValue);
   }, [contains]);
 
-  let items: IllustrationItemType[] = useMemo(() => {
-    if (variant === 'linear') {
-      let map = linearIllustrations ?? {};
-      return Object.keys(map).reduce<IllustrationItemType[]>((acc, name) => {
-        let mod = map[name];
-        if (mod?.default) {acc.push({id: name, Component: mod.default});}
-        return acc;
-      }, []);
-    }
-    let styleKey = gradientStyle;
-    let map = gradientIllustrations?.[styleKey] ?? {};
-    return Object.keys(map).reduce<IllustrationItemType[]>((acc, name) => {
-      let mod = map[name];
-      if (mod?.default) {acc.push({id: name, Component: mod.default});}
-      return acc;
-    }, []);
-  }, [variant, gradientStyle]);
-
   return (
     <Autocomplete filter={filter}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
         <div className={style({display: 'flex', justifyContent: 'center'})}>
           <SegmentedControl
+            aria-label="Illustration type"
             onSelectionChange={(value) => setVariant(value as 'linear' | 'gradient')}
             selectedKey={variant}>
             <SegmentedControlItem id="gradient"><Gradient /><Text>Gradient</Text></SegmentedControlItem>
             <SegmentedControlItem id="linear"><Polygon4 /><Text>Linear</Text></SegmentedControlItem>
           </SegmentedControl>
         </div>
-        <SearchField size="L" />
+        <SearchField size="L" aria-label="Search illustrations" placeholder="Search illustrations" />
         {variant === 'gradient' && (
           <RadioGroup
             labelPosition="side"
@@ -96,52 +80,133 @@ export function IllustrationCards() {
             <Radio value="generic2">Generic 2</Radio>
           </RadioGroup>
         )}
-        <Virtualizer
-          layout={GridLayout}
-          layoutOptions={{
-            minItemSize: new Size(164, 164),
-            maxItemSize: new Size(164, 164),
-            minSpace: new Size(20, 20),
-            preserveAspectRatio: true
-          }}>
-          <ListBox
-            items={items}
-            layout="grid"
-            className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}>
-            {(item: IllustrationItemType) => <IllustrationItem item={item} />}
-          </ListBox>
-        </Virtualizer>
+        <CopyInfoMessage />
+        <Suspense fallback={<Loading />}>
+          <IllustrationList variant={variant} gradientStyle={gradientStyle} />
+        </Suspense>
       </div>
     </Autocomplete>
   );
 }
 
-function IllustrationItem({item}: {item: IllustrationItemType}) {
+function Loading() {
+  return (
+    <div className={style({height: 560, width: 'full', display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
+      <ProgressCircle isIndeterminate aria-label="Loading" />
+    </div>
+  );
+}
+
+function CopyInfoMessage() {
+  return (
+    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
+      <InfoCircle styles={iconStyle({size: 'XS'})} />
+      <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
+    </div>
+  );
+}
+
+function useCopyImport(variant: string, gradientStyle: string) {
+  let [copiedId, setCopiedId] = useState<string | null>(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
+
+  let handleCopyImport = useCallback((id: string) => {
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    let importText = variant === 'gradient' ?
+      `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
+      `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+    navigator.clipboard.writeText(importText).then(() => {
+      setCopiedId(id);
+      timeout.current = setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => {
+      ToastQueue.negative('Failed to copy import statement.');
+    });
+  }, [variant, gradientStyle]);
+
+  return {copiedId, handleCopyImport};
+}
+
+function IllustrationList({variant, gradientStyle}) {
+  let items = use(loadIllustrations(variant, gradientStyle));
+  let {copiedId, handleCopyImport} = useCopyImport(variant, gradientStyle);
+  return (
+    <Virtualizer
+      layout={GridLayout}
+      layoutOptions={{
+        minItemSize: new Size(164, 164),
+        maxItemSize: new Size(164, 164),
+        minSpace: new Size(20, 20),
+        preserveAspectRatio: true
+      }}>
+      <ListBox
+        aria-label="Illustrations"
+        items={items}
+        layout="grid"
+        onAction={(item) => handleCopyImport(item.toString())}
+        dependencies={[copiedId]}
+        className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
+        renderEmptyState={() => (
+          <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+            <NoSearchResults />
+            <Heading>
+              No results
+            </Heading>
+            <Content>
+              Try a different search term.
+            </Content>
+          </IllustratedMessage>
+          )}>
+        {(item: IllustrationItemType) => <IllustrationItem item={item} isCopied={copiedId === item.id} />}
+      </ListBox>
+    </Virtualizer>
+  );
+}
+
+function IllustrationItem({item, isCopied = false}: {item: IllustrationItemType, isCopied?: boolean}) {
   let Illustration = item.Component;
   let ref = useRef(null);
   return (
     <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      {({isFocused}) => (
-        <>
-          <Illustration />
-          {isFocused && (
-            <div
-              className={style({
-                position: 'absolute',
-                bottom: 0,
-                left: '50%',
-                translateX: '-50%',
-                translateY: '20%',
-                padding: 4,
-                backgroundColor: 'elevated',
-                borderRadius: 'default',
-                boxShadow: 'elevated'
-              })}>
-              {item.id}
-            </div>
-          )}
-        </>
-      )}
+      {isCopied ? <Checkmark /> : <Illustration />}
+      <div
+        className={style({
+          display: 'flex',
+          alignItems: 'center',
+          padding: 4
+        })}>
+        {isCopied ? 'Copied!' : item.id}
+      </div>
     </ListBoxItem>
   );
+}
+
+const cache = new Map();
+
+function loadIllustrations(variant: string, style: string): Promise<IllustrationItemType[]> {
+  let key = variant === 'gradient' ? `${variant}:${style}` : variant;
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+
+  let promise: Promise<IllustrationItemType[]>;
+  if (variant === 'linear') {
+    promise = import('./illustrations/linear').then(m => m.default);
+  } else {
+    promise = style === 'generic1'
+      ? import('./illustrations/generic1').then(m => m.default)
+      : import('./illustrations/generic2').then(m => m.default);
+  }
+
+  cache.set(key, promise);
+  return promise;
 }

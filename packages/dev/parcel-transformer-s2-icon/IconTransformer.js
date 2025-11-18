@@ -82,7 +82,7 @@ function template(asset, svg) {
   let normalizedPath = asset.filePath.replaceAll('\\', '/');
   let fn = asset.pipeline === 'illustration' || normalizedPath.includes('@react-spectrum/s2/spectrum-illustrations') ? 'createIllustration' : 'createIcon';
   return (
-`
+`"use client";
 import {${fn}} from '${normalizedPath.includes('@react-spectrum/s2') ? '~/src/Icon' : '@react-spectrum/s2'}';
 
 ${svg.replace('import { SVGProps } from "react";', '')}

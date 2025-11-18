@@ -45,7 +45,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
  * Provides state management for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export function useRangeCalendarState<T extends DateValue = DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
+export function useRangeCalendarState<T extends DateValue = DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState<T> {
   let {
     value: valueProp,
     defaultValue,

@@ -3,6 +3,8 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['chips', 'pills'];
+
 # TagGroup
 
 <PageDescription>{docs.exports.TagGroup.description}</PageDescription>
@@ -58,7 +60,7 @@ function PhotoCategories() {
   return (
     <TagGroup
       label="Photo categories"
-      styles={style({width: 320})}
+      styles={style({maxWidth: 320})}
       /*- begin highlight -*/
       items={list.items}
       onRemove={(keys) => list.remove(...keys)}>

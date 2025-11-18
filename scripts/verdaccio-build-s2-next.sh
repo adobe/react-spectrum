@@ -34,6 +34,7 @@ echo 'build Spectrum 2 + Next.js test app'
 cd examples/s2-next-macros
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
+yarn up @react-spectrum/s2
 VERDACCIO=true yarn build
 mv out ../../$verdaccio_path/s2-next-macros
 

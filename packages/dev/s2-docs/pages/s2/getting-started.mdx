@@ -1,0 +1,186 @@
+import {Layout} from '../../src/Layout';
+import {InstallCommand} from '../../src/InstallCommand';
+import {BundlerSwitcher, BundlerSwitcherItem} from '../../src/BundlerSwitcher';
+export default Layout;
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+
+export const section = 'Overview';
+export const tags = ['introduction', 'installation'];
+export const description = 'Getting started with React Spectrum';
+
+# Getting started
+
+## Installation
+
+Spectrum 2 in React Spectrum can be installed with your preferred package manager:
+
+<InstallCommand pkg="@react-spectrum/s2" />
+
+## Configuring your bundler
+
+React Spectrum supports styling via [macros](https://parceljs.org/features/macros/), a new bundler feature that enables functions to run at build time. Currently, Parcel v2.12.0 and newer supports macros out of the box. When using other build tools, you can install a plugin to enable them.
+
+First, install `unplugin-parcel-macros` using your package manager:
+
+<InstallCommand pkg="unplugin-parcel-macros" flags="--dev" />
+
+Then, configure your bundler to use the plugin:
+
+<BundlerSwitcher>
+  <BundlerSwitcherItem id="webpack" label="Webpack">
+    ```js
+    // webpack.config.js
+    const macros = require('unplugin-parcel-macros');
+
+    module.exports = {
+      // ...
+      plugins: [
+        macros.webpack()
+      ]
+    };
+    ```
+  </BundlerSwitcherItem>
+  <BundlerSwitcherItem id="next" label="Next.js">
+    ```js
+    // next.config.js
+    const macros = require('unplugin-parcel-macros');
+
+    // Create a single instance of the plugin that's shared between server and client builds.
+    let plugin = macros.webpack();
+
+    module.exports = {
+      webpack(config) {
+        config.plugins.push(plugin);
+        return config;
+      }
+    };
+    ```
+  </BundlerSwitcherItem>
+  <BundlerSwitcherItem id="vite" label="Vite">
+    ```js
+    // vite.config.js
+    import macros from 'unplugin-parcel-macros';
+
+    export default {
+      plugins: [
+        macros.vite()
+      ]
+    };
+    ```
+  </BundlerSwitcherItem>
+  <BundlerSwitcherItem id="rollup" label="Rollup">
+    ```js
+    // rollup.config.js
+    import macros from 'unplugin-parcel-macros';
+
+    export default {
+      plugins: [
+        macros.rollup()
+      ]
+    };
+    ```
+  </BundlerSwitcherItem>
+  <BundlerSwitcherItem id="esbuild" label="ESBuild">
+    ```js
+    // build.mjs
+    import {build} from 'esbuild';
+    import macros from 'unplugin-parcel-macros';
+
+    build({
+      plugins: [
+        macros.esbuild()
+      ]
+    });
+    ```
+  </BundlerSwitcherItem>
+</BundlerSwitcher>
+
+- Note that plugin order is important: `unplugin-parcel-macros` must run before other plugins like Babel.
+- You may also need to configure other tools such as TypeScript, Babel, ESLint, and Jest to support parsing import attributes. See [Usage with other tools](https://parceljs.org/features/macros/#usage-with-other-tools).
+- See the [examples folder](https://github.com/adobe/react-spectrum/tree/main/examples) for working setups with various build tools.
+- For details on optimizing the output CSS, see [CSS Optimization](styling.html#css-optimization).
+
+## Setting up your app
+
+Wrap your app in an S2 `<Provider>` component to load Spectrum 2 fonts for the user's locale and apply the appropriate Spectrum background layer for your app. When using S2 together with other versions of Spectrum, ensure that the S2 provider is the inner-most provider.
+
+```tsx
+import {Provider} from '@react-spectrum/s2';
+
+function App() {
+  return (
+    <Provider background="base">
+      {/* ... */}
+    </Provider>
+  );
+}
+```
+
+### Optimizing full-page apps
+
+When building a full page S2 app that's not embedded within a larger page, import `@react-spectrum/s2/page.css` to apply the background color and color scheme to the `<html>` element instead of the `<Provider>`. This ensures that the page has styles even before your JavaScript loads. A `<Provider>` is still necessary in addition to `page.css` in order to include the fonts, set the locale, etc.
+
+```tsx
+// Apply S2 background to the <html> element
+import '@react-spectrum/s2/page.css';
+
+function App() {
+  return (
+    <Provider>
+      {/* ... */}
+    </Provider>
+  );
+}
+```
+
+By default, this uses the `base` background layer. This can be customized by setting the `data-background` attribute on the `<html>` element.
+
+```tsx
+<html data-background="layer-1">
+  {/* ... */}
+</html>
+```
+
+### Server-side rendering
+
+When using SSR, the `<Provider>` component can be rendered as the root `<html>` element. The `locale` prop should always be specified to avoid hydration errors. `page.css` is not needed in this case.
+
+```tsx
+<Provider elementType="html" locale="en-US">
+  <body>
+    {/* ... */}
+  </body>
+</Provider>
+```
+
+### Overriding the color scheme
+
+By default, React Spectrum follows the operating system color scheme setting, supporting both light and dark mode. The `colorScheme` prop can be set on `<Provider>` to force the app to always render in a certain color scheme.
+
+```tsx
+import {Provider} from '@react-spectrum/s2';
+
+<Provider colorScheme="light">
+  {/* your app */}
+</Provider>
+```
+
+When using `page.css`, set the `data-color-scheme` attribute on the `<html>` element.
+
+```tsx
+<html data-color-scheme="light">
+  {/* ... */}
+</html>
+```
+
+### Overriding the locale
+
+By default, React Spectrum uses the browser/operating system language setting for localized strings, date and number formatting, and to determine the layout direction (left-to-right or right-to-left). This can be overridden by setting the `locale` prop on the `<Provider>`.
+
+```tsx
+import {Provider} from '@react-spectrum/s2';
+
+<Provider locale="en-US">
+  {/* your app */}
+</Provider>
+```

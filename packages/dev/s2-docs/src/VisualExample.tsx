@@ -1,4 +1,5 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
+import {FileProvider, ShadcnProvider} from './CodePlatter';
 import {Files, getFiles} from './CodeBlock';
 import json5 from 'json5';
 import path from 'path';
@@ -14,7 +15,7 @@ const exampleStyle = style({
   },
   marginTop: {
     default: 20,
-    ':is([data-example-switcher] > *)': 0
+    ':is([data-example-switcher] *)': 0
   },
   borderRadius: 'xl',
   display: 'grid',
@@ -56,7 +57,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(130px, 1fr))',
+    default: 'repeat(auto-fit, minmax(200px, 1fr))',
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',
@@ -86,12 +87,14 @@ export interface VisualExampleProps {
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
+  downloadFiles?: {files?: {[name: string]: string}, deps?: {[name: string]: string}},
   type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
   align?: 'center' | 'start' | 'end',
   acceptOrientation?: boolean,
-  propsObject?: string
+  propsObject?: string,
+  showCoachMark?: boolean
 }
 
 export interface PropControl extends Omit<TProperty, 'description'> {
@@ -105,7 +108,7 @@ export interface PropControl extends Omit<TProperty, 'description'> {
 /**
  * Displays a component example with controls for changing the props.
  */
-export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, code, wide, slots, align, acceptOrientation, type, propsObject}: VisualExampleProps) {
+export function VisualExample({component, docs, links, importSource, props, initialProps, controlOptions, files, downloadFiles, code, wide, slots, align, acceptOrientation, type, propsObject, showCoachMark}: VisualExampleProps) {
   let componentProps = docs.type === 'interface' ? docs : docs.props;
   if (componentProps?.type !== 'interface') {
     return null;
@@ -155,26 +158,38 @@ export function VisualExample({component, docs, links, importSource, props, init
     importSource = './' + path.basename(files[0], path.extname(files[0]));
   }
 
+  if (!downloadFiles) {
+    if (files) {
+      downloadFiles = getFiles(files, type);
+    } else {
+      downloadFiles = {};
+    }
+  }
+
+  let registryUrl = type === 's2' || docs.type !== 'component' ? null : `${type}/${docs.name}.json`;
   let output = (
     <CodeOutput
       code={code}
-      files={files ? getFiles(files) : undefined}
       type={type}
-      registryUrl={type === 's2' || docs.type !== 'component' ? undefined : `${process.env.REGISTRY_URL || 'http://localhost:8081'}/${type}/${docs.name}.json`} />
+      showCoachMark={showCoachMark} />
   );
 
   // Render the corresponding client component to make the controls interactive.
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
-      <div className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
-        <Output align={align} acceptOrientation={acceptOrientation} />
-        <div className={controlsStyle}>
-          {Object.keys(controls).map(control => <Control key={control} name={control} />)}
-        </div>
-        <div style={{gridArea: 'files', overflow: 'hidden'}}>
-          {files ? <Files files={files}>{output}</Files> : output}
-        </div>
-      </div>
+      <FileProvider value={downloadFiles}>
+        <ShadcnProvider value={registryUrl}>
+          <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
+            <Output align={align} acceptOrientation={acceptOrientation} />
+            <div role="group" aria-label="Controls" className={controlsStyle}>
+              {Object.keys(controls).map(control => <Control key={control} name={control} />)}
+            </div>
+            <div style={{gridArea: 'files', overflow: 'hidden'}}>
+              {files ? <Files files={files} type={type}>{output}</Files> : output}
+            </div>
+          </div>
+        </ShadcnProvider>
+      </FileProvider>
     </VisualExampleClient>
   );
 }

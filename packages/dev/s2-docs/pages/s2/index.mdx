@@ -1,0 +1,88 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {Card, CardPreview, Content, Text} from '@react-spectrum/s2';
+import {ComponentCardView} from '../../src/ComponentCardView';
+
+export const section = 'Overview';
+export const title = 'Home';
+
+# React Spectrum
+
+<PageDescription>A React implementation of Spectrum, Adobe's design system.</PageDescription>
+
+[Getting started](getting-started.html) • [GitHub](https://github.com/adobe/react-spectrum)
+
+<ComponentCardView items={[
+  {id: 'Getting Started', name: 'Getting Started', href: 'getting-started.html'},
+  {id: 'Styling', name: 'Styling', href: 'styling.html'},
+  {id: 'Migrating', name: 'Migrating', href: 'migrating.html'},
+  {id: 'Accordion', name: 'Accordion', href: 'Accordion.html'},
+  {id: 'ActionBar', name: 'ActionBar', href: 'ActionBar.html'},
+  {id: 'ActionButton', name: 'ActionButton', href: 'ActionButton.html'},
+  {id: 'ActionButtonGroup', name: 'ActionButtonGroup', href: 'ActionButtonGroup.html'},
+  {id: 'ActionMenu', name: 'ActionMenu', href: 'ActionMenu.html'},
+  {id: 'Avatar', name: 'Avatar', href: 'Avatar.html'},
+  {id: 'AvatarGroup', name: 'AvatarGroup', href: 'AvatarGroup.html'},
+  {id: 'Badge', name: 'Badge', href: 'Badge.html'},
+  {id: 'Breadcrumbs', name: 'Breadcrumbs', href: 'Breadcrumbs.html'},
+  {id: 'Button', name: 'Button', href: 'Button.html'},
+  {id: 'ButtonGroup', name: 'ButtonGroup', href: 'ButtonGroup.html'},
+  {id: 'Calendar', name: 'Calendar', href: 'Calendar.html'},
+  {id: 'Card', name: 'Card', href: 'Card.html'},
+  {id: 'CardView', name: 'CardView', href: 'CardView.html'},
+  {id: 'Checkbox', name: 'Checkbox', href: 'Checkbox.html'},
+  {id: 'CheckboxGroup', name: 'CheckboxGroup', href: 'CheckboxGroup.html'},
+  {id: 'ColorArea', name: 'ColorArea', href: 'ColorArea.html'},
+  {id: 'ColorField', name: 'ColorField', href: 'ColorField.html'},
+  {id: 'ColorSlider', name: 'ColorSlider', href: 'ColorSlider.html'},
+  {id: 'ColorSwatch', name: 'ColorSwatch', href: 'ColorSwatch.html'},
+  {id: 'ColorSwatchPicker', name: 'ColorSwatchPicker', href: 'ColorSwatchPicker.html'},
+  {id: 'ColorWheel', name: 'ColorWheel', href: 'ColorWheel.html'},
+  {id: 'ComboBox', name: 'ComboBox', href: 'ComboBox.html'},
+  {id: 'ContextualHelp', name: 'ContextualHelp', href: 'ContextualHelp.html'},
+  {id: 'DateField', name: 'DateField', href: 'DateField.html'},
+  {id: 'DatePicker', name: 'DatePicker', href: 'DatePicker.html'},
+  {id: 'DateRangePicker', name: 'DateRangePicker', href: 'DateRangePicker.html'},
+  {id: 'Dialog', name: 'Dialog', href: 'Dialog.html'},
+  {id: 'Disclosure', name: 'Disclosure', href: 'Disclosure.html'},
+  {id: 'Divider', name: 'Divider', href: 'Divider.html'},
+  {id: 'DropZone', name: 'DropZone', href: 'DropZone.html'},
+  {id: 'Form', name: 'Form', href: 'Form.html'},
+  {id: 'Icons', name: 'Icons', href: 'icons.html'},
+  {id: 'IllustratedMessage', name: 'IllustratedMessage', href: 'IllustratedMessage.html'},
+  {id: 'Illustrations', name: 'Illustrations', href: 'Illustrations.html'},
+  {id: 'Image', name: 'Image', href: 'Image.html'},
+  {id: 'InlineAlert', name: 'InlineAlert', href: 'InlineAlert.html'},
+  {id: 'Link', name: 'Link', href: 'Link.html'},
+  {id: 'LinkButton', name: 'LinkButton', href: 'LinkButton.html'},
+  {id: 'Menu', name: 'Menu', href: 'Menu.html'},
+  {id: 'Meter', name: 'Meter', href: 'Meter.html'},
+  {id: 'NumberField', name: 'NumberField', href: 'NumberField.html'},
+  {id: 'Picker', name: 'Picker', href: 'Picker.html'},
+  {id: 'Popover', name: 'Popover', href: 'Popover.html'},
+  {id: 'ProgressBar', name: 'ProgressBar', href: 'ProgressBar.html'},
+  {id: 'ProgressCircle', name: 'ProgressCircle', href: 'ProgressCircle.html'},
+  {id: 'RadioGroup', name: 'RadioGroup', href: 'RadioGroup.html'},
+  {id: 'RangeCalendar', name: 'RangeCalendar', href: 'RangeCalendar.html'},
+  {id: 'RangeSlider', name: 'RangeSlider', href: 'RangeSlider.html'},
+  {id: 'SearchField', name: 'SearchField', href: 'SearchField.html'},
+  {id: 'SegmentedControl', name: 'SegmentedControl', href: 'SegmentedControl.html'},
+  {id: 'SelectBoxGroup', name: 'SelectBoxGroup', href: 'SelectBoxGroup.html'},
+  {id: 'Skeleton', name: 'Skeleton', href: 'Skeleton.html'},
+  {id: 'Slider', name: 'Slider', href: 'Slider.html'},
+  {id: 'StatusLight', name: 'StatusLight', href: 'StatusLight.html'},
+  {id: 'Switch', name: 'Switch', href: 'Switch.html'},
+  {id: 'TableView', name: 'TableView', href: 'TableView.html'},
+  {id: 'Tabs', name: 'Tabs', href: 'Tabs.html'},
+  {id: 'TagGroup', name: 'TagGroup', href: 'TagGroup.html'},
+  {id: 'TextArea', name: 'TextArea', href: 'TextArea.html'},
+  {id: 'TextField', name: 'TextField', href: 'TextField.html'},
+  {id: 'TimeField', name: 'TimeField', href: 'TimeField.html'},
+  {id: 'Toast', name: 'Toast', href: 'Toast.html'},
+  {id: 'ToggleButton', name: 'ToggleButton', href: 'ToggleButton.html'},
+  {id: 'ToggleButtonGroup', name: 'ToggleButtonGroup', href: 'ToggleButtonGroup.html'},
+  {id: 'Tooltip', name: 'Tooltip', href: 'Tooltip.html'},
+  {id: 'TreeView', name: 'TreeView', href: 'TreeView.html'},
+  {id: 'Release Notes', name: 'Release Notes', href: 'releases/index.html'}
+]}/>
