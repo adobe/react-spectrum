@@ -22,8 +22,10 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 
 export function PostListing({type}) {
   let {pages} = React.useContext(PageContext);
+  // releases pages are now under v3/releases so adjust accordingly so they show up
+  let prefix = type === 'releases' ? 'v3/releases' : type;
   let blogPages = pages
-    .filter(page => page.name.startsWith(type) && !page.name.endsWith('index.html'))
+    .filter(page => page.name.startsWith(prefix) && !page.name.endsWith('index.html'))
     .sort((a, b) => a.date < b.date ? 1 : -1);
 
   return (
