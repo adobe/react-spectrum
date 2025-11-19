@@ -22,7 +22,7 @@ import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
-import {ModalProvider, useModalProvider} from '@react-aria/overlays';
+import {ModalProvider, useIsInShadowRoot, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
@@ -134,6 +134,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   let {modalProviderProps} = useModalProvider();
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
+  let isInShadowRoot = useIsInShadowRoot();
 
   let themeKey = Object.keys(theme[colorScheme]!)[0];
   let scaleKey = Object.keys(theme[scale]!)[0];
@@ -159,6 +160,14 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
     // See https://web.dev/color-scheme/.
     colorScheme: props.colorScheme ?? colorScheme ?? Object.keys(theme).filter(k => k === 'light' || k === 'dark').join(' ')
   };
+
+  // Skip isolation: isolate when rendering in a shadow root to prevent
+  // stacking context issues with absolutely positioned overlays
+  if (isInShadowRoot && style.isolation === 'isolate') {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {isolation, ...restStyle} = style;
+    style = restStyle;
+  }
 
   let hasWarned = useRef(false);
   useEffect(() => {
