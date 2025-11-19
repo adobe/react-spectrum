@@ -28,8 +28,9 @@ import {
 import {CalendarDate, CalendarDateTime, CalendarIdentifier, Calendar as ICalendar, Time, ZonedDateTime} from '@internationalized/date';
 import {OverlayTriggerProps} from '@react-types/overlays';
 import {PageBehavior} from '@react-types/calendar';
+import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from '../../../@react-stately/datepicker/src/IncompleteDate';
 
-export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
+export type DateValue = IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime;
 type MappedDateValue<T> =
   T extends ZonedDateTime ? ZonedDateTime :
   T extends CalendarDateTime ? CalendarDateTime :

@@ -373,7 +373,7 @@ function Example(props) {
   );
 }
 
-function ControlledExample(props) {
+function  ControlledExample(props) {
   let [value, setValue] = React.useState(props.value);
 
   return (

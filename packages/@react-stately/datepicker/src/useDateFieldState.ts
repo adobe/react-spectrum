@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarIdentifier, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
+import {Calendar, CalendarDate, CalendarIdentifier, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
@@ -18,6 +18,8 @@ import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
+import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from './IncompleteDate';
+import { toIncompleteDate2 } from './conversion';
 
 export type SegmentType = 'era' | 'year' | 'month' | 'day' |  'hour' | 'minute' | 'second' | 'dayPeriod' | 'literal' | 'timeZoneName';
 export interface DateSegment {
@@ -263,7 +265,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setIsValueConfirmed(true);
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
-  let displayValue = isValueConfirmed && value ? value :  placeholderDate ;
+  let displayValue = isValueConfirmed && value ? toIncompleteDate2(value) :  placeholderDate;
   let setValue = (newValue: DateValue) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
@@ -298,12 +300,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let constrainDate = (value: DateValue) => {
-    const day = Math.max(1, Math.min(value.calendar.getDaysInMonth(value), value.day));
-    return setSegment(value, 'day', day, resolvedOptions); 
-  };
 
-  let updatePlaceholder = (newValue: DateValue) => {
+  let updatePlaceholder = (newValue: IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
@@ -348,8 +346,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     let validKeys = Object.keys(validSegments);
     let allKeys = Object.keys(allSegments);
     if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-      const constrained = constrainDate(v);
-      displayValue = constrained; 
+      const constrained = v.toCalendar();
+      displayValue = toIncompleteDate2(constrained); 
       setValue(constrained);
     } else {
       updatePlaceholder(v);
@@ -418,7 +416,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let allKeys = Object.keys(allSegments);
       const value = setSegment(displayValue, part, v, resolvedOptions);
       if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        setValue(constrainDate(value));
+        setValue(value.toCalendar());
       } else {
         updatePlaceholder(value);
       }
@@ -434,7 +432,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')) {
         validSegments = {...allSegments};
         setValidSegments(validSegments);
-        setValue(constrainDate(displayValue));
+        setValue(displayValue.toCalendar());
+
       } else {
         setDate(null);
         setPreviousValue(null);
@@ -450,20 +449,20 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
       let value = displayValue;
 
-      // Reset day period to default without changing the hour.
-      if (part === 'dayPeriod' && 'hour' in displayValue && 'hour' in placeholder) {
-        let isPM = displayValue.hour >= 12;
-        let shouldBePM = placeholder.hour >= 12;
-        if (isPM && !shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour - 12}, false);
-        } else if (!isPM && shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour + 12}, false);
-        }
-      } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
-        value = displayValue.set({hour: placeholder['hour'] + 12}, false);
-      } else if (part in displayValue) {
-        value = displayValue.set({[part]: placeholder[part]}, false);
-      }
+      // // Reset day period to default without changing the hour.
+      // if (part === 'dayPeriod' && 'hour' in displayValue && 'hour' in placeholder) {
+      //   let isPM = displayValue.hour >= 12;
+      //   let shouldBePM = placeholder.hour >= 12;
+      //   if (isPM && !shouldBePM) {
+      //     value = displayValue.set({hour: displayValue.hour - 12}, false);
+      //   } else if (!isPM && shouldBePM) {
+      //     value = displayValue.set({hour: displayValue.hour + 12}, false);
+      //   }
+      // } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
+      //   value = displayValue.set({hour: placeholder['hour'] + 12}, false);
+      // } else if (part in displayValue) {
+      //   value = displayValue.set({[part]: placeholder[part]}, false);
+      // }
       updatePlaceholder(value);
     },
     formatValue(fieldOptions: FieldOptions) {
@@ -638,13 +637,13 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
   return {};
 }
 
-function addSegment(value: DateValue, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
+function addSegment(value: IncompleteDate | IncompleteDateTime, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'era':
     case 'year':
     case 'month':
     case 'day':
-      return value.cycle(part, amount, {round: part === 'year'}, false);
+      return value.cycle(part, amount, {round: part === 'year'});
   }
 
   if ('hour' in value) {
@@ -652,7 +651,7 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
       case 'dayPeriod': {
         let hours = value.hour;
         let isPM = hours >= 12;
-        return value.set({hour: isPM ? hours - 12 : hours + 12}, false);
+        return value.set({hour: isPM ? hours - 12 : hours + 12});
       }
       case 'hour':
       case 'minute':
@@ -660,20 +659,20 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
         return value.cycle(part, amount, {
           round: part !== 'hour',
           hourCycle: options.hour12 ? 12 : 24
-        }, false);
+        });
     }
   }
 
   throw new Error('Unknown segment: ' + part);
 }
 
-function setSegment(value: DateValue, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
+function setSegment(value: IncompleteDate | IncompleteDateTime, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'day':
     case 'month':
     case 'year':
     case 'era':
-      return value.set({[part]: segmentValue}, false);
+      return value.set({[part]: segmentValue});
   }
 
   if ('hour' in value && typeof segmentValue === 'number') {
@@ -685,7 +684,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
         if (isPM === wasPM) {
           return value;
         }
-        return value.set({hour: wasPM ? hours - 12 : hours + 12}, false);
+        return value.set({hour: wasPM ? hours - 12 : hours + 12});
       }
       case 'hour':
         // In 12 hour time, ensure that AM/PM does not change
@@ -702,7 +701,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
         // fallthrough
       case 'minute':
       case 'second':
-        return value.set({[part]: segmentValue}, false);
+        return value.set({[part]: segmentValue});
     }
   }
 

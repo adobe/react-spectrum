@@ -59,10 +59,10 @@ export class CalendarDate {
   /** The day number within the month. */
   public readonly day: number;
 
-  constructor(year: number, month: number, day: number, constrainDay?: boolean);
-  constructor(era: string, year: number, month: number, day: number, constrainDay?: boolean);
-  constructor(calendar: Calendar, year: number, month: number, day: number, constrainDay?: boolean);
-  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, constrainDay?: boolean);
+  constructor(year: number, month: number, day: number);
+  constructor(era: string, year: number, month: number, day: number);
+  constructor(calendar: Calendar, year: number, month: number, day: number);
+  constructor(calendar: Calendar, era: string, year: number, month: number, day: number);
   constructor(...args: any[]) {
     let [calendar, era, year, month, day] = shiftArgs(args);
     this.calendar = calendar;
@@ -70,17 +70,16 @@ export class CalendarDate {
     this.year = year;
     this.month = month;
     this.day = day;
-    const constrainDay = args.shift();
 
-    constrain(this, constrainDay);
+    constrain(this);
   }
 
   /** Returns a copy of this date. */
-  copy(constrainDay?: boolean): CalendarDate {
+  copy(): CalendarDate {
     if (this.era) {
-      return new CalendarDate(this.calendar, this.era, this.year, this.month, this.day, constrainDay);
+      return new CalendarDate(this.calendar, this.era, this.year, this.month, this.day);
     } else {
-      return new CalendarDate(this.calendar, this.year, this.month, this.day, constrainDay);
+      return new CalendarDate(this.calendar, this.year, this.month, this.day);
     }
   }
 
@@ -95,16 +94,16 @@ export class CalendarDate {
   }
 
   /** Returns a new `CalendarDate` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: DateFields, constrainDay?: boolean): CalendarDate {
-    return set(this, fields, constrainDay);
+  set(fields: DateFields): CalendarDate {
+    return set(this, fields);
   }
 
   /**
    * Returns a new `CalendarDate` with the given field adjusted by a specified amount.
    * When the resulting value reaches the limits of the field, it wraps around.
    */
-  cycle(field: DateField, amount: number, options?: CycleOptions, constrainDay?: boolean): CalendarDate {
-    return cycleDate(this, field, amount, options, constrainDay);
+  cycle(field: DateField, amount: number, options?: CycleOptions): CalendarDate {
+    return cycleDate(this, field, amount, options);
   }
 
   /** Converts the date to a native JavaScript Date object, with the time set to midnight in the given time zone. */
@@ -166,8 +165,8 @@ export class Time {
   }
 
   /** Returns a new `Time` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: TimeFields, constrainDay?: boolean): Time {
-    return setTime(this, fields, constrainDay);
+  set(fields: TimeFields): Time {
+    return setTime(this, fields);
   }
 
   /**
@@ -217,10 +216,10 @@ export class CalendarDateTime {
   /** The millisecond in the second. */
   public readonly millisecond: number;
 
-  constructor(year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
-  constructor(era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
-  constructor(calendar: Calendar, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
-  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
+  constructor(year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(calendar: Calendar, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(...args: any[]) {
     let [calendar, era, year, month, day] = shiftArgs(args);
     this.calendar = calendar;
@@ -232,17 +231,16 @@ export class CalendarDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
-    const constrainDay = args.shift();
 
-    constrain(this, constrainDay);
+    constrain(this);
   }
 
   /** Returns a copy of this date. */
-  copy(constrainDay?: boolean): CalendarDateTime {
+  copy(): CalendarDateTime {
     if (this.era) {
-      return new CalendarDateTime(this.calendar, this.era, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond, constrainDay);
+      return new CalendarDateTime(this.calendar, this.era, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond);
     } else {
-      return new CalendarDateTime(this.calendar, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond, constrainDay);
+      return new CalendarDateTime(this.calendar, this.year, this.month, this.day, this.hour, this.minute, this.second, this.millisecond);
     }
   }
 
@@ -257,21 +255,21 @@ export class CalendarDateTime {
   }
 
   /** Returns a new `CalendarDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: DateFields & TimeFields, constrainDay?: boolean): CalendarDateTime {
-    return set(setTime(this, fields), fields, constrainDay);
+  set(fields: DateFields & TimeFields): CalendarDateTime {
+    return set(setTime(this, fields), fields);
   }
 
   /**
    * Returns a new `CalendarDateTime` with the given field adjusted by a specified amount.
    * When the resulting value reaches the limits of the field, it wraps around.
    */
-  cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions, constrainDay?: boolean): CalendarDateTime {
+  cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions): CalendarDateTime {
     switch (field) {
       case 'era':
       case 'year':
       case 'month':
       case 'day':
-        return cycleDate(this, field, amount, options, constrainDay);
+        return cycleDate(this, field, amount, options);
       default:
         return cycleTime(this, field, amount, options);
     }
@@ -330,10 +328,10 @@ export class ZonedDateTime {
   /** The UTC offset for this time, in milliseconds. */
   public readonly offset: number;
 
-  constructor(year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
-  constructor(era: string, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
-  constructor(calendar: Calendar, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
-  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number, constrainDay?: boolean);
+  constructor(year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(era: string, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(calendar: Calendar, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+  constructor(calendar: Calendar, era: string, year: number, month: number, day: number, timeZone: string, offset: number, hour?: number, minute?: number, second?: number, millisecond?: number);
   constructor(...args: any[]) {
     let [calendar, era, year, month, day] = shiftArgs(args);
     let timeZone = args.shift();
@@ -349,17 +347,16 @@ export class ZonedDateTime {
     this.minute = args.shift() || 0;
     this.second = args.shift() || 0;
     this.millisecond = args.shift() || 0;
-    const constrainDay = args.shift();
 
-    constrain(this, constrainDay);
+    constrain(this);
   }
 
   /** Returns a copy of this date. */
-  copy(constrainDay?: boolean): ZonedDateTime {
+  copy(): ZonedDateTime {
     if (this.era) {
-      return new ZonedDateTime(this.calendar, this.era, this.year, this.month, this.day, this.timeZone, this.offset, this.hour, this.minute, this.second, this.millisecond, constrainDay);
+      return new ZonedDateTime(this.calendar, this.era, this.year, this.month, this.day, this.timeZone, this.offset, this.hour, this.minute, this.second, this.millisecond);
     } else {
-      return new ZonedDateTime(this.calendar, this.year, this.month, this.day, this.timeZone, this.offset, this.hour, this.minute, this.second, this.millisecond, constrainDay);
+      return new ZonedDateTime(this.calendar, this.year, this.month, this.day, this.timeZone, this.offset, this.hour, this.minute, this.second, this.millisecond);
     }
   }
 
@@ -374,14 +371,8 @@ export class ZonedDateTime {
   }
 
   /** Returns a new `ZonedDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: DateFields & TimeFields, value?: Disambiguation | boolean): ZonedDateTime { 
-    let disambiguation, constrainDay = false;
-    if (value && typeof value === 'string') {
-      disambiguation = value;
-    } else if (value && typeof value === 'boolean') {
-      constrainDay = value;
-    }
-    return setZoned(this, fields, disambiguation, constrainDay); 
+  set(fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime { 
+    return setZoned(this, fields, disambiguation); 
   }
 
 
@@ -389,8 +380,8 @@ export class ZonedDateTime {
    * Returns a new `ZonedDateTime` with the given field adjusted by a specified amount.
    * When the resulting value reaches the limits of the field, it wraps around.
    */
-  cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions, constrainDay?: boolean): ZonedDateTime {
-    return cycleZoned(this, field, amount, options, constrainDay);
+  cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions): ZonedDateTime {
+    return cycleZoned(this, field, amount, options);
   }
 
   /** Converts the date to a native JavaScript Date object. */

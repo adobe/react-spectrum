@@ -19,6 +19,8 @@ import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
 import {getLocalTimeZone, isEqualCalendar} from './queries';
 import {Mutable} from './utils';
+import {DateValue} from '@react-types/datepicker';
+import { IncompleteDate } from '../../../@react-stately/datepicker/src/IncompleteDate';
 
 export function epochFromDate(date: AnyDateTime): number {
   date = toCalendar(date, new GregorianCalendar());
@@ -26,7 +28,7 @@ export function epochFromDate(date: AnyDateTime): number {
   return epochFromParts(year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
 }
 
-function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): number {
+export function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): number {
   // Note: Date.UTC() interprets one and two-digit years as being in the
   // 20th century, so don't use it
   let date = new Date();
@@ -259,7 +261,7 @@ export function toTime(dateTime: CalendarDateTime | ZonedDateTime): Time {
 }
 
 /** Converts a date from one calendar system to another. */
-export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar, constrainDay?: boolean): T {
+export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
   if (isEqualCalendar(date.calendar, calendar)) {
     return date;
   }
@@ -271,7 +273,7 @@ export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calenda
   copy.year = calendarDate.year;
   copy.month = calendarDate.month;
   copy.day = calendarDate.day;
-  constrain(copy, constrainDay);
+  constrain(copy);
   return copy;
 }
 
