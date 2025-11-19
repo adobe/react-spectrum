@@ -11,7 +11,7 @@
   outline: none;
 
   &[data-focus-visible] {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 }
@@ -20,15 +20,15 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  background: slateblue;
-  color: white;
+  /* TODO check this and text colors in docs build */
+  background: var(--tint-1000);
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-lg);
   outline: none;
   forced-color-adjust: none;
 
   &[data-focus-visible] {
-    outline: 2px solid var(--highlight-background);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 
@@ -41,7 +41,12 @@
     [slot=title] {
       font-weight: 600;
       font-size: var(--font-size);
-      color: white;
+      color: var(--highlight-foreground);
+    }
+
+    [slot=description] {
+      font-size: var(--font-size-sm);
+      color: var(--highlight-foreground);
     }
   }
 
@@ -53,22 +58,22 @@
     border-radius: var(--radius-sm);
     height: var(--spacing-8);
     width: var(--spacing-8);
-    color: white;
+    color: var(--highlight-foreground);
     padding: 0;
     outline: none;
     -webkit-tap-highlight-color: transparent;
 
     &[data-hovered] {
-      opacity: 1;
-      background: rgb(255 255 255 / 0.1);
+      background: rgb(from var(--highlight-foreground) r g b / 0.1);
     }
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue, 0 0 0 4px white;
+      outline: 2px solid var(--highlight-foreground);
+      outline-offset: 2px;
     }
 
     &[data-pressed] {
-      background: rgb(255 255 255 / 0.2);
+      background: rgb(from var(--highlight-foreground) r g b / 0.15);
     }
   }
 }
