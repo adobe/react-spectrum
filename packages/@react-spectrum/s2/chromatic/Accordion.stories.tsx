@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, AccordionItem, AccordionItemHeader, AccordionItemPanel, AccordionItemTitle, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
+import {Accordion, AccordionItem, AccordionItemHeader, AccordionItemPanel, AccordionItemTitle, ActionButton, TextField} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';
@@ -28,140 +28,6 @@ export default meta;
 type Story = StoryObj<typeof Accordion>;
 
 export const Example: Story = {
-  render: (args) => {
-    return (
-      <div className={style({minHeight: 240})}>
-        <Accordion {...args}>
-          <Disclosure id="files">
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
-            <DisclosurePanel>
-              Files content
-            </DisclosurePanel>
-          </Disclosure>
-          <Disclosure id="people">
-            <DisclosureTitle>
-              People
-            </DisclosureTitle>
-            <DisclosurePanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
-            </DisclosurePanel>
-          </Disclosure>
-        </Accordion>
-      </div>
-    );
-  }
-};
-
-export const WithLongTitle: Story = {
-  render: (args) => {
-    return (
-      <div className={style({minHeight: 224})}>
-        <Accordion styles={style({maxWidth: 224})} {...args}>
-          <Disclosure>
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
-            <DisclosurePanel>
-              Files content
-            </DisclosurePanel>
-          </Disclosure>
-          <Disclosure>
-            <DisclosureTitle>
-              People
-            </DisclosureTitle>
-            <DisclosurePanel>
-              People content
-            </DisclosurePanel>
-          </Disclosure>
-          <Disclosure>
-            <DisclosureTitle>
-              Very very very very very long title that wraps
-            </DisclosureTitle>
-            <DisclosurePanel>
-              Accordion content
-            </DisclosurePanel>
-          </Disclosure>
-        </Accordion>
-      </div>
-    );
-  }
-};
-
-export const WithDisabledDisclosure: Story = {
-  render: (args) => {
-    return (
-      <div className={style({minHeight: 240})}>
-        <Accordion {...args}>
-          <Disclosure>
-            <DisclosureTitle>
-              Files
-            </DisclosureTitle>
-            <DisclosurePanel>
-              Files content
-            </DisclosurePanel>
-          </Disclosure>
-          <Disclosure isDisabled>
-            <DisclosureTitle>
-              People
-            </DisclosureTitle>
-            <DisclosurePanel>
-              <TextField label="Name" placeholder="Enter your name" />
-            </DisclosurePanel>
-          </Disclosure>
-        </Accordion>
-      </div>
-    );
-  }
-};
-
-WithLongTitle.parameters = {
-  docs: {
-    disable: true
-  }
-};
-
-WithDisabledDisclosure.parameters = {
-  docs: {
-    disable: true
-  }
-};
-
-export const WithActionButton: Story = {
-  render: (args) => {
-    return (
-      <div className={style({minHeight: 240})}>
-        <Accordion {...args}>
-          <Disclosure id="files">
-            <DisclosureHeader>
-              <DisclosureTitle>
-                Files
-              </DisclosureTitle>
-              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
-            </DisclosureHeader>
-            <DisclosurePanel>
-              Files content
-            </DisclosurePanel>
-          </Disclosure>
-          <Disclosure id="people">
-            <DisclosureHeader>
-              <DisclosureTitle>
-                People
-              </DisclosureTitle>
-              <ActionButton><NewIcon aria-label="new icon" /></ActionButton>
-            </DisclosureHeader>
-            <DisclosurePanel>
-              <TextField label="Name" styles={style({maxWidth: 176})} placeholder="Enter your name" />
-            </DisclosurePanel>
-          </Disclosure>
-        </Accordion>
-      </div>
-    );
-  }
-};
-
-export const WithAccordionItem: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
@@ -188,7 +54,81 @@ export const WithAccordionItem: Story = {
   }
 };
 
-export const WithAccordionItemAndActionButton: Story = {
+export const WithLongTitle: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 224})}>
+        <Accordion styles={style({maxWidth: 224})} {...args}>
+          <AccordionItem>
+            <AccordionItemTitle>
+              Files
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              Files content
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionItemTitle>
+              People
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              People content
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionItemTitle>
+              Very very very very very long title that wraps
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              Accordion content
+            </AccordionItemPanel>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    );
+  }
+};
+
+export const WithDisabledItem: Story = {
+  render: (args) => {
+    return (
+      <div className={style({minHeight: 240})}>
+        <Accordion {...args}>
+          <AccordionItem>
+            <AccordionItemTitle>
+              Files
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              Files content
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem isDisabled>
+            <AccordionItemTitle>
+              People
+            </AccordionItemTitle>
+            <AccordionItemPanel>
+              <TextField label="Name" placeholder="Enter your name" />
+            </AccordionItemPanel>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    );
+  }
+};
+
+WithLongTitle.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+WithDisabledItem.parameters = {
+  docs: {
+    disable: true
+  }
+};
+
+export const WithActionButton: Story = {
   render: (args) => {
     return (
       <div className={style({minHeight: 240})}>
