@@ -35,7 +35,7 @@ export function MyToastRegion() {
           <Button
             slot="close"
             aria-label="Close"
-            className="flex-none appearance-none w-8 h-8 rounded-sm bg-transparent border-none text-white p-0 outline-none hover:bg-white/10 pressed:bg-white/15 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 items-center justify-center">
+            className="flex flex-none appearance-none w-8 h-8 rounded-sm bg-transparent border-none text-white p-0 outline-none hover:bg-white/10 pressed:bg-white/15 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 items-center justify-center">
             <XIcon className="w-4 h-4" />
           </Button>
         </MyToast>
