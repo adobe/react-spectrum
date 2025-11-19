@@ -120,7 +120,6 @@ export function SubmenuAnimation(): JSX.Element {
       className={style({
         backgroundColor: 'layer-1',
         borderRadius: 'xl',
-        marginY: 32,
         padding: {
           default: 12,
           lg: 24

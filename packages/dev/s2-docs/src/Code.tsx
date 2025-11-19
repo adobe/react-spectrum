@@ -114,7 +114,7 @@ export function Code({children, lang, hideImports = true, links, styles}: ICodeP
   return (
     <code
       className={style({
-        font: {default: 'code-xs', lg: 'code-sm'},
+        font: 'code-sm',
         backgroundColor: 'layer-1',
         paddingX: 4,
         borderWidth: 1,
