@@ -91,8 +91,6 @@ export const AccordionItem = forwardRef(function AccordionItem(props: AccordionI
   return <Disclosure {...props} ref={ref} />;
 });
 
-export const AccordionItemContext = DisclosureContext;
-
 export interface AccordionItemTitleProps extends DisclosureTitleProps {}
 /**
  * An accordion item title consisting of a heading and a trigger button to expand/collapse the panel.

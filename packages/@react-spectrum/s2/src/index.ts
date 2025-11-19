@@ -12,7 +12,7 @@
 
 'use client';
 
-export {Accordion, AccordionContext, AccordionItem, AccordionItemContext, AccordionItemHeader, AccordionItemTitle, AccordionItemPanel} from './Accordion';
+export {Accordion, AccordionContext, AccordionItem, AccordionItemHeader, AccordionItemTitle, AccordionItemPanel} from './Accordion';
 export {ActionBar, ActionBarContext} from './ActionBar';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionButtonGroup, ActionButtonGroupContext} from './ActionButtonGroup';
