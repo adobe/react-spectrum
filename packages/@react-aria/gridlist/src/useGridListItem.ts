@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getScrollParent, isFocusable, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -135,6 +135,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
+    if (keyboardNavigationBehavior === 'tab' && e.target !== ref.current) {
+      return;
+    }
+
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
 
@@ -227,22 +231,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let onFocus = (e) => {
-    keyWhenFocused.current = node.key;
-    if (e.target !== ref.current) {
-      // useSelectableItem only handles setting the focused key when
-      // the focused element is the row itself. We also want to
-      // set the focused key when a child element receives focus.
-      // If focus is currently visible (e.g. the user is navigating with the keyboard),
-      // then skip this. We want to restore focus to the previously focused row
-      // in that case since the list should act like a single tab stop.
-      if (!isFocusVisible()) {
-        state.selectionManager.setFocusedKey(node.key);
-      }
-      return;
-    }
-  };
-
   let onKeyDown = (e) => {
     if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
       return;
@@ -262,6 +250,42 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           }
         }
       }
+    }
+  };
+
+  // Prevent pressing space to select the row.
+  let originalOnKeyDown = itemProps.onKeyDown;
+  itemProps.onKeyDown = (e) => {
+    if (keyboardNavigationBehavior === 'tab' && e.key === ' ' && e.target !== ref.current) {
+      e.stopPropagation();
+      return;
+    }
+    originalOnKeyDown?.(e);
+  };
+
+  // Prevent clicking on a focusable element from selecting the row.
+  let originalPointerDown = itemProps.onPointerDown;
+  itemProps.onPointerDown = (e) => {
+    if (keyboardNavigationBehavior === 'tab' && isFocusable(e.target as Element) && e.target !== ref.current) {
+      e.stopPropagation();
+      return;
+    }
+    originalPointerDown?.(e);
+  };
+
+  let onFocus = (e) => {
+    keyWhenFocused.current = node.key;
+    if (e.target !== ref.current) {
+      // useSelectableItem only handles setting the focused key when
+      // the focused element is the row itself. We also want to
+      // set the focused key when a child element receives focus.
+      // If focus is currently visible (e.g. the user is navigating with the keyboard),
+      // then skip this. We want to restore focus to the previously focused row
+      // in that case since the list should act like a single tab stop.
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocusedKey(node.key);
+      }
+      return;
     }
   };
 

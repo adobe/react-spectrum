@@ -23,6 +23,7 @@ import {
   GridListHeader,
   GridListItem,
   GridListSection,
+  Input,
   Label,
   ListLayout,
   Modal,
@@ -30,6 +31,7 @@ import {
   Tag,
   TagGroup,
   TagList,
+  TextField,
   useDragAndDrop,
   Virtualizer
 } from '../';
@@ -1406,12 +1408,68 @@ describe('GridList', () => {
       let {getByRole} = renderGridList({}, {onAction, onPressStart, onPressEnd, onPress, onClick});
       let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
       await gridListTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('editing', () => {
+    it('should render a gridlist with edit mode', async () => {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <GridList
+          aria-label="Actors named Chris"
+          keyboardNavigationBehavior="tab"
+          onSelectionChange={onSelectionChange}
+          items={[
+            {id: '1', name: 'Chris Pine'},
+            {id: '2', name: 'Chris Hemsworth'},
+            {id: '3', name: 'Chris Evans'}
+          ]}>
+          {(item) => (
+            <GridListItem textValue={item.name}>
+              <TextField>
+                <Label>first {item.name}</Label>
+                <Input />
+              </TextField>
+              <TextField>
+                <Label>second {item.name}</Label>
+                <Input />
+              </TextField>
+              <TextField>
+                <Label>third {item.name}</Label>
+                <Input />
+              </TextField>
+            </GridListItem>
+          )}
+        </GridList>
+      );
+      let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+      await user.tab();
+      await user.tab();
+      let row1Inputs = [...gridListTester.rows[0].querySelectorAll('input')];
+      expect(row1Inputs[0]).toHaveFocus();
+      await user.keyboard('Chris E');
+      expect(row1Inputs[0]).toHaveFocus();
+      expect(row1Inputs[0]).toHaveValue('Chris E');
+
+      await user.tab();
+      expect(row1Inputs[1]).toHaveFocus();
+      await user.keyboard('{Enter}');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      await user.tab();
+      expect(row1Inputs[2]).toHaveFocus();
+
+      await user.keyboard('{ArrowLeft}');
+      expect(row1Inputs[2]).toHaveFocus();
+
+      await user.keyboard('{ArrowRight}');
+      expect(row1Inputs[2]).toHaveFocus();
     });
   });
 });
