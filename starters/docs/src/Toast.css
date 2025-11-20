@@ -20,7 +20,6 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  /* TODO check this and text colors in docs build */
   background: var(--tint-1000);
   padding: var(--spacing-3) var(--spacing-4);
   border-radius: var(--radius-lg);
@@ -64,7 +63,7 @@
     -webkit-tap-highlight-color: transparent;
 
     &[data-hovered] {
-      background: rgb(from var(--highlight-foreground) r g b / 0.1);
+      background: var(--highlight-hover);
     }
 
     &[data-focus-visible] {
@@ -73,7 +72,7 @@
     }
 
     &[data-pressed] {
-      background: rgb(from var(--highlight-foreground) r g b / 0.15);
+      background: var(--highlight-pressed);
     }
   }
 }
