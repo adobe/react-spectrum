@@ -4,7 +4,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/toast/docs/toast-anatomy.svg';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['notifications'];
 export const version = 'alpha';
@@ -231,53 +231,68 @@ Entry and exit animations can be added using third party libraries like [Motion]
 
 This example uses CSS view transitions to animate toasts. The `wrapUpdate` option wraps state updates in a view transition, and each toast gets a unique `viewTransitionName` based on its key.
 
-```tsx
+```tsx render files={['packages/dev/s2-docs/pages/react-aria/AnimatedToast.css']}
+"use client";
+import {
+  UNSTABLE_ToastRegion as ToastRegion,
+  UNSTABLE_Toast as Toast,
+  UNSTABLE_ToastQueue as ToastQueue,
+  UNSTABLE_ToastContent as ToastContent,
+  Button,
+  Text
+} from 'react-aria-components';
+import {X} from 'lucide-react';
+import {useMemo} from 'react';
 import {flushSync} from 'react-dom';
+import './AnimatedToast.css';
 
-const animatedQueue = new ToastQueue({
-  wrapUpdate(fn) {
-    if ('startViewTransition' in document) {
-      document.startViewTransition(() => {
-        flushSync(fn);
-      });
-    } else {
-      fn();
+interface MyToastContent {
+  title: string;
+  description?: string;
+}
+
+function Example() {
+  ///- begin highlight -///
+  let queue = useMemo(() => new ToastQueue<MyToastContent>({
+    wrapUpdate(fn) {
+      if ('startViewTransition' in document) {
+        document.startViewTransition(() => {
+          flushSync(fn);
+        });
+      } else {
+        fn();
+      }
     }
-  }
-});
+  }), []);
+  ///- end highlight -///
 
-<Toast style={{viewTransitionName: toast.key}} toast={toast}>
-  {/* ... */}
-</Toast>
-```
-
-Add CSS animations for the transitions:
-
-```css
-.react-aria-Toast {
-  view-transition-class: toast;
-}
-
-::view-transition-new(.toast):only-child {
-  animation: slide-in 400ms;
-}
-
-::view-transition-old(.toast):only-child {
-  animation: slide-out 400ms;
-}
-
-@keyframes slide-out {
-  to {
-    translate: 100% 0;
-    opacity: 0;
-  }
-}
-
-@keyframes slide-in {
-  from {
-    translate: 100% 0;
-    opacity: 0;
-  }
+  return (
+    <>
+      <ToastRegion queue={queue} className="fixed bottom-4 right-4 flex flex-col-reverse gap-2 outline-none focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+        {({toast}) => (
+          <Toast
+            toast={toast}
+            ///- begin highlight -///
+            style={{viewTransitionName: toast.key}}
+            ///- end highlight -///
+            className="animated-toast flex items-center gap-4 bg-blue-600 text-white px-4 py-3 rounded-lg outline-none focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+            <ToastContent className="flex flex-col flex-1 min-w-0">
+              <Text slot="title" className="font-semibold">{toast.content.title}</Text>
+              {toast.content.description && (
+                <Text slot="description" className="text-sm opacity-80">{toast.content.description}</Text>
+              )}
+            </ToastContent>
+            <Button slot="close" aria-label="Close" className="flex-none appearance-none w-8 h-8 rounded-sm bg-transparent border-none text-white p-0 outline-none hover:bg-white/10 active:bg-white/15 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 flex items-center justify-center">
+              <X className="w-4 h-4" />
+            </Button>
+          </Toast>
+        )}
+      </ToastRegion>
+      <Button onPress={() => queue.add({title: 'Animated toast!', description: 'Watch it slide in and out.'})}>
+        Show animated toast
+      </Button>
+    </>
+  );
 }
 ```
 
@@ -289,7 +304,7 @@ When a toast is closed, focus moves to the next toast if any. When the last toas
 
 ## API
 
-<Anatomy role="img" aria-label="Toast anatomy diagram showing the ToastRegion containing a Toast with ToastContent (title and description) and close button." />
+<Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
 A `<ToastRegion>` is an ARIA landmark region labeled "Notifications" by default. It accepts a render function that receives each visible toast and renders a `<Toast>` component. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) containing `<ToastContent>` and a close button.
 
