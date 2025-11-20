@@ -195,7 +195,7 @@ export function AppFrame({children, inert, hidden}: any) {
                 [SM]: 'inline'
               }
             })}>
-              {direction === 'rtl' ? 'طيف التفاعل' : 'React Spectrum'}
+              {direction === 'rtl' ? 'تطبيقي' : 'My App'}
           </span>
           <div
             className={style({
@@ -395,8 +395,8 @@ function Example(props: any) {
       <div className={style({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8})}>
         <div className={style({font: 'heading'})}>{direction === 'rtl' ? 'الصور' : 'Photos'}</div>
         <SegmentedControl selectedKey={layout} onSelectionChange={setLayout as any}>
-          <SegmentedControlItem id="waterfall"><ViewGridFluid /></SegmentedControlItem>
-          <SegmentedControlItem id="grid"><ViewGrid /></SegmentedControlItem>
+          <SegmentedControlItem id="waterfall" aria-label="Waterfall"><ViewGridFluid /></SegmentedControlItem>
+          <SegmentedControlItem id="grid" aria-label="Grid"><ViewGrid /></SegmentedControlItem>
         </SegmentedControl>
       </div>
       <CardView

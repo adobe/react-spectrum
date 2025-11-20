@@ -298,6 +298,7 @@ export function ExampleApp2({onBack, children, showPanel}: any) {
         <div
           className={style({
             gridArea: 'panels',
+            zIndex: 1,
             backgroundColor: {
               default: 'layer-1',
               forcedColors: 'Background'

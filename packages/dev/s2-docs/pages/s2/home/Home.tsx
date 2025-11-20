@@ -1,6 +1,5 @@
-import { linearGradient, size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
-import { Fragment } from "react/jsx-runtime";
 import { Code } from "../../../src/Code";
 import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
@@ -9,7 +8,7 @@ import { AppFrame, ExampleApp } from "./ExampleApp";
 import { LinkButton, Provider, Tab, TabList, TabPanel, Tabs } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
 import { Rems } from "./Rems";
-import { PressAnimation } from "./Press";
+// import { PressAnimation } from "./Press";
 import { HCM } from "./HCM";
 import Lightbulb from '@react-spectrum/s2/illustrations/gradient/generic2/Lightbulb';
 import Phone from '@react-spectrum/s2/illustrations/gradient/generic2/Phone';
@@ -18,11 +17,11 @@ import Animation from '@react-spectrum/s2/illustrations/gradient/generic2/Animat
 import Accessibility from '@react-spectrum/s2/illustrations/gradient/generic2/Accessibility';
 import TextIcon from '@react-spectrum/s2/illustrations/gradient/generic2/Text';
 import Interaction from '@react-spectrum/s2/illustrations/gradient/generic2/Interaction';
-import Ruler from '@react-spectrum/s2/illustrations/gradient/generic2/Ruler';
+// import Ruler from '@react-spectrum/s2/illustrations/gradient/generic2/Ruler';
 import Shapes from '@react-spectrum/s2/illustrations/gradient/generic2/Shapes';
 import Color from '@react-spectrum/s2/illustrations/gradient/generic2/Color';
 import CodeBrackets from '@react-spectrum/s2/illustrations/gradient/generic2/CodeBrackets';
-import Cursor from '@react-spectrum/s2/illustrations/gradient/generic2/Cursor';
+// import Cursor from '@react-spectrum/s2/illustrations/gradient/generic2/Cursor';
 import IllustrationIcon from '@react-spectrum/s2/illustrations/gradient/generic2/Illustration';
 import Sparkles from '@react-spectrum/s2/illustrations/gradient/generic2/Sparkles';
 import Server from '@react-spectrum/s2/illustrations/gradient/generic2/Server';
@@ -37,6 +36,7 @@ import { Responsive } from "./Responsive";
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 import { ReduceMotion } from "./ReduceMotion";
 import { Colors } from "./Colors";
+// import { SubmenuAnimation } from "./SubmenuAnimation";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -148,7 +148,8 @@ export function Home() {
             <Rems />
           </Feature>
         </Section>
-        <Section title="Motion that makes sense"
+        {/* We will add this section back after we have a few more things (e.g. dnd) */}
+        {/* <Section title="Motion that makes sense"
           description="Every interaction — from button presses to drag-and-drop — is polished, fast, and consistent across platforms. ">
           <Feature
             title="Press scaling"
@@ -162,9 +163,9 @@ export function Home() {
             description="Description"
             illustration={<Cursor />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
-            
+            <SubmenuAnimation />
           </Feature>
-        </Section>
+        </Section> */}
         <Section title="Everything you need to build beautiful apps" description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on brand.">
           <Feature
             title="Icons"
@@ -184,7 +185,6 @@ export function Home() {
         <Section
           title={<>Rapidly style custom components with Style Macros</>}
           description={<>Easily use Spectrum tokens like colors, spacing, and typography in your own custom components with style macros. Styles are <strong>colocated</strong> with your component code, allowing you to <strong>develop more efficiently</strong> and <strong>refactor with confidence</strong> – no more CSS conflicts or specificity issues. Style macros generate atomic CSS at build time, so you get tiny bundle sizes and fast runtime performance.</>}>
-          {/* colocation? atomic? */}
           <Feature
             title="Colors"
             description="Testing"
@@ -192,39 +192,12 @@ export function Home() {
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ColorScales />
           </Feature>
-          {/* <Feature
-            title="Spacing"
-            description="Testing"
-            style={{gridColumn: 'span 1'}}>
-            
-          </Feature> */}
           <Feature
             title="Typography"
             description="Testing"
             illustration={<TextIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <Typography />
-            {/* <div
-              className={style({
-                backgroundColor: 'layer-1',
-                padding: 24,
-                borderRadius: 'lg',
-                display: 'grid',
-                gridTemplateColumns: ['auto', '1fr'],
-                alignItems: 'center',
-                columnGap: 24
-              })}>
-              <pre className={style({font: 'code-sm', textAlign: 'end'})}><Code lang="ts">{`style({font: 'heading'})`}</Code></pre>
-              <h3 className={style({font: 'heading'})}>Heading</h3>
-              <pre className={style({font: 'code-sm', textAlign: 'end'})}><Code lang="ts">{`style({font: 'title'})`}</Code></pre>
-              <h3 className={style({font: 'title'})}>Title</h3>
-              <pre className={style({font: 'code-sm', textAlign: 'end'})}><Code lang="ts">{`style({font: 'body'})`}</Code></pre>
-              <p className={style({font: 'body'})}>Body</p>
-              <pre className={style({font: 'code-sm', textAlign: 'end'})}><Code lang="ts">{`style({font: 'detail'})`}</Code></pre>
-              <p className={style({font: 'detail'})}>Detail</p>
-              <pre className={style({font: 'code-sm', textAlign: 'end'})}><Code lang="ts">{`style({font: 'ui'})`}</Code></pre>
-              <p className={style({font: 'ui'})}>ui</p>
-            </div> */}
           </Feature>
           <Feature
             title="Object styles"

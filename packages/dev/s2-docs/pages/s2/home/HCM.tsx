@@ -12,7 +12,8 @@ const hcm = {
   '--hcm-graytext': 'rgb(63, 242, 63)',
   '--hcm-field': 'black',
   '--hcm-background': 'black',
-  '--hcm-linktext': 'yellow'
+  '--hcm-linktext': 'yellow',
+  '--hcm-mark': 'yellow'
 };
 
 export const HCMContext = createContext<object>({});
