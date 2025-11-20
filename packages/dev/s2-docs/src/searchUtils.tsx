@@ -219,15 +219,24 @@ export function useSearchTagSelection(
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
   const prevSearchWasEmptyRef = useRef<boolean>(true);
+  const [hasShowAllTriggered, setHasShowAllTriggered] = useState(false);
 
   // Ensure selected tag is valid for the current library
   const baseSectionIds = sectionTags.map(s => s.id);
   const resourceTagIds = resourceTags.map(t => t.id);
   const allBaseIds = useMemo(() => [...baseSectionIds, ...resourceTagIds], [baseSectionIds, resourceTagIds]);
   const isResourceSelected = selectedTagId && resourceTagIds.includes(selectedTagId);
+
+  useEffect(() => {
+    // "All" tag is shown once a non-Resource search starts 
+    if (searchValue.trim().length > 0 && !isResourceSelected) {
+      setHasShowAllTriggered(true);
+    }
+  }, [searchValue, isResourceSelected]);
+
   const sectionIds = useMemo(() => {
-    return searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
-  }, [searchValue, isResourceSelected, allBaseIds]);
+    return hasShowAllTriggered ? ['all', ...allBaseIds] : allBaseIds;
+  }, [hasShowAllTriggered, allBaseIds]);
   
   useEffect(() => {
     if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
@@ -253,13 +262,21 @@ export function useSectionTagsForDisplay(
   selectedTagId: string,
   resourceTagIds: string[]
 ): Tag[] {
+  const [hasShowAllTriggered, setHasShowAllTriggered] = useState(false);
+
+  useEffect(() => {
+    if (searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId)) {
+      setHasShowAllTriggered(true);
+    }
+  }, [searchValue, selectedTagId, resourceTagIds]);
+
   return useMemo(() => {
     const base = sections.map(s => ({id: s.id, name: s.name}));
-    if (searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId)) {
+    if (hasShowAllTriggered) {
       return [{id: 'all', name: 'All'}, ...base];
     }
     return base;
-  }, [sections, searchValue, selectedTagId, resourceTagIds]);
+  }, [sections, hasShowAllTriggered]);
 }
 
 export function sortItemsForDisplay<T extends {name: string, date?: string}>(items: T[], searchValue: string): T[] {

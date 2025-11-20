@@ -215,9 +215,13 @@ export function SearchMenu(props: SearchMenuProps) {
 
   const selectedItems = useMemo(() => {
     let items: typeof transformedComponents = [];
-    if (searchValue.trim().length > 0 && selectedTagId === 'all') {
+    if (selectedTagId === 'all') {
       items = filteredComponents.flatMap(s => s.children) || [];
-      items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
+      if (searchValue.trim().length > 0) {
+        items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
+      } else {
+        items = sortItemsForDisplay(items, searchValue);
+      }
     } else {
       items = (filteredComponents.find(s => s.id === selectedTagId)?.children) || [];
       items = sortItemsForDisplay(items, searchValue);
@@ -227,13 +231,13 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [filteredComponents, selectedTagId, searchValue]);
 
   const selectedSectionName = useMemo(() => {
-    if (searchValue.trim().length > 0 && selectedTagId === 'all') {
+    if (selectedTagId === 'all') {
       return 'All';
     }
     return (filteredComponents.find(s => s.id === selectedTagId)?.name)
       || (sections.find(s => s.id === selectedTagId)?.name)
       || 'Items';
-  }, [filteredComponents, sections, selectedTagId, searchValue]);
+  }, [filteredComponents, sections, selectedTagId]);
 
   useEffect(() => {
     const handleNavigationStart = () => {
