@@ -2,11 +2,11 @@
   view-transition-class: toast;
 }
 
-::view-transition-new(toast):only-child {
+::view-transition-new(.toast):only-child {
   animation: slide-in 400ms;
 }
 
-::view-transition-old(toast):only-child {
+::view-transition-old(.toast):only-child {
   animation: slide-out 400ms;
 }
 

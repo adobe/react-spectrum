@@ -23,7 +23,7 @@ export const version = 'alpha';
 
   function Example(props) {
     return (
-      <div /* PROPS */>
+      <div>
         <MyToastRegion />
         <Button onPress={() => queue.add(
           {
@@ -32,7 +32,7 @@ export const version = 'alpha';
           },
           props.timeout ? {timeout: props.timeout} : undefined
         )}>
-          Show toast
+          Upload files
         </Button>
       </div>
     );
@@ -55,7 +55,7 @@ export const version = 'alpha';
           },
           props.timeout ? {timeout: props.timeout} : undefined
         )}>
-          Show toast
+          Upload files
         </Button>
       </div>
     );
@@ -139,7 +139,7 @@ function Example() {
         })}
         ///- end highlight -///
       >
-        Show toast with description
+        Check for updates
       </Button>
     </>
   );
@@ -171,12 +171,12 @@ function Example() {
       <Button
         ///- begin highlight -///
         onPress={() => queue.add(
-          {title: 'Auto-dismissing toast'},
+          {title: 'File has been saved!'},
           {timeout: 5000}
         )}
         ///- end highlight -///
       >
-        Show auto-dismiss toast
+        Save file
       </Button>
     </>
   );
