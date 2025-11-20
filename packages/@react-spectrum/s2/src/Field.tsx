@@ -166,7 +166,10 @@ const fieldGroupStyles = style({
   borderColor: {
     default: baseColor('gray-300'),
     forcedColors: 'ButtonBorder',
-    isInvalid: baseColor('negative'),
+    isInvalid: {
+      default: baseColor('negative'),
+      forcedColors: 'Mark'
+    },
     isFocusWithin: {
       default: 'gray-900',
       isInvalid: 'negative-1000',
@@ -276,8 +279,14 @@ export const helpTextStyles = style({
   font: controlFont(),
   color: {
     default: 'neutral-subdued',
-    isInvalid: 'negative',
-    isDisabled: 'disabled'
+    isInvalid: {
+      default: 'negative',
+      forcedColors: 'Mark'
+    },
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   '--iconPrimary': {
     type: 'fill',
@@ -337,7 +346,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
                 type: 'fill',
                 value: {
                   default: 'negative',
-                  forcedColors: 'ButtonText'
+                  forcedColors: 'Mark'
                 }
               }
             })}),
