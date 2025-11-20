@@ -174,6 +174,14 @@ export function getPageTitle(page: Page): string {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
+/**
+ * Gets the search section for a page, preferring `searchSection` over `section`.
+ * This allows pages to appear in a different section in search results than in navigation.
+ */
+export function getSearchSection(page: Page): string {
+  return (page.exports?.searchSection as string) ?? (page.exports?.section as string) ?? 'Components';
+}
+
 export function getOrderedLibraries(currentPage: Page) {
   const allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, ...TAB_DEFS[id]}));
   const currentLibId = getLibraryFromPage(currentPage);

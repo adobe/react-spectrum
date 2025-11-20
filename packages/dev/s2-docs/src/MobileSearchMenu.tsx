@@ -9,6 +9,7 @@ import {
   getOrderedLibraries,
   getPageTitle,
   getResourceTags,
+  getSearchSection,
   SearchEmptyState,
   type Section,
   sortItemsForDisplay,
@@ -237,7 +238,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
     let sectionsMap = new Map();
     let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId && !page.exports?.hideFromSearch);
     for (let page of filteredPages) {
-      let section = page.exports?.section ?? 'Components';
+      let section = getSearchSection(page);
       let sectionPages = sectionsMap.get(section) ?? [];
       sectionPages.push(page);
       sectionsMap.set(section, sectionPages);
@@ -271,7 +272,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
       getTags: (page: Page) => page.exports?.tags || [],
       getDate: (page: Page) => page.exports?.date,
       shouldUseDateSort: (page: Page) => {
-        const section = page.exports?.section;
+        const section = getSearchSection(page);
         return section === 'Blog' || section === 'Releases';
       }
     });
@@ -365,7 +366,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
   }, [currentLibrarySections]);
 
   const initialSelectedSection = useMemo(() => {
-    const section = currentPage.exports?.section;
+    const section = getSearchSection(currentPage);
     const firstSection = currentLibrarySections[0]?.toLowerCase() || 'components';
     return section ? section.toLowerCase() : firstSection;
   }, [currentPage, currentLibrarySections]);

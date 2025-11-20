@@ -11,6 +11,7 @@ import {
   getOrderedLibraries,
   getPageTitle,
   getResourceTags,
+  getSearchSection,
   SearchEmptyState,
   sortItemsForDisplay,
   sortSearchItems,
@@ -103,7 +104,7 @@ export function SearchMenu(props: SearchMenuProps) {
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = getPageTitle(page);
-        const section: string = (page.exports?.section as string) || 'Components';
+        const section: string = getSearchSection(page);
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
         const description: string = stripMarkdown(page.exports?.description);
         const date: string | undefined = page.exports?.date;
@@ -146,7 +147,7 @@ export function SearchMenu(props: SearchMenuProps) {
     searchValue,
     sectionTags,
     resourceTags,
-    currentPage.exports?.section?.toLowerCase() || 'components'
+    getSearchSection(currentPage).toLowerCase()
   );
 
   const filteredIcons = useFilteredIcons(searchValue);
