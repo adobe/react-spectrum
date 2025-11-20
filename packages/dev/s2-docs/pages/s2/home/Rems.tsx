@@ -15,9 +15,11 @@ export function Rems() {
         value={value}
         onChange={setValue}
         labelPosition="side"
+        size="L"
+        // @ts-ignore
+        PRIVATE_staticColor
         styles={style({
-          maxWidth: 350,
-          marginStart: 'auto'
+          maxWidth: 400
         })} />
       <div
         className={style({
