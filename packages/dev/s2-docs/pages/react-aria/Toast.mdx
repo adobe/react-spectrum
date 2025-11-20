@@ -1,0 +1,326 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import '../../tailwind/tailwind.css';
+import Anatomy from '@react-aria/toast/docs/toast-anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+
+export const tags = ['notifications'];
+export const version = 'alpha';
+
+# Toast
+
+<PageDescription>{docs.exports.UNSTABLE_Toast.description}</PageDescription>
+
+## Example
+
+<ExampleSwitcher>
+  ```tsx render type="vanilla" files={["starters/docs/src/Toast.tsx", "starters/docs/src/Toast.css"]}
+  "use client";
+  import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+  import {Button} from 'vanilla-starter/Button';
+
+  function Example(props) {
+    return (
+      <div /* PROPS */>
+        <MyToastRegion />
+        <Button onPress={() => queue.add(
+          {
+            title: props.title || 'Files uploaded',
+            description: props.description || '3 files uploaded successfully.'
+          },
+          props.timeout ? {timeout: props.timeout} : undefined
+        )}>
+          Show toast
+        </Button>
+      </div>
+    );
+  }
+  ```
+
+  ```tsx render type="tailwind" files={["starters/tailwind/src/Toast.tsx"]}
+  "use client";
+  import {MyToastRegion, queue} from 'tailwind-starter/Toast';
+  import {Button} from 'tailwind-starter/Button';
+
+  function Example(props) {
+    return (
+      <div>
+        <MyToastRegion />
+        <Button onPress={() => queue.add(
+          {
+            title: props.title || 'Files uploaded',
+            description: props.description || '3 files uploaded successfully.'
+          },
+          props.timeout ? {timeout: props.timeout} : undefined
+        )}>
+          Show toast
+        </Button>
+      </div>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
+
+## Setup
+
+First, render a `<ToastRegion>` in the root of your app. This is a landmark region that displays toasts. Then, create a global `ToastQueue` that can be used from anywhere to trigger toasts.
+
+```tsx
+import {
+  UNSTABLE_ToastRegion as ToastRegion,
+  UNSTABLE_Toast as Toast,
+  UNSTABLE_ToastQueue as ToastQueue,
+  UNSTABLE_ToastContent as ToastContent,
+  Button,
+  Text
+} from 'react-aria-components';
+
+// Define the type for your toast content
+interface MyToastContent {
+  title: string;
+  description?: string;
+}
+
+// Create a global ToastQueue
+export const queue = new ToastQueue<MyToastContent>();
+
+// Render a ToastRegion in the root of your app
+export function App() {
+  return (
+    <>
+      <ToastRegion queue={queue}>
+        {({toast}) => (
+          <Toast toast={toast}>
+            <ToastContent>
+              <Text slot="title">{toast.content.title}</Text>
+              <Text slot="description">{toast.content.description}</Text>
+            </ToastContent>
+            <Button slot="close">×</Button>
+          </Toast>
+        )}
+      </ToastRegion>
+      {/* Your app here */}
+    </>
+  );
+}
+```
+
+Then, trigger toasts from anywhere using `queue.add()`:
+
+```tsx
+<Button onPress={() => queue.add({title: 'Success!'})}>
+  Show toast
+</Button>
+```
+
+## Content
+
+### Title and description
+
+Use the `"title"` and `"description"` slots within `<ToastContent>` to provide structured content for the toast. The title is required, and description is optional.
+
+```tsx render hideImports
+"use client";
+import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+import {Button} from 'vanilla-starter/Button';
+
+function Example() {
+  return (
+    <>
+      <MyToastRegion />
+      <Button
+        ///- begin highlight -///
+        onPress={() => queue.add({
+          title: 'Update available',
+          description: 'A new version is ready to install.'
+        })}
+        ///- end highlight -///
+      >
+        Show toast with description
+      </Button>
+    </>
+  );
+}
+```
+
+### Close button
+
+Include a `<Button slot="close">` to allow users to dismiss the toast manually. This is important for accessibility.
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>We recommend that that the close button should be rendered as a sibling of `<ToastContent>` rather than inside it, so that screen readers announce the toast content without the close button first.</Content>
+</InlineAlert>
+
+## Auto-dismiss
+
+Use the `timeout` option to automatically dismiss toasts after a period of time. For accessibility, toasts should have a minimum timeout of **5 seconds**. Timers automatically pause when the user focuses or hovers over a toast.
+
+```tsx render hideImports
+"use client";
+import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+import {Button} from 'vanilla-starter/Button';
+
+function Example() {
+  return (
+    <>
+      <MyToastRegion />
+      <Button
+        ///- begin highlight -///
+        onPress={() => queue.add(
+          {title: 'Auto-dismissing toast'},
+          {timeout: 5000}
+        )}
+        ///- end highlight -///
+      >
+        Show auto-dismiss toast
+      </Button>
+    </>
+  );
+}
+```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Only auto-dismiss toasts when the information is not critical, or may be found elsewhere. Some users may require additional time to read toasts, and screen zoom users may miss them entirely.</Content>
+</InlineAlert>
+
+## Programmatic dismissal
+
+Toasts can be programmatically dismissed using the key returned from `queue.add()`. This is useful when a toast becomes irrelevant before the user manually closes it.
+
+```tsx render hideImports
+"use client";
+import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+import {Button} from 'vanilla-starter/Button';
+import {useState} from 'react';
+
+function Example() {
+  let [toastKey, setToastKey] = useState(null);
+
+  return (
+    <>
+      <MyToastRegion />
+      <Button
+        ///- begin highlight -///
+        onPress={() => {
+          if (!toastKey) {
+            setToastKey(queue.add(
+              {title: 'Processing...'},
+              {onClose: () => setToastKey(null)}
+            ));
+          } else {
+            queue.close(toastKey);
+          }
+        }}
+        ///- end highlight -///
+      >
+        {toastKey ? 'Cancel' : 'Process'}
+      </Button>
+    </>
+  );
+}
+```
+
+## Animations
+
+Entry and exit animations can be added using third party libraries like [Motion](https://motion.dev/), or native [CSS view transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API).
+
+This example uses CSS view transitions to animate toasts. The `wrapUpdate` option wraps state updates in a view transition, and each toast gets a unique `viewTransitionName` based on its key.
+
+```tsx
+import {flushSync} from 'react-dom';
+
+const animatedQueue = new ToastQueue({
+  wrapUpdate(fn) {
+    if ('startViewTransition' in document) {
+      document.startViewTransition(() => {
+        flushSync(fn);
+      });
+    } else {
+      fn();
+    }
+  }
+});
+
+<Toast style={{viewTransitionName: toast.key}} toast={toast}>
+  {/* ... */}
+</Toast>
+```
+
+Add CSS animations for the transitions:
+
+```css
+.react-aria-Toast {
+  view-transition-class: toast;
+}
+
+::view-transition-new(.toast):only-child {
+  animation: slide-in 400ms;
+}
+
+::view-transition-old(.toast):only-child {
+  animation: slide-out 400ms;
+}
+
+@keyframes slide-out {
+  to {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}
+```
+
+## Keyboard navigation
+
+Toast regions are [landmark regions](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) that can be navigated using <Keyboard>F6</Keyboard> to move forward and <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> to move backward. This provides an easy way for keyboard users to jump to toasts from anywhere in the app.
+
+When a toast is closed, focus moves to the next toast if any. When the last toast is closed, focus is restored to where it was before.
+
+## API
+
+<Anatomy role="img" aria-label="Toast anatomy diagram showing the ToastRegion containing a Toast with ToastContent (title and description) and close button." />
+
+A `<ToastRegion>` is an ARIA landmark region labeled "Notifications" by default. It accepts a render function that receives each visible toast and renders a `<Toast>` component. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) containing `<ToastContent>` and a close button.
+
+```tsx links={{ToastRegion: '#toastregion', Toast: '#toast', ToastContent: '#toastcontent', ToastQueue: '#toastqueue', Button: 'Button.html'}}
+<ToastRegion>
+  {({toast}) => (
+    <Toast toast={toast}>
+      <ToastContent>
+        <Text slot="title" />
+        <Text slot="description" />
+      </ToastContent>
+      <Button slot="close" />
+    </Toast>
+  )}
+</ToastRegion>
+```
+
+### ToastRegion
+
+<PropTable component={docs.exports.UNSTABLE_ToastRegion} links={docs.links} showDescription />
+
+### Toast
+
+<PropTable component={docs.exports.UNSTABLE_Toast} links={docs.links} showDescription />
+
+### ToastContent
+
+`<ToastContent>` renders the main content of a toast, including the title and description slots. It accepts all HTML attributes.
+
+### ToastQueue
+
+A `ToastQueue` manages the state for a `<ToastRegion>`. The state is stored outside React so you can trigger toasts from anywhere in your application.
+
+<ClassAPI links={docs.links} class={docs.exports.UNSTABLE_ToastQueue} />
