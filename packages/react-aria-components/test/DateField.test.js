@@ -478,4 +478,25 @@ describe('DateField', () => {
     expect(segements[1]).toHaveTextContent('dd');
     expect(segements[2]).toHaveTextContent('yyyy');
   });
+
+  it('should support focusableRef', () => {
+    let focusableRef = React.createRef();
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput focusableRef={focusableRef}>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    expect(focusableRef.current).toBe(segments[0]);
+
+    act(() => {
+      focusableRef.current.focus();
+    });
+
+    expect(document.activeElement).toBe(segments[0]);
+  });
 });
