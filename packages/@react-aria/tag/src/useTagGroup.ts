@@ -31,7 +31,7 @@ export interface TagGroupAria {
   errorMessageProps: DOMAttributes
 }
 
-export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, Pick<AriaGridListProps<T>, 'escapeKeyBehavior'>, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
+export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, Pick<AriaGridListProps<T>, 'escapeKeyBehavior' | 'onAction'>, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Whether selection should occur on press up instead of press down. */
