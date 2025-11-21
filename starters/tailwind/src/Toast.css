@@ -1,7 +1,3 @@
-.animated-toast {
-  view-transition-class: toast;
-}
-
 ::view-transition-new(.toast):only-child {
   animation: slide-in 400ms;
 }

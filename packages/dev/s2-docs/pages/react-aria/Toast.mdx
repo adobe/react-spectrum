@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import toastDocs from 'docs:./ExampleToast';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/toast/docs/toast-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
@@ -16,7 +17,7 @@ export const version = 'alpha';
 ## Example
 
 <ExampleSwitcher>
-  ```tsx render type="vanilla" files={["starters/docs/src/Toast.tsx", "starters/docs/src/Toast.css"]}
+  ```tsx render docs={toastDocs.exports.MyToast} links={toastDocs.links} props={['title', 'description', 'timeout']} initialProps={{title: 'Files uploaded', description: '3 files uploaded successfully.', timeout: 0}} type="vanilla" files={["starters/docs/src/Toast.tsx", "starters/docs/src/Toast.css"]}
   "use client";
   import {MyToastRegion, queue} from 'vanilla-starter/Toast';
   import {Button} from 'vanilla-starter/Button';
@@ -39,7 +40,7 @@ export const version = 'alpha';
   }
   ```
 
-  ```tsx render type="tailwind" files={["starters/tailwind/src/Toast.tsx"]}
+  ```tsx render docs={toastDocs.exports.MyToast} links={toastDocs.links} props={['title', 'description', 'timeout']} initialProps={{title: 'Files uploaded', description: '3 files uploaded successfully.', timeout: 0}}  type="tailwind" files={["starters/tailwind/src/Toast.tsx"]}
   "use client";
   import {MyToastRegion, queue} from 'tailwind-starter/Toast';
   import {Button} from 'tailwind-starter/Button';
@@ -63,58 +64,6 @@ export const version = 'alpha';
   ```
 
 </ExampleSwitcher>
-
-## Setup
-
-First, render a `<ToastRegion>` in the root of your app. This is a landmark region that displays toasts. Then, create a global `ToastQueue` that can be used from anywhere to trigger toasts.
-
-```tsx
-import {
-  UNSTABLE_ToastRegion as ToastRegion,
-  UNSTABLE_Toast as Toast,
-  UNSTABLE_ToastQueue as ToastQueue,
-  UNSTABLE_ToastContent as ToastContent,
-  Button,
-  Text
-} from 'react-aria-components';
-
-// Define the type for your toast content
-interface MyToastContent {
-  title: string;
-  description?: string;
-}
-
-// Create a global ToastQueue
-export const queue = new ToastQueue<MyToastContent>();
-
-// Render a ToastRegion in the root of your app
-export function App() {
-  return (
-    <>
-      <ToastRegion queue={queue}>
-        {({toast}) => (
-          <Toast toast={toast}>
-            <ToastContent>
-              <Text slot="title">{toast.content.title}</Text>
-              <Text slot="description">{toast.content.description}</Text>
-            </ToastContent>
-            <Button slot="close">×</Button>
-          </Toast>
-        )}
-      </ToastRegion>
-      {/* Your app here */}
-    </>
-  );
-}
-```
-
-Then, trigger toasts from anywhere using `queue.add()`:
-
-```tsx
-<Button onPress={() => queue.add({title: 'Success!'})}>
-  Show toast
-</Button>
-```
 
 ## Content
 
@@ -225,78 +174,7 @@ function Example() {
 }
 ```
 
-## Animations
-
-Entry and exit animations can be added using third party libraries like [Motion](https://motion.dev/), or native [CSS view transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API).
-
-This example uses CSS view transitions to animate toasts. The `wrapUpdate` option wraps state updates in a view transition, and each toast gets a unique `viewTransitionName` based on its key.
-
-```tsx render files={['packages/dev/s2-docs/pages/react-aria/AnimatedToast.css']}
-"use client";
-import {
-  UNSTABLE_ToastRegion as ToastRegion,
-  UNSTABLE_Toast as Toast,
-  UNSTABLE_ToastQueue as ToastQueue,
-  UNSTABLE_ToastContent as ToastContent,
-  Button,
-  Text
-} from 'react-aria-components';
-import {X} from 'lucide-react';
-import {useMemo} from 'react';
-import {flushSync} from 'react-dom';
-import './AnimatedToast.css';
-
-interface MyToastContent {
-  title: string;
-  description?: string;
-}
-
-function Example() {
-  ///- begin highlight -///
-  let queue = useMemo(() => new ToastQueue<MyToastContent>({
-    wrapUpdate(fn) {
-      if ('startViewTransition' in document) {
-        document.startViewTransition(() => {
-          flushSync(fn);
-        });
-      } else {
-        fn();
-      }
-    }
-  }), []);
-  ///- end highlight -///
-
-  return (
-    <>
-      <ToastRegion queue={queue} className="fixed bottom-4 right-4 flex flex-col-reverse gap-2 outline-none focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
-        {({toast}) => (
-          <Toast
-            toast={toast}
-            ///- begin highlight -///
-            style={{viewTransitionName: toast.key}}
-            ///- end highlight -///
-            className="animated-toast flex items-center gap-4 bg-blue-600 text-white px-4 py-3 rounded-lg outline-none focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
-            <ToastContent className="flex flex-col flex-1 min-w-0">
-              <Text slot="title" className="font-semibold">{toast.content.title}</Text>
-              {toast.content.description && (
-                <Text slot="description" className="text-sm opacity-80">{toast.content.description}</Text>
-              )}
-            </ToastContent>
-            <Button slot="close" aria-label="Close" className="flex-none appearance-none w-8 h-8 rounded-sm bg-transparent border-none text-white p-0 outline-none hover:bg-white/10 active:bg-white/15 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 flex items-center justify-center">
-              <X className="w-4 h-4" />
-            </Button>
-          </Toast>
-        )}
-      </ToastRegion>
-      <Button onPress={() => queue.add({title: 'Animated toast!', description: 'Watch it slide in and out.'})}>
-        Show animated toast
-      </Button>
-    </>
-  );
-}
-```
-
-## Keyboard navigation
+## Accessibility
 
 Toast regions are [landmark regions](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) that can be navigated using <Keyboard>F6</Keyboard> to move forward and <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> to move backward. This provides an easy way for keyboard users to jump to toasts from anywhere in the app.
 

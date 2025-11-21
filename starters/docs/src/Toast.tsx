@@ -10,19 +10,35 @@ import {
 import {Button} from './Button';
 import {X} from 'lucide-react';
 import './Toast.css';
+import {flushSync} from 'react-dom';
 
+// Define the type for your toast content. This interface defines the properties of your toast content, affecting what you
+// pass to the queue calls as arguments.
 interface MyToastContent {
   title: string;
   description?: string;
 }
 
-export const queue = new ToastQueue<MyToastContent>();
+// This is a global toast queue, to be imported and called where ever you want to queue a toast via queue.add().
+export const queue = new ToastQueue<MyToastContent>({
+  // Wrap state updates in a CSS view transition.
+  wrapUpdate(fn) {
+    if ('startViewTransition' in document) {
+      document.startViewTransition(() => {
+        flushSync(fn);
+      });
+    } else {
+      fn();
+    }
+  }
+});
 
 export function MyToastRegion() {
   return (
+    // The ToastRegion should be rendered at the root of your app.
     <ToastRegion queue={queue}>
       {({toast}) => (
-        <MyToast toast={toast}>
+        <MyToast toast={toast} style={{viewTransitionName: toast.key}}>
           <ToastContent>
             <Text slot="title">{toast.content.title}</Text>
             {toast.content.description && (

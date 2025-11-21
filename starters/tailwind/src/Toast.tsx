@@ -11,16 +11,33 @@ import {
 } from 'react-aria-components';
 import {XIcon} from 'lucide-react';
 import {composeTailwindRenderProps} from './utils';
+import {flushSync} from 'react-dom';
+import './Toast.css';
 
+// Define the type for your toast content. This interface defines the properties of your toast content, affecting what you
+// pass to the queue calls as arguments.
 interface MyToastContent {
   title: string;
   description?: string;
 }
 
-export const queue = new ToastQueue<MyToastContent>();
+// This is a global toast queue, to be imported and called where ever you want to queue a toast via queue.add().
+export const queue = new ToastQueue<MyToastContent>({
+  // Wrap state updates in a CSS view transition.
+  wrapUpdate(fn) {
+    if ('startViewTransition' in document) {
+      document.startViewTransition(() => {
+        flushSync(fn);
+      });
+    } else {
+      fn();
+    }
+  }
+});
 
 export function MyToastRegion() {
   return (
+    // The ToastRegion should be rendered at the root of your app.
     <ToastRegion
       queue={queue}
       className="fixed bottom-4 right-4 flex flex-col-reverse gap-2 outline-none focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
@@ -48,9 +65,10 @@ export function MyToast(props: ToastProps<MyToastContent>) {
   return (
     <Toast
       {...props}
+      style={{viewTransitionName: props.toast.key}}
       className={composeTailwindRenderProps(
         props.className,
-        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast]"
       )}
     />
   );

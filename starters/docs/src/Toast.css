@@ -25,6 +25,7 @@
   border-radius: var(--radius-lg);
   outline: none;
   forced-color-adjust: none;
+  view-transition-class: toast;
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
@@ -36,10 +37,10 @@
     flex-direction: column;
     flex: 1 1 auto;
     min-width: 0;
+    font: var(--font-size) system-ui;
 
     [slot=title] {
       font-weight: 600;
-      font-size: var(--font-size);
       color: var(--highlight-foreground);
     }
 
@@ -74,5 +75,27 @@
     &[data-pressed] {
       background: var(--highlight-pressed);
     }
+  }
+}
+
+::view-transition-new(.toast):only-child {
+  animation: slide-in 400ms;
+}
+
+::view-transition-old(.toast):only-child {
+  animation: slide-out 400ms;
+}
+
+@keyframes slide-out {
+  to {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: 100% 0;
+    opacity: 0;
   }
 }
