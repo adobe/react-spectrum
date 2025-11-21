@@ -241,7 +241,6 @@ export function SearchMenu(props: SearchMenuProps) {
 
   useEffect(() => {
     const handleNavigationStart = () => {
-      setSearchValue('');
       onClose();
     };
 
