@@ -73,24 +73,21 @@ Use the `"title"` and `"description"` slots within `<ToastContent>` to provide s
 
 ```tsx render hideImports
 "use client";
-import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+import {queue} from 'vanilla-starter/Toast';
 import {Button} from 'vanilla-starter/Button';
 
 function Example() {
   return (
-    <>
-      <MyToastRegion />
-      <Button
-        ///- begin highlight -///
-        onPress={() => queue.add({
-          title: 'Update available',
-          description: 'A new version is ready to install.'
-        })}
-        ///- end highlight -///
-      >
-        Check for updates
-      </Button>
-    </>
+    <Button
+      ///- begin highlight -///
+      onPress={() => queue.add({
+        title: 'Update available',
+        description: 'A new version is ready to install.'
+      })}
+      ///- end highlight -///
+    >
+      Check for updates
+    </Button>
   );
 }
 ```
@@ -110,24 +107,21 @@ Use the `timeout` option to automatically dismiss toasts after a period of time.
 
 ```tsx render hideImports
 "use client";
-import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+import {queue} from 'vanilla-starter/Toast';
 import {Button} from 'vanilla-starter/Button';
 
 function Example() {
   return (
-    <>
-      <MyToastRegion />
-      <Button
-        ///- begin highlight -///
-        onPress={() => queue.add(
-          {title: 'File has been saved!'},
-          {timeout: 5000}
-        )}
-        ///- end highlight -///
-      >
-        Save file
-      </Button>
-    </>
+    <Button
+      ///- begin highlight -///
+      onPress={() => queue.add(
+        {title: 'File has been saved!'},
+        {timeout: 5000}
+      )}
+      ///- end highlight -///
+    >
+      Save file
+    </Button>
   );
 }
 ```
@@ -143,7 +137,7 @@ Toasts can be programmatically dismissed using the key returned from `queue.add(
 
 ```tsx render hideImports
 "use client";
-import {MyToastRegion, queue} from 'vanilla-starter/Toast';
+import {queue} from 'vanilla-starter/Toast';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
@@ -151,25 +145,22 @@ function Example() {
   let [toastKey, setToastKey] = useState(null);
 
   return (
-    <>
-      <MyToastRegion />
-      <Button
-        ///- begin highlight -///
-        onPress={() => {
-          if (!toastKey) {
-            setToastKey(queue.add(
-              {title: 'Processing...'},
-              {onClose: () => setToastKey(null)}
-            ));
-          } else {
-            queue.close(toastKey);
-          }
-        }}
-        ///- end highlight -///
-      >
-        {toastKey ? 'Cancel' : 'Process'}
-      </Button>
-    </>
+    <Button
+      ///- begin highlight -///
+      onPress={() => {
+        if (!toastKey) {
+          setToastKey(queue.add(
+            {title: 'Processing...'},
+            {onClose: () => setToastKey(null)}
+          ));
+        } else {
+          queue.close(toastKey);
+        }
+      }}
+      ///- end highlight -///
+    >
+      {toastKey ? 'Cancel' : 'Process'}
+    </Button>
   );
 }
 ```
