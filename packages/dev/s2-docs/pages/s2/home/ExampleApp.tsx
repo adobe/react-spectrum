@@ -5,7 +5,7 @@ import Bell from '@react-spectrum/s2/icons/Bell';
 import Apps from '@react-spectrum/s2/icons/AppsAll';
 import Add from '@react-spectrum/s2/icons/Add';
 import Home from '@react-spectrum/s2/icons/Home';
-import Folder from '@react-spectrum/s2/icons/Folder';
+import ImageIcon from '@react-spectrum/s2/icons/Image';
 import Lightbulb from '@react-spectrum/s2/icons/Lightbulb';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import FolderAdd from '@react-spectrum/s2/icons/FolderAdd';
@@ -18,11 +18,11 @@ import ViewGridFluid from '@react-spectrum/s2/icons/ViewGridFluid';
 import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
 import Search from '@react-spectrum/s2/icons/Search';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
-import {style} from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup, Provider, Link} from '@react-spectrum/s2';
+import {focusRing, size, style} from "@react-spectrum/s2/style" with {type: 'macro'};
+import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup, Provider, Link, pressScale, createIcon} from '@react-spectrum/s2';
 import {useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
-import { createContext, CSSProperties, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, CSSProperties, ReactNode, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ExampleApp2, FilterContext } from './ExampleApp2';
 import { flushSync } from 'react-dom';
 import DropToUpload from '@react-spectrum/s2/illustrations/gradient/generic2/DropToUpload';
@@ -30,34 +30,39 @@ import AIGenerateImage from '@react-spectrum/s2/illustrations/gradient/generic2/
 import Document from '@react-spectrum/s2/illustrations/gradient/generic2/Document';
 import ImageStack from '@react-spectrum/s2/illustrations/gradient/generic2/ImageStack';
 // @ts-ignore
-import banner from 'url:./banner.png?as=webp';
+import Banner from './banner.svg';
 import {useMediaQuery} from '@react-spectrum/utils';
 import { PopoverContext } from 'react-aria-components';
 import { HCMContext } from './HCM';
+import {ToggleButtonGroup as RACToggleButtonGroup, ToggleButton as RACToggleButton} from 'react-aria-components';
 
 const XS = `@container (min-width: ${480 / 16}rem)`;
 const SM = `@container (min-width: ${(640 / 16)}rem)`;
 const MD = `@container (min-width: ${(768 / 16)}rem)`;
+const LG = `@container (width > ${(1024 / 16)}rem)`;
 
 export function ExampleApp({showArrows}: {showArrows?: boolean} = {}) {
+  let [page, setPage] = useState<'photos' | 'home'>('photos');
   let [[detail, img] = [], setDetail] = useState<[any, HTMLImageElement] | []>([]);
 
   return (
-    <div className={style({containerType: 'inline-size', height: 'full', position: 'relative'})}>
-      <AppFrame hidden={!!detail}>
-        <Example onAction={setDetail} />
-        {/* <HomePage /> */}
-      </AppFrame>
-      {!detail && showArrows && <Arrows />}
-      {detail && img &&
-        <Detail detail={detail} img={img} setDetail={setDetail} />
-      }
-      {detail && showArrows && <Arrows2 />}
-    </div>
+    <ColorSchemeProvider>
+      <div data-container className={style({containerType: 'inline-size', height: 'full', position: 'relative'})}>
+        <AppFrame page={page} onPageChange={setPage} hidden={!!detail}>
+          {page === 'photos' && <Photos onAction={setDetail} />}
+          {page === 'home' && <HomePage />}
+        </AppFrame>
+        {!detail && page === 'photos' && showArrows && <Arrows />}
+        {detail && img &&
+          <Detail detail={detail} img={img} setDetail={setDetail} showArrows={showArrows} />
+        }
+      </div>
+    </ColorSchemeProvider>
   );
 }
 
-function Detail({detail, img, setDetail}: any) {
+function Detail({detail, img, setDetail, showArrows}: any) {
+  let [panel, setPanel] = useState('properties');
   let [filters, setFilters] = useState({
     brightness: 0,
     contrast: 0,
@@ -66,19 +71,22 @@ function Detail({detail, img, setDetail}: any) {
 
   return (
     <FilterContext value={{...filters, onChange: setFilters}}>
-      <ExampleApp2 onBack={() => {
-        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          setDetail([]);
-          return;
-        }
+      <ExampleApp2
+        panel={panel}
+        onPanelChange={setPanel}
+        onBack={() => {
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            setDetail([]);
+            return;
+          }
 
-        document.startViewTransition(async () => {
-          flushSync(() => setDetail([]));
-          img.style.viewTransitionName = 'photo';
-        }).ready.then(() => {
-          img.style.viewTransitionName = '';
-        });
-      }}>
+          document.startViewTransition(async () => {
+            flushSync(() => setDetail([]));
+            img.style.viewTransitionName = 'photo';
+          }).ready.then(() => {
+            img.style.viewTransitionName = '';
+          });
+        }}>
         <div
           className={style({
             size: 'full',
@@ -104,15 +112,17 @@ function Detail({detail, img, setDetail}: any) {
             } as any} />
         </div>
       </ExampleApp2>
+      {showArrows && <Arrows2 panel={panel} />}
     </FilterContext>
   );
 }
 
-const ColorSchemeContext = createContext<{colorScheme: 'light' | 'dark' | null, setColorScheme: (s: 'light' | 'dark' | null) => void}>({
+const DEFAULT_COLOR_SCHEME = {
   colorScheme: null,
   setColorScheme() {}
-});
+};
 
+const ColorSchemeContext = createContext<{colorScheme: 'light' | 'dark' | null, setColorScheme: (s: 'light' | 'dark' | null) => void}>(DEFAULT_COLOR_SCHEME);
 
 export function ColorSchemeProvider({children}: any) {
   let [colorScheme, setColorScheme] = useState<'light' | 'dark' | null>(null);
@@ -124,6 +134,11 @@ export function ColorSchemeProvider({children}: any) {
     return () => m.removeEventListener('change', onChange);
   }, []);
 
+  let ctx = useContext(ColorSchemeContext);
+  if (ctx !== DEFAULT_COLOR_SCHEME) {
+    return children;
+  }
+
   return (
     <ColorSchemeContext value={{colorScheme, setColorScheme}}>
       <Provider colorScheme={colorScheme || undefined} styles={style({display: 'contents'})}>
@@ -133,7 +148,7 @@ export function ColorSchemeProvider({children}: any) {
   );
 }
 
-export function AppFrame({children, inert, hidden}: any) {
+export function AppFrame({children, inert, hidden, page, onPageChange}: any) {
   let {direction} = useLocale();
 
   return (
@@ -185,9 +200,9 @@ export function AppFrame({children, inert, hidden}: any) {
             alignItems: 'center',
             width: 'full'
           })}>
-          <ActionButton isQuiet aria-label="Menu">
+          {/* <ActionButton isQuiet aria-label="Menu">
             <MenuHamburger />
-          </ActionButton>
+          </ActionButton> */}
           <AdobeLogo size={24} className={style({flexShrink: 0})} />
           <span
             className={style({
@@ -256,40 +271,7 @@ export function AppFrame({children, inert, hidden}: any) {
             <AccountMenu />
           </ActionButtonGroup>
         </div>
-        <div
-          className={style({
-            gridArea: 'sidebar',
-            display: {
-              default: 'none',
-              [SM]: 'flex'
-            },
-            flexDirection: 'column',
-            gap: 8,
-            paddingX: 16
-          })}>
-          <Button
-            variant="accent"
-            aria-label="Create"
-            styles={style({marginBottom: 8})}>
-            <Add />
-          </Button>
-          <ToggleButtonGroup
-            aria-label="Navigation"
-            isQuiet
-            orientation="vertical"
-            defaultSelectedKeys={['home']}
-            disallowEmptySelection>
-            <ToggleButton id="home" aria-label="Home">
-              <Home />
-            </ToggleButton>
-            <ToggleButton id="files" aria-label="Files">
-              <Folder />
-            </ToggleButton>
-            <ToggleButton id="ideas" aria-label="Ideas">
-              <Lightbulb />
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
+        <Sidebar page={page} onPageChange={onPageChange} />
         <div
           className={style({
             gridArea: 'content',
@@ -374,7 +356,7 @@ export function SkeletonCard() {
   );
 }
 
-function Example(props: any) {
+function Photos(props: any) {
   let [layout, setLayout] = useState<'waterfall' | 'grid'>('waterfall');
   let {direction} = useLocale();
   let list = useAsyncList<any, number | null>({
@@ -567,10 +549,11 @@ function PopoverContextProvider({children}: any) {
 function HomePage() {
   return (
     <div className={style({ display: 'flex', flexDirection: 'column', size: 'full', overflow: 'auto' })}>
-      <div className={style({ paddingX: 32, marginBottom: 32, boxSizing: 'border-box', display: { default: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'center' })} style={{ aspectRatio: '1280/322', backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundImage: `url(${banner})` }}>
-        <h2 className={style({ font: { default: 'heading', lg: 'heading-lg' }, color: 'black' })}>Find faster with semantic search</h2>
-        <p className={style({ font: { default: 'body', lg: 'body-lg' }, color: 'black', marginTop: 0, marginBottom: 32 })}>Quickly find visuals, words, sounds, and more in your media.</p>
-        <Button size="L" staticColor="black">Watch tutorial</Button>
+      <div className={style({ paddingX: 32, paddingY: 40, marginBottom: 32, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderRadius: 'xl', overflow: 'clip' })} style={{ position: 'relative', isolation: 'isolate' }}>
+        <Banner style={{position: 'absolute', zIndex: -1, top: 0, left: 0, width: '100%', height: '100%'}} preserveAspectRatio="none" />
+        <h2 className={style({ marginTop: 0, font: 'heading', color: 'gray-1000' })}>Find faster with semantic search</h2>
+        <p className={style({ font: 'body', color: 'gray-1000', marginTop: 0, marginBottom: 32 })}>Quickly find visuals, words, sounds, and more in your media.</p>
+        <Button staticColor="auto">Watch tutorial</Button>
       </div>
       <h1 className={style({ font: 'title-lg' })}>Start something new</h1>
       <div className={style({display: 'flex', gap: 16})}>
@@ -641,9 +624,18 @@ function HomePage() {
   );
 }
 
+
 function Arrows() {
   return (
-    <svg viewBox="0 0 1324 1200" style={{position: 'absolute', inset: -150, top: -50, pointerEvents: 'none'}}>
+    <svg
+      viewBox="0 0 1324 700"
+      style={{position: 'absolute', insetInline: -150, insetBlock: -50, pointerEvents: 'none'}}
+      className={style({
+        display: {
+          default: 'none',
+          '@media (width >= 1400px)': 'block'
+        }
+      })}>
       <defs>
         <marker
           id="arrow"
@@ -653,12 +645,21 @@ function Arrows() {
           markerWidth={6}
           markerHeight={6}
           orient="auto-start-reverse"
-          fill="white">
+          fill="light-dark(black,white)">
           <circle r={3} cx={3} cy={3} />
         </marker>
+        <mask id="app-mask" maskUnits="userSpaceOnUse">
+          <rect width="100%" height="100%" fill="white" />
+          <rect x={150} y={50} width={1024} height={600} fill="black" />
+        </mask> 
+        <mask id="app-mask2" maskUnits="userSpaceOnUse">
+          <rect width="100%" height="100%" fill="black" />
+          <rect x={150} y={50} width={1024} height={600} fill="white" />
+        </mask> 
       </defs>
       <Arrow textX={75} x1={120} x2={160} y={130} href="Button.html">Button</Arrow>
-      <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup.html">ToggleButtonGroup</Arrow>
+      {/* <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup.html">ToggleButtonGroup</Arrow> */}
+      <Arrow textX={38} x1={120} x2={160} y={618} href="ActionButton.html">ActionButton</Arrow>
       <Arrow textX={632} y={24} points="662,34 662,64" marker="markerEnd" href="SearchField.html">SearchField</Arrow>
       <Arrow textX={1206} x1={1198} x2={1158} y={82} marker="markerEnd" href="Menu.html">Menu</Arrow>
       <Arrow textX={1206} x1={1198} x2={1142} y={150} marker="markerEnd" href="SegmentedControl.html">SegmentedControl</Arrow>
@@ -667,9 +668,17 @@ function Arrows() {
   );
 }
 
-function Arrows2() {
+function Arrows2({panel}: {panel: string | null}) {
   return (
-    <svg viewBox="0 0 1324 1200" style={{position: 'absolute', inset: -150, top: -50, pointerEvents: 'none'}}>
+    <svg
+      viewBox="0 0 1324 1200"
+      style={{position: 'absolute', inset: -150, top: -50, pointerEvents: 'none'}}
+      className={style({
+        display: {
+          default: 'none',
+          '@media (width >= 1400px)': 'block'
+        }
+      })}>
       <defs>
         <marker
           id="arrow"
@@ -679,18 +688,39 @@ function Arrows2() {
           markerWidth={6}
           markerHeight={6}
           orient="auto-start-reverse"
-          fill="white">
+          fill="light-dark(black,white)">
           <circle r={3} cx={3} cy={3} />
         </marker>
+        <mask id="app-mask" maskUnits="userSpaceOnUse">
+          <rect width="100%" height="100%" fill="white" />
+          <rect x={150} y={50} width={1024} height={600} fill="black" />
+        </mask> 
+        <mask id="app-mask2" maskUnits="userSpaceOnUse">
+          <rect width="100%" height="100%" fill="black" />
+          <rect x={150} y={50} width={1024} height={600} fill="white" />
+        </mask> 
       </defs>
       <Arrow textX={35} x1={120} x2={160} y={82} href="ActionButton.html">ActionButton</Arrow>
       <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup.html">ToggleButtonGroup</Arrow>
       <Arrow textX={212} y={24} points="250,34 250,64" href="Breadcrumbs.html">Breadcrumbs</Arrow>
       <Arrow textX={1206} x1={1198} x2={1158} y={82} href="Menu.html">Menu</Arrow>
-      <Arrow textX={1206} x1={1198} x2={1100} y={168} href="Slider.html">Slider</Arrow>
-      <Arrow textX={1206} points="900,290 900,280 1198,280" marker="markerStart" y={280} href="ComboBox.html">ComboBox</Arrow>
-      <Arrow textX={1206} x1={1198} x2={1100} y={304} href="NumberField.html">NumberField</Arrow>
-      <Arrow textX={1206} x1={1198} x2={890} y={365} href="Checkbox.html">Checkbox</Arrow>
+      {panel === 'layers' && <>
+        <Arrow textX={1206} x1={1198} x2={1050} y={168} href="TreeView.html">TreeView</Arrow>
+      </>}
+      {panel === 'properties' && <>
+        <Arrow textX={1206} x1={1198} x2={1100} y={168} href="Slider.html">Slider</Arrow>
+        <Arrow textX={1206} points="900,290 900,280 1198,280" marker="markerStart" y={280} href="ComboBox.html">ComboBox</Arrow>
+        <Arrow textX={1206} x1={1198} x2={1100} y={304} href="NumberField.html">NumberField</Arrow>
+        <Arrow textX={1206} x1={1198} x2={890} y={365} href="Checkbox.html">Checkbox</Arrow>
+      </>}
+      {panel === 'comments' && <>
+        <Arrow textX={1206} x1={1198} x2={1092} y={208} href="TextArea.html">TextArea</Arrow>
+        <Arrow textX={1206} x1={1198} x2={1092} y={248} href="Button.html">Button</Arrow>
+        <Arrow textX={1206} points="842,370 842,360 1198,360" marker="markerStart" y={360} href="Avatar.html">Avatar</Arrow>
+      </>}
+      {panel === 'assets' && <>
+        <Arrow textX={1206} x1={1198} x2={1050} y={320} href="Card.html">Card</Arrow>
+      </>}
     </svg>
   );
 }
@@ -711,12 +741,197 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
   return (
     <>
       {points
-        ? <polyline points={points} {...markerProps} stroke="white" fill="none" />
-        : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} stroke="white" />
+        ? <polyline points={points} {...markerProps} stroke="white" fill="none" mask="url(#app-mask)" />
+        : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} stroke="white" mask="url(#app-mask)" />
+      }
+      {points
+        ? <polyline points={points} {...markerProps} stroke="light-dark(black,white)" fill="none" mask="url(#app-mask2)" />
+        : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} stroke="light-dark(black,white)" mask="url(#app-mask2)" />
       }
       <Link href={href} target="_blank" isQuiet isStandalone staticColor="white" UNSAFE_style={{pointerEvents: 'auto'}}>
         <text x={textX} y={y + 3} fill="currentColor" textDecoration="inherit">{children}</text>
       </Link>
     </>
+  );
+}
+
+const textStyle = style({
+  opacity: {
+    default: 0,
+    [LG]: 1,
+    state: {
+      expanded: 1,
+      collapsed: 0
+    }
+  },
+  transition: 'default',
+  transitionDuration: 300
+});
+
+function Sidebar({page, onPageChange}: any) {
+  let [state, setState] = useState<null | 'expanded' | 'collapsed'>(null);
+  return (
+    <div
+      className={style({
+        gridArea: 'sidebar',
+        display: {
+          default: 'none',
+          [SM]: 'flex'
+        },
+        flexDirection: 'column',
+        gap: 8,
+        paddingX: 16,
+        paddingBottom: 16,
+        width: {
+          default: 32,
+          [LG]: 100,
+          state: {
+            expanded: 100,
+            collapsed: 32
+          }
+        },
+        overflow: 'clip',
+        transition: '[width]',
+        transitionDuration: 300
+      })({state})}>
+      {/* This button is actually kinda custom to support the expand/collapsed state... */}
+      <Button
+        variant="accent"
+        styles={style({marginBottom: 8, width: {default: 32, [LG]: 88, state: {expanded: 88, collapsed: 32}}})({state})}
+        UNSAFE_style={{alignItems: 'center', justifyContent: 'start', overflow: 'clip', transition: 'all 300ms'}}>
+        <span className={style({marginStart: size(6)})}>
+          <Add />
+        </span>
+        <span className={textStyle({state})}>Create</span>
+      </Button>
+      <SideNav
+        aria-label="Navigation"
+        isQuiet
+        orientation="vertical"
+        selectedKeys={[page]}
+        onSelectionChange={keys => onPageChange([...keys][0])}
+        disallowEmptySelection>
+        <SideNavItem id="home">
+          <Home />
+          <span className={textStyle({state})}>Home</span>
+        </SideNavItem>
+        <SideNavItem id="photos">
+          <ImageIcon />
+          <span className={textStyle({state})}>Photos</span>
+        </SideNavItem>
+        <SideNavItem id="ideas">
+          <Lightbulb />
+          <span className={textStyle({state})}>Ideas</span>
+        </SideNavItem>
+      </SideNav>
+      <div className={style({flexGrow: 1})} />
+      <ActionButton
+        isQuiet
+        aria-label="Toggle sidebar"
+        styles={style({alignSelf: 'start'})}
+        onPress={(e) => {
+          if (state == null) {
+            let container = e.target.closest('[data-container]') as HTMLElement;
+            setState(container?.offsetWidth > 1024 ? 'collapsed' : 'expanded')
+          } else {
+            setState(state === 'expanded' ? 'collapsed' : 'expanded');
+          }
+        }}>
+        {/* @ts-ignore */}
+        <PanelIcon state={state} />
+      </ActionButton>
+    </div>
+  )
+}
+
+const PanelIcon = createIcon(props => {
+  let {state, ...otherProps} = props as any;
+  return (
+    <svg viewBox="0 0 20 20" fill="var(--iconPrimary)" {...otherProps}>
+      <path d="M15.75 18H4.25C3.00977 18 2 16.9907 2 15.75V4.25C2 3.00928 3.00977 2 4.25 2H15.75C16.9902 2 18 3.00928 18 4.25V15.75C18 16.9907 16.9902 18 15.75 18ZM4.25 3.5C3.83691 3.5 3.5 3.83643 3.5 4.25V15.75C3.5 16.1636 3.83691 16.5 4.25 16.5H15.75C16.1631 16.5 16.5 16.1636 16.5 15.75V4.25C16.5 3.83643 16.1631 3.5 15.75 3.5H4.25Z" fill="var(--iconPrimary)" />
+      <rect
+        x={5}
+        y={5}
+        rx={0.5}
+        height={10}
+        className={style({
+          transition: '[width]',
+          transitionDuration: 300,
+          width: {
+            default: '[1.5px]',
+            [LG]: '[5px]',
+            state: {
+              expanded: '[5px]',
+              collapsed: '[1.5px]'
+            }
+          }
+        })({state})} />
+    </svg>
+  );
+});
+
+// Fake sidenav component until we have a real one
+function SideNav(props: any) {
+  return (
+    <RACToggleButtonGroup
+      {...props}
+      className={style({
+        listStyleType: 'none',
+        padding: 0,
+        margin: 0,
+        marginStart: -4,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+        boxSizing: 'border-box'
+      })} />
+  );
+}
+
+function SideNavItem(props: any) {
+  let ref = useRef(null)
+  return (
+    <li>
+      <RACToggleButton
+        {...props}
+        ref={ref}
+        style={pressScale(ref)}
+        className={style({
+          ...focusRing(),
+          backgroundColor: 'transparent',
+          borderStyle: 'none',
+          minHeight: 32,
+          boxSizing: 'border-box',
+          padding: 0,
+          // paddingY: centerPadding(),
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          font: 'ui',
+          fontWeight: {
+            default: 'normal',
+            isSelected: 'bold'
+          },
+          textDecoration: 'none',
+          borderRadius: 'default',
+          transition: 'default'
+        })}>
+        {(renderProps) => (<>
+          <span
+            className={style({
+              width: 2,
+              height: '[1lh]',
+              borderRadius: 'full',
+              transition: 'default',
+              backgroundColor: {
+                default: 'transparent',
+                isHovered: 'gray-400',
+                isSelected: 'gray-800'
+              }
+            })(renderProps)} />
+          {props.children}
+        </>)}
+      </RACToggleButton>
+    </li>
   );
 }

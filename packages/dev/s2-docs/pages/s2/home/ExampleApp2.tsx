@@ -21,7 +21,7 @@ import TextAlignLeft from '@react-spectrum/s2/icons/TextAlignLeft';
 import TextAlignCenter from '@react-spectrum/s2/icons/TextAlignCenter';
 import TextAlignRight from '@react-spectrum/s2/icons/TextAlignRight';
 import TextAlignJustify from '@react-spectrum/s2/icons/TextAlignJustify';
-import {size, space, style} from "@react-spectrum/s2/style" with {type: 'macro'};
+import {size, style} from "@react-spectrum/s2/style" with {type: 'macro'};
 import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button, Form, ComboBoxItem, ComboBox, NumberField, Picker, PickerItem, Accordion, Disclosure, DisclosureHeader, DisclosureTitle, DisclosurePanel, Divider} from '@react-spectrum/s2';
 import {Key} from 'react-aria';
 import {createContext, useContext, useRef, useState} from 'react';
@@ -41,11 +41,17 @@ export const FilterContext = createContext({
 const SM_BREAK = 640 / 16;
 const SM = `@container (width >= ${SM_BREAK}rem)`;
 
-export function ExampleApp2({onBack, children, showPanel}: any) {
-  let [selectedPanel, setPanel] = useState<Key | null>('properties');
+export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}: any) {
+  let [selectedPanel, setSelectedPanel] = useState<Key | null>('properties');
   let [transitioning, setTransitioning] = useState<Key | null>(null);
-  let panel = selectedPanel || transitioning;
+  let displayPanel = panel || selectedPanel || transitioning;
   let [isLarge, setLarge] = useState(true);
+
+  let setPanel = (panel: Key | null) => {
+    onPanelChange?.(panel);
+    setSelectedPanel(panel);
+  };
+
   let ref = useRef<HTMLDivElement | null>(null);
   useResizeObserver({
     ref,
@@ -264,7 +270,7 @@ export function ExampleApp2({onBack, children, showPanel}: any) {
           onTransitionEnd={() => {
             setTransitioning(null);
           }}>
-          {panel && 
+          {displayPanel && 
             <div
               className={style({
                 width: {
@@ -289,10 +295,10 @@ export function ExampleApp2({onBack, children, showPanel}: any) {
                 },
                 borderStyle: 'solid'
               })}>
-              {panel === 'layers' && <Layers />}
-              {panel === 'properties' && <Properties />}
-              {panel === 'comments' && <Comments />}
-              {panel === 'assets' && <Assets />}
+              {displayPanel === 'layers' && <Layers />}
+              {displayPanel === 'properties' && <Properties />}
+              {displayPanel === 'comments' && <Comments />}
+              {displayPanel === 'assets' && <Assets />}
             </div>
           }
         </div>
@@ -331,8 +337,8 @@ export function ExampleApp2({onBack, children, showPanel}: any) {
             onSelectionChange={keys => {
               let key = [...keys][0];
               setPanel(key as string);
-              if (key == null || panel == null) {
-                setTransitioning(key || panel);
+              if (key == null || displayPanel == null) {
+                setTransitioning(key || displayPanel);
               }
             }}>
             <ToggleButton id="layers" aria-label="Layers">
@@ -499,7 +505,7 @@ function Properties() {
                   </ToggleButton>
                 </ToggleButtonGroup>
               </div>
-              <Checkbox isSelected isDisabled={isHCM}>Wrap</Checkbox>
+              <Checkbox defaultSelected isDisabled={isHCM}>Wrap</Checkbox>
             </Form>
           </DisclosurePanel>
         </Disclosure>
