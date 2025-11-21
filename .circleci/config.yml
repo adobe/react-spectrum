@@ -381,7 +381,6 @@ jobs:
           name: build fork-point apis
           command: |
             mkdir -p ~/.ssh
-            ssh-keygen -R github.com
             curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
