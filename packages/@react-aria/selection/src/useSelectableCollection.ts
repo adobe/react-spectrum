@@ -118,7 +118,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
-    isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action'
@@ -328,7 +327,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
   let scrollPos = useRef({top: 0, left: 0});
-  useEvent(scrollRef, 'scroll', isVirtualized ? undefined : () => {
+  useEvent(scrollRef, 'scroll', () => {
     scrollPos.current = {
       top: scrollRef.current?.scrollTop ?? 0,
       left: scrollRef.current?.scrollLeft ?? 0
@@ -369,7 +368,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       } else {
         navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
-    } else if (!isVirtualized && scrollRef.current) {
+    } else if (scrollRef.current) {
       // Restore the scroll position to what it was before.
       scrollRef.current.scrollTop = scrollPos.current.top;
       scrollRef.current.scrollLeft = scrollPos.current.left;
@@ -581,7 +580,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // This will be marshalled to either the first or last item depending on where focus came from.
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
-    tabIndex = manager.focusedKey == null ? 0 : -1;
+    tabIndex = manager.isFocused ? -1 : 0;
   }
 
   let collectionId = useCollectionId(manager.collection);
