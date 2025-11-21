@@ -121,7 +121,7 @@ export default function App(): React.ReactNode {
   };
 
   return (
-    <div className="h-full flex flex-col gap-4 p-4 max-w-[600px] mx-auto">
+    <div className="flex flex-col gap-4 p-4 max-w-[600px] mx-auto">
       <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1.1fr_auto_auto_1fr_auto] gap-2 items-end">
         <SearchField
           aria-label="Search"

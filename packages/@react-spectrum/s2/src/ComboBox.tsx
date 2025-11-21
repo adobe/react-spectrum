@@ -601,6 +601,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     <>
       <InternalComboboxContext.Provider value={{size}}>
         <FieldLabel
+          includeNecessityIndicatorInAccessibilityName
           isDisabled={isDisabled}
           isRequired={isRequired}
           size={size}
