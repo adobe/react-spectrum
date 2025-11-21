@@ -12,15 +12,9 @@ export const description = 'Testing Tabs with React Spectrum test utils';
 
 # Testing Tabs
 
-## General setup
-
-Tabs features automatic tab collapse behavior and may need specific mocks to test said behavior.
-TODO: update this with what mocks are required
-
 ## Test utils
 
-`@react-spectrum/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. To install, simply
-add it to your dev dependencies via your preferred package manager.
+`@react-spectrum/test-utils` offers common tabs interaction testing utilities. Install it with your preferred package manager.
 
 <InstallCommand pkg="@react-spectrum/test-utils" flags="--dev" />
 
@@ -29,16 +23,16 @@ add it to your dev dependencies via your preferred package manager.
   <Content>Please note that this library uses [@testing-library/react@16](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
 </InlineAlert>
 
-Once installed, you can access the `User` that `@react-spectrum/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
-the `Tabs` tester in your test cases. This gives you access to `Tabs` specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
-The example test case below shows how you might go about setting up the `Tabs` tester, use it to change tab selection, and verify the tabs' state after each interaction.
+Initialize a `User` object at the top of your test file, and use it to create a `Tabs` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
 
 ```ts
 // Tabs.test.ts
 import {render} from '@testing-library/react';
 import {User} from '@react-spectrum/test-utils';
 
-let testUtilUser = new User({interactionType: 'mouse'});
+let testUtilUser = new User({
+  interactionType: 'mouse'
+});
 // ...
 
 it('Tabs can change selection via keyboard', async function () {
@@ -58,7 +52,7 @@ it('Tabs can change selection via keyboard', async function () {
 });
 ```
 
-See below for the full definition of the `User` and the `Tabs` tester.
+## API
 
 <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
 <ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.TabsTester} />
