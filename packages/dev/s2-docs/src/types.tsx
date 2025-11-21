@@ -919,13 +919,19 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                 {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
                   let typeLink = styleMacroValueDesc[typeName];
                   if (typeLink?.description || typeLink?.body) {
+                    // dont render the type name for properties that only have one special value (e.g. baseSpacing) that has an associated description
+                    // so that we don't double up on rendering the value name
+                    let shouldSkipTypeName = values.length === 0 && propDef.additionalTypes?.length === 1;
+
                     return (
                       <div key={`type-desc-${i}`}>
-                        <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
-                          <code className={codeStyle}>
-                            <span className={codeStyles.variable}>{typeName}</span>
-                          </code>
-                        </h4>
+                        {!shouldSkipTypeName && (
+                          <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
+                            <code className={codeStyle}>
+                              <span className={codeStyles.variable}>{typeName}</span>
+                            </code>
+                          </h4>
+                        )}
                         {typeLink.description && (
                           <p className={style({font: 'body', marginBottom: 8})}>
                             {typeLink.description}
