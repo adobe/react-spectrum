@@ -23,7 +23,9 @@ const example = style({
   padding: {
     default: 12,
     lg: 24
-  }
+  },
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 const standaloneCode = style({
@@ -49,7 +51,9 @@ const standaloneCode = style({
     default: 'code-xs',
     lg: 'code-sm'
   },
-  overflow: 'auto'
+  overflow: 'auto',
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 interface CodeBlockProps extends VisualExampleProps {

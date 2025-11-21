@@ -75,7 +75,9 @@ export function ColorEditorExample() {
         padding: {
           default: 12,
           lg: 24
-        }
+        },
+        maxWidth: '--text-width',
+        marginX: 'auto'
       })}>
       <ColorPicker defaultValue="#5100FF">
         {({color}) => (

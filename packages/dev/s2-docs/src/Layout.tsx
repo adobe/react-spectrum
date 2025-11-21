@@ -1,9 +1,9 @@
+import {Byline} from './BlogList';
 import {ExampleList} from './ExampleList';
 import {Nav} from '../src/Nav';
 import {OptimisticMobileToc, OptimisticToc} from './OptimisticToc';
 import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement} from 'react';
-// @ts-ignore
 import '../src/client';
 // @ts-ignore
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
@@ -28,6 +28,7 @@ import {MobileHeader} from './MobileHeader';
 import {NavigationSuspense} from './NavigationSuspense';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
+import {Time} from './ReleasesList';
 import {TypeLink} from './types';
 import {VersionBadge} from './VersionBadge';
 import {VisualExample} from './VisualExample';
@@ -35,28 +36,37 @@ import {VisualExample} from './VisualExample';
 const h1 = style({
   font: 'heading-3xl',
   fontSize: {
-    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
-    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-    lg: 'heading-3xl'
+    default: {
+      // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+      default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
+      isSubPage: 'heading-xl'
+    },
+    lg: {
+      default: 'heading-3xl',
+      isSubPage: 'heading-2xl'
+    }
   },
-  marginY: 0
+  marginY: 0,
+  width: 'full',
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 const components = {
-  h1: ({children, ...props}) => <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>,
+  h1: ({children, ...props}) => <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1({isSubPage: false})}>{children}</h1>,
   h2: H2,
   h3: H3,
   h4: H4,
-  p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
+  p: ({children, ...props}) => <p {...props} className={style({font: 'body-lg', marginY: 24, maxWidth: '--text-width', marginX: 'auto'})}>{children}</p>,
   ul: (props) => <ul {...props} />,
-  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 0})}>{children}</li>,
+  li: ({children, ...props}) => <li {...props} className={style({font: 'body-lg', marginY: 0, maxWidth: '--text-width', marginX: 'auto'})}>{children}</li>,
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
-  PageDescription: ({children, ...props}) => <p {...props} className={style({font: {default: 'body-lg', lg: 'body-xl'}})}>{children}</p>,
+  PageDescription: ({children, ...props}) => <p {...props} className={style({font: 'body-xl', maxWidth: '--text-width', marginX: 'auto', marginTop: 8, marginBottom: 24})}>{children}</p>,
   VisualExample,
   Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
   PropTable,
@@ -67,15 +77,17 @@ const components = {
   ExampleList
 };
 
-const subPageComponents = (previousPage?: Page) => ({
+const subPageComponents = (previousPage: Page | undefined, currentPage: Page) => ({
   ...components,
   h1: ({children, ...props}) => (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
         <TitleLink href="./index.html">{previousPage?.exports?.title}</TitleLink>
-        <ChevronRightIcon styles={iconStyle({size: 'M'})} />
+        <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
       </div>
-      <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
+      <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1({isSubPage: true})}>{children}</h1>
+      {currentPage.exports?.author && <Byline author={currentPage.exports.author} authorLink={currentPage.exports.authorLink} date={currentPage.exports.date} />}
+      {currentPage.exports?.date && !currentPage.exports?.author && <Time date={currentPage.exports.date} />}
     </div>
   )
 });
@@ -130,12 +142,20 @@ const getFaviconUrl = (currentPage: Page): string => {
 };
 
 let articleStyles = style({
-  maxWidth: {
-    default: 'none',
-    isWithToC: 768
-  },
+  maxWidth: 768,
   width: 'full',
-  height: 'fit'
+  height: 'fit',
+  marginX: {
+    default: 0,
+    isCentered: 'auto'
+  },
+  '--text-width': {
+    type: 'width',
+    value: {
+      default: 'auto',
+      isSubPage: 568 // ~80 characters at body font size
+    }
+  }
 });
 
 function Footer() {
@@ -170,7 +190,7 @@ function Footer() {
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
-  let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let hasToC = (!currentPage.exports?.hideNav || currentPage.exports?.isSubpage) && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
   let ogImage = getOgImageUrl(currentPage);
@@ -300,11 +320,11 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
                   <NavigationSuspense pages={pages}>
                     <article
-                      className={articleStyles({isWithToC: hasToC})}>
+                      className={articleStyles({isSubPage: isSubpage, isCentered: currentPage.exports?.hideNav})}>
                       {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
                       {React.cloneElement(children, {
                         components: isSubpage ?
-                          subPageComponents(parentPage) :
+                          subPageComponents(parentPage, currentPage) :
                           components,
                         pages
                       })}
@@ -372,15 +392,5 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
         ))}
       </Ul>
     </div>
-  );
-}
-export function Time({date}: {date: string}) {
-  let dateObj = new Date(date);
-  return (
-    <time
-      dateTime={date}
-      className={style({font: 'detail'})}>
-      {dateObj.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
-    </time>
   );
 }

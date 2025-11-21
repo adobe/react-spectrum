@@ -14,7 +14,7 @@ export function BlogList({pages}: {pages: Page[]}) {
       {blogPosts.map(post => (
         <div key={post.name}>
           <header className={style({marginBottom: 12})}>
-            <h2 className={style({font: 'heading-lg', margin: 0})}><Link href={post.url}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link></h2>
+            <h2 className={style({font: 'title-xl', margin: 0})}><Link href={post.url}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link></h2>
             <Byline author={post.exports?.author} authorLink={post.exports?.authorLink} date={post.exports?.date} />
           </header>
           <p className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(post.exports?.description, {forceInline: true, forceBlock: false})}</p>
@@ -28,7 +28,7 @@ export function Byline({author, authorLink, date}: {author?: string, authorLink?
   let formattedDate = new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
 
   return (
-    <div className={style({font: 'detail'})}>
+    <div className={style({font: 'detail', width: 'full', maxWidth: '--text-width', marginX: 'auto', marginTop: 4})}>
       {author && (
         <>
           By {authorLink ? <Link href={authorLink} isQuiet>{author}</Link> : author}
