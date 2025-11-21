@@ -629,7 +629,7 @@ function Arrows() {
   return (
     <svg
       viewBox="0 0 1324 700"
-      style={{position: 'absolute', insetInline: -150, insetBlock: -50, pointerEvents: 'none'}}
+      style={{position: 'absolute', insetInline: -150, insetBlock: -50, width: 'calc(100% + 300px)', height: 'calc(100% + 100px)', pointerEvents: 'none'}}
       className={style({
         display: {
           default: 'none',
@@ -671,8 +671,8 @@ function Arrows() {
 function Arrows2({panel}: {panel: string | null}) {
   return (
     <svg
-      viewBox="0 0 1324 1200"
-      style={{position: 'absolute', inset: -150, top: -50, pointerEvents: 'none'}}
+      viewBox="0 0 1324 700"
+      style={{position: 'absolute', insetInline: -150, insetBlock: -50, width: 'calc(100% + 300px)', height: 'calc(100% + 100px)', pointerEvents: 'none'}}
       className={style({
         display: {
           default: 'none',
@@ -808,7 +808,7 @@ function Sidebar({page, onPageChange}: any) {
         aria-label="Navigation"
         isQuiet
         orientation="vertical"
-        selectedKeys={[page]}
+        selectedKeys={[page || 'photos']}
         onSelectionChange={keys => onPageChange([...keys][0])}
         disallowEmptySelection>
         <SideNavItem id="home">
@@ -903,7 +903,6 @@ function SideNavItem(props: any) {
           minHeight: 32,
           boxSizing: 'border-box',
           padding: 0,
-          // paddingY: centerPadding(),
           display: 'flex',
           alignItems: 'center',
           gap: 8,

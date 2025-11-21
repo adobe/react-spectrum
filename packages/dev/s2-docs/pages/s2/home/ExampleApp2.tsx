@@ -598,7 +598,7 @@ function Assets() {
         className={style({
           display: 'grid',
           gridTemplateColumns: `repeat(auto-fit, minmax(${size(96)}, 1fr))`,
-          gridTemplateRows: 'min-content',
+          gridAutoRows: 'max-content',
           justifyContent: 'space-between',
           gap: 12,
           margin: -16,
@@ -606,7 +606,6 @@ function Assets() {
           padding: 16,
           flexGrow: 1,
           minHeight: 0,
-          contain: 'size',
           overflow: 'auto'
         })}>
         <SkeletonCard />
