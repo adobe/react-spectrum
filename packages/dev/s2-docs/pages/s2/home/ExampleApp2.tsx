@@ -29,6 +29,7 @@ import {AccountMenu, ColorSchemeProvider} from './ExampleApp';
 import { useResizeObserver } from '@react-aria/utils';
 import { flushSync } from 'react-dom';
 import { Comment } from './Typography';
+import { HCMContext } from './HCM';
 
 export const FilterContext = createContext({
   brightness: 52,
@@ -407,6 +408,7 @@ function Layer({id, name, children}: any) {
 
 function Properties() {
   let {brightness, contrast, saturation, onChange} = useContext(FilterContext);
+  let isHCM = 'style' in useContext(HCMContext);
   return (
     <div role="group" aria-label="Properties" className={style({display: 'flex', flexDirection: 'column', gap: 8, padding: 8})}>
       <Accordion density="compact" isQuiet allowsMultipleExpanded defaultExpandedKeys={['filters', 'text']}>
@@ -497,7 +499,7 @@ function Properties() {
                   </ToggleButton>
                 </ToggleButtonGroup>
               </div>
-              <Checkbox isSelected isDisabled>Wrap</Checkbox>
+              <Checkbox isSelected isDisabled={isHCM}>Wrap</Checkbox>
             </Form>
           </DisclosurePanel>
         </Disclosure>

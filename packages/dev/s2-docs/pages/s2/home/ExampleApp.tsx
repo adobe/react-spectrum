@@ -19,10 +19,10 @@ import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
 import Search from '@react-spectrum/s2/icons/Search';
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
 import {style} from "@react-spectrum/s2/style" with {type: 'macro'};
-import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup, Provider} from '@react-spectrum/s2';
+import {Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Content, Text, ActionButton, SearchField, Avatar, Button, ToggleButton, ActionBar, ToggleButtonGroup, ActionButtonGroup, MenuTrigger, Popover, Switch, Divider, Menu, MenuSection, SubmenuTrigger, MenuItem, SegmentedControl, SegmentedControlItem, DropZone, IllustratedMessage, Heading, ButtonGroup, Provider, Link} from '@react-spectrum/s2';
 import {useLocale} from 'react-aria';
 import {useAsyncList} from 'react-stately';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, CSSProperties, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { ExampleApp2, FilterContext } from './ExampleApp2';
 import { flushSync } from 'react-dom';
 import DropToUpload from '@react-spectrum/s2/illustrations/gradient/generic2/DropToUpload';
@@ -39,18 +39,20 @@ const XS = `@container (min-width: ${480 / 16}rem)`;
 const SM = `@container (min-width: ${(640 / 16)}rem)`;
 const MD = `@container (min-width: ${(768 / 16)}rem)`;
 
-export function ExampleApp() {
+export function ExampleApp({showArrows}: {showArrows?: boolean} = {}) {
   let [[detail, img] = [], setDetail] = useState<[any, HTMLImageElement] | []>([]);
 
   return (
-    <div className={style({containerType: 'inline-size', height: 'full'})}>
+    <div className={style({containerType: 'inline-size', height: 'full', position: 'relative'})}>
       <AppFrame hidden={!!detail}>
         <Example onAction={setDetail} />
         {/* <HomePage /> */}
       </AppFrame>
+      {!detail && showArrows && <Arrows />}
       {detail && img &&
         <Detail detail={detail} img={img} setDetail={setDetail} />
       }
+      {detail && showArrows && <Arrows2 />}
     </div>
   );
 }
@@ -636,5 +638,85 @@ function HomePage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+function Arrows() {
+  return (
+    <svg viewBox="0 0 1324 1200" style={{position: 'absolute', inset: -150, top: -50, pointerEvents: 'none'}}>
+      <defs>
+        <marker
+          id="arrow"
+          viewBox="0 0 6 6"
+          refX={3}
+          refY={3}
+          markerWidth={6}
+          markerHeight={6}
+          orient="auto-start-reverse"
+          fill="white">
+          <circle r={3} cx={3} cy={3} />
+        </marker>
+      </defs>
+      <Arrow textX={75} x1={120} x2={160} y={130} href="Button.html">Button</Arrow>
+      <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup.html">ToggleButtonGroup</Arrow>
+      <Arrow textX={632} y={24} points="662,34 662,64" marker="markerEnd" href="SearchField.html">SearchField</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1158} y={82} marker="markerEnd" href="Menu.html">Menu</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1142} y={150} marker="markerEnd" href="SegmentedControl.html">SegmentedControl</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1142} y={350} marker="markerEnd" href="CardView.html">CardView</Arrow>
+    </svg>
+  );
+}
+
+function Arrows2() {
+  return (
+    <svg viewBox="0 0 1324 1200" style={{position: 'absolute', inset: -150, top: -50, pointerEvents: 'none'}}>
+      <defs>
+        <marker
+          id="arrow"
+          viewBox="0 0 6 6"
+          refX={3}
+          refY={3}
+          markerWidth={6}
+          markerHeight={6}
+          orient="auto-start-reverse"
+          fill="white">
+          <circle r={3} cx={3} cy={3} />
+        </marker>
+      </defs>
+      <Arrow textX={35} x1={120} x2={160} y={82} href="ActionButton.html">ActionButton</Arrow>
+      <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup.html">ToggleButtonGroup</Arrow>
+      <Arrow textX={212} y={24} points="250,34 250,64" href="Breadcrumbs.html">Breadcrumbs</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1158} y={82} href="Menu.html">Menu</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1100} y={168} href="Slider.html">Slider</Arrow>
+      <Arrow textX={1206} points="900,290 900,280 1198,280" marker="markerStart" y={280} href="ComboBox.html">ComboBox</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1100} y={304} href="NumberField.html">NumberField</Arrow>
+      <Arrow textX={1206} x1={1198} x2={890} y={365} href="Checkbox.html">Checkbox</Arrow>
+    </svg>
+  );
+}
+
+interface ArrowProps {
+  href: string,
+  children: ReactNode,
+  textX: number,
+  x1?: number,
+  x2?: number,
+  points?: string,
+  y: number,
+  marker?: 'markerStart' | 'markerEnd' | 'none'
+}
+
+export function Arrow({href, children, textX, x1, x2, points, y, marker = 'markerEnd'}: ArrowProps): ReactNode {
+  let markerProps = marker === 'none' ? {} : {...{[marker]: 'url(#arrow)'}};
+  return (
+    <>
+      {points
+        ? <polyline points={points} {...markerProps} stroke="white" fill="none" />
+        : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} stroke="white" />
+      }
+      <Link href={href} target="_blank" isQuiet isStandalone staticColor="white" UNSAFE_style={{pointerEvents: 'auto'}}>
+        <text x={textX} y={y + 3} fill="currentColor" textDecoration="inherit">{children}</text>
+      </Link>
+    </>
   );
 }

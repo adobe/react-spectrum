@@ -72,7 +72,7 @@ export function Home() {
           <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum.html">Explore components</LinkButton>
         </div>
         <section aria-label="Example app" className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
-          <ExampleApp />
+          <ExampleApp showArrows />
         </section>
       </header>
       <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600})}>
