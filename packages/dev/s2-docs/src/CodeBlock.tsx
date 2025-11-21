@@ -114,7 +114,7 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, inclu
         component={render}
         align={props.align} />
       <div>
-        {files ? 
+        {files ?
           <Files
             files={includeAllImports ? findAllFiles(files) : files}
             maxLines={expanded ? Infinity : 6}
@@ -206,7 +206,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
   if (type === 'tailwind' && !fileContents['index.css']) {
     fileContents['index.css'] = readFile(path.resolve('../../../starters/tailwind/src/index.css'));
   }
-  
+
   return {files: fileContents, deps: npmDeps};
 }
 
@@ -236,12 +236,12 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
   let deps = new Set<string>();
   for (let [, specifier] of contents.matchAll(/import (?:.|\n)*?['"](.+?)['"]/g)) {
     specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
-    
+
     if (specifier.startsWith('url:')) {
       urls[specifier] = resolveUrl(specifier.slice(4), file);
       continue;
     }
-    
+
     if (!/^(\.|starters)/.test(specifier)) {
       let dep = specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
       npmDeps[dep] ??= '^' + getPackageVersion(dep);
