@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
+import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style, StyleString} from '../style' with {type: 'macro'};
 import {
   Button,
   CellRenderProps,
@@ -1012,7 +1012,8 @@ export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | ke
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
-  children: ReactNode
+  children: ReactNode,
+  styles?: StyleString
 }
 
 /**
@@ -1030,11 +1031,11 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
       // @ts-ignore
       isSticky={isSticky}
-      className={renderProps => cell({
+      className={renderProps => mergeStyles(cell({
         ...renderProps,
         ...tableVisualOptions,
         isDivider: showDivider
-      })}
+      }), props.styles)}
       textValue={textValue}
       {...otherProps}>
       {({isFocusVisible}) => (
