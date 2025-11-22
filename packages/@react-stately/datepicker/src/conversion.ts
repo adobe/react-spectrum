@@ -3,7 +3,6 @@ import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from "./I
 import {  epochFromParts, getTimeZoneOffset } from "../../../@internationalized/date/src/conversion";
 import { Mutable } from "./manipulation";
 import { getExtendedYear } from "../../../@internationalized/date/src/calendars/GregorianCalendar";
-import { DateValue } from "@react-types/datepicker";
 import { timeToString } from "../../../@internationalized/date/src/string";
 
 const DAYMILLIS = 86400000;

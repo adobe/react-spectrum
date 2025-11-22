@@ -19,8 +19,6 @@ import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
 import {getLocalTimeZone, isEqualCalendar} from './queries';
 import {Mutable} from './utils';
-import {DateValue} from '@react-types/datepicker';
-import { IncompleteDate } from '../../../@react-stately/datepicker/src/IncompleteDate';
 
 export function epochFromDate(date: AnyDateTime): number {
   date = toCalendar(date, new GregorianCalendar());
