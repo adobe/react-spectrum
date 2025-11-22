@@ -22,5 +22,6 @@
   },
   "packagers": {
     "*.json": "parcel-packager-docs"
-  }
+  },
+  "namers": ["./S2DocsNamer.js", "..."]
 }
