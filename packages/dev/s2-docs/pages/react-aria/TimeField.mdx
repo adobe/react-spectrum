@@ -9,6 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
 
 export const tags = ['date', 'input'];
+export const relatedPages = [{'title': 'useTimeField', 'url': 'https://react-spectrum.adobe.com/react-aria/useTimeField.html'}];
 
 # TimeField
 
@@ -45,7 +46,7 @@ import {useState} from 'react';
 
 function Example() {
   let [time, setTime] = useState(new Time(11, 45));
-  
+
   return (
     <>
       <TimeField
