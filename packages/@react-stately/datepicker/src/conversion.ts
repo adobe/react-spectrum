@@ -21,6 +21,10 @@ export function toIncompleteDate(dateTime: AnyCalendarDate) {
       return new IncompleteDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
 
+export function toIncompleteZonedDateTime(date: ZonedDateTime) {
+      return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
+}
+
 export function toDate(dateTime: IncompleteDate | IncompleteDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
   return new Date(toAbsolute(dateTime, timeZone, disambiguation));
 }
@@ -79,7 +83,7 @@ export function toAbsolute(date: IncompleteDate | IncompleteDateTime, timeZone: 
   }
 }
 
-export function toIncompleteDateTime(date: IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime, time?: AnyTime): IncompleteDateTime {
+export function toIncompleteDateTime(date: IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime | ZonedDateTime, time?: AnyTime): IncompleteDateTime {
   let hour = 0, minute = 0, second = 0, millisecond = 0;
   if ('timeZone' in date) {
     ({hour, minute, second, millisecond} = date);
@@ -182,25 +186,13 @@ function getTimeZoneParts(ms: number, timeZone: string) {
   };
 }
 
-export function toIncompleteDate2(date: CalendarDate | CalendarDateTime | ZonedDateTime) {
+export function fromCalendarToIncompleteDate(date: CalendarDate | CalendarDateTime | ZonedDateTime)  {
   if(date instanceof CalendarDate) {
-    if (date.era) {
       return new IncompleteDate(date.calendar, date.era, date.year, date.month, date.day);
-    } else {
-      return new IncompleteDate(date.calendar, date.year, date.month, date.day);
-    }
   } else if (date instanceof CalendarDateTime) {
-    if (date.era) {
       return new IncompleteDateTime(date.calendar, date.era, date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
-    } else {
-      return new IncompleteDateTime(date.calendar, date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
-    }
   }else if(date instanceof ZonedDateTime) {
-    if (date.era) {
       return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
-    } else {
-      return new IncompleteZonedDateTime(date.calendar, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
-    }
   }
 }
 

@@ -19,7 +19,9 @@ import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from './IncompleteDate';
-import { toIncompleteDate2 } from './conversion';
+import { fromCalendarToIncompleteDate } from './conversion';
+
+type IncompleteValue = IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime
 
 export type SegmentType = 'era' | 'year' | 'month' | 'day' |  'hour' | 'minute' | 'second' | 'dayPeriod' | 'literal' | 'timeZoneName';
 export interface DateSegment {
@@ -265,7 +267,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     setIsValueConfirmed(true);
   }
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
-  let displayValue = isValueConfirmed && value ? toIncompleteDate2(value) :  placeholderDate;
+  let displayValue = isValueConfirmed && value ? fromCalendarToIncompleteDate(value) : placeholderDate;
   let setValue = (newValue: DateValue) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
@@ -301,7 +303,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
 
-  let updatePlaceholder = (newValue: IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime) => {
+  let updatePlaceholder = (newValue: IncompleteValue) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
@@ -454,14 +456,14 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         let isPM = displayValue.hour >= 12;
         let shouldBePM = placeholder.hour >= 12;
         if (isPM && !shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour - 12}, false);
+          value = displayValue.set({hour: displayValue.hour - 12});
         } else if (!isPM && shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour + 12}, false);
+          value = displayValue.set({hour: displayValue.hour + 12});
         }
       } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
-        value = displayValue.set({hour: placeholder['hour'] + 12}, false);
+        value = displayValue.set({hour: placeholder['hour'] + 12});
       } else if (part in displayValue) {
-        value = displayValue.set({[part]: placeholder[part]}, false);
+        value = displayValue.set({[part]: placeholder[part]});
       }
       updatePlaceholder(value);
     },
@@ -566,7 +568,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
   return processedSegments;
 }
 
-function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedDateTimeFormatOptions) {
+function getSegmentLimits(date: IncompleteValue, type: string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (type) {
     case 'era': {
       let eras = date.calendar.getEras();
@@ -637,7 +639,7 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
   return {};
 }
 
-function addSegment(value: IncompleteDate | IncompleteDateTime, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
+function addSegment(value: IncompleteValue, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'era':
     case 'year':

@@ -18,7 +18,7 @@ import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationa
 import {mergeValidation, VALID_VALIDITY_STATE} from '@react-stately/form';
 import {RangeValue, ValidationResult} from '@react-types/shared';
 import {useState} from 'react';
-import { toCalendar, toIncompleteDate, toIncompleteDate2, toIncompleteDateTime } from './conversion';
+import { toCalendar, toIncompleteDate, toIncompleteDateTime, toIncompleteZonedDateTime } from './conversion';
 import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from './IncompleteDate';
 
 const dictionary = new LocalizedStringDictionary(i18nMessages);
@@ -221,21 +221,21 @@ export function convertValue(value: DateValue | null | undefined, calendar: Cale
     return undefined;
   }
 
-  return toCalendar(toIncompleteDate2(value), calendar);
+  return toCalendar(value, calendar);
 }
 
 
-export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime | undefined {
+export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime {
   if (placeholderValue) {
     return convertValue(placeholderValue, calendar)!;
   }
 
-  let date = toIncompleteDate2(toCalendar(now(timeZone ?? getLocalTimeZone()).set({
+  let date = toCalendar(now(timeZone ?? getLocalTimeZone()).set({
     hour: 0,
     minute: 0,
     second: 0,
     millisecond: 0
-  }), calendar));
+  }), calendar);
 
   if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
     return toIncompleteDate(date);
@@ -245,7 +245,7 @@ export function createPlaceholderDate(placeholderValue: DateValue | null | undef
     return toIncompleteDateTime(date);
   }
 
-  return date;
+  return toIncompleteZonedDateTime(date);
 }
 
 export function useDefaultProps(v: DateValue | null, granularity: Granularity | undefined): [Granularity, string | undefined] {
