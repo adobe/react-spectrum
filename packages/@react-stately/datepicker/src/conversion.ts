@@ -186,12 +186,12 @@ function getTimeZoneParts(ms: number, timeZone: string) {
   };
 }
 
-export function fromCalendarToIncompleteDate(date: CalendarDate | CalendarDateTime | ZonedDateTime)  {
+export function fromCalendarToIncompleteDate(date: CalendarDate | CalendarDateTime | ZonedDateTime) {
   if(date instanceof CalendarDate) {
       return new IncompleteDate(date.calendar, date.era, date.year, date.month, date.day);
   } else if (date instanceof CalendarDateTime) {
       return new IncompleteDateTime(date.calendar, date.era, date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
-  }else if(date instanceof ZonedDateTime) {
+  }else {
       return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
   }
 }

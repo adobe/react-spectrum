@@ -349,7 +349,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     let allKeys = Object.keys(allSegments);
     if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
       const constrained = v.toCalendar();
-      displayValue = toIncompleteDate2(constrained); 
+      displayValue = fromCalendarToIncompleteDate(constrained); 
       setValue(constrained);
     } else {
       updatePlaceholder(v);
@@ -668,7 +668,7 @@ function addSegment(value: IncompleteValue, part: string, amount: number, option
   throw new Error('Unknown segment: ' + part);
 }
 
-function setSegment(value: IncompleteDate | IncompleteDateTime, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
+function setSegment(value: IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'day':
     case 'month':
