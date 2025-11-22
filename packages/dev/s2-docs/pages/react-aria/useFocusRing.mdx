@@ -1,0 +1,79 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {InterfaceType} from '../../src/types';
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/focus';
+
+export const section = 'Interactions';
+
+# useFocusRing
+
+<PageDescription>{docs.exports.useFocusRing.description}</PageDescription>
+
+## Introduction
+
+The `useFocusRing` hook returns whether a focus ring should be displayed to indicate keyboard focus for a component.
+This helps keyboard users determine which element on a page or in an application has keyboard focus as they
+navigate around. Focus rings are only visible when interacting with a keyboard so as not to distract mouse
+and touch screen users.
+
+If CSS classes are being used for styling, see the [FocusRing](FocusRing.html) component for a shortcut.
+
+## Example
+
+This example shows how to use `useFocusRing` to adjust styling when keyboard focus is on a button.
+Specifically, the `outline` property is used to create the focus ring when `isFocusVisible` is true.
+
+{/* Not implemented yet */}
+{/* See [useCheckbox](useCheckbox.html#styling), [useRadioGroup](useRadioGroup.html#styling), and
+[useSwitch](useSwitch.html#example) for more advanced examples of focus rings with other styling
+techniques. */}
+
+```tsx render
+'use client';
+import {useFocusRing} from '@react-aria/focus';
+
+function Example() {
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <button
+      {...focusProps}
+      style={{
+        WebkitAppearance: 'none',
+        appearance: 'none',
+        background: 'green',
+        border: 'none',
+        color: 'white',
+        fontSize: 14,
+        padding: '4px 8px',
+        outline: isFocusVisible ? '2px solid dodgerblue' : 'none',
+        outlineOffset: 2
+      }}>
+      Test
+    </button>
+  );
+}
+```
+
+## API
+
+<FunctionAPI links={docs.links} function={docs.exports.useFocusRing} />
+
+### AriaFocusRingProps
+
+<InterfaceType {...docs.exports.AriaFocusRingProps} />
+
+### FocusRingAria
+
+<InterfaceType {...docs.exports.FocusRingAria} />
+

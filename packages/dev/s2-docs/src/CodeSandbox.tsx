@@ -1,6 +1,11 @@
 import LZString from 'lz-string';
 
-export function createCodeSandbox(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' | 's2' = 'vanilla') {
+export function createCodeSandbox(
+  files: {[name: string]: string},
+  deps: {[name: string]: string},
+  type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
+  entry: string = 'Example'
+) {
   let form = document.createElement('form');
   form.hidden = true;
   form.method = 'POST';
@@ -24,7 +29,7 @@ export function createCodeSandbox(files: {[name: string]: string}, type: 'vanill
   input.name = 'parameters';
 
   input.value = LZString.compressToBase64(JSON.stringify({
-    files: getCodeSandboxFiles(files, type)
+    files: getCodeSandboxFiles(files, deps, type, entry)
   }));
   form.appendChild(input);
 
@@ -32,29 +37,6 @@ export function createCodeSandbox(files: {[name: string]: string}, type: 'vanill
   form.submit();
   form.remove();
 }
-
-const dependencies = {
-  vanilla: {
-    'react-aria-components': '^1.10.0',
-    react: '^19',
-    'react-dom': '^19',
-    'lucide-react': '^0.514.0',
-    'clsx': '^2.1.1'
-  },
-  tailwind: {
-    'react-aria-components': '^1.10.0',
-    react: '^19',
-    'react-dom': '^19',
-    'lucide-react': '^0.514.0',
-    'tailwind-variants': '^0.3.1',
-    'tailwind-merge': '^2.5.4'
-  },
-  s2: {
-    '@react-spectrum/s2': 'latest',
-    react: '^19',
-    'react-dom': '^19'
-  }
-};
 
 const devDependencies = {
   vanilla: {
@@ -82,7 +64,13 @@ const devDependencies = {
   }
 };
 
-export function getCodeSandboxFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' | 's2' = 'vanilla') {
+export function getCodeSandboxFiles(
+  files: {[name: string]: string},
+  deps: {[name: string]: string},
+  type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
+  entry: string = 'Example'
+) {
+  let entryName = entry.split('/').pop()!.split('.')[0];
   return {
     '.codesandbox/tasks.json': {
       content: JSON.stringify({
@@ -125,7 +113,11 @@ export function getCodeSandboxFiles(files: {[name: string]: string}, type: 'vani
           start: 'parcel',
           build: 'parcel build'
         },
-        dependencies: dependencies[type],
+        dependencies: {
+          react: '^19',
+          'react-dom': '^19',
+          ...deps
+        },
         devDependencies: devDependencies[type]
       }, null, 2) + '\n'
     },
@@ -153,9 +145,9 @@ export function getCodeSandboxFiles(files: {[name: string]: string}, type: 'vani
     },
     'src/index.tsx': {
       content: `import {createRoot} from 'react-dom/client';
-import {Example} from './Example';${type === 's2' ? "\nimport '@react-spectrum/s2/page.css';" : ''}
+import ${entryName} from './${entryName}';${type === 's2' ? "\nimport '@react-spectrum/s2/page.css';" : ''}
 
-createRoot(document.getElementById('root')!).render(<Example />);
+createRoot(document.getElementById('root')!).render(<${entryName} />);
 `
     },
     'tsconfig.json': {

@@ -13,11 +13,11 @@ import {PokemonListBox} from './PokemonListBox';
 import {PokemonGridList} from './PokemonGridList';
 
 export const section = 'Guides';
-export const description = 'Implementing drag and drop in React Aria';
+export const description = 'How to implement drag and drop.';
 
 # Drag and Drop
 
-<PageDescription>Drag and drop is an intuitive way for users to transfer data between locations. React Aria implements drag and drop for mouse and touch interactions, and provides full keyboard and screen reader accessibility.</PageDescription>
+<PageDescription>React Aria collection components support drag and drop with mouse and touch interactions, and full keyboard and screen reader accessibility. Learn how to provide drag data and handle drop events to move, insert, or reorder items.</PageDescription>
 
 ## Introduction
 
@@ -887,6 +887,10 @@ Draggable elements can sometimes have conflicting keyboard interactions, such as
 </Figure>
 
 Note that because mouse and touch drag and drop interactions utilize the native browser APIs, they work both within the browser window and with external applications on the user's device. Keyboard and screen reader drag and drop is implemented from scratch, and therefore can only be supported within the browser window. Alternative interactions for operations involving external applications, such as file uploading or copy and paste, should be implemented in addition to drag and drop.
+
+## Examples
+
+<ExampleList tag="drag and drop" pages={props.pages} />
 
 ## API
 

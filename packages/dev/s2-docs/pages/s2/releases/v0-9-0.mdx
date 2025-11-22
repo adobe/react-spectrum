@@ -1,0 +1,60 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'May 20, 2025';
+export const title = 'v0.9.0';
+export const description = 'Version 0.9.0 adds virtualization and async loading support to ComboBox and Picker, updates Dialog sizes, and introduces important TypeScript changes for UNSAFE_className. This release also includes significant style macro updates.';
+export const isSubpage = true;
+
+# v0.9.0
+<Time date={date} />
+
+Version 0.9.0 adds virtualization and async loading support to ComboBox and Picker, updates Dialog sizes, and introduces important TypeScript changes for UNSAFE_className. This release also includes significant style macro updates.
+
+## Updates
+* [Combobox](../ComboBox.html): Support for virtualization and async loading
+* [Dialog](../Dialog.html): Update sizes
+* [Picker](../Picker.html): Support for virtualization and async loading
+* [Popover](../Popover.html): Add `triggerRef` prop
+* [TableView](../TableView.html): Support custom menus in columns
+* Apply `position: relative` to Radio and Checkbox to prevent layout jumps
+
+## UNSAFE_className Typescript Error
+
+Style macros passed to `UNSAFE_className` will now result in a TypeScript error. This is not allowed because `UNSAFE_className` is appended to the component's own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
+
+We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](https://react-spectrum.adobe.com/react-aria/index.html) with the [S2 style macro](../styling.html#style-macro) to create custom components. [Safe style properties](../styling.html#values) can be passed to the `styles` prop of an S2 component.
+
+
+## Style macro updates
+
+We have made significant changes to the way our Style Macro generates class names in an effort to make them stable between versions. While we work to stabilize the style macro class names, we have added a postfix based on the version number so that class names don't conflict with any prior or future version.
+
+We also made some changes to the available style macro values.
+
+* Reduced the default spacing scale so it only goes up to 96px. Other values can be used via the `space()` macro
+* Switched to rems for media queries. Since component sizes scale with rems, breakpoints need to match.
+* Switch to px instead of rems for padding and absolute positioning. This avoids adding extra whitespace that causes additional text wrapping.
+* Used rems and touch scaling for icon sizes, and added t-shirt size prop
+* Added support for percentages and [viewport relative units](https://www.w3.org/TR/css-values-4/#viewport-relative-lengths) (e.g. vw)
+* Added support for arbitrary [aspect ratio values](https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio)
+* Added support for `calc` and other [math functions](https://www.w3.org/TR/css-values-4/#math)
+* Added support for [css-wide keywords](https://www.w3.org/TR/css-values-4/#common-keywords) like `inherit`
+* Colors no longer include default hover/press/focus states (e.g. `backgroundColor: 'accent'`). Use the `baseColor` macro instead.
+* The `control` value has been removed from `fontSize`, `borderRadius`, `width`, `height`, and other sizing properties. Use explicit values for each t-shirt size instead.
+* Fixed spelling of `disc` in `listStyleType` (was `dist`)

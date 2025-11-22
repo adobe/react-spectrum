@@ -1,0 +1,108 @@
+import {Layout} from '../../src/Layout';
+import {InstallCommand} from '../../src/InstallCommand';
+import {BundlerSwitcher, BundlerSwitcherItem} from '../../src/BundlerSwitcher';
+export default Layout;
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
+
+export const section = 'Components';
+import docs from 'docs:@react-spectrum/s2';
+
+# Provider
+
+<PageDescription>{docs.exports.Provider.description}</PageDescription>
+
+```tsx render docs={docs.exports.Provider} props={['colorScheme', 'background']} links={docs.links} type="s2"
+'use client';
+import {Button, Provider} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+
+<Provider
+  /* PROPS */
+  styles={style({padding: 12})}
+>
+  <Button>
+    Hello React Spectrum!
+  </Button>
+</Provider>
+```
+
+## Locales
+By default, React Spectrum chooses the locale matching the user’s browser/operating system language, but this can be overridden with the locale prop if you have an application specific setting. This prop accepts a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
+
+```tsx
+<Provider locale="en-US">
+  <YourApp />
+</Provider>
+```
+
+<Disclosure isQuiet>
+  <DisclosureTitle>Supported Locales</DisclosureTitle>
+  <DisclosurePanel>
+  <ul style={{columnWidth: 200, paddingLeft: 16, fontFamily: 'adobe-clean-spectrum-vf'}}>
+    <li>Arabic (United Arab Emirates)</li>
+    <li>Bulgarian (Bulgaria)</li>
+    <li>Chinese (Simplified)</li>
+    <li>Chinese (Traditional)</li>
+    <li>Croatian (Croatia)</li>
+    <li>Czech (Czech Republic)</li>
+    <li>Danish (Denmark)</li>
+    <li>Dutch (Netherlands)</li>
+    <li>English (Great Britain)</li>
+    <li>English (United States)</li>
+    <li>Estonian (Estonia)</li>
+    <li>Finnish (Finland)</li>
+    <li>French (Canada)</li>
+    <li>French (France)</li>
+    <li>German (Germany)</li>
+    <li>Greek (Greece)</li>
+    <li>Hebrew (Israel)</li>
+    <li>Hungarian (Hungary)</li>
+    <li>Italian (Italy)</li>
+    <li>Japanese (Japan)</li>
+    <li>Korean (Korea)</li>
+    <li>Latvian (Latvia)</li>
+    <li>Lithuanian (Lithuania)</li>
+    <li>Norwegian (Norway)</li>
+    <li>Polish (Poland)</li>
+    <li>Portuguese (Brazil)</li>
+    <li>Romanian (Romania)</li>
+    <li>Russian (Russia)</li>
+    <li>Serbian (Serbia)</li>
+    <li>Slovakian (Slovakia)</li>
+    <li>Slovenian (Slovenia)</li>
+    <li>Spanish (Spain)</li>
+    <li>Swedish (Sweden)</li>
+    <li>Turkish (Turkey)</li>
+    <li>Ukrainian (Ukraine)</li>
+  </ul>
+  </DisclosurePanel>
+</Disclosure>
+
+
+## Client side routing
+
+The Provider component accepts an optional `router` prop. This enables React Spectrum components that render links to perform client side navigation using your application or framework's client side router. See the client side routing guide for details on how to set this up.
+
+```tsx
+let navigate = useNavigateFromYourRouter();
+
+<Provider router={{navigate}}>
+  <YourApp />
+</Provider>
+```
+
+## Server side rendering 
+
+When using SSR, the `<Provider>` component can be rendered as the root `<html>` element. The `locale` prop should always be specified to avoid hydration errors.
+
+```tsx
+<Provider elementType="html" locale="en-US">
+  <YourApp />
+</Provider>
+```
+
+## API
+
+### Provider
+<PropTable component={docs.exports.Provider} links={docs.links} />

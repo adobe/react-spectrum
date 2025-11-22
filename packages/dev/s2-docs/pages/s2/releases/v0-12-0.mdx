@@ -1,0 +1,47 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'S2'];
+export const date = 'October 3, 2025';
+export const title = 'v0.12.0';
+export const description = 'Version 0.12.0 adds pending states to ActionButton, avatar support in ComboBox and Picker, Dialog XL size, and Popover styling improvements. This release also includes RTL fixes, placeholder support across components, and various component enhancements.';
+export const isSubpage = true;
+
+# v0.12.0
+<Time date={date} />
+
+Version 0.12.0 adds pending states to ActionButton, avatar support in ComboBox and Picker, Dialog XL size, and Popover styling improvements. This release also includes RTL fixes, placeholder support across components, and various component enhancements.
+
+## Updates
+* [ActionButton](../ActionButton.html): Add pending state
+* [ColorSlider](../ColorSlider.html): Fix `ColorLoupe` position in RTL locales
+* [ComboBox](../ComboBox.html): Support avatars and onAction
+* [CustomDialog](../Dialog.html#custom-dialog): Support custom widths
+* [Dialog](../Dialog.html): Add XL size
+* [Disclosure](../Disclosure.html): Add animation to disclosure
+* [InlineAlert](../InlineAlert.html): Support heading-less Inline Alerts
+* [Picker](../Picker.html): Support multiple selection and avatars
+* [Tags](../TagGroup.html): Fix Tag collapse calculation for removable tags
+* [Tooltip](../Tooltip.html): Prevent text overflow by default
+* Allow placeholders in supported S2 components (e.g. ColorArea, ComboBox, NumberField, SearchField, TextArea, TextField)
+* Apply `page.css` styles to the Shadow DOM
+
+## Popover Styling Updates
+
+The Popover component has been updated to better support custom styling. To
+remove the preset padding, use the new `padding` prop and wrap your Popover content
+in a custom div with your desired styling.

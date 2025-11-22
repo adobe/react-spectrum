@@ -1,0 +1,99 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {InterfaceType} from '../../src/types';
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/interactions';
+export const section = 'Interactions';
+
+# useFocusWithin
+
+<PageDescription>{docs.exports.useFocusWithin.description}</PageDescription>
+
+## Features
+
+`useFocusWithin` handles focus interactions for an element and its descendants. Focus is "within"
+an element when either the element itself or a descendant element has focus. This is similar to
+the [:focus-within](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-within) pseudo class
+in CSS.
+
+To handle focus events on only the target element, and not descendants, see [useFocus](useFocus.html).
+
+## Example
+
+This example stores focus within state in local component state, which is updated by an `onFocusWithinChange` handler. This is used
+to update the background color and text color of the group while one of the text fields has focus.
+
+Focus within and blur within events are also logged to the list below. Notice that the events are only
+fired when the wrapper gains and loses focus, not when focus moves within the group.
+
+{/* We don't have component hook docs yet */}
+{/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).** */}
+
+```tsx render
+"use client";
+import React from 'react';
+import {useFocusWithin} from '@react-aria/interactions';
+
+function Example() {
+  let [events, setEvents] = React.useState([]);
+  let [isFocusWithin, setFocusWithin] = React.useState(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithin: e => setEvents(
+      events => [...events, 'focus within']
+    ),
+    onBlurWithin: e => setEvents(
+      events => [...events, 'blur within']
+    ),
+    onFocusWithinChange: isFocusWithin => setFocusWithin(isFocusWithin)
+  });
+
+  return (
+    <>
+      <div
+        {...focusWithinProps}
+        style={{
+          display: 'inline-block',
+          border: '1px solid gray',
+          padding: 10,
+          background: isFocusWithin ? 'goldenrod' : '',
+          color: isFocusWithin ? 'black' : ''
+        }}>
+        <label style={{display: 'block'}}>
+          First Name: <input />
+        </label>
+        <label style={{display: 'block'}}>
+          Last Name: <input />
+        </label>
+      </div>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## API
+
+<FunctionAPI function={docs.exports.useFocusWithin} links={docs.links} />
+
+### FocusWithinProps
+
+<InterfaceType {...docs.exports.FocusWithinProps} />
+
+### FocusWithinResult
+
+<InterfaceType {...docs.exports.FocusWithinResult} />
