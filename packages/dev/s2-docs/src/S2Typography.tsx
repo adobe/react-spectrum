@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
