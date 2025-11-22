@@ -174,6 +174,14 @@ export function getPageTitle(page: Page): string {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
+/**
+ * Gets the search section for a page, preferring `searchSection` over `section`.
+ * This allows pages to appear in a different section in search results than in navigation.
+ */
+export function getSearchSection(page: Page): string {
+  return (page.exports?.searchSection as string) ?? (page.exports?.section as string) ?? 'Components';
+}
+
 export function getOrderedLibraries(currentPage: Page) {
   const allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, ...TAB_DEFS[id]}));
   const currentLibId = getLibraryFromPage(currentPage);
@@ -217,9 +225,13 @@ export function useSearchTagSelection(
   const resourceTagIds = resourceTags.map(t => t.id);
   const allBaseIds = useMemo(() => [...baseSectionIds, ...resourceTagIds], [baseSectionIds, resourceTagIds]);
   const isResourceSelected = selectedTagId && resourceTagIds.includes(selectedTagId);
+
+  // "All" tag is shown when there's a search value and a resource tag is not selected
+  const hasShowAllTriggered = searchValue.trim().length > 0 && !isResourceSelected;
+
   const sectionIds = useMemo(() => {
-    return searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
-  }, [searchValue, isResourceSelected, allBaseIds]);
+    return hasShowAllTriggered ? ['all', ...allBaseIds] : allBaseIds;
+  }, [hasShowAllTriggered, allBaseIds]);
   
   useEffect(() => {
     if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
@@ -245,13 +257,16 @@ export function useSectionTagsForDisplay(
   selectedTagId: string,
   resourceTagIds: string[]
 ): Tag[] {
+  // "All" tag is shown when there's a search value and a resource tag is not selected
+  const hasShowAllTriggered = searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId);
+
   return useMemo(() => {
     const base = sections.map(s => ({id: s.id, name: s.name}));
-    if (searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId)) {
+    if (hasShowAllTriggered) {
       return [{id: 'all', name: 'All'}, ...base];
     }
     return base;
-  }, [sections, searchValue, selectedTagId, resourceTagIds]);
+  }, [sections, hasShowAllTriggered]);
 }
 
 export function sortItemsForDisplay<T extends {name: string, date?: string}>(items: T[], searchValue: string): T[] {

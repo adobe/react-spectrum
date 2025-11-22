@@ -64,10 +64,6 @@ function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): stri
   return pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
 }
 
-function getPageTitle(page: Page): string {
-  return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
-}
-
 export function getPageFromPathname(pages: Page[], pathname: string | null): Page | null {
   if (!pathname) {
     return null;
@@ -97,7 +93,7 @@ function getPageInfo(pages: Page[], pathname: string | null): {title?: string, s
     return {};
   }
   
-  const title = getPageTitle(targetPage);
+  const title = targetPage.tableOfContents?.[0]?.title;
   const section = (targetPage.exports?.section as string) || 'Components';
   const hasToC = !targetPage.exports?.hideNav && targetPage.tableOfContents?.[0]?.children && targetPage.tableOfContents?.[0]?.children?.length > 0;
   

@@ -1,8 +1,10 @@
 'use client';
 
-import {ActionButton, DialogTrigger} from '@react-spectrum/s2';
+import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
+import {getHomepageUrl} from './Header';
 import {getLibraryFromPage} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
+import {Link} from 'react-aria-components';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
 import React, {CSSProperties, lazy, useEffect, useRef} from 'react';
@@ -83,6 +85,7 @@ export function MobileHeader({toc, pages, currentPage}) {
 
   let currentLibrary = getLibraryFromPage(currentPage);
   let icon = TAB_DEFS[currentLibrary].icon;
+  let libraryRootUrl = getHomepageUrl(pages, currentLibrary);
 
   return (
     <div
@@ -120,12 +123,17 @@ export function MobileHeader({toc, pages, currentPage}) {
         animationTimeline: 'scroll()',
         animationRange
       } as CSSProperties}>
-      <div
+      <Link
+        href={libraryRootUrl}
+        style={pressScale(ref)}
         className={style({
           display: 'flex',
           gap: 12,
           alignItems: 'center',
-          flexGrow: 1
+          flexGrow: 1,
+          textDecoration: 'none',
+          color: 'inherit',
+          disableTapHighlight: true
         })}>
         {icon}
         <h2
@@ -141,7 +149,7 @@ export function MobileHeader({toc, pages, currentPage}) {
           } as CSSProperties : undefined}>
           {TAB_DEFS[currentLibrary].label}
         </h2>
-      </div>
+      </Link>
       {toc && (
         <div
           className={style({

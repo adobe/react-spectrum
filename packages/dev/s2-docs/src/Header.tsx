@@ -21,6 +21,20 @@ function getButtonIcon(currentPage) {
   return getLibraryIcon(getLibraryFromPage(currentPage));
 }
 
+export function getHomepageUrl(pages, library) {
+  let subdirectory = 's2';
+  if (library === 'internationalized' || library === 'react-aria') {
+    subdirectory = 'react-aria';
+  }
+
+  for (let page of pages) {
+    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
+      return page.url;
+    }
+  }
+  return '';
+}
+
 const libraryStyles = style({
   ...focusRing(),
   paddingX: 12, 
@@ -110,20 +124,17 @@ export default function Header(props: PageProps) {
   };
 
   let library = getLibraryFromPage(currentPage);
+  let homepage = getHomepageUrl(pages, library);
   let subdirectory = 's2';
   if (library === 'internationalized' || library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
 
-  let homepage = '';
   let docs = '';
   let release = '';
   let blog = '';
   for (let page of pages) {
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      homepage = page.url;
-    }
     if (page.name.includes(subdirectory) && page.name.includes('getting-started.html')) {
       docs = page.url;
     }
