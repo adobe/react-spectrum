@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Point} from './Point';
-import {Rect} from './Rect';
+import {Point, Rect} from '@react-stately/utils';
 
 export class OverscanManager {
   private startTime = 0;
