@@ -1,0 +1,220 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+import {Time} from '../../../src/ReleasesList';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'April 11, 2025';
+export const title = 'v1.8.0';
+export const description = 'In today\'s release we are excited to announce custom calendar support in React Aria Components! We have also added enhanced support for React Suspense and performance optimizations for collections in React Aria Components, reduced the bundle sizes of our libraries as a whole, and now support onClick as an alias for onPress.';
+export const isSubpage = true;
+
+# v1.8.0
+<Time date={date} />
+
+In today's release, we are excited to announce custom calendar support in React Aria Components! This feature allows you to create your own calendar that implements custom business logic, such as a [4-5-4 fiscal calendar](https://nrf.com/resources/4-5-4-calendar), either by extending an existing Calendar implementation or building from scratch. Please see the [React Aria docs](../Calendar.html#custom-calendar-systems) for an example implementation. A special shout out to [@ToyWalrus](https://github.com/ToyWalrus) for all the hard work that went into this contribution!
+
+This release also includes several updates for collections in React Aria Components. These include enhanced support for React Suspense and optimizations for large collections. These changes should result in much more performant collections when fetching and rendering large amounts of data.
+
+We have also reduced the bundle sizes of our libraries by moving some console warnings to development only, and removing old browser fallbacks for pointer events. For example, `@react-aria/interactions`, which powers most of our components, is now 22% smaller!
+
+Lastly, we have decided to handle `onClick` as an alias for `onPress`. This improves interoperability with other dependencies that use `onClick` events. Please note that `onPress` is still preferred over `onClick` as it standardizes behavior across a variety of platforms.
+
+A huge thank you once again to everyone in the community for all of your feedback and contributions!
+
+
+## Enhancements
+- Calendar
+  - Custom calendar support - [@ToyWalrus](https://github.com/ToyWalrus) - [PR](https://github.com/adobe/react-spectrum/pull/7803)
+- Collections
+  - Add `escapeKeyBehavior` to GridList/ListBox/Menu/Table/Tree - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7974)
+- Toast
+  - Pass data attributes through on Toast - [@lukpsaxo](https://github.com/lukpsaxo) - [PR](https://github.com/adobe/react-spectrum/pull/7923)
+- Miscellaneous
+  - Support `onClick` as an alias for `onPress` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7891)
+  - Reduce production bundle sizes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7977), [PR](https://github.com/adobe/react-spectrum/pull/8046)
+  - Support React 19 and remove Jest reliance in test utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7686)
+
+## Fixes
+- Collections
+  - Support React Suspense in collections - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7912)
+  - Improve collection update performance - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7905), [PR](https://github.com/adobe/react-spectrum/pull/8052)
+- Date/Time
+  - Add `data-disabled` CSS selector to DateField - [@suyash5053](https://github.com/suyash5053) - [PR](https://github.com/adobe/react-spectrum/pull/7896)
+  - Exclude `isEditable` from DateSegment render props - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/7961)
+- Separator
+  - Pass aria labeling props in RAC Separator - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7881)
+- Table
+  - Ensure table typeahead does honor row `textValue` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7857)
+  - Add Table Cell `id` prop back into the Cell types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7983)
+- Toast
+  - Pass `wrapUpdate` through `useToastState` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7910)
+  - Export QueuedToast - [@lukpsaxo](https://github.com/lukpsaxo) - [PR](https://github.com/adobe/react-spectrum/pull/7944)
+- Miscellaneous
+  - Update yarn peer dependencies - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7932)
+  - Fix French number parsing ambiguity - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7966)
+  - Restore focus after a Select closes on mobile - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7904)
+  - Apply `touch-action` by default in `usePress` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/8047)
+
+
+## Docs
+- Remove defaults from `BoxAlignmentStyleProps` - [@dsmmcken](https://github.com/dsmmcken) - [PR](https://github.com/adobe/react-spectrum/pull/7982)
+- Fix typo in CalendarDate docs - [@DarkstarXDD](https://github.com/DarkstarXDD) - [PR](https://github.com/adobe/react-spectrum/pull/8043)
+
+## Under Construction
+- Allow configurations to the Toast PortalProvider - [@armandabric](https://github.com/armandabric) - [PR](https://github.com/adobe/react-spectrum/pull/7907), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7976)
+
+## Released packages
+
+```json
+ - react-aria@3.39.0
+ - react-aria-components@1.8.0
+ - react-stately@3.37.0
+ - @internationalized/date@3.8.0
+ - @internationalized/message@3.1.7
+ - @internationalized/number@3.6.1
+ - @internationalized/string@3.2.6
+ - @react-aria/actiongroup@3.7.15
+ - @react-aria/autocomplete@3.0.0-beta.2
+ - @react-aria/breadcrumbs@3.5.23
+ - @react-aria/button@3.13.0
+ - @react-aria/calendar@3.8.0
+ - @react-aria/checkbox@3.15.4
+ - @react-aria/collections@3.0.0-rc.0
+ - @react-aria/color@3.0.6
+ - @react-aria/combobox@3.12.2
+ - @react-aria/datepicker@3.14.2
+ - @react-aria/dialog@3.5.24
+ - @react-aria/disclosure@3.0.4
+ - @react-aria/dnd@3.9.2
+ - @react-aria/focus@3.20.2
+ - @react-aria/form@3.0.15
+ - @react-aria/grid@3.13.0
+ - @react-aria/gridlist@3.12.0
+ - @react-aria/i18n@3.12.8
+ - @react-aria/interactions@3.25.0
+ - @react-aria/label@3.7.17
+ - @react-aria/landmark@3.0.2
+ - @react-aria/link@3.8.0
+ - @react-aria/listbox@3.14.3
+ - @react-aria/live-announcer@3.4.2
+ - @react-aria/menu@3.18.2
+ - @react-aria/meter@3.4.22
+ - @react-aria/numberfield@3.11.13
+ - @react-aria/overlays@3.27.0
+ - @react-aria/progress@3.4.22
+ - @react-aria/radio@3.11.2
+ - @react-aria/searchfield@3.8.3
+ - @react-aria/select@3.15.4
+ - @react-aria/selection@3.24.0
+ - @react-aria/separator@3.4.8
+ - @react-aria/slider@3.7.18
+ - @react-aria/spinbutton@3.6.14
+ - @react-aria/ssr@3.9.8
+ - @react-aria/steplist@3.0.0-alpha.16
+ - @react-aria/switch@3.7.2
+ - @react-aria/table@3.17.2
+ - @react-aria/tabs@3.10.2
+ - @react-aria/tag@3.5.2
+ - @react-aria/test-utils@1.0.0-alpha.6
+ - @react-aria/textfield@3.17.2
+ - @react-aria/toast@3.0.2
+ - @react-aria/toggle@3.11.2
+ - @react-aria/toolbar@3.0.0-beta.15
+ - @react-aria/tooltip@3.8.2
+ - @react-aria/tree@3.0.2
+ - @react-aria/utils@3.28.2
+ - @react-aria/virtualizer@4.1.4
+ - @react-aria/visually-hidden@3.8.22
+ - @react-stately/autocomplete@3.0.0-beta.1
+ - @react-stately/calendar@3.8.0
+ - @react-stately/checkbox@3.6.13
+ - @react-stately/collections@3.12.3
+ - @react-stately/color@3.8.4
+ - @react-stately/combobox@3.10.4
+ - @react-stately/data@3.12.3
+ - @react-stately/datepicker@3.14.0
+ - @react-stately/disclosure@3.0.3
+ - @react-stately/dnd@3.5.3
+ - @react-stately/flags@3.1.1
+ - @react-stately/form@3.1.3
+ - @react-stately/grid@3.11.1
+ - @react-stately/layout@4.2.2
+ - @react-stately/list@3.12.1
+ - @react-stately/menu@3.9.3
+ - @react-stately/numberfield@3.9.11
+ - @react-stately/overlays@3.6.15
+ - @react-stately/radio@3.10.12
+ - @react-stately/searchfield@3.5.11
+ - @react-stately/select@3.6.12
+ - @react-stately/selection@3.20.1
+ - @react-stately/slider@3.6.3
+ - @react-stately/steplist@3.0.0-alpha.13
+ - @react-stately/table@3.14.1
+ - @react-stately/tabs@3.8.1
+ - @react-stately/toast@3.1.0
+ - @react-stately/toggle@3.8.3
+ - @react-stately/tooltip@3.5.3
+ - @react-stately/tree@3.8.9
+ - @react-stately/utils@3.10.6
+ - @react-stately/virtualizer@4.3.2
+ - @react-types/actionbar@3.1.14
+ - @react-types/actiongroup@3.4.16
+ - @react-types/autocomplete@3.0.0-alpha.30
+ - @react-types/avatar@3.0.14
+ - @react-types/badge@3.1.16
+ - @react-types/breadcrumbs@3.7.12
+ - @react-types/button@3.12.0
+ - @react-types/buttongroup@3.3.16
+ - @react-types/calendar@3.7.0
+ - @react-types/card@3.0.0-alpha.35
+ - @react-types/checkbox@3.9.3
+ - @react-types/color@3.0.4
+ - @react-types/combobox@3.13.4
+ - @react-types/contextualhelp@3.2.17
+ - @react-types/datepicker@3.12.0
+ - @react-types/dialog@3.5.17
+ - @react-types/divider@3.3.16
+ - @react-types/form@3.7.11
+ - @react-types/grid@3.3.1
+ - @react-types/illustratedmessage@3.3.16
+ - @react-types/image@3.4.8
+ - @react-types/label@3.9.10
+ - @react-types/layout@3.3.22
+ - @react-types/link@3.6.0
+ - @react-types/list@3.2.26
+ - @react-types/listbox@3.6.0
+ - @react-types/menu@3.10.0
+ - @react-types/meter@3.4.8
+ - @react-types/numberfield@3.8.10
+ - @react-types/overlays@3.8.14
+ - @react-types/progress@3.5.11
+ - @react-types/provider@3.8.8
+ - @react-types/radio@3.8.8
+ - @react-types/searchfield@3.6.1
+ - @react-types/select@3.9.11
+ - @react-types/shared@3.29.0
+ - @react-types/slider@3.7.10
+ - @react-types/statuslight@3.3.16
+ - @react-types/switch@3.5.10
+ - @react-types/table@3.12.0
+ - @react-types/tabs@3.3.14
+ - @react-types/text@3.3.16
+ - @react-types/textfield@3.12.1
+ - @react-types/tooltip@3.4.16
+ - @react-types/view@3.4.16
+ - @react-types/well@3.3.16
+ - @react-aria/parcel-resolver-optimize-locales@1.2.1
+```

@@ -8,6 +8,7 @@ import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['dialog', 'popup', 'overlay'];
+export const relatedPages = [{'title': 'useModalOverlay', 'url': 'https://react-spectrum.adobe.com/react-aria/useModalOverlay.html'}];
 
 # Modal
 
@@ -164,6 +165,10 @@ const CustomTrigger = React.forwardRef((props, ref) => (
   <button {...props} ref={ref} />
 ));
 ```
+
+## Examples
+
+<ExampleList tag="modal" pages={props.pages} />
 
 ## API
 

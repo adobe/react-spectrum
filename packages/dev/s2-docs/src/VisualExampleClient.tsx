@@ -3,7 +3,7 @@
 import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
-import {CodePlatter, Pre} from './CodePlatter';
+import {CodePlatter, Pre, ShareUrlProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
 import {flushSync} from 'react-dom';
@@ -96,10 +96,31 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let searchParams = new URLSearchParams();
+  let exampleType = useContext(ExampleSwitcherContext);
+  if (exampleType) {
+    searchParams.set('exampleType', String(exampleType));
+  }
+
+  for (let prop in props) {
+    let value = props[prop];
+    if (
+      value != null &&
+      controls[prop] != null &&
+      (controls[prop].default == null || value !== controls[prop].default)
+    ) {
+      searchParams.set(prop, JSON.stringify(value));
+    }
+  }
+
+  let url = '?' + searchParams.toString();
+
   return (
     <Context.Provider value={{component, name, importSource, controls, props, setProps, propsObject}}>
       <div hidden ref={ref} />
-      {children}
+      <ShareUrlProvider value={url}>
+        {children}
+      </ShareUrlProvider>
     </Context.Provider>
   );
 }
@@ -146,32 +167,12 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
 
 interface CodeOutputProps {
   code?: ReactNode,
-  files?: {[name: string]: string},
   type?: 'vanilla' | 'tailwind' | 's2',
-  registryUrl?: string
+  showCoachMark?: boolean
 }
 
-export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
+export function CodeOutput({code, type, showCoachMark}: CodeOutputProps) {
   let {name, importSource, props, controls, propsObject} = useContext(Context);
-  let searchParams = new URLSearchParams();
-
-  let exampleType = useContext(ExampleSwitcherContext);
-  if (exampleType) {
-    searchParams.set('exampleType', String(exampleType));
-  }
-
-  for (let prop in props) {
-    let value = props[prop];
-    if (
-      value != null &&
-      controls[prop] != null &&
-      (controls[prop].default == null || value !== controls[prop].default)
-    ) {
-      searchParams.set(prop, JSON.stringify(value));
-    }
-  }
-
-  let url = '?' + searchParams.toString();
 
   if (propsObject) {
     props = {[propsObject]: props};
@@ -179,7 +180,7 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
 
   code ||= (
     <Pre>
-      <code>
+      <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
         {importSource ? renderImports(name, importSource, props) : null}
         {renderElement(name, props, controls)}
       </code>
@@ -187,7 +188,7 @@ export function CodeOutput({code, files, type, registryUrl}: CodeOutputProps) {
   );
 
   return (
-    <CodePlatter shareUrl={url} files={files} type={type} registryUrl={registryUrl}>
+    <CodePlatter type={type} showCoachMark={showCoachMark}>
       {code}
     </CodePlatter>
   );
@@ -1017,8 +1018,8 @@ function PlacementControl({control, value, onChange}) {
             "sb .  .  .  eb"
             ".  bs bc be . "
           `,
-          gridTemplateColumns: '25px 24px 24px 25px 24px',
-          gridTemplateRows: '25px 24px 24px 25px 24px'
+          gridTemplateColumns: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))',
+          gridTemplateRows: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))'
         }}>
         <PlacementControlItem id="top start" style={{gridArea: 'ts'}} />
         <PlacementControlItem id="top" style={{gridArea: 'tc'}} />

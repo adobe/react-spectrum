@@ -40,24 +40,7 @@
   }
 }
 
-.react-aria-Popover[data-trigger=Select] {
+.select-popover[data-trigger=Select] {
   width: var(--trigger-width);
   padding: 0;
-
-  .react-aria-ListBox {
-    display: block;
-    width: unset;
-    max-height: inherit;
-    min-height: unset;
-    border: none;
-
-    &[data-empty] {
-      min-height: var(--spacing-8);
-      padding: var(--spacing-2);
-    }
-
-    .react-aria-Header {
-      padding-left: var(--spacing-7);
-    }
-  }
 }

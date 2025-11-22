@@ -12,7 +12,9 @@ interface ExampleOutputProps {
 
 export function ExampleOutput({component, props = {}, align = 'center', orientation = 'horizontal'}: ExampleOutputProps) {
   return (
-    <div 
+    <div
+      role="group"
+      aria-label="Rendered component"
       className={style({
         display: 'flex',
         flexDirection: {

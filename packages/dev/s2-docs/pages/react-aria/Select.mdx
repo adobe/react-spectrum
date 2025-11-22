@@ -7,6 +7,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
+export const relatedPages = [{'title': 'useSelect', 'url': 'https://react-spectrum.adobe.com/react-aria/useSelect.html'}];
 
 # Select
 
@@ -103,9 +104,8 @@ function Example() {
 "use client";
 import {Select, Label, SelectValue, Autocomplete, useFilter} from 'react-aria-components';
 import {Button} from 'vanilla-starter/Button';
-import {SelectItem} from 'vanilla-starter/Select';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {Popover} from 'vanilla-starter/Popover';
-import {ListBox} from 'vanilla-starter/ListBox';
 import {SearchField} from 'vanilla-starter/SearchField';
 import {ChevronDown} from 'lucide-react';
 
@@ -119,11 +119,11 @@ function Example() {
         <SelectValue />
         <ChevronDown size={18} />
       </Button>
-      <Popover hideArrow>
+      <Popover hideArrow className="select-popover">
         {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
           <SearchField aria-label="Search tags" placeholder="Search tags" autoFocus style={{margin: 4}} />
-          <ListBox>
+          <SelectListBox>
             {/*- end highlight -*/}
             <SelectItem>News</SelectItem>
             <SelectItem>Travel</SelectItem>
@@ -134,7 +134,7 @@ function Example() {
             <SelectItem>Technology</SelectItem>
             <SelectItem>Health</SelectItem>
             <SelectItem>Science</SelectItem>
-          </ListBox>
+          </SelectListBox>
         </Autocomplete>
       </Popover>
     </Select>
@@ -150,7 +150,7 @@ Use the `SelectValue` render prop function to display the selected items as a [T
 "use client";
 import {Autocomplete, Select, SelectValue, Group, useFilter} from 'react-aria-components';
 import {Button} from 'vanilla-starter/Button';
-import {ListBox, DropdownItem} from 'vanilla-starter/ListBox';
+import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
 import {Label} from 'vanilla-starter/Form';
 import {Popover} from 'vanilla-starter/Popover';
 import {Plus} from 'lucide-react';
@@ -243,16 +243,17 @@ function SelectWithTagGroup() {
         {/*- end highlight -*/}
         <Button variant="primary"><Plus /></Button>
       </Group>
-      <Popover 
+      <Popover
         // Position popover relative to the wrapping div instead of the Button
         triggerRef={triggerRef}
         hideArrow
+        className="select-popover"
         style={{display: 'flex', flexDirection: 'column', width: 250, padding: 4}}>
         <Autocomplete filter={contains}>
           <SearchField aria-label="Search states" placeholder="Search states" autoFocus style={{marginBottom: 4}} />
-          <ListBox items={states}>
-            {state => <DropdownItem>{state.name}</DropdownItem>}
-          </ListBox>
+          <SelectListBox items={states}>
+            {state => <SelectItem>{state.name}</SelectItem>}
+          </SelectListBox>
         </Autocomplete>
       </Popover>
     </Select>

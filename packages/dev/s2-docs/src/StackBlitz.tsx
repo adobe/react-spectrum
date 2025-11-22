@@ -1,4 +1,9 @@
-export function createStackBlitz(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' | 's2' = 'vanilla') {
+export function createStackBlitz(
+  files: {[name: string]: string},
+  deps: {[name: string]: string},
+  type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
+  entry: string = 'Example'
+) {
   let form = document.createElement('form');
   form.hidden = true;
   form.method = 'POST';
@@ -23,7 +28,7 @@ export function createStackBlitz(files: {[name: string]: string}, type: 'vanilla
   input.value = 'description';
   form.appendChild(input);
 
-  let generatedFiles = getFiles(files, type);
+  let generatedFiles = getFiles(files, deps, type, entry);
   for (let name in generatedFiles) {
     input = document.createElement('input');
     input.type = 'hidden';
@@ -37,7 +42,13 @@ export function createStackBlitz(files: {[name: string]: string}, type: 'vanilla
   form.remove();
 }
 
-function getFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' | 's2' = 'vanilla') {
+function getFiles(
+  files: {[name: string]: string},
+  deps: {[name: string]: string},
+  type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
+  entry: string = 'Example'
+) {
+  let entryName = entry.split('/').pop()!.split('.')[0];
   return {
     'package.json': JSON.stringify({
       name: 'react-aria-starter',
@@ -50,13 +61,9 @@ function getFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' 
         preview: 'vite preview'
       },
       dependencies: {
-        'react-aria-components': '^1.10.0',
         react: '^19',
         'react-dom': '^19',
-        'lucide-react': '^0.514.0',
-        ...(type === 'tailwind' ? {
-          'tailwind-variants': '^0.3.1'
-        } : {})
+        ...deps
       },
       devDependencies: {
         '@types/react': '^19',
@@ -90,11 +97,10 @@ export default defineConfig({
 </body>
 </html>
 `,
-    'src/index.tsx': `import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import {Example} from './Example';
+    'src/index.tsx': `import {createRoot} from 'react-dom/client';
+import ${entryName} from './${entryName}';
 
-createRoot(document.getElementById('root')!).render(<Example />);
+createRoot(document.getElementById('root')!).render(<${entryName} />);
 `,
     'tsconfig.json': JSON.stringify({
       compilerOptions: {

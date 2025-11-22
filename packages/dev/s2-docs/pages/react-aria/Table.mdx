@@ -8,6 +8,7 @@ import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['data', 'grid'];
+export const relatedPages = [{'title': 'useTable', 'url': 'https://react-spectrum.adobe.com/react-aria/useTable.html'}];
 
 # Table
 
@@ -89,7 +90,7 @@ export const tags = ['data', 'grid'];
 
 ## Content
 
-`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -639,6 +640,10 @@ function ReorderableTable() {
   );
 }
 ```
+
+## Examples
+
+<ExampleList tag="table" pages={props.pages} />
 
 ## API
 
