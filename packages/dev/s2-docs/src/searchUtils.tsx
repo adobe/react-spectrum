@@ -219,7 +219,6 @@ export function useSearchTagSelection(
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
   const prevSearchWasEmptyRef = useRef<boolean>(true);
-  const [hasShowAllTriggered, setHasShowAllTriggered] = useState(false);
 
   // Ensure selected tag is valid for the current library
   const baseSectionIds = sectionTags.map(s => s.id);
@@ -227,12 +226,8 @@ export function useSearchTagSelection(
   const allBaseIds = useMemo(() => [...baseSectionIds, ...resourceTagIds], [baseSectionIds, resourceTagIds]);
   const isResourceSelected = selectedTagId && resourceTagIds.includes(selectedTagId);
 
-  useEffect(() => {
-    // "All" tag is shown once a non-Resource search starts 
-    if (searchValue.trim().length > 0 && !isResourceSelected) {
-      setHasShowAllTriggered(true);
-    }
-  }, [searchValue, isResourceSelected]);
+  // "All" tag is shown when there's a search value and a resource tag is not selected
+  const hasShowAllTriggered = searchValue.trim().length > 0 && !isResourceSelected;
 
   const sectionIds = useMemo(() => {
     return hasShowAllTriggered ? ['all', ...allBaseIds] : allBaseIds;
@@ -262,13 +257,8 @@ export function useSectionTagsForDisplay(
   selectedTagId: string,
   resourceTagIds: string[]
 ): Tag[] {
-  const [hasShowAllTriggered, setHasShowAllTriggered] = useState(false);
-
-  useEffect(() => {
-    if (searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId)) {
-      setHasShowAllTriggered(true);
-    }
-  }, [searchValue, selectedTagId, resourceTagIds]);
+  // "All" tag is shown when there's a search value and a resource tag is not selected
+  const hasShowAllTriggered = searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId);
 
   return useMemo(() => {
     const base = sections.map(s => ({id: s.id, name: s.name}));
