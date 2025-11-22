@@ -5,6 +5,7 @@ import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
+import type {DownloadFiles} from './CodeBlock';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -49,10 +50,7 @@ export function CodePlatterProvider(props: CodePlatterContextValue & {children: 
   return <CodePlatterContext.Provider value={props}>{props.children}</CodePlatterContext.Provider>;
 }
 
-interface FileProviderContextValue {
-  files?: {[name: string]: string},
-  deps?: {[name: string]: string},
-  urls?: {[url: string]: string},
+interface FileProviderContextValue extends DownloadFiles {
   entry?: string
 }
 
@@ -225,11 +223,11 @@ export function Pre({children}) {
   );
 }
 
-function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: {[name: string]: string}, urls: {[name: string]: string}, entry: string | undefined) {
+function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: DownloadFiles['files'], urls: {[name: string]: string}, entry: string | undefined): DownloadFiles['files'] {
   if (!entry) {
     return {
       ...files,
-      'Example.tsx': getExampleCode(codeRef, urls)
+      'Example.tsx': {contents: getExampleCode(codeRef, urls)}
     };
   }
 
