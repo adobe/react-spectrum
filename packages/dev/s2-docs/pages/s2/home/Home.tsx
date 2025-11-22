@@ -91,7 +91,7 @@ export function Home() {
           <div className={style({display: {default: 'none', sm: 'contents'}})}>
             <Link staticColor="white" isQuiet isStandalone href="../blog/index.html">Blog</Link>
             <Link staticColor="white" isQuiet isStandalone href="../releases/index.html">Releases</Link>
-            <Link staticColor="white" isQuiet isStandalone href="../react-spectrum/index.html">React Spectrum</Link>
+            <Link staticColor="white" isQuiet isStandalone href="../react-aria/index.html">React Aria</Link>
             <Link staticColor="white" isQuiet isStandalone href="../internationalized/index.html">Internationalized</Link>
           </div>
           <Link staticColor="white" isQuiet isStandalone href="https://github.com/adobe/react-spectrum" target="_blank" aria-label="GitHub">
