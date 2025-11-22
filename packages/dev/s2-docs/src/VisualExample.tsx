@@ -1,6 +1,6 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
-import {FileProvider, ShadcnProvider} from './CodePlatter';
 import {DownloadFiles, Files, getFiles} from './CodeBlock';
+import {FileProvider, ShadcnProvider} from './CodePlatter';
 import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';

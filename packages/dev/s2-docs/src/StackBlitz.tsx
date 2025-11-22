@@ -1,4 +1,4 @@
-import type {DownloadFiles} from "./CodeBlock";
+import type {DownloadFiles} from './CodeBlock';
 
 export function createStackBlitz(
   files: DownloadFiles['files'],

@@ -6,8 +6,8 @@ import Chevron from '../../../@react-spectrum/s2/ui-icons/Chevron';
 import {CodeClient} from './CodeClient';
 import More from '@react-spectrum/s2/icons/More';
 import {pressScale} from '@react-spectrum/s2';
-import {useMemo, useRef} from 'react';
 import {Token} from './CodeToken';
+import {useMemo, useRef} from 'react';
 
 const trigger = style({
   ...focusRing(),

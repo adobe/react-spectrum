@@ -43,7 +43,7 @@ function Highlight({tokens}) {
 }
 
 function Focus({tokens}) {
-  return <span><CodeClient tokens={tokens} /></span>
+  return <span><CodeClient tokens={tokens} /></span>;
 }
 
 const groupings = {

@@ -1,7 +1,7 @@
 'use client';
-import {Token} from './CodeToken';
 import {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Token} from './CodeToken';
 
 const styles = [
   style({color: 'magenta-1000'}), // keyword
