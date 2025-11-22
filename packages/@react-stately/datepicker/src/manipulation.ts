@@ -91,6 +91,9 @@ export function cycleDate(value: IncompleteDate | IncompleteDateTime, field: Dat
         mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
   }
 
+  if (value.calendar.balanceDate) {
+    value.calendar.balanceDate(mutable);
+  }
   return mutable;
 }
 
