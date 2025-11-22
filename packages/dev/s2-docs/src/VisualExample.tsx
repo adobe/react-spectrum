@@ -185,7 +185,7 @@ export function VisualExample({component, docs, links, importSource, props, init
               {Object.keys(controls).map(control => <Control key={control} name={control} />)}
             </div>
             <div style={{gridArea: 'files', overflow: 'hidden'}}>
-              {files ? <Files files={files} type={type}>{output}</Files> : output}
+              {files ? <Files files={files} downloadFiles={downloadFiles.files} type={type}>{output}</Files> : output}
             </div>
           </div>
         </ShadcnProvider>
