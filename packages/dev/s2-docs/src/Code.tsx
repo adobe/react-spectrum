@@ -4,6 +4,7 @@ import {CodeProps} from './VisualExampleClient';
 import {HastNode, HastTextNode, highlightHast, Language} from 'tree-sitter-highlight';
 import React, {ReactNode} from 'react';
 import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {TabLink} from './FileTabs';
 
 const property = style({color: 'indigo-1000'});
 const fn = style({color: 'red-1000'});
@@ -237,6 +238,12 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
       let link = links[children];
       tagName = CodeLink;
       properties = {...properties, href: link};
+    }
+
+    // Link to imported files.
+    if (properties?.className === 'string' && typeof children === 'string' && /^['"]\.\//.test(children)) {
+      tagName = TabLink;
+      properties = {...properties, name: children.slice(3, -1)};
     }
 
     if (tagName === 'span' && !className) {
