@@ -9,6 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
 export const tags = ['calendar'];
+export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html'}];
 
 # RangeCalendar
 
@@ -48,7 +49,7 @@ function Example() {
     end: parseDate('2025-02-12')
   });
   let formatter = useDateFormatter({ dateStyle: 'long' });
-  
+
   return (
     <>
       <RangeCalendar
@@ -230,13 +231,13 @@ function Example(props) {
         [...Array(props.visibleDuration.months).keys()].map(i => (
           <div key={i} style={{flex: 1}}>
             <header style={{minHeight: 32}}>
-              {i === 0 && 
+              {i === 0 &&
                 <Button slot="previous" variant="quiet">
                   <ChevronLeft />
                 </Button>
               }
               <Heading>{monthFormatter.format(state.visibleRange.start.add({months: i}).toDate(state.timeZone))}</Heading>
-              {i === props.visibleDuration.months - 1 && 
+              {i === props.visibleDuration.months - 1 &&
                 <Button slot="next" variant="quiet">
                   <ChevronRight />
                 </Button>
