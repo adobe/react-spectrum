@@ -20,6 +20,8 @@
   white-space: nowrap;
   forced-color-adjust: none;
   cursor: text;
+  overflow-x: auto;
+  scrollbar-width: none;
 
   &[data-focus-within] {
     outline: 2px solid var(--focus-ring-color);
