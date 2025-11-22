@@ -64,7 +64,8 @@
     -webkit-tap-highlight-color: transparent;
 
     &[data-hovered] {
-      background: var(--highlight-hover);
+      background: var(--tint-900);
+      box-shadow: none;
     }
 
     &[data-focus-visible] {

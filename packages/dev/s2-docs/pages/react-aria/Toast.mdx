@@ -14,8 +14,6 @@ export const version = 'alpha';
 
 <PageDescription>{docs.exports.UNSTABLE_Toast.description}</PageDescription>
 
-## Example
-
 <ExampleSwitcher>
   ```tsx render docs={toastDocs.exports.MyToast} links={toastDocs.links} props={['title', 'description', 'timeout']} initialProps={{title: 'Files uploaded', description: '3 files uploaded successfully.', timeout: 0}} type="vanilla" files={["starters/docs/src/Toast.tsx", "starters/docs/src/Toast.css"]}
   "use client";
@@ -101,7 +99,7 @@ Include a `<Button slot="close">` to allow users to dismiss the toast manually. 
   <Content>We recommend that that the close button should be rendered as a sibling of `<ToastContent>` rather than inside it, so that screen readers announce the toast content without the close button first.</Content>
 </InlineAlert>
 
-## Auto-dismiss
+## Dismissal
 
 Use the `timeout` option to automatically dismiss toasts after a period of time. For accessibility, toasts should have a minimum timeout of **5 seconds**. Timers automatically pause when the user focuses or hovers over a toast.
 
@@ -131,7 +129,7 @@ function Example() {
   <Content>Only auto-dismiss toasts when the information is not critical, or may be found elsewhere. Some users may require additional time to read toasts, and screen zoom users may miss them entirely.</Content>
 </InlineAlert>
 
-## Programmatic dismissal
+### Programmatic dismissal
 
 Toasts can be programmatically dismissed using the key returned from `queue.add()`. This is useful when a toast becomes irrelevant before the user manually closes it.
 
@@ -174,8 +172,6 @@ When a toast is closed, focus moves to the next toast if any. When the last toas
 ## API
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
-
-A `<ToastRegion>` is an ARIA landmark region labeled "Notifications" by default. It accepts a render function that receives each visible toast and renders a `<Toast>` component. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) containing `<ToastContent>` and a close button.
 
 ```tsx links={{ToastRegion: '#toastregion', Toast: '#toast', ToastContent: '#toastcontent', ToastQueue: '#toastqueue', Button: 'Button.html'}}
 <ToastRegion>

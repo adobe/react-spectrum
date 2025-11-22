@@ -68,7 +68,7 @@ export function MyToast(props: ToastProps<MyToastContent>) {
       style={{viewTransitionName: props.toast.key}}
       className={composeTailwindRenderProps(
         props.className,
-        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast]"
+        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans"
       )}
     />
   );
