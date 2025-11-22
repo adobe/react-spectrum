@@ -11,6 +11,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
+import {Placement} from '@react-types/overlays';
 import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
@@ -29,6 +30,11 @@ export interface ContextualHelpProps extends
   Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
   Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
+  /**
+   * The placement of the popover with respect to the action button.
+   * @default 'bottom start'
+   */
+  placement?: Placement,
   /** Contents of the Contextual Help popover. */
   children: ReactNode,
   /**

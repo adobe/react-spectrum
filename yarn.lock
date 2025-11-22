@@ -7553,6 +7553,7 @@ __metadata:
     "@react-stately/utils": "npm:^3.10.8"
     "@react-types/dialog": "npm:^3.5.22"
     "@react-types/grid": "npm:^3.3.6"
+    "@react-types/overlays": "npm:^3.9.2"
     "@react-types/provider": "npm:^3.8.13"
     "@react-types/shared": "npm:^3.32.1"
     "@react-types/table": "npm:^3.13.4"

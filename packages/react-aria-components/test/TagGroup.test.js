@@ -527,9 +527,9 @@ describe('TagGroup', () => {
       let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -539,9 +539,9 @@ describe('TagGroup', () => {
       let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -551,9 +551,9 @@ describe('TagGroup', () => {
       let {getAllByRole} = renderTagGroup({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -572,7 +572,7 @@ describe('TagGroup', () => {
       let {getByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {onPressStart, onPressEnd, onPress, onClick});
       let tester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
       await tester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
