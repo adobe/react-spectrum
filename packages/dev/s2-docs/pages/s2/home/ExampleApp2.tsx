@@ -25,11 +25,13 @@ import {size, style} from "@react-spectrum/s2/style" with {type: 'macro'};
 import {Card, CardPreview, Content, Text, ActionButton, Avatar, ToggleButton, Breadcrumbs, Breadcrumb, TextField, ToggleButtonGroup, Slider, Checkbox, TextArea, TreeView, TreeViewItem, TreeViewItemContent, ActionButtonGroup, Button, Form, ComboBoxItem, ComboBox, NumberField, Picker, PickerItem, Accordion, Disclosure, DisclosureHeader, DisclosureTitle, DisclosurePanel, Divider} from '@react-spectrum/s2';
 import {Key} from 'react-aria';
 import {createContext, useContext, useRef, useState} from 'react';
-import {AccountMenu, ColorSchemeProvider} from './ExampleApp';
+import {ColorSchemeProvider} from './ExampleApp';
 import { useResizeObserver } from '@react-aria/utils';
 import { flushSync } from 'react-dom';
 import { Comment } from './Typography';
 import { HCMContext } from './HCM';
+import { AccountMenu } from './app/AccountMenu';
+import { Notifications } from './app/Notifications';
 
 export const FilterContext = createContext({
   brightness: 52,
@@ -152,9 +154,7 @@ export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}:
               <ActionButton isQuiet aria-label="Help">
                 <HelpCircle />
               </ActionButton>
-              <ActionButton isQuiet aria-label="Notifications">
-                <Bell />
-              </ActionButton>
+              <Notifications />
               <ActionButton isQuiet aria-label="Apps">
                 <Apps />
               </ActionButton>
@@ -265,7 +265,8 @@ export function ExampleApp2({onBack, children, showPanel, panel, onPanelChange}:
               [SM]: 'static'
             },
             bottom: 0,
-            insetEnd: 0
+            insetEnd: 0,
+            contain: 'size'
           })({isCollapsed: !selectedPanel, isTransitioning: !!transitioning})}
           onTransitionEnd={() => {
             setTransitioning(null);
