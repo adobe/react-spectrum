@@ -115,7 +115,7 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
 
 function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
   date.month = Math.max(1, Math.min(date.calendar.getMonthsInYear(date), date.month));
-  date.day = Math.max(1, Math.min(date.calendar.getMaxDays(), date.day));
+  date.day = Math.max(1, Math.min(date.calendar.getDaysInMonth(date), date.day));
 }
 
 export function constrain(date: Mutable<AnyCalendarDate>): void {
