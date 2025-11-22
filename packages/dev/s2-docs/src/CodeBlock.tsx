@@ -1,5 +1,5 @@
 // @ts-ignore
-import assets from 'url:../pages/**/*.{png,jpg,svg}';
+import assets from 'url:../pages/**/*.{png,jpg,svg}' with {env: 'react-client'};
 import {cache, ReactElement, ReactNode} from 'react';
 import {Code, ICodeProps} from './Code';
 import {CodePlatter, FileProvider, Pre} from './CodePlatter';

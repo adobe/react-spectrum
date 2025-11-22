@@ -229,7 +229,7 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
 
     // CodeProps includes the indent and newlines in case there are no props to show.
     if (node.tagName === 'div' && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) && React.isValidElement(childArray[1]) && childArray[1].type === CodeProps) {
-      children = childArray[1];
+      children = childArray.slice(1);
     }
 
     let tagName: any = node.tagName;
