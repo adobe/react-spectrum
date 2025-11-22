@@ -1018,8 +1018,8 @@ function PlacementControl({control, value, onChange}) {
             "sb .  .  .  eb"
             ".  bs bc be . "
           `,
-          gridTemplateColumns: '25px 24px 24px 25px 24px',
-          gridTemplateRows: '25px 24px 24px 25px 24px'
+          gridTemplateColumns: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))',
+          gridTemplateRows: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))'
         }}>
         <PlacementControlItem id="top start" style={{gridArea: 'ts'}} />
         <PlacementControlItem id="top" style={{gridArea: 'tc'}} />

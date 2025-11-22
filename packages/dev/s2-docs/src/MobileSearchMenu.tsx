@@ -283,18 +283,31 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
 
     let filteredPages = filterPages(pages, searchValue);
 
-    return filteredPages
-      .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
+    let items = filteredPages.map(page => ({
+      id: page.url.replace(/^\//, ''),
+      name: getPageTitle(page),
+      href: page.url,
+      description: stripMarkdown(page.exports?.description),
+      date: page.exports?.date
+    }));
+
+    return sortItemsForDisplay(items, searchValue);
   };
 
   let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
     let librarySections = getSectionsForLibrary(libraryId);
     let allPages = Array.from(librarySections.values()).flat();
     let filteredPages = filterPages(allPages, searchValue);
-    return filteredPages
-      .sort((a, b) => getPageTitle(a).localeCompare(getPageTitle(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: getPageTitle(page), href: page.url, description: stripMarkdown(page.exports?.description)}));
+    
+    let items = filteredPages.map(page => ({
+      id: page.url.replace(/^\//, ''),
+      name: getPageTitle(page),
+      href: page.url,
+      description: stripMarkdown(page.exports?.description),
+      date: page.exports?.date
+    }));
+
+    return sortItemsForDisplay(items, searchValue);
   };
 
   let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
@@ -427,6 +440,11 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
           </div>
           {libraries.map(library => {
             const isIconsSelected = selectedSection === 'icons' && library.id === 'react-spectrum';
+            const libraryResourceTags = getResourceTags(library.id);
+            const selectedResourceTag = libraryResourceTags.find(tag => tag.id === selectedSection);
+            const placeholderText = selectedResourceTag 
+              ? `Search ${selectedResourceTag.name}` 
+              : `Search ${library.label}`;
             return (
               <MobileTabPanel key={library.id} id={library.id}>
                 <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
@@ -437,6 +455,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
                       onChange={handleSearchChange}
                       onFocus={handleSearchFocus}
                       onBlur={handleSearchBlur}
+                      placeholder={placeholderText}
                       styles={style({marginX: 16})} />
                     <div className={style({overflow: 'auto', paddingX: 8, paddingBottom: 8})}>
                       <SearchTagGroups
