@@ -449,20 +449,20 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
       let value = displayValue;
 
-      // // Reset day period to default without changing the hour.
-      // if (part === 'dayPeriod' && 'hour' in displayValue && 'hour' in placeholder) {
-      //   let isPM = displayValue.hour >= 12;
-      //   let shouldBePM = placeholder.hour >= 12;
-      //   if (isPM && !shouldBePM) {
-      //     value = displayValue.set({hour: displayValue.hour - 12}, false);
-      //   } else if (!isPM && shouldBePM) {
-      //     value = displayValue.set({hour: displayValue.hour + 12}, false);
-      //   }
-      // } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
-      //   value = displayValue.set({hour: placeholder['hour'] + 12}, false);
-      // } else if (part in displayValue) {
-      //   value = displayValue.set({[part]: placeholder[part]}, false);
-      // }
+      // Reset day period to default without changing the hour.
+      if (part === 'dayPeriod' && 'hour' in displayValue && 'hour' in placeholder) {
+        let isPM = displayValue.hour >= 12;
+        let shouldBePM = placeholder.hour >= 12;
+        if (isPM && !shouldBePM) {
+          value = displayValue.set({hour: displayValue.hour - 12}, false);
+        } else if (!isPM && shouldBePM) {
+          value = displayValue.set({hour: displayValue.hour + 12}, false);
+        }
+      } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
+        value = displayValue.set({hour: placeholder['hour'] + 12}, false);
+      } else if (part in displayValue) {
+        value = displayValue.set({[part]: placeholder[part]}, false);
+      }
       updatePlaceholder(value);
     },
     formatValue(fieldOptions: FieldOptions) {
