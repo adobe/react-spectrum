@@ -7,7 +7,7 @@ import {
   DateValue,
   CalendarCellProps,
   CalendarGridProps,
-  composeRenderProps
+  CalendarCarousel,
 } from 'react-aria-components';
 import {Heading, Text} from './Content';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
@@ -32,9 +32,11 @@ export function Calendar<T extends DateValue>(
           <Heading />
           <Button slot="next" variant="quiet"><ChevronRight /></Button>
         </header>
-        <CalendarGrid>
-          {(date) => <CalendarCell date={date} />}
-        </CalendarGrid>
+        <CalendarCarousel>
+          <CalendarGrid>
+            {(date) => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </CalendarCarousel>
         {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
       </AriaCalendar>
     )

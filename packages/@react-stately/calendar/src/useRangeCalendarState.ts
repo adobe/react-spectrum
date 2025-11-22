@@ -41,6 +41,8 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
   selectionAlignment?: 'start' | 'center' | 'end'
 }
 
+const DEFAULT_VISIBLE_DURATION: DateDuration = {months: 1};
+
 /**
  * Provides state management for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
@@ -52,7 +54,7 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
     onChange,
     createCalendar,
     locale,
-    visibleDuration = {months: 1},
+    visibleDuration = DEFAULT_VISIBLE_DURATION,
     minValue,
     maxValue,
     ...calendarProps} = props;

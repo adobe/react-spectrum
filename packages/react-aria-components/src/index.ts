@@ -19,7 +19,7 @@ export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext
 export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
-export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
+export {Calendar, CalendarCarousel, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxGroupStateContext} from './Checkbox';
 export {ColorArea, ColorAreaStateContext} from './ColorArea';
 export {ColorField, ColorFieldStateContext} from './ColorField';
@@ -90,7 +90,7 @@ export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer'
 export type {AutocompleteProps} from './Autocomplete';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
-export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
+export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarCarouselProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
 export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, CheckboxProps} from './Checkbox';
 export type {ColorAreaProps, ColorAreaRenderProps} from './ColorArea';
 export type {ColorFieldProps, ColorFieldRenderProps} from './ColorField';

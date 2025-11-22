@@ -70,6 +70,18 @@ export function alignEnd(date: CalendarDate, duration: DateDuration, locale: str
   return constrainStart(date, aligned, duration, locale, minValue, maxValue);
 }
 
+export function alignDate(date: CalendarDate, selectionAlignment: 'start' | 'center' | 'end', duration: DateDuration, locale: string, minValue?: DateValue | null, maxValue?: DateValue | null): CalendarDate {
+  switch (selectionAlignment) {
+    case 'start':
+      return alignStart(date, duration, locale, minValue, maxValue);
+    case 'end':
+      return alignEnd(date, duration, locale, minValue, maxValue);
+    case 'center':
+    default:
+      return alignCenter(date, duration, locale, minValue, maxValue);
+  }
+}
+
 export function constrainStart(
   date: CalendarDate,
   aligned: CalendarDate,

@@ -2,7 +2,6 @@
 
 .react-aria-RangeCalendar {
   width: fit-content;
-  max-width: 100%;
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
@@ -33,6 +32,7 @@
     padding: 0 2px;
     position: relative;
     z-index: 1;
+    outline: none;
 
     span {
       display: block;
@@ -57,7 +57,7 @@
       }
 
       &[data-selection-start],
-      &:is(td:first-child > *, [aria-disabled] + td > *)  {
+      &:is(td:first-child > *, [aria-disabled] + td > *, td:has([data-outside-month]) + td > *)  {
         border-start-start-radius: 9999px;
         border-end-start-radius: 9999px;
         border-inline-start-width: 0.5px;
@@ -66,7 +66,7 @@
       }
 
       &[data-selection-end],
-      &:is(td:last-child > *, td:has(+ [aria-disabled]) > *) {
+      &:is(td:last-child > *, td:has(+ [aria-disabled], + td > [data-outside-month]) > *) {
         border-end-end-radius: 9999px;
         border-start-end-radius: 9999px;
         border-inline-end-width: 0.5px;
@@ -95,7 +95,6 @@
     }
 
     &[data-focus-visible] {
-      outline: none;
       z-index: 2;
       span {
         outline: 2px solid var(--focus-ring-color);
