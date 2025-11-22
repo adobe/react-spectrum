@@ -20,7 +20,7 @@ const track = tv({
       true: 'bg-neutral-700 dark:bg-neutral-300 forced-colors:bg-[Highlight]! group-pressed:bg-neutral-800 dark:group-pressed:bg-neutral-200',
     },
     isDisabled: {
-      true: 'bg-neutral-100 dark:bg-neutral-800 group-selected:bg-neutral-300 dark:group-selected:bg-neutral-900 forced-colors:group-selected:bg-[GrayText]! border-neutral-300 dark:border-neutral-900 forced-colors:border-[GrayText]',
+      true: 'bg-neutral-100 dark:bg-neutral-800 group-selected:bg-neutral-300 dark:group-selected:bg-neutral-800 forced-colors:group-selected:bg-[GrayText]! border-neutral-300 dark:border-neutral-900 forced-colors:border-[GrayText]',
     }
   }
 });
@@ -35,7 +35,19 @@ const handle = tv({
     isDisabled: {
       true: 'forced-colors:outline-[GrayText]'
     }
-  }
+  },
+  compoundVariants: [
+    {
+      isSelected: false,
+      isDisabled: true,
+      class: 'bg-neutral-300 dark:bg-neutral-700'
+    },
+    {
+      isSelected: true,
+      isDisabled: true,
+      class: 'bg-neutral-50 dark:bg-neutral-700'
+    }
+  ]
 });
 
 export function Switch({ children, ...props }: SwitchProps) {

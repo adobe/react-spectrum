@@ -70,7 +70,7 @@ export function TreeItem(props: TreeItemProps) {
       <AriaTreeItemContent {...props}>
         {({ selectionMode, selectionBehavior, hasChildItems, isExpanded, isDisabled }) => (
           <div className={`flex items-center`}>
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
             <div className='shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]' />

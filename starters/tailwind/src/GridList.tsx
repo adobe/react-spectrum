@@ -44,7 +44,7 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
         <>
           {/* Add elements for drag and drop and selection. */}
           {allowsDragging && <Button slot="drag">≡</Button>}
-          {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+          {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
             <Checkbox slot="selection" />
           )}
           {children}

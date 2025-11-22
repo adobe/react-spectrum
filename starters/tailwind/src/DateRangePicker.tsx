@@ -28,7 +28,7 @@ export function DateRangePicker<T extends DateValue>(
   return (
     <AriaDateRangePicker {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
       {label && <Label>{label}</Label>}
-      <FieldGroup className="min-w-[208px] w-auto cursor-text">
+      <FieldGroup className="min-w-[208px] w-auto cursor-text disabled:cursor-default">
         <DateInput slot="start" className="ps-3 pe-2 text-sm" />
         <span aria-hidden="true" className="text-neutral-800 dark:text-neutral-200 forced-colors:text-[ButtonText] group-disabled:text-neutral-200 dark:group-disabled:text-neutral-600 forced-colors:group-disabled:text-[GrayText]">–</span>
         <DateInput slot="end" className="flex-1 ps-2 pe-3 text-sm" />

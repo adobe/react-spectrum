@@ -13,7 +13,7 @@ let styles = tv({
       true: 'bg-neutral-700 hover:bg-neutral-800 pressed:bg-neutral-900 text-white dark:bg-neutral-300 dark:hover:bg-neutral-200 dark:pressed:bg-neutral-100 dark:text-black forced-colors:bg-[Highlight]! forced-colors:text-[HighlightText]!'
     },
     isDisabled: {
-      true: 'border-transparent dark:border-transparent bg-neutral-100 dark:bg-neutral-800 forced-colors:bg-[ButtonFace]! text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]! border-black/5 dark:border-white/5 forced-colors:border-[GrayText]'
+      true: 'border-transparent dark:border-transparent bg-neutral-100 dark:bg-neutral-800 forced-colors:bg-[ButtonFace]! text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]!'
     }
   }
 });
