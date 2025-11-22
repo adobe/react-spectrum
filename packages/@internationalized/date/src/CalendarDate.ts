@@ -371,9 +371,10 @@ export class ZonedDateTime {
   }
 
   /** Returns a new `ZonedDateTime` with the given fields set to the provided values. Other fields will be constrained accordingly. */
-  set(fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime {
-    return setZoned(this, fields, disambiguation);
+  set(fields: DateFields & TimeFields, disambiguation?: Disambiguation): ZonedDateTime { 
+    return setZoned(this, fields, disambiguation); 
   }
+
 
   /**
    * Returns a new `ZonedDateTime` with the given field adjusted by a specified amount.

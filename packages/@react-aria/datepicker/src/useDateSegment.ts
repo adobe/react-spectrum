@@ -83,13 +83,13 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     onIncrementToMax: () => {
       enteredKeys.current = '';
       if (segment.maxValue !== undefined) {
-        state.setSegment(segment.type, segment.maxValue);
+        state.incrementToMinMax(segment.type, segment.maxValue);
       }
     },
     onDecrementToMin: () => {
       enteredKeys.current = '';
       if (segment.minValue !== undefined) {
-        state.setSegment(segment.type, segment.minValue);
+        state.incrementToMinMax(segment.type, segment.minValue);
       }
     }
   });

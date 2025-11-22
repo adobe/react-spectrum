@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, DateFormatter, getLocalTimeZone, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, DateFormatter, getLocalTimeZone, now, Time} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 // @ts-ignore
 import i18nMessages from '../intl/*.json';
@@ -18,6 +18,8 @@ import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationa
 import {mergeValidation, VALID_VALIDITY_STATE} from '@react-stately/form';
 import {RangeValue, ValidationResult} from '@react-types/shared';
 import {useState} from 'react';
+import { fromCalendarToIncompleteDate, toCalendar, toIncompleteDate, toIncompleteDateTime, toIncompleteZonedDateTime } from './conversion';
+import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from './IncompleteDate';
 
 const dictionary = new LocalizedStringDictionary(i18nMessages);
 
@@ -223,9 +225,10 @@ export function convertValue(value: DateValue | null | undefined, calendar: Cale
 }
 
 
-export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): DateValue {
-  if (placeholderValue) {
-    return convertValue(placeholderValue, calendar)!;
+export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime {
+  if(placeholderValue) {
+    const v =  convertValue(placeholderValue, calendar) as DateValue;
+    return fromCalendarToIncompleteDate(v)
   }
 
   let date = toCalendar(now(timeZone ?? getLocalTimeZone()).set({
@@ -236,14 +239,14 @@ export function createPlaceholderDate(placeholderValue: DateValue | null | undef
   }), calendar);
 
   if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
-    return toCalendarDate(date);
+    return toIncompleteDate(date);
   }
 
   if (!timeZone) {
-    return toCalendarDateTime(date);
+    return toIncompleteDateTime(date);
   }
 
-  return date;
+  return toIncompleteZonedDateTime(date);
 }
 
 export function useDefaultProps(v: DateValue | null, granularity: Granularity | undefined): [Granularity, string | undefined] {
