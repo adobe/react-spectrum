@@ -1025,7 +1025,10 @@ function PlacementControl({control, value, onChange}) {
         disallowEmptySelection
         selectedKeys={[value]}
         onSelectionChange={keys => onChange([...keys][0])}
-        className=""
+        className={style({
+          gridTemplateColumns: [25, 24, 24, 25, 24],
+          gridTemplateRows: [25, 24, 24, 25, 24]
+        })}
         style={{
           display: 'grid',
           gridTemplateAreas: `
@@ -1034,9 +1037,7 @@ function PlacementControl({control, value, onChange}) {
             "sc .  .  .  ec"
             "sb .  .  .  eb"
             ".  bs bc be . "
-          `,
-          gridTemplateColumns: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))',
-          gridTemplateRows: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))'
+          `
         }}>
         <PlacementControlItem id="top start" style={{gridArea: 'ts'}} />
         <PlacementControlItem id="top" style={{gridArea: 'tc'}} />
