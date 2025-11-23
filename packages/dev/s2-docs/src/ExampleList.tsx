@@ -61,7 +61,8 @@ export function ExampleList({tag, pages}) {
             itemProp="item"
             itemScope
             itemType="https://schema.org/TechArticle">
-            <Card href={example.url} itemProp="url">
+            <meta itemProp="url" content={example.url} />
+            <Card href={example.url}>
               <CardPreview>
                 <ExampleImage name={example.name} />
               </CardPreview>
