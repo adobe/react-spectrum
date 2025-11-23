@@ -9,6 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
+export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'https://react-spectrum.adobe.com/react-aria/useDateRangePicker.html'}];
 
 # DateRangePicker
 
@@ -50,7 +51,7 @@ function Example() {
     end: parseDate('2025-02-12')
   });
   let formatter = useDateFormatter({ dateStyle: 'long' });
-  
+
   return (
     <>
       <DateRangePicker

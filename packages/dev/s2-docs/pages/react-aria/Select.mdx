@@ -7,6 +7,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
 
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
+export const relatedPages = [{'title': 'useSelect', 'url': 'https://react-spectrum.adobe.com/react-aria/useSelect.html'}];
 
 # Select
 
@@ -242,7 +243,7 @@ function SelectWithTagGroup() {
         {/*- end highlight -*/}
         <Button variant="primary"><Plus /></Button>
       </Group>
-      <Popover 
+      <Popover
         // Position popover relative to the wrapping div instead of the Button
         triggerRef={triggerRef}
         hideArrow
