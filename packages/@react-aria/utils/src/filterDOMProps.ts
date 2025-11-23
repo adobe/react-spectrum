@@ -31,8 +31,7 @@ const linkPropNames = new Set([
   'rel',
   'download',
   'ping',
-  'referrerPolicy',
-  'itemProp'
+  'referrerPolicy'
 ]);
 
 const globalAttrs = new Set([

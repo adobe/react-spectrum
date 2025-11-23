@@ -22,11 +22,12 @@ export function PostList({pages}: {pages: Page[]}) {
         <article key={post.name} itemProp="blogPost" itemScope itemType="https://schema.org/BlogPosting">
           <header className={style({marginBottom: 12})}>
             <h2 itemProp="headline" className={style({font: 'title-xl', margin: 0})}>
-              <Link itemProp="url" href={post.url}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link>
+              <Link href={post.url}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link>
             </h2>
             {post.exports?.author && <Byline author={post.exports?.author} authorLink={post.exports?.authorLink} date={post.exports?.date} />}
             {post.exports?.date && !post.exports.author && <Time date={post.exports.date} />}
           </header>
+          <meta itemProp="url" content={post.url} />
           <p itemProp="description" className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(post.exports?.description, {forceInline: true, forceBlock: false})}</p>
         </article>
       ))}
@@ -43,7 +44,12 @@ export function Byline({author, authorLink, date}: {author?: string, authorLink?
         <>
           {'By '}
           <span itemProp="author" itemScope itemType="https://schema.org/Person">
-            {authorLink ? <Link href={authorLink} isQuiet itemProp="url" rel="author" target="_blank"><span itemProp="name">{author}</span></Link> : <span itemProp="name">{author}</span>}
+            {authorLink ? (<>
+              <meta itemProp="url" content={authorLink} />
+              <Link href={authorLink} isQuiet rel="author" target="_blank">
+                <span itemProp="name">{author}</span>
+              </Link>
+            </>) : <span itemProp="name">{author}</span>}
           </span>
           {' · '}
         </>
