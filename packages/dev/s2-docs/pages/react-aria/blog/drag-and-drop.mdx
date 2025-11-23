@@ -57,7 +57,9 @@ After years of research, development, and extensive testing across many devices 
 
 Drag and drop starts with a drag source, implemented using the [useDrag](../useDrag.html) hook, which provides data to be dragged. Multiple items can be dragged at once, and each item can include several representations in different data formats so that they can be dropped in many compatible locations. The [useDrop](../useDrop.html) hook can be used to implement a drop target, which accepts dragged items containing specific data types.
 
-<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
+<div style={{maxWidth: 'calc(var(--text-width) + 64px)', margin: '0 auto'}}>
+  <Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
+</div>
 
 For mouse and touch screen users, React Aria uses the native [HTML drag and drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) under the hood. This means items can be dragged within the browser window, between browser windows, or even outside the browser into external native applications (e.g. email programs). External items such as files or directories from the user's device may also be dragged in.
 
@@ -80,7 +82,7 @@ All of these accessibility features are implemented behind the scenes using the 
 Collection components such as lists or tables are treated as a single drop target, so that users can easily tab past them to get to the next drop target without going through every item. Within a droppable collection, keys such as `ArrowDown` and `ArrowUp` can be used to select a drop position, such as on the collection itself, on an item, or between items. Drop indicator elements may be added between items to show the user where dropped data will be inserted, and include accessibility labels such as "Insert between item A and item B".
 
 <figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
-  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 4}}>
+  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 'var(--anatomy-radius)'}}>
     <RootDropPosition role="img" aria-label="Root drop position diagram, showing the root drop position." />
     <OnDropPosition role="img" aria-label="On drop position diagram, showing the on drop position." />
     <BetweenDropPosition role="img" aria-label="Between drop position diagram, showing the between drop position." />

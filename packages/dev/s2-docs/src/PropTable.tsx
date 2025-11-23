@@ -29,7 +29,7 @@ const GROUPS = {
     /^on[A-Z]/
   ],
   Links: [
-    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'routerOptions'
+    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'itemProp', 'routerOptions'
   ],
   Styling: [
     'style', 'className'

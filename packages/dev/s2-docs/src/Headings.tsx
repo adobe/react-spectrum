@@ -1,5 +1,6 @@
 'use client';
 
+import {getTextWidth} from './textWidth';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link} from '@react-spectrum/s2';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -50,6 +51,34 @@ function AnchorLink({anchorId, isHovered, level, headingText}) {
           UNSAFE_style={{marginBottom: (level === 3 || level === 4) ? 0 : undefined}} />
       </Link>
     </span>
+  );
+}
+
+const h1 = style({
+  font: 'heading-3xl',
+  fontSize: {
+    default: {
+      // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+      default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
+      isLongForm: 'heading-xl'
+    },
+    lg: {
+      default: 'heading-3xl',
+      isLongForm: 'heading-2xl'
+    }
+  },
+  textWrap: 'balance',
+  marginY: 0,
+  width: 'full',
+  maxWidth: '--text-width',
+  marginX: 'auto'
+});
+
+export function H1({children, isLongForm, ...props}) {
+  return (
+    <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1({isLongForm})}>
+      {children}
+    </h1>
   );
 }
 

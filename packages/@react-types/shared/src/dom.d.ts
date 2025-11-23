@@ -218,6 +218,8 @@ export interface LinkDOMProps {
   ping?: string,
   /** How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy). */
   referrerPolicy?: HTMLAttributeReferrerPolicy,
+  /** Associates the link URL with a microdata object. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/itemprop). */
+  itemProp?: string,
   /** Options for the configured client side router. */
   routerOptions?: RouterOptions
 }

@@ -35,6 +35,8 @@ export function ExampleList({tag, pages}) {
 
   return (
     <ul
+      itemScope
+      itemType="https://schema.org/ItemList"
       className={style({
         display: 'grid',
         gridTemplateColumns: `repeat(auto-fit, ${size(240)})`,
@@ -47,17 +49,28 @@ export function ExampleList({tag, pages}) {
           lg: 'start'
         }
       })}>
+      <meta itemProp="name" content="Examples" />
       {examples.map(example => (
-        <li key={example.url}>
-          <Card href={example.url}>
-            <CardPreview>
-              <ExampleImage name={example.name} />
-            </CardPreview>
-            <Content>
-              <Text slot="title">{getTitle(example)}</Text>
-              {example.exports?.description ? <Text slot="description">{example.exports?.description}</Text> : null}
-            </Content>
-          </Card>
+        <li
+          key={example.url}
+          itemProp="itemListElement"
+          itemScope
+          itemType="https://schema.org/ListItem">
+          <div
+            className={style({display: 'contents'})}
+            itemProp="item"
+            itemScope
+            itemType="https://schema.org/TechArticle">
+            <Card href={example.url} itemProp="url">
+              <CardPreview>
+                <ExampleImage name={example.name} />
+              </CardPreview>
+              <Content>
+                <Text slot="title" itemProp="headline">{getTitle(example)}</Text>
+                {example.exports?.description ? <Text slot="description" itemProp="description">{example.exports?.description}</Text> : null}
+              </Content>
+            </Card>
+          </div>
         </li>
       ))}
     </ul>
@@ -85,7 +98,7 @@ export function ExampleImage({name}) {
     <picture>
       <source srcSet={light} media="(prefers-color-scheme: light)" />
       <source srcSet={dark} media="(prefers-color-scheme: dark)" />
-      <img src={light} alt="" className={image} />
+      <img src={light} alt="" itemProp="image" className={image} />
     </picture>
   );
 }

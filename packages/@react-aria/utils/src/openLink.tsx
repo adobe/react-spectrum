@@ -180,7 +180,8 @@ export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
     rel: props?.rel,
     download: props?.download,
     ping: props?.ping,
-    referrerPolicy: props?.referrerPolicy
+    referrerPolicy: props?.referrerPolicy,
+    itemProp: props?.itemProp
   };
 }
 
