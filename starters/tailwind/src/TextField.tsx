@@ -22,6 +22,7 @@ const inputStyles = tv({
 export interface TextFieldProps extends AriaTextFieldProps {
   label?: string;
   description?: string;
+  placeholder?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
