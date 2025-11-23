@@ -361,7 +361,7 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
       {page.exports?.version && <VersionBadge version={page.exports.version} />}
       {page.exports?.isSubpage
         ? <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} />
-        : <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
+        : page.tableOfContents?.[0].level === 1 && <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
       }
       <div
         className={style({display: 'contents'})}
@@ -378,7 +378,7 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
 function PostListContainer({page, children, isLongForm, isWide}: ArticleProps) {
   return (
     <div className={articleStyles({isLongForm, isWide})}>
-      <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
+      {page.tableOfContents?.[0].level === 1 && <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>}
       {children}
     </div>
   );
