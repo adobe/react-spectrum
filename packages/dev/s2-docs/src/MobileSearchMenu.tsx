@@ -204,10 +204,10 @@ function MobileTabPanel(props: Omit<RACTabPanelProps, 'children'> & {children: R
   );
 }
 
-export function MobileSearchMenu({pages, currentPage}: {pages: Page[], currentPage: Page}) {
+export function MobileSearchMenu({pages, currentPage, initialTag}: {pages: Page[], currentPage: Page, initialTag?: string}) {
   return (
     <MobileCustomDialog padding="none">
-      <MobileNav pages={pages} currentPage={currentPage} />
+      <MobileNav pages={pages} currentPage={currentPage} initialTag={initialTag} />
     </MobileCustomDialog>
   );
 }
@@ -226,7 +226,7 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
   );
 };
 
-function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
+function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage: Page, initialTag?: string}) {
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
@@ -367,8 +367,8 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
   const initialSelectedSection = useMemo(() => {
     const section = currentPage.exports?.section;
     const firstSection = currentLibrarySections[0]?.toLowerCase() || 'components';
-    return section ? section.toLowerCase() : firstSection;
-  }, [currentPage, currentLibrarySections]);
+    return initialTag || (section ? section.toLowerCase() : firstSection);
+  }, [initialTag, currentPage, currentLibrarySections]);
 
   const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
 
