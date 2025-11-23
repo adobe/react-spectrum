@@ -57,7 +57,7 @@ export function H2({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h2 {...props} id={id} className={style({font: 'heading-lg', marginTop: 48, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto'})} {...hoverProps}>
+    <h2 {...props} id={id} className={style({font: 'heading-lg', marginTop: 48, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance'})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={2} headingText={children} />
     </h2>
@@ -68,7 +68,7 @@ export function H3({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h3 {...props} id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto'})} {...hoverProps}>
+    <h3 {...props} id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance'})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={3} headingText={children} />
     </h3>
@@ -79,7 +79,7 @@ export function H4({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h4 {...props} id={id} className={style({font: 'heading-sm', maxWidth: '--text-width', marginX: 'auto'})} {...hoverProps}>
+    <h4 {...props} id={id} className={style({font: 'heading-sm', maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance'})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={4} headingText={children} />
     </h4>
