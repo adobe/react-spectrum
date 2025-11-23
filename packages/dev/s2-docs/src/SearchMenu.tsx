@@ -312,6 +312,7 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   ) : (
                     <ComponentCardView
+                      currentUrl={currentPage.url}
                       onAction={onClose}
                       items={selectedItems.map(item => ({
                         id: item.id,
