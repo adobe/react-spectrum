@@ -51,7 +51,7 @@ const DEFAULT_EXPANDED = new Set([
   'Value'
 ]);
 
-const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, wordBreak: 'break-word'});
 
 interface PropTableProps {
   component: TComponent,

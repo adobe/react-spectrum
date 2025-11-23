@@ -295,6 +295,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   display: 'flex',
                   flexDirection: 'column',
                   flexGrow: 1,
+                  minWidth: 0,
                   width: 'full'
                 })}>
                 <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
