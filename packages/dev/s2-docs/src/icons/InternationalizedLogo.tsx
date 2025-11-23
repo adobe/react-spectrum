@@ -5,7 +5,7 @@ export const InternationalizedLogo = ({size = 32}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      id="Layer_1"
+      aria-hidden
       viewBox="15 17 135 128"
       style={{width: size, height: size}}>
       <defs>
