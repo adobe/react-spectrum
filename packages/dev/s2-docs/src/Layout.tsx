@@ -359,8 +359,8 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
           lg: 'none'
         }
       })}>
-      <H2>Related pages</H2>
-      <Ul>
+      <H2 id="related-pages">Related pages</H2>
+      <Ul className={style({listStyleType: 'none'})}>
         {pages.map((page, i) => (
           <Li key={i}>
             <P>
@@ -374,6 +374,7 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
     </div>
   );
 }
+
 export function Time({date}: {date: string}) {
   let dateObj = new Date(date);
   return (

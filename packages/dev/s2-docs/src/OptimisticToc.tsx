@@ -46,12 +46,15 @@ function renderMobileToc(toc: TocNode[], seen = new Map()) {
 export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
   let pendingPage = usePendingPage(pages);
   let displayPage = pendingPage ?? currentPage;
-  
+
   return (
     <>
       <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center', marginBottom: 4, flexShrink: 0})}>On this page</div>
       <ScrollableToc>
         <Toc toc={displayPage.tableOfContents?.[0]?.children ?? []} key={displayPage.url} />
+        {currentPage.exports?.relatedPages && (
+          <RelatedPages pages={currentPage.exports.relatedPages} />
+        )}
       </ScrollableToc>
       <div className={style({flexShrink: 0})}>
         <Divider size="S" styles={style({marginY: 12})} />
@@ -61,17 +64,42 @@ export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: P
   );
 }
 
+function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+  return (
+    <div className={style({paddingTop: 24})}>
+      <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Related pages</div>
+      <OnPageNav>
+        <SideNav>
+          {pages.map((page, i) => (
+            <SideNavItem key={i}>
+              <SideNavLink href={page.url}>{page.title}</SideNavLink>
+            </SideNavItem>
+          ))}
+        </SideNav>
+      </OnPageNav>
+    </div>
+  );
+}
+
 export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
   let pendingPage = usePendingPage(pages);
   let displayPage = pendingPage ?? currentPage;
-  
+
   if ((displayPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {
     return null;
   }
-  
+
+  let withRelatedPages = displayPage.exports?.relatedPages ? [
+    ...(displayPage.tableOfContents ?? []),
+    {
+      level: 2,
+      title: 'Related pages',
+      children: []
+    }] : displayPage.tableOfContents!;
+
   return (
     <MobileOnPageNav currentPage={currentPage}>
-      {renderMobileToc(displayPage.tableOfContents ?? [])}
+      {renderMobileToc(withRelatedPages)}
     </MobileOnPageNav>
   );
 }
