@@ -77,6 +77,10 @@ export class IslamicCivilCalendar implements Calendar {
     return 12;
   }
 
+  getMaxMonths(): number {
+    return 12
+  }
+
   getDaysInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 355 : 354;
   }

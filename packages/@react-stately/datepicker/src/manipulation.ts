@@ -85,7 +85,7 @@ export function cycleDate(value: IncompleteDate | IncompleteDateTime, field: Dat
       break;
     }
     case 'month':
-      mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
+      mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMaxMonths(), options?.round);
       break;
     default:
       mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);

@@ -100,6 +100,10 @@ export class EthiopicCalendar implements Calendar {
     return 13;
   }
 
+  getMaxMonths(): number {
+    return 13;
+  }
+
   getDaysInYear(date: AnyCalendarDate): number {
     return 365 + getLeapDay(date.year);
   }

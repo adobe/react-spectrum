@@ -67,6 +67,10 @@ export class PersianCalendar implements Calendar {
     return 12;
   }
 
+  getMaxMonths(): number {
+    return 12
+  }
+
   getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month <= 6) {
       return 31;

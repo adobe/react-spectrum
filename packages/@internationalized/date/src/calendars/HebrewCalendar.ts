@@ -180,6 +180,10 @@ export class HebrewCalendar implements Calendar {
     return isLeapYear(date.year) ? 13 : 12;
   }
 
+  getMaxMonths(): number {
+    return 13
+  }
+
   getDaysInYear(date: AnyCalendarDate): number {
     return getDaysInYear(date.year);
   }

@@ -582,13 +582,13 @@ function getSegmentLimits(date: IncompleteValue, type: string, options: Intl.Res
       return {
         value: date.year,
         minValue: 1,
-        maxValue: date.calendar.getYearsInEra(date)
+        maxValue: 9999
       };
     case 'month':
       return {
         value: date.month,
         minValue: getMinimumMonthInYear(date),
-        maxValue: date.calendar.getMonthsInYear(date)
+        maxValue: date.calendar.getMaxMonths()
       };
     case 'day':
       return {
