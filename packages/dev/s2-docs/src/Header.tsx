@@ -102,13 +102,6 @@ export default function Header(props: PageProps) {
     });
   };
 
-  let handleActionButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'ArrowDown' && !searchOpen) {
-      e.preventDefault();
-      openSearchMenu();
-    }
-  };
-
   let library = getLibraryFromPage(currentPage);
   let subdirectory = 's2';
   if (library === 'internationalized' || library === 'react-aria') {
@@ -148,11 +141,7 @@ export default function Header(props: PageProps) {
           })}>
           <div className={style({justifySelf: 'start'})}>
             <Link
-              aria-label="Open menu and search"
-              aria-expanded={searchOpen}
-              aria-controls={searchOpen ? searchMenuId : undefined}
               href={homepage}
-              onKeyDown={handleActionButtonKeyDown}
               ref={ref}
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>

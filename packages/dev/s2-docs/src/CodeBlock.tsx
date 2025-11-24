@@ -132,7 +132,7 @@ export function CodeBlockBase({children, lang}: {children: string, lang: string}
   let highlighted = highlight(children, Language[lang.toUpperCase()]);
   return (
     <pre className="m-0">
-      <code className="source" dangerouslySetInnerHTML={{__html: highlighted}} />
+      <code className="source" style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}} dangerouslySetInnerHTML={{__html: highlighted}} />
     </pre>
   );
 }

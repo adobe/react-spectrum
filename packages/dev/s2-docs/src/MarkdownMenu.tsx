@@ -61,7 +61,7 @@ export function MarkdownMenu({url}: MarkdownMenuProps) {
         {isCopied ? <CheckmarkCircle /> : <Copy />}
         <Text>Copy for LLM</Text>
       </ActionButton>
-      <MenuTrigger>
+      <MenuTrigger align="end">
         <ActionButton size="M" isQuiet aria-label="Markdown options">
           <More />
         </ActionButton>
