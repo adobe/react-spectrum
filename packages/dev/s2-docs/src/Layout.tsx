@@ -295,6 +295,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   display: 'flex',
                   flexDirection: 'column',
                   flexGrow: 1,
+                  minWidth: 0,
                   width: 'full'
                 })}>
                 <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
@@ -320,12 +321,8 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 className={style({
                   position: 'sticky',
                   top: 0,
-                  height: {
-                    default: 'fit',
-                    lg: '[calc(100vh - 72px)]'
-                  },
-                  paddingY: 32,
-                  paddingX: 4,
+                  paddingTop: 32,
+                  marginBottom: -40,
                   boxSizing: 'border-box',
                   width: 180,
                   flexShrink: 0,
