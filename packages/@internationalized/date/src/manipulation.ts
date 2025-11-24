@@ -120,7 +120,7 @@ function constrainMonthDay(date: Mutable<AnyCalendarDate>) {
 
 export function constrain(date: Mutable<AnyCalendarDate>): void {
   if (date.calendar.constrainDate) {
-    date.calendar.constrainDate(date); 
+    date.calendar.constrainDate(date);
   }
 
   date.year = Math.max(1, Math.min(date.calendar.getYearsInEra(date), date.year));
@@ -169,8 +169,8 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields): 
   return mutableDate;
 }
 
-export function setTime(value: CalendarDateTime, fields: TimeFields,): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields,): Time;
+export function setTime(value: CalendarDateTime, fields: TimeFields): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields): Time;
 export function setTime(value: Time | CalendarDateTime, fields: TimeFields): Mutable<Time | CalendarDateTime> {
   let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
 
