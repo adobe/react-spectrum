@@ -295,7 +295,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   width: 'full'
                 })}>
                 <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
-                  <NavigationSuspense pages={pages} isLongForm={isLongForm} isWide={isWide}>
+                  <NavigationSuspense pages={pages}>
                     <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
                       {React.cloneElement(children, {
                         components: components(isLongForm),
