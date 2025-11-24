@@ -23,8 +23,8 @@ body {
 .header-background {
   @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
   background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
-    radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
-    conic-gradient(from 30deg at 50% 60%,
+    radial-gradient(circle at 50% 70%, transparent 0% 50%, var(--page-bg)),
+    conic-gradient(from 30deg at 50% 70%,
       oklch(var(--l) var(--c) 220),
       oklch(min(var(--l), 86%) var(--c) 260),
       oklch(var(--l) var(--c) 300),

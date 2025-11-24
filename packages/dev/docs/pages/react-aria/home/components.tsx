@@ -11,6 +11,7 @@
  */
 import {ArrowRight} from 'lucide-react';
 import React, {ForwardedRef, HTMLAttributes, ReactNode} from 'react';
+import {twMerge} from 'tailwind-merge';
 
 export function Window({children, className = '', isBackground = false, toolbar}: {children: ReactNode, className?: string, isBackground?: boolean, toolbar: ReactNode}): ReactNode {
   return (
@@ -85,8 +86,8 @@ React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLD
   return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:bg-[Highlight]! forced-colors:mix-blend-normal!" {...props} />;
 });
 
-export function LearnMoreLink({href, className}: {href: string, className: string}): ReactNode {
-  return <a href={href} className={`group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95 ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+export function LearnMoreLink({children, href, className}: {children?: string, href: string, className: string}): ReactNode {
+  return <a href={href} className={twMerge(`group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95`, className)}>{children || 'Learn more'}<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
 }
 
 export function Scrollable({children, className = ''}: {children: ReactNode, className?: string}): ReactNode {

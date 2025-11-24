@@ -21,6 +21,7 @@ import {Button} from 'tailwind-starter/Button';
 import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
 import reactAriaFavicon from 'url:../../assets/react-aria.ico';
 import SearchMenuWrapper from '../../src/SearchMenuWrapper';
+import demoVideoUrl from 'url:./demo.webm';
 
 export const section = 'Overview';
 export const title = 'Home';
@@ -64,7 +65,7 @@ export const hideFromSearch = true;
       )}} />
   </head>
   <body className="m-0">
-    <header className="relative header-background">
+    <header className="relative header-background pt-32">
       <nav className="absolute top-4 left-4 right-4 flex justify-between gap-4">
         <a href="." className="no-underline inline-flex items-center gap-4 font-bold px-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 dark:text-white/80 ring-1 ring-black/5 focus-ring dark:outline-white">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" height="22">
@@ -96,6 +97,19 @@ export const hideFromSearch = true;
           </a>
         </div>
       </nav>
+
+      <section className="p-10 box-border overflow-clip bg-white dark:bg-zinc-800/80 dark:backdrop-saturate-200 card-shadow w-fit max-w-[calc(100%-40px)] mx-auto rounded-xl flex items-center flex-col xl:flex-row gap-8">
+        <div>
+          <h2 className="text-3xl md:text-4xl my-0 text-balance"><GradientText>Redesigned documentation is here.</GradientText></h2>
+          <p className="mt-4 mb-2 md:mb-4 text-balance text-lg md:text-xl max-w-xl text-slate-700 dark:text-slate-400">Re-rewritten content. Improved search. All-new vanilla CSS and Tailwind examples with interactive controls. Editable sandboxes. Install with shadcn. Open with AI. MCP server. And more!</p>
+          <LearnMoreLink href="getting-started.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%] mb-0">Check it out</LearnMoreLink>
+        </div>
+        <div className="flex-1">
+          <div className="w-fit rounded-lg overflow-clip justify-self-end">
+            <video src={demoVideoUrl.split('?')[0]} autoPlay loop playsInline muted className="block w-full max-w-xl xl:w-auto xl:h-[300px]" />
+          </div>
+        </div>
+      </section>
 
       <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold m-0 mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Craft world-class accessible components with custom styles.</GradientText></h1>
