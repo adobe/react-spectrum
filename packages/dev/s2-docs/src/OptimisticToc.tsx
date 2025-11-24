@@ -64,25 +64,6 @@ export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: P
   );
 }
 
-export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
-  let pendingPage = usePendingPage(pages);
-  let displayPage = pendingPage ?? currentPage;
-  let relatedPages = currentPage.exports?.relatedPages;
-
-  if ((displayPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {
-    return null;
-  }
-
-  return (
-    <MobileOnPageNav currentPage={currentPage}>
-      {renderMobileToc(displayPage.tableOfContents ?? [])}
-      {relatedPages && relatedPages.map((page, i) => (
-        <PickerItem key={`related-${i}`} id={page.url} href={page.url}>{page.title}</PickerItem>
-      ))}
-    </MobileOnPageNav>
-  );
-}
-
 function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
   return (
     <div className={style({paddingTop: 24})}>
@@ -97,5 +78,28 @@ function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
         </SideNav>
       </OnPageNav>
     </div>
+  );
+}
+
+export function OptimisticMobileToc({currentPage, pages}: {currentPage: Page, pages: Page[]}) {
+  let pendingPage = usePendingPage(pages);
+  let displayPage = pendingPage ?? currentPage;
+
+  if ((displayPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1) {
+    return null;
+  }
+
+  let withRelatedPages = displayPage.exports?.relatedPages ? [
+    ...(displayPage.tableOfContents ?? []),
+    {
+      level: 2,
+      title: 'Related pages',
+      children: []
+    }] : displayPage.tableOfContents!;
+
+  return (
+    <MobileOnPageNav currentPage={currentPage}>
+      {renderMobileToc(withRelatedPages)}
+    </MobileOnPageNav>
   );
 }

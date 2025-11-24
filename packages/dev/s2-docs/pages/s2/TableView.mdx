@@ -689,6 +689,178 @@ function subscribe(fn) {
 }
 ```
 
+## Editable Table
+
+`EditableCell` represents an editable value in a single cell. It opens a popover that can contain any editable input or combination of inputs when the end user clicks the user provided `ActionButton` .
+
+An `ActionButton` with `slot="edit"` must be provided as a child of the `EditableCell` to open the popover.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import User from '@react-spectrum/s2/icons/User';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import {useCallback} from 'react';
+import {useListData} from '@react-stately/data';
+
+///- begin collapse -///
+let defaultItems = [
+  {id: 1, fruits: 'Apples', task: 'Collect', farmer: 'Eva'},
+  {id: 2, fruits: 'Oranges', task: 'Collect', farmer: 'Steven'},
+  {id: 3, fruits: 'Pears', task: 'Collect', farmer: 'Michael'},
+  {id: 4, fruits: 'Cherries', task: 'Collect', farmer: 'Sara'},
+  {id: 5, fruits: 'Dates', task: 'Collect', farmer: 'Karina'},
+  {id: 6, fruits: 'Bananas', task: 'Collect', farmer: 'Otto'},
+  {id: 7, fruits: 'Melons', task: 'Collect', farmer: 'Matt'},
+  {id: 8, fruits: 'Figs', task: 'Collect', farmer: 'Emily'},
+  {id: 9, fruits: 'Blueberries', task: 'Collect', farmer: 'Amelia'},
+  {id: 10, fruits: 'Blackberries', task: 'Collect', farmer: 'Isla'}
+];
+///- end collapse -///
+
+///- begin collapse -///
+let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '6fr', minWidth: 300},
+  {name: 'Task', id: 'task', width: '2fr', minWidth: 100},
+  {name: 'Farmer', id: 'farmer', width: '2fr', minWidth: 150}
+];
+///- end collapse -///
+
+export default function EditableTable(props) {
+  let columns = editableColumns;
+  let data = useListData({initialItems: defaultItems});
+
+  let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+    let value = values[columnId];
+    if (value == null) {
+      return;
+    }
+    data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
+  }, [data]);
+
+  return (
+    <TableView aria-label="Dynamic table" {...props} styles={style({height: 208})}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column {...column}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={data.items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              if (column.id === 'fruits') {
+                ///- begin highlight -///
+                return (
+                  <EditableCell
+                    aria-label={`Edit ${item[column.id]} in ${column.name}`}
+                    align={column.align}
+                    showDivider={column.showDivider}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
+                    renderEditing={() => (
+                      <TextField
+                        aria-label="Fruit name edit field"
+                        autoFocus
+                        validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                        styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                        defaultValue={item[column.id!]}
+                        name={column.id! as string} />
+                    )}>
+                    <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                      {item[column.id]}
+                      <ActionButton slot="edit" aria-label="Edit fruit">
+                        <Edit />
+                      </ActionButton>
+                    </div>
+                  </EditableCell>
+                );
+                ///- end highlight -///
+              }
+              if (column.id === 'farmer') {
+                ///- begin highlight -///
+                return (
+                  <EditableCell
+                    align={column.align}
+                    showDivider={column.showDivider}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
+                    renderEditing={() => (
+                      <Picker
+                        aria-label="Edit farmer"
+                        autoFocus
+                        styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                        defaultValue={item[column.id!]}
+                        name={column.id! as string}>
+                        <PickerItem textValue="Eva" id="Eva">
+                          <User />
+                          <Text>Eva</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Steven" id="Steven">
+                          <User />
+                          <Text>Steven</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Michael" id="Michael">
+                          <User />
+                          <Text>Michael</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Sara" id="Sara">
+                          <User />
+                          <Text>Sara</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Karina" id="Karina">
+                          <User />
+                          <Text>Karina</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Otto" id="Otto">
+                          <User />
+                          <Text>Otto</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Matt" id="Matt">
+                          <User />
+                          <Text>Matt</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Emily" id="Emily">
+                          <User />
+                          <Text>Emily</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Amelia" id="Amelia">
+                          <User />
+                          <Text>Amelia</Text>
+                        </PickerItem>
+                        <PickerItem textValue="Isla" id="Isla">
+                          <User />
+                          <Text>Isla</Text>
+                        </PickerItem>
+                      </Picker>
+                    )}>
+                    <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                      {item[column.id]}
+                      <ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton>
+                    </div>
+                  </EditableCell>
+                );
+                ///- end highlight -///
+              }
+              return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
 ## API
 
 ```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell'}}
@@ -727,3 +899,7 @@ function subscribe(fn) {
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### EditableCell
+
+<PropTable component={docs.exports.EditableCell} links={docs.links} showDescription />
