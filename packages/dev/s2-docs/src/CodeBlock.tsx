@@ -1,16 +1,16 @@
 // @ts-ignore
 import assets from 'url:../pages/**/*.{png,jpg,svg}' with {env: 'react-client'};
-import {cache, ReactNode} from 'react';
+import {cache, ReactElement, ReactNode} from 'react';
 import {Code, ICodeProps} from './Code';
 import {CodePlatter, FileProvider, Pre} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
-import {ExpandableCode} from './ExpandableCode';
+import {ExpandableCode, ExpandableCodeProvider} from './ExpandableCode';
+import {FileTabs} from './FileTabs';
 import {findPackageJSON} from 'module';
 import fs from 'fs';
 import {highlight, Language} from 'tree-sitter-highlight';
 import path from 'path';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Tab, TabList, TabPanel, Tabs} from '@react-spectrum/s2';
 import {VisualExample, VisualExampleProps} from './VisualExample';
 
 const example = style({
@@ -59,11 +59,10 @@ interface CodeBlockProps extends VisualExampleProps {
   files?: string[],
   expanded?: boolean,
   hidden?: boolean,
-  includeAllImports?: boolean,
   showCoachMark?: boolean
 }
 
-export function CodeBlock({render, children, dir, files, expanded, hidden, includeAllImports, ...props}: CodeBlockProps) {
+export function CodeBlock({render, children, dir, files, expanded, hidden, ...props}: CodeBlockProps) {
   if (hidden) {
     return null;
   }
@@ -116,7 +115,8 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, inclu
       <div>
         {files ? 
           <Files
-            files={includeAllImports ? findAllFiles(files) : files}
+            files={files}
+            downloadFiles={downloadFiles.files}
             maxLines={expanded ? Infinity : 6}
             type={props.type}>
             {content}
@@ -161,21 +161,44 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
   );
 }
 
-export function Files({children, files, type, defaultSelected, maxLines}: {children?: ReactNode, files: string[], type?: 'vanilla' | 'tailwind' | 's2', defaultSelected?: string, maxLines?: number}) {
+interface FilesProps {
+  children?: ReactNode,
+  files: string[],
+  downloadFiles?: DownloadFiles['files'],
+  type?: 'vanilla' | 'tailwind' | 's2',
+  defaultSelected?: string,
+  maxLines?: number
+}
+
+export function Files({children, files, downloadFiles, type, defaultSelected, maxLines}: FilesProps) {
+  let fileMap: {[name: string]: ReactElement} = {};
+  for (let file of files) {
+    fileMap[path.basename(file)] = <File filename={file} maxLines={maxLines} type={type} />;
+  }
+
+  let extraFiles: {[name: string]: ReactElement} = {};
+  if (downloadFiles) {
+    for (let name in downloadFiles) {
+      if (!files[name]) {
+        extraFiles[name] = (
+          <CodePlatter type={type}>
+            <TruncatedCode lang={path.extname(name).slice(1)} hideImports={false} maxLines={maxLines}>{downloadFiles[name].contents}</TruncatedCode>
+          </CodePlatter>
+        );
+      }
+    }
+  }
+
   return (
-    <Tabs
-      key={files.join('|')}
-      aria-label="Files"
-      defaultSelectedKey={defaultSelected || (children ? 'example' : undefined)}
-      density="compact"
-      data-files>
-      <TabList styles={style({marginBottom: 20})}>
-        {children && <Tab id="example">Example</Tab>}
-        {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
-      </TabList>
-      {children && <TabPanel id="example" shouldForceMount data-example>{children}</TabPanel>}
-      {files.map(file => <TabPanel key={file} id={file}><File filename={file} maxLines={maxLines} type={type} /></TabPanel>)}
-    </Tabs>
+    <ExpandableCodeProvider>
+      <FileTabs
+        key={files.join('|')}
+        files={fileMap}
+        extraFiles={extraFiles}
+        defaultSelectedKey={defaultSelected || (children ? 'example' : undefined)}>
+        {children}
+      </FileTabs>
+    </ExpandableCodeProvider>
   );
 }
 
@@ -190,21 +213,25 @@ export function File({filename, maxLines, type}: {filename: string, maxLines?: n
   );
 }
 
+const readFileReplace = cache((file: string) => {
+  let contents = readFile(file)
+    .replace(/(vanilla-starter|tailwind-starter)\//g, './')
+    .replace(/import (.*?) from ['"]url:(.*?)['"]/g, (_, name, specifier) => {
+      return `const ${name} = '${resolveUrl(specifier, file)}'`;
+    });
+  return {contents};
+});
+
 // Reads files, parses imports, and loads recursively.
-export function getFiles(files: string[], type: string | undefined, npmDeps = {}) {
-  let fileContents = {};
+export function getFiles(files: string[], type: string | undefined, npmDeps = {}): DownloadFiles {
+  let fileContents: DownloadFiles['files'] = {};
   for (let file of findAllFiles(files, npmDeps)) {
     let name = path.basename(file);
-    let contents = readFile(file);
-    fileContents[name] = contents
-      .replace(/(vanilla-starter|tailwind-starter)\//g, './')
-      .replace(/import (.*?) from ['"]url:(.*?)['"]/g, (_, name, specifier) => {
-        return `const ${name} = '${resolveUrl(specifier, file)}'`;
-      });
+    fileContents[name] = readFileReplace(file);
   }
 
   if (type === 'tailwind' && !fileContents['index.css']) {
-    fileContents['index.css'] = readFile(path.resolve('../../../starters/tailwind/src/index.css'));
+    fileContents['index.css'] = readFileReplace(path.resolve('../../../starters/tailwind/src/index.css'));
   }
   
   return {files: fileContents, deps: npmDeps};
@@ -263,7 +290,19 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
   return deps;
 }
 
-function getExampleFiles(file: string, contents: string, type: string | undefined) {
+export interface DownloadFiles {
+  files: {
+    [name: string]: {contents: string}
+  },
+  deps: {
+    [name: string]: string
+  },
+  urls?: {
+    [url: string]: string
+  }
+}
+
+function getExampleFiles(file: string, contents: string, type: string | undefined): DownloadFiles {
   let npmDeps = {};
   let urls = {};
   let fileDeps = parseFile(file, contents, npmDeps, urls);

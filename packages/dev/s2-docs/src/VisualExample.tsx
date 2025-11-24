@@ -1,6 +1,6 @@
 import {CodeOutput, Control, Output, VisualExampleClient} from './VisualExampleClient';
+import {DownloadFiles, Files, getFiles} from './CodeBlock';
 import {FileProvider, ShadcnProvider} from './CodePlatter';
-import {Files, getFiles} from './CodeBlock';
 import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
@@ -87,7 +87,7 @@ export interface VisualExampleProps {
   importSource?: string,
   /** When provided, the source code for the listed filenames will be included as tabs. */
   files?: string[],
-  downloadFiles?: {files?: {[name: string]: string}, deps?: {[name: string]: string}},
+  downloadFiles?: DownloadFiles,
   type?: 'vanilla' | 'tailwind' | 's2',
   code?: ReactNode,
   wide?: boolean,
@@ -162,7 +162,7 @@ export function VisualExample({component, docs, links, importSource, props, init
     if (files) {
       downloadFiles = getFiles(files, type);
     } else {
-      downloadFiles = {};
+      downloadFiles = {files: {}, deps: {}};
     }
   }
 
@@ -185,7 +185,7 @@ export function VisualExample({component, docs, links, importSource, props, init
               {Object.keys(controls).map(control => <Control key={control} name={control} />)}
             </div>
             <div style={{gridArea: 'files', overflow: 'hidden'}}>
-              {files ? <Files files={files} type={type}>{output}</Files> : output}
+              {files ? <Files files={files} downloadFiles={downloadFiles.files} type={type}>{output}</Files> : output}
             </div>
           </div>
         </ShadcnProvider>
