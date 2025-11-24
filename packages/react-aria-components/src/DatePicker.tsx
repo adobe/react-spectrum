@@ -87,14 +87,18 @@ export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePicke
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DatePicker'
    */
-  className?: ClassNameOrFunction<DatePickerRenderProps>
+  className?: ClassNameOrFunction<DatePickerRenderProps>,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
 }
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DateRangePicker'
    */
-  className?: ClassNameOrFunction<DateRangePickerRenderProps>
+  className?: ClassNameOrFunction<DateRangePickerRenderProps>,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
 }
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
@@ -174,7 +178,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DatePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
-        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
@@ -283,7 +287,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       values={[
         [DateRangePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
-        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
