@@ -87,7 +87,7 @@ React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLD
 });
 
 export function LearnMoreLink({children, href, className}: {children?: string, href: string, className: string}): ReactNode {
-  return <a href={href} className={twMerge(`group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95`, className)}>{children || 'Learn more'}<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+  return <a href={href} className={twMerge('group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95', className)}>{children || 'Learn more'}<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
 }
 
 export function Scrollable({children, className = ''}: {children: ReactNode, className?: string}): ReactNode {
