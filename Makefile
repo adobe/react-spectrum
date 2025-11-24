@@ -156,6 +156,7 @@ build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:og
 	REGISTRY_URL=$(PUBLIC_URL)/registry node scripts/buildRegistry.mjs
 	REGISTRY_URL=$(PUBLIC_URL)/registry yarn build:s2-docs --public-url $(PUBLIC_URL)
+	node scripts/createFeedS2.mjs
 	mkdir -p $(DIST_DIR)
 	mv packages/dev/s2-docs/dist/* $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/registry
