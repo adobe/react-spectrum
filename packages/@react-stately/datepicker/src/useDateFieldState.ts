@@ -14,12 +14,12 @@ import {Calendar, CalendarIdentifier, DateFormatter, getMinimumDayInMonth, getMi
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
+import {fromCalendarToIncompleteDate} from './conversion';
 import {getPlaceholder} from './placeholders';
+import {IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime} from './IncompleteDate';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
-import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from './IncompleteDate';
-import { fromCalendarToIncompleteDate } from './conversion';
 
 type IncompleteValue = IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime
 

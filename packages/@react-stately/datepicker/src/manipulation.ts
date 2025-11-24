@@ -1,6 +1,6 @@
-import { Calendar, CycleTimeOptions, Disambiguation, GregorianCalendar, TimeField, TimeFields } from "@internationalized/date";
-import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from "./IncompleteDate";
-import { AnyTime, epochFromDate, fromAbsolute, toAbsolute, toCalendar, toIncompleteDateTime, toTimeZone } from "./conversion";
+import {AnyTime, epochFromDate, fromAbsolute, toAbsolute, toCalendar, toIncompleteDateTime, toTimeZone} from './conversion';
+import {Calendar, CycleTimeOptions, Disambiguation, GregorianCalendar, TimeField, TimeFields} from '@internationalized/date';
+import {IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime} from './IncompleteDate';
 
 export interface DateFields {
   era?: string,
@@ -58,7 +58,7 @@ export function set(date: IncompleteDate | IncompleteDateTime, fields: DateField
 
 export function cycleDate(value: IncompleteDate, field: DateField, amount: number, options?: CycleOptions): IncompleteDate;
 export function cycleDate(value: IncompleteDateTime, field: DateField, amount: number, options?: CycleOptions): IncompleteDateTime;
-export function cycleDate(value: IncompleteDate | IncompleteDateTime, field: DateField, amount: number, options?: CycleOptions): Mutable<IncompleteDate | IncompleteDateTime>{
+export function cycleDate(value: IncompleteDate | IncompleteDateTime, field: DateField, amount: number, options?: CycleOptions): Mutable<IncompleteDate | IncompleteDateTime> {
   let mutable: Mutable<IncompleteDate | IncompleteDateTime> = value.copy();
 
   switch (field) {
@@ -88,7 +88,7 @@ export function cycleDate(value: IncompleteDate | IncompleteDateTime, field: Dat
       mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
       break;
     default:
-        mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
   }
 
   if (value.calendar.balanceDate) {

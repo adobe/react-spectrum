@@ -1,9 +1,9 @@
-import { AnyCalendarDate, AnyDateTime, Calendar, CalendarDate, CalendarDateTime, Disambiguation, getLocalTimeZone, GregorianCalendar, isEqualCalendar, ZonedDateTime } from "@internationalized/date";
-import { IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime } from "./IncompleteDate";
-import {  epochFromParts, getTimeZoneOffset } from "../../../@internationalized/date/src/conversion";
-import { Mutable } from "./manipulation";
-import { getExtendedYear } from "../../../@internationalized/date/src/calendars/GregorianCalendar";
-import { timeToString } from "../../../@internationalized/date/src/string";
+import {AnyCalendarDate, AnyDateTime, Calendar, CalendarDate, CalendarDateTime, Disambiguation, getLocalTimeZone, GregorianCalendar, isEqualCalendar, ZonedDateTime} from '@internationalized/date';
+import {epochFromParts, getTimeZoneOffset} from '../../../@internationalized/date/src/conversion';
+import {getExtendedYear} from '../../../@internationalized/date/src/calendars/GregorianCalendar';
+import {IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime} from './IncompleteDate';
+import {Mutable} from './manipulation';
+import {timeToString} from '../../../@internationalized/date/src/string';
 
 const DAYMILLIS = 86400000;
 
@@ -17,11 +17,11 @@ export interface AnyTime {
 }
 
 export function toIncompleteDate(dateTime: AnyCalendarDate) {
-      return new IncompleteDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
+  return new IncompleteDate(dateTime.calendar, dateTime.era, dateTime.year, dateTime.month, dateTime.day);
 }
 
 export function toIncompleteZonedDateTime(date: ZonedDateTime) {
-      return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
+  return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
 }
 
 export function toDate(dateTime: IncompleteDate | IncompleteDateTime, timeZone: string, disambiguation: Disambiguation = 'compatible'): Date {
@@ -186,12 +186,12 @@ function getTimeZoneParts(ms: number, timeZone: string) {
 }
 
 export function fromCalendarToIncompleteDate(date: CalendarDate | CalendarDateTime | ZonedDateTime) {
-  if(date instanceof CalendarDate) {
-      return new IncompleteDate(date.calendar, date.era, date.year, date.month, date.day);
+  if (date instanceof CalendarDate) {
+    return new IncompleteDate(date.calendar, date.era, date.year, date.month, date.day);
   } else if (date instanceof CalendarDateTime) {
-      return new IncompleteDateTime(date.calendar, date.era, date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
-  }else {
-      return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
+    return new IncompleteDateTime(date.calendar, date.era, date.year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
+  } else {
+    return new IncompleteZonedDateTime(date.calendar, date.era, date.year, date.month, date.day, date.timeZone, date.offset, date.hour, date.minute, date.second, date.millisecond);
   }
 }
 
