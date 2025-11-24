@@ -33,6 +33,10 @@ import {VisualExample} from './VisualExample';
 
 const p = style({
   font: 'body-lg',
+  fontFamily: {
+    default: 'sans',
+    isLongForm: 'serif'
+  },
   textWrap: 'pretty',
   marginY: '[1lh]',
   maxWidth: '--text-width',
@@ -41,6 +45,10 @@ const p = style({
 
 const li = style({
   font: 'body-lg',
+  fontFamily: {
+    default: 'sans',
+    isLongForm: 'serif'
+  },
   textWrap: 'pretty',
   marginY: {
     default: 0,
@@ -56,7 +64,7 @@ const components = (isLongForm?: boolean) => ({
   h2: H2,
   h3: H3,
   h4: H4,
-  p: ({children, ...props}) => <p {...props} className={p}>{children}</p>,
+  p: ({children, ...props}) => <p {...props} className={p({isLongForm})}>{children}</p>,
   ul: (props) => <ul {...props} />,
   li: ({children, ...props}) => <li {...props} className={li({isLongForm})}>{children}</li>,
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,

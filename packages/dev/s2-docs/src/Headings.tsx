@@ -31,6 +31,7 @@ function AnchorLink({anchorId, isHovered, level, headingText}) {
     <span
       {...focusProps}
       className={style({
+        position: 'absolute',
         opacity: {
           default: 0,
           isHovered: 1,
