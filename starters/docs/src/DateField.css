@@ -30,6 +30,7 @@
 
   &[data-disabled] {
     color: var(--text-color-disabled);
+    cursor: default;
   }
 }
 
