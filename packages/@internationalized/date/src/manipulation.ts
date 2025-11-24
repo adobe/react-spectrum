@@ -169,9 +169,9 @@ export function set(date: CalendarDate | CalendarDateTime, fields: DateFields): 
   return mutableDate;
 }
 
-export function setTime(value: CalendarDateTime, fields: TimeFields, ): CalendarDateTime;
-export function setTime(value: Time, fields: TimeFields, ): Time;
-export function setTime(value: Time | CalendarDateTime, fields: TimeFields, ): Mutable<Time | CalendarDateTime> {
+export function setTime(value: CalendarDateTime, fields: TimeFields,): CalendarDateTime;
+export function setTime(value: Time, fields: TimeFields,): Time;
+export function setTime(value: Time | CalendarDateTime, fields: TimeFields): Mutable<Time | CalendarDateTime> {
   let mutableValue: Mutable<Time | CalendarDateTime> = value.copy();
 
   if (fields.hour != null) {
@@ -284,7 +284,7 @@ export function cycleDate(value: CalendarDate | CalendarDateTime, field: DateFie
       mutable.month = cycleValue(value.month, amount, 1, value.calendar.getMonthsInYear(value), options?.round);
       break;
     case 'day':
-        mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
+      mutable.day = cycleValue(value.day, amount, 1, value.calendar.getDaysInMonth(value), options?.round);
       break;
     default:
       throw new Error('Unsupported field ' + field);
