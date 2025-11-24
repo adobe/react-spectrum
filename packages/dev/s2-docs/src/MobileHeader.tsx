@@ -2,7 +2,6 @@
 
 import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {getHomepageUrl} from './Header';
 import {getLibraryFromPage} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Link} from 'react-aria-components';
@@ -85,9 +84,21 @@ export function MobileHeader({toc, pages, currentPage}) {
     }
   }, []);
 
-  let currentLibrary = getLibraryFromPage(currentPage);
-  let icon = TAB_DEFS[currentLibrary].icon;
-  let libraryRootUrl = getHomepageUrl(pages, currentLibrary);
+  let library = getLibraryFromPage(currentPage);
+  let icon = TAB_DEFS[library].icon;
+  let subdirectory = 's2';
+  if (library === 'internationalized' || library === 'react-aria') {
+    // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
+    subdirectory = 'react-aria';
+  }
+
+  let homepage = '';
+  for (let page of pages) {
+    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
+      homepage = page.url;
+      break;
+    }
+  }
 
   return (
     <div
@@ -127,7 +138,7 @@ export function MobileHeader({toc, pages, currentPage}) {
       } as CSSProperties}>
       <div className={style({flexGrow: 1})}>
         <Link
-          href={libraryRootUrl}
+          href={homepage}
           ref={linkRef}
           style={pressScale(linkRef)}
           className={style({
@@ -153,7 +164,7 @@ export function MobileHeader({toc, pages, currentPage}) {
               animationTimeline: 'scroll()',
               animationRange
             } as CSSProperties : undefined}>
-            {TAB_DEFS[currentLibrary].label}
+            {TAB_DEFS[library].label}
           </span>
         </Link>
       </div>

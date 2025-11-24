@@ -148,7 +148,7 @@ export function SearchMenu(props: SearchMenuProps) {
     searchValue,
     sectionTags,
     resourceTags,
-    props.initialTag || getSearchSection(currentPage).toLowerCase()
+    props.initialTag || currentPage.exports?.section?.toLowerCase() || 'components'
   );
 
   const filteredIcons = useFilteredIcons(searchValue);
