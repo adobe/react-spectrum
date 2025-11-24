@@ -25,6 +25,7 @@ import {getChildNodes, getItemCount} from '@react-stately/collections';
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
 import {privateValidationStateProp} from '@react-stately/form';
+import {useInteractOutside} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
@@ -180,10 +181,26 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   };
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
+    let blurFromButton = buttonRef?.current && nodeContains(buttonRef.current, e.relatedTarget as Element);
     let blurIntoPopover = popoverRef.current && nodeContains(popoverRef.current, e.relatedTarget as Element);
+    
+    // Special handling for Shadow DOM: When focus moves into a shadow root portal,
+    // relatedTarget is retargeted to the shadow HOST, not the content inside.
+    // Check if relatedTarget is a shadow host that CONTAINS our popover.
+    let blurIntoShadowHostWithPopover = false;
+    if (!blurIntoPopover && e.relatedTarget && popoverRef.current) {
+      let relatedEl = e.relatedTarget as Element;
+      if ('shadowRoot' in relatedEl && (relatedEl as any).shadowRoot) {
+        // relatedTarget is a shadow host - check if popover is inside its shadow root
+        let shadowRoot = (relatedEl as any).shadowRoot;
+        if (nodeContains(shadowRoot, popoverRef.current) && !nodeContains(shadowRoot, inputRef.current)) {
+          blurIntoShadowHostWithPopover = true;
+        }
+      }
+    }
+    
     // Ignore blur if focused moved to the button(if exists) or into the popover.
-    if (blurFromButton || blurIntoPopover) {
+    if (blurFromButton || blurIntoPopover || blurIntoShadowHostWithPopover) {
       return;
     }
 
@@ -357,6 +374,16 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   useEvent(listBoxRef, 'react-aria-item-action', state.isOpen ? () => {
     state.close();
   } : undefined);
+
+  // Add interact outside handling for the popover to support Shadow DOM contexts
+  // where blur events don't fire when clicking non-focusable elements
+  useInteractOutside({
+    ref: popoverRef,
+    onInteractOutside: () => {
+      state.setFocused(false);
+    },
+    isDisabled: !state.isOpen
+  });
 
   return {
     labelProps,
