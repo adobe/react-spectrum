@@ -161,3 +161,4 @@ build-s2-docs:
 	mkdir -p $(DIST_DIR)/registry
 	mv starters/docs/registry $(DIST_DIR)/registry/vanilla
 	mv starters/tailwind/registry $(DIST_DIR)/registry/tailwind
+	node scripts/createFeedS2.mjs
