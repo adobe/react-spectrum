@@ -327,7 +327,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabPro
   );
 });
 
-export interface TabPanelsProps<T> extends CollectionProps<T>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-TabPanels'
