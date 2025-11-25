@@ -3,6 +3,7 @@ import crud from 'url:../pages/react-aria/examples/crud.png';
 import crudDark from 'url:../pages/react-aria/examples/crud-dark.png';
 import emojiPicker from 'url:../pages/react-aria/examples/emoji-picker.png';
 import emojiPickerDark from 'url:../pages/react-aria/examples/emoji-picker-dark.png';
+import {getCanonicalUrl} from './pageUtils';
 import iosList from 'url:react-aria-components/docs/examples/ios-list.png';
 import iosListDark from 'url:../pages/react-aria/examples/ios-list-dark.png';
 import kanban from 'url:../pages/react-aria/examples/kanban.png';
@@ -18,14 +19,14 @@ import swipeableTabs from 'url:../pages/react-aria/examples//swipeable-tabs.png'
 import swipeableTabsDark from 'url:../pages/react-aria/examples//swipeable-tabs-dark.png';
 
 const images = {
-  'ios-list.html': [iosList, iosListDark],
-  'emoji-picker.html': [emojiPicker, emojiPickerDark],
-  'kanban.html': [kanban, kanbanDark],
-  'photos.html': [photos, photosDark],
-  'crud.html': [crud, crudDark],
-  'ripple-button.html': rippleButton,
-  'sheet.html': [sheet, sheetDark],
-  'swipeable-tabs.html': [swipeableTabs, swipeableTabsDark]
+  'ios-list': [iosList, iosListDark],
+  'emoji-picker': [emojiPicker, emojiPickerDark],
+  'kanban': [kanban, kanbanDark],
+  'photos': [photos, photosDark],
+  'crud': [crud, crudDark],
+  'ripple-button': rippleButton,
+  'sheet': [sheet, sheetDark],
+  'swipeable-tabs': [swipeableTabs, swipeableTabsDark]
 };
 
 export function ExampleList({tag, pages}) {
@@ -61,10 +62,10 @@ export function ExampleList({tag, pages}) {
             itemProp="item"
             itemScope
             itemType="https://schema.org/TechArticle">
-            <meta itemProp="url" content={example.url} />
-            <Card href={example.url}>
+            <meta itemProp="url" content={getCanonicalUrl(example)} />
+            <Card href={getCanonicalUrl(example)}>
               <CardPreview>
-                <ExampleImage name={example.name} />
+                <ExampleImage name={example.name.replace('.html', '')} />
               </CardPreview>
               <Content>
                 <Text slot="title" itemProp="headline">{getTitle(example)}</Text>

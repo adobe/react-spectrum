@@ -2,6 +2,7 @@
 
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage} from './library';
 import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
@@ -128,7 +129,7 @@ export function Nav({pages, currentPage}: PageProps) {
                       .filter(page => !page.exports?.isSubpage)
                       .map(page => (
                         <SideNavItem key={page.url}>
-                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayUrl}>
+                          <SideNavLink href={getCanonicalUrl(page)} page={page} isSelected={page.url === displayUrl}>
                             {title(page)}
                           </SideNavLink>
                         </SideNavItem>
@@ -155,7 +156,7 @@ export function Nav({pages, currentPage}: PageProps) {
                 })
                 .filter(page => !page.exports?.isSubpage)
                 .map(page => (
-                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+                  <SideNavItem key={page.url}><SideNavLink href={getCanonicalUrl(page)} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
               ))}
             </SideNav>
           );
@@ -181,7 +182,7 @@ export function Nav({pages, currentPage}: PageProps) {
                     .filter(page => !page.exports?.isSubpage)
                     .map(page => (
                       <SideNavItem key={page.url}>
-                        <SideNavLink href={page.url} isSelected={page.url === currentPage.url}>
+                        <SideNavLink href={getCanonicalUrl(page)} isSelected={page.url === currentPage.url}>
                           {title(page)}
                         </SideNavLink>
                       </SideNavItem>

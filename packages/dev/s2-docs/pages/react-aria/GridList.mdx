@@ -92,7 +92,7 @@ export const relatedPages = [{'title': 'useGridList', 'url': 'https://react-spec
 
 ## Content
 
-`GridList` follows the [Collection Components API](collections.html?component=GridList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`GridList` follows the [Collection Components API](collections?component=GridList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
@@ -413,7 +413,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<GridListItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=GridList#selection-behavior) for more details.
+Use the `href` prop on a `<GridListItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection?component=GridList#selection-behavior) for more details.
 
 ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Links', selectionMode: 'multiple'}} wide
 "use client";
@@ -519,7 +519,7 @@ import {GridList} from 'vanilla-starter/GridList';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=GridList) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=GridList) for more details.
 
 ```tsx render docs={docs.exports.GridList} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -602,7 +602,7 @@ function Example(props) {
 
 ## Drag and drop
 
-GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=GridList) to learn more.
+GridList supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=GridList) to learn more.
 
 ```tsx render
 "use client";
@@ -903,7 +903,7 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
 
-```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button.html', Checkbox: 'Checkbox.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{GridList: '#gridlist', GridListItem: '#gridlistitem', GridListLoadMoreItem: '#gridlistloadmoreitem', Button: 'Button', Checkbox: 'Checkbox', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <GridList>
   <GridListItem>
     <Button slot="drag" />

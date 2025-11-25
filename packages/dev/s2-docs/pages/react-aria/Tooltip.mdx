@@ -102,12 +102,12 @@ function Example(props) {
 
 <InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
   <Heading>Accessibility</Heading>
-  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover) to show information in an adjacent element.</Content>
 </InlineAlert>
 
 ## Custom trigger
 
-`DialogTrigger` works with any focusable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any focusable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -135,13 +135,13 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
-[DialogTrigger](Modal.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
+[DialogTrigger](Modal#custom-trigger) or [MenuTrigger](Menu#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
 
 ## API
 
 <Anatomy />
 
-```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', OverlayArrow: '#overlayarrow', Button: 'Button.html'}}
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', OverlayArrow: '#overlayarrow', Button: 'Button'}}
 <TooltipTrigger>
   <Button />
   <Tooltip>

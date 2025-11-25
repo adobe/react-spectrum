@@ -40,6 +40,7 @@ import {ExampleImage} from './ExampleList';
 import FileTriggerSvg from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg';
 import FocusScopeSvg from '@react-spectrum/docs/pages/assets/component-illustrations/FocusScope.svg';
 import FormSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
+import {getCanonicalUrl} from './pageUtils';
 import GroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Group.svg';
 import IconsSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Icons.svg';
 import IllustratedMessageSvg from '@react-spectrum/docs/pages/assets/component-illustrations/IllustratedMessage.svg';
@@ -328,7 +329,7 @@ interface ComponentListProps {
 }
 
 export function ComponentList(props: ComponentListProps) {
-  let pages = props.pages.filter(page => props.components.includes(page.name));
+  let pages = props.pages.filter(page => props.components.includes(page.name.slice(0, -5)));
   return (
     <ul
       className={style({
@@ -358,7 +359,7 @@ export function ComponentList(props: ComponentListProps) {
       }}>
       {pages.map(page => (
         <li key={page.url}>
-          <ComponentCard name={getTitle(page)} href={page.url} size="S" UNSAFE_style={{scrollSnapAlign: 'start'}} />
+          <ComponentCard name={getTitle(page)} href={getCanonicalUrl(page)} size="S" UNSAFE_style={{scrollSnapAlign: 'start'}} />
         </li>
       ))}
     </ul>

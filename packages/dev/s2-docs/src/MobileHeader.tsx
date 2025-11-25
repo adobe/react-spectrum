@@ -2,6 +2,7 @@
 
 import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Link} from 'react-aria-components';
@@ -95,7 +96,7 @@ export function MobileHeader({toc, pages, currentPage}) {
   let homepage = '';
   for (let page of pages) {
     if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      homepage = page.url;
+      homepage = getCanonicalUrl(page);
       break;
     }
   }

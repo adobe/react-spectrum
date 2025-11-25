@@ -21,7 +21,7 @@ export const group = 'Internationalized';
 
 ## Introduction
 
-A `Time` object represents a clock time without any date components. If you need to refer to a time on a specific date, use a [CalendarDateTime](CalendarDateTime.html) or [ZonedDateTime](ZonedDateTime.html) instead.
+A `Time` object represents a clock time without any date components. If you need to refer to a time on a specific date, use a [CalendarDateTime](CalendarDateTime) or [ZonedDateTime](ZonedDateTime) instead.
 
 A `Time` can be created using the constructor. This example creates a time that represents 9:45 AM.
 
@@ -149,7 +149,7 @@ date.toString(); // '09:45:00'
 
 ### To a date and time
 
-A `Time` can be combined with a [CalendarDate](CalendarDate.html) to produce a [CalendarDateTime](CalendarDateTime.html) object using the <TypeLink links={docs.links} type={docs.exports.toCalendarDateTime} /> function.
+A `Time` can be combined with a [CalendarDate](CalendarDate) to produce a [CalendarDateTime](CalendarDateTime) object using the <TypeLink links={docs.links} type={docs.exports.toCalendarDateTime} /> function.
 
 ```tsx
 import {toCalendarDateTime, CalendarDate} from '@internationalized/date';

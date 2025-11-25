@@ -49,7 +49,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Content
 
-`TableView` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections.
+`TableView` follows the [Collection Components API](collections?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render type="s2"
@@ -193,7 +193,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a Row to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a Row to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -333,7 +333,7 @@ function TableWithDividers() {
 
 ### Column menus
 
-Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Menu.html) docs for more details.
+Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Menu) docs for more details.
 
 ```tsx render type="s2"
 "use client";
@@ -397,7 +397,7 @@ function CustomMenusTable() {
 
 ## Selection and actions
 
-Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar.html) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection.html) for details.
+Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
 "use client";

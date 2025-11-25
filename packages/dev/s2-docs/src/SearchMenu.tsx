@@ -18,10 +18,11 @@ import {
   useSearchTagSelection,
   useSectionTagsForDisplay
 } from './searchUtils';
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
-import {type Library, TAB_DEFS} from './constants';
 // @ts-ignore
+import {type Library, TAB_DEFS} from './constants';
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
@@ -111,7 +112,7 @@ export function SearchMenu(props: SearchMenuProps) {
         return {
           id: name,
           name: title,
-          href: page.url,
+          href: getCanonicalUrl(page),
           section,
           tags,
           description,
@@ -312,12 +313,12 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   ) : (
                     <ComponentCardView
-                      currentUrl={currentPage.url}
+                      currentUrl={getCanonicalUrl(currentPage)}
                       onAction={onClose}
                       items={selectedItems.map(item => ({
                         id: item.id,
                         name: item.name,
-                        href: item.href ?? `/${tab.id}/${item.name}.html`,
+                        href: item.href ?? `/${tab.id}/${item.name}`,
                         description: item.description
                       }))}
                       ariaLabel={selectedSectionName}

@@ -6,8 +6,14 @@ import {type ReactElement} from 'react';
 const prefetchPromises = new Map<string, Promise<ReactElement>>();
 
 export function prefetchRoute(pathname: string) {
-  let [basePath] = pathname.split('#');
-  let rscPath = basePath.replace('.html', '.rsc');
+  let url = new URL(pathname, location.href);
+  let basePath = url.pathname;
+  let rscPath = basePath.replace('.html', '');
+  if (rscPath.endsWith('/')) {
+    rscPath += '/index.rsc';
+  } else {
+    rscPath += '.rsc';
+  }
   
   // Skip if currently prefetching
   if (prefetchPromises.has(rscPath)) {

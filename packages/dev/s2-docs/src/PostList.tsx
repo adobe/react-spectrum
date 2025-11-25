@@ -1,3 +1,4 @@
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryLabel} from './library';
 import {Link} from './Link';
 import type {Page} from '@parcel/rsc';
@@ -39,12 +40,12 @@ export function PostList({currentPage, pages}: {currentPage: Page, pages: Page[]
           <article key={post.name} itemProp="blogPost" itemScope itemType="https://schema.org/BlogPosting">
             <header className={style({marginBottom: 12})}>
               <h2 itemProp="headline" className={style({font: 'title-xl', margin: 0})}>
-                <Link href={post.url}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link>
+                <Link href={getCanonicalUrl(post)}>{post.tableOfContents?.[0]?.title || post.exports?.title}</Link>
               </h2>
               {post.exports?.author && <Byline author={post.exports?.author} authorLink={post.exports?.authorLink} date={post.exports?.date} />}
               {post.exports?.date && !post.exports.author && <Time date={post.exports.date} />}
             </header>
-            <meta itemProp="url" content={post.url} />
+            <meta itemProp="url" content={getCanonicalUrl(post)} />
             <p itemProp="description" className={style({font: 'body', margin: 0})}>{renderHTMLfromMarkdown(post.exports?.description, {forceInline: true, forceBlock: false})}</p>
           </article>
         ))}

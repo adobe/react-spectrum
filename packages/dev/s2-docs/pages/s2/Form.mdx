@@ -27,7 +27,7 @@ import {Form, TextField, Checkbox, ButtonGroup, Button} from '@react-spectrum/s2
 
 ## Submitting data
 
-When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms.html) guide details about integrating with frameworks.
+When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms) guide details about integrating with frameworks.
 
 <ExampleSwitcher type={null} examples={['React 19', 'React 18']}>
 
@@ -75,7 +75,7 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
 
 ## Validation
 
-Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms.html) guide for more details.
+Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms) guide for more details.
 
 ```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="s2"
 "use client";

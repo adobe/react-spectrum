@@ -34,7 +34,9 @@ let currentAbortController: AbortController | null = null;
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
-  let [basePath, pathAnchor] = pathname.split('#');
+  let url = new URL(pathname, location.href);
+  let basePath = url.pathname;
+  let pathAnchor = url.hash.slice(1);
   let currentPath = location.pathname;
   let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
   
@@ -51,7 +53,12 @@ async function navigate(pathname: string, push = false) {
     return;
   }
   
-  let rscPath = basePath.replace('.html', '.rsc');
+  let rscPath = basePath.replace('.html', '');
+  if (rscPath.endsWith('/')) {
+    rscPath += '/index.rsc';
+  } else {
+    rscPath += '.rsc';
+  }
   
   // Cancel any in-flight navigation
   if (currentAbortController) {

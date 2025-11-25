@@ -16,16 +16,16 @@ import {
   useSearchTagSelection,
   useSectionTagsForDisplay
 } from './searchUtils';
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage} from './library';
-import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 // @ts-ignore
+import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
 import {Page} from '@parcel/rsc';
 import React, {lazy, ReactNode, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {stripMarkdown} from './SearchMenu';
 import {useId} from '@react-aria/utils';
-
 
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
@@ -284,7 +284,7 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
     let items = filteredPages.map(page => ({
       id: page.url.replace(/^\//, ''),
       name: getPageTitle(page),
-      href: page.url,
+      href: getCanonicalUrl(page),
       description: stripMarkdown(page.exports?.description),
       date: page.exports?.date
     }));
@@ -300,7 +300,7 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
     let items = filteredPages.map(page => ({
       id: page.url.replace(/^\//, ''),
       name: getPageTitle(page),
-      href: page.url,
+      href: getCanonicalUrl(page),
       description: stripMarkdown(page.exports?.description),
       date: page.exports?.date
     }));
@@ -477,7 +477,7 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
                       </Suspense>
                     ) : (
                       <ComponentCardView
-                        currentUrl={currentPage.url}
+                        currentUrl={getCanonicalUrl(currentPage)}
                         onAction={() => {
                           setSearchValue('');
                           overlayTriggerState?.close();

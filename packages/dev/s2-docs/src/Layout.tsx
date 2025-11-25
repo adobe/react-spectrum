@@ -18,6 +18,7 @@ import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
 import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
 import {H1, H2, H3, H4} from './Headings';
 import Header from './Header';
@@ -213,11 +214,11 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta name="twitter:image" content={ogImage} />
         <meta property="og:title" content={title} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={currentPage.url} />
+        <meta property="og:url" content={getCanonicalUrl(currentPage)} />
         <meta property="og:image" content={ogImage} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
-        <link rel="canonical" href={currentPage.url} />
+        <link rel="canonical" href={getCanonicalUrl(currentPage)} />
       </head>
       <body
         className={style({
@@ -399,7 +400,7 @@ function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
-        <TitleLink href="./index.html">{parentPage?.exports?.title}</TitleLink>
+        <TitleLink href="./">{parentPage?.exports?.title}</TitleLink>
         <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
       </div>
       <H1 itemProp="headline" isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>

@@ -5,10 +5,11 @@ import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with
 // @ts-ignore
 import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
+import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {Link} from 'react-aria-components';
 // @ts-ignore
+import {Link} from 'react-aria-components';
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
@@ -115,16 +116,16 @@ export default function Header(props: PageProps) {
   let blog = '';
   for (let page of pages) {
     if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      homepage = page.url;
+      homepage = getCanonicalUrl(page);
     }
     if (page.name.includes(subdirectory) && page.name.includes('getting-started.html')) {
-      docs = page.url;
+      docs = getCanonicalUrl(page);
     }
     if (page.name.includes(subdirectory) && page.name.includes('index.html') && page.name.includes('releases')) {
-      release = page.url;
+      release = getCanonicalUrl(page);
     }
     if (page.name.includes('react-aria') && page.name.includes('index.html') && page.name.includes('blog')) {
-      blog = page.url;
+      blog = getCanonicalUrl(page);
     }
   }
 
