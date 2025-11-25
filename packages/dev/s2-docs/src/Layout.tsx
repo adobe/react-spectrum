@@ -409,6 +409,10 @@ function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps
   );
 }
 
+function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
 function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
   return (
     <div
@@ -420,13 +424,19 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
       })}>
       <H2 id="related-pages">Related pages</H2>
       <ul className={style({listStyleType: 'none'})}>
-        {pages.map((page, i) => (
-          <li key={i} className={li({isLongForm: false})}>
-            <Link href={page.url}>
-              {page.title}
-            </Link>
-          </li>
-        ))}
+        {pages.map((page, i) => {
+          let isExternal = isExternalUrl(page.url);
+          return (
+            <li key={i} className={li({isLongForm: false})}>
+              <Link
+                href={page.url}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}>
+                {page.title}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

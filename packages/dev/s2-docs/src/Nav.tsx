@@ -5,6 +5,7 @@ import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {typ
 import {getLibraryFromPage} from './library';
 import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
+import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page, PageProps} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
 
@@ -271,12 +272,14 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
-  let {...linkProps} = props;
+  let {isExternal, ...linkProps} = props;
   
   return (
     <Link
       {...linkProps}
       ref={linkRef}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
       className={style({
@@ -311,6 +314,11 @@ export function SideNavLink(props) {
             }
           })(renderProps)} />
         {props.children}
+        {isExternal && (
+          <LinkOutIcon
+            aria-label="(opens in a new tab)"
+            className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})} />
+        )}
       </>)}
     </Link>
   );
