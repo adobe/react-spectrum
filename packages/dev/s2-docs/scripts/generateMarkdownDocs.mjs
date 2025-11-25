@@ -1144,6 +1144,25 @@ function remarkDocsComponentsToMarkdown() {
         const childrenText = extractText(node.children);
         const linkText = ariaLabel || childrenText || href;
 
+        // Transform relative links to use .md extension
+        if (href && !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('mailto:') && !href.startsWith('#')) {
+          // Split href into path and query/hash parts
+          const match = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+          if (match) {
+            let [, pathPart, queryPart = '', hashPart = ''] = match;
+            
+            if (pathPart.endsWith('.html')) {
+              // Replace .html with .md
+              pathPart = pathPart.slice(0, -5) + '.md';
+            } else if (pathPart && !pathPart.match(/\.[a-zA-Z0-9]+$/)) {
+              // Add .md to paths without an extension
+              pathPart = pathPart + '.md';
+            }
+            
+            href = pathPart + queryPart + hashPart;
+          }
+        }
+
         if (href) {
           const linkNode = {
             type: 'link',
