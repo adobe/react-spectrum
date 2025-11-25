@@ -4,7 +4,7 @@
 @source "../../../../starters/tailwind/src/*.{ts,tsx}";
 @source "../pages/**/*.mdx";
 @source "../pages/react-aria/examples/plants/*.tsx";
-@source "../pages/react-aria/examples/tabs/*.tsx";
+@source "../pages/react-aria/examples/Tab*.tsx";
 @plugin 'tailwindcss-react-aria-components';
 @plugin 'tailwindcss-animate';
 
