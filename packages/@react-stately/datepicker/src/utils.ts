@@ -22,6 +22,7 @@ import {RangeValue, ValidationResult} from '@react-types/shared';
 import {useState} from 'react';
 
 const dictionary = new LocalizedStringDictionary(i18nMessages);
+type IncompleteValue = IncompleteDate |  IncompleteDateTime | IncompleteZonedDateTime
 
 function getLocale() {
   // Match browser language setting here, NOT react-aria's I18nProvider, so that we match other browser-provided
@@ -225,7 +226,7 @@ export function convertValue(value: DateValue | null | undefined, calendar: Cale
 }
 
 
-export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime {
+export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): IncompleteValue {
   if (placeholderValue) {
     const v =  convertValue(placeholderValue, calendar) as DateValue;
     return fromCalendarToIncompleteDate(v);

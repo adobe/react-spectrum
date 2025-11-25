@@ -668,7 +668,7 @@ function addSegment(value: IncompleteValue, part: string, amount: number, option
   throw new Error('Unknown segment: ' + part);
 }
 
-function setSegment(value: IncompleteDate | IncompleteDateTime | IncompleteZonedDateTime, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
+function setSegment(value: IncompleteValue, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'day':
     case 'month':
