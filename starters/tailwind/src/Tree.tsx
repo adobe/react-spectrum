@@ -16,7 +16,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative font-sans w-48 flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-neutral-900 dark:text-neutral-200 bg-white dark:bg-neutral-900 border-y dark:border-y-neutral-700 border-transparent first:border-t-0 last:border-b-0 -mb-px last:mb-0 -outline-offset-2',
+  base: 'relative font-sans w-48 flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-neutral-900 dark:text-neutral-200 bg-white dark:bg-neutral-900 border-t dark:border-t-neutral-700 border-transparent first:border-t-0 -outline-offset-2 first:rounded-t-lg last:rounded-b-lg',
   variants: {
     isSelected: {
       false: 'hover:bg-neutral-100 dark:hover:bg-neutral-800',
