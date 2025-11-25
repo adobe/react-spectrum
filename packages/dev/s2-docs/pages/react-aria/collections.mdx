@@ -5,11 +5,11 @@ import docs from 'docs:react-aria-components';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const section = 'Guides';
-export const description = 'Implementing collections in React Aria';
+export const description = 'How to load and render collections.';
 
 # Collections
 
-<PageDescription>Many components display a collection of items, and provide functionality such as keyboard navigation, selection, and more. React Aria has a consistent, compositional API to define the items displayed in these components.</PageDescription>
+<PageDescription>Many components display a collection of items, and provide functionality such as keyboard navigation, and selection. Learn how to load and render collections using React Aria's compositional API.</PageDescription>
 
 ## Static collections
 
@@ -17,13 +17,17 @@ A **static collection** is a collection that does not change over time (e.g. har
 
 ```tsx render
 "use client";
-import {MenuButton, MenuItem} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
 
-<MenuButton label="Menu">
-  <MenuItem>Open</MenuItem>
-  <MenuItem>Edit</MenuItem>
-  <MenuItem>Delete</MenuItem>
-</MenuButton>
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <MenuItem>Edit</MenuItem>
+    <MenuItem>Delete</MenuItem>
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Sections
@@ -34,24 +38,28 @@ Sections or groups of items can be constructed by wrapping the items in a sectio
 
 ```tsx render
 "use client";
-import {MenuButton, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
 import {Header} from 'react-aria-components';
 
-<MenuButton label="Menu">
-  {/*- begin highlight -*/}
-  <MenuSection>
-    <Header>Styles</Header>
-    {/*- end highlight -*/}
-    <MenuItem>Bold</MenuItem>
-    <MenuItem>Underline</MenuItem>
-  </MenuSection>
-  <MenuSection>
-    <Header>Align</Header>
-    <MenuItem>Left</MenuItem>
-    <MenuItem>Middle</MenuItem>
-    <MenuItem>Right</MenuItem>
-  </MenuSection>
-</MenuButton>
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Menu>
+    {/*- begin highlight -*/}
+    <MenuSection>
+      <Header>Styles</Header>
+      {/*- end highlight -*/}
+      <MenuItem>Bold</MenuItem>
+      <MenuItem>Underline</MenuItem>
+    </MenuSection>
+    <MenuSection>
+      <Header>Align</Header>
+      <MenuItem>Left</MenuItem>
+      <MenuItem>Middle</MenuItem>
+      <MenuItem>Right</MenuItem>
+    </MenuSection>
+  </Menu>
+</MenuTrigger>
 ```
 
 ```tsx render

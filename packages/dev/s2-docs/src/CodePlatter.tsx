@@ -1,10 +1,11 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
+import type {DownloadFiles} from './CodeBlock';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -49,10 +50,7 @@ export function CodePlatterProvider(props: CodePlatterContextValue & {children: 
   return <CodePlatterContext.Provider value={props}>{props.children}</CodePlatterContext.Provider>;
 }
 
-interface FileProviderContextValue {
-  files?: {[name: string]: string},
-  deps?: {[name: string]: string},
-  urls?: {[url: string]: string},
+interface FileProviderContextValue extends DownloadFiles {
   entry?: string
 }
 
@@ -120,7 +118,9 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                     if (node instanceof HTMLHeadingElement && node.id) {
                       url.hash = '#' + node.id;
                     }
-                    navigator.clipboard.writeText(url.toString());
+                    navigator.clipboard.writeText(url.toString()).catch(() => {
+                      ToastQueue.negative('Failed to copy link.');
+                    });
                   }}>
                   <LinkIcon />
                   <Text slot="label">Copy link</Text>
@@ -177,7 +177,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
               }
               {registryUrl &&
                 <MenuItem
-                  href={`https://v0.dev/chat/api/open?url=${registryUrl}`}
+                  href={`https://v0.dev/chat/api/open?url=${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
                   <V0 />
@@ -223,11 +223,11 @@ export function Pre({children}) {
   );
 }
 
-function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: {[name: string]: string}, urls: {[name: string]: string}, entry: string | undefined) {
+function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: DownloadFiles['files'], urls: {[name: string]: string}, entry: string | undefined): DownloadFiles['files'] {
   if (!entry) {
     return {
       ...files,
-      'Example.tsx': getExampleCode(codeRef, urls)
+      'Example.tsx': {contents: getExampleCode(codeRef, urls)}
     };
   }
 
@@ -300,7 +300,9 @@ function ShadcnDialog({registryUrl}) {
           <Button
             variant="accent"
             onPress={() => {
-              navigator.clipboard.writeText(preRef.current!.textContent!);
+              navigator.clipboard.writeText(preRef.current!.textContent!).catch(() => {
+                ToastQueue.negative('Failed to copy command. Please try again.');
+              });
               close();
             }}>
             Copy and close

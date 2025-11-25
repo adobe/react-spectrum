@@ -6,6 +6,7 @@
 @plugin 'tailwindcss-animate';
 @source "../../docs/pages/react-aria/home/*.tsx";
 @import "../../docs/pages/react-aria/home/home.css";
+@source "../src/SearchMenuWrapper.tsx";
 
 @font-face {
   font-family: "adobe-clean-spectrum-vf";
@@ -30,5 +31,11 @@ body {
     --text-xl: calc(1.25rem * 1.125);
     --text-2xl: calc(1.5rem * 1.125);
     --text-3xl: calc(1.875rem * 1.125);
+  }
+}
+
+@layer utilities {
+  .font-spectrum {
+    font-family: "adobe-clean-spectrum-vf", system-ui, sans-serif;
   }
 }

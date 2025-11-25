@@ -1,59 +1,79 @@
+import {Byline, Time} from './PostList';
 import {ExampleList} from './ExampleList';
-import {MobileOnPageNav, Nav, OnPageNav, SideNav, SideNavItem, SideNavLink} from '../src/Nav';
-import type {Page, PageProps, TocNode} from '@parcel/rsc';
-import React, {ReactElement} from 'react';
-// @ts-ignore
+import {Nav} from '../src/Nav';
+import {OptimisticMobileToc, OptimisticToc} from './OptimisticToc';
+import type {Page, PageProps} from '@parcel/rsc';
+import React, {ReactElement, ReactNode} from 'react';
 import '../src/client';
 // @ts-ignore
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
 // @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
 import './anatomy.css';
+import './footer.css';
 import ChevronRightIcon from '@react-spectrum/s2/icons/ChevronRight';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
+import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
-import {getTextWidth} from './textWidth';
-import {H2, H3, H4} from './Headings';
+import {H1, H2, H3, H4} from './Headings';
 import Header from './Header';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Link, TitleLink} from './Link';
 import {MobileHeader} from './MobileHeader';
-import {PickerItem, Provider} from '@react-spectrum/s2';
+import {NavigationSuspense} from './NavigationSuspense';
 import {PropTable} from './PropTable';
 import {StateTable} from './StateTable';
 import {TypeLink} from './types';
 import {VersionBadge} from './VersionBadge';
 import {VisualExample} from './VisualExample';
 
-const h1 = style({
-  font: 'heading-3xl',
-  fontSize: {
-    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
-    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-    lg: 'heading-3xl'
+const p = style({
+  font: 'body-lg',
+  fontFamily: {
+    default: 'sans',
+    isLongForm: 'serif'
   },
-  marginY: 0
+  textWrap: 'pretty',
+  marginY: '[1lh]',
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
-const components = {
-  h1: ({children, ...props}) => <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>,
+const li = style({
+  font: 'body-lg',
+  fontFamily: {
+    default: 'sans',
+    isLongForm: 'serif'
+  },
+  textWrap: 'pretty',
+  marginY: {
+    default: 0,
+    isLongForm: 8
+  },
+  maxWidth: '--text-width',
+  marginX: 'auto'
+});
+
+const components = (isLongForm?: boolean) => ({
+  // h1 is rendered separately
+  h1: () => null,
   h2: H2,
   h3: H3,
   h4: H4,
-  p: ({children, ...props}) => <p {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 24})}>{children}</p>,
+  p: ({children, ...props}) => <p {...props} className={p({isLongForm})}>{children}</p>,
   ul: (props) => <ul {...props} />,
-  li: ({children, ...props}) => <li {...props} className={style({font: {default: 'body', lg: 'body-lg'}, marginY: 0})}>{children}</li>,
+  li: ({children, ...props}) => <li {...props} className={li({isLongForm})}>{children}</li>,
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
-  PageDescription: ({children, ...props}) => <p {...props} className={style({font: {default: 'body-lg', lg: 'body-xl'}})}>{children}</p>,
+  PageDescription: ({children, ...props}) => <p {...props} className={style({font: 'body-xl', maxWidth: '--text-width', marginX: 'auto', marginTop: 8, marginBottom: 24})}>{children}</p>,
   VisualExample,
   Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
   PropTable,
@@ -62,24 +82,7 @@ const components = {
   ExampleSwitcher,
   TypeLink,
   ExampleList
-};
-
-const subPageComponents = (previousPage?: Page) => ({
-  ...components,
-  h1: ({children, ...props}) => (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
-        <TitleLink href="./index.html">{previousPage?.exports?.title}</TitleLink>
-        <ChevronRightIcon styles={iconStyle({size: 'M'})} />
-      </div>
-      <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1}>{children}</h1>
-    </div>
-  )
 });
-
-function anchorId(children) {
-  return children.replace(/\s/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
-}
 
 const getTitle = (currentPage: Page): string => {
   const explicitTitle = (currentPage as any).pageTitle || currentPage.exports?.pageTitle;
@@ -132,25 +135,70 @@ const getFaviconUrl = (currentPage: Page): string => {
 
 let articleStyles = style({
   maxWidth: {
-    default: 'none',
-    isWithToC: 768
+    default: 768,
+    isWide: 'none',
+    isLongForm: 900
   },
+  marginX: 'auto',
   width: 'full',
-  height: 'fit'
+  height: 'fit',
+  flexGrow: 1,
+  '--text-width': {
+    type: 'width',
+    value: {
+      default: 'auto',
+      isLongForm: 600 // ~80 characters at body font size
+    }
+  }
 });
+
+function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer
+      className={style({
+        marginTop: 32,
+        paddingY: 12
+      })}>
+      <Divider size="S" />
+      <ul
+        className={style({
+          display: 'flex',
+          justifyContent: 'end',
+          flexWrap: 'wrap',
+          paddingX: 12,
+          margin: 0,
+          marginTop: 16,
+          font: 'body-2xs',
+          listStyleType: 'none'
+        })}>
+        <li>Copyright © {year} Adobe. All rights reserved.</li>
+        <li><Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">Privacy</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">Terms of Use</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">Cookies</Link></li>
+        <li><Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">Do not sell my personal information</Link></li>
+      </ul>
+    </footer>
+  );
+}
 
 export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {pages, currentPage, children} = props;
-  let hasToC = !currentPage.exports?.hideNav && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let isSubpage = currentPage.exports?.isSubpage;
+  let section = currentPage.exports?.section;
+  let isLongForm = isSubpage && section === 'Blog';
+  let hasToC = (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
+  let isWide = !hasToC && !isLongForm && section !== 'Blog' && section !== 'Releases';
   let library = getLibraryLabel(getLibraryFromPage(currentPage));
   let keywords = [...new Set((currentPage.exports?.keywords ?? []).concat([library]).filter(k => !!k))];
   let ogImage = getOgImageUrl(currentPage);
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
-  let isSubpage = currentPage.exports?.isSubpage;
   let parentPage = pages.find(p => {
     return p.url === currentPage.url.replace(/\/[^/]+\.html$/, '/index.html');
   });
+  let isPostList = currentPage.exports?.isPostList;
+  let Content = isPostList ? PostListContainer : Article;
   return (
     <Provider elementType="html" locale="en" background="layer-1" styles={style({scrollPaddingTop: {default: 64, lg: 0}})}>
       <head>
@@ -170,24 +218,6 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
         <link rel="canonical" href={currentPage.url} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{__html: JSON.stringify(
-            {
-              '@context': 'http://schema.org',
-              '@type': 'Article',
-              author: 'Adobe Inc',
-              headline: title,
-              description: description,
-              image: ogImage,
-              publisher: {
-                '@type': 'Organization',
-                url: 'https://www.adobe.com',
-                name: 'Adobe',
-                logo: 'https://www.adobe.com/favicon.ico'
-              }
-            }
-          )}} />
       </head>
       <body
         className={style({
@@ -206,7 +236,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             alignItems: 'center',
             maxWidth: {
               default: 'full',
-              lg: 1280
+              lg: 1440
             },
             marginX: 'auto',
             marginY: 0,
@@ -218,14 +248,18 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
             gap: {
               default: 0,
               lg: 12
+            },
+            minHeight: {
+              default: 'screen',
+              lg: 'auto'
             }
           })}>
           <Header pages={pages} currentPage={currentPage} />
           <MobileHeader
-            toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) > 1 ? <MobileToc key="toc" toc={currentPage.tableOfContents ?? []} currentPage={currentPage} /> : null}
+            toc={<OptimisticMobileToc currentPage={currentPage} pages={pages} />}
             pages={pages}
             currentPage={currentPage} />
-          <div className={style({display: 'flex', width: 'full'})}>
+          <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
             {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
             <main
               key={currentPage.url}
@@ -249,6 +283,10 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 flexGrow: 1,
                 display: 'flex',
                 justifyContent: 'space-between',
+                columnGap: {
+                  default: 12,
+                  lg: 40
+                },
                 position: 'relative',
                 height: {
                   lg: '[calc(100vh - 72px)]'
@@ -257,86 +295,121 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   lg: 'auto'
                 }
               })}>
-              <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
-                <article
-                  className={articleStyles({isWithToC: hasToC})}>
-                  {currentPage.exports?.version && <VersionBadge version={currentPage.exports.version} />}
-                  {React.cloneElement(children, {
-                    components: isSubpage ?
-                      subPageComponents(parentPage) :
-                      components,
-                    pages
-                  })}
-                  {currentPage.exports?.relatedPages && (
-                    <MobileRelatedPages pages={currentPage.exports.relatedPages} />
-                  )}
-                </article>
-              </CodePlatterProvider>
+              <div
+                className={style({
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flexGrow: 1,
+                  minWidth: 0,
+                  width: 'full'
+                })}>
+                <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                  <NavigationSuspense pages={pages}>
+                    <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
+                      {React.cloneElement(children, {
+                        components: components(isLongForm),
+                        pages
+                      })}
+                    </Content>
+                  </NavigationSuspense>
+                </CodePlatterProvider>
+                <Footer />
+              </div>
               {hasToC && <aside
                 className={style({
                   position: 'sticky',
                   top: 0,
-                  height: 'fit',
-                  maxHeight: 'screen',
-                  overflow: 'auto',
-                  paddingY: 32,
+                  paddingTop: 32,
+                  marginBottom: -40,
                   boxSizing: 'border-box',
+                  width: 180,
+                  flexShrink: 0,
                   display: {
                     default: 'none',
-                    lg: 'block'
-                  }
+                    lg: 'flex'
+                  },
+                  flexDirection: 'column'
                 })}>
-                <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Contents</div>
-                <Toc toc={currentPage.tableOfContents?.[0]?.children ?? []} />
-                {currentPage.exports?.relatedPages && (
-                  <RelatedPages pages={currentPage.exports.relatedPages} />
-                )}
+                <OptimisticToc currentPage={currentPage} pages={pages} />
               </aside>}
             </main>
           </div>
         </div>
+        <ToastContainer placement="bottom" />
       </body>
     </Provider>
   );
 }
 
-function Toc({toc}) {
+interface ArticleProps {
+  page: Page,
+  parentPage?: Page,
+  children: ReactNode,
+  isLongForm?: boolean,
+  isWide?: boolean
+}
+
+function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps) {
+  let section = page.exports?.section;
   return (
-    <OnPageNav>
-      <SideNav>
-        {toc.map((c, i) => (
-          <SideNavItem key={i}>
-            <SideNavLink href={'#' + anchorId(c.title)}>{c.title}</SideNavLink>
-            {c.children.length > 0 && <Toc toc={c.children} />}
-          </SideNavItem>
-        ))}
-      </SideNav>
-    </OnPageNav>
+    <article
+      className={articleStyles({isLongForm, isWide})}
+      itemScope
+      itemType={`https://schema.org/${section === 'Blog' || section === 'Releases' ? 'BlogPosting' : 'TechArticle'}`}>
+      <meta itemProp="description" content={getDescription(page)} />
+      <meta itemProp="image" content={getOgImageUrl(page)} />
+      <div itemProp="publisher" itemScope itemType="https://schema.org/Organization" hidden>
+        <meta itemProp="name" content="Adobe" />
+        <meta itemProp="url" content="https://www.adobe.com" />
+        <meta itemProp="logo" content="https://www.adobe.com/favicon.ico" />
+      </div>
+      {page.exports?.version && <VersionBadge version={page.exports.version} />}
+      {page.exports?.isSubpage
+        ? <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} />
+        : page.tableOfContents?.[0].level === 1 && <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
+      }
+      <div
+        className={style({display: 'contents'})}
+        itemProp="articleBody">
+        {children}
+      </div>
+      {page.exports?.relatedPages && (
+        <MobileRelatedPages pages={page.exports.relatedPages} />
+      )}
+    </article>
   );
 }
 
-function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
+function PostListContainer({page, children, isLongForm, isWide}: ArticleProps) {
   return (
-    <div className={style({paddingTop: 24})}>
-      <div className={style({font: 'title', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Related pages</div>
-      <OnPageNav>
-        <SideNav>
-          {pages.map((page, i) => (
-            <SideNavItem key={i}>
-              <SideNavLink href={page.url}>{page.title}</SideNavLink>
-            </SideNavItem>
-          ))}
-        </SideNav>
-      </OnPageNav>
+    <div className={articleStyles({isLongForm, isWide})}>
+      {page.tableOfContents?.[0].level === 1 && <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>}
+      {children}
+    </div>
+  );
+}
+
+interface SubpageHeaderProps {
+  currentPage: Page,
+  parentPage?: Page,
+  isLongForm?: boolean
+}
+
+function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps) {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
+        <TitleLink href="./index.html">{parentPage?.exports?.title}</TitleLink>
+        <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
+      </div>
+      <H1 itemProp="headline" isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
+      {currentPage.exports?.author && <Byline author={currentPage.exports.author} authorLink={currentPage.exports.authorLink} date={currentPage.exports.date} />}
+      {currentPage.exports?.date && !currentPage.exports?.author && <Time date={currentPage.exports.date} />}
     </div>
   );
 }
 
 function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
-  const P = components.p;
-  const Li = components.li;
-  const Ul = components.ul;
-
   return (
     <div
       className={style({
@@ -345,57 +418,16 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
           lg: 'none'
         }
       })}>
-      <H2>Related pages</H2>
-      <Ul>
+      <H2 id="related-pages">Related pages</H2>
+      <ul className={style({listStyleType: 'none'})}>
         {pages.map((page, i) => (
-          <Li key={i}>
-            <P>
-              <Link href={page.url}>
-                {page.title}
-              </Link>
-            </P>
-          </Li>
+          <li key={i} className={li({isLongForm: false})}>
+            <Link href={page.url}>
+              {page.title}
+            </Link>
+          </li>
         ))}
-      </Ul>
+      </ul>
     </div>
-  );
-}
-
-function MobileToc({toc, currentPage}) {
-  let relatedPages = currentPage.exports?.relatedPages;
-  return (
-    <MobileOnPageNav currentPage={currentPage}>
-      {renderMobileToc(toc)}
-      {relatedPages && relatedPages.map((page, i) => (
-        <PickerItem key={`related-${i}`} id={page.url} href={page.url}>{page.title}</PickerItem>
-      ))}
-    </MobileOnPageNav>
-  );
-}
-
-function renderMobileToc(toc: TocNode[], seen = new Map()) {
-  return toc.map((c) => {
-    let href = c.level === 1 ? '#top' : '#' + anchorId(c.title);
-    if (seen.has(href)) {
-      seen.set(href, seen.get(href) + 1);
-      href += '-' + seen.get(href);
-    } else {
-      seen.set(href, 1);
-    }
-    return (<React.Fragment key={href}>
-      <PickerItem id={href} href={href}>{c.title}</PickerItem>
-      {c.children.length > 0 && renderMobileToc(c.children, seen)}
-    </React.Fragment>);
-  });
-}
-
-export function Time({date}: {date: string}) {
-  let dateObj = new Date(date);
-  return (
-    <time
-      dateTime={date}
-      className={style({font: 'detail'})}>
-      {dateObj.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
-    </time>
   );
 }

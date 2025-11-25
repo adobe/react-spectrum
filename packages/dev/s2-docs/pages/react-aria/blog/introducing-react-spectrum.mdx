@@ -22,6 +22,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
 
+export const hideNav = true;
 export const tags = ['react stately', 'react aria', 'react spectrum', 'hooks', 'react', 'spectrum'];
 export const description = 'Today, we\'re excited to announce [React Spectrum](https://react-spectrum.adobe.com/), a collection of libraries and tools that help you build adaptive, accessible, and robust user experiences. Check it out on [Github](https://github.com/adobe/react-spectrum)!';
 export const date = '2020-07-15';
@@ -48,9 +49,9 @@ We're excited to announce [React Spectrum](https://react-spectrum.adobe.com/inde
 
 ## Features
 
-- ♿️ [**Accessible**](../concepts.html#accessibility) – Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
-- 📱 [**Adaptive**](../concepts.html#interactions) – All components are designed to work with mouse, touch, and keyboard interactions. They're built with responsive design principles to deliver a great experience, no matter the device.
-- 🌍 [**International**](../concepts.html#internationalization) – Support for more than 30 languages is included out of the box, with support for right-to-left languages, date and number formatting, and more.
+- ♿️ [**Accessible**](../quality.html#accessibility) – Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
+- 📱 [**Adaptive**](../quality.html#interactions) – All components are designed to work with mouse, touch, and keyboard interactions. They're built with responsive design principles to deliver a great experience, no matter the device.
+- 🌍 [**International**](../quality.html#internationalization) – Support for more than 30 languages is included out of the box, with support for right-to-left languages, date and number formatting, and more.
 - 🎨 [**Customizable**](../../s2/styling.html) – React Spectrum automatically adapt for dark mode. For even more customizability, you can build your own components with your own DOM structure and styling using the [React Aria](../index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) hooks to provide behavior, accessibility, and interactions.
 
 Adobe is a large company with thousands of engineers working on hundreds of products, which must all meet high standards for UI consistency, accessibility, internationalization, and usability. Meeting these standards at our scale has been a challenge, and we're excited to share what we've learned with the community and raise the bar for web applications together.
@@ -79,7 +80,7 @@ React Stately can be used independently in your own components, or paired with R
 
 ### React Aria
 
-[React Aria](../index.html) implements behavior and [accessibility](../concepts.html#accessibility) for the web according to the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/). It includes full screen reader and keyboard navigation support, along with mouse and touch [interactions](../concepts.html#interactions) that have been tested across a wide variety of devices and browsers. It also implements [internationalization](../concepts.html#internationalization) for over 30 languages, with right-to-left specific behavior, localized date and number formatting, and more.
+[React Aria](../index.html) implements behavior and [accessibility](../quality.html#accessibility) for the web according to the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/). It includes full screen reader and keyboard navigation support, along with mouse and touch [interactions](../quality.html#interactions) that have been tested across a wide variety of devices and browsers. It also implements [internationalization](../quality.html#internationalization) for over 30 languages, with right-to-left specific behavior, localized date and number formatting, and more.
 
 React Aria does not contain any design system specific styling or logic. It implements event handling, accessibility, internationalization, etc. — all the parts of a component that could be shared across multiple design systems. It returns DOM props that can be spread onto the elements rendered by the component. These include semantic properties like [ARIA](https://www.w3.org/TR/wai-aria-1.2/), and event handlers. The event handlers in turn call methods on the state interface to implement the behavior for the component.
 
@@ -118,7 +119,7 @@ function Switch(props) {
 <Switch>Test</Switch>
 ```
 
-[Read more](../concepts.html) about React Aria and the problems it solves, and check out the docs to [get started](../getting-started.html) building your own design system.
+[Read more](../quality.html) about React Aria and the problems it solves, and check out the docs to [get started](../getting-started.html) building your own design system.
 
 ### React Spectrum
 

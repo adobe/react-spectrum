@@ -11,8 +11,8 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
+export const hideNav = true;
 export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
 export const date = 'November 20, 2024';
@@ -21,7 +21,6 @@ export const description = 'We\'re excited to announce that our Disclosure compo
 export const isSubpage = true;
 
 # v1.5.0
-<Time date={date} />
 
 We're excited to announce that our Disclosure components are now generally available! This includes [Disclosure](../Disclosure.html) and [DisclosureGroup](../DisclosureGroup.html) in React Aria. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
 
