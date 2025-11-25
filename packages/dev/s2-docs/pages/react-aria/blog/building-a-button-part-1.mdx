@@ -16,7 +16,6 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 
 export const hideNav = true;
 export const tags = ['react aria', 'react spectrum', 'react', 'spectrum', 'interactions', 'button', 'touch'];
@@ -28,7 +27,6 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Building a Button Part 1: Press Events
-<Byline author={author} authorLink={authorLink} date={date} />
 
 UI development is really hard. While building components has become much easier with modern UI frameworks like React, handling interactions across devices and supporting proper accessibility and internationalization is still extraordinarily difficult. Building UIs has a very [long tail](https://en.wikipedia.org/wiki/Long_tail): it's fairly easy to get the basics for a given component working, but there are many details to consider, and these add up to a majority of the work.
 
@@ -64,7 +62,7 @@ Mobile browsers often introduce delays before emulated mouse events like onClick
 
 The CSS `:active` and `:hover` pseudo-classes are also affected by mouse event emulation. For example, when tapping down on a button and dragging your finger off, the active state persists even when your finger is not over it. This makes it appear like lifting your finger will activate the button when it will not. This is not how native buttons behave, so it can feel inconsistent with user expectations.
 
-<video src={draggingVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={draggingVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 ## Pointer events
 
@@ -84,7 +82,7 @@ Touch events can also be canceled by scrolling. If you touch a button and then s
 
 Text selection gestures are another case where we need to determine the user's intent. On iOS, for example, a long press begins text selection. However, when pressing a button, you wouldn't usually expect text selection to start.
 
-<video src={textSelectionVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={textSelectionVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 It is possible to add the `user-select: none` CSS property to the button to make it non-selectable, but even with that enabled, Safari still tries to select elements nearby. The only way to avoid this is to add `user-select: none` to the entire page. We wouldn't want to do this all the time though, because some elements should allow text selection to occur. React Aria automatically handles adding `user-select: none` to the page on touch start on a pressable element, and removes it after a short delay on press up. The delay is necessary because iOS may begin selecting even after touch up within some threshold.
 
@@ -108,7 +106,7 @@ Each of these events receive a unified `PressEvent` object rather than the under
 
 With the [usePress](../usePress.html) hook, our buttons handle interactions consistently. Dragging your pointer off the button correctly removes the active state, text selection is canceled, and issues with emulated mouse events are avoided.
 
-<video src={buttonVideoUrl} style={{width: '100%', display: 'block', margin: '20px auto'}} controls preload="metadata" />
+<video src={buttonVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
 Try a live example for yourself in our [Button](../../s2/Button.html) docs!
 

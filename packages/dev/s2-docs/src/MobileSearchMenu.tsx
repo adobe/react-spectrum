@@ -9,6 +9,7 @@ import {
   getOrderedLibraries,
   getPageTitle,
   getResourceTags,
+  getSearchSection,
   SearchEmptyState,
   type Section,
   sortItemsForDisplay,
@@ -55,17 +56,16 @@ const dialogStyle = style({
 
 // Mobile tabs styles - horizontal layout with scrolling
 const mobileTabsWrapper = style({
+  height: 'full',
   position: 'relative',
   display: 'flex',
   flexDirection: 'column',
-  font: 'ui'
+  font: 'ui',
+  backgroundColor: 'layer-1'
 });
 
 const mobileTabListContainer = style({
-  position: 'sticky',
-  top: 0,
-  zIndex: 2,
-  backgroundColor: 'layer-2'
+  flexShrink: 0
 });
 
 const mobileTabListWrapper = style({
@@ -135,6 +135,7 @@ const mobileSelectionIndicator = style({
 const mobileTabPanel = style({
   ...focusRing(),
   flexGrow: 1,
+  minHeight: 0,
   display: 'flex',
   flexDirection: 'column',
   outlineStyle: 'none'
@@ -144,14 +145,12 @@ const IconSearchView = lazy(() => import('./IconSearchView').then(({IconSearchVi
 
 const stickySearchContainer = style({
   width: 'full',
-  position: 'sticky',
-  top: 64,
-  zIndex: 1,
-  backgroundColor: 'layer-2',
   display: 'flex',
   flexDirection: 'column',
   gap: 8,
-  paddingTop: 8
+  paddingTop: 8,
+  flexShrink: 0,
+  overflow: 'auto'
 });
 
 function MobileTab(props: Omit<RACTabProps, 'children'> & {children: ReactNode}) {
@@ -204,10 +203,10 @@ function MobileTabPanel(props: Omit<RACTabPanelProps, 'children'> & {children: R
   );
 }
 
-export function MobileSearchMenu({pages, currentPage}: {pages: Page[], currentPage: Page}) {
+export function MobileSearchMenu({pages, currentPage, initialTag}: {pages: Page[], currentPage: Page, initialTag?: string}) {
   return (
     <MobileCustomDialog padding="none">
-      <MobileNav pages={pages} currentPage={currentPage} />
+      <MobileNav pages={pages} currentPage={currentPage} initialTag={initialTag} />
     </MobileCustomDialog>
   );
 }
@@ -226,7 +225,7 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
   );
 };
 
-function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
+function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage: Page, initialTag?: string}) {
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let [searchValue, setSearchValue] = useState('');
@@ -237,7 +236,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
     let sectionsMap = new Map();
     let filteredPages = pages.filter(page => getLibraryFromPage(page) === libraryId && !page.exports?.hideFromSearch);
     for (let page of filteredPages) {
-      let section = page.exports?.section ?? 'Components';
+      let section = getSearchSection(page);
       let sectionPages = sectionsMap.get(section) ?? [];
       sectionPages.push(page);
       sectionsMap.set(section, sectionPages);
@@ -271,7 +270,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
       getTags: (page: Page) => page.exports?.tags || [],
       getDate: (page: Page) => page.exports?.date,
       shouldUseDateSort: (page: Page) => {
-        const section = page.exports?.section;
+        const section = getSearchSection(page);
         return section === 'Blog' || section === 'Releases';
       }
     });
@@ -365,10 +364,10 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
   }, [currentLibrarySections]);
 
   const initialSelectedSection = useMemo(() => {
-    const section = currentPage.exports?.section;
+    const section = getSearchSection(currentPage);
     const firstSection = currentLibrarySections[0]?.toLowerCase() || 'components';
-    return section ? section.toLowerCase() : firstSection;
-  }, [currentPage, currentLibrarySections]);
+    return initialTag || (section ? section.toLowerCase() : firstSection);
+  }, [initialTag, currentPage, currentLibrarySections]);
 
   const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
 
@@ -411,9 +410,10 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
   }, [selectedSection, selectedLibrary, searchValue]);
 
   return (
-    <div className={style({minHeight: '100dvh', paddingBottom: 24, boxSizing: 'border-box'})}>
+    <div className={style({height: 'full'})}>
       <div className={mobileTabsWrapper}>
         <RACTabs
+          className={style({height: 'full', display: 'flex', flexDirection: 'column'})}
           aria-label="Libraries"
           selectedKey={selectedLibrary}
           onSelectionChange={(key) => {
@@ -478,6 +478,7 @@ function MobileNav({pages, currentPage}: {pages: Page[], currentPage: Page}) {
                       </Suspense>
                     ) : (
                       <ComponentCardView
+                        currentUrl={currentPage.url}
                         onAction={() => {
                           setSearchValue('');
                           overlayTriggerState?.close();

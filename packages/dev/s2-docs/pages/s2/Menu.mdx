@@ -225,7 +225,7 @@ Wrap a `<MenuItem>` and a `<Menu>` with a `<SubmenuTrigger>` to create a submenu
 
 ```tsx render
 "use client";
-import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from '@react-spectrum/s2';
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, ActionButton} from '@react-spectrum/s2';
 
 <MenuTrigger>
   <ActionButton>Actions</ActionButton>
@@ -236,14 +236,12 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from
     {/*- begin highlight -*/}
     <SubmenuTrigger>
       <MenuItem id="share">Share</MenuItem>
-      <Popover>
       <Menu>
       {/*- end highlight -*/}
         <MenuItem>Email</MenuItem>
         <MenuItem>SMS</MenuItem>
         <MenuItem>Copy Link</MenuItem>
       </Menu>
-      </Popover>
     </SubmenuTrigger>
   </Menu>
 </MenuTrigger>
@@ -251,7 +249,7 @@ import {Menu, MenuTrigger, MenuItem, SubmenuTrigger, Popover, ActionButton} from
 
 ### Links
 
-Use the `href` prop on a `<MenuItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+Use the `href` prop on a `<MenuItem>` to create a link. See the [client side routing guide](routing.html) to learn how to integrate with your framework.
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['hideLinkOutIcon']} type="s2" wide
 "use client";

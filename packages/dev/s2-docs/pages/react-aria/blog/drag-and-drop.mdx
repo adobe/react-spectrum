@@ -22,7 +22,6 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 
 export const hideNav = true;
 export const tags = ['drag and drop', 'dnd', 'components', 'accessibility', 'keyboard', 'mobile', 'react spectrum', 'react', 'spectrum', 'interactions', 'touch'];
@@ -34,7 +33,6 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Taming the dragon: Accessible drag and drop
-<Byline author={author} authorLink={authorLink} date={date} />
 
 We are excited to announce the release of drag and drop support in [React Aria](../dnd.html) and [React Spectrum](../../s2/dnd.html)! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input. We've designed these hooks with the following features in mind:
 
@@ -59,19 +57,21 @@ After years of research, development, and extensive testing across many devices 
 
 Drag and drop starts with a drag source, implemented using the [useDrag](../useDrag.html) hook, which provides data to be dragged. Multiple items can be dragged at once, and each item can include several representations in different data formats so that they can be dropped in many compatible locations. The [useDrop](../useDrop.html) hook can be used to implement a drop target, which accepts dragged items containing specific data types.
 
-<Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
+<div style={{maxWidth: 'calc(var(--text-width) + 64px)', margin: '0 auto'}}>
+  <Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
+</div>
 
 For mouse and touch screen users, React Aria uses the native [HTML drag and drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) under the hood. This means items can be dragged within the browser window, between browser windows, or even outside the browser into external native applications (e.g. email programs). External items such as files or directories from the user's device may also be dragged in.
 
 In addition to native drag and drop, we have also implemented keyboard and screen reader accessible interactions from scratch. Keyboard users can focus a draggable element and press the `Enter` key to start dragging it. This enters a drag and drop mode across the whole page, which allows the user to press `Tab` to navigate only between drop targets that accept the dragged data, while skipping over all other elements. This reduces the number of elements on the page that must be traversed to find a drop target, and removes the guess work often found with other alternatives such as copy and paste. Once a target is chosen, pressing the `Enter` key again performs the drop.
 
-<video src={dndKeyboard} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
+<video src={dndKeyboard + '#t=0.1'} preload="metadata" controls aria-label="Demo of drag and drop using a keyboard, showing list items being selected and dragged to corresponding drop targets." style={{width: '100%', display: 'block', margin: '40px auto'}} />
 
 For screen reader users, the interactions are similar. We've taken great care to include prompts and announcements to help guide the user through the process, which adapt to the device, and are localized into over 30 languages. Drag sources and drop targets include ARIA descriptions indicating that the user can press `Enter` or double tap to drag or drop, depending on their device. We also use an ARIA live region to announce when a drag starts, with instructions on how to navigate and perform a drop, and to announce when a drop is completed successfully or canceled by the user.
 
 In addition, while in drag and drop mode, all elements other than valid drop targets are hidden from screen readers. Desktop screen reader users can use the `Tab` key to navigate as described earlier, but touch screen readers navigate by swiping through elements using a virtual cursor, and double tapping to drop. Hiding all non-drop target elements makes it much easier to find valid places to drop, without needing to swipe through potentially hundreds of unrelated elements.
 
-<video src={dndMobile} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}}>
+<video src={dndMobile + '#t=0.1'} preload="metadata" controls aria-label="Demo of drag and drop using VoiceOver on iOS" style={{maxHeight: '600px', width: '100%', display: 'block', margin: '40px auto'}}>
   <track src={dndMobileVTT} default kind="captions" label="English Captions" srcLang="en-us" type="text/vtt" />
 </video>
 
@@ -82,7 +82,7 @@ All of these accessibility features are implemented behind the scenes using the 
 Collection components such as lists or tables are treated as a single drop target, so that users can easily tab past them to get to the next drop target without going through every item. Within a droppable collection, keys such as `ArrowDown` and `ArrowUp` can be used to select a drop position, such as on the collection itself, on an item, or between items. Drop indicator elements may be added between items to show the user where dropped data will be inserted, and include accessibility labels such as "Insert between item A and item B".
 
 <figure style={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '20px 0'}}>
-  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 4}}>
+  <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 50, marginBottom: 4, background: 'var(--anatomy-gray-100)', padding: 32, width: 'calc(100% - 64px)', borderRadius: 'var(--anatomy-radius)'}}>
     <RootDropPosition role="img" aria-label="Root drop position diagram, showing the root drop position." />
     <OnDropPosition role="img" aria-label="On drop position diagram, showing the on drop position." />
     <BetweenDropPosition role="img" aria-label="Between drop position diagram, showing the between drop position." />

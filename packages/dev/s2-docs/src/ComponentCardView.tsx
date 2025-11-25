@@ -3,7 +3,7 @@
 import {ComponentCard} from './ComponentCard';
 import {InternalCardViewContext} from '../../../@react-spectrum/s2/src/Card';
 import {Key, ListBox, ListBoxItem} from 'react-aria-components';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export interface ComponentCardItem {
@@ -17,17 +17,29 @@ interface ComponentCardGridProps {
   items: ComponentCardItem[],
   ariaLabel?: string,
   size?: 'S' | 'M' | 'L',
+  currentUrl?: string,
   onAction?: (key: Key) => void,
   renderEmptyState?: () => React.ReactNode
 }
 
-export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAction, renderEmptyState}: ComponentCardGridProps) {
+export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', currentUrl, onAction, renderEmptyState}: ComponentCardGridProps) {
   return (
     <InternalCardViewContext.Provider value={{ElementType: ListBoxItem, layout: 'grid'}}>
       <ListBox
         aria-label={ariaLabel}
         layout="grid"
         onAction={onAction}
+        ref={useCallback(el => {
+          if (el && currentUrl) {
+            // Wait for extra collection render.
+            requestAnimationFrame(() => {
+              let link = el.querySelector(`[href="${CSS.escape(currentUrl)}"]`);
+              if (link) {
+                el.scrollTo({top: link.offsetTop - 8});
+              }
+            });
+          }
+        }, [currentUrl])}
         className={style({
           display: {
             default: 'grid',
@@ -43,6 +55,7 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
             default: 12,
             md: 16
           },
+          scrollPadding: 8,
           marginX: {
             default: -12,
             md: 0
@@ -55,7 +68,8 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
             isEmpty: 'center'
           },
           overflow: 'auto',
-          flexGrow: 1
+          flexGrow: 1,
+          position: 'relative'
         })}
         renderEmptyState={renderEmptyState}
         items={items}>

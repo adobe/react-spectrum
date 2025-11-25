@@ -64,10 +64,6 @@ function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): stri
   return pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
 }
 
-function getPageTitle(page: Page): string {
-  return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
-}
-
 export function getPageFromPathname(pages: Page[], pathname: string | null): Page | null {
   if (!pathname) {
     return null;
@@ -90,18 +86,21 @@ export function getPageFromPathname(pages: Page[], pathname: string | null): Pag
   return targetPage ?? null;
 }
 
-function getPageInfo(pages: Page[], pathname: string | null): {title?: string, section?: string, hasToC?: boolean} {
+function getPageInfo(pages: Page[], pathname: string | null) {
   const targetPage = getPageFromPathname(pages, pathname);
   
   if (!targetPage) {
     return {};
   }
   
-  const title = getPageTitle(targetPage);
+  const title = targetPage.tableOfContents?.[0]?.title;
   const section = (targetPage.exports?.section as string) || 'Components';
   const hasToC = !targetPage.exports?.hideNav && targetPage.tableOfContents?.[0]?.children && targetPage.tableOfContents?.[0]?.children?.length > 0;
-  
-  return {title, section, hasToC};
+  let isSubpage = targetPage.exports?.isSubpage;
+  let isLongForm = isSubpage && section === 'Blog';
+  let isWide = !hasToC && !isLongForm && section !== 'Blog' && section !== 'Releases';
+
+  return {title, section, hasToC, isLongForm, isWide};
 }
 
 function NavigationContent({children}: {children: React.ReactNode}) {
@@ -130,9 +129,9 @@ export function NavigationSuspense({children, pages}: {children: React.ReactNode
   // Subscribe to get the latest targetPathname for skeleton page info
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const pageInfo = getPageInfo(pages, snapshot.pathname);
-  
+
   return (
-    <Suspense fallback={<PageSkeleton title={pageInfo.title} section={pageInfo.section} hasToC={pageInfo.hasToC} />}>
+    <Suspense fallback={<PageSkeleton title={pageInfo.title} section={pageInfo.section} hasToC={pageInfo.hasToC} isLongForm={pageInfo.isLongForm} isWide={pageInfo.isWide} />}>
       <NavigationContent>{children}</NavigationContent>
     </Suspense>
   );

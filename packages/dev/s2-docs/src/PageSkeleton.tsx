@@ -8,30 +8,42 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 const h1 = style({
   font: 'heading-3xl',
   fontSize: {
-    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
-    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-    lg: 'heading-3xl'
+    default: {
+      // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+      default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
+      isLongForm: 'heading-xl'
+    },
+    lg: {
+      default: 'heading-3xl',
+      isLongForm: 'heading-2xl'
+    }
   },
-  marginY: 0
+  textWrap: 'balance',
+  marginY: 0,
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 const skeletonPageDescription = style({
   font: {default: 'body-lg', lg: 'body-xl'},
   marginY: 24,
-  width: '100%'
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 const skeletonParagraph = style({
   font: {default: 'body', lg: 'body-lg'},
-  marginY: 24,
-  width: '100%'
+  marginY: '[1lh]',
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 const skeletonH2 = style({
   font: 'heading-xl',
   marginTop: 48,
-  marginBottom: 16,
-  width: '40%'
+  marginBottom: 24,
+  maxWidth: '--text-width',
+  marginX: 'auto'
 });
 
 function SkeletonVisualExample() {
@@ -61,26 +73,35 @@ function SkeletonVisualExample() {
 
 const skeletonArticle = style({
   maxWidth: {
-    default: 'none',
-    isWithToC: 768
+    default: 768,
+    isWide: 'none',
+    isLongForm: 900
   },
+  marginX: 'auto',
   width: 'full',
-  height: 'fit'
+  height: 'fit',
+  '--text-width': {
+    type: 'width',
+    value: {
+      default: 'auto',
+      isLongForm: 600 // ~80 characters at body font size
+    }
+  }
 });
 
-export function PageSkeleton({title, section, hasToC}: {title?: string, section?: string, hasToC?: boolean}) {
+export function PageSkeleton({title, section, hasToC, isLongForm, isWide}: {title?: string, section?: string, hasToC?: boolean, isLongForm?: boolean, isWide?: boolean}) {
   const isComponents = section === 'Components';
   
   return (
-    <article className={skeletonArticle({isWithToC: hasToC})}>
+    <article className={skeletonArticle({isWithToC: hasToC, isLongForm, isWide})}>
       {title && (
-        <h1 id="top" style={{'--width-per-em': getTextWidth(title)} as any} className={h1}>
+        <h1 id="top" style={{'--width-per-em': getTextWidth(title)} as any} className={h1({isLongForm})}>
           {title}
         </h1>
       )}
       <Skeleton isLoading>
         {!title && (
-          <h1 className={style({font: 'heading-3xl', fontSize: {default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)', lg: 'heading-3xl'}, marginY: 0, width: '60%'})}>
+          <h1 style={{'--width-per-em': getTextWidth('Page Title')} as any} className={h1({isLongForm})}>
             <Text>Page Title</Text>
           </h1>
         )}

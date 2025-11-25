@@ -13,6 +13,7 @@ import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
 import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
+import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
 
 export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
@@ -393,7 +394,23 @@ function renderImports(name: string, importSource: string, props: Props) {
 }
 
 function renderImport(name, from, isDefault = false) {
-  return <Fragment key={from}><span className={style({color: 'magenta-1000'})}>import</span> {isDefault ? null : '{'}{name}{isDefault ? null : '}'} <span className={style({color: 'magenta-1000'})}>from</span> <span className={style({color: 'green-1000'})}>'{from}'</span>;</Fragment>;
+  return (
+    <Fragment key={from}>
+      <span className={style({color: 'magenta-1000'})}>import</span>
+      {' '}
+      {isDefault ? null : '{'}
+      {name}
+      {isDefault ? null : '}'}
+      {' '}
+      <span className={style({color: 'magenta-1000'})}>from</span>
+      {' '}
+      {from.startsWith('./')
+        ? <TabLink className={style({color: 'green-1000'})} name={from.slice(2)}>'{from}'</TabLink>
+        : <span className={style({color: 'green-1000'})}>'{from}'</span>
+      }
+      {';'}
+    </Fragment>
+  );
 }
 
 export function Control({name}: {name: string}) {
@@ -1008,7 +1025,10 @@ function PlacementControl({control, value, onChange}) {
         disallowEmptySelection
         selectedKeys={[value]}
         onSelectionChange={keys => onChange([...keys][0])}
-        className=""
+        className={style({
+          gridTemplateColumns: [25, 24, 24, 25, 24],
+          gridTemplateRows: [25, 24, 24, 25, 24]
+        })}
         style={{
           display: 'grid',
           gridTemplateAreas: `
@@ -1017,9 +1037,7 @@ function PlacementControl({control, value, onChange}) {
             "sc .  .  .  ec"
             "sb .  .  .  eb"
             ".  bs bc be . "
-          `,
-          gridTemplateColumns: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))',
-          gridTemplateRows: 'calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(24px * var(--s2-scale)) calc(25px * var(--s2-scale)) calc(24px * var(--s2-scale))'
+          `
         }}>
         <PlacementControlItem id="top start" style={{gridArea: 'ts'}} />
         <PlacementControlItem id="top" style={{gridArea: 'tc'}} />
