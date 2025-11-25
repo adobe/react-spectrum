@@ -244,7 +244,11 @@ function renderHast(node: HastNode | HastTextNode, key: string, links?: Links, i
 
     // CodeProps includes the indent and newlines in case there are no props to show.
     if (node.tagName === 'div' && typeof childArray[0] === 'string' && /^\s+$/.test(childArray[0]) && React.isValidElement(childArray[1]) && childArray[1].type === CodeProps) {
-      childArray = childArray.slice(1);
+      // If the only thing after CodeProps is the newline from div processing, exclude it (CodeProps handles its own newlines).
+      // Otherwise, include all trailing content.
+      childArray = childArray.length === 3 && childArray[2] === '\n'
+      ? childArray.slice(1, 2)
+      : childArray.slice(1);
     }
 
     let children = childArray.length === 1 ? childArray[0] : childArray;

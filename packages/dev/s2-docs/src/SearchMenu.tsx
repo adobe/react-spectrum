@@ -11,6 +11,7 @@ import {
   getOrderedLibraries,
   getPageTitle,
   getResourceTags,
+  getSearchSection,
   SearchEmptyState,
   sortItemsForDisplay,
   sortSearchItems,
@@ -104,7 +105,7 @@ export function SearchMenu(props: SearchMenuProps) {
       .map(page => {
         const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = getPageTitle(page);
-        const section: string = (page.exports?.section as string) || 'Components';
+        const section: string = getSearchSection(page);
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
         const description: string = stripMarkdown(page.exports?.description);
         const date: string | undefined = page.exports?.date;
@@ -215,9 +216,13 @@ export function SearchMenu(props: SearchMenuProps) {
 
   const selectedItems = useMemo(() => {
     let items: typeof transformedComponents = [];
-    if (searchValue.trim().length > 0 && selectedTagId === 'all') {
+    if (selectedTagId === 'all') {
       items = filteredComponents.flatMap(s => s.children) || [];
-      items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
+      if (searchValue.trim().length > 0) {
+        items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
+      } else {
+        items = sortItemsForDisplay(items, searchValue);
+      }
     } else {
       items = (filteredComponents.find(s => s.id === selectedTagId)?.children) || [];
       items = sortItemsForDisplay(items, searchValue);
@@ -227,17 +232,16 @@ export function SearchMenu(props: SearchMenuProps) {
   }, [filteredComponents, selectedTagId, searchValue]);
 
   const selectedSectionName = useMemo(() => {
-    if (searchValue.trim().length > 0 && selectedTagId === 'all') {
+    if (selectedTagId === 'all') {
       return 'All';
     }
     return (filteredComponents.find(s => s.id === selectedTagId)?.name)
       || (sections.find(s => s.id === selectedTagId)?.name)
       || 'Items';
-  }, [filteredComponents, sections, selectedTagId, searchValue]);
+  }, [filteredComponents, sections, selectedTagId]);
 
   useEffect(() => {
     const handleNavigationStart = () => {
-      setSearchValue('');
       onClose();
     };
 
