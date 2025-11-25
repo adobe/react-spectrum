@@ -57,9 +57,9 @@ export interface Calendar {
   getDaysInMonth(date: AnyCalendarDate): number,
   /** Returns the number of months in the year of the given date. */
   getMonthsInYear(date: AnyCalendarDate): number,
-  /** Returns the maximum month. */
+  /** Returns the maximum month across all years. */
   getMaxMonths(): number,
-  /** Returns the maximum day. */
+  /** Returns the maximum day across all months. */
   getMaxDays(): number,
   /** Returns the number of years in the era of the given date. */
   getYearsInEra(date: AnyCalendarDate): number,
