@@ -75,6 +75,7 @@
 
     &[data-pressed] {
       background: var(--highlight-pressed);
+      box-shadow: none;
     }
   }
 }
