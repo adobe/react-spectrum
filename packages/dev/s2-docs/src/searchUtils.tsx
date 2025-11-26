@@ -174,6 +174,14 @@ export function getPageTitle(page: Page): string {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
+/**
+ * Gets the search section for a page, preferring `searchSection` over `section`.
+ * This allows pages to appear in a different section in search results than in navigation.
+ */
+export function getSearchSection(page: Page): string {
+  return (page.exports?.searchSection as string) ?? (page.exports?.section as string) ?? 'Components';
+}
+
 export function getOrderedLibraries(currentPage: Page) {
   const allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, ...TAB_DEFS[id]}));
   const currentLibId = getLibraryFromPage(currentPage);
@@ -210,6 +218,7 @@ export function useSearchTagSelection(
   initialTagId: string
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
+  const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
   const prevSearchWasEmptyRef = useRef<boolean>(true);
 
   // Ensure selected tag is valid for the current library
@@ -217,9 +226,18 @@ export function useSearchTagSelection(
   const resourceTagIds = resourceTags.map(t => t.id);
   const allBaseIds = useMemo(() => [...baseSectionIds, ...resourceTagIds], [baseSectionIds, resourceTagIds]);
   const isResourceSelected = selectedTagId && resourceTagIds.includes(selectedTagId);
+
+  // "All" tag is shown when search starts (first time search value is non-empty and no resource is selected)
+  const shouldTriggerAll = searchValue.trim().length > 0 && !isResourceSelected;
+
+  // Track if "All" has been shown, and once shown, keep showing it
+  if (shouldTriggerAll && !hasAllBeenShown) {
+    setHasAllBeenShown(true);
+  }
+
   const sectionIds = useMemo(() => {
-    return searchValue.trim().length > 0 && !isResourceSelected ? ['all', ...allBaseIds] : allBaseIds;
-  }, [searchValue, isResourceSelected, allBaseIds]);
+    return hasAllBeenShown ? ['all', ...allBaseIds] : allBaseIds;
+  }, [hasAllBeenShown, allBaseIds]);
   
   useEffect(() => {
     if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
@@ -245,13 +263,23 @@ export function useSectionTagsForDisplay(
   selectedTagId: string,
   resourceTagIds: string[]
 ): Tag[] {
+  const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
+  
+  // Track if "All" should be triggered (search value exists and no resource is selected)
+  const shouldTriggerAll = searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId);
+  
+  // Once "All" has been shown, keep showing it
+  if (shouldTriggerAll && !hasAllBeenShown) {
+    setHasAllBeenShown(true);
+  }
+
   return useMemo(() => {
     const base = sections.map(s => ({id: s.id, name: s.name}));
-    if (searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId)) {
+    if (hasAllBeenShown) {
       return [{id: 'all', name: 'All'}, ...base];
     }
     return base;
-  }, [sections, searchValue, selectedTagId, resourceTagIds]);
+  }, [sections, hasAllBeenShown]);
 }
 
 export function sortItemsForDisplay<T extends {name: string, date?: string}>(items: T[], searchValue: string): T[] {
