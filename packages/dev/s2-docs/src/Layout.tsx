@@ -194,9 +194,27 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let ogImage = getOgImageUrl(currentPage);
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
-  let parentPage = pages.find(p => {
-    return p.url === currentPage.url.replace(/\/[^/]+\.html$/, '/index.html');
-  });
+  let parentUrl;
+  let parentPage;
+  if (isSubpage) {
+    let pathParts = currentPage.url.split('/');
+    let fileName = pathParts.pop();
+
+    if (fileName === 'testing.html') {
+      // for testing pages like /CheckboxGroup/testing.html, parent is /CheckboxGroup.html
+      let parentDir = pathParts.pop();
+      parentUrl = `../${parentDir}.html`;
+
+      let parentPageUrl = pathParts.join('/') + `/${parentDir}.html`;
+      parentPage = pages.find(p => p.url === parentPageUrl);
+    } else {
+      // for release subpages like releases/2024-01-15.html, parent is just the same but with the end replaced with index.html
+      parentUrl = './index.html';
+      let parentIndexUrl = pathParts.join('/') + '/index.html';
+      parentPage = pages.find(p => p.url === parentIndexUrl);
+    }
+  }
+
   let isPostList = currentPage.exports?.isPostList;
   let Content = isPostList ? PostListContainer : Article;
   return (
@@ -305,7 +323,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                 })}>
                 <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
                   <NavigationSuspense pages={pages}>
-                    <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
+                    <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide} parentHref={parentUrl}>
                       {React.cloneElement(children, {
                         components: components(isLongForm),
                         pages
@@ -346,10 +364,11 @@ interface ArticleProps {
   parentPage?: Page,
   children: ReactNode,
   isLongForm?: boolean,
-  isWide?: boolean
+  isWide?: boolean,
+  parentHref?: string
 }
 
-function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps) {
+function Article({page, parentPage, children, isLongForm, isWide, parentHref}: ArticleProps) {
   let section = page.exports?.section;
   return (
     <article
@@ -365,7 +384,7 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
       </div>
       {page.exports?.version && <VersionBadge version={page.exports.version} />}
       {page.exports?.isSubpage
-        ? <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} />
+        ? <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} parentHref={parentHref} />
         : page.tableOfContents?.[0].level === 1 && <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
       }
       <div
@@ -392,14 +411,15 @@ function PostListContainer({page, children, isLongForm, isWide}: ArticleProps) {
 interface SubpageHeaderProps {
   currentPage: Page,
   parentPage?: Page,
-  isLongForm?: boolean
+  isLongForm?: boolean,
+  parentHref?: string
 }
 
-function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps) {
+function SubpageHeader({currentPage, parentPage, isLongForm, parentHref}: SubpageHeaderProps) {
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
-        <TitleLink href="./index.html">{parentPage?.exports?.title}</TitleLink>
+        <TitleLink href={parentHref ?? './index.html'}>{parentPage?.exports?.title ?? parentPage?.tableOfContents?.[0]?.title ?? parentPage?.name}</TitleLink>
         <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
       </div>
       <H1 itemProp="headline" isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
@@ -418,8 +438,8 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
           lg: 'none'
         }
       })}>
-      <H2 id="related-pages">Related pages</H2>
-      <ul className={style({listStyleType: 'none'})}>
+      <H2>Related pages</H2>
+      <ul>
         {pages.map((page, i) => (
           <li key={i} className={li({isLongForm: false})}>
             <Link href={page.url}>

@@ -36,7 +36,7 @@ export function Nav({pages, currentPage}: PageProps) {
 
     let section = page.exports?.section ?? 'Components';
     let group = page.exports?.group ?? undefined;
-    if (section === '') {
+    if (section === '' || page.exports?.isSubpage) {
       continue;
     }
 
@@ -46,7 +46,7 @@ export function Nav({pages, currentPage}: PageProps) {
       if (value instanceof Map) {
         groupMap = value;
       } else {
-        groupMap = new Map<string, Page[]>(); 
+        groupMap = new Map<string, Page[]>();
       }
       let groupPages = groupMap.get(section) ?? [];
       groupPages.push(page);
@@ -82,7 +82,7 @@ export function Nav({pages, currentPage}: PageProps) {
     if (b[0] === 'Guides') {
       return -1;
     }
-    
+
     return a[0].localeCompare(b[0]);
   });
 
@@ -272,7 +272,7 @@ export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
   let {...linkProps} = props;
-  
+
   return (
     <Link
       {...linkProps}
