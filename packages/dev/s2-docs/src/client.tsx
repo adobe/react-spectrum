@@ -15,7 +15,7 @@ let isClientLink = (link: HTMLAnchorElement) => {
     (!link.target || link.target === '_self') &&
     link.origin === location.origin &&
     !link.hasAttribute('download') &&
-    link.pathname.startsWith(getBaseUrl((process.env.LIBRARY as any) || 'react-aria'))
+    link.href.startsWith(getBaseUrl((process.env.LIBRARY as any) || 'react-aria'))
   );
 };
 
