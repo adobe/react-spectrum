@@ -1,6 +1,7 @@
 'use client';
 
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getBaseUrl} from './pageUtils';
 import {LinkProps, Link as S2Link} from '@react-spectrum/s2';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import React from 'react';
@@ -11,12 +12,9 @@ export function Link({href, ...props}: LinkProps) {
   );
 }
 
+const baseUrl = getBaseUrl((process.env.LIBRARY as any) || 'react-aria');
 export function getAnchorProps(href) {
-  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|^#/.test(href)) {
-    return {};
-  }
-
-  if (/^\//.test(href)) {
+  if (!/^http/.test(href) || href.startsWith(baseUrl)) {
     return {};
   }
 
