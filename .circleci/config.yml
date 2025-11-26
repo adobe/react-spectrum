@@ -49,6 +49,30 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
+commands:
+  deploy-s3:
+    parameters:
+      dir:
+        type: string
+      bucket:
+        type: string
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
+          from: /tmp/dist/s2-docs/<< parameters.dir >>
+          to: << parameters.bucket >>
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
+          from: /tmp/dist/s2-docs/<< parameters.dir >>
+          to: << parameters.bucket >>
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
+          from: /tmp/dist/s2-docs/<< parameters.dir >>
+          to: << parameters.bucket >>
+
 jobs:
   install:
     executor: rsp-large
@@ -827,43 +851,15 @@ jobs:
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8" --cache-control "max-age=300"
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.html;*.rsc" --cache-control "max-age=300"
 
-  deploy-s3-prod:
-    executor: rsp
-    steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - aws-cli/install
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
-          from: /tmp/dist/s2-docs
-          to: s3://react-spectrum-prod
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
-          from: /tmp/dist/s2-docs
-          to: s3://react-spectrum-prod
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
-          from: /tmp/dist/s2-docs
-          to: s3://react-spectrum-prod
-
   deploy-s3-stage:
     executor: rsp
     steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - aws-cli/install
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
-          from: /tmp/dist/s2-docs
-          to: s3://react-spectrum-stage
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
-          from: /tmp/dist/s2-docs
-          to: s3://react-spectrum-stage
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
-          from: /tmp/dist/s2-docs
-          to: s3://react-spectrum-stage
+      - deploy-s3:
+          dir: react-aria
+          bucket: s3://react-aria-stage
+      - deploy-s3:
+          dir: s2
+          bucket: s3://react-spectrum-stage
 
   comment:
     executor: rsp
