@@ -39,10 +39,6 @@ export function setNavigationPromise(promise: Promise<void> | null, pathname?: s
   listeners.forEach(callback => callback());
 }
 
-function getPageTitle(page: Page): string {
-  return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
-}
-
 export function getPageFromPathname(pages: Page[], url: string | null): Page | null {
   if (!url) {
     return null;
@@ -58,7 +54,7 @@ function getPageInfo(pages: Page[], pathname: string | null) {
     return {};
   }
   
-  const title = getPageTitle(targetPage);
+  const title = targetPage.tableOfContents?.[0]?.title;
   const section = (targetPage.exports?.section as string) || 'Components';
   const hasToC = !targetPage.exports?.hideNav && targetPage.tableOfContents?.[0]?.children && targetPage.tableOfContents?.[0]?.children?.length > 0;
   let isSubpage = targetPage.exports?.isSubpage;
