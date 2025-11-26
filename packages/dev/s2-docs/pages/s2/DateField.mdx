@@ -3,6 +3,7 @@ export default Layout;
 
 import {DateField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
+import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['calendar'];
 
@@ -20,7 +21,7 @@ export const tags = ['calendar'];
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the <Link href={`${getBaseUrl('react-aria')}/internationalized/date/`}>@internationalized/date</Link> package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
