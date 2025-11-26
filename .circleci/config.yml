@@ -13,6 +13,10 @@ parameters:
     type: string
     default: ""
 
+orbs:
+  aws-cli: circleci/aws-cli@5.4.1
+  aws-s3: circleci/aws-s3@4.1
+
 executors:
   rsp:
     docker:
@@ -480,21 +484,6 @@ jobs:
           paths:
             - '*/docs/'
 
-  docs-beta:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make s2-docs-production
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
   s2-docs:
     executor: rsp-xlarge
     steps:
@@ -504,6 +493,21 @@ jobs:
       - run:
           name: build s2 docs
           command: make s2-docs
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/s2-docs/'
+
+  s2-docs-production:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs-production
 
       - persist_to_workspace:
           root: dist
@@ -823,6 +827,44 @@ jobs:
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8" --cache-control "max-age=300"
             azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.html;*.rsc" --cache-control "max-age=300"
 
+  deploy-s3-prod:
+    executor: rsp
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
+          from: /tmp/dist/s2-docs
+          to: s3://react-spectrum-prod
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
+          from: /tmp/dist/s2-docs
+          to: s3://react-spectrum-prod
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
+          from: /tmp/dist/s2-docs
+          to: s3://react-spectrum-prod
+
+  deploy-s3-stage:
+    executor: rsp
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
+          from: /tmp/dist/s2-docs
+          to: s3://react-spectrum-stage
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
+          from: /tmp/dist/s2-docs
+          to: s3://react-spectrum-stage
+      - aws-s3/sync:
+          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
+          from: /tmp/dist/s2-docs
+          to: s3://react-spectrum-stage
+
   comment:
     executor: rsp
     steps:
@@ -934,6 +976,12 @@ workflows:
       - s2-docs:
           requires:
             - install
+      - s2-docs-production:
+          requires:
+            - install
+          filters:
+            branches:
+              only: main
       - verdaccio:
           filters:
             branches:
@@ -988,7 +1036,21 @@ workflows:
             - storybook
             - storybook-s2
             - docs
+      - deploy-s3-stage:
+          name: deploy-s3-commit
+          requires:
             - s2-docs
+          filters:
+            branches:
+              ignore: main
+      - deploy-s3-stage:
+          name: deploy-s3-main
+          requires:
+            - s2-docs
+            - s2-docs-production
+          filters:
+            branches:
+              only: main
       - deploy-verdaccio:
           requires:
             - v-docs
@@ -1009,6 +1071,7 @@ workflows:
           requires:
             - ts-diff
             - deploy
+            - deploy-s3-commit
       - comment:
           name: comment-verdaccio
           requires:
@@ -1035,26 +1098,6 @@ workflows:
               only: main
           requires:
             - docs-production
-
-
-  beta-docs:
-    when:
-      and:
-        - equal: [ "beta-docs", << pipeline.parameters.GHA_Action >> ]
-    jobs:
-      - install
-      - docs-beta:
-          filters:
-            branches:
-              only: beta-docs
-          requires:
-            - install
-      - deploy-production:
-          filters:
-            branches:
-              only: beta-docs
-          requires:
-            - docs-beta
 
   nightly:
     triggers:

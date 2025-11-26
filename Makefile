@@ -2,6 +2,9 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
+BRANCH := $(or $(CIRCLE_BRANCH),$(shell git rev-parse --abbrev-ref HEAD))
+BRANCH_TYPE := $(if $(filter $(BRANCH),main),main,pr)
+HASH := $(shell git rev-parse HEAD)
 
 all: node_modules
 
@@ -146,14 +149,14 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
-	DOCS_ENV=stage PUBLIC_URL=/$$(git rev-parse HEAD) DIST_DIR=dist/$$(git rev-parse HEAD) $(MAKE) build-s2-docs
-	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/react-aria/robots.txt
-	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/s2/robots.txt
+	DOCS_ENV=stage PUBLIC_URL=/$(BRANCH_TYPE)/$(HASH) DIST_DIR=dist/s2-docs/$(BRANCH_TYPE)/$(HASH) $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/$(BRANCH_TYPE)/$(HASH)/react-aria/robots.txt
+	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/$(BRANCH_TYPE)/$(HASH)/s2/robots.txt
 
 s2-docs-production:
-	DOCS_ENV=prod PUBLIC_URL=/ DIST_DIR=dist/production $(MAKE) build-s2-docs
-	cp packages/dev/docs/pages/robots.txt dist/production/react-aria/robots.txt
-	cp packages/dev/docs/pages/robots.txt dist/production/s2/robots.txt
+	DOCS_ENV=prod PUBLIC_URL=/ DIST_DIR=dist/s2-docs $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
+	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
