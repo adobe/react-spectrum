@@ -31,7 +31,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -39,7 +39,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
