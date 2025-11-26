@@ -759,7 +759,7 @@ export const style = createTheme({
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
+    fontSize: new ExpandedProperty<keyof typeof fontSize>(['--fs', 'fontSize'], (value) => {
       return {
         '--fs': `pow(1.125, ${value})`,
         fontSize: `round(${fontSizeCalc} / 16 * 1rem, 1px)`
