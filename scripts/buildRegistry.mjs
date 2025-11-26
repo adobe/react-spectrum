@@ -6,7 +6,7 @@ import path from 'path';
 import postcss from 'postcss';
 import * as recast from 'recast';
 
-const publicUrl = getBaseUrl('react-aria') + '/registry/';
+const publicUrl = getBaseUrl('react-aria') + '/registry';
 
 fs.rmSync('starters/tailwind/registry', {recursive: true, force: true});
 fs.mkdirSync('starters/tailwind/registry');

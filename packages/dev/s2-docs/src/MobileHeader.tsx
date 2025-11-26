@@ -93,7 +93,8 @@ export function MobileHeader({toc, pages, currentPage}) {
     subdirectory = 'react-aria';
   }
 
-  let homepage = getBaseUrl(subdirectory);
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
 
   return (
     <div

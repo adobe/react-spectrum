@@ -110,9 +110,10 @@ export default function Header(props: PageProps) {
     subdirectory = 'react-aria';
   }
 
-  let homepage = getBaseUrl(subdirectory);
-  let docs = `${homepage}/getting-started`;
-  let release = `${homepage}/releases/`;
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
+  let docs = `${baseUrl}/getting-started`;
+  let release = `${baseUrl}/releases/`;
   let blog = `${getBaseUrl('react-aria')}/blog/`;
 
   return (

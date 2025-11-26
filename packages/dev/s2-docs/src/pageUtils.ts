@@ -29,7 +29,7 @@ export function getRSCUrl(pathname: string) {
   let url = new URL(pathname, location.href);
   url.pathname = url.pathname.replace('.html', '');
   if (url.pathname.endsWith('/')) {
-    url.pathname += '/index.rsc';
+    url.pathname += 'index.rsc';
   } else {
     url.pathname += '.rsc';
   }
