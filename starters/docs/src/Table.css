@@ -55,6 +55,10 @@
   transition-duration: 200ms;
   -webkit-tap-highlight-color: transparent;
 
+  &tr:last-child {
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -2px;
@@ -142,6 +146,14 @@
     display: flex;
     align-items: center;
     height: 100%;
+  }
+
+  &:is(.react-aria-Row > :first-child) {
+    border-end-start-radius: var(--radius);
+  }
+
+  &:is(.react-aria-Row > :last-child) {
+    border-end-end-radius: var(--radius);
   }
 
   &[data-focus-visible] {

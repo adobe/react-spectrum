@@ -3,6 +3,7 @@
 import {ActionButton, Avatar, Collection, ComboBox, ComboBoxItem, Content, ContextualHelp, Footer, Header, Heading, NotificationBadge, NumberField, Picker, PickerItem, PickerSection, RangeSlider, Slider, Switch, Text, TextField, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import AddCircle from '@react-spectrum/s2/icons/AddCircle';
 import {baseColor, focusRing, style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {CenterBaseline} from '../../../@react-spectrum/s2/src/CenterBaseline';
 import {CodePlatter, Pre, ShareUrlProvider} from './CodePlatter';
 import {ExampleOutput} from './ExampleOutput';
 import {ExampleSwitcherContext} from './ExampleSwitcher';
@@ -549,7 +550,15 @@ function Wrapper({control, children, styles, ref}: {control: PropControl, childr
         {control.name}
         <span className={style({whiteSpace: 'nowrap'})}>
           &nbsp;
-          {control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}
+          {control.description ? (
+            <CenterBaseline
+              styles={style({
+                display: 'inline-flex',
+                height: 0
+              })}>
+              <PropContextualHelp control={control} />
+            </CenterBaseline>
+          ) : null}
         </span>
       </span>
       {children}
