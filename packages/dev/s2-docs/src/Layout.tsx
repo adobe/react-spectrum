@@ -457,7 +457,6 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
             </li>
           );
         })}
-        ))}
       </ul>
     </div>
   );
