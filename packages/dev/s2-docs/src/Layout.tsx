@@ -18,8 +18,8 @@ import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
 import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
-import {getCanonicalUrl} from './pageUtils';
-import {getLibraryFromPage, getLibraryFromUrl, getLibraryLabel} from './library';
+import {getCurrentPage, getPages} from './getPages';
+import {getLibraryFromPage, getLibraryLabel} from './library';
 import {H1, H2, H3, H4} from './Headings';
 import Header from './Header';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -74,6 +74,7 @@ const components = (isLongForm?: boolean) => ({
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
+  Link,
   PageDescription: ({children, ...props}) => <p {...props} className={style({font: 'body-xl', maxWidth: '--text-width', marginX: 'auto', marginTop: 8, marginBottom: 24})}>{children}</p>,
   VisualExample,
   Keyboard: (props) => <kbd {...props} className={style({font: 'code-sm', paddingX: 4, whiteSpace: 'nowrap', backgroundColor: 'gray-100', borderRadius: 'sm'})} />,
@@ -102,11 +103,12 @@ const getTitle = (currentPage: Page): string => {
 };
 
 const getOgImageUrl = (currentPage: Page): string => {
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  if (!publicUrl.endsWith('/')) {
-    publicUrl += '/';
+  let currentURL = new URL(currentPage.url);
+  let path = currentURL.pathname || '/';
+  if (path.endsWith('/')) {
+    path += 'index';
   }
-  return publicUrl + 'og/' + currentPage.url.replace(publicUrl, '').replace(/\.html$/, '.png');
+  return new URL(`/og${path}.png`, currentURL).href;
 };
 
 const getDescription = (currentPage: Page): string => {
@@ -183,8 +185,10 @@ function Footer() {
   );
 }
 
-export function Layout(props: PageProps & {children: ReactElement<any>}) {
-  let {pages, currentPage, children} = props;
+export async function Layout(props: PageProps & {children: ReactElement<any>}) {
+  let {children} = props;
+  let pages = await getPages();
+  let currentPage = getCurrentPage(props.currentPage);
   let isSubpage = currentPage.exports?.isSubpage;
   let section = currentPage.exports?.section;
   let isLongForm = isSubpage && section === 'Blog';
@@ -195,9 +199,8 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
   let ogImage = getOgImageUrl(currentPage);
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
-  let parentPage = pages.find(p => {
-    return p.url === currentPage.url.replace(/\/[^/]+\.html$/, '/index.html');
-  });
+  let parentUrl = new URL('./', currentPage.url);
+  let parentPage = pages.find(p => p.url === parentUrl.href);
   let isPostList = currentPage.exports?.isPostList;
   let Content = isPostList ? PostListContainer : Article;
   return (
@@ -214,11 +217,11 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
         <meta name="twitter:image" content={ogImage} />
         <meta property="og:title" content={title} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={getCanonicalUrl(currentPage)} />
+        <meta property="og:url" content={currentPage.url} />
         <meta property="og:image" content={ogImage} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
-        <link rel="canonical" href={getCanonicalUrl(currentPage)} />
+        <link rel="canonical" href={currentPage.url} />
       </head>
       <body
         className={style({
@@ -263,7 +266,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
           <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
             {currentPage.exports?.hideNav ? null : <Nav pages={pages} currentPage={currentPage} />}
             <main
-              key={currentPage.url}
+              key={currentPage.name}
               style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
               className={style({
                 isolation: 'isolate',
@@ -304,7 +307,7 @@ export function Layout(props: PageProps & {children: ReactElement<any>}) {
                   minWidth: 0,
                   width: 'full'
                 })}>
-                <CodePlatterProvider library={getLibraryFromUrl(currentPage.url)}>
+                <CodePlatterProvider library={getLibraryFromPage(currentPage)}>
                   <NavigationSuspense pages={pages}>
                     <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
                       {React.cloneElement(children, {
@@ -367,7 +370,7 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
       {page.exports?.version && <VersionBadge version={page.exports.version} />}
       {page.exports?.isSubpage
         ? <SubpageHeader currentPage={page} parentPage={parentPage} isLongForm={isLongForm} />
-        : page.tableOfContents?.[0].level === 1 && <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
+        : page.tableOfContents?.[0]?.level === 1 && <H1 itemProp="headline" isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>
       }
       <div
         className={style({display: 'contents'})}
@@ -384,7 +387,7 @@ function Article({page, parentPage, children, isLongForm, isWide}: ArticleProps)
 function PostListContainer({page, children, isLongForm, isWide}: ArticleProps) {
   return (
     <div className={articleStyles({isLongForm, isWide})}>
-      {page.tableOfContents?.[0].level === 1 && <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>}
+      {page.tableOfContents?.[0]?.level === 1 && <H1 isLongForm={isLongForm}>{page.tableOfContents?.[0].title}</H1>}
       {children}
     </div>
   );

@@ -39,55 +39,16 @@ export function setNavigationPromise(promise: Promise<void> | null, pathname?: s
   listeners.forEach(callback => callback());
 }
 
-function normalizePathname(urlOrPathname: string, publicUrlPrefix: string): string {
-  let pathname: string;
-  try {
-    if (urlOrPathname.startsWith('http://') || urlOrPathname.startsWith('https://')) {
-      pathname = new URL(urlOrPathname).pathname;
-    } else {
-      pathname = new URL(urlOrPathname, location.href).pathname;
-    }
-  } catch {
-    const [basePathname] = urlOrPathname.split('?');
-    const [cleanPathname] = basePathname.split('#');
-    pathname = cleanPathname;
-  }
-  
-  let pathnameWithoutPrefix = pathname;
-  if (publicUrlPrefix !== '/' && pathname.startsWith(publicUrlPrefix)) {
-    pathnameWithoutPrefix = pathname.slice(publicUrlPrefix.length);
-    if (!pathnameWithoutPrefix.startsWith('/')) {
-      pathnameWithoutPrefix = '/' + pathnameWithoutPrefix;
-    }
-  }
-  
-  return pathnameWithoutPrefix.startsWith('/') ? pathnameWithoutPrefix : '/' + pathnameWithoutPrefix;
-}
-
 function getPageTitle(page: Page): string {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
-export function getPageFromPathname(pages: Page[], pathname: string | null): Page | null {
-  if (!pathname) {
+export function getPageFromPathname(pages: Page[], url: string | null): Page | null {
+  if (!url) {
     return null;
   }
   
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
-  let publicUrlPrefix = publicUrlPathname === '/' ? '/' : publicUrlPathname.replace(/\/$/, '');
-  
-  let normalizedPathname = normalizePathname(pathname, publicUrlPrefix);
-  
-  const targetPage = pages.find(p => {
-    let normalizedPageUrl = normalizePathname(p.url, publicUrlPrefix);
-    
-    return normalizedPageUrl === normalizedPathname || 
-          normalizedPageUrl === normalizedPathname.replace(/\.html$/, '') ||
-          normalizedPageUrl === normalizedPathname + '.html';
-  });
-  
-  return targetPage ?? null;
+  return pages.find(p => p.url === url) ?? null;
 }
 
 function getPageInfo(pages: Page[], pathname: string | null) {

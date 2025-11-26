@@ -20,7 +20,9 @@ import {Popover} from 'tailwind-starter/Popover';
 import {Button} from 'tailwind-starter/Button';
 import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
 import reactAriaFavicon from 'url:../../assets/react-aria.ico';
-import SearchMenuWrapper from '../../src/SearchMenuWrapper';
+import SearchMenuWrapperServer from '../../src/SearchMenuWrapperServer';
+import {getCurrentPage, getPages} from '../../src/getPages';
+import {getBaseUrl} from '../../src/pageUtils';
 
 export const section = 'Overview';
 export const title = 'Home';
@@ -39,11 +41,11 @@ export const hideFromSearch = true;
     <meta name="twitter:image" content={ogImage} />
     <meta property="og:title" content="React Aria" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={props.currentPage.url} />
+    <meta property="og:url" content={getCurrentPage(props.currentPage).url} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:description" content="Craft world-class accessible components with custom styles." />
     <meta property="og:locale" content="en_US" />
-    <link rel="canonical" href={props.currentPage.url} />
+    <link rel="canonical" href={getCurrentPage(props.currentPage).url} />
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{__html: JSON.stringify(
@@ -76,10 +78,10 @@ export const hideFromSearch = true;
         </a>
 
         <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 font-semibold ring-1 ring-black/5">
-          <a href={props.pages.filter(page => page.name.includes('react-aria') && page.name.includes('blog') && page.name.includes('index.html'))[0].url} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Blog</a>
-          <a href={props.pages.filter(page => page.name.includes('react-aria') && page.name.includes('releases') && page.name.includes('index.html'))[0].url}className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Releases</a>
-          <a href={props.pages.filter(page => page.name.includes('s2') && !page.name.includes('releases') && page.name.includes('index.html'))[0].url}className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
-          <a href={props.pages.filter(page => page.name.includes('internationalized') && page.name.includes('date') && page.name.includes('index.html'))[0].url} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Internationalized</a>
+          <a href="blog/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Blog</a>
+          <a href="releases/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Releases</a>
+          <a href={getBaseUrl('s2')} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
+          <a href="internationalized/date/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Internationalized</a>
           <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="no-underline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">
             <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
               <path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
@@ -103,7 +105,7 @@ export const hideFromSearch = true;
 
         <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
           <a href="getting-started" className="no-underline bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-pointer">Get Started</a>
-          <SearchMenuWrapper pages={props.pages} currentPage={props.currentPage} />
+          <SearchMenuWrapperServer currentPage={props.currentPage} />
         </div>
 
         <div className="relative pt-10 md:pt-20 md:mt-20">

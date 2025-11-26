@@ -16,7 +16,6 @@ import {
   useSearchTagSelection,
   useSectionTagsForDisplay
 } from './searchUtils';
-import {getCanonicalUrl} from './pageUtils';
 import {getLibraryFromPage} from './library';
 // @ts-ignore
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
@@ -282,9 +281,9 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
     let filteredPages = filterPages(pages, searchValue);
 
     let items = filteredPages.map(page => ({
-      id: page.url.replace(/^\//, ''),
+      id: page.name,
       name: getPageTitle(page),
-      href: getCanonicalUrl(page),
+      href: page.url,
       description: stripMarkdown(page.exports?.description),
       date: page.exports?.date
     }));
@@ -298,9 +297,9 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
     let filteredPages = filterPages(allPages, searchValue);
     
     let items = filteredPages.map(page => ({
-      id: page.url.replace(/^\//, ''),
+      id: page.name,
       name: getPageTitle(page),
-      href: getCanonicalUrl(page),
+      href: page.url,
       description: stripMarkdown(page.exports?.description),
       date: page.exports?.date
     }));
@@ -477,7 +476,7 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
                       </Suspense>
                     ) : (
                       <ComponentCardView
-                        currentUrl={getCanonicalUrl(currentPage)}
+                        currentUrl={currentPage.url}
                         onAction={() => {
                           setSearchValue('');
                           overlayTriggerState?.close();

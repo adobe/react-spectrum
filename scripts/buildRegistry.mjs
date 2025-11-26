@@ -1,11 +1,12 @@
 import fs from 'fs';
+import {getBaseUrl} from '../packages/dev/s2-docs/src/pageUtils.ts';
 import {globSync} from 'glob';
-import * as recast from 'recast';
 import {parse} from '@babel/parser';
 import path from 'path';
 import postcss from 'postcss';
+import * as recast from 'recast';
 
-const publicUrl = process.env.REGISTRY_URL || 'http://localhost:8081';
+const publicUrl = getBaseUrl('react-aria') + '/registry/';
 
 fs.rmSync('starters/tailwind/registry', {recursive: true, force: true});
 fs.mkdirSync('starters/tailwind/registry');

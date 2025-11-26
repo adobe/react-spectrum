@@ -40,7 +40,6 @@ import {ExampleImage} from './ExampleList';
 import FileTriggerSvg from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg';
 import FocusScopeSvg from '@react-spectrum/docs/pages/assets/component-illustrations/FocusScope.svg';
 import FormSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
-import {getCanonicalUrl} from './pageUtils';
 import GroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Group.svg';
 import IconsSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Icons.svg';
 import IllustratedMessageSvg from '@react-spectrum/docs/pages/assets/component-illustrations/IllustratedMessage.svg';
@@ -259,10 +258,10 @@ const illustrationStyles = style({
 });
 
 function getDefaultIllustration(href: string) {
-  if (href.includes('/react-aria/')) {
-    return ReactAriaDefaultSvg;
-  } else if (href.includes('/internationalized/')) {
+  if (href.includes('/internationalized/')) {
     return InternationalizedDefaultSvg;
+  } else if (href.includes('/react-aria/')) {
+    return ReactAriaDefaultSvg;
   }
   return AdobeDefaultSvg;
 }
@@ -329,7 +328,7 @@ interface ComponentListProps {
 }
 
 export function ComponentList(props: ComponentListProps) {
-  let pages = props.pages.filter(page => props.components.includes(page.name.slice(0, -5)));
+  let pages = props.pages.filter(page => props.components.includes(page.name));
   return (
     <ul
       className={style({
@@ -359,7 +358,7 @@ export function ComponentList(props: ComponentListProps) {
       }}>
       {pages.map(page => (
         <li key={page.url}>
-          <ComponentCard name={getTitle(page)} href={getCanonicalUrl(page)} size="S" UNSAFE_style={{scrollSnapAlign: 'start'}} />
+          <ComponentCard name={getTitle(page)} href={page.url} size="S" UNSAFE_style={{scrollSnapAlign: 'start'}} />
         </li>
       ))}
     </ul>

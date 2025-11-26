@@ -1,12 +1,13 @@
 'use client-entry';
 
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
+import {getBaseUrl, getRSCUrl} from './pageUtils';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
 import {setNavigationPromise} from './NavigationSuspense';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
-let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
+let isClientLink = (link: HTMLAnchorElement) => {
   return (
     link &&
     link instanceof HTMLAnchorElement &&
@@ -14,7 +15,7 @@ let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
     (!link.target || link.target === '_self') &&
     link.origin === location.origin &&
     !link.hasAttribute('download') &&
-    link.pathname.startsWith(pathname)
+    link.pathname.startsWith(getBaseUrl((process.env.LIBRARY as any) || 'react-aria'))
   );
 };
 
@@ -53,12 +54,7 @@ async function navigate(pathname: string, push = false) {
     return;
   }
   
-  let rscPath = basePath.replace('.html', '');
-  if (rscPath.endsWith('/')) {
-    rscPath += '/index.rsc';
-  } else {
-    rscPath += '.rsc';
-  }
+  let rscPath = getRSCUrl(pathname);
   
   // Cancel any in-flight navigation
   if (currentAbortController) {
@@ -155,7 +151,9 @@ async function navigate(pathname: string, push = false) {
     }
   })();
   
-  setNavigationPromise(navigationPromise, pathname);
+  url.hash = '';
+  url.search = '';
+  setNavigationPromise(navigationPromise, url.href);
 }
 
 // Prefetch routes on pointerover
@@ -174,13 +172,11 @@ function clearPrefetchTimeout() {
 
 document.addEventListener('pointerover', e => {
   let link = e.target instanceof Element ? e.target.closest('a') : null;
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname) && link.pathname !== location.pathname) {
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -199,13 +195,11 @@ document.addEventListener('pointerout', e => {
 
 document.addEventListener('focus', e => {
   let link = e.target instanceof Element ? e.target.closest('a') : null;
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname) && link.pathname !== location.pathname) {
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -225,11 +219,9 @@ document.addEventListener('blur', e => {
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
   let link = e.target instanceof Element ? e.target.closest('a') : null;
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
   if (
     link &&
-    isClientLink(link, publicUrlPathname) &&
+    isClientLink(link) &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)

@@ -146,19 +146,23 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
-	PUBLIC_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs DIST_DIR=dist/$$(git rev-parse HEAD)/s2-docs $(MAKE) build-s2-docs
+	DOCS_ENV=stage PUBLIC_URL=/$$(git rev-parse HEAD) DIST_DIR=dist/$$(git rev-parse HEAD) $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/react-aria/robots.txt
+	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/s2/robots.txt
 
 s2-docs-production:
-	PUBLIC_URL=https://react-spectrum.adobe.com/beta DIST_DIR=dist/production/docs/beta $(MAKE) build-s2-docs
+	DOCS_ENV=prod PUBLIC_URL=/ DIST_DIR=dist/production $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/robots.txt dist/production/react-aria/robots.txt
+	cp packages/dev/docs/pages/robots.txt dist/production/s2/robots.txt
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
-	REGISTRY_URL=$(PUBLIC_URL)/registry node scripts/buildRegistry.mjs
-	REGISTRY_URL=$(PUBLIC_URL)/registry yarn build:s2-docs --public-url $(PUBLIC_URL)
+	node scripts/buildRegistry.mjs
+	yarn build:s2-docs
 	node scripts/createFeedS2.mjs
 	mkdir -p $(DIST_DIR)
 	mv packages/dev/s2-docs/dist/* $(DIST_DIR)
-	mkdir -p $(DIST_DIR)/registry
-	mv starters/docs/registry $(DIST_DIR)/registry/vanilla
-	mv starters/tailwind/registry $(DIST_DIR)/registry/tailwind
+	mkdir -p $(DIST_DIR)/react-aria/registry
+	mv starters/docs/registry $(DIST_DIR)/react-aria/registry/vanilla
+	mv starters/tailwind/registry $(DIST_DIR)/react-aria/registry/tailwind

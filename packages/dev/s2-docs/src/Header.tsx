@@ -5,7 +5,7 @@ import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with
 // @ts-ignore
 import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
-import {getCanonicalUrl} from './pageUtils';
+import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
 // @ts-ignore
@@ -104,30 +104,16 @@ export default function Header(props: PageProps) {
   };
 
   let library = getLibraryFromPage(currentPage);
-  let subdirectory = 's2';
+  let subdirectory: 's2' | 'react-aria' = 's2';
   if (library === 'internationalized' || library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
 
-  let homepage = '';
-  let docs = '';
-  let release = '';
-  let blog = '';
-  for (let page of pages) {
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      homepage = getCanonicalUrl(page);
-    }
-    if (page.name.includes(subdirectory) && page.name.includes('getting-started.html')) {
-      docs = getCanonicalUrl(page);
-    }
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && page.name.includes('releases')) {
-      release = getCanonicalUrl(page);
-    }
-    if (page.name.includes('react-aria') && page.name.includes('index.html') && page.name.includes('blog')) {
-      blog = getCanonicalUrl(page);
-    }
-  }
+  let homepage = getBaseUrl(subdirectory);
+  let docs = `${homepage}/getting-started`;
+  let release = `${homepage}/releases/`;
+  let blog = `${getBaseUrl('react-aria')}/blog/`;
 
   return (
     <>

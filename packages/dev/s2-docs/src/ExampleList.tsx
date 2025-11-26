@@ -3,7 +3,6 @@ import crud from 'url:../pages/react-aria/examples/crud.png';
 import crudDark from 'url:../pages/react-aria/examples/crud-dark.png';
 import emojiPicker from 'url:../pages/react-aria/examples/emoji-picker.png';
 import emojiPickerDark from 'url:../pages/react-aria/examples/emoji-picker-dark.png';
-import {getCanonicalUrl} from './pageUtils';
 import iosList from 'url:react-aria-components/docs/examples/ios-list.png';
 import iosListDark from 'url:../pages/react-aria/examples/ios-list-dark.png';
 import kanban from 'url:../pages/react-aria/examples/kanban.png';
@@ -31,7 +30,7 @@ const images = {
 
 export function ExampleList({tag, pages}) {
   let examples = pages
-    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index.html') && (!tag || page.exports?.keywords.includes(tag)))
+    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index') && (!tag || page.exports?.keywords.includes(tag)))
     .sort((a, b) => getTitle(a).localeCompare(getTitle(b)));
 
   return (
@@ -62,10 +61,10 @@ export function ExampleList({tag, pages}) {
             itemProp="item"
             itemScope
             itemType="https://schema.org/TechArticle">
-            <meta itemProp="url" content={getCanonicalUrl(example)} />
-            <Card href={getCanonicalUrl(example)}>
+            <meta itemProp="url" content={example.url} />
+            <Card href={example.url}>
               <CardPreview>
-                <ExampleImage name={example.name.replace('.html', '')} />
+                <ExampleImage name={example.name} />
               </CardPreview>
               <Content>
                 <Text slot="title" itemProp="headline">{getTitle(example)}</Text>

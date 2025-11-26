@@ -18,8 +18,7 @@ import {
   useSearchTagSelection,
   useSectionTagsForDisplay
 } from './searchUtils';
-import {getCanonicalUrl} from './pageUtils';
-import {getLibraryFromPage, getLibraryFromUrl} from './library';
+import {getLibraryFromPage} from './library';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 // @ts-ignore
 import {type Library, TAB_DEFS} from './constants';
@@ -101,18 +100,17 @@ export function SearchMenu(props: SearchMenuProps) {
     }
 
     const components = pages
-      .filter(page => page.url && page.url.endsWith('.html') && getLibraryFromUrl(page.url) === selectedLibrary && !page.exports?.hideFromSearch)
+      .filter(page => getLibraryFromPage(page) === selectedLibrary && !page.exports?.hideFromSearch)
       .map(page => {
-        const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
         const title = getPageTitle(page);
         const section: string = (page.exports?.section as string) || 'Components';
         const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
         const description: string = stripMarkdown(page.exports?.description);
         const date: string | undefined = page.exports?.date;
         return {
-          id: name,
+          id: page.name,
           name: title,
-          href: getCanonicalUrl(page),
+          href: page.url,
           section,
           tags,
           description,
@@ -313,7 +311,7 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   ) : (
                     <ComponentCardView
-                      currentUrl={getCanonicalUrl(currentPage)}
+                      currentUrl={currentPage.url}
                       onAction={onClose}
                       items={selectedItems.map(item => ({
                         id: item.id,
