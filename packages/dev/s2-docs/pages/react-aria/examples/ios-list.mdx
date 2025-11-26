@@ -5,13 +5,14 @@ import '../../../tailwind/tailwind.css';
 import {ComponentList} from '../../../src/ComponentCard';
 
 export const hideNav = true;
+export const isSubpage = true;
 export const section = 'Examples';
 export const keywords = ['react-aria', 'example', 'gridlist', 'gesture', 'framer motion', 'tailwind'];
 export const description = 'A GridList with Framer Motion swipe gestures and layout animations.';
 
 # iOS List View
 
-<PageDescription>A re-creation of the iOS List View built with React Aria Components, [Framer Motion](https://www.framer.com/motion/), and [Tailwind CSS](https://tailwindcss.com/) with support for swipe gestures, layout animations, and multiple selection mode.</PageDescription>
+<PageDescription>A re-creation of the iOS List View built with React Aria Components, [Motion](https://motion.dev/), and [Tailwind CSS](https://tailwindcss.com/) with support for swipe gestures, layout animations, and multiple selection mode.</PageDescription>
 
 ```tsx render type="tailwind" expanded
 "use client";
@@ -191,7 +192,7 @@ function ListItem({ id, children, textValue, onRemove }) {
     <MotionItem
       id={id}
       textValue={textValue}
-      className="outline-hidden group relative overflow-clip border-t border-0 border-solid last:border-b border-gray-200 dark:border-gray-800 pressed:bg-gray-200 dark:pressed:bg-gray-800 selected:bg-gray-200 dark:selected:bg-gray-800 focus-visible:outline focus-visible:outline-blue-600 focus-visible:-outline-offset-2"
+      className="outline-hidden group relative overflow-clip border-t border-0 border-solid last:border-b border-gray-200 dark:border-gray-800 pressed:bg-gray-200 dark:pressed:bg-gray-800 selected:bg-gray-200 dark:selected:bg-gray-800 focus-visible:outline-solid focus-visible:outline-blue-600 focus-visible:-outline-offset-2"
       layout
       transition={{ duration: 0.25 }}
       exit={{ opacity: 0 }}

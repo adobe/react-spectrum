@@ -9,6 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
+export const relatedPages = [{'title': 'useDatePicker', 'url': 'https://react-spectrum.adobe.com/react-aria/useDatePicker.html'}];
 
 # DatePicker
 
@@ -47,7 +48,7 @@ import {useState} from 'react';
 function Example() {
   let [date, setDate] = useState(parseDate('2020-02-03'));
   let formatter = useDateFormatter({ dateStyle: 'full' });
-  
+
   return (
     <>
       <DatePicker

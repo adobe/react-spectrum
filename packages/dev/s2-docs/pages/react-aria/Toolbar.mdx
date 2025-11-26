@@ -6,6 +6,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/toolbar/docs/toolbar-anatomy.svg';
 
 export const tags = ['group'];
+export const relatedPages = [{'title': 'useToolbar', 'url': 'https://react-spectrum.adobe.com/react-aria/useToolbar.html'}];
 
 # Toolbar
 
@@ -77,7 +78,7 @@ export const tags = ['group'];
         <Underline size={16} />
       </ToggleButton>
     </ToggleButtonGroup>
-    <Group aria-label="Clipboard" className="flex gap-1">
+    <Group aria-label="Clipboard" className="flex gap-1" style={{flexDirection: 'inherit'}}>
       <Button aria-label="Copy" variant="secondary">
         <ClipboardCopy size={16} />
       </Button>

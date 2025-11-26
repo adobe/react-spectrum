@@ -5,6 +5,7 @@ import '../../../tailwind/tailwind.css';
 import {ComponentList} from '../../../src/ComponentCard';
 
 export const hideNav = true;
+export const isSubpage = true;
 export const section = 'Examples';
 export const keywords = ['react-aria', 'example', 'tabs', 'tailwind'];
 export const description = 'With CSS scroll snapping, scroll-driven animations, and anchor positioning.';
@@ -13,14 +14,14 @@ export const description = 'With CSS scroll snapping, scroll-driven animations, 
 
 <PageDescription>A swipeable [Tabs](../Tabs.html) component with [CSS scroll snapping](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap), [scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations), and [anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning).</PageDescription>
 
-```tsx render files={['packages/dev/s2-docs/pages/react-aria/examples/tabs/TabSelectionIndicator.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/tabs/TabPanelCarousel.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/tabs/Tabs.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/tabs/TabList.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/tabs/Tab.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/tabs/TabPanel.tsx']} type="tailwind" expanded
+```tsx render dir="react-aria/examples" files={['packages/dev/s2-docs/pages/react-aria/examples/TabSelectionIndicator.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/TabPanelCarousel.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/Tabs.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/TabList.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/Tab.tsx', 'packages/dev/s2-docs/pages/react-aria/examples/TabPanel.tsx']} type="tailwind" expanded
 "use client";
-import {Tabs} from './tabs/Tabs';
-import {TabList} from './tabs/TabList';
-import {Tab} from './tabs/Tab';
-import {TabPanel} from './tabs/TabPanel';
-import {TabSelectionIndicator} from './tabs/TabSelectionIndicator';
-import {TabPanelCarousel} from './tabs/TabPanelCarousel';
+import {Tabs} from './Tabs';
+import {TabList} from './TabList';
+import {Tab} from './Tab';
+import {TabPanel} from './TabPanel';
+import {TabSelectionIndicator} from './TabSelectionIndicator';
+import {TabPanelCarousel} from './TabPanelCarousel';
 
 <Tabs className="w-[400px] max-w-full">
   <TabList aria-label="Tabs">

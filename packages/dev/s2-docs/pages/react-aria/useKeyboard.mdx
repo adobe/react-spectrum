@@ -1,0 +1,81 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {InterfaceType} from '../../src/types';
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/interactions';
+export const section = 'Interactions';
+
+# useKeyboard
+
+<PageDescription>{docs.exports.useKeyboard.description}</PageDescription>
+
+## Features
+
+`useKeyboard` handles keyboard interactions. The only difference from DOM events is that propagation
+is stopped by default if there is an event handler, unless `event.continuePropagation()` is called.
+This provides better modularity by default, so that a parent component doesn't respond to an event
+that a child already handled. If the child doesn't handle the event (e.g. it was for an unknown key),
+it can call `event.continuePropagation()` to allow parents to handle the event.
+
+## Example
+
+This example shows a simple input element that handles keyboard events with `useKeyboard` and logs them to a list below.
+
+{/* TODO: Components hooks have not been written yet */}
+{/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).** */}
+
+```tsx render
+"use client"
+import React from 'react';
+import {useKeyboard} from '@react-aria/interactions';
+
+function Example() {
+  let [events, setEvents] = React.useState([]);
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: e => setEvents(
+      events => [`key down: ${e.key}`, ...events]
+    ),
+    onKeyUp: e => setEvents(
+      events => [`key up: ${e.key}`, ...events]
+    )
+  });
+
+  return (
+    <>
+      <label htmlFor="example">Example</label>
+      <input
+        {...keyboardProps}
+        id="example" />
+      <ul style={{
+        height: 100,
+        overflow: 'auto',
+        border: '1px solid gray',
+        width: 200
+      }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## API
+
+<FunctionAPI function={docs.exports.useKeyboard} links={docs.links} />
+
+### KeyboardProps
+
+<InterfaceType {...docs.exports.KeyboardProps} />
+
+### KeyboardResult
+
+<InterfaceType {...docs.exports.KeyboardResult} />

@@ -3,11 +3,12 @@ export default Layout;
 
 import '../../../tailwind/tailwind.css';
 
-import {App} from './plants/App';
+import App from './plants/App';
 import {ExampleApp} from '../../../src/ExampleApp';
 import {ComponentList} from '../../../src/ComponentCard';
 
 export const hideNav = true;
+export const isSubpage = true;
 export const section = 'Examples';
 export const keywords = ['react-aria', 'example', 'table', 'search', 'filters', 'taggroup', 'actions', 'form', 'menu', 'popover', 'searchfield', 'dropzone', 'crud'];
 export const description = 'Table with search, filters, column resizing, and form validation.';
@@ -18,7 +19,7 @@ export const description = 'Table with search, filters, column resizing, and for
 
 <App />
 
-<ExampleApp dir="packages/dev/s2-docs/pages/react-aria/examples/plants" defaultSelected="App.tsx" />
+<ExampleApp dir="packages/dev/s2-docs/pages/react-aria/examples/plants" defaultSelected="App.tsx" type="tailwind" />
 
 ## Components
 

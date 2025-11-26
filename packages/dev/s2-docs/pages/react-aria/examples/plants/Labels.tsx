@@ -1,6 +1,6 @@
-import { Plant } from "@react-spectrum/docs/pages/react-aria/home/plants";
-import { CloudSun, Dessert, Droplet, Droplets, RefreshCw, Sun, SunDim } from "lucide-react";
-import { ReactElement } from "react";
+import { Plant } from './plants';
+import { CloudSun, Dessert, Droplet, Droplets, RefreshCw, Sun, SunDim } from 'lucide-react';
+import { ReactElement } from 'react';
 
 const labelStyles = {
   gray: 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600',

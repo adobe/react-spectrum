@@ -1,7 +1,8 @@
 'use client';
 
-import {Button, ButtonProps, Modal} from 'react-aria-components';
+import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {getLibraryFromPage, getLibraryLabel} from './library';
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
 import Search from '@react-spectrum/s2/icons/Search';
@@ -23,6 +24,25 @@ export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | '
   isSearchOpen: boolean,
   overlayId: string
 }
+
+let underlayStyle = style({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: 'full',
+  height: '--page-height',
+  isolation: 'isolate',
+  backgroundColor: 'transparent-black-500',
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
+  },
+  transition: 'opacity',
+  transitionDuration: {
+    default: 250,
+    isExiting: 130
+  }
+});
 
 let modalStyle = style({
   position: 'absolute',
@@ -119,7 +139,8 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         className={({isHovered, isFocusVisible}) => style({
           height: 40,
           boxSizing: 'border-box',
-          paddingX: 'edge-to-text',
+          paddingStart: 'pill',
+          paddingEnd: 8,
           fontSize: 'ui-lg',
           borderRadius: 'full',
           borderWidth: 2,
@@ -151,13 +172,14 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             isFocusVisible: 2
           }
         })({isHovered, isFocusVisible})}
-        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none'} as CSSProperties}>
+        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none', visibility: isSearchOpen ? 'hidden' : 'visible'} as CSSProperties}>
         <Search
           UNSAFE_className={String(style({
             size: fontRelative(20),
             '--iconPrimary': {type: 'fill', value: 'currentColor'},
             flexShrink: 0
           }))} />
+        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(props.currentPage))}</span>
         <kbd
           className={style({
             marginStart: 'auto',
@@ -173,18 +195,21 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             alignSelf: 'center'
           })}>⌘K</kbd>
       </Button>
-      <Modal
+      <ModalOverlay
         isDismissable
         isOpen={isSearchOpen}
         onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
-        className={modalStyle}>
-        <SearchMenu
-          pages={props.pages}
-          currentPage={props.currentPage}
-          onClose={onClose}
-          overlayId={overlayId}
-          initialSearchValue={initialSearchValue} />
-      </Modal>
+        className={underlayStyle}>
+        <Modal className={modalStyle}>
+          <SearchMenu
+            pages={props.pages}
+            currentPage={props.currentPage}
+            onClose={onClose}
+            overlayId={overlayId}
+            initialSearchValue={initialSearchValue}
+            isSearchOpen={isSearchOpen} />
+        </Modal>
+      </ModalOverlay>
     </div>
   );
 }

@@ -16,14 +16,14 @@ parameters:
 executors:
   rsp:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -31,7 +31,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -39,7 +39,7 @@ executors:
 
   rsp-2xlarge:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     resource_class: 2xlarge
     environment:
       CACHE_VERSION: v1
@@ -380,6 +380,8 @@ jobs:
       - run:
           name: build fork-point apis
           command: |
+            mkdir -p ~/.ssh
+            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:

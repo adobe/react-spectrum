@@ -1,0 +1,112 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {InterfaceType} from '../../src/types';
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/interactions';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+export const section = 'Interactions';
+
+# useHover
+
+<PageDescription>{docs.exports.useHover.description}</PageDescription>
+
+## Features
+
+* Uses pointer events where available, with fallbacks to mouse and touch events
+* Ignores emulated mouse events in mobile browsers
+
+`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) pseudo class in CSS,
+but `:hover` is problematic on touch devices due to mouse emulation in mobile browsers. Depending on the browser
+and device, `:hover` may never apply, or may apply continuously until the user touches another element.
+`useHover` only applies when the pointer is truly capable of hovering, and emulated mouse events are ignored.
+
+{/* TODO: uncomment once we transfer over the blogs to new docs  */}
+{/* Read our [blog post](/blog/building-a-button-part-2.html) about the complexities of hover event handling to learn more. */}
+
+## Accessibility
+
+Hover interactions should never be the only way to interact with an element because they are not
+supported across all devices. Alternative interactions should be provided on touch devices, for
+example a long press or an explicit button to tap.
+
+In addition, even on devices with hover support, users may be using a keyboard or screen reader
+to navigate your app, which also do not trigger hover events. Hover interactions should be paired
+with focus events in order to expose the content to keyboard users.
+
+## Example
+
+This example shows a simple target that handles hover events with `useHover` and logs them to a
+list below. It also uses the `isHovered` state to adjust the background
+color when the target is hovered.
+
+```tsx render
+"use client";
+import React from 'react';
+import {useHover} from '@react-aria/interactions';
+
+function Example() {
+  let [events, setEvents] = React.useState([]);
+  let {hoverProps, isHovered} = useHover({
+    onHoverStart: e => setEvents(
+      events => [...events, `hover start with ${e.pointerType}`]
+    ),
+    onHoverEnd: e => setEvents(
+      events => [...events, `hover end with ${e.pointerType}`]
+    )
+  });
+
+  return (
+    <>
+      <div
+        {...hoverProps}
+        style={{
+          background: isHovered ? 'darkgreen' : 'green',
+          color: 'white',
+          display: 'inline-block',
+          padding: 4,
+          cursor: 'pointer'
+        }}
+        role="button"
+        tabIndex={0}>
+        Hover me!
+      </div>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## API
+
+<FunctionAPI function={docs.exports.useHover} links={docs.links} />
+
+
+### HoverProps
+
+<InterfaceType {...docs.exports.HoverProps} />
+
+### HoverResult
+
+<InterfaceType {...docs.exports.HoverResult} />
+
+### HoverEvent
+
+Each of these handlers is fired with a `HoverEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<InterfaceType {...typesDocs.exports.HoverEvent} />

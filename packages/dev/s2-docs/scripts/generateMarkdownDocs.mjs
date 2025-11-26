@@ -727,13 +727,13 @@ function remarkDocsComponentsToMarkdown() {
       }
 
       // Render an unordered list of icon names.
-      if (name === 'IconCards') {
+      if (name === 'IconsPageSearch') {
         const iconList = getIconNames();
         const listMarkdown = iconList.length 
           ? iconList.map(iconName => `- ${iconName}`).join('\n') 
           : '> Icon list could not be generated.';
-        const iconCardsNode = unified().use(remarkParse).parse(listMarkdown);
-        parent.children.splice(index, 1, ...iconCardsNode.children);
+        const iconListNode = unified().use(remarkParse).parse(listMarkdown);
+        parent.children.splice(index, 1, ...iconListNode.children);
         return index;
       }
 
@@ -1111,6 +1111,11 @@ function remarkDocsComponentsToMarkdown() {
           } else if (typeof hrefAttr.value === 'string') {
             href = hrefAttr.value.trim();
           }
+        }
+
+        // Convert .html links to .md for relative links
+        if (href && !href.startsWith('http') && !href.startsWith('//') && href.endsWith('.html')) {
+          href = href.replace(/\.html$/, '.md');
         }
 
         // Check for aria-label attribute first
@@ -2092,7 +2097,15 @@ async function main() {
         listItemIndent: 'one'
       });
 
-    const markdown = String(await processor.process({value: mdContent, path: filePath}));
+    let markdown = String(await processor.process({value: mdContent, path: filePath}));
+
+    // Convert markdown links ending in .html to .md (relative links only)
+    markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+\.html)\)/g, (match, text, url) => {
+      if (!url.startsWith('http') && !url.startsWith('//')) {
+        return `[${text}](${url.replace(/\.html$/, '.md')})`;
+      }
+      return match;
+    });
 
     const relativePath = path.relative(S2_DOCS_PAGES_ROOT, filePath);
     const outPath = path.join(DIST_ROOT, relativePath).replace(/\.mdx$/, '.md');

@@ -77,7 +77,7 @@ const iconSizes = {
 
 export function iconStyle(this: MacroContext | void, options: IconStyle): StyleString<Exclude<keyof IconStyle, 'color' | 'size'>> {
   let {size = 'M', color, ...styles} = options;
-  
+
   if (color) {
     styles['--iconPrimary'] = {
       type: 'fill',

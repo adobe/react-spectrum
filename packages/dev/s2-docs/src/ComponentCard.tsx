@@ -146,6 +146,7 @@ const componentIllustrations: Record<string, React.ComponentType | undefined> = 
   'FileTrigger': FileTriggerSvg,
   'FocusScope': FocusScopeSvg,
   'Form': FormSvg,
+  'Forms': FormSvg,
   'GridList': ListViewSvg, // GridList -> ListView
   'Group': GroupSvg,
   'Icons': IconsSvg,
@@ -265,6 +266,14 @@ function getDefaultIllustration(href: string) {
   return AdobeDefaultSvg;
 }
 
+function getReleaseVersionLabel(href: string) {
+  let match = href.match(/releases\/(v[\w-]+)\.html$/i);
+  if (!match) {
+    return null;
+  }
+  return match[1].replace(/-/g, '.');
+}
+
 interface ComponentCardProps extends Omit<CardProps, 'children'> {
   name: string,
   href: string,
@@ -275,7 +284,14 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
   let IllustrationComponent = componentIllustrations[name] || getDefaultIllustration(href);
   let overrides = propOverrides[name] || {};
   let preview;
-  if (href.includes('react-aria/examples/') && !href.endsWith('index.html')) {
+  let releaseVersion = getReleaseVersionLabel(href);
+  if (releaseVersion) {
+    preview = (
+      <div className={style({width: '100%', aspectRatio: '3 / 2', backgroundColor: 'var(--anatomy-gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 0})}>
+        <span className={style({font: 'heading-lg', color: 'var(--anatomy-gray-900)'})}>{releaseVersion}</span>
+      </div>
+    );
+  } else if (href.includes('react-aria/examples/') && !href.endsWith('index.html')) {
     preview = <ExampleImage name={href} />;
   } else {
     preview = (

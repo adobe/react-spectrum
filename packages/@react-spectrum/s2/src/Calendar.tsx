@@ -52,7 +52,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface CalendarProps<T extends DateValue>
-  extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles' | keyof GlobalDOMAttributes>,
+  extends Omit<AriaCalendarProps<T>, 'visibleDuration' | 'style' | 'className' | 'styles' | 'children' | keyof GlobalDOMAttributes>,
   StyleProps {
   /**
    * The error message to display when the calendar is invalid.
@@ -353,14 +353,14 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
         isolation: 'isolate'
       })}
       offset={{months: props.months}}>
-      <CalendarGridHeader>
+      <CalendarGridHeader className="">
         {(day) => (
           <CalendarHeaderCell>
             {day}
           </CalendarHeaderCell>
         )}
       </CalendarGridHeader>
-      <CalendarGridBody>
+      <CalendarGridBody className="">
         {(date) => (
           <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
         )}

@@ -1,0 +1,43 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import docs from 'docs:@react-aria/ssr';
+
+export const section = 'Utilities';
+export const description = 'Implementing collections in React Aria';
+
+# SSRProvider
+
+## Introduction
+
+If you're using React 16 or 17, `SSRProvider` should be used as a wrapper for the entire application during server side rendering.
+It works together with the [useId](useId.html) hook to ensure that auto generated ids are consistent
+between the client and server by resetting the id internal counter on each request.
+See the [server side rendering](ssr.html) docs for more information.
+
+**Note**: if you're using React 18 or newer, `SSRProvider` is not necessary and can be removed from your app. React Aria uses the
+[React.useId](https://react.dev/reference/react/useId) hook internally when using React 18, which ensures ids are consistent.
+
+## Example
+
+```tsx
+import {SSRProvider} from '@react-aria/ssr';
+
+<SSRProvider>
+  <YourApp />
+</SSRProvider>
+```
+
+## API
+
+### SSRProvider
+
+<PropTable component={docs.exports.SSRProvider} links={docs.links} />
