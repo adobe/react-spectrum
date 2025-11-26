@@ -521,7 +521,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/s2-docs/'
+            - 's2-docs/'
 
   s2-docs-production:
     executor: rsp-xlarge
@@ -536,7 +536,7 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/s2-docs/'
+            - 's2-docs/'
 
   verdaccio:
     executor: rsp-xlarge

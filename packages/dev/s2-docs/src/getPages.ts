@@ -3,7 +3,7 @@ import {getBaseUrl} from './pageUtils';
 import {glob, readFile} from 'fs/promises';
 import type {Page} from '@parcel/rsc';
 // eslint-disable-next-line
-import {transformAsync} from '@parcel/rust';
+import {transformAsync} from '@parcel/rust/lib/index.js';
 
 export const getPages = cache(async () => {
   let pages: string[] = [];
