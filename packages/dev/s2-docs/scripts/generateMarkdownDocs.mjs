@@ -44,6 +44,34 @@ function cleanTypeText(t) {
   return cleaned;
 }
 
+/**
+ * Transform relative URLs to use .md extension instead of .html or no extension.
+ * Preserves query params and hash fragments.
+ */
+function transformRelativeUrl(href) {
+  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
+    return href;
+  }
+  
+  // Split href into path and query/hash parts
+  const match = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+  if (!match) {
+    return href;
+  }
+  
+  let [, pathPart, queryPart = '', hashPart = ''] = match;
+  
+  if (pathPart.endsWith('.html')) {
+    // Replace .html with .md
+    pathPart = pathPart.slice(0, -5) + '.md';
+  } else if (pathPart && !pathPart.match(/\.[a-zA-Z0-9]+$/)) {
+    // Add .md to paths without an extension
+    pathPart = pathPart + '.md';
+  }
+  
+  return pathPart + queryPart + hashPart;
+}
+
 function getIconNames() {
   if (iconNamesCache) {
     return iconNamesCache;
@@ -1149,6 +1177,9 @@ function remarkDocsComponentsToMarkdown() {
         const childrenText = extractText(node.children);
         const linkText = ariaLabel || childrenText || href;
 
+        // Transform relative links to use .md extension
+        href = transformRelativeUrl(href);
+
         if (href) {
           const linkNode = {
             type: 'link',
@@ -1546,6 +1577,11 @@ function remarkDocsComponentsToMarkdown() {
         .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
         .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
         .join('\n');
+    });
+
+    // Transform relative links to use .md extension.
+    visit(tree, 'link', (node) => {
+      node.url = transformRelativeUrl(node.url);
     });
 
     // Append "Related Types" section if we collected any.

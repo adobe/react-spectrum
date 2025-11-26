@@ -251,6 +251,7 @@ for (let file of files) {
           alignItems: 'center',
           width: '100%',
           height: '100%',
+          padding: '60px',
           backgroundColor: '#ffffff',
           fontFamily: 'adobe-clean',
           color: '#000000'
@@ -261,19 +262,32 @@ for (let file of files) {
             style: {
               display: 'flex',
               alignItems: 'center',
-              gap: 44
+              gap: 44,
+              maxWidth: '100%'
             },
             children: [
               // Library logo
-              getLibraryLogo(subtitle),
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    flexShrink: 0
+                  },
+                  children: getLibraryLogo(subtitle)
+                }
+              },
               // Library name
               {
                 type: 'div',
                 props: {
                   style: {
+                    display: 'flex',
                     fontSize: 84,
                     fontWeight: 700,
-                    lineHeight: 1.1
+                    lineHeight: 1.1,
+                    flexShrink: 1,
+                    minWidth: 0
                   },
                   children: subtitle
                 }
@@ -294,6 +308,7 @@ for (let file of files) {
           alignItems: 'center',
           width: '100%',
           height: '100%',
+          padding: '60px',
           backgroundColor: '#ffffff',
           fontFamily: 'adobe-clean',
           color: '#000000'
@@ -304,11 +319,21 @@ for (let file of files) {
             style: {
               display: 'flex',
               alignItems: 'center',
-              gap: 44
+              gap: 44,
+              maxWidth: '100%'
             },
             children: [
               // Library logo
-              getLibraryLogo(subtitle),
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    flexShrink: 0
+                  },
+                  children: getLibraryLogo(subtitle)
+                }
+              },
               // Text content
               {
                 type: 'div',
@@ -316,13 +341,16 @@ for (let file of files) {
                   style: {
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 0
+                    gap: 0,
+                    flexShrink: 1,
+                    minWidth: 0
                   },
                   children: [
                     {
                       type: 'div',
                       props: {
                         style: {
+                          display: 'flex',
                           fontSize: 84,
                           fontWeight: 700,
                           lineHeight: 1.1
@@ -334,6 +362,7 @@ for (let file of files) {
                       type: 'div',
                       props: {
                         style: {
+                          display: 'flex',
                           fontSize: 56,
                           fontWeight: 400,
                           color: '#464646'

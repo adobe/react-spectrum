@@ -64,6 +64,10 @@ export function OptimisticToc({currentPage, pages}: {currentPage: Page, pages: P
   );
 }
 
+function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
 function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
   return (
     <div className={style({paddingTop: 24})}>
@@ -72,7 +76,7 @@ function RelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
         <SideNav>
           {pages.map((page, i) => (
             <SideNavItem key={i}>
-              <SideNavLink href={page.url}>{page.title}</SideNavLink>
+              <SideNavLink href={page.url} isExternal={isExternalUrl(page.url)}>{page.title}</SideNavLink>
             </SideNavItem>
           ))}
         </SideNav>
