@@ -1,10 +1,13 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Dialog, FullscreenDialog, CustomDialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Heading, Header, Content, Footer, Image, TextField, Checkbox, CloseButton, ActionButton, IllustratedMessage} from '@react-spectrum/s2';
+import {Dialog, FullscreenDialog, CustomDialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Heading, Header, Content, Footer, Image, TextField, Checkbox, CloseButton, ActionButton, IllustratedMessage, InlineAlert} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['modal', 'popup', 'overlay'];
+export const relatedPages = [
+  {title: 'Testing', url: './Dialog/testing.html'}
+];
 export const description = 'An overlay shown above other content in an application.';
 
 # Dialog
@@ -201,7 +204,7 @@ function DialogContainerExample() {
         <MenuItem id="delete">Delete Item</MenuItem>
         <MenuItem id="share">Share Item</MenuItem>
       </ActionMenu>
-      
+
       {/*- begin highlight -*/}
       <DialogContainer onDismiss={() => setDialogType(null)}>
       {/*- end highlight -*/}
