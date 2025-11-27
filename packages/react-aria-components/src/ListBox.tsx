@@ -356,7 +356,9 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
    * Handler that is called when a user performs an action on the item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void
+  onAction?: () => void,
+  /** Handler that is called when a key is pressed on the item. */
+  onKeyDown?: (e: React.KeyboardEvent) => void
 }
 
 /**
@@ -378,6 +380,8 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd
   });
+
+  let keyDownProps = props.onKeyDown ? {onKeyDown: props.onKeyDown} : undefined;
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
@@ -422,7 +426,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
 
   return (
     <ElementType
-      {...mergeProps(DOMProps, renderProps, optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+      {...mergeProps(DOMProps, renderProps, optionProps, hoverProps, keyDownProps, draggableItem?.dragProps, droppableItem?.dropProps)}
       ref={ref}
       data-allows-dragging={!!dragState || undefined}
       data-selected={states.isSelected || undefined}
