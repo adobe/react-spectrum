@@ -2,7 +2,7 @@ import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collectio
 import {GridCollection, GridNode} from '@react-types/grid';
 import {Key} from '@react-types/shared';
 import {MultipleSelectionState, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
-import {useEffect, useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface GridState<T, C extends GridCollection<T>> {
   collection: C,
@@ -11,7 +11,15 @@ export interface GridState<T, C extends GridCollection<T>> {
   /** A selection manager to read and update row selection state. */
   selectionManager: SelectionManager,
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  isKeyboardNavigationDisabled: boolean
+  isKeyboardNavigationDisabled: boolean,
+  /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  setKeyboardNavigationDisabled: (val: boolean) => void,
+  /** The currently editing cell in the table. */
+  editingKey: Key | null,
+  /** Starts editing the given cell. */
+  startEditing(key: Key): void,
+  /** Exits edit mode. */
+  endEditing(): void
 }
 
 export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
@@ -113,10 +121,23 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     cachedCollection.current = collection;
   }, [collection, selectionManager, selectionState, selectionState.focusedKey]);
 
+  let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
+  let [editingKey, setEditingKey] = useState<Key | null>(null);
+
   return {
     collection,
     disabledKeys,
-    isKeyboardNavigationDisabled: false,
-    selectionManager
+    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
+    setKeyboardNavigationDisabled,
+    selectionManager,
+    editingKey,
+    startEditing(key) {
+      setEditingKey(key);
+      setKeyboardNavigationDisabled(true);
+    },
+    endEditing() {
+      setEditingKey(null);
+      setKeyboardNavigationDisabled(false);
+    }
   };
 }
