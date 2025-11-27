@@ -403,7 +403,7 @@ function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
-        <TitleLink href="./">{parentPage?.exports?.title}</TitleLink>
+        <TitleLink href="./">{parentPage?.exports?.title ?? parentPage?.tableOfContents?.[0]?.title ?? parentPage?.name}</TitleLink>
         <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
       </div>
       <H1 itemProp="headline" isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>
@@ -411,6 +411,10 @@ function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps
       {currentPage.exports?.date && !currentPage.exports?.author && <Time date={currentPage.exports.date} />}
     </div>
   );
+}
+
+function isExternalUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
 }
 
 function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>}) {
@@ -424,13 +428,19 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
       })}>
       <H2 id="related-pages">Related pages</H2>
       <ul className={style({listStyleType: 'none'})}>
-        {pages.map((page, i) => (
-          <li key={i} className={li({isLongForm: false})}>
-            <Link href={page.url}>
-              {page.title}
-            </Link>
-          </li>
-        ))}
+        {pages.map((page, i) => {
+          let isExternal = isExternalUrl(page.url);
+          return (
+            <li key={i} className={li({isLongForm: false})}>
+              <Link
+                href={page.url}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}>
+                {page.title}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

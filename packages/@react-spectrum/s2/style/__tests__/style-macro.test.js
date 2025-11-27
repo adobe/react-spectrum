@@ -173,6 +173,23 @@ describe('style-macro', () => {
     expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12"');
   });
 
+  it('should support allowed overrides for fontSize', () => {
+    let {js} = testStyle(
+      {
+        fontSize: 'heading-3xl'
+      },
+      ['fontSize']
+    );
+
+    let {js: overrides} = testStyle({
+      fontSize: 'ui-xs'
+    });
+
+    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc12 vx12"');
+    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a12 vx12"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a12 vx12"');
+  });
+
   it("should support allowed overrides for values that aren't defined", () => {
     let {js} = testStyle(
       {

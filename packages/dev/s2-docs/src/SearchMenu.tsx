@@ -5,34 +5,19 @@ import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'r
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import {
-  type ComponentItem,
-  createSearchOptions,
-  filterAndSortSearchItems,
-  getOrderedLibraries,
-  getPageTitle,
   getResourceTags,
-  getSearchSection,
+  LazyIconSearchView,
   SearchEmptyState,
-  sortItemsForDisplay,
-  sortSearchItems,
-  useFilteredIcons,
-  useSearchTagSelection,
-  useSectionTagsForDisplay
+  useSearchMenuState
 } from './searchUtils';
-import {getLibraryFromPage} from './library';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
-// @ts-ignore
 import {type Library, TAB_DEFS} from './constants';
 import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, Suspense, useCallback, useEffect, useRef} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
-
-export function stripMarkdown(description: string | undefined) {
-  return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
-}
 
 export const divider = style({
   marginY: 8,
@@ -50,7 +35,6 @@ export const divider = style({
   width: '[3px]'
 });
 
-const IconSearchView = lazy(() => import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView})));
 
 interface SearchMenuProps {
   pages: Page[],
@@ -77,16 +61,31 @@ function CloseButton({onClose}: {onClose: () => void}) {
 export function SearchMenu(props: SearchMenuProps) {
   let {pages, currentPage, onClose, overlayId, isSearchOpen} = props;
 
-  const currentLibrary = getLibraryFromPage(currentPage);
-  let [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
-  let [searchValue, setSearchValue] = useState(props.initialSearchValue);
-
-  const orderedTabs = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
-
   const searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
+  const iconFilter = useIconFilter();
+
+  const {
+    selectedLibrary,
+    setSelectedLibrary,
+    orderedLibraries: orderedTabs,
+    searchValue,
+    setSearchValue,
+    sectionTagsForDisplay,
+    selectedTagId,
+    handleTagSelectionChange,
+    filteredIcons,
+    isIconsSelected,
+    selectedItems,
+    selectedSectionName,
+    getPlaceholderText
+  } = useSearchMenuState({
+    pages,
+    currentPage,
+    initialSearchValue: props.initialSearchValue,
+    initialTag: props.initialTag
+  });
 
   // Auto-focus search field when menu opens
-  // We don't put autoFocus on the SearchField because it will cause a flicker when switching tabs
   useEffect(() => {
     const timer = setTimeout(() => {
       searchRef.current?.focus();
@@ -94,101 +93,8 @@ export function SearchMenu(props: SearchMenuProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Transform pages data into component data structure
-  const transformedComponents = useMemo(() => {
-    if (!pages || !Array.isArray(pages)) {
-      return [];
-    }
-
-    const components = pages
-      .filter(page => getLibraryFromPage(page) === selectedLibrary && !page.exports?.hideFromSearch)
-      .map(page => {
-        const title = getPageTitle(page);
-        const section: string = getSearchSection(page);
-        const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
-        const description: string = stripMarkdown(page.exports?.description);
-        const date: string | undefined = page.exports?.date;
-        return {
-          id: page.name,
-          name: title,
-          href: page.url,
-          section,
-          tags,
-          description,
-          date
-        };
-      });
-
-    return components;
-  }, [pages, selectedLibrary]);
-
-  // Build sections for the selected library
-  const sections = useMemo(() => {
-    const sectionNames = Array.from(new Set(transformedComponents.map(c => c.section || 'Components')));
-    return sectionNames.map(sectionName => ({
-      id: sectionName.toLowerCase(),
-      name: sectionName,
-      children: transformedComponents.filter(c => (c.section || 'Components') === sectionName)
-    })).sort((a, b) => {
-      if (a.id === 'components') {
-        return -1;
-      }
-      if (b.id === 'components') {
-        return 1;
-      }
-      return 0;
-    });
-  }, [transformedComponents]);
-
-  const sectionTags = useMemo(() => sections.map(s => ({id: s.id, name: s.name})), [sections]);
-  const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
-
-  const [selectedTagId, setSelectedTagId] = useSearchTagSelection(
-    searchValue,
-    sectionTags,
-    resourceTags,
-    props.initialTag || currentPage.exports?.section?.toLowerCase() || 'components'
-  );
-
-  const filteredIcons = useFilteredIcons(searchValue);
-  const iconFilter = useIconFilter();
-
-  let filteredComponents = useMemo(() => {
-    if (!searchValue) {
-      return sections;
-    }
-
-    const allItems = sections.flatMap(section => section.children);
-
-    const sortedItems = filterAndSortSearchItems(allItems, searchValue, createSearchOptions<ComponentItem>());
-
-    const resultsBySection = new Map<string, typeof transformedComponents>();
-
-    sortedItems.forEach(item => {
-      const section = item.section || 'Components';
-      if (!resultsBySection.has(section)) {
-        resultsBySection.set(section, []);
-      }
-      resultsBySection.get(section)!.push(item);
-    });
-
-    return sections
-      .map(section => ({
-        ...section,
-        children: resultsBySection.get(section.name) || []
-      }))
-      .filter(section => section.children.length > 0);
-  }, [sections, searchValue]);
-
-  const sectionTagsForDisplay = useSectionTagsForDisplay(
-    sections,
-    searchValue,
-    selectedTagId,
-    resourceTags.map(t => t.id)
-  );
-
-  const handleTabSelectionChange = React.useCallback((key: Key) => {
-    setSelectedLibrary(key as typeof selectedLibrary);
+  const handleTabSelectionChange = useCallback((key: Key) => {
+    setSelectedLibrary(key as Library);
     // Focus main search field of the newly selected tab
     setTimeout(() => {
       const lib = key as Library;
@@ -197,47 +103,7 @@ export function SearchMenu(props: SearchMenuProps) {
         searchRef.current.focus();
       }
     }, 10);
-  }, []);
-
-  const handleSectionSelectionChange = React.useCallback((keys: Iterable<Key>) => {
-    const firstKey = Array.from(keys)[0] as string;
-    if (firstKey) {
-      setSelectedTagId(firstKey);
-    }
-  }, [setSelectedTagId]);
-
-  const handleIconSelectionChange = React.useCallback((keys: Iterable<Key>) => {
-    const firstKey = Array.from(keys)[0] as string;
-    if (firstKey) {
-      setSelectedTagId(firstKey);
-    }
-  }, [setSelectedTagId]);
-
-  const selectedItems = useMemo(() => {
-    let items: typeof transformedComponents = [];
-    if (selectedTagId === 'all') {
-      items = filteredComponents.flatMap(s => s.children) || [];
-      if (searchValue.trim().length > 0) {
-        items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
-      } else {
-        items = sortItemsForDisplay(items, searchValue);
-      }
-    } else {
-      items = (filteredComponents.find(s => s.id === selectedTagId)?.children) || [];
-      items = sortItemsForDisplay(items, searchValue);
-    }
-
-    return items;
-  }, [filteredComponents, selectedTagId, searchValue]);
-
-  const selectedSectionName = useMemo(() => {
-    if (selectedTagId === 'all') {
-      return 'All';
-    }
-    return (filteredComponents.find(s => s.id === selectedTagId)?.name)
-      || (sections.find(s => s.id === selectedTagId)?.name)
-      || 'Items';
-  }, [filteredComponents, sections, selectedTagId]);
+  }, [setSelectedLibrary]);
 
   useEffect(() => {
     const handleNavigationStart = () => {
@@ -277,13 +143,10 @@ export function SearchMenu(props: SearchMenuProps) {
         </TabList>
         {orderedTabs.map((tab, i) => {
           const tabResourceTags = getResourceTags(tab.id);
-          const selectedResourceTag = tabResourceTags.find(tag => tag.id === selectedTagId);
-          const placeholderText = selectedResourceTag 
-            ? `Search ${selectedResourceTag.name}` 
-            : `Search ${tab.label}`;
+          const placeholderText = getPlaceholderText(tab.label);
           return (
             <TabPanel key={tab.id} id={tab.id}>
-              <Autocomplete filter={selectedTagId === 'icons' ? iconFilter : undefined}>
+              <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
                 <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
                   <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
                     <SearchField
@@ -303,12 +166,12 @@ export function SearchMenu(props: SearchMenuProps) {
                     sectionTags={sectionTagsForDisplay}
                     resourceTags={tabResourceTags}
                     selectedTagId={selectedTagId}
-                    onSectionSelectionChange={handleSectionSelectionChange}
-                    onResourceSelectionChange={handleIconSelectionChange} />
-                  {selectedTagId === 'icons' ? (
+                    onSectionSelectionChange={handleTagSelectionChange}
+                    onResourceSelectionChange={handleTagSelectionChange} />
+                  {isIconsSelected ? (
                     <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<IconSearchSkeleton />}>
-                        <IconSearchView 
+                        <LazyIconSearchView 
                           filteredItems={filteredIcons} 
                           listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
                       </Suspense>
