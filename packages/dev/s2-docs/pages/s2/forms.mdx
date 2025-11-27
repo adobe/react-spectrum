@@ -189,7 +189,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <InlineAlert variant="informative">
   <Heading>Localization</Heading>
-  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Spectrums's [Provider](Provider.html) has no effect on validation errors.</Content>
+  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Spectrums's [Provider](Provider) has no effect on validation errors.</Content>
 </InlineAlert>
 
 ### Custom validation
@@ -259,7 +259,7 @@ By default, invalid fields block forms from being submitted. To avoid this, use 
 
 Client side validation is useful to give the user immediate feedback, but data should always be validated on the backend for security and reliability. Your business logic may also include rules which cannot be validated on the frontend.
 
-To display server validation errors, set the the `validationErrors` prop on the [Form](Form.html) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
+To display server validation errors, set the the `validationErrors` prop on the [Form](Form) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
 
 ```tsx render
 'use client';

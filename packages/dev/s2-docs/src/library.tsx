@@ -5,21 +5,21 @@ import {ReactAriaLogo} from './icons/ReactAriaLogo';
 
 export type Library = 'react-spectrum' | 'react-aria' | 'internationalized';
 
-export function getLibraryFromUrl(url: string): Library {
-  if (url.includes('/react-aria/')) {
-    return 'react-aria';
-  }
-  if (url.includes('/internationalized/')) {
+export function getLibraryFromUrl(name: string): Library {
+  if (name.startsWith('react-aria/internationalized/')) {
     return 'internationalized';
   }
-  if (url.includes('/s2/')) {
+  if (name.startsWith('react-aria/')) {
+    return 'react-aria';
+  }
+  if (name.startsWith('s2/')) {
     return 'react-spectrum';
   }
   return 'react-spectrum';
 }
 
-export function getLibraryFromPage(page: {url: string}): Library {
-  return getLibraryFromUrl(page.url);
+export function getLibraryFromPage(page: {name: string}): Library {
+  return getLibraryFromUrl(page.name);
 }
 
 export function getLibraryLabel(library: Library): string {

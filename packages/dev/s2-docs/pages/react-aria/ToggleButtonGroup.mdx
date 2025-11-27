@@ -41,7 +41,7 @@ export const description = 'Allows a user to toggle multiple options, with singl
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ToggleButtonGroup) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ToggleButtonGroup) for more details.
 
 ```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -85,7 +85,7 @@ function Example(props) {
 
 ### Animation
 
-Render a [SelectionIndicator](selection.html#animated-selectionindicator) within each `ToggleButton` to animate selection changes.
+Render a [SelectionIndicator](selection#animated-selectionindicator) within each `ToggleButton` to animate selection changes.
 
 ```tsx render files={['starters/docs/src/SegmentedControl.css']}
 "use client";
@@ -119,7 +119,7 @@ function SegmentedControlItem(props: ToggleButtonProps) {
 
 <Anatomy />
 
-```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <ToggleButtonGroup>
   <ToggleButton>
     <SelectionIndicator />

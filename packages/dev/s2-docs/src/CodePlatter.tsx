@@ -6,6 +6,7 @@ import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import type {DownloadFiles} from './CodeBlock';
+import {getBaseUrl} from './pageUtils';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
@@ -177,7 +178,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
               }
               {registryUrl &&
                 <MenuItem
-                  href={`https://v0.dev/chat/api/open?url=${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`}
+                  href={`https://v0.dev/chat/api/open?url=${getBaseUrl('react-aria')}/registry/${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
                   <V0 />

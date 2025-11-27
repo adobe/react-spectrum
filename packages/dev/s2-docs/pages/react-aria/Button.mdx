@@ -10,6 +10,7 @@ import vanillaDocs from 'docs:vanilla-starter/Button';
 import tailwindDocs from 'docs:tailwind-starter/Button';
 import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['btn'];
 export const relatedPages = [{'title': 'useButton', 'url': 'https://react-spectrum.adobe.com/react-aria/useButton.html'}];
@@ -47,9 +48,9 @@ export const description = 'Allows a user to perform an action, with mouse, touc
 
 ## Events
 
-Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. This is similar to `onClick`, but normalized for consistency across browsers, devices, and interaction methods. Read our [blog post](building-a-button-part-1.html) to learn more.
+Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. This is similar to `onClick`, but normalized for consistency across browsers, devices, and interaction methods. Read our [blog post](blog/building-a-button-part-1) to learn more.
 
-The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) for more details.
+The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See <Link href={`${getBaseUrl('react-aria')}/usePress`}>usePress</Link> for more details.
 
 ```tsx render
 "use client";
@@ -111,7 +112,7 @@ function PendingButton() {
 
 ## Link buttons
 
-The `Button` component always represents a button semantically. To create a link that visually looks like a button, use the [Link](Link.html) component instead. You can reuse the same styles you apply to the `Button` component on the `Link`.
+The `Button` component always represents a button semantically. To create a link that visually looks like a button, use the [Link](Link) component instead. You can reuse the same styles you apply to the `Button` component on the `Link`.
 
 ```tsx render
 "use client";

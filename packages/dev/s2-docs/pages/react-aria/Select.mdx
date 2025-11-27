@@ -10,7 +10,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
 export const relatedPages = [
   {title: 'useSelect', url: 'https://react-spectrum.adobe.com/react-aria/useSelect.html'},
-  {title: 'Testing', url: './Select/testing.html'}
+  {title: 'Testing', url: './Select/testing'}
 ];
 export const description = 'Displays a collapsible list of options and allows a user to select one of them.';
 
@@ -51,7 +51,7 @@ export const description = 'Displays a collapsible list of options and allows a 
 
 ## Content
 
-`Select` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`Select` reuses the `ListBox` component, following the [Collection Components API](collections?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
@@ -103,7 +103,7 @@ function Example() {
 
 ### Autocomplete
 
-`Select` can include additional components as siblings of the `ListBox`. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+`Select` can include additional components as siblings of the `ListBox`. This example uses an [Autocomplete](Autocomplete) with a [SearchField](SearchField) to let the user filter the items.
 
 ```tsx render
 "use client";
@@ -149,7 +149,7 @@ function Example() {
 
 ### TagGroup
 
-Use the `SelectValue` render prop function to display the selected items as a [TagGroup](TagGroup.html).
+Use the `SelectValue` render prop function to display the selected items as a [TagGroup](TagGroup).
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/MultiSelect.css']}
 "use client";
@@ -335,7 +335,7 @@ import {Form} from 'vanilla-starter/Form';
 
 <Anatomy />
 
-```tsx links={{Select: '#select', Button: 'Button.html', SelectValue: '#selectvalue', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+```tsx links={{Select: '#select', Button: 'Button', SelectValue: '#selectvalue', Popover: 'Popover', ListBox: 'ListBox'}}
 <Select>
   <Label />
   <Button>

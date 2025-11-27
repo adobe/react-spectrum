@@ -8,6 +8,7 @@ import {ExpandableCode, ExpandableCodeProvider} from './ExpandableCode';
 import {FileTabs} from './FileTabs';
 import {findPackageJSON} from 'module';
 import fs from 'fs';
+import {getBaseUrl} from './pageUtils';
 import {highlight, Language} from 'tree-sitter-highlight';
 import path from 'path';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -346,6 +347,5 @@ function resolveUrl(specifier: string, file: string) {
     }
   }
 
-  let publicUrl = process.env.PUBLIC_URL || 'http://localhost:1234';
-  return publicUrl + cur;
+  return getBaseUrl((process.env.LIBRARY as any) || 'react-aria') + cur;
 }

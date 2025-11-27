@@ -12,7 +12,6 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
-// @ts-ignore
 import {Page} from '@parcel/rsc';
 import React, {CSSProperties, Suspense, useCallback, useEffect, useRef} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
@@ -184,7 +183,7 @@ export function SearchMenu(props: SearchMenuProps) {
                       items={selectedItems.map(item => ({
                         id: item.id,
                         name: item.name,
-                        href: item.href ?? `/${tab.id}/${item.name}.html`,
+                        href: item.href ?? `/${tab.id}/${item.name}`,
                         description: item.description
                       }))}
                       ariaLabel={selectedSectionName}

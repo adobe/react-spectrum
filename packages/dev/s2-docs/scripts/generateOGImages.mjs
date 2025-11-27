@@ -9,21 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const pagesDir = path.resolve(__dirname, '../pages');
-const outputDir = path.resolve(__dirname, '../dist/og');
-
-async function getMdxFiles(dir) {
-  let entries = await fs.readdir(dir, {withFileTypes: true});
-  let files = [];
-  for (let entry of entries) {
-    let fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files = files.concat(await getMdxFiles(fullPath));
-    } else if (entry.isFile() && /\.mdx?$/.test(entry.name)) {
-      files.push(fullPath);
-    }
-  }
-  return files;
-}
+const outputDir = path.resolve(__dirname, '../dist');
 
 async function getTitle(filePath) {
   let raw = await fs.readFile(filePath, 'utf8');
@@ -51,9 +37,10 @@ function getSubtitle(slug) {
   const folder = slugParts[0];
   switch (folder) {
     case 'react-aria':
+      if (slugParts[1] === 'internationalized') {
+        return 'Internationalized';
+      }
       return 'React Aria';
-    case 'internationalized':
-      return 'Internationalized';
     case 's2':
     default:
       return 'React Spectrum';
@@ -220,10 +207,8 @@ function getLibraryLogo(subtitle) {
 }
 
 await fs.mkdir(outputDir, {recursive: true});
-const files = await getMdxFiles(pagesDir);
-console.log(`Generating OG images for ${files.length} pages…`);
 
-for (let file of files) {
+for await (let file of fs.glob('pages/*/**/*.mdx')) {
   let title = await getTitle(file);
   let slug = path
     .relative(pagesDir, file)
@@ -404,7 +389,8 @@ for (let file of files) {
 
   // Convert SVG -> PNG
   let pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
-  let outFile = path.join(outputDir, `${slug}.png`);
+  let [library, ...rest] = slug.split('/');
+  let outFile = path.join(outputDir, `${library}/og/${rest.join('/')}.png`);
   await fs.mkdir(path.dirname(outFile), {recursive: true});
   await fs.writeFile(outFile, pngBuffer);
   console.log(`✓ ${slug}.png`);

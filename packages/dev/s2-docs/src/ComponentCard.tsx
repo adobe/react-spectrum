@@ -258,10 +258,10 @@ const illustrationStyles = style({
 });
 
 function getDefaultIllustration(href: string) {
-  if (href.includes('/react-aria/')) {
-    return ReactAriaDefaultSvg;
-  } else if (href.includes('/internationalized/')) {
+  if (href.includes('/internationalized/')) {
     return InternationalizedDefaultSvg;
+  } else if (href.includes('/react-aria/')) {
+    return ReactAriaDefaultSvg;
   }
   return AdobeDefaultSvg;
 }
