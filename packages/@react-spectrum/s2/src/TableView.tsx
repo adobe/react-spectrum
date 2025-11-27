@@ -908,7 +908,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
                 </>
               }
               {selectionMode === 'multiple' &&
-                <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
+                <Checkbox styles={selectAllCheckbox} slot="selection" />
               }
             </>
           )}
@@ -1362,8 +1362,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
 };
 
 // Use color-mix instead of transparency so sticky cells work correctly.
-const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
-const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
+const selectedBackground = colorMix('gray-25', 'gray-900', 7);
+const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
@@ -1462,7 +1462,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox isEmphasized slot="selection" />
+          <Checkbox slot="selection" />
         </Cell>
       )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>

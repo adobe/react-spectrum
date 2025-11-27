@@ -152,43 +152,6 @@ export const TreeSelection: StoryObj<typeof TreeExample> = {
   }
 };
 
-export const TreeIsDetached: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isDetached: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
-export const TreeIsEmphasized: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isEmphasized: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
-export const TreeIsDetachedIsEmphasized: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isDetached: true,
-    isEmphasized: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
-export const TreeIsDetachedMobile: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isDetached: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
 interface TreeViewItemType {
   id: string,
   name: string,
