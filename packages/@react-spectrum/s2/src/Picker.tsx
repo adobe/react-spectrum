@@ -34,7 +34,7 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -48,7 +48,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {control, controlBorderRadius, controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {control, controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createHideableComponent} from '@react-aria/collections';
 import {
   Divider,
@@ -183,27 +183,6 @@ const quietFocusLine = style({
     default: 'blue-800',
     forcedColors: 'Highlight'
   }
-});
-
-export let menu = style({
-  outlineStyle: 'none',
-  display: 'grid',
-  width: 'full',
-  gridTemplateColumns: {
-    size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
-    }
-  },
-  boxSizing: 'border-box',
-  maxHeight: 'inherit',
-  overflow: 'auto',
-  padding: 8,
-  fontFamily: 'sans',
-  fontSize: controlFont(),
-  gridAutoRows: 'min-content'
 });
 
 const invalidBorder = style({
