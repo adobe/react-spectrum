@@ -439,11 +439,28 @@ let alignColumns = [
 ];
 
 const TextAlign = (args: TableViewProps): ReactElement => {
+  let [items, setItems] = useState(sortItems);
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
   return (
-    <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
+    <TableView aria-label="Show Dividers table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
         {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+          <Column allowsSorting width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
