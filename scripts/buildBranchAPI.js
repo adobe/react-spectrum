@@ -133,6 +133,7 @@ async function build() {
   fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   // Delete test-utils from copied packages since we don't expose anything from there
   fs.rmSync(path.join(dir, 'packages', 'dev', 'test-utils'), {recursive: true, force: true});
+  fs.rmSync(path.join(dir, 'packages', 'dev', 'mcp'), {recursive: true, force: true});
 
   fs.cpSync(path.join(__dirname, '..', '.yarn'), path.join(dir, '.yarn'), {recursive: true});
   fs.cpSync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));

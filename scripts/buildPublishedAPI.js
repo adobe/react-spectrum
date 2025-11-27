@@ -179,6 +179,7 @@ async function build() {
   fs.cpSync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
   fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {recursive: true});
   fs.rmSync(path.join(dir, 'packages', 'dev', 'docs'), {recursive: true, force: true});
+  fs.rmSync(path.join(dir, 'packages', 'dev', 'mcp'), {recursive: true, force: true});
   fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {recursive: true});
   fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.cpSync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
