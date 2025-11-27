@@ -220,7 +220,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           style: {'--trigger-width': menuWidth} as React.CSSProperties,
           clearContexts: CLEAR_CONTEXTS
         }],
-        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
+        [ListBoxContext, {...listBoxProps, autoFocus: 'first', ref: listBoxRef}],
         [ListStateContext, state],
         [TextContext, {
           slots: {
