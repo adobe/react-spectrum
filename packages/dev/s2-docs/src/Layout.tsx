@@ -200,7 +200,9 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let title = getTitle(currentPage);
   let description = getDescription(currentPage);
   let parentUrl = new URL('./', currentPage.url);
-  let parentPage = pages.find(p => p.url === parentUrl.href);
+  let parentIndex = parentUrl.href;
+  let parentPageUrl = parentUrl.href.slice(0, -1);
+  let parentPage = pages.find(p => p.url === parentIndex || p.url === parentPageUrl);
   let isPostList = currentPage.exports?.isPostList;
   let Content = isPostList ? PostListContainer : Article;
   return (
@@ -403,7 +405,7 @@ function SubpageHeader({currentPage, parentPage, isLongForm}: SubpageHeaderProps
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 4, maxWidth: '--text-width', marginX: 'auto', marginBottom: 40})}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 2})}>
-        <TitleLink href="./">{parentPage?.exports?.title ?? parentPage?.tableOfContents?.[0]?.title ?? parentPage?.name}</TitleLink>
+        <TitleLink href={parentPage?.url}>{parentPage?.exports?.title ?? parentPage?.tableOfContents?.[0]?.title ?? parentPage?.name}</TitleLink>
         <ChevronRightIcon styles={iconStyle({size: 'XS'})} />
       </div>
       <H1 itemProp="headline" isLongForm={isLongForm}>{currentPage.tableOfContents?.[0].title}</H1>

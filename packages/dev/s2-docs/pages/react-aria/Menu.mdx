@@ -9,7 +9,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 export const tags = ['dropdown'];
 export const relatedPages = [
   {title: 'useMenu', url: 'https://react-spectrum.adobe.com/react-aria/useMenu.html'},
-  {title: 'Testing', url: './Menu/testing.html'}
+  {title: 'Testing', url: './Menu/testing'}
 ];
 export const description = 'Displays a list of actions or options that a user can choose.';
 
@@ -285,7 +285,7 @@ import {Button} from 'vanilla-starter/Button';
 
 ### Links
 
-Use the `href` prop on a `<MenuItem>` to create a link. See the [framework setup guide](frameworks.html) to learn how to integrate with your framework.
+Use the `href` prop on a `<MenuItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
 
 ```tsx render hideImports
 "use client";
@@ -435,7 +435,7 @@ function Example() {
 
 ### Custom trigger
 
-`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](usePress) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render hideImports
 "use client";
