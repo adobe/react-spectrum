@@ -282,7 +282,7 @@ describe('TableView', () => {
       // TODO: also weird that it is dialog.dialog?
       expect(dialog).toBeVisible();
 
-      let selectTester = testUtilUser.createTester('Select', {root: dialog!});
+      let selectTester = testUtilUser.createTester('Select', {root: dialog!, interactionType: 'keyboard'});
       expect(selectTester.trigger).toHaveFocus();
       await selectTester.selectOption({option: 'Steven'});
       act(() => {jest.runAllTimers();});

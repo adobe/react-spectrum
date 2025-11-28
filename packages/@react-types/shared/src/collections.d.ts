@@ -123,6 +123,8 @@ export interface KeyboardDelegate {
   getKeyForSearch?(search: string, fromKey?: Key | null): Key | null
 }
 
+export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+
 export interface Rect {
   x: number,
   y: number,
@@ -133,6 +135,11 @@ export interface Rect {
 export interface Size {
   width: number,
   height: number
+}
+
+export interface Point {
+  x: number,
+  y: number
 }
 
 /** A LayoutDelegate provides layout information for collection items. */

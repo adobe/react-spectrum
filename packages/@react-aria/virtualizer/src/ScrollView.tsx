@@ -10,273 +10,117 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore
-import {flushSync} from 'react-dom';
-import {getScrollLeft} from './utils';
-import React, {
-  CSSProperties,
-  ForwardedRef,
-  HTMLAttributes,
-  ReactNode,
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
-import {Rect, Size} from '@react-stately/virtualizer';
-import {useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {ScrollViewProps as AriaScrollViewProps, mergeProps, ScrollViewAria, useScrollView as useAriaScrollView, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, Orientation, Size} from '@react-types/shared';
+import React, {CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useMemo} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
-interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
+interface ScrollViewProps extends Omit<AriaScrollViewProps, 'onScroll' | 'direction'>, Omit<HTMLAttributes<HTMLElement>, 'onScrollEnd'> {
   contentSize: Size,
-  onVisibleRectChange: (rect: Rect) => void,
   children?: ReactNode,
+  /** @deprecated Use 'contentStyle' instead. */
   innerStyle?: CSSProperties,
-  onScrollStart?: () => void,
-  onScrollEnd?: () => void,
-  scrollDirection?: 'horizontal' | 'vertical' | 'both'
+  /** @deprecated Use 'orientation' instead. */
+  scrollDirection?: Orientation | 'both'
 }
 
-function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
+export const ScrollView = /*#__PURE__*/ (forwardRef as forwardRefType)(function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
   ref = useObjectRef(ref);
-  let {scrollViewProps, contentProps} = useScrollView(props, ref);
+  let {isScrolling, scrollViewProps, contentProps} = useScrollView(props, ref);
 
   return (
-    <div role="presentation" {...scrollViewProps} ref={ref}>
+    <div role="presentation" ref={ref} {...scrollViewProps} data-scrolling={isScrolling || undefined}>
       <div {...contentProps}>
         {props.children}
       </div>
     </div>
   );
-}
-
-const ScrollViewForwardRef:
-  React.ForwardRefExoticComponent<ScrollViewProps & React.RefAttributes<HTMLDivElement | null>> =
-React.forwardRef(ScrollView);
-export {ScrollViewForwardRef as ScrollView};
-
-interface ScrollViewAria {
-  isScrolling: boolean,
-  scrollViewProps: HTMLAttributes<HTMLElement>,
-  contentProps: HTMLAttributes<HTMLElement>
-}
+});
 
 export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>): ScrollViewAria {
-  let {
-    contentSize,
-    onVisibleRectChange,
-    innerStyle,
-    onScrollStart,
-    onScrollEnd,
-    scrollDirection = 'both',
-    ...otherProps
-  } = props;
-
-  let state = useRef({
-    scrollTop: 0,
-    scrollLeft: 0,
-    scrollEndTime: 0,
-    scrollTimeout: null as ReturnType<typeof setTimeout> | null,
-    width: 0,
-    height: 0,
-    isScrolling: false
-  }).current;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {contentSize, onScrollStart, onScrollEnd, onScrollPortChange, onScrollSnapChange, onScrollSnapChanging, onVisibleRectChange, ...otherProps} = props;
+  let {style, innerStyle, contentStyle = innerStyle, scrollDirection = 'both', orientation = scrollDirection, ...domProps} = otherProps;
   let {direction} = useLocale();
 
-  let [isScrolling, setScrolling] = useState(false);
-
-  let onScroll = useCallback((e) => {
-    if (e.target !== e.currentTarget) {
-      return;
-    }
-
-    if (props.onScroll) {
-      props.onScroll(e);
-    }
-
-    flushSync(() => {
-      let scrollTop = e.currentTarget.scrollTop;
-      let scrollLeft = getScrollLeft(e.currentTarget, direction);
-
-      // Prevent rubber band scrolling from shaking when scrolling out of bounds
-      state.scrollTop = Math.max(0, Math.min(scrollTop, contentSize.height - state.height));
-      state.scrollLeft = Math.max(0, Math.min(scrollLeft, contentSize.width - state.width));
-      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
-
-      if (!state.isScrolling) {
-        state.isScrolling = true;
-        setScrolling(true);
-
-        // Pause typekit MutationObserver during scrolling.
-        window.dispatchEvent(new Event('tk.disconnect-observer'));
-        if (onScrollStart) {
-          onScrollStart();
-        }
-      }
-
-      // So we don't constantly call clearTimeout and setTimeout,
-      // keep track of the current timeout time and only reschedule
-      // the timer when it is getting close.
-      let now = Date.now();
-      if (state.scrollEndTime <= now + 50) {
-        state.scrollEndTime = now + 300;
-
-        if (state.scrollTimeout != null) {
-          clearTimeout(state.scrollTimeout);
-        }
-
-        state.scrollTimeout = setTimeout(() => {
-          state.isScrolling = false;
-          setScrolling(false);
-          state.scrollTimeout = null;
-
-          window.dispatchEvent(new Event('tk.connect-observer'));
-          if (onScrollEnd) {
-            onScrollEnd();
-          }
-        }, 300);
-      }
-    });
-  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
-
-  // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
-  useEvent(ref, 'scroll', onScroll);
-
-  useEffect(() => {
-    return () => {
-      if (state.scrollTimeout != null) {
-        clearTimeout(state.scrollTimeout);
-      }
-
-      if (state.isScrolling) {
-        window.dispatchEvent(new Event('tk.connect-observer'));
-      }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  let isUpdatingSize = useRef(false);
-  let updateSize = useCallback((flush: typeof flushSync) => {
-    let dom = ref.current;
-    if (!dom || isUpdatingSize.current) {
-      return;
-    }
-
-    // Prevent reentrancy when resize observer fires, triggers re-layout that results in
-    // content size update, causing below layout effect to fire. This avoids infinite loops.
-    isUpdatingSize.current = true;
-
-    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
-    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
-    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
-    let clientWidth = dom.clientWidth;
-    let clientHeight = dom.clientHeight;
-    let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
-    let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
-
-    if (state.width !== w || state.height !== h) {
-      state.width = w;
-      state.height = h;
-      flush(() => {
-        onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
-      });
-
-      // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
-      // a result of the layout update. In this case, re-layout again to account for the
-      // adjusted space. In very specific cases this might result in the scrollbars disappearing
-      // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
-      // an infinite loop. This matches how browsers behavior with native CSS grid layout.
-      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
-        state.width = dom.clientWidth;
-        state.height = dom.clientHeight;
-        flush(() => {
-          onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
-        });
-      }
-    }
-
-    isUpdatingSize.current = false;
-  }, [ref, state, onVisibleRectChange]);
-  let updateSizeEvent = useEffectEvent(updateSize);
-
-  // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
-  let lastContentSize = useRef<Size | null>(null);
-  let [update, setUpdate] = useState({});
-  // We only contain a call to setState in here for testing environments.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
-      // React doesn't allow flushSync inside effects, so queue a microtask.
-      // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
-      // If we are in an `act` environment, update immediately without a microtask so you don't need
-      // to mock timers in tests. In this case, the update is synchronous already.
-      // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
-      // https://github.com/reactwg/react-18/discussions/102
-      // @ts-ignore
-      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
-        // This is so we update size in a separate render but within the same act. Needs to be setState instead of refs
-        // due to strict mode.
-        setUpdate({});
-        lastContentSize.current = contentSize;
-        return;
-      } else {
-        queueMicrotask(() => updateSizeEvent(flushSync));
-      }
-    }
-
-    lastContentSize.current = contentSize;
-  });
-
-  // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
-  useLayoutEffect(() => {
-    updateSizeEvent(fn => fn());
-  }, [update]);
-
-  let onResize = useCallback(() => {
-    updateSize(flushSync);
-  }, [updateSize]);
-
-  // Watch border-box instead of of content-box so that we don't go into
-  // an infinite loop when scrollbars appear or disappear.
-  useResizeObserver({ref, box: 'border-box', onResize});
-
-  let style: React.CSSProperties = {
-    // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
+  // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
+  let virtualizerStyle: CSSProperties = {
     padding: 0,
-    ...otherProps.style
+    ...style
   };
 
-  if (scrollDirection === 'horizontal') {
-    style.overflowX = 'auto';
-    style.overflowY = 'hidden';
-  } else if (scrollDirection === 'vertical' || contentSize.width === state.width) {
-    // Set overflow-x: hidden if content size is equal to the width of the scroll view.
-    // This prevents horizontal scrollbars from flickering during resizing due to resize observer
-    // firing slower than the frame rate, which may cause an infinite re-render loop.
-    style.overflowY = 'auto';
-    style.overflowX = 'hidden';
-  } else {
-    style.overflow = 'auto';
-  }
-
-  innerStyle = {
-    width: Number.isFinite(contentSize.width) ? contentSize.width : undefined,
-    height: Number.isFinite(contentSize.height) ? contentSize.height : undefined,
-    pointerEvents: isScrolling ? 'none' : 'auto',
+  let layoutStyle: CSSProperties = {
     position: 'relative',
-    ...innerStyle
+    ...contentStyle
   };
+
+  // Skip native event listener, since we forward props for backwards compatibility :(
+  let viewProps = {...props, onScroll: undefined};
+  let viewRef = useScrollViewRef(viewProps, ref);
+
+  // Pause typekit MutationObserver during scrolling.
+  let {isScrolling, scrollViewProps, contentProps} = useAriaScrollView(mergeProps(viewProps, {
+    onScrollStart: () => window.dispatchEvent(new Event('tk.disconnect-observer')),
+    onScrollEnd: () => window.dispatchEvent(new Event('tk.connect-observer')),
+    style: virtualizerStyle,
+    contentStyle: layoutStyle,
+    orientation,
+    direction
+  }), viewRef);
+
+  // Re-connect typekit MutationObserver on unmount.
+  useLayoutEffect(() => () => {
+    window.dispatchEvent(new Event('tk.connect-observer'));
+  }, []);
 
   return {
     isScrolling,
+    contentProps,
     scrollViewProps: {
-      ...otherProps,
-      style
-    },
-    contentProps: {
-      role: 'presentation',
-      style: innerStyle
+      ...domProps,
+      ...scrollViewProps
     }
   };
+}
+
+// In test environments, we auto-stub the dimensions of the visible rect to the entire contentSize, so that 
+// consumers don't need to setup dimension stubs to test a virtualized component. Unfortunately, both scrollWidth 
+// and scrollHeight are used to stub item dimensions, although our observer relies on scrollWidth >= clientWidth.
+// This intercepts reads with a Proxy to provide reliable dimensions while avoiding leaks from Virtualizer's scope.
+// See https://github.com/adobe/react-spectrum/pull/4835#discussion_r1284897591
+function useScrollViewRef(props: ScrollViewProps, ref: RefObject<HTMLElement | null>): RefObject<HTMLElement | null> {
+  let {contentSize} = props;
+  return useMemo(() => {
+    if (process.env.NODE_ENV !== 'test') { return ref; }
+
+    let cache: HTMLElement | null = null;
+    let proto = typeof window !== 'undefined' ? Object.getOwnPropertyNames(window.HTMLElement.prototype) : [];
+
+    return {
+      get current() {
+        if (!ref.current) { return null; }
+
+        return cache ??= new Proxy(ref.current, {
+          get(target, key, receiver) {
+            switch (key) {
+              case 'clientWidth': 
+                return process.env.VIRT_ON || proto.includes(key) ? ref.current![key] : contentSize.width;
+              case 'clientHeight': 
+                return process.env.VIRT_ON || proto.includes(key) ? ref.current![key] : contentSize.height;
+              case 'scrollWidth': 
+                return contentSize.width;
+              case 'scrollHeight': 
+                return contentSize.height;
+            }
+
+            let value = Reflect.get(target, key, receiver);
+            return typeof value === 'function' ? value.bind(target) : value;
+          }
+        });
+      },
+      set current(v: HTMLElement | null) {
+        ref.current = v;
+      }
+    };
+  }, [ref, contentSize.width, contentSize.height]);
 }

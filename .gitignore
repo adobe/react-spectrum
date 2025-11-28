@@ -1,6 +1,7 @@
 .DS_Store
 .cache
 .idea
+.vscode
 .package-lock.json
 .parcel-cache
 build-storybook.log

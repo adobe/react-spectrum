@@ -12,7 +12,7 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
-import {Rect} from './Rect';
+import {Rect} from '@react-stately/utils';
 
 export interface InvalidationContext<O = any> {
   contentChanged?: boolean,
