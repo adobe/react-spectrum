@@ -30,13 +30,51 @@ let updateRoot = hydrate({
 let currentNavigationId = 0;
 let currentAbortController: AbortController | null = null;
 
+// Store scroll positions by pathname
+const scrollPositions = new Map<string, {scrollTop: number, windowScrollTop: number}>();
+
+// Track the current pathname so we can save scroll position on popstate
+// (when popstate fires, location.pathname has already changed to the destination)
+let currentPathname = location.pathname;
+
+function getScrollContainer(): HTMLElement | null {
+  return document.querySelector('main');
+}
+
+// Save scroll position for a given pathname
+function saveScrollPosition(pathname: string) {
+  let scrollContainer = getScrollContainer();
+  let scrollTop = scrollContainer?.scrollTop ?? 0;
+  let windowScrollTop = window.scrollY;
+  scrollPositions.set(pathname, {scrollTop, windowScrollTop});
+}
+
+function restoreScrollPosition(pathname: string) {
+  let position = scrollPositions.get(pathname);
+  if (position) {
+    requestAnimationFrame(() => {
+      let scrollContainer = getScrollContainer();
+      if (scrollContainer) {
+        scrollContainer.scrollTop = position.scrollTop;
+      }
+      window.scrollTo(0, position.windowScrollTop);
+    });
+  }
+}
+
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
-async function navigate(pathname: string, push = false) {
+// restoreScroll: when true (e.g., popstate), restore scroll position from saved positions
+async function navigate(pathname: string, push = false, restoreScroll = false) {
   let [basePath, pathAnchor] = pathname.split('#');
   let currentPath = location.pathname;
   let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
+  
+  // Save scroll position before navigating away
+  // For push: use location.pathname (still the current page)
+  // For popstate: use currentPathname (because location.pathname already changed)
+  saveScrollPosition(push ? location.pathname : currentPathname);
   
   if (isSamePageAnchor) {
     if (push) {
@@ -95,15 +133,27 @@ async function navigate(pathname: string, push = false) {
             push = false;
           }
 
-          // Reset scroll if navigating to a different page without an anchor
-          if (currentPath !== newBasePath && !newPathAnchor) {
+          // Handle scroll position
+          if (restoreScroll) {
+            // Restore scroll position from saved positions (back/forward navigation)
+            restoreScrollPosition(newBasePath);
+          } else if (currentPath !== newBasePath && !newPathAnchor) {
+            // Reset scroll for forward navigation to a different page without an anchor
+            let scrollContainer = getScrollContainer();
+            if (scrollContainer) {
+              scrollContainer.scrollTop = 0;
+            }
             window.scrollTo(0, 0);
           } else if (newPathAnchor) {
+            // Scroll to anchor
             let element = document.getElementById(newPathAnchor);
             if (element) {
               element.scrollIntoView();
             }
           }
+
+          // Update tracked pathname after navigation completes
+          currentPathname = newBasePath;
 
           queueMicrotask(() => {
             window.dispatchEvent(new CustomEvent('rsc-navigation'));
@@ -235,9 +285,10 @@ document.addEventListener('click', e => {
   }
 });
 
-// When the user clicks the back button, navigate with RSC.
+// When the user clicks the back/forward button, navigate with RSC.
+// Pass restoreScroll=true to restore scroll position from saved positions.
 window.addEventListener('popstate', () => {
-  navigate(location.pathname + location.search + location.hash);
+  navigate(location.pathname + location.search + location.hash, false, true);
 });
 
 function scrollToCurrentHash() {
@@ -267,7 +318,5 @@ function scrollToCurrentHash() {
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   scrollToCurrentHash();
 } else {
-  window.addEventListener('DOMContentLoaded', () => {
-    scrollToCurrentHash();
-  }, {once: true});
+  window.addEventListener('DOMContentLoaded', scrollToCurrentHash, {once: true});
 }
