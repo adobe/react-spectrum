@@ -13,7 +13,7 @@
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
 import {useEffect} from 'react';
-import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
+import {useFocusWithin} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
@@ -119,7 +119,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined, onInteractOutsideStart});
+  // useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
@@ -147,6 +147,9 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
     if (e.target === e.currentTarget) {
       e.preventDefault();
+      if (isDismissable) {
+        onInteractOutsideStart(e);
+      }
     }
   };
 
@@ -156,7 +159,12 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
       ...focusWithinProps
     },
     underlayProps: {
-      onPointerDown: onPointerDownUnderlay
+      onPointerDown: onPointerDownUnderlay,
+      onClick(e) {
+        if (isDismissable && isOpen && e.target === e.currentTarget) {
+          onInteractOutside(e.nativeEvent as PointerEvent);
+        }
+      }
     }
   };
 }
