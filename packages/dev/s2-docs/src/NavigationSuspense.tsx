@@ -64,23 +64,23 @@ function getPageInfo(pages: Page[], pathname: string | null) {
   return {title, section, hasToC, isLongForm, isWide};
 }
 
-function NavigationContent({children}: {children: React.ReactNode}) {
-  // Subscribe to navigation promise changes to ensure React re-renders when setNavigationPromise() is called.
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  let [delayedPromise, setDelayedPromise] = useState<Promise<void> | null>(null);
+export function useDelayedSnapshot() {
+  let snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  let [delayedSnapshot, setDelayedSnapshot] = useState<typeof snapshot>(snapshot);
   useEffect(() => {
-    let promise = snapshot.promise;
-    if (!promise) {
-      return;
-    }
     let timeout = setTimeout(() => {
-      setDelayedPromise(promise);
+      setDelayedSnapshot(snapshot);
     }, SKELETON_DELAY);
     return () => clearTimeout(timeout);
   }, [snapshot]);
 
-  if (delayedPromise) {
-    use(delayedPromise);
+  return delayedSnapshot;
+}
+
+function NavigationContent({children}: {children: React.ReactNode}) {
+  let snapshot = useDelayedSnapshot();
+  if (snapshot.promise) {
+    use(snapshot.promise);
   }
 
   return <>{children}</>;

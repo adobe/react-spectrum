@@ -158,7 +158,7 @@ async function navigate(pathname: string, push = false) {
 
 // Prefetch routes on pointerover
 // Use a delay to avoid prefetching when quickly moving over multiple links.
-const PREFETCH_DELAY_MS = 100;
+const PREFETCH_DELAY_MS = 65;
 let prefetchTimeout: ReturnType<typeof setTimeout> | null = null;
 let currentPrefetchLink: HTMLAnchorElement | null = null;
 
@@ -171,6 +171,10 @@ function clearPrefetchTimeout() {
 }
 
 document.addEventListener('pointerover', e => {
+  if (e.pointerType !== 'mouse') {
+    return;
+  }
+
   let link = e.target instanceof Element ? e.target.closest('a') : null;
   
   // Clear any pending prefetch
@@ -185,8 +189,25 @@ document.addEventListener('pointerover', e => {
   }
 }, true);
 
+// Prefetch immediately on pointer down, with high priority.
+document.addEventListener('pointerdown', e => {
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
+
+  // Clear any pending prefetch
+  clearPrefetchTimeout();
+
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
+    currentPrefetchLink = link;
+    prefetchRoute(link.pathname + link.search + link.hash, 'high');
+  }
+});
+
 // Clear prefetch timeout when pointer leaves a link
 document.addEventListener('pointerout', e => {
+  if (e.pointerType !== 'mouse') {
+    return;
+  }
+
   let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (link && link === currentPrefetchLink) {
     clearPrefetchTimeout();

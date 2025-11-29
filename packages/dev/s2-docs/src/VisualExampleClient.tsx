@@ -12,7 +12,7 @@ import {getColorChannels, parseColor} from 'react-stately';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
-import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, Suspense, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
@@ -745,9 +745,11 @@ function ChildrenControl({control, value, onChange}: ControlProps) {
                 value={objectValue?.text || ''}
                 onChange={text => onChange({...objectValue, text})}
                 styles={style({width: 80, flexGrow: 1})} />
-              <IconPicker
-                value={value}
-                onChange={onChange} />
+              <Suspense fallback={<ActionButton isPending>No icon</ActionButton>}>
+                <IconPicker
+                  value={value}
+                  onChange={onChange} />
+              </Suspense>
             </div>
           )}
           {(control.slots.avatar || control.slots.badge) &&

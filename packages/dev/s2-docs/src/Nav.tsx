@@ -3,7 +3,7 @@
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
-import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
+import {getPageFromPathname, getSnapshot, subscribe, useDelayedSnapshot} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page, PageProps} from '@parcel/rsc';
@@ -66,7 +66,7 @@ export function Nav({pages, currentPage}: PageProps) {
   let [maskSize, setMaskSize] = useState(0);
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
-  let displayUrl = pendingPage?.url ?? currentPage.url;
+  let displayPage = pendingPage ?? currentPage;
 
   let sortedSections = [...sections].sort((a, b) => {
     if (a[0] === 'Overview') {
@@ -129,7 +129,7 @@ export function Nav({pages, currentPage}: PageProps) {
                       .filter(page => !page.exports?.isSubpage)
                       .map(page => (
                         <SideNavItem key={page.url}>
-                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayUrl}>
+                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayPage.url}>
                             {title(page)}
                           </SideNavLink>
                         </SideNavItem>
@@ -156,7 +156,7 @@ export function Nav({pages, currentPage}: PageProps) {
                 })
                 .filter(page => !page.exports?.isSubpage)
                 .map(page => (
-                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === displayPage.url}>{title(page)}</SideNavLink></SideNavItem>
               ))}
             </SideNav>
           );
@@ -182,7 +182,7 @@ export function Nav({pages, currentPage}: PageProps) {
                     .filter(page => !page.exports?.isSubpage)
                     .map(page => (
                       <SideNavItem key={page.url}>
-                        <SideNavLink href={page.url} isSelected={page.url === currentPage.url}>
+                        <SideNavLink href={page.url} isSelected={page.url === displayPage.url}>
                           {title(page)}
                         </SideNavLink>
                       </SideNavItem>
@@ -231,7 +231,7 @@ function SideNavSection({title, children}) {
 const SideNavContext = createContext('');
 
 export function usePendingPage(pages: Page[]): Page | null {
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const snapshot = useDelayedSnapshot();
   return snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
 }
 
