@@ -67,6 +67,10 @@ export class PersianCalendar implements Calendar {
     return 12;
   }
 
+  getMaxMonths(): number {
+    return 12
+  }
+
   getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month <= 6) {
       return 31;
@@ -78,6 +82,10 @@ export class PersianCalendar implements Calendar {
 
     let isLeapYear = mod(25 * date.year + 11, 33) < 8;
     return isLeapYear ? 30 : 29;
+  }
+
+  getMaxDays(): number {
+    return 31;
   }
 
   getEras(): string[] {
