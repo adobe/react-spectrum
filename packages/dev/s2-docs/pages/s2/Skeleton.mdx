@@ -18,7 +18,7 @@ import preview from 'url:./assets/preview.png';
 import Select from '@react-spectrum/s2/icons/Select';
 
 <Skeleton/* PROPS */>
-  <div className={style({display: 'flex', gap: 16})}>
+  <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}})}>
     <Image
       src={preview}
       width={1600}
