@@ -429,7 +429,7 @@ function MobileRelatedPages({pages}: {pages: Array<{title: string, url: string}>
         }
       })}>
       <H2 id="related-pages">Related pages</H2>
-      <ul className={style({listStyleType: 'none'})}>
+      <ul>
         {pages.map((page, i) => {
           let isExternal = isExternalUrl(page.url);
           return (
