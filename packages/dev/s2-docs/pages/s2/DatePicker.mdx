@@ -80,7 +80,7 @@ import {parseZonedDateTime} from '@internationalized/date';
 
 Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. The `isDateUnavailable` callback prevents certain dates from being selected. See the Forms guide to learn more.
 
-```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
 import {useLocale} from 'react-aria';
