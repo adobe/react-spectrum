@@ -233,7 +233,7 @@ import Select from '@react-spectrum/s2/icons/Select';
 
 ## Skeleton
 
-Wrap a card in a `Skeleton` to display a loading state. Placeholder text content and images are displayed in a skeleton style.
+Wrap a card in a [Skeleton](Skeleton) to display a loading state. Placeholder text content and images are displayed in a skeleton style.
 
 ```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2" wide
 import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
@@ -255,7 +255,7 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 
 ### Card
 
-```tsx
+```tsx links={{Image: 'Image', Illustration: 'illustrations', ActionMenu: 'ActionMenu'}}
 <Card>
   <CardPreview>
     <Image /> or <Illustration />
@@ -273,7 +273,7 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 
 ### AssetCard
 
-```tsx
+```tsx links={{Image: 'Image', Illustration: 'illustrations', ActionMenu: 'ActionMenu'}}
 <AssetCard>
   <CardPreview>
     <Image /> or <Illustration />
@@ -290,7 +290,7 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 
 ### UserCard
 
-```tsx
+```tsx links={{Image: 'Image', ActionMenu: 'ActionMenu'}}
 <UserCard>
   <CardPreview>
     <Image />
@@ -309,7 +309,7 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 
 ### ProductCard
 
-```tsx
+```tsx links={{Image: 'Image', ActionMenu: 'ActionMenu', Button: 'Button', LinkButton: 'LinkButton'}}
 <ProductCard>
   <CardPreview>
     <Image slot="preview" />
