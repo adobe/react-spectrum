@@ -45,6 +45,16 @@ export interface ColorFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the color field is read only.
+   * @selector [data-readonly]
+   */
+   isReadOnly: boolean,
+   /**
+    * Whether the color field is required.
+    * @selector [data-required]
+    */
+   isRequired: boolean,
+  /**
    * The color channel that this field edits, or "hex" if no `channel` prop is set.
    * @selector [data-channel="hex | hue | saturation | ..."]
    */
@@ -192,7 +202,9 @@ function useChildren(
       state,
       channel: props.channel || 'hex',
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false
+      isInvalid: validation.isInvalid || false,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-ColorField'
   });
@@ -222,7 +234,9 @@ function useChildren(
         slot={props.slot || undefined}
         data-channel={props.channel || 'hex'}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={validation.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined}
+        data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
     </Provider>
   );
 }
