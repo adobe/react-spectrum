@@ -19,7 +19,8 @@ const trigger = style({
   whiteSpace: 'inherit',
   fontFamily: 'inherit',
   fontSize: 'inherit',
-  color: 'inherit'
+  color: 'inherit',
+  disableTapHighlight: true
 });
 
 const chevronStyles = style({

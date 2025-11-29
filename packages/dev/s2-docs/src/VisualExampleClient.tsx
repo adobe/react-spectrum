@@ -1093,7 +1093,8 @@ function PlacementControlItem(props) {
         zIndex: {
           default: 0,
           isFocusVisible: 1
-        }
+        },
+        disableTapHighlight: true
       })}>
       <div
         className={style({
