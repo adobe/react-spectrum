@@ -3,10 +3,10 @@
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
-import {getPageFromPathname, getSnapshot, subscribe, useDelayedSnapshot} from './NavigationSuspense';
+import {getPageFromPathname, getSnapshot, subscribe, useRouter} from './Router';
 import {Link} from 'react-aria-components';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
-import type {Page, PageProps} from '@parcel/rsc';
+import type {Page} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
 
 type SectionValue = Page[] | Map<string, Page[]>;
@@ -15,8 +15,18 @@ function isSectionMap(value: SectionValue): value is Map<string, Page[]> {
   return value instanceof Map;
 }
 
-export function Nav({pages, currentPage}: PageProps) {
-  let currentLibrary = getLibraryFromPage(currentPage);
+export function Nav() {
+  let {pages, currentPage} = useRouter();
+  let [maskSize, setMaskSize] = useState(0);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
+  let displayPage = pendingPage ?? currentPage;
+
+  if (currentPage.exports?.hideNav) {
+    return null;
+  }
+
+  let currentLibrary = getLibraryFromPage(displayPage);
   let sections = new Map<string, SectionValue>();
   let sectionLibrary = new Map();
   for (let page of pages) {
@@ -62,11 +72,6 @@ export function Nav({pages, currentPage}: PageProps) {
 
     sectionLibrary.set(section, library);
   }
-
-  let [maskSize, setMaskSize] = useState(0);
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
-  let displayPage = pendingPage ?? currentPage;
 
   let sortedSections = [...sections].sort((a, b) => {
     if (a[0] === 'Overview') {
@@ -230,11 +235,6 @@ function SideNavSection({title, children}) {
 
 const SideNavContext = createContext('');
 
-export function usePendingPage(pages: Page[]): Page | null {
-  const snapshot = useDelayedSnapshot();
-  return snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
-}
-
 export function SideNav({children, isNested = false}) {
   return (
     <ul
@@ -365,7 +365,8 @@ export function OnPageNav({children}) {
   );
 }
 
-export function MobileOnPageNav({children, currentPage}) {
+export function MobileOnPageNav({children}) {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
   useEffect(() => {
     let elements = Array.from(document.querySelectorAll('article :is(h1,h2,h3,h4,h5)'));

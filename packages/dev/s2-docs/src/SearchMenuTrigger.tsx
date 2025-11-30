@@ -3,9 +3,9 @@
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {getLibraryFromPage, getLibraryLabel} from './library';
-import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
 import Search from '@react-spectrum/s2/icons/Search';
+import {useRouter} from './Router';
 
 let SearchMenu = lazy(() => import('./SearchMenu').then(({SearchMenu}) => ({default: SearchMenu})));
 export async function preloadSearchMenu() {
@@ -17,8 +17,6 @@ export async function preloadSearchMenu() {
 }
 
 export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | 'className'> {
-  pages: Page[],
-  currentPage: Page,
   onOpen: () => void,
   onClose: () => void,
   isSearchOpen: boolean,
@@ -66,6 +64,7 @@ let modalStyle = style({
 });
 
 export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overlayId, ...props}: SearchMenuTriggerProps) {
+  let {currentPage} = useRouter();
   let [initialSearchValue, setInitialSearchValue] = useState('');
   let open = useCallback((value: string) => {
     setInitialSearchValue(value);
@@ -179,7 +178,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             '--iconPrimary': {type: 'fill', value: 'currentColor'},
             flexShrink: 0
           }))} />
-        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(props.currentPage))}</span>
+        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(currentPage))}</span>
         <kbd
           className={style({
             marginStart: 'auto',
@@ -202,8 +201,6 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         className={underlayStyle}>
         <Modal className={modalStyle}>
           <SearchMenu
-            pages={props.pages}
-            currentPage={props.currentPage}
             onClose={onClose}
             overlayId={overlayId}
             initialSearchValue={initialSearchValue}

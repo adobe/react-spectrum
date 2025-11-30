@@ -10,9 +10,9 @@ import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
 // @ts-ignore
 import {Link} from 'react-aria-components';
-import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
+import {useRouter} from './Router';
 
 function getButtonText(currentPage) {
   return getLibraryLabel(getLibraryFromPage(currentPage));
@@ -66,8 +66,8 @@ const iconStyles = style({
   paddingX: space(6)
 });
 
-export default function Header(props: PageProps) {
-  const {pages, currentPage} = props;
+export default function Header() {
+  const {currentPage} = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const searchMenuId = useId();
   let ref = useRef(null);
@@ -144,8 +144,6 @@ export default function Header(props: PageProps) {
             </Link>
           </div>
           <SearchMenuTrigger
-            pages={pages}
-            currentPage={currentPage}
             onOpen={openSearchMenu}
             onClose={closeSearchMenu}
             isSearchOpen={searchOpen}

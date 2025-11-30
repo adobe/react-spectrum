@@ -12,12 +12,12 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
-import {Page} from '@parcel/rsc';
 import React, {CSSProperties, Suspense, useCallback, useEffect, useRef} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
+import {useRouter} from './Router';
 
 export const divider = style({
   marginY: 8,
@@ -37,8 +37,6 @@ export const divider = style({
 
 
 interface SearchMenuProps {
-  pages: Page[],
-  currentPage: Page,
   onClose: () => void,
   overlayId?: string,
   initialSearchValue: string,
@@ -59,7 +57,8 @@ function CloseButton({onClose}: {onClose: () => void}) {
 }
 
 export function SearchMenu(props: SearchMenuProps) {
-  let {pages, currentPage, onClose, overlayId, isSearchOpen} = props;
+  let {pages, currentPage} = useRouter();
+  let {onClose, overlayId, isSearchOpen} = props;
 
   const searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
   const iconFilter = useIconFilter();

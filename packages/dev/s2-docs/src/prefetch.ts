@@ -26,12 +26,13 @@ export function prefetchRoute(pathname: string, priority: RequestPriority = 'low
 
   prefetchPromise.then(res => {
     // Remove from cache after 30 seconds (rely on browser cache for subsequent requests)
+    // This is required so we can reuse the same promise on click.
     setTimeout(() => {
       prefetchPromises.delete(url);
     }, 30_000);
     return res;
   })
-  .catch((err) => {
+  .catch(() => {
     prefetchPromises.delete(url);
   });
   

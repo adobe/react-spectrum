@@ -10,6 +10,7 @@ import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import {Modal} from '../../../@react-spectrum/s2/src/Modal';
 import React, {CSSProperties, lazy, useEffect, useRef} from 'react';
 import {TAB_DEFS} from './constants';
+import {useRouter} from './Router';
 
 const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
 
@@ -62,7 +63,7 @@ const animation = {
 
 const animationRange = '24px 64px';
 
-export function MobileHeader({toc, pages, currentPage}) {
+export function MobileHeader({toc}) {
   let ref = useRef<HTMLDivElement | null>(null);
   let linkRef = useRef<HTMLAnchorElement | null>(null);
 
@@ -85,6 +86,7 @@ export function MobileHeader({toc, pages, currentPage}) {
     }
   }, []);
 
+  let {currentPage} = useRouter();
   let library = getLibraryFromPage(currentPage);
   let icon = TAB_DEFS[library].icon;
   let subdirectory: 's2' | 'react-aria' = 's2';
@@ -185,7 +187,7 @@ export function MobileHeader({toc, pages, currentPage}) {
           <MenuHamburger />
         </ActionButton>
         <Modal size="fullscreenTakeover">
-          <MobileSearchMenu pages={pages} currentPage={currentPage} />
+          <MobileSearchMenu />
         </Modal>
       </DialogTrigger>
     </div>
