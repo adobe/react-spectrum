@@ -40,6 +40,7 @@ import '../../../src/footer.css';
 // @ts-ignore
 import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
+import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -53,6 +54,135 @@ const container = style({
   overflow: 'clip',
   display: 'flex',
   flexDirection: 'column'
+});
+
+// Animated heading sliding in from the top.
+const swapWrapper = style({
+  display: 'inline-block',
+  position: 'relative',
+  height: '[1em]',
+  overflow: 'hidden',
+  verticalAlign: 'baseline',
+  whiteSpace: 'nowrap',
+  lineHeight: '[1em]',
+  marginEnd: 12
+});
+
+const swapItem = style({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0
+});
+
+// Track that scrolls vertically through all the items.
+const slideTrack = keyframes(`
+  0% {
+    transform: translateY(0%);
+  }
+  15% {
+    transform: translateY(0%);
+  }
+  16% {
+    transform: translateY(-16.666%);
+  }
+  31% {
+    transform: translateY(-16.666%);
+  }
+  32% {
+    transform: translateY(-33.333%);
+  }
+  47% {
+    transform: translateY(-33.333%);
+  }
+  48% {
+    transform: translateY(-50%);
+  }
+  63% {
+    transform: translateY(-50%);
+  }
+  64% {
+    transform: translateY(-66.666%);
+  }
+  79% {
+    transform: translateY(-66.666%);
+  }
+  80% {
+    transform: translateY(-83.333%);
+  }
+  95% {
+    transform: translateY(-83.333%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+`);
+
+const swapTrack = style({
+  animation: slideTrack,
+  animationDuration: 15000,
+  animationTimingFunction: 'linear',
+  animationIterationCount: 'infinite',
+  display: 'flex',
+  flexDirection: 'column',
+  whiteSpace: 'nowrap'
+});
+
+// for measuring longest word
+const swapSizer = style({
+  opacity: 0,
+  whiteSpace: 'nowrap'
+});
+
+
+const swapRow = style({
+  display: 'block',
+  height: '[1em]',
+  lineHeight: '[1em]'
+});
+
+const slidePolish = keyframes(`
+  0%, 45% {
+    transform: translateY(0%);
+  }
+  50% {
+    transform: translateY(100%);
+  }
+  50.01%, 95% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+`);
+
+const slideSpeed = keyframes(`
+  0%, 45% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(0%);
+  }
+  95% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+`);
+
+const swapPolish = style({
+  animation: slidePolish,
+  animationDuration: 5000,
+  animationTimingFunction: 'in-out',
+  animationIterationCount: 'infinite'
+});
+
+const swapSpeed = style({
+  animation: slideSpeed,
+  animationDuration: 5000,
+  animationTimingFunction: 'in-out',
+  animationIterationCount: 'infinite'
 });
 
 export function Home() {
@@ -111,7 +241,20 @@ export function Home() {
         </div>
       </nav>
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
-        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>Build apps with polish, with speed, with ease, with accessibility, with consistency.</h1>
+        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>
+          <span className={swapWrapper} >Build apps </span>
+          <span className={swapWrapper}>
+            <span className={swapTrack}>
+              <span className={swapRow}>with polish</span>
+              <span className={swapRow}>with speed</span>
+              <span className={swapRow}>with ease</span>
+              <span className={swapRow}>with accessibility</span>
+              <span className={swapRow}>with consistency</span>
+              <span className={swapRow}>with React Spectrum</span>
+            </span>
+            <span className={swapSizer} aria-hidden>with React Spectrum</span>
+          </span>
+        </h1>
         <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>React Spectrum gives you the power to build high quality, accessible UI with the cohesive look and feel of Adobe. </p>
         <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 56})}>
           <LinkButton size="XL" staticColor="white" href="getting-started.html">Get started</LinkButton>
