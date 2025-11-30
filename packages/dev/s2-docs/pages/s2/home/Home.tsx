@@ -111,8 +111,8 @@ export function Home() {
         </div>
       </nav>
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
-        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>React Spectrum</h1>
-        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>Subtitle</p>
+        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>Build apps with polish, with speed, with ease, with accessibility, with consistency.</h1>
+        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>React Spectrum gives you the power to build high quality, accessible UI with the cohesive look and feel of Adobe. </p>
         <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 56})}>
           <LinkButton size="XL" staticColor="white" href="getting-started.html">Get started</LinkButton>
           <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum.html">Explore components</LinkButton>
@@ -127,14 +127,14 @@ export function Home() {
           description="React Spectrum makes interfaces more accessible, flexible, and easier to maintain, while giving users a seamless experience no matter where they are.">
           <Feature
             title="Dark mode"
-            description="Deliver effortless dark and light mode support, automatically. No extra styling required."
+            description="Deliver effortless dark and light mode support with no extra styling needed."
             illustration={<Lightbulb />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <DarkMode />
           </Feature>
           <Feature
             title="Touch friendly"
-            description="Components automatically scale adapt and adapt for touch or pointer input, ensuring a smooth experience on any device."
+            description="Components automatically scale and adapt for touch or pointer input, ensuring a smooth experience on any device."
             illustration={<Interaction />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <Mobile />
@@ -181,14 +181,14 @@ export function Home() {
           </Feature> */}
           <Feature
             title="High contrast mode"
-            description="Automatically adjust to high contrast mode, ensuring a clear and readable experience based on preference."
+            description="Support for high contrast mode included, ensuring a clear and readable experience based on preference."
             illustration={<Accessibility />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <HCM />
           </Feature>
           <Feature
             title="Adaptive font sizes"
-            description="Fonts scale autoamtically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
+            description="Fonts scale automatically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
             illustration={<TextIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <Rems />
@@ -212,7 +212,7 @@ export function Home() {
             <SubmenuAnimation />
           </Feature>
         </Section> */}
-        <Section title="Everything you need to build beautiful apps" description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on brand.">
+        <Section title="Everything you need to build beautiful apps" description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
           <Feature
             title="Icons"
             description="Spectrum icon support for your product. Use the icon search to simplify finding the right icon the right experience."
@@ -233,35 +233,35 @@ export function Home() {
           description={<>Easily use Spectrum tokens like colors, spacing, and typography in your own custom components with style macros. Styles are <strong>colocated</strong> with your component code, allowing you to <strong>develop more efficiently</strong> and <strong>refactor with confidence</strong> – no more CSS conflicts or specificity issues. Style macros generate atomic CSS at build time, so you get tiny bundle sizes and fast runtime performance.</>}>
           <Feature
             title="Colors"
-            description="Testing"
+            description="Access the full range of Spectrum color tokens when you need them."
             illustration={<Color />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ColorScales />
           </Feature>
           <Feature
             title="Typography"
-            description="Testing"
+            description="Use the predefined type styles to draw attention and create consistent hierarchy."
             illustration={<TextIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <Typography />
           </Feature>
           <Feature
             title="Object styles"
-            description="Testing"
+            description="Follow Spectrum's foundational design principles using object style tokens."
             illustration={<Shapes />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ObjectStyles />
           </Feature>
           <Feature
             title="States and variants"
-            description="Testing"
+            description="Define the states needed for your custom components, all in one place using Spectrum tokens."
             illustration={<Layers />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <States />
           </Feature>
           <Feature
             title="Reusable utilities"
-            description="Macros are just functions, so you can create your own reusable style utilities."
+            description="Macros are functions that can be used to create reusable style utilities for your own components."
             illustration={<CodeBrackets />}
             styles={style({gridColumnStart: {default: 'span 6', xl: 'span 3'}})}>
             <div className={style({display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1, justifyContent: 'space-between'})}>
@@ -325,32 +325,32 @@ const buttonStyle = style({
           </Feature>
           <Feature
             title="Responsive design"
-            description="Show media/container queries"
+            description="Adaptive UI built on Spectrum's responsive layout definitions.... *needs work"
             illustration={<Phone />}
             style={{gridColumn: 'span 6'}}>
             <Responsive />
           </Feature>
         </Section>
         <Section
-          title="Modern"
-          description="Stuff">
+          title="Built for modern development and the modern web"
+          description="With AI-ready documentation, server side and runtime performance optimizations, React Spectrum helps you build modern, scalable apps without compromise.">
           <Feature
             title="AI-ready"
-            description="MCP server..."
+            description="Comprehensive markdown docs, llms.txt, and an agent-friendly MCP server."
             illustration={<Sparkles />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
           <Feature
             title="SSR"
-            description="and React Server Components"
+            description="Server-side rendering and React Server Components support, maximizing Core Web Vitals with zero layout thrashing."
             illustration={<Server />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
           <Feature
             title="Small bundle"
-            description="CSS?"
+            description="Aggressive tree-shaking and atomic CSS resulting in reduced bundle sizes and faster runtime performance."
             illustration={<SpeedFast />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
