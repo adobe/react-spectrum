@@ -1,3 +1,4 @@
+import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
 import {Code, styles as codeStyles} from './Code';
 import {CSSVariables, StateTable} from './StateTable';
 import {DisclosureRow} from './DisclosureRow';
@@ -126,8 +127,9 @@ export function GroupedPropTable({properties, links, propGroups = GROUPS, defaul
 
   // properties.sort((a, b) => a.name.localeCompare(b.name));
 
+  let allProps = [...Object.values(props), ...Object.values(groups).flatMap(g => Object.values(g))];
   // Default to showing required indicators if some properties are optional but not all.
-  // let showRequired = !properties.every(p => p.optional) && !properties.every(p => !p.optional);
+  let showRequired = !allProps.every(p => p.optional) && !allProps.every(p => !p.optional);
 
   // Show default values by default if any of the properties have one defined.
   let showDefault = Object.values(props).some(p => !!p.default);
@@ -143,18 +145,18 @@ export function GroupedPropTable({properties, links, propGroups = GROUPS, defaul
         </tr>
       </TableHeader>
       <TableBody>
-        <Rows props={props} showDefault={showDefault} />
+        <Rows props={props} showDefault={showDefault} showRequired={showRequired} />
       </TableBody>
       {Object.keys(groups).map((group) => (
         <DisclosureRow key={group} title={group} defaultExpanded={defaultExpanded?.has(group)}>
-          <Rows props={groups[group]} showDefault={showDefault} />
+          <Rows props={groups[group]} showDefault={showDefault} showRequired={showRequired} />
         </DisclosureRow>
       ))}
     </Table>
   );
 }
 
-function Rows({props, showDefault}: {props: TInterface['properties'], showDefault?: boolean}) {
+function Rows({props, showDefault, showRequired}: {props: TInterface['properties'], showDefault?: boolean, showRequired?: boolean}) {
   let properties = Object.values(props);
 
   return properties.map((prop, index) => (
@@ -164,10 +166,10 @@ function Rows({props, showDefault}: {props: TInterface['properties'], showDefaul
           <code className={codeStyle}>
             <span className={codeStyles.attribute}>{prop.name}</span>
           </code>
-          {/* {!prop.optional && showRequired
-            ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} aria-label="Required" />
+          {!prop.optional && showRequired
+            ? <Asterisk size="M" className={style({marginStart: 4})} aria-label="Required" />
             : null
-          } */}
+          }
         </TableCell>
         <TableCell hideBorder={!!prop.description}>
           <code className={codeStyle}>
