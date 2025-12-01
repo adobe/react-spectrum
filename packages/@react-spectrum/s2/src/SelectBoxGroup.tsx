@@ -368,7 +368,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
   );
 }
 
-/*
+/**
  * SelectBoxGroup allows users to select one or more options from a list.
  */
 export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
