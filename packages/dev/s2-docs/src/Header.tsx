@@ -36,7 +36,7 @@ const libraryStyles = style({
       default: 'transparent'
     }
   },
-  marginStart: space(14)
+  marginStart: space(26)
 });
 
 const linkStyle = {
