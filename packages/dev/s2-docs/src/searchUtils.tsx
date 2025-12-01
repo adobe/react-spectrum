@@ -394,12 +394,11 @@ export function useSearchTagSelection(
   const sectionIds = useMemo(() => {
     return hasAllBeenShown ? ['all', ...allBaseIds] : allBaseIds;
   }, [hasAllBeenShown, allBaseIds]);
-  
-  useEffect(() => {
-    if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
-      setSelectedTagId(sectionIds[0] || 'components');
-    }
-  }, [selectedTagId, sectionIds, setSelectedTagId]);
+
+  let defaultTagId = sectionIds.includes(initialTagId) ? initialTagId : sectionIds[0] || 'components';
+  if (!selectedTagId || !sectionIds.includes(selectedTagId) || (!isOpen && selectedTagId !== defaultTagId)) {
+    setSelectedTagId(defaultTagId);
+  }
 
   // Auto-select "All" when search starts (unless resource is selected)
   useEffect(() => {
@@ -409,11 +408,6 @@ export function useSearchTagSelection(
     }
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue, isResourceSelected]);
-
-  // Reset selected tag when search menu closes.
-  if (!isOpen && selectedTagId !== initialTagId) {
-    setSelectedTagId(initialTagId);
-  }
 
   return [selectedTagId, setSelectedTagId] as const;
 }
