@@ -330,7 +330,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
                   </div>
-                  <div key={selectedLibrary + selectedSection} className={style({paddingX: 12, flexGrow: 1, overflow: 'clip', display: 'flex', flexDirection: 'column'})}>
+                  <div key={selectedLibrary + selectedSection} className={style({paddingX: 12, minHeight: 0, flexGrow: 1, overflow: 'clip', display: 'flex', flexDirection: 'column'})}>
                     {showIcons ? (
                       <Suspense fallback={<IconSearchSkeleton />}>
                         <LazyIconSearchView 
