@@ -92,6 +92,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
   let queuedActiveDescendant = useRef<string | null>(null);
+  let lastPointerType = useRef<string | null>(null);
 
   // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
   // moving focus back to the subtriggers
@@ -105,9 +106,23 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     return () => clearTimeout(timeout.current);
   }, []);
 
+  useEffect(() => {
+    let handlePointerDown = (e: PointerEvent) => {
+      lastPointerType.current = e.pointerType;
+    };
+
+    if (typeof PointerEvent !== 'undefined') {
+      document.addEventListener('pointerdown', handlePointerDown, true);
+      return () => {
+        document.removeEventListener('pointerdown', handlePointerDown, true);
+      };
+    }
+  }, []);
+
   let updateActiveDescendantEvent = useEffectEvent((e: Event) => {
     // Ensure input is focused if the user clicks on the collection directly.
-    if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
+    // don't trigger on touch so that mobile keyboard doesnt appear when tapping on options
+    if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current && lastPointerType.current !== 'touch') {
       inputRef.current.focus();
     }
 
