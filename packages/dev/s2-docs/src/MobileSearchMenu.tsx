@@ -12,7 +12,7 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
-import React, {ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
+import React, {CSSProperties, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
 import {useRouter} from './Router';
@@ -65,17 +65,17 @@ const mobileTabListWrapper = style({
 });
 
 const mobileTabList = style({
-  display: 'flex',
+  display: {
+    default: 'flex',
+    '::-webkit-scrollbar': 'none'
+  },
   flexDirection: 'row',
   gap: 8,
   paddingX: 12,
   paddingY: 8,
   overflow: 'auto',
   flexGrow: 1,
-  scrollbarWidth: 'none',
-  '::-webkit-scrollbar': {
-    display: 'none'
-  }
+  scrollbarWidth: 'none'
 });
 
 const mobileTab = style<TabRenderProps>({
@@ -217,7 +217,8 @@ function MobileNav({initialTag}: {initialTag?: string}) {
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
   let scrollContainerRef = useRef<HTMLDivElement>(null);
-  const iconFilter = useIconFilter();
+  let iconFilter = useIconFilter();
+  let isOpen = !!overlayTriggerState?.isOpen;
 
   const {
     selectedLibrary,
@@ -236,7 +237,8 @@ function MobileNav({initialTag}: {initialTag?: string}) {
   } = useSearchMenuState({
     pages,
     currentPage,
-    initialTag
+    initialTag,
+    isOpen
   });
 
   let handleSearchFocus = () => {
@@ -262,6 +264,21 @@ function MobileNav({initialTag}: {initialTag?: string}) {
     }
   }, [selectedSection, selectedLibrary, searchValue]);
 
+  // Delay closing until the page updates (or the skeleton shows).
+  let lastPage = useRef(currentPage);
+  useEffect(() => {
+    if (currentPage !== lastPage.current && overlayTriggerState?.isOpen) {
+      overlayTriggerState?.close();
+    }
+    lastPage.current = currentPage;
+  }, [currentPage, overlayTriggerState]);
+
+  // Wait to update selection until after close animation.
+  let [currentUrl, setCurrentUrl] = useState(currentPage.url);
+  if (currentPage.url !== currentUrl && !isOpen) {
+    setCurrentUrl(currentPage.url);
+  }
+
   return (
     <div className={style({height: 'full'})}>
       <div className={mobileTabsWrapper}>
@@ -278,12 +295,16 @@ function MobileNav({initialTag}: {initialTag?: string}) {
           }}>
           <div className={mobileTabListContainer}>
             <MobileTabList>
-              {libraries.map(library => (
+              {libraries.map((library, i) => (
                 <MobileTab key={library.id} id={library.id}>
-                  <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+                  <div
+                    className={style({display: 'flex', alignItems: 'center', gap: 8})}
+                    style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
                     {library.icon}
                   </div>
-                  {library.label}
+                  <span style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-label' : 'none'} as CSSProperties}>
+                    {library.label}
+                  </span>
                 </MobileTab>
               ))}
             </MobileTabList>
@@ -325,10 +346,11 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                       </Suspense>
                     ) : (
                       <ComponentCardView
-                        currentUrl={currentPage.url}
-                        onAction={() => {
-                          setSearchValue('');
-                          overlayTriggerState?.close();
+                        currentUrl={currentUrl}
+                        onAction={(key) => {
+                          if (key === currentPage.url) {
+                            overlayTriggerState?.close();
+                          }
                         }}
                         items={library.id === selectedLibrary ? selectedItems : []}
                         ariaLabel="Pages"

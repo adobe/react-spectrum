@@ -194,6 +194,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         isOpen={isSearchOpen}
         onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
         className={underlayStyle}
+        // Keep in the DOM after it has opened once to preserve scroll position.
         isExiting={!isSearchOpen && wasOpen}
         style={{
           display: !isSearchOpen ? 'none' : undefined,

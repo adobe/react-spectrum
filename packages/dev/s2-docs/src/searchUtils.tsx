@@ -414,7 +414,8 @@ export function useSectionTagsForDisplay(
   sections: Section[],
   searchValue: string,
   selectedTagId: string,
-  resourceTagIds: string[]
+  resourceTagIds: string[],
+  isOpen: boolean
 ): Tag[] {
   const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
   
@@ -424,6 +425,8 @@ export function useSectionTagsForDisplay(
   // Once "All" has been shown, keep showing it
   if (shouldTriggerAll && !hasAllBeenShown) {
     setHasAllBeenShown(true);
+  } else if (!isOpen && hasAllBeenShown) {
+    setHasAllBeenShown(false);
   }
 
   return useMemo(() => {
@@ -503,7 +506,8 @@ export interface SearchMenuStateOptions {
   pages: Page[],
   currentPage: Page,
   initialSearchValue?: string,
-  initialTag?: string
+  initialTag?: string,
+  isOpen: boolean
 }
 
 export interface SearchMenuState {
@@ -588,7 +592,8 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     sections,
     searchValue,
     selectedTagId,
-    resourceTagIds
+    resourceTagIds,
+    options.isOpen
   );
   
   // Icons
@@ -626,6 +631,11 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
       ? `Search ${selectedResourceTag.name}` 
       : `Search ${libraryLabel}`;
   }, [resourceTags, selectedTagId]);
+
+  // Reset search value after search menu closes.
+  if (!options.isOpen && searchValue) {
+    setSearchValue('');
+  }
   
   return {
     // Library state

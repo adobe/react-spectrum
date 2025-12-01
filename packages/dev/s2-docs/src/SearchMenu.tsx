@@ -82,7 +82,8 @@ export function SearchMenu(props: SearchMenuProps) {
     pages,
     currentPage,
     initialSearchValue: props.initialSearchValue,
-    initialTag: props.initialTag
+    initialTag: props.initialTag,
+    isOpen: isSearchOpen
   });
 
   // Auto-focus search field when menu opens
@@ -110,11 +111,11 @@ export function SearchMenu(props: SearchMenuProps) {
   // Delay closing until the page updates (or the skeleton shows).
   let lastPage = useRef(currentPage);
   useEffect(() => {
-    if (currentPage !== lastPage.current) {
-      lastPage.current = currentPage;
+    if (currentPage !== lastPage.current && isSearchOpen) {
       onClose();
     }
-  }, [currentPage, onClose]);
+    lastPage.current = currentPage;
+  }, [currentPage, onClose, isSearchOpen]);
 
   // Wait to update selection until after close animation.
   let [currentUrl, setCurrentUrl] = useState(currentPage.url);

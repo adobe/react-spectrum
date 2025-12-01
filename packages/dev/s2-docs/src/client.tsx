@@ -200,7 +200,7 @@ document.addEventListener('pointerdown', e => {
     currentPrefetchLink = link;
     prefetchRoute(link.pathname + link.search + link.hash, 'high');
   }
-});
+}, true);
 
 // Clear prefetch timeout when pointer leaves a link
 document.addEventListener('pointerleave', e => {
