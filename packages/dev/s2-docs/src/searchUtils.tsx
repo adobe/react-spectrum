@@ -1,7 +1,7 @@
 'use client';
 
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
-import {getLibraryFromPage, getLibraryFromUrl} from './library';
+import {getLibraryFromPage} from './library';
 // @ts-ignore
 import {iconList, useIconFilter} from './IconSearchView';
 import {Key} from 'react-aria-components';
@@ -51,14 +51,13 @@ export function stripMarkdown(description: string | undefined): string {
  * Transforms a page into a ComponentItem for search/display.
  */
 export function transformPageToComponentItem(page: Page): ComponentItem {
-  const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
   const title = getPageTitle(page);
   const section: string = getSearchSection(page);
   const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
   const description: string = stripMarkdown(page.exports?.description);
   const date: string | undefined = page.exports?.date;
   return {
-    id: name,
+    id: page.name,
     name: title,
     href: page.url,
     section,
@@ -74,9 +73,7 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
  */
 export function buildSectionsFromPages(pages: Page[], library: Library): Section[] {
   const filteredPages = pages.filter(page => 
-    page.url && 
-    page.url.endsWith('.html') && 
-    getLibraryFromUrl(page.url) === library && 
+    getLibraryFromPage(page) === library && 
     !page.exports?.hideFromSearch
   );
 

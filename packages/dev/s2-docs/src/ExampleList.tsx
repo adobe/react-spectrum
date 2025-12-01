@@ -18,19 +18,19 @@ import swipeableTabs from 'url:../pages/react-aria/examples//swipeable-tabs.png'
 import swipeableTabsDark from 'url:../pages/react-aria/examples//swipeable-tabs-dark.png';
 
 const images = {
-  'ios-list.html': [iosList, iosListDark],
-  'emoji-picker.html': [emojiPicker, emojiPickerDark],
-  'kanban.html': [kanban, kanbanDark],
-  'photos.html': [photos, photosDark],
-  'crud.html': [crud, crudDark],
-  'ripple-button.html': rippleButton,
-  'sheet.html': [sheet, sheetDark],
-  'swipeable-tabs.html': [swipeableTabs, swipeableTabsDark]
+  'ios-list': [iosList, iosListDark],
+  'emoji-picker': [emojiPicker, emojiPickerDark],
+  'kanban': [kanban, kanbanDark],
+  'photos': [photos, photosDark],
+  'crud': [crud, crudDark],
+  'ripple-button': rippleButton,
+  'sheet': [sheet, sheetDark],
+  'swipeable-tabs': [swipeableTabs, swipeableTabsDark]
 };
 
 export function ExampleList({tag, pages}) {
   let examples = pages
-    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index.html') && (!tag || page.exports?.keywords.includes(tag)))
+    .filter(page => page.name.startsWith('react-aria/examples/') && !page.name.endsWith('index') && (!tag || page.exports?.keywords.includes(tag)))
     .sort((a, b) => getTitle(a).localeCompare(getTitle(b)));
 
   return (

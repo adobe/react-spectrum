@@ -138,7 +138,7 @@ function Example() {
 
 ## Custom trigger
 
-`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](usePress) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -182,7 +182,7 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 <Anatomy />
 
-```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', ModalOverlay: '#modaloverlay', Modal: '#modal', Dialog: '#dialog'}}
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button', ModalOverlay: '#modaloverlay', Modal: '#modal', Dialog: '#dialog'}}
 <DialogTrigger>
   <Button />
   <ModalOverlay>

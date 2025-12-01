@@ -7,7 +7,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '../../../src/Layout';
+import {Layout} from '../../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@internationalized/date';
@@ -22,7 +22,7 @@ export const description = 'A date and time without a time zone.';
 
 ## Introduction
 
-A `CalendarDateTime` object represents a date and time without a time zone, in a specific calendar system such as the Gregorian calendar. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a [ZonedDateTime](ZonedDateTime.html).
+A `CalendarDateTime` object represents a date and time without a time zone, in a specific calendar system such as the Gregorian calendar. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a [ZonedDateTime](ZonedDateTime).
 
 A `CalendarDateTime` can be created using the constructor. This example creates a date that represents February 3rd, 2022 at 9:15 AM in the Gregorian calendar system.
 
@@ -63,7 +63,7 @@ import {BuddhistCalendar} from '@internationalized/date';
 let date = new CalendarDateTime(new BuddhistCalendar(), 2563, 4, 30, 9, 15);
 ```
 
-See the [Calendar](Calendar.html#implementations) docs for details about the supported calendars.
+See the [Calendar](Calendar#implementations) docs for details about the supported calendars.
 
 ### Eras
 
@@ -214,7 +214,7 @@ date.toString(); // '2022-02-03T09:45:00'
 
 ### To a date or time only
 
-A `CalendarDateTime` can be converted to a [CalendarDate](CalendarDate.html) or [Time](Time.html) object if only one of these components is needed.
+A `CalendarDateTime` can be converted to a [CalendarDate](CalendarDate) or [Time](Time) object if only one of these components is needed.
 
 Use the <TypeLink links={docs.links} type={docs.exports.toCalendarDate} /> function to convert a `CalendarDateTime` to a `CalendarDate`.
 

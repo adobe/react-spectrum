@@ -11,13 +11,11 @@ import {
   useSearchMenuState
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
-// @ts-ignore
 import {type Library} from './constants';
 import {Page} from '@parcel/rsc';
 import React, {ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
-
 
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',

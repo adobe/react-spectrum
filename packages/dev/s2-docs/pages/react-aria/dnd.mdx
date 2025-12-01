@@ -25,7 +25,7 @@ Drag and drop allows a user to move data between two locations. The initial loca
 
 <Anatomy role="img" aria-label="Drag and drop anatomy diagram, showing drag source, drag preview, and drop target." />
 
-Drag and drop is implemented using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. The result of this function is passed into components that support drag and drop, such as [ListBox](ListBox.html), [GridList](GridList.html), [Tree](Tree.html), and [Table](Table.html).
+Drag and drop is implemented using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. The result of this function is passed into components that support drag and drop, such as [ListBox](ListBox), [GridList](GridList), [Tree](Tree), and [Table](Table).
 
 ## Drag source
 
@@ -312,7 +312,7 @@ function DroppableTree() {
 
 ## Drop positions
 
-Collection components such as [ListBox](ListBox.html), [Table](Table.html), [Tree](Tree.html), and [GridList](GridList.html) support multiple **drop positions**.
+Collection components such as [ListBox](ListBox), [Table](Table), [Tree](Tree), and [GridList](GridList) support multiple **drop positions**.
 
 * The `"root"` drop position allows dropping on the collection as a whole. 
 * The `"on"` drop position allows dropping on individual collection items, such as a folder within a list.
@@ -474,7 +474,7 @@ function DroppableCOMPONENT() {
 
 ### Reordering items
 
-Use the `onReorder` event to enable reordering items. For components with hierarchy like [Tree](Tree.html), this only allows reordering within the same level. Use `onMove` to allow moving items between levels.
+Use the `onReorder` event to enable reordering items. For components with hierarchy like [Tree](Tree), this only allows reordering within the same level. Use `onMove` to allow moving items between levels.
 
 <ExampleSwitcher type="component" examples={['ListBox', 'GridList', 'Tree', 'Table']}>
 
@@ -877,7 +877,7 @@ While drag and drop has historically been mostly limited to mouse and touchscree
 
 Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to cycle between the drop targets that accept the dragged data, and <Keyboard>Enter</Keyboard> to drop. <Keyboard>Escape</Keyboard> cancels a drag. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop. Screen reader announcements are included to help guide the user through this process.
 
-Collection components such as [GridList](GridList.html) and [Table](Table.html) are treated as a single drop target, so that users can easily tab past them to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a **drop position**, such as on an item, or between items.
+Collection components such as [GridList](GridList) and [Table](Table) are treated as a single drop target, so that users can easily tab past them to get to the next drop target. Within a droppable collection, keys such as <Keyboard>ArrowDown</Keyboard> and <Keyboard>ArrowUp</Keyboard> can be used to select a **drop position**, such as on an item, or between items.
 
 Draggable elements can sometimes have conflicting keyboard interactions, such as selection. These are handled by adding an explicit **drag affordance**. Keyboard and screen reader users can focus this element, and use it to initiate drag and drop for the parent item. In addition, this has the added benefit of making drag and drop more discoverable.
 

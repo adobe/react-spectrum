@@ -7,11 +7,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '../../../src/Layout';
+import {Layout} from '../../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@internationalized/date';
-import {StaticTable} from '../../../src/StaticTable';
+import {StaticTable} from '../../../../src/StaticTable';
 
 export const section = 'Date and Time';
 export const group = 'Internationalized';
@@ -25,7 +25,7 @@ export const description = 'Calendar systems for international date calculations
 
 While the Gregorian calendar is the most common, many other calendar systems are used throughout the world. The `Calendar` interface represents calendar systems in the `@internationalized/date` library. It encapsulates information such as the number of days in a month, the number of months in a year, and the list of eras in a calendar system, as well as methods that handle correct arithmetic of dates in that calendar system, as well as converting dates between calendar systems. Many implementations of this interface are provided in `@internationalized/date` to handle the most commonly used calendar systems.
 
-As described in the docs for [CalendarDate](CalendarDate.html#calendar-systems) and other date objects, you can pass a `Calendar` instance to a date to represent a date in that calendar. Date manipulation follows the rules defined by that calendar system. You can also convert between calendar systems using the <TypeLink links={docs.links} type={docs.exports.toCalendar} /> function.
+As described in the docs for [CalendarDate](CalendarDate#calendar-systems) and other date objects, you can pass a `Calendar` instance to a date to represent a date in that calendar. Date manipulation follows the rules defined by that calendar system. You can also convert between calendar systems using the <TypeLink links={docs.links} type={docs.exports.toCalendar} /> function.
 
 ```tsx
 import {HebrewCalendar, GregorianCalendar, toCalendar} from '@internationalized/date';

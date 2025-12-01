@@ -61,12 +61,12 @@ function Example(props) {
 
 <InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
   <Heading>Accessibility</Heading>
-  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover) to show information in an adjacent element.</Content>
 </InlineAlert>
 
 ## Non-interactive elements
 
-Tooltips must be placed on focusable elements so they are accessible to keyboard and screen reader users. Use [ContextualHelp](ContextualHelp.html) to provide context for non-interactive elements such as plain text or disabled buttons.
+Tooltips must be placed on focusable elements so they are accessible to keyboard and screen reader users. Use [ContextualHelp](ContextualHelp) to provide context for non-interactive elements such as plain text or disabled buttons.
 
 ```tsx render
 "use client";
@@ -88,7 +88,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## API
 
-```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', Button: 'Button.html'}}
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', Button: 'Button'}}
 <TooltipTrigger>
   <Button />
   <Tooltip />

@@ -9,7 +9,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 export const tags = ['dropdown'];
 export const relatedPages = [
   {title: 'useMenu', url: 'https://react-spectrum.adobe.com/react-aria/useMenu.html'},
-  {title: 'Testing', url: './Menu/testing.html'}
+  {title: 'Testing', url: './Menu/testing'}
 ];
 export const description = 'Displays a list of actions or options that a user can choose.';
 
@@ -117,7 +117,7 @@ export const description = 'Displays a list of actions or options that a user ca
 
 ## Content
 
-`Menu` follows the [Collection Components API](collections.html?component=Menu), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`Menu` follows the [Collection Components API](collections?component=Menu), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render hideImports
 "use client";
@@ -285,7 +285,7 @@ import {Button} from 'vanilla-starter/Button';
 
 ### Links
 
-Use the `href` prop on a `<MenuItem>` to create a link. See the [framework setup guide](frameworks.html) to learn how to integrate with your framework.
+Use the `href` prop on a `<MenuItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
 
 ```tsx render hideImports
 "use client";
@@ -307,7 +307,7 @@ import {Button} from 'vanilla-starter/Button';
 
 ### Autocomplete
 
-Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+Popovers can include additional components as siblings of a menu. This example uses an [Autocomplete](Autocomplete) with a [SearchField](SearchField) to let the user filter the items.
 
 ```tsx render
 "use client";
@@ -347,7 +347,7 @@ function Example() {
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Menu) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Menu) for more details.
 
 ```tsx render docs={docs.exports.Menu} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide align="start"
 "use client";
@@ -435,7 +435,7 @@ function Example() {
 
 ### Custom trigger
 
-`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`MenuTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](usePress) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render hideImports
 "use client";
@@ -500,7 +500,7 @@ import {ChevronDown} from 'lucide-react';
 
 <Anatomy />
 
-```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button.html', Popover: 'Popover.html', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator.html', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{MenuTrigger: '#menutrigger', Button: 'Button', Popover: 'Popover', Menu: '#menu', MenuItem: '#menuitem', Separator: 'Separator', MenuSection: '#menusection', SubmenuTrigger: '#submenutrigger', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <MenuTrigger>
   <Button />
   <Popover>
