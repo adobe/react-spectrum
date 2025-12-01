@@ -67,12 +67,8 @@ function isValidKey(e: KeyboardEvent) {
 
 
 function handleKeyboardEvent(e: KeyboardEvent) {
-  if (!e.isTrusted) {
-    return;
-  }
-  
   hasEventBeforeFocus = true;
-  if (isValidKey(e)) {
+  if (!(openLink as any).isOpening && isValidKey(e)) {
     currentModality = 'keyboard';
     triggerChangeHandlers('keyboard', e);
   }

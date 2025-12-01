@@ -6,7 +6,6 @@ import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import type {DownloadFiles} from './CodeBlock';
-import {getBaseUrl} from './pageUtils';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
