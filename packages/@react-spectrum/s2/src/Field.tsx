@@ -112,7 +112,8 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
                     value: 'currentColor'
                   }
                 })}
-                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined} />
+                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined}
+                aria-hidden={!includeNecessityIndicatorInAccessibilityName} />
             }
             {necessityIndicator === 'label' &&
               /* The necessity label is hidden to screen readers if the field is required because
