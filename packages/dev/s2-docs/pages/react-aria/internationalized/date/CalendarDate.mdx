@@ -7,13 +7,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '../../../src/Layout';
+import {Layout} from '../../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@internationalized/date';
 
 export const section = 'Date and Time';
 export const group = 'Internationalized';
+export const description = 'A date without time in a specific calendar system.';
 
 # CalendarDate
 
@@ -21,7 +22,7 @@ export const group = 'Internationalized';
 
 ## Introduction
 
-A `CalendarDate` object represents a date without any time components, in a specific calendar system such as the Gregorian calendar. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event. If you need to refer to a specific time, use a [CalendarDateTime](CalendarDateTime.html) or [ZonedDateTime](ZonedDateTime.html) instead.
+A `CalendarDate` object represents a date without any time components, in a specific calendar system such as the Gregorian calendar. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event. If you need to refer to a specific time, use a [CalendarDateTime](CalendarDateTime) or [ZonedDateTime](ZonedDateTime) instead.
 
 A `CalendarDate` can be created using the constructor. This example creates a date that represents February 3rd, 2022 in the Gregorian calendar system.
 
@@ -73,7 +74,7 @@ import {BuddhistCalendar} from '@internationalized/date';
 let date = new CalendarDate(new BuddhistCalendar(), 2563, 4, 30);
 ```
 
-See the [Calendar](Calendar.html#implementations) docs for details about the supported calendars.
+See the [Calendar](Calendar#implementations) docs for details about the supported calendars.
 
 ### Eras
 
@@ -211,7 +212,7 @@ date.toDate(getLocalTimeZone()); // e.g. Thu Feb 03 2022 00:00:00 GMT-0500 (East
 
 ### To a date with time
 
-A `CalendarDate` can be converted to a [CalendarDateTime](CalendarDateTime.html) or [ZonedDateTime](ZonedDateTime.html) by providing an optional [Time](Time.html) object and/or time zone identifier.
+A `CalendarDate` can be converted to a [CalendarDateTime](CalendarDateTime) or [ZonedDateTime](ZonedDateTime) by providing an optional [Time](Time) object and/or time zone identifier.
 
 A <TypeLink links={docs.links} type={docs.exports.CalendarDateTime} /> represents a date with a time, but not in any specific time zone. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
 

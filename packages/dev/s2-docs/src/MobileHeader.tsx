@@ -2,6 +2,7 @@
 
 import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Link} from 'react-aria-components';
@@ -86,19 +87,14 @@ export function MobileHeader({toc, pages, currentPage}) {
 
   let library = getLibraryFromPage(currentPage);
   let icon = TAB_DEFS[library].icon;
-  let subdirectory = 's2';
+  let subdirectory: 's2' | 'react-aria' = 's2';
   if (library === 'internationalized' || library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
 
-  let homepage = '';
-  for (let page of pages) {
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      homepage = page.url;
-      break;
-    }
-  }
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
 
   return (
     <div

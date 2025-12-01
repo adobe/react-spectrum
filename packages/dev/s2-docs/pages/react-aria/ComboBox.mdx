@@ -6,9 +6,14 @@ import {ComboBox as VanillaComboBox, ComboBoxItem} from 'vanilla-starter/ComboBo
 import vanillaDocs from 'docs:vanilla-starter/ComboBox';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/ComboBoxAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['autocomplete', 'search', 'typeahead', 'input'];
-export const relatedPages = [{'title': 'useComboBox', 'url': 'https://react-spectrum.adobe.com/react-aria/useComboBox.html'}];
+export const relatedPages = [
+  {title: 'useComboBox', url: 'https://react-spectrum.adobe.com/react-aria/useComboBox.html'},
+  {title: 'Testing', url: './ComboBox/testing'}
+];
+export const description = 'Combines a text input with a listbox, allowing users to filter a list of options to items matching a query.';
 
 # ComboBox
 
@@ -47,7 +52,7 @@ export const relatedPages = [{'title': 'useComboBox', 'url': 'https://react-spec
 
 ## Content
 
-`ComboBox` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=ComboBox). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`ComboBox` reuses the `ListBox` component, following the [Collection Components API](collections?component=ComboBox). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
@@ -104,7 +109,7 @@ function Example() {
 
 ## Selection
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ComboBox#single-selection) for more details.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ComboBox#single-selection) for more details.
 
 ```tsx render
 "use client";
@@ -338,7 +343,7 @@ import {ComboBox, ComboBoxItem} from 'vanilla-starter/ComboBox';
 
 <Anatomy />
 
-```tsx links={{ComboBox: '#combobox', Button: 'Button.html', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+```tsx links={{ComboBox: '#combobox', Button: 'Button', Popover: 'Popover', ListBox: 'ListBox'}}
 <ComboBox>
   <Label />
   <Input />

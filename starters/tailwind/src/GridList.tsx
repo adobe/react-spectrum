@@ -24,7 +24,7 @@ export function GridList<T extends object>(
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative flex gap-3 cursor-default select-none py-2 px-3 text-sm text-neutral-900 dark:text-neutral-200 border-y dark:border-y-neutral-700 border-transparent first:border-t-0 last:border-b-0 first:rounded-t-lg last:rounded-b-lg -mb-px last:mb-0 -outline-offset-2',
+  base: 'relative flex gap-3 cursor-default select-none py-2 px-3 text-sm text-neutral-900 dark:text-neutral-200 border-t dark:border-t-neutral-700 border-transparent first:border-t-0 first:rounded-t-lg last:rounded-b-lg last:mb-0 -outline-offset-2',
   variants: {
     isSelected: {
       false: 'hover:bg-neutral-100 dark:hover:bg-neutral-700/60',

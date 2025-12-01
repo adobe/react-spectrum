@@ -5,10 +5,11 @@ import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with
 // @ts-ignore
 import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {flushSync} from 'react-dom';
+import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {Link} from 'react-aria-components';
 // @ts-ignore
+import {Link} from 'react-aria-components';
 import {PageProps} from '@parcel/rsc';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
@@ -19,20 +20,6 @@ function getButtonText(currentPage) {
 
 function getButtonIcon(currentPage) {
   return getLibraryIcon(getLibraryFromPage(currentPage));
-}
-
-export function getHomepageUrl(pages, library) {
-  let subdirectory = 's2';
-  if (library === 'internationalized' || library === 'react-aria') {
-    subdirectory = 'react-aria';
-  }
-
-  for (let page of pages) {
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      return page.url;
-    }
-  }
-  return '';
 }
 
 const libraryStyles = style({
@@ -117,27 +104,17 @@ export default function Header(props: PageProps) {
   };
 
   let library = getLibraryFromPage(currentPage);
-  let homepage = getHomepageUrl(pages, library);
-  let subdirectory = 's2';
+  let subdirectory: 's2' | 'react-aria' = 's2';
   if (library === 'internationalized' || library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
 
-  let docs = '';
-  let release = '';
-  let blog = '';
-  for (let page of pages) {
-    if (page.name.includes(subdirectory) && page.name.includes('getting-started.html')) {
-      docs = page.url;
-    }
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && page.name.includes('releases')) {
-      release = page.url;
-    }
-    if (page.name.includes('react-aria') && page.name.includes('index.html') && page.name.includes('blog')) {
-      blog = page.url;
-    }
-  }
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
+  let docs = `${baseUrl}/getting-started`;
+  let release = `${baseUrl}/releases/`;
+  let blog = `${getBaseUrl('react-aria')}/blog/`;
 
   return (
     <>

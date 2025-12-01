@@ -4,12 +4,13 @@ import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
 import {getLibraryFromPage} from './library';
 // @ts-ignore
 import {iconList, useIconFilter} from './IconSearchView';
+import {Key} from 'react-aria-components';
 import {type Library, TAB_DEFS} from './constants';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 // @ts-ignore
 import {Page} from '@parcel/rsc';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export interface SearchableItem {
@@ -37,6 +38,158 @@ export interface Section {
 export interface Tag {
   id: string,
   name: string
+}
+
+/**
+ * Strips markdown link syntax from a string, keeping only the link text.
+ */
+export function stripMarkdown(description: string | undefined): string {
+  return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
+}
+
+/**
+ * Transforms a page into a ComponentItem for search/display.
+ */
+export function transformPageToComponentItem(page: Page): ComponentItem {
+  const title = getPageTitle(page);
+  const section: string = getSearchSection(page);
+  const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
+  const description: string = stripMarkdown(page.exports?.description);
+  const date: string | undefined = page.exports?.date;
+  return {
+    id: page.name,
+    name: title,
+    href: page.url,
+    section,
+    tags,
+    description,
+    date
+  };
+}
+
+/**
+ * Builds sections from pages for a given library.
+ * Sorts sections with 'Components' first.
+ */
+export function buildSectionsFromPages(pages: Page[], library: Library): Section[] {
+  const filteredPages = pages.filter(page => 
+    getLibraryFromPage(page) === library && 
+    !page.exports?.hideFromSearch
+  );
+
+  const components = filteredPages.map(transformPageToComponentItem);
+
+  const sectionNames = Array.from(new Set(components.map(c => c.section || 'Components')));
+  
+  return sectionNames
+    .map(sectionName => ({
+      id: sectionName.toLowerCase(),
+      name: sectionName,
+      children: components.filter(c => (c.section || 'Components') === sectionName)
+    }))
+    .sort((a, b) => {
+      if (a.id === 'components') {
+        return -1;
+      }
+      if (b.id === 'components') {
+        return 1;
+      }
+      return 0;
+    });
+}
+
+/**
+ * Gets items for a given section selection (handles 'all' and specific sections).
+ */
+export function getItemsForSection(
+  sections: Section[],
+  sectionId: string,
+  searchValue: string,
+  resourceTagIds: string[] = []
+): ComponentItem[] {
+  // Check if this is a resource tag (e.g., icons) - return empty, handled separately
+  if (resourceTagIds.includes(sectionId)) {
+    return [];
+  }
+
+  let items: ComponentItem[];
+  if (sectionId === 'all') {
+    items = sections.flatMap(s => s.children);
+    if (searchValue.trim().length > 0) {
+      items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
+    } else {
+      items = sortItemsForDisplay(items, searchValue);
+    }
+  } else {
+    items = sections.find(s => s.id === sectionId)?.children || [];
+    items = sortItemsForDisplay(items, searchValue);
+  }
+
+  return items;
+}
+
+/**
+ * Filters sections based on search value.
+ */
+export function filterSections(sections: Section[], searchValue: string): Section[] {
+  if (!searchValue) {
+    return sections;
+  }
+
+  const allItems = sections.flatMap(section => section.children);
+  const sortedItems = filterAndSortSearchItems(allItems, searchValue, createSearchOptions<ComponentItem>());
+
+  const resultsBySection = new Map<string, ComponentItem[]>();
+  sortedItems.forEach(item => {
+    const section = item.section || 'Components';
+    if (!resultsBySection.has(section)) {
+      resultsBySection.set(section, []);
+    }
+    resultsBySection.get(section)!.push(item);
+  });
+
+  return sections
+    .map(section => ({
+      ...section,
+      children: resultsBySection.get(section.name) || []
+    }))
+    .filter(section => section.children.length > 0);
+}
+
+/**
+ * Hook to build and manage sections for a library with search filtering.
+ */
+export function useLibrarySections(pages: Page[], library: Library, searchValue: string) {
+  const sections = useMemo(
+    () => buildSectionsFromPages(pages, library),
+    [pages, library]
+  );
+
+  const filteredSections = useMemo(
+    () => filterSections(sections, searchValue),
+    [sections, searchValue]
+  );
+
+  const getSectionNames = useCallback(() => {
+    return sections.map(s => s.name);
+  }, [sections]);
+
+  return {sections, filteredSections, getSectionNames};
+}
+
+/**
+ * Creates search options for filtering/sorting Page objects directly.
+ */
+export function createSearchOptionsForPages(): SearchOptions<Page> {
+  return {
+    getName: (page: Page) => getPageTitle(page),
+    getTags: (page: Page) => page.exports?.tags || [],
+    getDate: (page: Page) => page.exports?.date,
+    shouldUseDateSort: (page: Page) => {
+      const section = getSearchSection(page);
+      return section === 'Blog' || section === 'Releases';
+    }
+  };
 }
 
 export interface SearchOptions<T> {
@@ -340,4 +493,175 @@ export function SearchEmptyState({searchValue, libraryLabel}: {searchValue: stri
       )}
     </IllustratedMessage>
   );
+}
+
+export const LazyIconSearchView = React.lazy(() => 
+  import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView}))
+);
+
+export interface SearchMenuStateOptions {
+  pages: Page[],
+  currentPage: Page,
+  initialSearchValue?: string,
+  initialTag?: string
+}
+
+export interface SearchMenuState {
+  // Library state
+  selectedLibrary: Library,
+  setSelectedLibrary: (library: Library) => void,
+  orderedLibraries: ReturnType<typeof getOrderedLibraries>,
+  
+  // Search state
+  searchValue: string,
+  setSearchValue: (value: string) => void,
+  
+  // Section state
+  sections: Section[],
+  filteredSections: Section[],
+  sectionTags: Tag[],
+  sectionTagsForDisplay: Tag[],
+  
+  // Resource tags (icons, etc.)
+  resourceTags: Tag[],
+  resourceTagIds: string[],
+  
+  // Tag selection
+  selectedTagId: string,
+  setSelectedTagId: (id: string) => void,
+  handleTagSelectionChange: (keys: Iterable<Key>) => void,
+  
+  // Icons
+  filteredIcons: typeof iconList,
+  iconFilter: ReturnType<typeof useIconFilter>,
+  isIconsSelected: boolean,
+  
+  // Computed items
+  selectedItems: ComponentItem[],
+  selectedSectionName: string,
+  
+  // Helpers
+  getPlaceholderText: (libraryLabel: string) => string
+}
+
+export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuState {
+  const {pages, currentPage, initialSearchValue = '', initialTag} = options;
+  
+  // Library state
+  const currentLibrary = getLibraryFromPage(currentPage);
+  const [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
+  const orderedLibraries = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
+  
+  // Search state
+  const [searchValue, setSearchValue] = useState(initialSearchValue);
+  
+  // Build sections for the selected library
+  const {sections, filteredSections} = useLibrarySections(
+    pages || [],
+    selectedLibrary,
+    searchValue
+  );
+  
+  // Section and resource tags
+  const sectionTags = useMemo(() => sections.map(s => ({id: s.id, name: s.name})), [sections]);
+  const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
+  const resourceTagIds = useMemo(() => resourceTags.map(t => t.id), [resourceTags]);
+  
+  // Compute initial selected section
+  const initialSelectedSection = useMemo(() => {
+    const currentSection = sections.find(s => 
+      s.children.some(c => c.href === currentPage.url)
+    );
+    return initialTag || currentSection?.id || currentPage.exports?.section?.toLowerCase() || 'components';
+  }, [initialTag, currentPage, sections]);
+  
+  // Tag selection
+  const [selectedTagId, setSelectedTagId] = useSearchTagSelection(
+    searchValue,
+    sectionTags,
+    resourceTags,
+    initialSelectedSection
+  );
+  
+  // Section tags for display (includes "All" when searching)
+  const sectionTagsForDisplay = useSectionTagsForDisplay(
+    sections,
+    searchValue,
+    selectedTagId,
+    resourceTagIds
+  );
+  
+  // Icons
+  const filteredIcons = useFilteredIcons(searchValue);
+  const iconFilter = useIconFilter();
+  const isIconsSelected = selectedTagId === 'icons';
+  
+  // Handler for tag selection change (works with TagGroup's onSelectionChange)
+  const handleTagSelectionChange = useCallback((keys: Iterable<Key>) => {
+    const firstKey = Array.from(keys)[0] as string;
+    if (firstKey) {
+      setSelectedTagId(firstKey);
+    }
+  }, [setSelectedTagId]);
+  
+  // Computed selected items
+  const selectedItems = useMemo(() => {
+    return getItemsForSection(filteredSections, selectedTagId, searchValue, resourceTagIds);
+  }, [filteredSections, selectedTagId, searchValue, resourceTagIds]);
+  
+  // Computed section name for aria-label
+  const selectedSectionName = useMemo(() => {
+    if (selectedTagId === 'all') {
+      return 'All';
+    }
+    return (filteredSections.find(s => s.id === selectedTagId)?.name)
+      || (sections.find(s => s.id === selectedTagId)?.name)
+      || 'Items';
+  }, [filteredSections, sections, selectedTagId]);
+  
+  // Helper to get placeholder text based on selected resource tag
+  const getPlaceholderText = useCallback((libraryLabel: string) => {
+    const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
+    return selectedResourceTag 
+      ? `Search ${selectedResourceTag.name}` 
+      : `Search ${libraryLabel}`;
+  }, [resourceTags, selectedTagId]);
+  
+  return {
+    // Library state
+    selectedLibrary,
+    setSelectedLibrary,
+    orderedLibraries,
+    
+    // Search state
+    searchValue,
+    setSearchValue,
+    
+    // Section state
+    sections,
+    filteredSections,
+    sectionTags,
+    sectionTagsForDisplay,
+    
+    // Resource tags
+    resourceTags,
+    resourceTagIds,
+    
+    // Tag selection
+    selectedTagId,
+    setSelectedTagId,
+    handleTagSelectionChange,
+    
+    // Icons
+    filteredIcons,
+    iconFilter,
+    isIconsSelected,
+    
+    // Computed items
+    selectedItems,
+    selectedSectionName,
+    
+    // Helpers
+    getPlaceholderText
+  };
 }

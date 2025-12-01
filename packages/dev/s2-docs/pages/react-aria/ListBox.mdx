@@ -9,7 +9,11 @@ import Anatomy from 'react-aria-components/docs/ListBoxAnatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['options'];
-export const relatedPages = [{'title': 'useListBox', 'url': 'https://react-spectrum.adobe.com/react-aria/useListBox.html'}];
+export const relatedPages = [
+  {title: 'useListBox', url: 'https://react-spectrum.adobe.com/react-aria/useListBox.html'},
+  {title: 'Testing', url: './ListBox/testing'}
+];
+export const description = 'Displays a list of options and allows a user to select one or more of them.';
 
 # ListBox
 
@@ -48,7 +52,7 @@ export const relatedPages = [{'title': 'useListBox', 'url': 'https://react-spect
 
 ## Content
 
-`ListBox` follows the [Collection Components API](collections.html?component=ListBox), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`ListBox` follows the [Collection Components API](collections?component=ListBox), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
@@ -105,7 +109,7 @@ import {ListBox, ListBoxItem, Text} from 'react-aria-components';
 
 <InlineAlert variant="notice">
   <Heading>Accessibility warning</Heading>
-  <Content>Interactive elements (e.g. buttons) within listbox items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children. Use [GridList](GridList.html) if interactive children are needed.</Content>
+  <Content>Interactive elements (e.g. buttons) within listbox items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons or images) as children. Use [GridList](GridList) if interactive children are needed.</Content>
 </InlineAlert>
 
 ### Sections
@@ -193,7 +197,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<ListBoxItem>` to create a link. See the [framework setup guide](frameworks.html) to learn how to integrate with your framework.
+Use the `href` prop on a `<ListBoxItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
 
 By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with `selectionBehavior="replace"`, items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
 
@@ -226,7 +230,7 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ListBox) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ListBox) for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -332,7 +336,7 @@ let planets = [
 
 ## Drag and drop
 
-ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=ListBox) to learn more.
+ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=ListBox) to learn more.
 
 ```tsx render
 "use client";
@@ -386,7 +390,7 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a label and description. The items are grouped into a section with a header." />
 
-```tsx links={{ListBox: '#listbox', ListBoxItem: '#listboxitem', ListBoxSection: '#listboxsection', ListBoxLoadMoreItem: '#listboxloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{ListBox: '#listbox', ListBoxItem: '#listboxitem', ListBoxSection: '#listboxsection', ListBoxLoadMoreItem: '#listboxloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <ListBox>
   <ListBoxItem>
     <Text slot="label" />

@@ -9,6 +9,8 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['notifications'];
 export const version = 'alpha';
+export const relatedPages = [{'title': 'useToast', 'url': 'https://react-spectrum.adobe.com/react-aria/useToast.html'}];
+export const description = 'Displays brief, temporary notifications of actions, errors, or other events in an application.';
 
 # Toast
 
@@ -31,7 +33,7 @@ export const version = 'alpha';
           },
           props.timeout ? {timeout: props.timeout} : undefined
         )}>
-          Upload files
+          Show Toast
         </Button>
       </div>
     );
@@ -54,7 +56,7 @@ export const version = 'alpha';
           },
           props.timeout ? {timeout: props.timeout} : undefined
         )}>
-          Upload files
+          Show Toast
         </Button>
       </div>
     );
@@ -69,26 +71,50 @@ export const version = 'alpha';
 
 Use the `"title"` and `"description"` slots within `<ToastContent>` to provide structured content for the toast. The title is required, and description is optional.
 
-```tsx render hideImports
-"use client";
-import {queue} from 'vanilla-starter/Toast';
-import {Button} from 'vanilla-starter/Button';
+<ExampleSwitcher>
+  ```tsx render hideImports type="vanilla"
+  "use client";
+  import {queue} from 'vanilla-starter/Toast';
+  import {Button} from 'vanilla-starter/Button';
 
-function Example() {
-  return (
-    <Button
-      ///- begin highlight -///
-      onPress={() => queue.add({
-        title: 'Update available',
-        description: 'A new version is ready to install.'
-      })}
-      ///- end highlight -///
-    >
-      Check for updates
-    </Button>
-  );
-}
-```
+  function Example() {
+    return (
+      <Button
+        ///- begin highlight -///
+        onPress={() => queue.add({
+          title: 'Update available',
+          description: 'A new version is ready to install.'
+        })}
+        ///- end highlight -///
+      >
+        Check for updates
+      </Button>
+    );
+  }
+  ```
+
+  ```tsx render hideImports type="tailwind"
+  "use client";
+  import {queue} from 'tailwind-starter/Toast';
+  import {Button} from 'tailwind-starter/Button';
+
+  function Example() {
+    return (
+      <Button
+        ///- begin highlight -///
+        onPress={() => queue.add({
+          title: 'Update available',
+          description: 'A new version is ready to install.'
+        })}
+        ///- end highlight -///
+      >
+        Check for updates
+      </Button>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
 
 ### Close button
 
@@ -103,26 +129,50 @@ Include a `<Button slot="close">` to allow users to dismiss the toast manually. 
 
 Use the `timeout` option to automatically dismiss toasts after a period of time. For accessibility, toasts should have a minimum timeout of **5 seconds**. Timers automatically pause when the user focuses or hovers over a toast.
 
-```tsx render hideImports
-"use client";
-import {queue} from 'vanilla-starter/Toast';
-import {Button} from 'vanilla-starter/Button';
+<ExampleSwitcher>
+  ```tsx render hideImports type="vanilla"
+  "use client";
+  import {queue} from 'vanilla-starter/Toast';
+  import {Button} from 'vanilla-starter/Button';
 
-function Example() {
-  return (
-    <Button
-      ///- begin highlight -///
-      onPress={() => queue.add(
-        {title: 'File has been saved!'},
-        {timeout: 5000}
-      )}
-      ///- end highlight -///
-    >
-      Save file
-    </Button>
-  );
-}
-```
+  function Example() {
+    return (
+      <Button
+        ///- begin highlight -///
+        onPress={() => queue.add(
+          {title: 'File has been saved!'},
+          {timeout: 5000}
+        )}
+        ///- end highlight -///
+      >
+        Save file
+      </Button>
+    );
+  }
+  ```
+
+  ```tsx render hideImports type="tailwind"
+  "use client";
+  import {queue} from 'tailwind-starter/Toast';
+  import {Button} from 'tailwind-starter/Button';
+
+  function Example() {
+    return (
+      <Button
+        ///- begin highlight -///
+        onPress={() => queue.add(
+          {title: 'File has been saved!'},
+          {timeout: 5000}
+        )}
+        ///- end highlight -///
+      >
+        Save file
+      </Button>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
 
 <InlineAlert variant="notice">
   <Heading>Accessibility</Heading>
@@ -133,35 +183,68 @@ function Example() {
 
 Toasts can be programmatically dismissed using the key returned from `queue.add()`. This is useful when a toast becomes irrelevant before the user manually closes it.
 
-```tsx render hideImports
-"use client";
-import {queue} from 'vanilla-starter/Toast';
-import {Button} from 'vanilla-starter/Button';
-import {useState} from 'react';
+<ExampleSwitcher>
+  ```tsx render hideImports type="vanilla"
+  "use client";
+  import {queue} from 'vanilla-starter/Toast';
+  import {Button} from 'vanilla-starter/Button';
+  import {useState} from 'react';
 
-function Example() {
-  let [toastKey, setToastKey] = useState(null);
+  function Example() {
+    let [toastKey, setToastKey] = useState(null);
 
-  return (
-    <Button
-      ///- begin highlight -///
-      onPress={() => {
-        if (!toastKey) {
-          setToastKey(queue.add(
-            {title: 'Processing...'},
-            {onClose: () => setToastKey(null)}
-          ));
-        } else {
-          queue.close(toastKey);
-        }
-      }}
-      ///- end highlight -///
-    >
-      {toastKey ? 'Cancel' : 'Process'}
-    </Button>
-  );
-}
-```
+    return (
+      <Button
+        ///- begin highlight -///
+        onPress={() => {
+          if (!toastKey) {
+            setToastKey(queue.add(
+              {title: 'Processing...'},
+              {onClose: () => setToastKey(null)}
+            ));
+          } else {
+            queue.close(toastKey);
+          }
+        }}
+        ///- end highlight -///
+      >
+        {toastKey ? 'Cancel' : 'Process'}
+      </Button>
+    );
+  }
+  ```
+
+  ```tsx render hideImports type="tailwind"
+  "use client";
+  import {queue} from 'tailwind-starter/Toast';
+  import {Button} from 'tailwind-starter/Button';
+  import {useState} from 'react';
+
+  function Example() {
+    let [toastKey, setToastKey] = useState(null);
+
+    return (
+      <Button
+        ///- begin highlight -///
+        onPress={() => {
+          if (!toastKey) {
+            setToastKey(queue.add(
+              {title: 'Processing...'},
+              {onClose: () => setToastKey(null)}
+            ));
+          } else {
+            queue.close(toastKey);
+          }
+        }}
+        ///- end highlight -///
+      >
+        {toastKey ? 'Cancel' : 'Process'}
+      </Button>
+    );
+  }
+  ```
+
+</ExampleSwitcher>
 
 ## Accessibility
 
@@ -173,7 +256,7 @@ When a toast is closed, focus moves to the next toast if any. When the last toas
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-```tsx links={{ToastRegion: '#toastregion', Toast: '#toast', ToastContent: '#toastcontent', ToastQueue: '#toastqueue', Button: 'Button.html'}}
+```tsx links={{ToastRegion: '#toastregion', Toast: '#toast', ToastContent: '#toastcontent', ToastQueue: '#toastqueue', Button: 'Button'}}
 <ToastRegion>
   {({toast}) => (
     <Toast toast={toast}>

@@ -8,6 +8,7 @@ import {ExpandableCode, ExpandableCodeProvider} from './ExpandableCode';
 import {FileTabs} from './FileTabs';
 import {findPackageJSON} from 'module';
 import fs from 'fs';
+import {getBaseUrl} from './pageUtils';
 import {highlight, Language} from 'tree-sitter-highlight';
 import path from 'path';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -117,7 +118,7 @@ export function CodeBlock({render, children, dir, files, expanded, hidden, ...pr
         component={render}
         align={props.align} />
       <div>
-        {files ? 
+        {files ?
           <Files
             files={files}
             downloadFiles={downloadFiles.files}
@@ -237,7 +238,7 @@ export function getFiles(files: string[], type: string | undefined, npmDeps = {}
   if (type === 'tailwind' && !fileContents['index.css']) {
     fileContents['index.css'] = readFileReplace(path.resolve('../../../starters/tailwind/src/index.css'));
   }
-  
+
   return {files: fileContents, deps: npmDeps};
 }
 
@@ -267,12 +268,12 @@ function parseFile(file: string, contents: string, npmDeps = {}, urls = {}) {
   let deps = new Set<string>();
   for (let [, specifier] of contents.matchAll(/import (?:.|\n)*?['"](.+?)['"]/g)) {
     specifier = specifier.replace(/(vanilla-starter|tailwind-starter)\//g, (m, s) => 'starters/' + (s === 'vanilla-starter' ? 'docs' : 'tailwind') + '/src/');
-    
+
     if (specifier.startsWith('url:')) {
       urls[specifier] = resolveUrl(specifier.slice(4), file);
       continue;
     }
-    
+
     if (!/^(\.|starters)/.test(specifier)) {
       let dep = specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
       npmDeps[dep] ??= '^' + getPackageVersion(dep);
@@ -346,6 +347,5 @@ function resolveUrl(specifier: string, file: string) {
     }
   }
 
-  let publicUrl = process.env.PUBLIC_URL || 'http://localhost:1234';
-  return publicUrl + cur;
+  return getBaseUrl((process.env.LIBRARY as any) || 'react-aria') + cur;
 }

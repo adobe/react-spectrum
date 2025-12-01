@@ -6,6 +6,8 @@ import vanillaDocs from 'docs:vanilla-starter/CommandPalette';
 import '../../tailwind/tailwind.css';
 
 export const tags = ['combobox', 'typeahead', 'input'];
+export const relatedPages = [{'title': 'useAutocomplete', 'url': 'https://react-spectrum.adobe.com/react-aria/useAutocomplete.html'}];
+export const description = 'Allows users to search or filter a list of suggestions.';
 
 # Autocomplete
 
@@ -109,9 +111,9 @@ export const tags = ['combobox', 'typeahead', 'input'];
 
 ## Content
 
-Autocomplete filters a collection component using a [TextField](TextField.html) or [SearchField](SearchField.html). It can be used to build UI patterns such as command palettes, searchable menus, filterable selects, and more.
+Autocomplete filters a collection component using a [TextField](TextField) or [SearchField](SearchField). It can be used to build UI patterns such as command palettes, searchable menus, filterable selects, and more.
 
-[Menu](Menu.html) and [ListBox](ListBox.html) support **virtual focus**, which allows arrow key navigation within the list while the text input is focused. Use `disableVirtualFocus` to require the user to tab between the input and list.
+[Menu](Menu) and [ListBox](ListBox) support **virtual focus**, which allows arrow key navigation within the list while the text input is focused. Use `disableVirtualFocus` to require the user to tab between the input and list.
 
 <ExampleSwitcher type="component" examples={['Menu', 'Select', 'ListBox', 'TagGroup', 'GridList', 'Table']}>
 
@@ -1106,7 +1108,7 @@ function AsyncLoadingExample() {
 
 ## API
 
-```tsx links={{Autocomplete: '#autocomplete', SearchField: 'SearchField.html', TextField: 'TextField.html', Menu: 'Menu.html', ListBox: 'ListBox.html', TagGroup: 'TagGroup.html', GridList: 'GridList.html', Table: 'Table.html'}}
+```tsx links={{Autocomplete: '#autocomplete', SearchField: 'SearchField', TextField: 'TextField', Menu: 'Menu', ListBox: 'ListBox', TagGroup: 'TagGroup', GridList: 'GridList', Table: 'Table'}}
 <Autocomplete>
   <SearchField /> or <TextField />
   <Menu />, <ListBox />, <TagGroup />, <GridList />, or <Table />

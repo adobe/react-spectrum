@@ -7,13 +7,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '../../../src/Layout';
+import {Layout} from '../../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@internationalized/date';
 
 export const section = 'Date and Time';
 export const group = 'Internationalized';
+export const description = 'An exact date and time in a specific time zone.';
 
 # ZonedDateTime
 
@@ -108,7 +109,7 @@ let date = new ZonedDateTime(
 );
 ```
 
-See the [Calendar](Calendar.html#implementations) docs for details about the supported calendars.
+See the [Calendar](Calendar#implementations) docs for details about the supported calendars.
 
 ### Eras
 
@@ -355,7 +356,7 @@ date.toDate('America/Los_Angeles'); // Thu Feb 03 2022 09:45:00 GMT-0800 (Pacifi
 
 ### To a date or time only
 
-A `ZonedDateTime` can be converted to a [CalendarDate](CalendarDate.html) or [Time](Time.html) object if only one of these components is needed.
+A `ZonedDateTime` can be converted to a [CalendarDate](CalendarDate) or [Time](Time) object if only one of these components is needed.
 
 Use the <TypeLink links={docs.links} type={docs.exports.toCalendarDate} /> function to convert a `ZonedDateTime` to a `CalendarDate`.
 
@@ -377,7 +378,7 @@ toTime(date); // 09:45
 
 ### To a date and time without a time zone
 
-A `ZonedDateTime` can be converted to a [CalendarDateTime](CalendarDateTime.html), which represents a date and time that is not in any specific time zone. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
+A `ZonedDateTime` can be converted to a [CalendarDateTime](CalendarDateTime), which represents a date and time that is not in any specific time zone. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
 
 Use the <TypeLink links={docs.links} type={docs.exports.toCalendarDateTime} /> function to convert a `ZonedDateTime` to a `CalendarDateTime`.
 

@@ -7,13 +7,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '../../../src/Layout';
+import {Layout} from '../../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@internationalized/number';
 
 export const section = 'Numbers';
 export const group = 'Internationalized';
+export const description = 'Validates and parses numbers from user input with locale support.';
 
 # NumberParser
 
@@ -27,7 +28,7 @@ Numbers can be formatted in many different ways, including percentages, units, d
 
 Parsing numbers while taking into account all locale-specific detail is quite complex and error-prone. `NumberParser` uses information about the locale and expected format for a number in order to parse it correctly. This means it is somewhat strict about the accepted formats. It is not designed to handle use cases where the user can enter numbers in an unknown format (e.g. either a unit value _or_ a percentage), this must be known up front or selected via an external UI control.
 
-Read our [blog post](how-we-internationalized-our-numberfield.html) for more details on how the number parser is implemented.
+Read our [blog post](how-we-internationalized-our-numberfield) for more details on how the number parser is implemented.
 
 ### Example
 

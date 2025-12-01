@@ -1,10 +1,14 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {CheckboxGroup} from '@react-spectrum/s2';
+import {CheckboxGroup, InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = [];
+export const relatedPages = [
+  {title: 'Testing', url: './CheckboxGroup/testing'}
+];
+export const description = 'Allows a user to select one or more items in a list of options.';
 
 # CheckboxGroup
 
@@ -84,7 +88,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## API
 
-```tsx links={{CheckboxGroup: '#checkboxgroup', Checkbox: 'Checkbox.html'}}
+```tsx links={{CheckboxGroup: '#checkboxgroup', Checkbox: 'Checkbox'}}
 <CheckboxGroup>
   <Checkbox />
 </CheckboxGroup>
