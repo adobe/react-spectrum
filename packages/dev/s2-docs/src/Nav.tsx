@@ -3,11 +3,11 @@
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
-import {getPageFromPathname, getSnapshot, subscribe, useRouter} from './Router';
 import {Link} from 'react-aria-components';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page} from '@parcel/rsc';
-import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {usePendingPage, useRouter} from './Router';
 
 type SectionValue = Page[] | Map<string, Page[]>;
 
@@ -18,9 +18,7 @@ function isSectionMap(value: SectionValue): value is Map<string, Page[]> {
 export function Nav() {
   let {pages, currentPage} = useRouter();
   let [maskSize, setMaskSize] = useState(0);
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
-  let displayPage = pendingPage ?? currentPage;
+  let displayPage = usePendingPage();
 
   if (currentPage.exports?.hideNav) {
     return null;

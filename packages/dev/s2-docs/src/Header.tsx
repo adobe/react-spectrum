@@ -4,7 +4,6 @@ import {Badge, pressScale, Text} from '@react-spectrum/s2';
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
 import BetaApp from '@react-spectrum/s2/icons/BetaApp';
-import {flushSync} from 'react-dom';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
@@ -12,6 +11,7 @@ import GithubLogo from './icons/GithubLogo';
 import {Link} from 'react-aria-components';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useRouter} from './Router';
 
 function getButtonText(currentPage) {
@@ -74,6 +74,7 @@ export default function Header() {
   let docsRef = useRef(null);
   let releasesRef = useRef(null);
   let blogRef = useRef(null);
+  let renderCallback = useRef<(() => void) | null>(null);
 
   let openSearchMenu = async () => {
     if (!document.startViewTransition) {
@@ -83,10 +84,19 @@ export default function Header() {
 
     // Preload SearchMenu so it is ready to render immediately.
     await preloadSearchMenu();
-    document.startViewTransition(() => {
-      flushSync(() => {
+
+    // Don't transition the entire page.
+    document.documentElement.style.viewTransitionName = 'none';
+    let viewTransition = document.startViewTransition(() => {
+      // Wait until next render. Using flushSync causes flickering.
+      return new Promise<void>(resolve => {
+        renderCallback.current = resolve;
         setSearchOpen((prev) => !prev);
       });
+    });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
     });
   };
 
@@ -96,12 +106,23 @@ export default function Header() {
       return;
     }
 
-    document.startViewTransition(() => {
-      flushSync(() => {
+    document.documentElement.style.viewTransitionName = 'none';
+    let viewTransition = document.startViewTransition(() => {
+      return new Promise<void>(resolve => {
+        renderCallback.current = resolve;
         setSearchOpen(false);
       });
     });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
+    });
   };
+
+  useLayoutEffect(() => {
+    renderCallback.current?.();
+    renderCallback.current = null;
+  });
 
   let library = getLibraryFromPage(currentPage);
   let subdirectory: 's2' | 'react-aria' = 's2';

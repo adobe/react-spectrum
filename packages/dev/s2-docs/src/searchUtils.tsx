@@ -57,7 +57,7 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
   const description: string = stripMarkdown(page.exports?.description);
   const date: string | undefined = page.exports?.date;
   return {
-    id: page.name,
+    id: page.url,
     name: title,
     href: page.url,
     section,

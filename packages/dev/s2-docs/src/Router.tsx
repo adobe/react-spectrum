@@ -2,7 +2,7 @@
 
 import type {Page} from '@parcel/rsc';
 import {PageSkeleton} from './PageSkeleton';
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 const SKELETON_DELAY = 150;
@@ -53,32 +53,38 @@ export function getPageFromPathname(pages: Page[], url: string | null): Page | n
 
 function useDelayedSnapshot() {
   let [delayedSnapshot, setDelayedSnapshot] = useState(getSnapshot());
+  let skeletonDisplayTime = useRef(0);
   useEffect(() => {
     let timeout;
-    let skeletonMinTime = 0;
     return subscribe(() => {
       clearTimeout(timeout);
       
       let snapshot = getSnapshot();
       if (snapshot.promise) {
+        // Delay skeleton slightly in case network is fast.
         timeout = setTimeout(() => {
           setDelayedSnapshot(snapshot);
-          skeletonMinTime = Date.now() + MIN_SKELETON_TIME;
         }, SKELETON_DELAY);
       } else {
-        let skeletonTimeout = skeletonMinTime - Date.now();
+        // Ensure that skeleton shows for a minimum amount of time
+        // if it shows at all, to avoid a jarring flash.
+        let skeletonTimeout = (skeletonDisplayTime.current + MIN_SKELETON_TIME) - Date.now();
         if (skeletonTimeout > 0) {
           timeout = setTimeout(() => {
             setDelayedSnapshot(snapshot);
-            skeletonMinTime = 0;
           }, skeletonTimeout);
         } else {
           setDelayedSnapshot(snapshot);
-          skeletonMinTime = 0;
         }
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (delayedSnapshot.promise) {
+      skeletonDisplayTime.current = Date.now();
+    }
+  }, [delayedSnapshot]);
 
   return delayedSnapshot;
 }
@@ -119,6 +125,20 @@ export function Router({currentPage, pages, children}) {
 
 export function useRouter(): RouterContextValue {
   return useContext(RouterContext)!;
+}
+
+export function usePendingPage(): Page {
+  let {pages, currentPage} = useRouter();
+  let [snapshot, setSnapshot] = useState(getSnapshot());
+  let pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
+
+  useEffect(() => {
+    return subscribe(() => {
+      setSnapshot(getSnapshot());
+    });
+  }, []);
+
+  return pendingPage ?? currentPage;
 }
 
 export function Main(props) {

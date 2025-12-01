@@ -30,16 +30,7 @@ let underlayStyle = style({
   width: 'full',
   height: '--page-height',
   isolation: 'isolate',
-  backgroundColor: 'transparent-black-500',
-  opacity: {
-    isEntering: 0,
-    isExiting: 0
-  },
-  transition: 'opacity',
-  transitionDuration: {
-    default: 250,
-    isExiting: 130
-  }
+  backgroundColor: 'transparent-black-500'
 });
 
 let modalStyle = style({
@@ -117,8 +108,12 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isSearchOpen, onClose, open]);
-  
-  
+
+  let [wasOpen, setWasOpen] = useState(isSearchOpen);
+  if (isSearchOpen && !wasOpen) {
+    setWasOpen(true);
+  }
+    
   return (
     <div
       className={style({
@@ -198,7 +193,13 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         isDismissable
         isOpen={isSearchOpen}
         onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
-        className={underlayStyle}>
+        className={underlayStyle}
+        isExiting={!isSearchOpen && wasOpen}
+        style={{
+          display: !isSearchOpen ? 'none' : undefined,
+          // @ts-ignore
+          viewTransitionName: 'search-menu-underlay'
+        }}>
         <Modal className={modalStyle}>
           <SearchMenu
             onClose={onClose}

@@ -170,7 +170,7 @@ function clearPrefetchTimeout() {
   currentPrefetchLink = null;
 }
 
-document.addEventListener('pointerover', e => {
+document.addEventListener('pointerenter', e => {
   if (e.pointerType !== 'mouse') {
     return;
   }
@@ -203,7 +203,7 @@ document.addEventListener('pointerdown', e => {
 });
 
 // Clear prefetch timeout when pointer leaves a link
-document.addEventListener('pointerout', e => {
+document.addEventListener('pointerleave', e => {
   if (e.pointerType !== 'mouse') {
     return;
   }

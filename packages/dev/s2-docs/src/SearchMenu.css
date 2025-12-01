@@ -1,0 +1,9 @@
+::view-transition-group(search-menu-underlay) {
+  z-index: 0;
+}
+
+::view-transition-group(search-menu-icon),
+::view-transition-group(search-menu-label),
+::view-transition-group(search-menu-search-field) {
+  z-index: 1;
+}

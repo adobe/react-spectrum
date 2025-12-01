@@ -12,12 +12,13 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
-import React, {CSSProperties, Suspense, useCallback, useEffect, useRef} from 'react';
+import React, {CSSProperties, Suspense, useCallback, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
 import {useRouter} from './Router';
+import './SearchMenu.css';
 
 export const divider = style({
   marginY: 8,
@@ -86,11 +87,13 @@ export function SearchMenu(props: SearchMenuProps) {
 
   // Auto-focus search field when menu opens
   useEffect(() => {
-    const timer = setTimeout(() => {
-      searchRef.current?.focus();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+    if (isSearchOpen) {
+      const timer = setTimeout(() => {
+        searchRef.current?.focus();
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isSearchOpen]);
 
   const handleTabSelectionChange = useCallback((key: Key) => {
     setSelectedLibrary(key as Library);
@@ -103,17 +106,21 @@ export function SearchMenu(props: SearchMenuProps) {
       }
     }, 10);
   }, [setSelectedLibrary]);
-
+  
+  // Delay closing until the page updates (or the skeleton shows).
+  let lastPage = useRef(currentPage);
   useEffect(() => {
-    const handleNavigationStart = () => {
+    if (currentPage !== lastPage.current) {
+      lastPage.current = currentPage;
       onClose();
-    };
+    }
+  }, [currentPage, onClose]);
 
-    window.addEventListener('rsc-navigation-start', handleNavigationStart);
-    return () => {
-      window.removeEventListener('rsc-navigation-start', handleNavigationStart);
-    };
-  }, [onClose]);
+  // Wait to update selection until after close animation.
+  let [currentUrl, setCurrentUrl] = useState(currentPage.url);
+  if (currentPage.url !== currentUrl && !isSearchOpen) {
+    setCurrentUrl(currentPage.url);
+  }
 
   return (
     <Dialog id={overlayId} className={style({height: 'full'})} aria-label="Search menu">
@@ -177,10 +184,14 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   ) : (
                     <ComponentCardView
-                      currentUrl={currentPage.url}
-                      onAction={onClose}
+                      currentUrl={currentUrl}
+                      onAction={(key) => {
+                        if (key === currentPage.url) {
+                          onClose();
+                        }
+                      }}
                       items={selectedItems.map(item => ({
-                        id: item.id,
+                        id: item.href,
                         name: item.name,
                         href: item.href ?? `/${tab.id}/${item.name}`,
                         description: item.description
