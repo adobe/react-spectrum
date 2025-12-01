@@ -53,7 +53,7 @@ const skeletonArticle = style({
 export function PageSkeleton() {
   let {currentPage, pages} = useRouter();
   let isSubpage = currentPage.exports?.isSubpage;
-  let section = currentPage.exports?.section;
+  let section = currentPage.exports?.section || 'Components';;
   let isLongForm = isSubpage && section === 'Blog';
   let hasToC = (!currentPage.exports?.hideNav || section === 'Blog' || section === 'Releases') && currentPage.tableOfContents?.[0]?.children && currentPage.tableOfContents?.[0]?.children?.length > 0;
   let isWide = !hasToC && !isLongForm && section !== 'Blog' && section !== 'Releases';
