@@ -202,7 +202,7 @@ export function MobileHeader({toc}) {
             transition: 'default',
             disableTapHighlight: true
           })}>
-          <span style={{viewTransitionName: !isOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
+          <span style={{viewTransitionName: 'search-menu-icon', display: isOpen ? 'none' : undefined} as CSSProperties}>
             {icon}
           </span>
           <span

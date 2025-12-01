@@ -295,7 +295,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                     style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
                     {library.icon}
                   </div>
-                  <span style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-label' : 'none'} as CSSProperties}>
+                  <span style={{viewTransitionName: (i === 0 && isOpen && window.scrollY === 0) ? 'search-menu-label' : 'none'} as CSSProperties}>
                     {library.label}
                   </span>
                 </MobileTab>
