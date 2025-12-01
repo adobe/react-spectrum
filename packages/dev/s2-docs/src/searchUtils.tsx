@@ -368,7 +368,8 @@ export function useSearchTagSelection(
   searchValue: string,
   sectionTags: Tag[],
   resourceTags: Tag[],
-  initialTagId: string
+  initialTagId: string,
+  isOpen: boolean
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
   const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
@@ -386,6 +387,8 @@ export function useSearchTagSelection(
   // Track if "All" has been shown, and once shown, keep showing it
   if (shouldTriggerAll && !hasAllBeenShown) {
     setHasAllBeenShown(true);
+  } else if (!isOpen && hasAllBeenShown) {
+    setHasAllBeenShown(false);
   }
 
   const sectionIds = useMemo(() => {
@@ -406,6 +409,11 @@ export function useSearchTagSelection(
     }
     prevSearchWasEmptyRef.current = isEmpty;
   }, [searchValue, isResourceSelected]);
+
+  // Reset selected tag when search menu closes.
+  if (!isOpen && selectedTagId !== initialTagId) {
+    setSelectedTagId(initialTagId);
+  }
 
   return [selectedTagId, setSelectedTagId] as const;
 }
@@ -584,7 +592,8 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     searchValue,
     sectionTags,
     resourceTags,
-    initialSelectedSection
+    initialSelectedSection,
+    options.isOpen
   );
   
   // Section tags for display (includes "All" when searching)
