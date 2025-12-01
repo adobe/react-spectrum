@@ -216,7 +216,6 @@ function MobileNav({initialTag}: {initialTag?: string}) {
   let {pages, currentPage} = useRouter();
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
-  let scrollContainerRef = useRef<HTMLDivElement>(null);
   let iconFilter = useIconFilter();
   let isOpen = !!overlayTriggerState?.isOpen;
 
@@ -257,12 +256,6 @@ function MobileNav({initialTag}: {initialTag?: string}) {
       setSearchFocused(false);
     }
   };
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
-    }
-  }, [selectedSection, selectedLibrary, searchValue]);
 
   // Delay closing until the page updates (or the skeleton shows).
   let lastPage = useRef(currentPage);
@@ -337,7 +330,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
                   </div>
-                  <div ref={scrollContainerRef} className={style({paddingX: 12, flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                  <div key={selectedLibrary + selectedSection} className={style({paddingX: 12, flexGrow: 1, overflow: 'clip', display: 'flex', flexDirection: 'column'})}>
                     {showIcons ? (
                       <Suspense fallback={<IconSearchSkeleton />}>
                         <LazyIconSearchView 

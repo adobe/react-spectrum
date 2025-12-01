@@ -185,6 +185,7 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   ) : (
                     <ComponentCardView
+                      key={selectedLibrary + selectedTagId}
                       currentUrl={currentUrl}
                       onAction={(key) => {
                         if (key === currentPage.url) {
