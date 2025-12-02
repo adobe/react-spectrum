@@ -167,7 +167,16 @@ function Rows({props, showDefault, showRequired}: {props: TInterface['properties
             <span className={codeStyles.attribute}>{prop.name}</span>
           </code>
           {!prop.optional && showRequired
-            ? <Asterisk size="M" className={style({marginStart: 4})} aria-label="Required" />
+            ? <Asterisk
+                size="M"
+                className={style({
+                  marginStart: 4,
+                  '--iconPrimary': {
+                    type: 'fill',
+                    value: 'currentColor'
+                  }
+                })}
+                aria-label="Required" />
             : null
           }
         </TableCell>
