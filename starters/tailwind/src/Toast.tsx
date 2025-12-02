@@ -40,7 +40,7 @@ export function MyToastRegion() {
     // The ToastRegion should be rendered at the root of your app.
     <ToastRegion
       queue={queue}
-      className="fixed bottom-4 right-4 flex flex-col-reverse gap-2 outline-none focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+      className="fixed bottom-4 right-4 flex flex-col-reverse gap-2 rounded-lg outline-none focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
       {({toast}) => (
         <MyToast toast={toast}>
           <ToastContent className="flex flex-col flex-1 min-w-0">
@@ -52,7 +52,7 @@ export function MyToastRegion() {
           <Button
             slot="close"
             aria-label="Close"
-            className="flex flex-none appearance-none w-8 h-8 rounded-sm bg-transparent border-none text-white p-0 outline-none hover:bg-white/10 pressed:bg-white/15 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 items-center justify-center">
+            className="flex flex-none appearance-none w-8 h-8 rounded-sm bg-transparent border-none text-white p-0 outline-none hover:bg-white/10 pressed:bg-white/15 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 items-center justify-center">
             <XIcon className="w-4 h-4" />
           </Button>
         </MyToast>
@@ -68,7 +68,7 @@ export function MyToast(props: ToastProps<MyToastContent>) {
       style={{viewTransitionName: props.toast.key}}
       className={composeTailwindRenderProps(
         props.className,
-        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans w-[230px]"
+        "flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans w-[230px]"
       )}
     />
   );
