@@ -83,7 +83,7 @@ export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends 
   form?: string
 }
 
-export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | 'allowsEmptyCollection'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.
