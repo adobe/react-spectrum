@@ -122,7 +122,6 @@ Autocomplete filters a collection component using a [TextField](TextField) or [S
 import {Autocomplete, useFilter} from 'react-aria-components';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
-import {Popover} from 'vanilla-starter/Popover';
 import {SearchField} from 'vanilla-starter/SearchField';
 
 function Example(props) {
@@ -131,7 +130,7 @@ function Example(props) {
   return (
     <MenuTrigger>
       <Button>Add tag...</Button>
-      <Popover style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         {/*- begin highlight -*/}
         <Autocomplete {...props}/* PROPS */ filter={contains}>
           <SearchField
@@ -152,7 +151,7 @@ function Example(props) {
             <MenuItem>Science</MenuItem>
           </Menu>
         </Autocomplete>
-      </Popover>
+      </div>
     </MenuTrigger>
   );
 }
