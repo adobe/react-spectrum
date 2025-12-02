@@ -130,7 +130,7 @@ function Example(props) {
   return (
     <MenuTrigger>
       <Button>Add tag...</Button>
-      <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex', flexDirection: 'column', maxHeight: 'inherit'}}>
         {/*- begin highlight -*/}
         <Autocomplete {...props}/* PROPS */ filter={contains}>
           <SearchField
