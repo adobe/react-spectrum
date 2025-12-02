@@ -235,11 +235,7 @@ describe('DateField', function () {
           errorMessage="Date unavailable." />
       );
       await user.tab();
-      await user.keyboard('1');
-      await user.keyboard('[ArrowRight]');
-      await user.keyboard('1');
-      await user.keyboard('[ArrowRight]');
-      await user.keyboard('1980[Tab]');
+      await user.keyboard('01011980[Tab]');
       expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
 
@@ -373,7 +369,7 @@ describe('DateField', function () {
       expect(input).toHaveAttribute('name', 'date');
       await user.tab();
       await user.keyboard('{ArrowUp}');
-      await user.tab({shift: true});
+      await user.tab();
       expect(getDescription()).toBe('Selected Date: March 3, 2020');
       expect(input).toHaveValue('2020-03-03');
 
@@ -460,7 +456,6 @@ describe('DateField', function () {
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
           expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
-
           await user.keyboard('[Tab][Tab][ArrowUp]');
           
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
