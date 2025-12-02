@@ -54,7 +54,10 @@ const standaloneCode = style({
   },
   overflow: 'auto',
   maxWidth: '--text-width',
-  marginX: 'auto'
+  marginX: {
+    default: 'auto',
+    ':is([data-example-switcher] *)': 0
+  }
 });
 
 interface CodeBlockProps extends VisualExampleProps {

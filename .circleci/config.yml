@@ -59,19 +59,38 @@ commands:
     steps:
       - attach_workspace:
           at: /tmp/dist
-      - aws-cli/install
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
+      - when:
+          condition:
+            and:
+              - not:
+                  equal: [ "", "${AWS_ACCESS_KEY_ID}" ]
+              - not:
+                  equal: [ "", "${AWS_SECRET_ACCESS_KEY}" ]
+          steps:
+            - aws-cli/install
+            - aws-s3/sync:
+                arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
+                from: /tmp/dist/s2-docs/<< parameters.dir >>
+                to: << parameters.bucket >>
+            - aws-s3/sync:
+                arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
+                from: /tmp/dist/s2-docs/<< parameters.dir >>
+                to: << parameters.bucket >>
+            - aws-s3/sync:
+                arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
+                from: /tmp/dist/s2-docs/<< parameters.dir >>
+                to: << parameters.bucket >>
+      - unless:
+          condition:
+            and:
+              - not:
+                  equal: [ "", "${AWS_ACCESS_KEY_ID}" ]
+              - not:
+                  equal: [ "", "${AWS_SECRET_ACCESS_KEY}" ]
+          steps:
+            - run:
+                name: Skip S3 deployment
+                command: echo "AWS credentials not found. Skipping S3 deployment."
 
 jobs:
   install:

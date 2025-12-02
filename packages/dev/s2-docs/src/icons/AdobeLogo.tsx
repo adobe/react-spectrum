@@ -5,7 +5,7 @@ export const AdobeLogo = ({className = '', size = 32}) => {
   return (
     <svg
       className={className}
-      style={{width: size, height: size}}
+      style={{display: 'block', width: size, height: size}}
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
       viewBox="0 0 501.71 444.05">
