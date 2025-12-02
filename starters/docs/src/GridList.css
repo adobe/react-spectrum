@@ -165,6 +165,7 @@
     object-fit: cover;
     padding-bottom: var(--spacing-2);
     -webkit-user-drag: none;
+    -webkit-touch-callout: none;
     flex-shrink: 0;
   }
 
