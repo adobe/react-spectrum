@@ -202,7 +202,8 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
         }
       }}
       onTouchEnd={e => {
-        if (!(e.target as Element).closest('button,input,textarea')) {
+        let target = e.target as HTMLElement;
+        if (!target.isContentEditable && !target.closest('button,input,textarea')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
