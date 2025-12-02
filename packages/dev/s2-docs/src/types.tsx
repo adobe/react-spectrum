@@ -84,7 +84,7 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 let LINKS = {};
 export function setLinks(links) {
-  LINKS = links;
+  Object.assign(LINKS, links);
 }
 
 export function Type({type}: {type: TType}) {
