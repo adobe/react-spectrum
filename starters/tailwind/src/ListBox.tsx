@@ -60,8 +60,11 @@ export const dropdownItemStyles = tv({
       false: 'text-neutral-900 dark:text-neutral-100',
       true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
     },
+    isPressed: {
+      true: 'bg-neutral-100 dark:bg-neutral-800'
+    },
     isFocused: {
-      true: 'bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
+      true: 'bg-blue-600 dark:bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
     }
   },
   compoundVariants: [
