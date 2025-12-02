@@ -43,7 +43,7 @@ export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | '
 }
 
 export function CodeLink(props: RACLinkProps) {
-  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: isHovered ? 'underline solid' : 'underline dotted'})} />;
+  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
 }
 
 const titleLink = style({
