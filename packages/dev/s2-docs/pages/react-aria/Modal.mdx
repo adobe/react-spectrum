@@ -62,11 +62,15 @@ export const relatedPages = [{'title': 'useModalOverlay', 'url': 'https://react-
         <Button>Sign up…</Button>
         <Modal {...props}/* PROPS */>
           <Dialog>
+            <Heading slot="title" className="text-xl mt-0">Subscribe to our newsletter</Heading>
+            <p className="text-sm">Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
             <Form>
-              <Heading slot="title">Sign up</Heading>
-              <TextField autoFocus label="First Name" />
-              <TextField label="Last Name" />
-              <Button slot="close" className="self-end">Submit</Button>
+              <TextField autoFocus label="Name" placeholder="Enter your full name" />
+              <TextField label="Email" placeholder="Enter your email" />
+              <div className="flex gap-2 self-end">
+                <Button slot="close" variant="secondary">Cancel</Button>
+                <Button slot="close">Subscribe</Button>
+              </div>
             </Form>
           </Dialog>
         </Modal>
@@ -104,7 +108,7 @@ Use the `isOpen` prop to show a modal programmatically or mount in a different p
 "use client";
 import {useState} from 'react';
 import {Heading} from 'react-aria-components';
-import {MenuButton, MenuItem} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Modal} from 'vanilla-starter/Modal';
 import {Dialog} from 'vanilla-starter/Dialog';
 import {Button} from 'vanilla-starter/Button';
@@ -114,9 +118,12 @@ function Example() {
 
   return (
     <>
-      <MenuButton label="Menu">
-        <MenuItem onAction={() => setOpen(true)}>Open dialog…</MenuItem>
-      </MenuButton>
+      <MenuTrigger>
+        <Button>Menu</Button>
+        <Menu>
+          <MenuItem onAction={() => setOpen(true)}>Open dialog…</MenuItem>
+        </Menu>
+      </MenuTrigger>
       <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
         <Dialog>
           <Heading slot="title">Notice</Heading>

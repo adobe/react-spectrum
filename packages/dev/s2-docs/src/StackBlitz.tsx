@@ -1,6 +1,8 @@
+import type {DownloadFiles} from './CodeBlock';
+
 export function createStackBlitz(
-  files: {[name: string]: string},
-  deps: {[name: string]: string},
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
@@ -43,8 +45,8 @@ export function createStackBlitz(
 }
 
 function getFiles(
-  files: {[name: string]: string},
-  deps: {[name: string]: string},
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
@@ -127,6 +129,6 @@ createRoot(document.getElementById('root')!).render(<${entryName} />);
       },
       'include': ['src']
     }, null, 2) + '\n',
-    ...Object.fromEntries(Object.entries(files).map(([name, contents]) => ['src/' + name, contents]))
+    ...Object.fromEntries(Object.entries(files).map(([name, file]) => ['src/' + name, file.contents]))
   };
 }

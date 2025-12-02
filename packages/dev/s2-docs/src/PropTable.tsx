@@ -29,7 +29,7 @@ const GROUPS = {
     /^on[A-Z]/
   ],
   Links: [
-    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'routerOptions'
+    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'itemProp', 'routerOptions'
   ],
   Styling: [
     'style', 'className'
@@ -51,7 +51,7 @@ const DEFAULT_EXPANDED = new Set([
   'Value'
 ]);
 
-const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, wordBreak: 'break-word'});
 
 interface PropTableProps {
   component: TComponent,
