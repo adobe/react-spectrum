@@ -235,7 +235,9 @@ function AsyncSortTable() {
         </TableHeader>
         <TableBody
           renderEmptyState={() => (
-            <ProgressCircle isIndeterminate aria-label="Loading..." />
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <ProgressCircle isIndeterminate aria-label="Loading..." />
+            </div>
           )}>
           <Collection items={list.items}>
             {(item) => (

@@ -28,6 +28,7 @@
   }
 
   &:has(.react-aria-TableBody[data-empty]) {
+    height: 100%;
     min-height: 100px;
   }
 
@@ -330,10 +331,4 @@
 .react-aria-TableLoadingIndicator {
   height: 32px;
   position: relative;
-
-  > div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
