@@ -233,7 +233,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               }
             })}>
             <Header />
-            <MobileHeader toc={<OptimisticMobileToc />} />
+            <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
             <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
               <Nav />
               <Main
