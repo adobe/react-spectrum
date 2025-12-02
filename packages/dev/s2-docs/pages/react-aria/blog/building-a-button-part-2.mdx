@@ -73,11 +73,11 @@ I hear that these bugs may already be fixed in the iOS 14 betas, so hopefully we
 
 We've wrapped all of this behavior into the [useHover](../useHover) hook in React Aria. It provides a simple way to determine if an element is hovered, and exposes a set of events that you can handle as well. `onHoverStart` is fired when the user hovers over an element with a mouse, and `onHoverEnd` is fired when the user moves their mouse off of the element. We take care of all of the browser inconsistencies discussed above, and also include fallbacks for touch and mouse events to support older devices without pointer events.
 
-The [Button](../../s2/Button) component, and all other components in React Spectrum that support hover states, use the [useHover](../useHover) hook to handle interactions, and apply a CSS class when they are hovered. This ensures that hover states are only applied when interacting with a mouse, which avoids unexpected behavior on touch devices.
+The [Button](s2:Button) component, and all other components in React Spectrum that support hover states, use the [useHover](../useHover) hook to handle interactions, and apply a CSS class when they are hovered. This ensures that hover states are only applied when interacting with a mouse, which avoids unexpected behavior on touch devices.
 
 <video src={hoveriPadVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
 
-Try a live example for yourself in our [Button](../../s2/Button) docs!
+Try a live example for yourself in our [Button](s2:Button) docs!
 
 ## Conclusion
 

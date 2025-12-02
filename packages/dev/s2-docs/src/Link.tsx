@@ -7,6 +7,11 @@ import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components'
 import React from 'react';
 
 export function Link({href, ...props}: LinkProps) {
+  if (href?.startsWith('s2:') || href?.startsWith('react-aria:')) {
+    let url = new URL(href);
+    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
+  }
+
   return (
     <S2Link {...props} href={href} {...getAnchorProps(href)} />
   );
