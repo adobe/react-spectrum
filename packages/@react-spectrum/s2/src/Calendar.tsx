@@ -141,7 +141,8 @@ const cellStyles = style({
     isOutsideMonth: 'none'
   },
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  disableTapHighlight: true
 });
 
 const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({

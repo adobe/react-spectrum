@@ -57,7 +57,7 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
   const description: string = stripMarkdown(page.exports?.description);
   const date: string | undefined = page.exports?.date;
   return {
-    id: page.name,
+    id: page.url,
     name: title,
     href: page.url,
     section,
@@ -368,7 +368,8 @@ export function useSearchTagSelection(
   searchValue: string,
   sectionTags: Tag[],
   resourceTags: Tag[],
-  initialTagId: string
+  initialTagId: string,
+  isOpen: boolean
 ) {
   const [selectedTagId, setSelectedTagId] = useState<string>(initialTagId);
   const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
@@ -386,17 +387,18 @@ export function useSearchTagSelection(
   // Track if "All" has been shown, and once shown, keep showing it
   if (shouldTriggerAll && !hasAllBeenShown) {
     setHasAllBeenShown(true);
+  } else if (!isOpen && hasAllBeenShown) {
+    setHasAllBeenShown(false);
   }
 
   const sectionIds = useMemo(() => {
     return hasAllBeenShown ? ['all', ...allBaseIds] : allBaseIds;
   }, [hasAllBeenShown, allBaseIds]);
-  
-  useEffect(() => {
-    if (!selectedTagId || !sectionIds.includes(selectedTagId)) {
-      setSelectedTagId(sectionIds[0] || 'components');
-    }
-  }, [selectedTagId, sectionIds, setSelectedTagId]);
+
+  let defaultTagId = sectionIds.includes(initialTagId) ? initialTagId : sectionIds[0] || 'components';
+  if (!selectedTagId || !sectionIds.includes(selectedTagId) || (!isOpen && selectedTagId !== defaultTagId)) {
+    setSelectedTagId(defaultTagId);
+  }
 
   // Auto-select "All" when search starts (unless resource is selected)
   useEffect(() => {
@@ -414,7 +416,8 @@ export function useSectionTagsForDisplay(
   sections: Section[],
   searchValue: string,
   selectedTagId: string,
-  resourceTagIds: string[]
+  resourceTagIds: string[],
+  isOpen: boolean
 ): Tag[] {
   const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
   
@@ -424,6 +427,8 @@ export function useSectionTagsForDisplay(
   // Once "All" has been shown, keep showing it
   if (shouldTriggerAll && !hasAllBeenShown) {
     setHasAllBeenShown(true);
+  } else if (!isOpen && hasAllBeenShown) {
+    setHasAllBeenShown(false);
   }
 
   return useMemo(() => {
@@ -503,7 +508,8 @@ export interface SearchMenuStateOptions {
   pages: Page[],
   currentPage: Page,
   initialSearchValue?: string,
-  initialTag?: string
+  initialTag?: string,
+  isOpen: boolean
 }
 
 export interface SearchMenuState {
@@ -580,7 +586,8 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     searchValue,
     sectionTags,
     resourceTags,
-    initialSelectedSection
+    initialSelectedSection,
+    options.isOpen
   );
   
   // Section tags for display (includes "All" when searching)
@@ -588,7 +595,8 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     sections,
     searchValue,
     selectedTagId,
-    resourceTagIds
+    resourceTagIds,
+    options.isOpen
   );
   
   // Icons
@@ -626,6 +634,11 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
       ? `Search ${selectedResourceTag.name}` 
       : `Search ${libraryLabel}`;
   }, [resourceTags, selectedTagId]);
+
+  // Reset search value after search menu closes.
+  if (!options.isOpen && searchValue) {
+    setSearchValue('');
+  }
   
   return {
     // Library state

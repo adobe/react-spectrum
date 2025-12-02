@@ -12,10 +12,10 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
-import {Page} from '@parcel/rsc';
-import React, {ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
+import React, {CSSProperties, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
+import {useRouter} from './Router';
 
 interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
@@ -65,17 +65,17 @@ const mobileTabListWrapper = style({
 });
 
 const mobileTabList = style({
-  display: 'flex',
+  display: {
+    default: 'flex',
+    '::-webkit-scrollbar': 'none'
+  },
   flexDirection: 'row',
   gap: 8,
   paddingX: 12,
   paddingY: 8,
   overflow: 'auto',
   flexGrow: 1,
-  scrollbarWidth: 'none',
-  '::-webkit-scrollbar': {
-    display: 'none'
-  }
+  scrollbarWidth: 'none'
 });
 
 const mobileTab = style<TabRenderProps>({
@@ -190,10 +190,10 @@ function MobileTabPanel(props: Omit<RACTabPanelProps, 'children'> & {children: R
   );
 }
 
-export function MobileSearchMenu({pages, currentPage, initialTag}: {pages: Page[], currentPage: Page, initialTag?: string}) {
+export function MobileSearchMenu({initialTag}: {initialTag?: string}) {
   return (
     <MobileCustomDialog padding="none">
-      <MobileNav pages={pages} currentPage={currentPage} initialTag={initialTag} />
+      <MobileNav initialTag={initialTag} />
     </MobileCustomDialog>
   );
 }
@@ -212,11 +212,12 @@ const MobileCustomDialog = function MobileCustomDialog(props: MobileDialogProps)
   );
 };
 
-function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage: Page, initialTag?: string}) {
+function MobileNav({initialTag}: {initialTag?: string}) {
+  let {pages, currentPage} = useRouter();
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let [searchFocused, setSearchFocused] = useState(false);
-  let scrollContainerRef = useRef<HTMLDivElement>(null);
-  const iconFilter = useIconFilter();
+  let iconFilter = useIconFilter();
+  let isOpen = !!overlayTriggerState?.isOpen;
 
   const {
     selectedLibrary,
@@ -235,7 +236,8 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
   } = useSearchMenuState({
     pages,
     currentPage,
-    initialTag
+    initialTag,
+    isOpen
   });
 
   let handleSearchFocus = () => {
@@ -255,11 +257,20 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
     }
   };
 
+  // Delay closing until the page updates (or the skeleton shows).
+  let lastPage = useRef(currentPage);
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
+    if (currentPage !== lastPage.current && overlayTriggerState?.isOpen) {
+      overlayTriggerState?.close();
     }
-  }, [selectedSection, selectedLibrary, searchValue]);
+    lastPage.current = currentPage;
+  }, [currentPage, overlayTriggerState]);
+
+  // Wait to update selection until after close animation.
+  let [currentUrl, setCurrentUrl] = useState(currentPage.url);
+  if (currentPage.url !== currentUrl && !isOpen) {
+    setCurrentUrl(currentPage.url);
+  }
 
   return (
     <div className={style({height: 'full'})}>
@@ -277,12 +288,16 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
           }}>
           <div className={mobileTabListContainer}>
             <MobileTabList>
-              {libraries.map(library => (
+              {libraries.map((library, i) => (
                 <MobileTab key={library.id} id={library.id}>
-                  <div className={style({display: 'flex', alignItems: 'center', gap: 8})}>
+                  <div
+                    className={style({display: 'flex', alignItems: 'center', gap: 8})}
+                    style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
                     {library.icon}
                   </div>
-                  {library.label}
+                  <span style={{viewTransitionName: (i === 0 && isOpen && window.scrollY === 0) ? 'search-menu-label' : 'none'} as CSSProperties}>
+                    {library.label}
+                  </span>
                 </MobileTab>
               ))}
             </MobileTabList>
@@ -315,7 +330,7 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
                   </div>
-                  <div ref={scrollContainerRef} className={style({paddingX: 12, flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
+                  <div key={selectedLibrary + selectedSection} className={style({paddingX: 12, minHeight: 0, flexGrow: 1, overflow: 'clip', display: 'flex', flexDirection: 'column'})}>
                     {showIcons ? (
                       <Suspense fallback={<IconSearchSkeleton />}>
                         <LazyIconSearchView 
@@ -324,10 +339,11 @@ function MobileNav({pages, currentPage, initialTag}: {pages: Page[], currentPage
                       </Suspense>
                     ) : (
                       <ComponentCardView
-                        currentUrl={currentPage.url}
-                        onAction={() => {
-                          setSearchValue('');
-                          overlayTriggerState?.close();
+                        currentUrl={currentUrl}
+                        onAction={(key) => {
+                          if (key === currentPage.url) {
+                            overlayTriggerState?.close();
+                          }
                         }}
                         items={library.id === selectedLibrary ? selectedItems : []}
                         ariaLabel="Pages"

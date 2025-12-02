@@ -5,7 +5,7 @@ import json5 from 'json5';
 import path from 'path';
 import React, {ReactNode} from 'react';
 import {renderHTMLfromMarkdown, TComponent, TInterface, TProperty, Type} from './types';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {size, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -57,7 +57,7 @@ const exampleStyle = style({
 const controlsStyle = style({
   display: 'grid',
   gridTemplateColumns: {
-    default: 'repeat(auto-fit, minmax(200px, 1fr))',
+    default: `repeat(auto-fit, minmax(${size(130)}, 1fr))`,
     lg: ['1fr']
   },
   gridAutoFlow: 'dense',
@@ -68,7 +68,18 @@ const controlsStyle = style({
     default: 12,
     lg: 16
   },
-  gridArea: 'controls'
+  gridArea: 'controls',
+  borderStyle: 'solid',
+  borderWidth: 0,
+  borderColor: 'gray-200',
+  borderTopWidth: {
+    default: 1,
+    lg: 0
+  },
+  paddingTop: {
+    default: 16,
+    lg: 0
+  }
 });
 
 export interface VisualExampleProps {

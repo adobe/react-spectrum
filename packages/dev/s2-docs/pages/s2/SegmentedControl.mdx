@@ -11,7 +11,7 @@ export const description = 'A mutually exclusive group of buttons used for view 
 
 <PageDescription>{docs.exports.SegmentedControl.description}</PageDescription>
 
-```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2"
+```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2" wide
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 
 <SegmentedControl/* PROPS */>
@@ -39,16 +39,16 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
   <SegmentedControlItem id="left">
     {/*- begin highlight -*/}
     <AlignLeft />
-    <Text>Align left</Text>
+    <Text>Left</Text>
     {/*- end highlight -*/}
   </SegmentedControlItem>
   <SegmentedControlItem id="center">
     <AlignCenter />
-    <Text>Align center</Text>
+    <Text>Center</Text>
   </SegmentedControlItem>
   <SegmentedControlItem id="right">
     <AlignRight />
-    <Text>Align right</Text>
+    <Text>Right</Text>
   </SegmentedControlItem>
 </SegmentedControl>
 ```
@@ -110,7 +110,7 @@ function Example() {
 
 ## API
 
-```tsx links={{SegmentedControl: '#segmentedcontrol', SegmentedControlItem: '#segmentedcontrolitem'}}
+```tsx links={{SegmentedControl: '#segmentedcontrol', SegmentedControlItem: '#segmentedcontrolitem', Icon: 'icons'}}
 <SegmentedControl>
   <SegmentedControlItem>
     <Icon />

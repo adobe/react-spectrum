@@ -52,7 +52,7 @@ let modalStyle = style({
 });
 
 
-export default function SearchMenuWrapper({pages, currentPage}) {
+export default function SearchMenuWrapper() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   let openSearchMenu = async () => {
@@ -94,8 +94,6 @@ export default function SearchMenuWrapper({pages, currentPage}) {
             className={underlayStyle}>
             <Modal className={modalStyle}>
               <SearchMenu
-                pages={pages}
-                currentPage={currentPage}
                 onClose={closeSearchMenu}
                 initialSearchValue=""
                 initialTag="components"
@@ -108,7 +106,7 @@ export default function SearchMenuWrapper({pages, currentPage}) {
         <DialogTrigger>
           <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 pressed:scale-95 cursor-pointer">Explore Components</Button>
           <S2Modal size="fullscreenTakeover">
-            <MobileSearchMenu pages={pages} currentPage={currentPage} initialTag="components" />
+            <MobileSearchMenu initialTag="components" />
           </S2Modal>
         </DialogTrigger>
       </div>

@@ -3,7 +3,7 @@
 import {ComponentCard} from './ComponentCard';
 import {InternalCardViewContext} from '../../../@react-spectrum/s2/src/Card';
 import {Key, ListBox, ListBoxItem} from 'react-aria-components';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export interface ComponentCardItem {
@@ -28,18 +28,13 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', curre
       <ListBox
         aria-label={ariaLabel}
         layout="grid"
+        selectionMode="single"
+        selectionBehavior="replace"
+        // @ts-ignore
+        linkBehavior="override"
+        autoFocus={!!currentUrl}
+        selectedKeys={currentUrl ? [currentUrl] : []}
         onAction={onAction}
-        ref={useCallback(el => {
-          if (el && currentUrl) {
-            // Wait for extra collection render.
-            requestAnimationFrame(() => {
-              let link = el.querySelector(`[href="${CSS.escape(currentUrl)}"]`);
-              if (link) {
-                el.scrollTo({top: link.offsetTop - 8});
-              }
-            });
-          }
-        }, [currentUrl])}
         className={style({
           display: {
             default: 'grid',

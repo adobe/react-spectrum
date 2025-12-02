@@ -76,7 +76,8 @@ const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boo
     default: 'focus-ring',
     isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 export const CloseButtonContext = createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
