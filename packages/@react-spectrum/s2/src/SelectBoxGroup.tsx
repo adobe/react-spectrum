@@ -105,12 +105,16 @@ const selectBoxStyles = style({
       horizontal: 188
     }
   },
-  maxWidth: {
-    default: 170,
-    orientation: {
-      horizontal: 480
+  '--max-width': {
+    type: 'width',
+    value: {
+      default: 170,
+      orientation: {
+        horizontal: 480
+      }
     }
   },
+  maxWidth: 'min(100%, var(--max-width))',
   minHeight: {
     default: 144,
     orientation: {
@@ -281,10 +285,19 @@ const gridStyles = style<{orientation?: Orientation}>({
       }
     }
   },
+  '--min-size': {
+    type: 'width',
+    value: {
+      orientation: {
+        horizontal: 188,
+        vertical: 144
+      }
+    }
+  },
   gridTemplateColumns: {
     orientation: {
-      horizontal: 'repeat(auto-fit, var(--size))',
-      vertical: 'repeat(auto-fit, var(--size))'
+      horizontal: 'repeat(auto-fit, minmax(var(--min-size), min(var(--size), 100%)))',
+      vertical: 'repeat(auto-fit, minmax(var(--min-size), min(var(--size), 100%)))'
     }
   }
 }, getAllowedOverrides());
@@ -315,7 +328,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       }, styles)}
       style={pressScale(ref, UNSAFE_style)}
       {...otherProps}>
-      {({isSelected, isDisabled, isHovered}) => {
+      {({isSelected, isDisabled, isHovered, selectionMode}) => {
         return (
           <>
             <div
@@ -326,7 +339,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
                 pointerEvents: 'none'
               })}
               aria-hidden="true">
-              {!isDisabled && (
+              {!isDisabled && selectionMode === 'multiple' && (
                 <div
                   className={box({
                     isSelected,
