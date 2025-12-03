@@ -120,6 +120,12 @@ function getContainerDimensions(containerNode: Element, visualViewport: VisualVi
     totalHeight = documentElement.clientHeight;
     width = visualViewport?.width ?? totalWidth;
     height = visualViewport?.height ?? totalHeight;
+
+    // If the visual viewport is larger than the client width, it means that the scrollbar gutter is taking up space
+    // that the visual viewport is not accounting for. In this case, we should cap the width at the client width.
+    if (width > documentElement.clientWidth) {
+      width = documentElement.clientWidth;
+    }
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
 
@@ -587,7 +593,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 }
 
 export function getRect(node: Element, ignoreScale: boolean) {
-  let {top, left, width, height} = node.getBoundingClientRect();
+  let { top, left, width, height } = node.getBoundingClientRect();
 
   // Use offsetWidth and offsetHeight if this is an HTML element, so that
   // the size is not affected by scale transforms.
