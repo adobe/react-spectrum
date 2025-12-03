@@ -10,22 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import NoMetadata_L from 'illustration:./S2_fill_noMetadata_generic1_160.svg';
+import NoMetadata_M from 'illustration:./S2_fill_noMetadata_generic1_96.svg';
+import NoMetadata_S from 'illustration:./S2_fill_noMetadata_generic1_48.svg';
 import {ReactNode} from 'react';
-import {IconProps, IllustrationContext} from '../../src/Icon';
+import {IconProps, IllustrationContext} from '../../../src/Icon';
 import {useContextProps} from 'react-aria-components';
-import Warning_L from 'illustration:./S2_lin_warning_160.svg';
-import Warning_M from 'illustration:./S2_lin_warning_96.svg';
-import Warning_S from 'illustration:./S2_lin_warning_48.svg';
 
-export default function Warning(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
+export default function NoMetadata(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'L':
-      return <Warning_L {...otherProps} />;
+      return <NoMetadata_L {...otherProps} />;
     case 'S':
-      return <Warning_S {...otherProps} />;
+      return <NoMetadata_S {...otherProps} />;
     case 'M':
-      return <Warning_M {...otherProps} />;
+      return <NoMetadata_M {...otherProps} />;
   }
 }
