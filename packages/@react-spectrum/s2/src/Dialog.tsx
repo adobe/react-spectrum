@@ -48,11 +48,17 @@ const image = style({
 const heading = style({
   flexGrow: 1,
   marginY: 0,
-  font: 'heading'
+  font: {
+    default: 'title-xl',
+    sm: 'title-2xl'
+  }
 });
 
 const header = style({
-  font: 'body-lg'
+  font: {
+    default: 'body-sm',
+    sm: 'body'
+  }
 });
 
 const content =  style({
@@ -65,7 +71,10 @@ const content =  style({
     // Make the whole dialog scroll rather than only the content when the height is small.
     [`@container (height < ${500 / 16}rem)`]: 'visible'
   },
-  font: 'body',
+  font: {
+    default: 'body-sm',
+    sm: 'body'
+  },
   // TODO: adjust margin on mobile?
   paddingX: {
     default: 32
@@ -74,7 +83,10 @@ const content =  style({
 
 const footer = style({
   flexGrow: 1,
-  font: 'body'
+  font: {
+    default: 'body-sm',
+    sm: 'body'
+  }
 });
 
 const buttonGroup = style({
@@ -181,7 +193,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible && 
+              {props.isDismissible &&
                 <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>
