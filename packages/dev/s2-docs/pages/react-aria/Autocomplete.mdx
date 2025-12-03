@@ -1058,10 +1058,9 @@ When the `filter` prop is not set, the items are controlled. This example uses a
 
 ```tsx render
 "use client";
-import {Autocomplete} from 'react-aria-components';
+import {Autocomplete, useAsyncList} from 'react-aria-components';
 import {SearchField} from 'vanilla-starter/SearchField';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
-import {useAsyncList} from 'react-stately';
 
 function AsyncLoadingExample() {
   let list = useAsyncList<{name: string}>({

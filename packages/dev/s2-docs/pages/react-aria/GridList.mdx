@@ -611,9 +611,8 @@ GridList supports drag and drop interactions when the `dragAndDropHooks` prop is
 
 ```tsx render
 "use client";
-import {useListData} from 'react-stately';
 import {GridList, GridListItem} from 'vanilla-starter/GridList';
-import {useDragAndDrop, Text} from 'react-aria-components';
+import {useDragAndDrop, Text, useListData} from 'react-aria-components';
 
 ///- begin collapse -///
 let images = [
