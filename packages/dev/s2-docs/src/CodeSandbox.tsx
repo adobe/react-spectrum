@@ -1,42 +1,43 @@
 import type {DownloadFiles} from './CodeBlock';
 import LZString from 'lz-string';
 
-export function createCodeSandbox(
+export async function createCodeSandbox(
   files: DownloadFiles['files'],
   deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
-  let form = document.createElement('form');
-  form.hidden = true;
-  form.method = 'POST';
-  form.action = 'https://codesandbox.io/api/v1/sandboxes/define';
-  form.target = '_blank';
-
-  let input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'query';
-  input.value = 'file=src/Example.tsx';
-  form.appendChild(input);
-
-  input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'environment';
-  input.value = 'server';
-  form.appendChild(input);
-
-  input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'parameters';
-
-  input.value = LZString.compressToBase64(JSON.stringify({
+  const parameters = LZString.compressToBase64(JSON.stringify({
     files: getCodeSandboxFiles(files, deps, type, entry)
   }));
-  form.appendChild(input);
 
-  document.body.appendChild(form);
-  form.submit();
-  form.remove();
+  // Validate with CodeSandbox API first
+  const response = await fetch('https://codesandbox.io/api/v1/sandboxes/define?json=1', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: 'file=src/Example.tsx',
+      environment: 'server',
+      parameters
+    })
+  });
+
+  console.log(response);
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`CodeSandbox API error: ${response.status} - ${errorText}`);
+  }
+
+  const result = await response.json();
+  console.log(result);
+  // Check if there's an error in the response
+  if (result.error) {
+    throw new Error(`CodeSandbox error: ${result.error}`);
+  }
+
+  return result.sandbox_id;
 }
 
 const devDependencies = {

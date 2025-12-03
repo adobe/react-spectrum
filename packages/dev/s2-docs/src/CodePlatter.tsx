@@ -126,7 +126,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Copy link</Text>
                 </MenuItem>
               }
-              {files && 
+              {files &&
                 <MenuItem
                   onAction={() => {
                     let filesToDownload = getCodeSandboxFiles(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
@@ -157,16 +157,22 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text>Install with shadcn</Text>
                 </MenuItem>
               }
-              {files && 
+              {files &&
                 <MenuItem
-                  onAction={() => {
-                    createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+                  onAction={async () => {
+                    try {
+                      let result = await createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+                      let url = `https://codesandbox.io/p/devbox/${result}`;
+                      window.open(url, '_blank')?.focus();
+                    } catch {
+                      ToastQueue.negative('Failed to create CodeSandbox, make sure you are logged in to CodeSandbox. If you are already logged in, logout and log back in.');
+                    }
                   }}>
                   <Polygon4 />
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
               }
-              {files && type !== 's2' && 
+              {files && type !== 's2' &&
                 <MenuItem
                   onAction={() => {
                     createStackBlitz(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
