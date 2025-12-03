@@ -593,7 +593,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 }
 
 export function getRect(node: Element, ignoreScale: boolean) {
-  let { top, left, width, height } = node.getBoundingClientRect();
+  let {top, left, width, height} = node.getBoundingClientRect();
 
   // Use offsetWidth and offsetHeight if this is an HTML element, so that
   // the size is not affected by scale transforms.
