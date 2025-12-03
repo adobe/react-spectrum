@@ -1882,6 +1882,137 @@ describe('Tree', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+  
+  describe('selection propagation', () => {
+    let items = rows;
+  
+    it('should select all children when the parent is selected', async () => {
+      let {getAllByRole, getByLabelText} = render(<DynamicTree treeProps={{selectionMode: 'multiple', selectionPropagation: true}} />);
+      let rows = getAllByRole('row');
+  
+      expect(rows).toHaveLength(20);
+  
+      for (let row of rows) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+  
+      let row = getByLabelText('Projects');
+      let checkbox = within(row).getByRole('checkbox');
+  
+      expect(row).toHaveAttribute('data-key', 'projects');
+      await user.click(checkbox);
+  
+      let expectedKeys = collectIds(items, 'projects');
+      for (let row of rows) {
+        let checkbox = within(row).getByRole('checkbox');
+        if (expectedKeys.has(row.dataset.key)) {
+          expect(checkbox).toBeChecked();
+        } else {
+          expect(checkbox).not.toBeChecked();
+        }
+      }
+  
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(expectedKeys);
+      await user.click(checkbox);
+  
+      for (let row of rows) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+  
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set());
+    });
+  
+    it('should select the parent when all children are selected', async () => {
+      let {getAllByRole, getByLabelText} = render(<DynamicTree treeProps={{selectionMode: 'multiple', selectionPropagation: true}} />);
+      let rows = getAllByRole('row');
+      let row = getByLabelText('Reports 1ABC');
+      let checkbox = within(row).getByRole('checkbox');
+  
+      expect(row).toHaveAttribute('data-key', 'reports-1ABC');
+      await user.click(checkbox);
+  
+      let expectedKeys = collectIds(items, 'reports-1A');
+      for (let row of rows) {
+        let checkbox = within(row).getByRole('checkbox');
+        if (expectedKeys.has(row.dataset.key)) {
+          expect(checkbox).toBeChecked();
+        } else {
+          expect(checkbox).not.toBeChecked();
+        }
+      }
+  
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(expectedKeys);
+      await user.click(checkbox);
+  
+      for (let row of rows) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+  
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set());
+    });
+  
+    it('should update the indeterminate state of the parent when a child is selected', async () => {
+      let {getByLabelText} = render(<DynamicTree treeProps={{selectionMode: 'multiple', selectionPropagation: true}} />);
+      let checkbox1 = within(getByLabelText('Projects')).getByRole('checkbox');
+      let checkbox2 = within(getByLabelText('Project 2')).getByRole('checkbox');
+  
+      expect(checkbox1).not.toBePartiallyChecked();
+      expect(checkbox2).not.toBePartiallyChecked();
+      await user.click(within(getByLabelText('Project 2A')).getByRole('checkbox'));
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['project-2A']));
+      expect(checkbox1).toBePartiallyChecked();
+      expect(checkbox2).toBePartiallyChecked();
+    });
+  
+    it('should work with selectionStrategy=parent', async () => {
+      let {getAllByRole, getByLabelText} = render(<DynamicTree treeProps={{selectionMode: 'multiple', selectionPropagation: true, selectionStrategy: 'parent'}} />);
+      let row = getByLabelText('Projects');
+      let checkbox = within(row).getByRole('checkbox');
+  
+      await user.click(checkbox);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['projects']));
+  
+      let expectedKeys = collectIds(items, 'projects');
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        if (expectedKeys.has(row.dataset.key)) {
+          expect(checkbox).toBeChecked();
+        } else {
+          expect(checkbox).not.toBeChecked();
+        }
+      }
+    });
+  
+    it('should work with selectionStrategy=child', async () => {
+      let {getAllByRole, getByLabelText} = render(<DynamicTree treeProps={{selectionMode: 'multiple', selectionPropagation: true, selectionStrategy: 'child'}} />);
+      let row = getByLabelText('Project 2');
+      let checkbox = within(row).getByRole('checkbox');
+  
+      await user.click(checkbox);
+  
+      let expectedKeys = collectIds(items, 'project-2');
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        if (expectedKeys.has(row.dataset.key)) {
+          expect(checkbox).toBeChecked();
+        } else {
+          expect(checkbox).not.toBeChecked();
+        }
+      }
+  
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['project-2A', 'project-2B', 'project-2C']));
+    });
+  });
 });
 
 AriaTreeTests({
@@ -2056,3 +2187,27 @@ AriaTreeTests({
     )
   }
 });
+
+function collectIds(tree, id) {
+  const ids = new Set();
+
+  const collect = items => {
+    items?.forEach(item => {
+      ids.add(item.id);
+      collect(item.childItems);
+    });
+  };
+
+  const traverse = items => {
+    return items?.some(item => {
+      if (item.id === id) {
+        ids.add(item.id);
+        collect(item.childItems);
+        return true;
+      }
+      return !!traverse(item.childItems);
+    });
+  };
+  traverse(tree);
+  return ids;
+}
