@@ -65,7 +65,7 @@ const tabProps = tv({
   base: 'group relative flex items-center cursor-default rounded-full px-4 py-1.5 text-sm font-medium transition forced-color-adjust-none',
   variants: {
     isDisabled: {
-      true: 'text-gray-200 dark:text-zinc-600 forced-colors:text-[GrayText] selected:text-white dark:selected:text-zinc-500 forced-colors:selected:text-[HighlightText] selected:bg-gray-200 dark:selected:bg-zinc-600 forced-colors:selected:bg-[GrayText]'
+      true: 'text-neutral-200 dark:text-neutral-600 forced-colors:text-[GrayText] selected:text-white dark:selected:text-neutral-500 forced-colors:selected:text-[HighlightText] selected:bg-neutral-200 dark:selected:bg-neutral-600 forced-colors:selected:bg-[GrayText]'
     }
   }
 });
@@ -80,7 +80,7 @@ export function Tab(props: TabProps) {
       )}>
       {composeRenderProps(props.children, children => (<>
         {children}
-        <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference group-disabled:bg-gray-400 group-disabled:mix-blend-normal group-disabled:dark:bg-zinc-600 group-disabled:-z-1 motion-safe:transition-[translate,width,height] " />
+        <SelectionIndicator className="absolute top-0 left-0 w-full h-full z-10 bg-white rounded-full mix-blend-difference group-disabled:bg-neutral-400 group-disabled:mix-blend-normal group-disabled:dark:bg-neutral-600 group-disabled:-z-1 motion-safe:transition-[translate,width,height] " />
       </>))}
     </RACTab>
   );
@@ -96,7 +96,7 @@ export function TabPanels<T extends object>(props: TabPanelsProps<T>) {
 
 const tabPanelStyles = tv({
   extend: focusRing,
-  base: 'flex-1 box-border p-4 text-sm text-gray-900 dark:text-zinc-100 transition entering:opacity-0 exiting:opacity-0 exiting:absolute exiting:top-0 exiting:left-0 exiting:w-full'
+  base: 'flex-1 box-border p-4 text-sm text-neutral-900 dark:text-neutral-100 transition entering:opacity-0 exiting:opacity-0 exiting:absolute exiting:top-0 exiting:left-0 exiting:w-full'
 });
 
 export function TabPanel(props: TabPanelProps) {

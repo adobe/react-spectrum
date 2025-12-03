@@ -363,6 +363,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
+              includeNecessityIndicatorInAccessibilityName
               isDisabled={isDisabled}
               isRequired={isRequired}
               size={size}

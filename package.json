@@ -27,8 +27,8 @@
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "start:s2-docs": "yarn workspace @react-spectrum/s2-docs start",
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
-    "build:mcp": "yarn workspace @react-spectrum/mcp build",
-    "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn workspace @react-spectrum/mcp build && node packages/dev/mcp/dist/index.js",
+    "build:mcp": "yarn workspace @react-spectrum/mcp build && yarn workspace @react-aria/mcp build",
+    "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn build:mcp && node packages/dev/mcp/s2/dist/index.js && node packages/dev/mcp/react-aria/dist/index.js",
     "test:mcp": "yarn build:s2-docs && yarn build:mcp && node packages/dev/mcp/scripts/smoke-list-pages.mjs",
     "test": "cross-env STRICT_MODE=1 VIRT_ON=1 yarn jest",
     "test:lint": "node packages/**/*.test-lint.js",
@@ -66,6 +66,8 @@
     "packages/react-aria",
     "packages/react-aria-components",
     "packages/tailwindcss-react-aria-components",
+    "packages/dev/mcp/s2",
+    "packages/dev/mcp/react-aria",
     "packages/*/*"
   ],
   "devDependencies": {
@@ -183,6 +185,7 @@
     "recast": "^0.23",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
+    "rehype-stringify": "^9.0.4",
     "rimraf": "^6.0.1",
     "sharp": "^0.33.5",
     "storybook": "^8.6.14",
@@ -272,8 +275,5 @@
         ]
       }
     ]
-  },
-  "locales": [
-    "en-US"
-  ]
+  }
 }

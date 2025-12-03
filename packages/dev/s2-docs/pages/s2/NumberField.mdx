@@ -5,6 +5,7 @@ import {NumberField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['input'];
+export const description = 'Allows a user to enter, increment, or decrement a numeric value.';
 
 # NumberField
 
@@ -110,9 +111,9 @@ import {Provider, NumberField} from '@react-spectrum/s2';
 
 ## Forms
 
-Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the raw number value (not a formatted string) to the server. Set the `isRequired` prop to validate that the user enters a value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
-```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true, placeholder: 'Enter a number'}} type="s2"
+```tsx render docs={docs.exports.NumberField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true, placeholder: 'Enter a number'}} type="s2" wide
 "use client";
 import {NumberField, Button, Form} from '@react-spectrum/s2';
 

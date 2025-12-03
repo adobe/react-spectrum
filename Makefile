@@ -2,6 +2,9 @@
 
 SHELL := /bin/bash
 PATH := ./node_modules/.bin:$(PATH)
+BRANCH := $(or $(CIRCLE_BRANCH),$(shell git rev-parse --abbrev-ref HEAD))
+BRANCH_TYPE := $(if $(filter $(BRANCH),main),main,pr)
+HASH := $(shell git rev-parse HEAD)
 
 all: node_modules
 
@@ -146,18 +149,25 @@ s2-api-diff:
 	node scripts/api-diff.js --skip-same --skip-style-props
 
 s2-docs:
-	PUBLIC_URL=https://reactspectrum.blob.core.windows.net/reactspectrum/$$(git rev-parse HEAD)/s2-docs DIST_DIR=dist/$$(git rev-parse HEAD)/s2-docs $(MAKE) build-s2-docs
+	DOCS_ENV=stage PUBLIC_URL=/$(BRANCH_TYPE)/$(HASH) $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/$(BRANCH_TYPE)/$(HASH)/robots.txt
+	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/$(BRANCH_TYPE)/$(HASH)/robots.txt
 
 s2-docs-production:
-	PUBLIC_URL=https://react-spectrum.adobe.com/beta DIST_DIR=dist/production/docs/beta $(MAKE) build-s2-docs
+	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
+	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
-	REGISTRY_URL=$(PUBLIC_URL)/registry node scripts/buildRegistry.mjs
-	REGISTRY_URL=$(PUBLIC_URL)/registry yarn build:s2-docs --public-url $(PUBLIC_URL)
-	mkdir -p $(DIST_DIR)
-	mv packages/dev/s2-docs/dist/* $(DIST_DIR)
-	mkdir -p $(DIST_DIR)/registry
-	mv starters/docs/registry $(DIST_DIR)/registry/vanilla
-	mv starters/tailwind/registry $(DIST_DIR)/registry/tailwind
+	node scripts/buildRegistry.mjs
+	yarn build:s2-docs
+	node scripts/createFeedS2.mjs
+	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
+	mkdir -p dist/s2-docs/s2/$(PUBLIC_URL)
+	mv packages/dev/s2-docs/dist/react-aria/* dist/s2-docs/react-aria/$(PUBLIC_URL)
+	mv packages/dev/s2-docs/dist/s2/* dist/s2-docs/s2/$(PUBLIC_URL)
+	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)/registry
+	mv starters/docs/registry dist/s2-docs/react-aria/$(PUBLIC_URL)/registry/vanilla
+	mv starters/tailwind/registry dist/s2-docs/react-aria/$(PUBLIC_URL)/registry/tailwind

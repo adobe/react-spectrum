@@ -66,7 +66,7 @@ const disclosure = style({
 }, getAllowedOverrides());
 
 /**
- * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
  */
 export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
@@ -99,7 +99,7 @@ export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps,
 
 export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
-   * 
+   *
    * @default 3
    */
   level?: number,
@@ -342,4 +342,3 @@ export const DisclosurePanel = forwardRef(function DisclosurePanel(props: Disclo
     </RACDisclosurePanel>
   );
 });
-

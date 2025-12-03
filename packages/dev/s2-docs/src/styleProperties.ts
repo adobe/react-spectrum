@@ -413,7 +413,7 @@ const shorthandMapping: {[key: string]: {values: string[], mapping: string[]}} =
     mapping: ['overflowX', 'overflowY', 'textOverflow', 'whiteSpace']
   },
   font: {
-    values: ['fontSize'],
+    values: [...fontSize],
     mapping: ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'color']
   }
 };
@@ -463,18 +463,6 @@ export function getAdditionalTypes(propertyName: string): string[] {
 export const spacingTypeValues = {
   baseSpacing: baseSpacingValues,
   negativeSpacing: negativeBaseSpacingValues
-};
-
-// a mapping of value to relative links that should be replaced in place
-// opted NOT to link to Fonts from 'ui', 'code', etc since the visual example
-// is so close to the area in the table where those are rendered
-const relativeLinks: {[key: string]: string} = {
-  'text-to-control': '#dimensions',
-  'text-to-visual': '#dimensions',
-  'edge-to-text': '#dimensions',
-  'pill': '#dimensions',
-  'baseColors': '#colors',
-  'fontSize': '#text'
 };
 
 // a mapping of value to mdn links that should be replaced in place
@@ -546,8 +534,6 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
 
         if (mdnTypeLinks[value]) {
           links[value] = {href: mdnTypeLinks[value]};
-        } else if (relativeLinks[value]) {
-          links[value] = {href: relativeLinks[value], isRelative: true};
         }
       }
     }
@@ -576,8 +562,6 @@ export function getShorthandDefinitions(): {[key: string]: StyleMacroPropertyDef
 
       if (mdnTypeLinks[value]) {
         links[value] = {href: mdnTypeLinks[value]};
-      } else if (relativeLinks[value]) {
-        links[value] = {href: relativeLinks[value], isRelative: true};
       }
     }
 

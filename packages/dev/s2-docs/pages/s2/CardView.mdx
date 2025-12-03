@@ -4,6 +4,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['grid', 'gallery'];
+export const description = 'Displays a group of related objects, with support for selection and bulk actions.';
 
 # CardView
 
@@ -115,7 +116,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Content
 
-`CardView` follows the [Collection Components API](collections.html?component=CardView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+`CardView` follows the [Collection Components API](collections?component=CardView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
 
 ```tsx render
 "use client";
@@ -487,7 +488,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
 
 ### Links
 
-Use the `href` prop on a Card to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a Card to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle']} wide type="s2"
 "use client";
@@ -843,7 +844,7 @@ import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 
 ## Selection and actions
 
-Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each card's `id`) to control the selected cards. Return an [ActionBar](ActionBar.html) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable cards with `isDisabled`. See the [selection guide](selection.html) for details.
+Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each card's `id`) to control the selected cards. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable cards with `isDisabled`. See the [selection guide](selection) for details.
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -953,7 +954,7 @@ function Example(props) {
 
 ## API
 
-```tsx links={{CardView: '#cardview', Card: 'Card.html'}}
+```tsx links={{CardView: '#cardview', Card: 'Card'}}
 <CardView>
   <Card />
   <SkeletonCollection />

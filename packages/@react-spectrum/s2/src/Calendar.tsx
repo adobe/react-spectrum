@@ -141,7 +141,8 @@ const cellStyles = style({
     isOutsideMonth: 'none'
   },
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  disableTapHighlight: true
 });
 
 const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({
@@ -353,14 +354,14 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
         isolation: 'isolate'
       })}
       offset={{months: props.months}}>
-      <CalendarGridHeader>
+      <CalendarGridHeader className="">
         {(day) => (
           <CalendarHeaderCell>
             {day}
           </CalendarHeaderCell>
         )}
       </CalendarGridHeader>
-      <CalendarGridBody>
+      <CalendarGridBody className="">
         {(date) => (
           <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
         )}

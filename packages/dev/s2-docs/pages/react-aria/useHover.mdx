@@ -14,6 +14,7 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 export const section = 'Interactions';
+export const description = 'Handles hover interactions with proper support for touch devices.';
 
 # useHover
 
@@ -29,8 +30,7 @@ but `:hover` is problematic on touch devices due to mouse emulation in mobile br
 and device, `:hover` may never apply, or may apply continuously until the user touches another element.
 `useHover` only applies when the pointer is truly capable of hovering, and emulated mouse events are ignored.
 
-{/* TODO: uncomment once we transfer over the blogs to new docs  */}
-{/* Read our [blog post](/blog/building-a-button-part-2.html) about the complexities of hover event handling to learn more. */}
+Read our [blog post](blog/building-a-button-part-2) about the complexities of hover event handling to learn more.
 
 ## Accessibility
 
