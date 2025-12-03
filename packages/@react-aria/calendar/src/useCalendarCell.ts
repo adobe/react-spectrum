@@ -100,7 +100,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       : state.value && isSameDay(state.value, date)
   );
 
-  if (isInvalid) {
+  if (isInvalid && !isUnavailable) {
     isSelected = true;
   }
 
