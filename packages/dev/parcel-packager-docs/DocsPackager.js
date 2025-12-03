@@ -13,25 +13,23 @@
 const {Packager} = require('@parcel/plugin');
 const v8 = require('v8');
 
-let cache = new Map();
-let nodes = {};
-
 module.exports = new Packager({
-  async loadBundleConfig() {
-    cache = new Map();
-    nodes = {};
-  },
   async package({bundle, bundleGraph, options}) {
+    let cache = new Map();
+    let nodes = {};
+
     let promises = [];
     bundle.traverseAssets(asset => {
       promises.push(parse(asset));
     });
 
     let code = new Map(await Promise.all(promises));
+    let entryAsset = bundle.getEntryAssets()[0];
+    let result;
     try {
-      var result = processAsset(bundle.getEntryAssets()[0]);
+      result = processAsset(entryAsset);
     } catch (err) {
-      console.log(err.stack);
+      throw new Error(`Failed to process docs for ${entryAsset?.filePath || 'unknown asset'}: ${err.message}\n${err.stack}`);
     }
 
     function processAsset(asset) {
