@@ -430,6 +430,7 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+  let variant = props.variant || 'primary';
 
   return (
     <Link
@@ -440,28 +441,41 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        variant: props.variant || 'primary',
+        variant,
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor,
         isStaticColor: !!props.staticColor,
         isPending: false
       }, props.styles)}>
-      <Provider
-        values={[
-          [SkeletonContext, null],
-          [TextContext, {
-            styles: style({paddingY: '--labelPadding', order: 1}),
-            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-            'data-rsp-slot': 'text'
-          }],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-      </Provider>
+      {(renderProps) => (<>
+        {variant === 'genai' || variant === 'premium'
+          ? (
+            <span
+              className={gradient({
+                ...renderProps,
+                // Retain hover styles when an overlay is open.
+                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                variant
+              })} />
+             )
+          : null}
+        <Provider
+          values={[
+            [SkeletonContext, null],
+            [TextContext, {
+              styles: style({paddingY: '--labelPadding', order: 1}),
+              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+              'data-rsp-slot': 'text'
+            }],
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            }]
+          ]}>
+          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+        </Provider>
+      </>)}
     </Link>
   );
 });

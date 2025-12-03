@@ -35,7 +35,7 @@ let states = [
   {isDisabled: true},
   {size: ['S', 'M', 'L', 'XL']},
   {staticColor: ['black', 'white']},
-  {variant: ['accent', 'negative', 'primary', 'secondary']}
+  {variant: ['accent', 'negative', 'primary', 'secondary', 'premium', 'genai']}
 ];
 
 let combinations = generatePowerset(states);
