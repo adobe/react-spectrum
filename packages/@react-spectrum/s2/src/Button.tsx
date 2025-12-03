@@ -430,7 +430,14 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
-  let variant = props.variant || 'primary';
+  let {
+    fillStyle = 'fill',
+    size = 'M',
+    variant = 'primary',
+    staticColor,
+    styles,
+    children
+  } = props;
 
   return (
     <Link
@@ -442,12 +449,12 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
         variant,
-        fillStyle: props.fillStyle || 'fill',
-        size: props.size || 'M',
-        staticColor: props.staticColor,
-        isStaticColor: !!props.staticColor,
+        fillStyle,
+        size,
+        staticColor,
+        isStaticColor: !!staticColor,
         isPending: false
-      }, props.styles)}>
+      }, styles)}>
       {(renderProps) => (<>
         {variant === 'genai' || variant === 'premium'
           ? (
@@ -473,7 +480,7 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
               styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
             }]
           ]}>
-          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
         </Provider>
       </>)}
     </Link>

@@ -105,7 +105,7 @@ const selectBoxStyles = style({
       horizontal: 188
     }
   },
-  '--max-width': {
+  '--select-box-max-width': {
     type: 'width',
     value: {
       default: 170,
@@ -114,7 +114,7 @@ const selectBoxStyles = style({
       }
     }
   },
-  maxWidth: 'min(100%, var(--max-width))',
+  maxWidth: 'min(100%, var(--select-box-max-width))',
   minHeight: {
     default: 144,
     orientation: {
@@ -276,7 +276,7 @@ const gridStyles = style<{orientation?: Orientation}>({
   gridAutoRows: '1fr',
   gap: 24,
   justifyContent: 'center',
-  '--size': {
+  '--select-box-group-width': {
     type: 'width',
     value: {
       orientation: {
@@ -285,7 +285,7 @@ const gridStyles = style<{orientation?: Orientation}>({
       }
     }
   },
-  '--min-size': {
+  '--select-box-group-min-width': {
     type: 'width',
     value: {
       orientation: {
@@ -296,8 +296,8 @@ const gridStyles = style<{orientation?: Orientation}>({
   },
   gridTemplateColumns: {
     orientation: {
-      horizontal: 'repeat(auto-fit, minmax(var(--min-size), min(var(--size), 100%)))',
-      vertical: 'repeat(auto-fit, minmax(var(--min-size), min(var(--size), 100%)))'
+      horizontal: 'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))',
+      vertical: 'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))'
     }
   }
 }, getAllowedOverrides());
