@@ -149,11 +149,11 @@
     height: 100%;
   }
 
-  &:is(.react-aria-Row > :first-child) {
+  &:is(.react-aria-Row:last-child > :first-child) {
     border-end-start-radius: var(--radius);
   }
 
-  &:is(.react-aria-Row > :last-child) {
+  &:is(.react-aria-Row:last-child > :last-child) {
     border-end-end-radius: var(--radius);
   }
 
