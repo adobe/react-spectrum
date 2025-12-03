@@ -464,7 +464,8 @@ export function sortItemsForDisplay<T extends {name: string, date?: string}>(ite
       if (!aIsIntro && bIsIntro) {
         return 1;
       }
-      return 0;
+      // Sort alphabetically by name
+      return a.name.localeCompare(b.name);
     });
   }
   return items;

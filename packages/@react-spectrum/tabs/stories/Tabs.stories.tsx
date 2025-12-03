@@ -374,10 +374,10 @@ ChangingTabTitles.story = {
   name: 'changing tab titles'
 };
 
-export const ChangingSelectionProgramatically: TabsStory = () => <ControlledSelection />;
+export const ChangingSelectionProgrammatically: TabsStory = () => <ControlledSelection />;
 
-ChangingSelectionProgramatically.story = {
-  name: 'changing selection programatically'
+ChangingSelectionProgrammatically.story = {
+  name: 'changing selection programmatically'
 };
 
 export const Links: StoryFn<SpectrumTabsProps<unknown> & {collapsed?: boolean}> = (args) => {
