@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
+import {fireEvent, render} from '@react-spectrum/test-utils-internal';
 import {TextArea} from '../src';
 
 describe('TextField', () => {
@@ -24,10 +24,8 @@ describe('TextField', () => {
     let icon = getByRole('presentation').querySelector('svg')!;
     expect(icon).toBeInTheDocument();
     // user event with touch doesn't cause touchEnd to trigger so using fireEvent
-    act(() => {
-      fireEvent.touchStart(icon);
-      fireEvent.touchEnd(icon);
-    });
+    fireEvent.touchStart(icon);
+    fireEvent.touchEnd(icon);
 
     expect(document.activeElement).toBe(textarea);
   });
