@@ -5,18 +5,22 @@ import type {Page} from '@parcel/rsc';
 // eslint-disable-next-line
 import {transformAsync} from '@parcel/rust/lib/index.js';
 
-export const getPages = cache(async () => {
+let pagesPromise: Promise<Page[]> | null = null;
+
+async function loadPages(): Promise<Page[]> {
   let pages: string[] = [];
   for await (let page of glob('pages/*/**/*.mdx')) {
     pages.push(page);
   }
 
-  return Promise.all(pages.map(async (page, index) => {
+  let results: Page[] = [];
+  for (let i = 0; i < pages.length; i++) {
+    let page = pages[i];
     let code = await readFile(page);
     let res: any = await transformAsync({
       filename: page,
       code,
-      module_id: `page_${index}_${page}`,
+      module_id: `page_${i}_${page}`,
       project_root: process.cwd(),
       inline_fs: false,
       env: {},
@@ -40,13 +44,22 @@ export const getPages = cache(async () => {
     });
 
     let name = page.slice(6, -4);    
-    return {
+    results.push({
       name,
       url: getUrl(name),
       exports: res.mdx_exports,
       tableOfContents: res.mdx_toc
-    } satisfies Page;
-  }));
+    } satisfies Page);
+  }
+  return results;
+}
+
+export const getPages = cache(async () => {
+  // Call loadPages() only once during build
+  if (!pagesPromise) {
+    pagesPromise = loadPages();
+  }
+  return pagesPromise;
 });
 
 function getUrl(name: string) {
