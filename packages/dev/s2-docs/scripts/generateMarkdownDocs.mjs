@@ -3,7 +3,7 @@
 import * as babel from '@babel/parser';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
-import {getBaseUrl} from '../src/pageUtils';
+import {getBaseUrl} from '../src/pageUtils.ts';
 import glob from 'fast-glob';
 import path from 'path';
 import {Project} from 'ts-morph';
