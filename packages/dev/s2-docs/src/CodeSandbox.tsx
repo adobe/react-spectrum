@@ -24,14 +24,12 @@ export async function createCodeSandbox(
     })
   });
 
-  console.log(response);
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`CodeSandbox API error: ${response.status} - ${errorText}`);
   }
 
   const result = await response.json();
-  console.log(result);
   // Check if there's an error in the response
   if (result.error) {
     throw new Error(`CodeSandbox error: ${result.error}`);
