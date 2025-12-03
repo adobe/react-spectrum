@@ -123,9 +123,9 @@ function getContainerDimensions(containerNode: Element, visualViewport: VisualVi
 
     // If the visual viewport is larger than the client width, it means that the scrollbar gutter is taking up space
     // that the visual viewport is not accounting for. In this case, we should cap the width at the client width.
-    if (width > documentElement.clientWidth) {
-      width = documentElement.clientWidth;
-    }
+    // if (width > documentElement.clientWidth) {
+    //   width = documentElement.clientWidth;
+    // }
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
 
