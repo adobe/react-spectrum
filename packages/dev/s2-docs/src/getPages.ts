@@ -11,12 +11,12 @@ export const getPages = cache(async () => {
     pages.push(page);
   }
 
-  return Promise.all(pages.map(async (page, index) => {
+  return Promise.all(pages.map(async page => {
     let code = await readFile(page);
     let res: any = await transformAsync({
       filename: page,
       code,
-      module_id: `page_${index}_${page}`,
+      module_id: '123',
       project_root: process.cwd(),
       inline_fs: false,
       env: {},
