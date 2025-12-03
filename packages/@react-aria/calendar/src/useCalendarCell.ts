@@ -100,8 +100,12 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       : state.value && isSameDay(state.value, date)
   );
 
-  if (isInvalid && !isUnavailable) {
-    isSelected = true;
+  if (isInvalid) {
+    // don't mark unavaliable + invalid dates in range calendars as selected, that case only comes up via allowsNoncontiguousRanges
+    // and thus those unavailable dates shouldn't be selected. For single select calendars, we mark unavailble + invalid days as selected for styling reasons
+    if (!('highlightedRange' in state) || !isUnavailable) {
+      isSelected = true;
+    }
   }
 
   // For performance, reuse the same date object as before if the new date prop is the same.
