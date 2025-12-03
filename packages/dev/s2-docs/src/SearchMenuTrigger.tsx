@@ -3,9 +3,9 @@
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {getLibraryFromPage, getLibraryLabel} from './library';
-import {Page} from '@parcel/rsc';
 import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
 import Search from '@react-spectrum/s2/icons/Search';
+import {useRouter} from './Router';
 
 let SearchMenu = lazy(() => import('./SearchMenu').then(({SearchMenu}) => ({default: SearchMenu})));
 export async function preloadSearchMenu() {
@@ -17,8 +17,6 @@ export async function preloadSearchMenu() {
 }
 
 export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | 'className'> {
-  pages: Page[],
-  currentPage: Page,
   onOpen: () => void,
   onClose: () => void,
   isSearchOpen: boolean,
@@ -32,16 +30,7 @@ let underlayStyle = style({
   width: 'full',
   height: '--page-height',
   isolation: 'isolate',
-  backgroundColor: 'transparent-black-500',
-  opacity: {
-    isEntering: 0,
-    isExiting: 0
-  },
-  transition: 'opacity',
-  transitionDuration: {
-    default: 250,
-    isExiting: 130
-  }
+  backgroundColor: 'transparent-black-500'
 });
 
 let modalStyle = style({
@@ -66,6 +55,7 @@ let modalStyle = style({
 });
 
 export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overlayId, ...props}: SearchMenuTriggerProps) {
+  let {currentPage} = useRouter();
   let [initialSearchValue, setInitialSearchValue] = useState('');
   let open = useCallback((value: string) => {
     setInitialSearchValue(value);
@@ -118,8 +108,12 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isSearchOpen, onClose, open]);
-  
-  
+
+  let [wasOpen, setWasOpen] = useState(isSearchOpen);
+  if (isSearchOpen && !wasOpen) {
+    setWasOpen(true);
+  }
+    
   return (
     <div
       className={style({
@@ -172,14 +166,14 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             isFocusVisible: 2
           }
         })({isHovered, isFocusVisible})}
-        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none'} as CSSProperties}>
+        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none', visibility: isSearchOpen ? 'hidden' : 'visible'} as CSSProperties}>
         <Search
           UNSAFE_className={String(style({
             size: fontRelative(20),
             '--iconPrimary': {type: 'fill', value: 'currentColor'},
             flexShrink: 0
           }))} />
-        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(props.currentPage))}</span>
+        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(currentPage))}</span>
         <kbd
           className={style({
             marginStart: 'auto',
@@ -199,14 +193,20 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
         isDismissable
         isOpen={isSearchOpen}
         onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
-        className={underlayStyle}>
+        className={underlayStyle}
+        // Keep in the DOM after it has opened once to preserve scroll position.
+        isExiting={!isSearchOpen && wasOpen}
+        style={{
+          display: !isSearchOpen ? 'none' : undefined,
+          // @ts-ignore
+          viewTransitionName: 'search-menu-underlay'
+        }}>
         <Modal className={modalStyle}>
           <SearchMenu
-            pages={props.pages}
-            currentPage={props.currentPage}
             onClose={onClose}
             overlayId={overlayId}
-            initialSearchValue={initialSearchValue} />
+            initialSearchValue={initialSearchValue}
+            isSearchOpen={isSearchOpen} />
         </Modal>
       </ModalOverlay>
     </div>

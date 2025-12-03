@@ -13,6 +13,7 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 export const section = 'Interactions';
+export const description = 'Handles focus interactions for an element and its descendants.';
 
 # useFocusWithin
 
@@ -25,7 +26,7 @@ an element when either the element itself or a descendant element has focus. Thi
 the [:focus-within](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-within) pseudo class
 in CSS.
 
-To handle focus events on only the target element, and not descendants, see [useFocus](useFocus.html).
+To handle focus events on only the target element, and not descendants, see [useFocus](useFocus).
 
 ## Example
 
@@ -36,7 +37,7 @@ Focus within and blur within events are also logged to the list below. Notice th
 fired when the wrapper gains and loses focus, not when focus moves within the group.
 
 {/* We don't have component hook docs yet */}
-{/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).** */}
+{/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField).** */}
 
 ```tsx render
 "use client";

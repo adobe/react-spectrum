@@ -174,7 +174,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme})}>
       {renderProps => (
         <>
-          <OverlayArrow>
+          <OverlayArrow className="">
             <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 5">
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>

@@ -1,0 +1,106 @@
+@import "./theme.css";
+
+.react-aria-ToastRegion {
+  position: fixed;
+  bottom: var(--spacing-4);
+  right: var(--spacing-4);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--spacing-2);
+  border-radius: var(--radius-lg);
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+}
+
+.react-aria-Toast {
+  width: 230px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  background: var(--highlight-background);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  outline: none;
+  forced-color-adjust: none;
+  view-transition-class: toast;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  .react-aria-ToastContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    font: var(--font-size) system-ui;
+
+    [slot=title] {
+      font-weight: 600;
+      color: var(--highlight-foreground);
+    }
+
+    [slot=description] {
+      font-size: var(--font-size-sm);
+      color: var(--highlight-foreground);
+    }
+  }
+
+  .react-aria-Button[slot=close] {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    appearance: none;
+    border-radius: var(--radius-sm);
+    height: var(--spacing-8);
+    width: var(--spacing-8);
+    color: var(--highlight-foreground);
+    padding: 0;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &[data-hovered] {
+      background: var(--tint-900);
+      box-shadow: none;
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--highlight-foreground);
+      outline-offset: 2px;
+    }
+
+    &[data-pressed] {
+      background: var(--highlight-pressed);
+      box-shadow: none;
+    }
+  }
+}
+
+::view-transition-new(.toast):only-child {
+  animation: slide-in 400ms;
+}
+
+::view-transition-old(.toast):only-child {
+  animation: slide-out 400ms;
+  animation-fill-mode: forwards;
+}
+
+@keyframes slide-out {
+  to {
+    translate: 100% 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}

@@ -4,8 +4,10 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['upload', 'input'];
+export const description = 'Allows a user to access the file system with any pressable React Aria or React Spectrum component.';
 
 # FileTrigger
 
@@ -42,7 +44,7 @@ function Example(props) {
 
 ## Custom trigger
 
-`FileTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`FileTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or <Link href={`${getBaseUrl('react-aria')}/usePress`}>usePress</Link> hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -70,7 +72,7 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 ## API
 
-```tsx links={{FileTrigger: '#filetrigger', Button: 'Button.html'}}
+```tsx links={{FileTrigger: '#filetrigger', Button: 'Button'}}
 <FileTrigger>
   <Button />
 </FileTrigger>

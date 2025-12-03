@@ -1,8 +1,9 @@
+import type {DownloadFiles} from './CodeBlock';
 import LZString from 'lz-string';
 
 export function createCodeSandbox(
-  files: {[name: string]: string},
-  deps: {[name: string]: string},
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
@@ -65,8 +66,8 @@ const devDependencies = {
 };
 
 export function getCodeSandboxFiles(
-  files: {[name: string]: string},
-  deps: {[name: string]: string},
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
@@ -164,6 +165,6 @@ createRoot(document.getElementById('root')!).render(<${entryName} />);
         'include': ['src']
       }, null, 2) + '\n'
     },
-    ...Object.fromEntries(Object.entries(files).map(([name, content]) => ['src/' + name, {content}]))
+    ...Object.fromEntries(Object.entries(files).map(([name, file]) => ['src/' + name, {content: file.contents}]))
   };
 }

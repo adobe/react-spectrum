@@ -20,10 +20,14 @@ import {Popover} from 'tailwind-starter/Popover';
 import {Button} from 'tailwind-starter/Button';
 import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
 import reactAriaFavicon from 'url:../../assets/react-aria.ico';
+import SearchMenuWrapperServer from '../../src/SearchMenuWrapperServer';
+import {getCurrentPage, getPages} from '../../src/getPages';
+import {getBaseUrl} from '../../src/pageUtils';
 
-export const section = 'Getting started';
+export const section = 'Overview';
 export const title = 'Home';
 export const hideFromSearch = true;
+export const description = 'Accessible, high quality UI components and hooks for building design systems.';
 
 <html>
   <head>
@@ -38,19 +42,19 @@ export const hideFromSearch = true;
     <meta name="twitter:image" content={ogImage} />
     <meta property="og:title" content="React Aria" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={props.currentPage.url} />
+    <meta property="og:url" content={getCurrentPage(props.currentPage).url} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:description" content="Craft world-class accessible components with custom styles." />
     <meta property="og:locale" content="en_US" />
-    <link rel="canonical" href={props.currentPage.url} />
+    <link rel="canonical" href={getCurrentPage(props.currentPage).url} />
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{__html: JSON.stringify(
         {
           '@context': 'http://schema.org',
-          '@type': 'Article',
+          '@type': 'WebPage',
           author: 'Adobe Inc',
-          headline: 'React Aria',
+          name: 'React Aria',
           description: 'Craft world-class accessible components with custom styles.',
           image: ogImage,
           publisher: {
@@ -75,10 +79,10 @@ export const hideFromSearch = true;
         </a>
 
         <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 font-semibold ring-1 ring-black/5">
-          <a href="../blog/index.html" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Blog</a>
-          <a href="../releases/index.html" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Releases</a>
-          <a href="../react-spectrum/index.html" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
-          <a href="../internationalized/index.html" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Internationalized</a>
+          <a href="blog/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Blog</a>
+          <a href="releases/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Releases</a>
+          <a href={getBaseUrl('s2')} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
+          <a href="internationalized/date/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Internationalized</a>
           <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="no-underline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">
             <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
               <path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
@@ -101,8 +105,8 @@ export const hideFromSearch = true;
         <p className="m-0 text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-3xl mx-auto [text-wrap:balance]">Over 50 components with built-in behavior, adaptive interactions, top-tier accessibility, and internationalization out of the box, ready for your styles.</p>
 
         <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-          <a href="getting-started.html" className="no-underline bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95">Get Started</a>
-          <a href="components.html" className="no-underline bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95">Explore Components</a>
+          <a href="getting-started" className="no-underline bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-pointer">Get Started</a>
+          <SearchMenuWrapperServer currentPage={props.currentPage} />
         </div>
 
         <div className="relative pt-10 md:pt-20 md:mt-20">
@@ -125,19 +129,22 @@ export const hideFromSearch = true;
                 <circle r={3} cx={3} cy={3} />
               </marker>
             </defs>
-            <Arrow href="Popover.html" points="310,50 310,132 383,132 383,142" textX={290} y={41}>Popover</Arrow>
-            <Arrow href="Tooltip.html" points="522,50 522,132 427,132 427,142" textX={504} y={41}>Tooltip</Arrow>
+            <Arrow href="Popover" points="310,50 310,132 383,132 383,142" textX={290} y={41}>Popover</Arrow>
+            <Arrow href="Tooltip" points="522,50 522,132 427,132 427,142" textX={504} y={41}>Tooltip</Arrow>
             <g transform="translate(0 80)">
-              <Arrow href="SearchField.html" textX={28} x1={88} x2={132} y={80}>SearchField</Arrow>
-              <Arrow href="Table.html" textX={58} x1={88} x2={132} y={170}>Table</Arrow>
-              <Arrow href="Modal.html" textX={748} x1={700} x2={742} y={80} marker="markerStart">Modal</Arrow>
+              <Arrow href="SearchField" textX={28} x1={88} x2={132} y={80}>SearchField</Arrow>
+              <Arrow href="Table" textX={58} x1={88} x2={132} y={170}>Table</Arrow>
+              <Arrow href="Modal" textX={748} x1={700} x2={742} y={80} marker="markerStart">Modal</Arrow>
             </g>
             <g transform="translate(0 80)" id="hideOnScroll" className="transition duration-300">
-              <Arrow href="Checkbox.html" textX={36} x1={88} x2={142} y={294}>Checkbox</Arrow>
-              <Arrow href="ToggleButton.html" textX={20} x1={88} x2={180} y={362}>ToggleButton</Arrow>
-              <Arrow href="Menu.html" textX={748} x1={690} x2={744} y={180} marker="markerStart">Menu</Arrow>
+              <Arrow href="Checkbox" textX={36} x1={88} x2={142} y={294}>Checkbox</Arrow>
+              <Arrow href="ToggleButton" textX={20} x1={88} x2={180} y={362}>ToggleButton</Arrow>
+              <Arrow href="Menu" textX={748} x1={690} x2={744} y={180} marker="markerStart">Menu</Arrow>
             </g>
           </svg>
+          <div className="max-w-[600px] mx-auto">
+            <a href="examples/crud" target="_blank" className="flex items-center gap-1 w-fit mt-4 ms-auto text-sm text-gray-900 dark:text-white hover:bg-black/10 hover:dark:bg-white/10 group no-underline rounded-full px-3 -me-3 py-1 transition focus-ring active:scale-95">View example source<ArrowRight aria-hidden className="inline w-4 h-4 will-change-transform group-hover:translate-x-0.5 transition" /></a>
+          </div>
         </div>
       </section>
     </header>
@@ -147,7 +154,7 @@ export const hideFromSearch = true;
     <Section className="pink-gradient-background">
       <h2><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-linear-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
       <p className="m-0">React Aria is style-free out of the box, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.</p>
-      <LearnMoreLink href="styling.html" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
+      <LearnMoreLink href="styling" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
 
       <Styles>
 
@@ -298,14 +305,15 @@ export const hideFromSearch = true;
     <Section className="red-gradient-background">
       <h2><span className="bg-clip-text bg-linear-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
       <p className="m-0">Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation, table column resizing, and a ton more.</p>
-      <LearnMoreLink href="dnd.html" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
+      <LearnMoreLink href="dnd" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
       <KanbanBoard />
+      <a href="examples/kanban" target="_blank" className="flex items-center gap-1 w-fit ms-auto text-sm text-gray-900 dark:text-white hover:bg-black/10 hover:dark:bg-white/10 group no-underline rounded-full px-3 -me-3 py-1 transition focus-ring active:scale-95">View example source<ArrowRight aria-hidden className="inline w-4 h-4 will-change-transform group-hover:translate-x-0.5 transition" /></a>
     </Section>
 
     <Section className="cyan-gradient-background">
       <h2><GradientText>High quality</GradientText> <span className="bg-clip-text bg-linear-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
       <p className="m-0">React Aria ensures a great experience for users, no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
-      <LearnMoreLink href="quality.html#interactions" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
+      <LearnMoreLink href="quality#interactions" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
 
       <PaginatedCarousel className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar" paginationClassName="md:hidden">
         <Card>
@@ -347,7 +355,7 @@ export const hideFromSearch = true;
     <Section className="blue-gradient-background">
       <h2><span className="bg-clip-text bg-linear-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
       <p className="m-0">React Aria is designed with accessibility as a top priority, and battle tested in production applications. All components are built to work across a wide variety of devices and assistive technologies to ensure the best experience possible for all users.</p>
-      <LearnMoreLink href="quality.html#accessibility" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
+      <LearnMoreLink href="quality#accessibility" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
 
       <div className="grid gap-y-6 gap-x-20 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-center">
         <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-1/2 iphone-frame md:order-4">
@@ -376,14 +384,14 @@ export const hideFromSearch = true;
     <Section className="orange-gradient-background">
       <h2><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-linear-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
       <p className="m-0">React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 5 numbering systems, right-to-left layout, and more.</p>
-      <LearnMoreLink href="quality.html#internationalization" className="text-orange-700 dark:text-orange-600 hover:bg-orange-400/[15%]" />
+      <LearnMoreLink href="quality#internationalization" className="text-orange-700 dark:text-orange-600 hover:bg-orange-400/[15%]" />
       <I18n />
     </Section>
 
     <Section className="green-gradient-background">
       <h2><span className="bg-clip-text bg-linear-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
       <p className="m-0">React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with a built-in DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the low-level Hook-based API. Mix and match as needed.</p>
-      <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
+      <LearnMoreLink href="customization" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
     <PaginatedCarousel className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] lg:grid-cols-2 lg:auto-rows-[1rem] -mx-8 px-8 lg:px-12 lg:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" paginationClassName="max-w-3xl lg:hidden">
       <Card className="lg:row-end-[span_13]">
@@ -615,17 +623,17 @@ export const hideFromSearch = true;
       <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
 
       <div className="grid md:grid-cols-3 gap-6">
-        <a href="getting-started.html" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
+        <a href="getting-started" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
           <CardTitle>Install and Setup <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
           <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
         </a>
 
-        <a href="components.html" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
+        <a href="components" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
           <CardTitle>View Components <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
           <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
         </a>
 
-        <a href="examples/index.html" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
+        <a href="examples/" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
           <CardTitle>Explore Examples <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
           <CardDescription>Check out some fully styled examples showing what is possible with React Aria.</CardDescription>
         </a>

@@ -9,21 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const pagesDir = path.resolve(__dirname, '../pages');
-const outputDir = path.resolve(__dirname, '../dist/og');
-
-async function getMdxFiles(dir) {
-  let entries = await fs.readdir(dir, {withFileTypes: true});
-  let files = [];
-  for (let entry of entries) {
-    let fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files = files.concat(await getMdxFiles(fullPath));
-    } else if (entry.isFile() && /\.mdx?$/.test(entry.name)) {
-      files.push(fullPath);
-    }
-  }
-  return files;
-}
+const outputDir = path.resolve(__dirname, '../dist');
 
 async function getTitle(filePath) {
   let raw = await fs.readFile(filePath, 'utf8');
@@ -51,9 +37,10 @@ function getSubtitle(slug) {
   const folder = slugParts[0];
   switch (folder) {
     case 'react-aria':
+      if (slugParts[1] === 'internationalized') {
+        return 'Internationalized';
+      }
       return 'React Aria';
-    case 'internationalized':
-      return 'Internationalized';
     case 's2':
     default:
       return 'React Spectrum';
@@ -220,10 +207,8 @@ function getLibraryLogo(subtitle) {
 }
 
 await fs.mkdir(outputDir, {recursive: true});
-const files = await getMdxFiles(pagesDir);
-console.log(`Generating OG images for ${files.length} pages…`);
 
-for (let file of files) {
+for await (let file of fs.glob('pages/*/**/*.mdx')) {
   let title = await getTitle(file);
   let slug = path
     .relative(pagesDir, file)
@@ -251,6 +236,7 @@ for (let file of files) {
           alignItems: 'center',
           width: '100%',
           height: '100%',
+          padding: '60px',
           backgroundColor: '#ffffff',
           fontFamily: 'adobe-clean',
           color: '#000000'
@@ -261,19 +247,32 @@ for (let file of files) {
             style: {
               display: 'flex',
               alignItems: 'center',
-              gap: 44
+              gap: 44,
+              maxWidth: '100%'
             },
             children: [
               // Library logo
-              getLibraryLogo(subtitle),
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    flexShrink: 0
+                  },
+                  children: getLibraryLogo(subtitle)
+                }
+              },
               // Library name
               {
                 type: 'div',
                 props: {
                   style: {
+                    display: 'flex',
                     fontSize: 84,
                     fontWeight: 700,
-                    lineHeight: 1.1
+                    lineHeight: 1.1,
+                    flexShrink: 1,
+                    minWidth: 0
                   },
                   children: subtitle
                 }
@@ -294,6 +293,7 @@ for (let file of files) {
           alignItems: 'center',
           width: '100%',
           height: '100%',
+          padding: '60px',
           backgroundColor: '#ffffff',
           fontFamily: 'adobe-clean',
           color: '#000000'
@@ -304,11 +304,21 @@ for (let file of files) {
             style: {
               display: 'flex',
               alignItems: 'center',
-              gap: 44
+              gap: 44,
+              maxWidth: '100%'
             },
             children: [
               // Library logo
-              getLibraryLogo(subtitle),
+              {
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    flexShrink: 0
+                  },
+                  children: getLibraryLogo(subtitle)
+                }
+              },
               // Text content
               {
                 type: 'div',
@@ -316,13 +326,16 @@ for (let file of files) {
                   style: {
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 0
+                    gap: 0,
+                    flexShrink: 1,
+                    minWidth: 0
                   },
                   children: [
                     {
                       type: 'div',
                       props: {
                         style: {
+                          display: 'flex',
                           fontSize: 84,
                           fontWeight: 700,
                           lineHeight: 1.1
@@ -334,6 +347,7 @@ for (let file of files) {
                       type: 'div',
                       props: {
                         style: {
+                          display: 'flex',
                           fontSize: 56,
                           fontWeight: 400,
                           color: '#464646'
@@ -375,7 +389,8 @@ for (let file of files) {
 
   // Convert SVG -> PNG
   let pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
-  let outFile = path.join(outputDir, `${slug}.png`);
+  let [library, ...rest] = slug.split('/');
+  let outFile = path.join(outputDir, `${library}/og/${rest.join('/')}.png`);
   await fs.mkdir(path.dirname(outFile), {recursive: true});
   await fs.writeFile(outFile, pngBuffer);
   console.log(`✓ ${slug}.png`);
