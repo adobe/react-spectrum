@@ -101,8 +101,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={docs.exports.DateRangePicker} links={docs.links} props={['allowsNonContiguousRanges', 'isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide type="s2"
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-import {DateRangePicker, Form, Button} from '@react-spectrum/s2';
+import {DateRangePicker, Form, Button, useLocale} from '@react-spectrum/s2';
 
 function Example(props) {
   let {locale} = useLocale();

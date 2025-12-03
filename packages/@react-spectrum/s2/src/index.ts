@@ -91,11 +91,7 @@ export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from 
 
 export {pressScale} from './pressScale';
 
-export {Autocomplete} from 'react-aria-components';
-export {Collection} from 'react-aria-components';
-export {FileTrigger} from 'react-aria-components';
-export {parseColor} from 'react-aria-components';
-
+export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
 export {useListData, useTreeData, useAsyncList} from 'react-stately';
 
 export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps} from './Accordion';

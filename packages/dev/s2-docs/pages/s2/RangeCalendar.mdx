@@ -154,8 +154,7 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide type="s2"
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-import {RangeCalendar} from '@react-spectrum/s2';
+import {RangeCalendar, useLocale} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example(props) {

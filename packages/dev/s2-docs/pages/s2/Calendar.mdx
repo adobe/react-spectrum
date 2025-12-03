@@ -142,8 +142,7 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={docs.exports.Calendar} links={docs.links} props={['isInvalid', 'errorMessage']} wide type="s2"
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-import {Calendar} from '@react-spectrum/s2';
+import {Calendar, useLocale} from '@react-spectrum/s2';
 
 function Example(props) {
   let {locale} = useLocale();
