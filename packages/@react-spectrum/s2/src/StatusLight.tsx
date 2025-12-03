@@ -29,7 +29,7 @@ interface StatusLightStyleProps {
    *
    * @default 'neutral'
    */
-  variant: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
+  variant?: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
   /**
    * The size of the StatusLight.
    *
@@ -110,7 +110,7 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
  */
 export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
-  let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let {children, size = 'M', variant = 'neutral', role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);
   let isSkeleton = useIsSkeleton();
 
