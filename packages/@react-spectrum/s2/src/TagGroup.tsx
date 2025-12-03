@@ -525,10 +525,21 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphasized, isSelected}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
+  let parentButtonContext = useContext(RACButtonContext);
+  let buttonContext;
+  // we only wanna keep the props from the button remove slot since that is the remove button props, clear context if not (aka in a custom dialog)
+  if (parentButtonContext && typeof parentButtonContext === 'object' && 'slots' in parentButtonContext) {
+    if (parentButtonContext.slots?.remove) {
+      buttonContext = {slots: {remove: parentButtonContext.slots.remove}};
+    } else {
+      buttonContext = null;
+    }
+  }
+
   return (
     <Provider
       values={[
-        [RACButtonContext, null]
+        [RACButtonContext, buttonContext]
       ]}>
       {isInRealDOM && (
         <div
