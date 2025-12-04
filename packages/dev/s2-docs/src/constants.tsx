@@ -1,5 +1,5 @@
 import {AdobeLogo} from './icons/AdobeLogo';
-import {InternationalizedLogoFilled} from './icons/InternationalizedLogoFilled';
+import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 import {ReactNode} from 'react';
 
@@ -25,7 +25,7 @@ export const TAB_DEFS: Record<Library, TabDef> = {
   'internationalized': {
     label: 'Internationalized',
     description: 'Framework-agnostic internationalization utilities',
-    icon: <InternationalizedLogoFilled />
+    icon: <InternationalizedLogo />
   }
 };
 

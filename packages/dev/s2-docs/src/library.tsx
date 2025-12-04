@@ -1,5 +1,5 @@
 import {AdobeLogo} from './icons/AdobeLogo';
-import {InternationalizedLogoFilled} from './icons/InternationalizedLogoFilled';
+import {InternationalizedLogo} from './icons/InternationalizedLogo';
 import React from 'react';
 import {ReactAriaLogo} from './icons/ReactAriaLogo';
 
@@ -38,7 +38,7 @@ export function getLibraryIcon(library: Library): React.ReactNode {
     case 'react-aria':
       return <ReactAriaLogo />;
     case 'internationalized':
-      return <InternationalizedLogoFilled />;
+      return <InternationalizedLogo />;
     default:
       return <AdobeLogo />;
   }
