@@ -1,6 +1,9 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "parcel-resolver-docs", "..."],
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "./S2DocsResolver", "parcel-resolver-docs", "..."],
+  "optimizers": {
+    "*.html": []
+  },
   "transformers": {
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
@@ -21,5 +24,6 @@
   },
   "packagers": {
     "*.json": "parcel-packager-docs"
-  }
+  },
+  "namers": ["./S2DocsNamer.js", "..."]
 }

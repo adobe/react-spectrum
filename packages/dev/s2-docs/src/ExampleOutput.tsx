@@ -32,6 +32,11 @@ export function ExampleOutput({component, props = {}, align = 'center', orientat
         },
         alignItems: 'center',
         width: 'full',
+        height: {
+          orientation: {
+            vertical: 80
+          }
+        },
         overflow: 'auto',
         gridArea: 'example',
         borderRadius: 'lg',

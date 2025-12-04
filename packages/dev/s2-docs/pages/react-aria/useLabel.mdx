@@ -11,8 +11,10 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 import docs from 'docs:@react-aria/label';
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
 
 export const section = 'Utilities';
+export const description = 'Associates a label with a form field for accessibility.';
 
 # useLabel
 
@@ -49,10 +51,17 @@ By default, `useLabel` assumes that the label is a native HTML label element.
 However, if you are labeling a non-native form element, be sure to use an
 element other than a `<label>` and set the `labelElementType` prop appropriately.
 
-{/* not implemented yet */}
-{/* See [useRadioGroup](useRadioGroup.html#example) and [useTextField](useTextField.html#example)
-for examples of how `useLabel` is used by components. */}
+See [useRadioGroup](https://react-spectrum.adobe.com/react-aria/useRadioGroup.html#example) and [useTextField](https://react-spectrum.adobe.com/react-aria/useTextField.html#example)
+for examples of how `useLabel` is used by components.
 
 ## API
 
 <FunctionAPI function={docs.exports.useLabel} links={docs.links} />
+
+### LabelAriaProps
+
+<InterfaceType {...docs.exports.LabelAriaProps} />
+
+### LabelAria
+
+<InterfaceType {...docs.exports.LabelAria} />

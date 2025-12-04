@@ -8,7 +8,7 @@ import {PhotoDetail} from './PhotoDetail';
 
 type Photo = typeof photos[0];
 
-export function App() {
+export default function App() {
   let [album, setAlbum] = useState('library');
   let [library, setLibrary] = useState(photos);
   let [isMobile, setMobile] = useState(false);

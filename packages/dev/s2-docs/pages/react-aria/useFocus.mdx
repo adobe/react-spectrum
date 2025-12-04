@@ -13,6 +13,7 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 import {InterfaceType} from '../../src/types';
 export const section = 'Interactions';
+export const description = 'Handles focus events for the target element only, not descendants.';
 
 # useFocus
 
@@ -26,7 +27,7 @@ behavior where focus events do not bubble. This is similar to
 the [:focus](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus) pseudo class
 in CSS.
 
-To handle focus events on descendants of an element, see [useFocusWithin](useFocusWithin.html).
+To handle focus events on descendants of an element, see [useFocusWithin](useFocusWithin).
 
 ## Example
 
@@ -74,12 +75,12 @@ function Example() {
 
 <FunctionAPI function={docs.exports.useFocus} links={docs.links} />
 
-### Usage
+### FocusProps
 
-`useFocus` returns props that you should spread onto the target element:
+<InterfaceType {...docs.exports.FocusProps} />
+
+### FocusResult
 
 <InterfaceType {...docs.exports.FocusResult} />
 
-`useFocus` supports the following options and event handlers:
 
-<InterfaceType {...docs.exports.FocusProps} />

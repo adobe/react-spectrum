@@ -448,7 +448,11 @@ const tabPanel = style({
   marginTop: 4,
   color: 'gray-800',
   flexGrow: 1,
-  minHeight: 0
+  minHeight: 0,
+  display: {
+    default: 'block',
+    isInert: 'none'
+  }
 }, getAllowedOverrides({height: true}));
 
 export function TabPanel(props: TabPanelProps): ReactNode | null {
@@ -677,6 +681,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     contents = (
       <RACTabs
         {...props}
+        className=""
         style={{display: 'contents'}}>
         {props.children}
       </RACTabs>

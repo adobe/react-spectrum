@@ -1,17 +1,18 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
+import type {DownloadFiles} from './CodeBlock';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
-import React, {createContext, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, ProviderProps, ReactNode, RefObject, useContext, useRef, useState} from 'react';
 import {ShadcnCommand} from './ShadcnCommand';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {zip} from './zip';
@@ -36,10 +37,7 @@ const platterStyle = style({
 
 interface CodePlatterProps {
   children: ReactNode,
-  shareUrl?: string,
-  files?: {[name: string]: string},
   type?: 'vanilla' | 'tailwind' | 's2',
-  registryUrl?: string,
   showCoachMark?: boolean
 }
 
@@ -52,7 +50,26 @@ export function CodePlatterProvider(props: CodePlatterContextValue & {children: 
   return <CodePlatterContext.Provider value={props}>{props.children}</CodePlatterContext.Provider>;
 }
 
-export function CodePlatter({children, shareUrl, files, type, registryUrl, showCoachMark}: CodePlatterProps) {
+interface FileProviderContextValue extends DownloadFiles {
+  entry?: string
+}
+
+const FileProviderContext = createContext<FileProviderContextValue | null>(null);
+export function FileProvider(props: ProviderProps<FileProviderContextValue | null>) {
+  return <FileProviderContext {...props} />;
+}
+
+const ShadcnContext = createContext<string | null>(null);
+export function ShadcnProvider(props: ProviderProps<string | null>) {
+  return <ShadcnContext {...props} />;
+}
+
+const ShareContext = createContext<string | null>(null);
+export function ShareUrlProvider(props: ProviderProps<string | null>) {
+  return <ShareContext {...props} />;
+}
+
+export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
   let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
@@ -65,6 +82,10 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl, showC
     }
   }
 
+  let {files, deps = {}, urls = {}, entry} = useContext(FileProviderContext) ?? {};
+  let registryUrl = useContext(ShadcnContext);
+  let shareUrl = useContext(ShareContext);
+
   return (
     <div className={platterStyle}>
       <Toolbar showCoachMark={showCoachMark}>
@@ -74,7 +95,7 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl, showC
           density="regular"
           size="S">
           <CopyButton ariaLabel="Copy code" tooltip="Copy code" getText={getText} />
-          {(shareUrl || files || type || registryUrl) && <MenuTrigger align="end">
+          {(shareUrl || files || registryUrl) && <MenuTrigger align="end">
             <TooltipTrigger placement="end">
               <ActionButton aria-label="Open in…">
                 <OpenIn />
@@ -97,23 +118,21 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl, showC
                     if (node instanceof HTMLHeadingElement && node.id) {
                       url.hash = '#' + node.id;
                     }
-                    navigator.clipboard.writeText(url.toString());
+                    navigator.clipboard.writeText(url.toString()).catch(() => {
+                      ToastQueue.negative('Failed to copy link.');
+                    });
                   }}>
                   <LinkIcon />
                   <Text slot="label">Copy link</Text>
                 </MenuItem>
               }
-              {(files || type) &&
+              {files && 
                 <MenuItem
                   onAction={() => {
-                    let code = codeRef.current!.querySelector('pre')!.textContent!;
-                    let filesToDownload = getCodeSandboxFiles({
-                      ...files,
-                      'Example.tsx': transformExampleCode(code)
-                    }, type);
+                    let filesToDownload = getCodeSandboxFiles(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
                     let filesToZip = {};
                     for (let key in filesToDownload) {
-                      if (filesToDownload[key]) {
+                      if (filesToDownload[key] && !key.startsWith('.codesandbox') && !key.startsWith('.devcontainer')) {
                         filesToZip[key] = filesToDownload[key].content;
                       }
                     }
@@ -138,41 +157,33 @@ export function CodePlatter({children, shareUrl, files, type, registryUrl, showC
                   <Text>Install with shadcn</Text>
                 </MenuItem>
               }
-              {(files || type) &&
+              {files && 
                 <MenuItem
                   onAction={() => {
-                    let code = codeRef.current!.querySelector('pre')!.textContent!;
-                    createCodeSandbox({
-                      ...files,
-                      'Example.tsx': transformExampleCode(code)
-                    }, type);
+                    createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
                   }}>
                   <Polygon4 />
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
               }
-              {(files || type) && type !== 's2' &&
+              {files && type !== 's2' && 
                 <MenuItem
                   onAction={() => {
-                    let code = codeRef.current!.querySelector('pre')!.textContent!;
-                    createStackBlitz({
-                      ...files,
-                      'Example.tsx': transformExampleCode(code)
-                    }, type);
+                    createStackBlitz(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
                   }}>
                   <Flash />
                   <Text slot="label">Open in StackBlitz</Text>
                 </MenuItem>
               }
-              {registryUrl &&
+              {/* registryUrl &&
                 <MenuItem
-                  href={`https://v0.dev/chat/api/open?url=${registryUrl}`}
+                  href={`https://v0.dev/chat/api/open?url=${getBaseUrl('react-aria')}/registry/${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
                   <V0 />
                   <Text>Open in v0</Text>
                 </MenuItem>
-              }
+              */}
             </Menu>
           </MenuTrigger>}
         </ActionButtonGroup>
@@ -212,35 +223,59 @@ export function Pre({children}) {
   );
 }
 
-function transformExampleCode(code: string): string {
-  // Export the last function
-  code = code.replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport function Example$2');
+function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: DownloadFiles['files'], urls: {[name: string]: string}, entry: string | undefined): DownloadFiles['files'] {
+  if (!entry) {
+    return {
+      ...files,
+      'Example.tsx': {contents: getExampleCode(codeRef, urls)}
+    };
+  }
 
-  // Add function wrapper around raw JSX in examples.
-  return code.replace(/\n<((?:.|\n)+)/, (_, code) => {
-    let res = '\nexport function Example() {\n  return (\n    <';
-    let lines = code.split('\n');
-    res += lines.shift();
-
-    for (let line of lines) {
-      res += '\n    ' + line;
-    }
-
-    res += '\n  );\n}\n';
-    return res;
-  });
+  return files;
 }
 
-const V0 = createIcon(props => (
-  <svg viewBox="0 0 40 20" {...props}>
-    <path
-      d="M23.3919 0H32.9188C36.7819 0 39.9136 3.13165 39.9136 6.99475V16.0805H36.0006V6.99475C36.0006 6.90167 35.9969 6.80925 35.9898 6.71766L26.4628 16.079C26.4949 16.08 26.5272 16.0805 26.5595 16.0805H36.0006V19.7762H26.5595C22.6964 19.7762 19.4788 16.6139 19.4788 12.7508V3.68923H23.3919V12.7508C23.3919 12.9253 23.4054 13.0977 23.4316 13.2668L33.1682 3.6995C33.0861 3.6927 33.003 3.68923 32.9188 3.68923H23.3919V0Z"
-      fill="var(--iconPrimary)" />
-    <path
-      d="M13.7688 19.0956L0 3.68759H5.53933L13.6231 12.7337V3.68759H17.7535V17.5746C17.7535 19.6705 15.1654 20.6584 13.7688 19.0956Z"
-      fill="var(--iconPrimary)" />
-  </svg>
-));
+function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name: string]: string}) {
+  let code = codeRef.current!.querySelector('pre')!.textContent!;
+  let fileTabs = codeRef.current!.closest('[data-files]');
+  if (fileTabs) {
+    let example = fileTabs.querySelector('[data-example] pre');
+    if (example) {
+      code = example.textContent!;
+    }
+  }
+
+  return code
+    // Export the last function
+    .replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport default function Example$2')
+    // Add function wrapper around raw JSX in examples.
+    .replace(/\n<((?:.|\n)+)/, (_, code) => {
+      let res = '\nexport default function Example() {\n  return (\n    <';
+      let lines = code.split('\n');
+      res += lines.shift();
+
+      for (let line of lines) {
+        res += '\n    ' + line;
+      }
+
+      res += '\n  );\n}\n';
+      return res;
+    })
+    // Resolve urls
+    .replace(/import (.*?) from ['"](url:.*?)['"]/g, (_, name, specifier) => {
+      return `const ${name} = '${urls[specifier]}'`;
+    });
+}
+
+// const V0 = createIcon(props => (
+//   <svg viewBox="0 0 40 20" {...props}>
+//     <path
+//       d="M23.3919 0H32.9188C36.7819 0 39.9136 3.13165 39.9136 6.99475V16.0805H36.0006V6.99475C36.0006 6.90167 35.9969 6.80925 35.9898 6.71766L26.4628 16.079C26.4949 16.08 26.5272 16.0805 26.5595 16.0805H36.0006V19.7762H26.5595C22.6964 19.7762 19.4788 16.6139 19.4788 12.7508V3.68923H23.3919V12.7508C23.3919 12.9253 23.4054 13.0977 23.4316 13.2668L33.1682 3.6995C33.0861 3.6927 33.003 3.68923 32.9188 3.68923H23.3919V0Z"
+//       fill="var(--iconPrimary)" />
+//     <path
+//       d="M13.7688 19.0956L0 3.68759H5.53933L13.6231 12.7337V3.68759H17.7535V17.5746C17.7535 19.6705 15.1654 20.6584 13.7688 19.0956Z"
+//       fill="var(--iconPrimary)" />
+//   </svg>
+// ));
 
 const Flash = createIcon(props => (
   <svg viewBox="0 0 20 20" {...props}>
@@ -265,7 +300,9 @@ function ShadcnDialog({registryUrl}) {
           <Button
             variant="accent"
             onPress={() => {
-              navigator.clipboard.writeText(preRef.current!.textContent!);
+              navigator.clipboard.writeText(preRef.current!.textContent!).catch(() => {
+                ToastQueue.negative('Failed to copy command. Please try again.');
+              });
               close();
             }}>
             Copy and close

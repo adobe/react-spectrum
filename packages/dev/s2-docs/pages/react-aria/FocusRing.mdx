@@ -14,6 +14,7 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/focus';
 
 export const section = 'Interactions';
+export const description = 'A utility component that applies a visual focus indicator to its child element when focused via keyboard.';
 
 # FocusRing
 
@@ -27,7 +28,7 @@ navigate around. Focus rings are only visible when interacting with a keyboard s
 and touch screen users. When we are unable to detect if the user is using a mouse or touch screen, such as
 switching in from a different tab, we show the focus ring.
 
-If CSS classes are not being used for styling, see [useFocusRing](useFocusRing.html) for a hooks version.
+If CSS classes are not being used for styling, see [useFocusRing](useFocusRing) for a hooks version.
 
 ## Example
 
@@ -44,5 +45,7 @@ import './FocusRingExample.css';
 ```
 
 ## API
+
+### FocusRing
 
 <PropTable links={docs.links} component={docs.exports.FocusRing} />

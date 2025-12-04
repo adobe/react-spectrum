@@ -2,9 +2,13 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['table', 'data', 'grid'];
+export const relatedPages = [
+  {title: 'Testing TableView', url: './TableView/testing'}
+];
+export const description = 'Displays data in rows and columns, with row selection and sorting.';
 
 # TableView
 
@@ -49,7 +53,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Content
 
-`TableView` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections.
+`TableView` follows the [Collection Components API](collections?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render type="s2"
@@ -193,7 +197,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a Row to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a Row to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -333,7 +337,7 @@ function TableWithDividers() {
 
 ### Column menus
 
-Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Menu.html) docs for more details.
+Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Menu) docs for more details.
 
 ```tsx render type="s2"
 "use client";
@@ -397,7 +401,7 @@ function CustomMenusTable() {
 
 ## Selection and actions
 
-Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar.html) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection.html) for details.
+Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -698,7 +702,8 @@ import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, Text
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import User from '@react-spectrum/s2/icons/User';
 import Edit from '@react-spectrum/s2/icons/Edit';
-import {useCallback,useRef, useState} from 'react';
+import {useCallback} from 'react';
+import {useListData} from '@react-stately/data';
 
 ///- begin collapse -///
 let defaultItems = [
@@ -725,24 +730,15 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
 
 export default function EditableTable(props) {
   let columns = editableColumns;
-  let [editableItems, setEditableItems] = useState(defaultItems);
-  let intermediateValue = useRef<any>(null);
+  let data = useListData({initialItems: defaultItems});
 
-  let onChange = useCallback((id: Key, columnId: Key) => {
-    let value = intermediateValue.current;
-    if (value === null) {
+  let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+    let value = values[columnId];
+    if (value == null) {
       return;
     }
-    intermediateValue.current = null;
-    setEditableItems(prev => {
-      let newItems = prev.map(i => i.id === id && i[columnId] !== value ? {...i, [columnId]: value} : i);
-      return newItems;
-    });
-  }, []);
-
-  let onIntermediateChange = useCallback((value: any) => {
-    intermediateValue.current = value;
-  }, []);
+    data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
+  }, [data]);
 
   return (
     <TableView aria-label="Dynamic table" {...props} styles={style({height: 208})}>
@@ -751,7 +747,7 @@ export default function EditableTable(props) {
           <Column {...column}>{column.name}</Column>
         )}
       </TableHeader>
-      <TableBody items={editableItems}>
+      <TableBody items={data.items}>
         {item => (
           <Row id={item.id} columns={columns}>
             {(column) => {
@@ -759,23 +755,30 @@ export default function EditableTable(props) {
                 ///- begin highlight -///
                 return (
                   <EditableCell
+                    aria-label={`Edit ${item[column.id]} in ${column.name}`}
                     align={column.align}
                     showDivider={column.showDivider}
-                    onSubmit={() => onChange(item.id, column.id!)}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
                     renderEditing={() => (
                       <TextField
-                        aria-label="Edit fruit"
+                        aria-label="Fruit name edit field"
                         autoFocus
                         validate={value => value.length > 0 ? null : 'Fruit name is required'}
                         styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                         defaultValue={item[column.id!]}
-                        onChange={value => onIntermediateChange(value)} />
+                        name={column.id! as string} />
                     )}>
                     <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
                       {item[column.id]}
                       <ActionButton slot="edit" aria-label="Edit fruit">
                         <Edit />
-                      </ActionButton></div>
+                      </ActionButton>
+                    </div>
                   </EditableCell>
                 );
                 ///- end highlight -///
@@ -786,14 +789,19 @@ export default function EditableTable(props) {
                   <EditableCell
                     align={column.align}
                     showDivider={column.showDivider}
-                    onSubmit={() => onChange(item.id, column.id!)}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
                     renderEditing={() => (
                       <Picker
                         aria-label="Edit farmer"
                         autoFocus
                         styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
                         defaultValue={item[column.id!]}
-                        onChange={value => onIntermediateChange(value)}>
+                        name={column.id! as string}>
                         <PickerItem textValue="Eva" id="Eva">
                           <User />
                           <Text>Eva</Text>

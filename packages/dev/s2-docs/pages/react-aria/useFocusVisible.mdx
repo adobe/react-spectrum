@@ -14,14 +14,11 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 export const section = 'Interactions';
+export const description = 'Determines whether keyboard focus should be visible based on interaction mode.';
 
 # useFocusVisible
 
 <PageDescription>{docs.exports.useFocusVisible.description}</PageDescription>
-
-## API
-
-<FunctionAPI function={docs.exports.useFocusVisible} links={docs.links} />
 
 ## Features
 
@@ -33,7 +30,7 @@ the [:focus-visible](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-vis
 in CSS.
 
 To determine whether a focus ring should be visible for an individual component rather than
-globally, see [useFocusRing](useFocusRing.html).
+globally, see [useFocusRing](useFocusRing).
 
 ## Example
 
@@ -71,12 +68,10 @@ function Example() {
 
 <FunctionAPI function={docs.exports.useFocusVisible} links={docs.links} />
 
-### Usage
-
-`useFocusVisible` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.FocusVisibleResult} />
-
-`useFocusVisible` supports the following options:
+### FocusVisibleProps
 
 <InterfaceType {...docs.exports.FocusVisibleProps} />
+
+### FocusVisibleResult
+
+<InterfaceType {...docs.exports.FocusVisibleResult} />

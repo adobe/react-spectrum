@@ -3,8 +3,10 @@ export default Layout;
 
 import {RangeCalendar} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
+import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['calendar'];
+export const description = 'Allows a user to select a contiguous range of dates.';
 
 # RangeCalendar
 
@@ -23,11 +25,12 @@ export const tags = ['calendar'];
     }
   }}
   importSource="@react-spectrum/s2"
-  type="s2" />
+  type="s2"
+  wide />
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the <Link href={`${getBaseUrl('react-aria')}/internationalized/date/`}>@internationalized/date</Link> package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -80,7 +83,7 @@ import {parseDate} from '@internationalized/date';
 
 ### Custom calendar systems
 
-`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the <Link href={`${getBaseUrl('react-aria')}/internationalized/date/Calendar#custom-calendars`}>@internationalized/date docs</Link> for an example implementation.
 
 ```tsx render
 "use client";
@@ -88,13 +91,15 @@ import type {AnyCalendarDate} from '@internationalized/date';
 import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
 import {RangeCalendar} from '@react-spectrum/s2';
 
-export default (
-  <RangeCalendar
-    firstDayOfWeek="sun"
-    ///- begin highlight -///
-    createCalendar={() => new Custom454()} />
-    ///- end highlight -///
-);
+export default function Example() {
+  return (
+    <RangeCalendar
+      firstDayOfWeek="sun"
+      ///- begin highlight -///
+      createCalendar={() => new Custom454()} />
+      ///- end highlight -///
+  );
+}
 
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
