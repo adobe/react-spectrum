@@ -171,3 +171,8 @@ build-s2-docs:
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)/registry
 	mv starters/docs/registry dist/s2-docs/react-aria/$(PUBLIC_URL)/registry/vanilla
 	mv starters/tailwind/registry dist/s2-docs/react-aria/$(PUBLIC_URL)/registry/tailwind
+
+	# Build old docs pages, which get inter-mixed with the new pages
+	# TODO: We probably don't need to build this on every PR
+	yarn parcel build 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
+	yarn parcel build 'packages/@react-{aria,stately}/*/docs/*.mdx'  --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
