@@ -48,17 +48,11 @@ const image = style({
 const heading = style({
   flexGrow: 1,
   marginY: 0,
-  font: {
-    default: 'title-xl',
-    sm: 'title-2xl'
-  }
+  font: 'title-2xl'
 });
 
 const header = style({
-  font: {
-    default: 'body-sm',
-    sm: 'body'
-  }
+  font: 'body'
 });
 
 const content =  style({
@@ -71,10 +65,7 @@ const content =  style({
     // Make the whole dialog scroll rather than only the content when the height is small.
     [`@container (height < ${500 / 16}rem)`]: 'visible'
   },
-  font: {
-    default: 'body-sm',
-    sm: 'body'
-  },
+  font: 'body',
   // TODO: adjust margin on mobile?
   paddingX: {
     default: 32
@@ -83,10 +74,7 @@ const content =  style({
 
 const footer = style({
   flexGrow: 1,
-  font: {
-    default: 'body-sm',
-    sm: 'body'
-  }
+  font: 'body'
 });
 
 const buttonGroup = style({
