@@ -15,17 +15,18 @@ export interface SearchFieldProps extends AriaSearchFieldProps {
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
   placeholder?: string;
+  autoFocus?: boolean;
 }
 
 export function SearchField(
-  { label, description, errorMessage, placeholder, ...props }: SearchFieldProps
+  { label, description, errorMessage, placeholder, autoFocus, ...props }: SearchFieldProps
 ) {
   return (
     (
       <AriaSearchField {...props}>
         {label && <Label>{label}</Label>}
         <Search size={18} />
-        <Input placeholder={placeholder} className="react-aria-Input inset" />
+        <Input placeholder={placeholder} className="react-aria-Input inset" autoFocus={autoFocus} />
         <Button className="clear-button"><X size={14} /></Button>
         {description && <Description>{description}</Description>}
         <FieldError>{errorMessage}</FieldError>
