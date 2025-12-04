@@ -63,7 +63,7 @@ formatting options and can be styled as needed.
 * Uses an ARIA live region to ensure that value changes are announced
 * Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
 
-Read our [blog post](../blog/how-we-internationalized-our-numberfield.html) for more details about the interactions and internationalization support implemented by `useNumberField`.
+Read our [blog post](../blog/how-we-internationalized-our-numberfield) for more details about the interactions and internationalization support implemented by `useNumberField`.
 
 ## Anatomy
 
@@ -101,7 +101,7 @@ twice when incrementing or decrementing the value from the minimum or maximum va
 you may wish to use a `<div>` element instead of a `<button>` to avoid this issue. See the [useButton docs](useButton.html#custom-element-type)
 for an example of a button with a custom element type.
 
-In addition, see [useTextField](useTextField.html) for an example of the description and error message elements.
+In addition, see [useTextField](../TextField/useTextField.html) for an example of the description and error message elements.
 
 ```tsx example export=true
 import {useNumberField} from '@react-aria/numberfield';
@@ -146,7 +146,7 @@ function NumberField(props) {
 
 ### Button
 
-The `Button` component is used in the above example to increment and decrement the value. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to increment and decrement the value. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>

@@ -111,13 +111,13 @@ keywords: [tree, grid]
 ```
 
 ## Content
-TreeView is a [collection component](../react-aria/collections.html) that provides users with a way to navigate nested hierarchical information.
+TreeView is a [collection component](collections.html) that provides users with a way to navigate nested hierarchical information.
 
 Basic usage of TreeView, seen in the example above, shows the use of a static collection where the contents of the TreeView are hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source, such as an API, or update over time. Providing the data in this way allows TreeView to automatically cache the rendering of each item, which dramatically improves performance.
 
 Items can be statically defined as children, or generated dynamically using a function based on the data passed to the `items` prop.
 
-Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](../react-aria/collections.html#unique-ids) to learn more about keys in dynamic collections.
+Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](collections.html#unique-ids) to learn more about keys in dynamic collections.
 
 <strong>Note: Asynchronous tree loading (i.e, loading by level or infinite scrolling) is not yet supported in TreeView.</strong>
 
