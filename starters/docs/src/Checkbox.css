@@ -55,5 +55,6 @@
 
   &[data-disabled] {
     color: var(--text-color-disabled);
+    --checkmark-color: var(--text-color-disabled);
   }
 }

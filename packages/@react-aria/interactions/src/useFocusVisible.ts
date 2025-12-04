@@ -17,6 +17,7 @@
 
 import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, openLink} from '@react-aria/utils';
 import {ignoreFocusEvent} from './utils';
+import {PointerType} from '@react-types/shared';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -37,6 +38,7 @@ export interface FocusVisibleResult {
 }
 
 let currentModality: null | Modality = null;
+let currentPointerType: PointerType = 'keyboard';
 let changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
   focus: () => void
@@ -70,12 +72,14 @@ function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
   if (!(openLink as any).isOpening && isValidKey(e)) {
     currentModality = 'keyboard';
+    currentPointerType = 'keyboard';
     triggerChangeHandlers('keyboard', e);
   }
 }
 
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
   currentModality = 'pointer';
+  currentPointerType = 'pointerType' in e ? e.pointerType as PointerType : 'mouse';
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
     hasEventBeforeFocus = true;
     triggerChangeHandlers('pointer', e);
@@ -86,6 +90,7 @@ function handleClickEvent(e: MouseEvent) {
   if (!(openLink as any).isOpening && isVirtualClick(e)) {
     hasEventBeforeFocus = true;
     currentModality = 'virtual';
+    currentPointerType = 'virtual';
   }
 }
 
@@ -101,6 +106,7 @@ function handleFocusEvent(e: FocusEvent) {
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
   if (!hasEventBeforeFocus && !hasBlurredWindowRecently) {
     currentModality = 'virtual';
+    currentPointerType = 'virtual';
     triggerChangeHandlers('virtual', e);
   }
 
@@ -249,7 +255,13 @@ export function getInteractionModality(): Modality | null {
 
 export function setInteractionModality(modality: Modality): void {
   currentModality = modality;
+  currentPointerType = modality === 'pointer' ? 'mouse' : modality;
   triggerChangeHandlers(modality, null);
+}
+
+/** @private */
+export function getPointerType(): PointerType {
+  return currentPointerType;
 }
 
 /**

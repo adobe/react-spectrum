@@ -216,7 +216,8 @@ export function MobileHeader({toc}) {
               animationName: fadeOut,
               animationTimeline: 'scroll()',
               animationRange,
-              animationPlayState: isTransitioning ? 'paused' : undefined
+              animationPlayState: isTransitioning ? 'paused' : undefined,
+              display: isOpen ? 'none' : undefined
             } as CSSProperties : undefined}>
             {TAB_DEFS[library].label}
           </span>

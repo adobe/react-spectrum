@@ -280,9 +280,8 @@ Many components support infinite scrolling via the `loadingState` and `onLoadMor
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string

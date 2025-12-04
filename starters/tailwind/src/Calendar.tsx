@@ -20,7 +20,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'w-9 h-9 text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none',
+  base: 'w-9 h-9 text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
   variants: {
     isSelected: {
       false: 'text-neutral-900 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 pressed:bg-neutral-300 dark:pressed:bg-neutral-600',

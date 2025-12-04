@@ -18,6 +18,8 @@ export const description = 'Wraps Intl.DateTimeFormat and formats dates for the 
 
 # useDateFormatter
 
+<PageDescription>{docs.exports.useDateFormatter.description}</PageDescription>
+
 ## Introduction
 
 `useDateFormatter` wraps a builtin browser [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
@@ -33,7 +35,7 @@ using the [I18nProvider](I18nProvider) to specify the locale to display.
 
 ```tsx render
 'use client';
-import {I18nProvider, useDateFormatter} from '@react-aria/i18n';
+import {I18nProvider, useDateFormatter} from 'react-aria';
 
 function CurrentDate() {
   let formatter = useDateFormatter();

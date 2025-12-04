@@ -19,16 +19,6 @@ export const description = 'Combines multiple prop objects together, merging eve
 
 <PageDescription>{docs.exports.mergeProps.description}</PageDescription>
 
-## Introduction
-
-`mergeProps` is a utility function that combines multiple props objects together in a smart way.
-This can be useful when you need to combine the results of multiple react-aria hooks onto a single
-element. `mergeProps` handles combining these props together so that multiple
-event handlers will be chained, multiple classes will be combined, and ids will be deduplicated.
-For all other props, the last prop object overrides all previous ones.
-
-## Example
-
 ```tsx
 import {mergeProps} from '@react-aria/utils';
 
