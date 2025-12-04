@@ -265,7 +265,8 @@ const CATEGORY_ORDER = [
   'Utilities'
 ];
 
-function Nav({currentPageName, pages}) {
+function Nav({currentPage, pages}) {
+  let currentPageName = currentPage.name;
   let currentParts = currentPageName.split('/');
   let isBlog = isBlogSection(currentParts[0]);
   let blogIndex = currentParts[0] + '/index.html';
@@ -287,26 +288,11 @@ function Nav({currentPageName, pages}) {
       return false;
     }
 
-    // Pages within same directory (react-spectrum/Alert.html)
-    if (currentParts.length > 1) {
-      // include react stately hooks under react aria
-      if (currentDir === 'react-aria' && pageDir === 'react-stately') {
-        return !INDEX_RE.test(p.name);
-      }
-      // include react aria hooks under react stately
-      if (currentDir === 'react-stately' && pageDir === 'react-aria') {
-        return !INDEX_RE.test(p.name);
-      }
-      return currentDir === pageDir && !INDEX_RE.test(p.name);
+    if (currentDir === 'v3') {
+      return pageDir === 'v3';
     }
 
-    // Top-level index pages (react-spectrum/index.html)
-    if (currentParts.length === 1 && pageParts.length > 1 && INDEX_RE.test(p.name)) {
-      return true;
-    }
-
-    // Other top-level pages
-    return !INDEX_RE.test(p.name) && pageParts.length === 1;
+    return true;
   });
 
   if (currentParts.length === 1) {
@@ -378,7 +364,6 @@ function Nav({currentPageName, pages}) {
     }
   }
   let currentPageIsIndex = INDEX_RE.test(currentPageName);
-  let sectionIndex = './index.html';
 
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
@@ -404,7 +389,7 @@ function Nav({currentPageName, pages}) {
   };
 
   let sections = [];
-  if ((currentPageName.startsWith('react-aria') || currentPageName.startsWith('react-stately')) && ENABLE_PAGE_TYPES) {
+  if ((currentPage.filePath?.includes('@react-aria') || currentPage.filePath?.includes('@react-stately')) && ENABLE_PAGE_TYPES) {
     let statelyPages = {};
     let ariaOtherPages = {};
 
@@ -412,8 +397,8 @@ function Nav({currentPageName, pages}) {
     for (let category in pagesByType.other) {
       let categoryPages = pagesByType.other[category];
 
-      let statelyPagesInCategory = categoryPages.filter(p => p.name.startsWith('react-stately/'));
-      let ariaPagesInCategory = categoryPages.filter(p => p.name.startsWith('react-aria/'));
+      let statelyPagesInCategory = categoryPages.filter(p => p.filePath?.includes('@react-stately'));
+      let ariaPagesInCategory = categoryPages.filter(p => p.filePath?.includes('@react-aria'));
 
       if (statelyPagesInCategory.length > 0) {
         statelyPages[category] = statelyPagesInCategory;
@@ -462,7 +447,7 @@ function Nav({currentPageName, pages}) {
   return (
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
-        <a href={sectionIndex} className={docStyles.homeBtn} id="nav-title-id">
+        <span className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -471,7 +456,7 @@ function Nav({currentPageName, pages}) {
           <h2 className={typographyStyles['spectrum-Heading4']}>
             {title}
           </h2>
-        </a>
+        </span>
       </header>
       {sections.map((section, i) => {
         let contents = categories.filter(c => section.pages[c]?.length).map(key => {
@@ -530,7 +515,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
-        <Nav currentPageName={currentPage.name} pages={pages} />
+        <Nav currentPage={currentPage} pages={pages} />
         <main className={toc.length === 0 ? docStyles.noToc : null}>
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>

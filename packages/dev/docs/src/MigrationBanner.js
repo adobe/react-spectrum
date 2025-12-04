@@ -17,12 +17,18 @@ import React from 'react';
 import url from 'url:../pages/assets/wallpaper_collaborative_S2_desktop.webp';
 
 export function MigrationBanner({currentPage}) {
-  if (!currentPage || !currentPage.name) {
+  if (!currentPage || !currentPage.filePath) {
     return null;
   }
 
-  let parts = currentPage.name.split('/');
-  let section = parts[0];
+  let section;
+  if (currentPage.filePath.includes('@react-stately')) {
+    section = 'react-stately';
+  } else if (currentPage.filePath.includes('@react-aria')) {
+    section = 'react-aria';
+  } else {
+    section = 'v3';
+  }
   let isIndexPage = /^(?:[^/]+\/)?index\.html$/.test(currentPage.name);
 
   // only banner on react-stately index page, not other index pages
