@@ -279,7 +279,7 @@ function Example(props) {
   let [animal, setAnimal] = useState("bison");
 
   return (
-    <div>
+    <>
       <Select
         {...props}
         label="Pick an animal"
@@ -297,7 +297,7 @@ function Example(props) {
         <SelectItem id="skunk">Skunk</SelectItem>
       </Select>
       <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
-    </div>
+    </>
   );
 }
 ```

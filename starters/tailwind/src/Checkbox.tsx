@@ -25,7 +25,7 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
 }
 
 const checkboxStyles = tv({
-  base: 'flex gap-2 items-center group font-sans text-sm transition relative',
+  base: 'flex gap-2 items-center group font-sans text-sm transition relative [-webkit-tap-highlight-color:transparent]',
   variants: {
     isDisabled: {
       false: 'text-neutral-800 dark:text-neutral-200',

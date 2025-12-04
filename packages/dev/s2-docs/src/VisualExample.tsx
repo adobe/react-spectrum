@@ -192,9 +192,9 @@ export function VisualExample({component, docs, links, importSource, props, init
         <ShadcnProvider value={registryUrl}>
           <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
             <Output align={align} acceptOrientation={acceptOrientation} />
-            <div role="group" aria-label="Controls" className={controlsStyle}>
+            {props.length > 0 && <div role="group" aria-label="Controls" className={controlsStyle}>
               {Object.keys(controls).map(control => <Control key={control} name={control} />)}
-            </div>
+            </div>}
             <div style={{gridArea: 'files', overflow: 'hidden'}}>
               {files ? <Files files={files} downloadFiles={downloadFiles.files} type={type}>{output}</Files> : output}
             </div>
