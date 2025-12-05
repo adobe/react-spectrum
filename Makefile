@@ -117,6 +117,10 @@ website-production:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
 	$(MAKE) s2-storybook-docs
+	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
+	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
+	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 
 check-examples:
 	node scripts/extractExamples.mjs
@@ -128,18 +132,14 @@ starter:
 starter-zip: starter
 	cp LICENSE starters/docs/.
 	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
-	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/docs && yarn build-storybook
-	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
 
 tailwind-starter:
 	cp LICENSE starters/tailwind/.
 	cd starters/tailwind && yarn --no-immutable && yarn up react-aria-components && yarn up tailwindcss-react-aria-components && yarn tsc
 
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
-	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/tailwind && yarn build-storybook
-	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
 
 s2-storybook-docs:
 	yarn build:s2-storybook-docs -o dist/production/docs/s2
@@ -153,10 +153,17 @@ s2-docs:
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/$(BRANCH_TYPE)/$(HASH)/robots.txt
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/$(BRANCH_TYPE)/$(HASH)/robots.txt
 
+s2-docs-stage:
+	DOCS_ENV=stage PUBLIC_URL=/ $(MAKE) build-s2-docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/$(BRANCH_TYPE)/$(HASH)/robots.txt
+	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/$(BRANCH_TYPE)/$(HASH)/robots.txt
+	$(MAKE) starters
+
 s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
+	$(MAKE) starters
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
@@ -176,3 +183,11 @@ build-s2-docs:
 	# TODO: We probably don't need to build this on every PR
 	yarn parcel build 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
 	yarn parcel build 'packages/@react-{aria,stately}/*/docs/*.mdx'  --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
+
+starters:
+	$(MAKE) starter-zip
+	$(MAKE) tailwind-starter
+	mv starters/docs/storybook-static dist/s2-docs/react-aria-starter
+	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/tailwind/storybook-static dist/s2-docs/react-aria-tailwind-starter
+	mv starters/tailwind/react-aria-tailwind-starter.zip dist/s2-docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
