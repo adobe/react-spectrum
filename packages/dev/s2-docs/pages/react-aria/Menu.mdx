@@ -322,7 +322,7 @@ function Example() {
   return (
     <MenuTrigger>
       <Button>Add tag...</Button>
-      <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex', flexDirection: 'column', maxHeight: 'inherit'}}>
         {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
           <SearchField aria-label="Search tags" placeholder="Search tags" autoFocus style={{margin: 4}} />

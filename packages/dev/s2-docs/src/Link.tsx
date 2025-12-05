@@ -7,6 +7,11 @@ import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components'
 import React from 'react';
 
 export function Link({href, ...props}: LinkProps) {
+  if (href?.startsWith('s2:') || href?.startsWith('react-aria:')) {
+    let url = new URL(href);
+    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
+  }
+
   return (
     <S2Link {...props} href={href} {...getAnchorProps(href)} />
   );
@@ -43,7 +48,7 @@ export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | '
 }
 
 export function CodeLink(props: RACLinkProps) {
-  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: isHovered ? 'underline solid' : 'underline dotted'})} />;
+  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
 }
 
 const titleLink = style({

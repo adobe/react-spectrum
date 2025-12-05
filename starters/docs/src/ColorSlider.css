@@ -4,8 +4,6 @@
                        "track track";
   grid-template-columns: 1fr auto;
   gap: var(--spacing-1);
-  width: 100%;
-  max-width: 300px;
 
   .react-aria-Label {
     grid-area: label;
@@ -24,8 +22,11 @@
   }
 
   &[data-orientation=horizontal] {
+    width: 100%;
+    max-width: 300px;
+
     .react-aria-SliderTrack {
-      height: var(--spacing-7);
+      height: var(--spacing-6);
     }
 
     .react-aria-ColorThumb {
@@ -34,7 +35,7 @@
   }
 
   &[data-orientation=vertical] {
-    height: 150px;
+    height: 200px;
     display: block;
 
     .react-aria-Label,
@@ -43,7 +44,7 @@
     }
 
     .react-aria-SliderTrack {
-      width: var(--spacing-7);
+      width: var(--spacing-6);
       height: 100%;
     }
 

@@ -17,7 +17,7 @@ import { ChevronRight } from "lucide-react";
 import { composeTailwindRenderProps } from "./utils";
 
 const disclosure = tv({
-  base: "group min-w-64 font-sans rounded-lg text-neutral-900 dark:text-neutral-200"
+  base: "group min-w-50 font-sans rounded-lg text-neutral-900 dark:text-neutral-200"
 });
 
 const chevron = tv({

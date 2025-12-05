@@ -19,6 +19,8 @@ export const description = 'Wraps Intl.NumberFormat and formats numbers for the 
 
 # useNumberFormatter
 
+<PageDescription>{docs.exports.useNumberFormatter.description}</PageDescription>
+
 ## Introduction
 
 `useNumberFormatter` wraps a builtin browser [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat)
@@ -34,7 +36,7 @@ using the [I18nProvider](I18nProvider) to specify the locale to display.
 
 ```tsx render
 'use client';
-import {I18nProvider, useNumberFormatter} from '@react-aria/i18n';
+import {I18nProvider, useNumberFormatter} from 'react-aria';
 
 function Currency({value, currency}) {
   let formatter = useNumberFormatter({

@@ -181,12 +181,21 @@ export function CodeOutput({code, type, showCoachMark}: CodeOutputProps) {
   }
 
   code ||= (
-    <Pre>
-      <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
-        {importSource ? renderImports(name, importSource, props) : null}
-        {renderElement(name, props, controls)}
-      </code>
-    </Pre>
+    <div
+      className={style({
+        overflow: 'auto',
+        '--code-padding-end': {
+          type: 'paddingEnd',
+          value: 64 // Extra space for the toolbar
+        }
+      })}>
+      <Pre>
+        <code style={{fontFamily: 'inherit', WebkitTextSizeAdjust: 'none'}}>
+          {importSource ? renderImports(name, importSource, props) : null}
+          {renderElement(name, props, controls)}
+        </code>
+      </Pre>
+    </div>
   );
 
   return (

@@ -285,10 +285,9 @@ Several components also support infinite scrolling by rendering a `LoadMoreItem`
 
 ```tsx render
 "use client";
-import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
+import {Collection, ListBoxLoadMoreItem, useAsyncList} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string

@@ -34,6 +34,7 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', curre
         linkBehavior="override"
         autoFocus={!!currentUrl}
         selectedKeys={currentUrl ? [currentUrl] : []}
+        disallowEmptySelection
         onAction={onAction}
         className={style({
           display: {

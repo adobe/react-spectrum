@@ -3,7 +3,7 @@
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {getLibraryFromPage, getLibraryLabel} from './library';
-import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
+import React, {CSSProperties, lazy, useCallback, useEffect, useRef, useState} from 'react';
 import Search from '@react-spectrum/s2/icons/Search';
 import {useRouter} from './Router';
 
@@ -113,6 +113,17 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
   if (isSearchOpen && !wasOpen) {
     setWasOpen(true);
   }
+
+  // Manually restore focus to the trigger when search menu closes, since we don't actually unmount.
+  let buttonRef = useRef<HTMLButtonElement | null>(null);
+  let isOpenRef = useRef(isSearchOpen);
+  useEffect(() => {
+    if (!isSearchOpen && isOpenRef.current && buttonRef.current) {
+      buttonRef.current.focus({preventScroll: true});
+    }
+
+    isOpenRef.current = isSearchOpen;
+  }, [isSearchOpen]);
     
   return (
     <div
@@ -124,6 +135,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
       })}>
       <Button
         {...props}
+        ref={buttonRef}
         aria-label="Open search and menu"
         aria-expanded={isSearchOpen}
         aria-controls={isSearchOpen ? overlayId : undefined}
