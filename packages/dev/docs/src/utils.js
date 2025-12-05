@@ -56,9 +56,9 @@ const BASE_URL = {
   }
 };
 
-function getBaseUrl(library) {
+export function getBaseUrl(library) {
   let env = process.env.DOCS_ENV;
-  let base = env 
+  let base = env
     ? BASE_URL[env][library]
     : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;

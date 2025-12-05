@@ -12,6 +12,7 @@
 
 import {Content, Heading, InlineAlert, Link} from '@adobe/react-spectrum';
 import {Flex} from '@react-spectrum/layout';
+import {getBaseUrl} from './utils';
 import React from 'react';
 // @ts-ignore
 import url from 'url:../pages/assets/wallpaper_collaborative_S2_desktop.webp';
@@ -31,8 +32,8 @@ export function MigrationBanner({currentPage}) {
   }
   let isIndexPage = /^(?:[^/]+\/)?index\.html$/.test(currentPage.name);
 
-  // only banner on react-stately index page, not other index pages
-  if (isIndexPage && section !== 'react-stately') {
+  // only have banner on react-stately index page, not other index pages. Also skip releases
+  if ((isIndexPage && section !== 'react-stately') || currentPage.name.startsWith('v3/releases/')) {
     return null;
   }
 
@@ -130,7 +131,11 @@ export function MigrationBanner({currentPage}) {
     let nameMatch = currentPage.name.match(/^v3\/([^/]+)\.html$/);
     if (nameMatch) {
       let name = nameMatch[1];
-      if (!noS2Mapping.has(name)) {
+      // v3 filetrigger should link to react-aria instead of s2
+      if (name === 'FileTrigger') {
+        componentName = name;
+        s2Link = `${getBaseUrl('react-aria')}/${name}`;
+      } else if (!noS2Mapping.has(name)) {
         if (specialMappings[name]) {
           componentName = name;
           let s2Path = specialMappings[name];
