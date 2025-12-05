@@ -4,7 +4,7 @@ import '../tailwind/home.global.css';
 import {Button, DialogTrigger, Modal, ModalOverlay} from 'react-aria-components';
 import {flushSync} from 'react-dom';
 import {preloadSearchMenu} from './SearchMenuTrigger';
-import React, {lazy, useState} from 'react';
+import React, {lazy, ReactNode, useState} from 'react';
 import {Modal as S2Modal} from '../../../@react-spectrum/s2/src/Modal';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
@@ -31,7 +31,7 @@ let underlayStyle = style({
 });
 
 let modalStyle = style({
-  position: 'absolute',
+  position: 'sticky',
   top: 8,
   width: 'full',
   // 1280px matches body
@@ -52,7 +52,7 @@ let modalStyle = style({
 });
 
 
-export default function SearchMenuWrapper() {
+export default function SearchMenuWrapper({children}: {children: ReactNode}) {
   const [searchOpen, setSearchOpen] = useState(false);
 
   let openSearchMenu = async () => {
@@ -87,9 +87,13 @@ export default function SearchMenuWrapper() {
     <>
       <div className={style({display: {default: 'none', lg: 'flex'}})}>
         <DialogTrigger isOpen={searchOpen} onOpenChange={() => {openSearchMenu();}} >
-          <Button onHoverStart={() => preloadSearchMenu()} className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 pressed:scale-95 cursor-pointer">Explore Components</Button>
+          <Button onHoverStart={() => preloadSearchMenu()} className="bg-transparent border-0 p-0 group font-[inherit] outline-0">{children}</Button>
           <ModalOverlay
-            style={{zIndex: 21}}
+            style={{
+              zIndex: 21,
+              // @ts-ignore
+              viewTransitionName: 'search-menu-underlay'
+            }}
             isDismissable
             className={underlayStyle}>
             <Modal className={modalStyle}>
@@ -104,7 +108,7 @@ export default function SearchMenuWrapper() {
       </div>
       <div className={style({display: {default: 'flex', lg: 'none'}})}>
         <DialogTrigger>
-          <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 pressed:scale-95 cursor-pointer">Explore Components</Button>
+          <Button className="bg-transparent border-0 p-0 group font-[inherit] outline-0">{children}</Button>
           <S2Modal size="fullscreenTakeover">
             <MobileSearchMenu initialTag="components" />
           </S2Modal>
@@ -113,5 +117,3 @@ export default function SearchMenuWrapper() {
     </>
   );
 }
-
-
