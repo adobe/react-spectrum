@@ -62,6 +62,11 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * By default, onClose will always be called on interaction outside the popover ref.
    */
   shouldCloseOnInteractOutside?: (element: Element) => boolean
+
+  /**
+   *  Nothing will be hidden above this element when a popup is modal.
+   */
+  rootHiddenOutsideElement?: Element
 }
 
 export interface PopoverAria {
@@ -89,6 +94,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     isNonModal,
     isKeyboardDismissDisabled,
     shouldCloseOnInteractOutside,
+    rootHiddenOutsideElement,
     ...otherProps
   } = props;
 
@@ -123,7 +129,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       if (isNonModal) {
         return keepVisible(groupRef?.current ?? popoverRef.current);
       } else {
-        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true});
+        return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true, root: rootHiddenOutsideElement});
       }
     }
   }, [isNonModal, state.isOpen, popoverRef, groupRef]);
