@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
-import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -30,14 +28,16 @@ import {
   Separator,
   SeparatorProps
 } from 'react-aria-components';
+import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+import {box, iconStyles} from './Checkbox';
+import {centerBaseline} from './CenterBaseline';
+import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
-import {centerBaseline} from './CenterBaseline';
-import {box, iconStyles} from './Checkbox';
+import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
-import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??

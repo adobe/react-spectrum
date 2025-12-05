@@ -23,15 +23,8 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
-import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-types/shared';
-import CheckmarkIcon from '../ui-icons/Checkmark';
-import ChevronIcon from '../ui-icons/Chevron';
 import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
-import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {
-  FieldLabel
-} from './Field';
 import {
   checkmark,
   description,
@@ -41,7 +34,14 @@ import {
   sectionHeader,
   sectionHeading
 } from './Menu';
+import CheckmarkIcon from '../ui-icons/Checkmark';
+import ChevronIcon from '../ui-icons/Chevron';
 import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
+import {
+  FieldLabel
+} from './Field';
+import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
