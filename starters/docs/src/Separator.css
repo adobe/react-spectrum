@@ -9,6 +9,7 @@
   
   &[aria-orientation="vertical"] {
     width: 2px;
+    min-height: 32px;
     height: 100%;
   }
 }
