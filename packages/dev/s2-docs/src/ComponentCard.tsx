@@ -259,7 +259,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
 
 const illustrationContainer = style({
   width: 'full',
-  aspectRatio: '4/3',
+  aspectRatio: '8/5',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -285,15 +285,6 @@ const illustrationStyles = style({
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'
-});
-
-const placeholderContainer = style({
-  width: 'full',
-  aspectRatio: '4/3',
-  backgroundColor: '--anatomy-gray-100',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
 });
 
 const defaultIllustrationStyles = style({
