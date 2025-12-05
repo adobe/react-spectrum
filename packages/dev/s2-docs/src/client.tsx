@@ -243,6 +243,7 @@ document.addEventListener('click', e => {
   if (
     link &&
     isClientLink(link) &&
+    link.pathname !== location.pathname &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)

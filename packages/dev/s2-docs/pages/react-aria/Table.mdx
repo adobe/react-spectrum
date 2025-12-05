@@ -57,8 +57,7 @@ export const description = 'Displays data in rows and columns and enables a user
 
   ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/Table.tsx"]}
   "use client";
-  import {Table, TableHeader, Column, Row, Cell} from 'tailwind-starter/Table';
-  import {TableBody} from 'react-aria-components';
+  import {Table, TableHeader, TableBody, Column, Row, Cell} from 'tailwind-starter/Table';
 
   <Table/* PROPS */>
     <TableHeader>
@@ -178,10 +177,9 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
+import {Collection, useAsyncList} from 'react-aria-components';
 import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
-import {Collection} from 'react-aria-components';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string;
@@ -235,7 +233,9 @@ function AsyncSortTable() {
         </TableHeader>
         <TableBody
           renderEmptyState={() => (
-            <ProgressCircle isIndeterminate aria-label="Loading..." />
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <ProgressCircle isIndeterminate aria-label="Loading..." />
+            </div>
           )}>
           <Collection items={list.items}>
             {(item) => (
@@ -589,10 +589,8 @@ Table supports drag and drop interactions when the `dragAndDropHooks` prop is pr
 
 ```tsx render
 "use client";
-import {useListData} from 'react-stately';
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
-import {useDragAndDrop} from 'react-aria-components';
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
+import {useDragAndDrop, useListData} from 'react-aria-components';
 
 function ReorderableTable() {
   let list = useListData({

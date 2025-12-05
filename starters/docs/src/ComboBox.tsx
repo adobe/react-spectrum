@@ -30,7 +30,7 @@ export function ComboBox<T extends object>(
       <Label>{label}</Label>
       <div className="combobox-field">
         <Input className="react-aria-Input inset" />
-        <FieldButton><ChevronDown size={16} /></FieldButton>
+        <FieldButton><ChevronDown /></FieldButton>
       </div>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

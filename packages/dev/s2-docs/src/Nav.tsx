@@ -326,7 +326,7 @@ function useCurrentSection() {
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article :is(h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -367,7 +367,7 @@ export function MobileOnPageNav({children}) {
   let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article :is(h1,h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     elements.reverse();
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
