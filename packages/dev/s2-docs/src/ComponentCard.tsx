@@ -297,6 +297,7 @@ const placeholderContainer = style({
 });
 
 const defaultIllustrationStyles = style({
+  position: 'relative',
   maxWidth: 'calc(100% - 16px)',
   maxHeight: 'calc(100% - 16px)',
   userSelect: 'none',
@@ -312,19 +313,10 @@ function getDefaultIllustration(href: string) {
   return AdobeDefaultSvg;
 }
 
-const releaseContainer = style({
-  width: 'full',
-  aspectRatio: '4/3',
-  backgroundColor: '--anatomy-gray-100',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: 0
-});
-
 const releaseText = style({
+  position: 'relative',
   font: 'heading-lg',
-  color: '--anatomy-gray-900'
+  color: 'white'
 });
 
 interface IllustrationProps {
@@ -339,7 +331,18 @@ function ComponentIllustration({name, href}: IllustrationProps) {
     // Return the default library logo for components without illustrations
     const DefaultIllustration = getDefaultIllustration(href);
     return (
-      <div className={placeholderContainer}>
+      <div className={illustrationContainer}>
+        {/* Background gradient */}
+        <picture>
+          <source srcSet={BackgroundLight} media="(prefers-color-scheme: light)" />
+          <source srcSet={BackgroundDark} media="(prefers-color-scheme: dark)" />
+          <img
+            src={BackgroundLight}
+            alt=""
+            aria-hidden="true"
+            className={backgroundStyles}
+            loading="lazy" />
+        </picture>
         <DefaultIllustration aria-hidden="true" className={defaultIllustrationStyles} />
       </div>
     );
@@ -376,7 +379,8 @@ function ComponentIllustration({name, href}: IllustrationProps) {
 }
 
 function getReleaseVersionLabel(href: string) {
-  let match = href.match(/releases\/(v[\w-]+)\.html$/i);
+  // Match releases with or without .html extension
+  let match = href.match(/releases\/(v[\w-]+)(?:\.html)?$/i);
   if (!match) {
     return null;
   }
@@ -395,7 +399,18 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
 
   if (releaseVersion) {
     preview = (
-      <div className={releaseContainer}>
+      <div className={illustrationContainer}>
+        {/* Background gradient */}
+        <picture>
+          <source srcSet={BackgroundLight} media="(prefers-color-scheme: light)" />
+          <source srcSet={BackgroundDark} media="(prefers-color-scheme: dark)" />
+          <img
+            src={BackgroundLight}
+            alt=""
+            aria-hidden="true"
+            className={backgroundStyles}
+            loading="lazy" />
+        </picture>
         <span className={releaseText}>{releaseVersion}</span>
       </div>
     );
