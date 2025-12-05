@@ -42,5 +42,8 @@
   "alias": {
     "tailwind-starter": "../../../starters/tailwind/src",
     "vanilla-starter": "../../../starters/docs/src"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
   }
 }

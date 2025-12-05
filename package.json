@@ -187,7 +187,7 @@
     "regenerator-runtime": "0.13.3",
     "rehype-stringify": "^9.0.4",
     "rimraf": "^6.0.1",
-    "sharp": "^0.33.5",
+    "sharp": "^0.34.5",
     "storybook": "^8.6.14",
     "storybook-dark-mode": "^4.0.2",
     "storybook-react-parcel": "workspace:^",
