@@ -1,3 +1,6 @@
+/* eslint-disable rulesdir/imports */
+/* eslint-disable monorepo/no-internal-import */
+
 import accordionDark from 'url:../assets/component-illustrations/dark/components/accordion.png';
 import accordionLight from 'url:../assets/component-illustrations/light/components/accordion.png';
 // @ts-ignore
