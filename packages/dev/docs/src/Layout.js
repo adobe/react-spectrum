@@ -546,8 +546,8 @@ export function Layout(props) {
   return (
     <BaseLayout {...props}>
       <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
-        <VersionBadge version={props.currentPage.preRelease} size="large" />
         <MigrationBanner currentPage={props.currentPage} />
+        <VersionBadge version={props.currentPage.preRelease} size="large" style={{display: 'block'}} />
         {props.children}
       </article>
     </BaseLayout>

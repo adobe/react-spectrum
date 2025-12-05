@@ -10,11 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Flex} from '@react-spectrum/layout';
-import {Link} from '@adobe/react-spectrum';
+import {Content, Heading, InlineAlert, Link} from '@adobe/react-spectrum';
 import React from 'react';
-// @ts-ignore
-import url from 'url:../pages/assets/wallpaper_collaborative_S2_desktop.webp';
 
 export function MigrationBanner({currentPage}) {
   if (!currentPage || !currentPage.filePath) {
@@ -37,68 +34,99 @@ export function MigrationBanner({currentPage}) {
   }
 
   let content;
-  if (section === 'react-aria') {
+  if (section === 'react-aria' || section === 'react-stately') {
     content = (
       <>
-        <Link variant="overBackground">
-          <a href="https://react-aria.adobe.com/index.html">
-            React Aria
-          </a>
-        </Link>
-        {' has a new home!'}
+        <Heading>Migration in progress</Heading>
+        <Content>
+          This page is still being migrated to our new website. In the meantime, you can explore the new React Aria Components docs{' '}
+          <Link>
+            <a href="https://react-aria.adobe.com/index.html">here</a>
+          </Link>
+          .
+        </Content>
       </>
     );
   } else if (section === 'v3') {
+    let componentName;
+    let s2Link;
+
+    const noS2Mapping = new Set([
+      'ListView',
+      'LabeledValue',
+      'dnd',
+      'SearchAutocomplete',
+      'Keyboard',
+      'ColorPicker',
+      'Well',
+      'View',
+      'Header',
+      'Footer',
+      'Content',
+      'Text',
+      'Heading',
+      'StepList',
+      'Grid',
+      'Flex',
+      'LogicButton',
+      'DialogContainer',
+      'ListBox',
+      'layout',
+      'versioning',
+      'theming',
+      'ssr'
+    ]);
+
+    const specialMappings = {
+      'MenuTrigger': 'Menu',
+      'AlertDialog': 'Dialog#alert-dialog',
+      'workflow-icons': 'icons',
+      'custom-icons': 'icons',
+      'DialogTrigger': 'Dialog',
+      'ActionGroup': 'ActionButtonGroup'
+    };
+
+    let nameMatch = currentPage.name.match(/^v3\/([^/]+)\.html$/);
+    if (nameMatch) {
+      let name = nameMatch[1];
+      if (!noS2Mapping.has(name)) {
+        if (specialMappings[name]) {
+          componentName = name;
+          let s2Path = specialMappings[name];
+          s2Link = `https://react-spectrum.adobe.com/${s2Path}`;
+        } else {
+          componentName = name;
+          s2Link = `https://react-spectrum.adobe.com/${componentName}`;
+        }
+      }
+    }
+
     content = (
       <>
-        <Link variant="overBackground">
-          <a href="https://react-spectrum.adobe.com/index.html">
-            React Spectrum
-          </a>
-        </Link>
-        {' has a new home!'}
-      </>
-    );
-  } else if (section === 'react-stately') {
-    content = (
-      <>
-        <Link variant="overBackground">
-          <a href="https://react-aria.adobe.com/index.html">
-            React Aria
-          </a>
-        </Link>
-        {' and '}
-        <Link variant="overBackground">
-          <a href="https://react-spectrum.adobe.com/index.html">
-            React Spectrum
-          </a>
-        </Link>
-        {' have a new home!'}
+        <Heading>Spectrum 2 is now available</Heading>
+        <Content>
+          {componentName && (
+            <>
+              Check out the S2{' '}
+              <Link>
+                <a href={s2Link}>{componentName}</a>
+              </Link>
+              {' '}docs and the{' '}
+            </>
+          )}
+          {!componentName && 'Check out the '}
+          <Link>
+            <a href="https://react-spectrum.adobe.com/migrating.html">migration docs</a>
+          </Link>
+          .
+        </Content>
       </>
     );
   }
 
   return (
-    <header
-      style={{
-        backgroundImage: `url(${url})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center 30%',
-        padding: '48px',
-        marginBottom: '32px',
-        borderRadius: '12px'
-      }}>
-      <Flex direction="row" alignItems="center" gap="size-100" wrap>
-        <span
-          style={{
-            fontSize: '28px',
-            fontWeight: 700,
-            color: 'white',
-            lineHeight: 1.3
-          }}>
-          {content}
-        </span>
-      </Flex>
-    </header>
+    <InlineAlert variant="info" marginBottom="size-400">
+      {content}
+    </InlineAlert>
   );
 }
