@@ -89,8 +89,12 @@ module.exports = new Namer({
           return path.join(...parts.slice(4, -1), basename);
         }
 
-        if (/use(.+?)State\.html$/.test(basename)) {
-          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)State\.html$/, '$1/use$1State.html'));
+        if (basename.endsWith('useTabListState.html')) {
+          return path.join(...parts.slice(4, -1), 'Tabs/useTabListState.html');
+        }
+
+        if (/use(.+?)(Trigger)?State\.html$/.test(basename)) {
+          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)State\.html$/, '$1/use$1$2State.html'));
         }
 
         return path.join(...parts.slice(4, -1), basename);

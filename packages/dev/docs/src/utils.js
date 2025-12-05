@@ -63,7 +63,9 @@ function getBaseUrl(library) {
     : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;
   if (publicUrl) {
-    base += publicUrl.replace(/\/$/, '');
+    let url = new URL(base);
+    url.pathname = publicUrl.replace(/\/$/, '') + url.pathname;
+    base = url.href;
   }
   return base;
 }
