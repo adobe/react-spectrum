@@ -17,6 +17,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface AriaPositionProps extends PositionProps {
   /**
@@ -91,6 +92,7 @@ let visualViewport = typeof document !== 'undefined' ? window.visualViewport : n
  */
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
+  let {getContainerBounds} = useUNSAFE_PortalContext();
   let {
     arrowSize,
     targetRef,
@@ -178,6 +180,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       overlay.style.maxHeight = (window.visualViewport?.height ?? window.innerHeight) + 'px';
     }
 
+    // Get container bounds if available from PortalProvider
+    let containerBounds = getContainerBounds?.() || null;
+
     let position = calculatePosition({
       placement: translateRTL(placement, direction),
       overlayNode: overlayRef.current,
@@ -190,7 +195,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       crossOffset,
       maxHeight,
       arrowSize: arrowSize ?? (arrowRef?.current ? getRect(arrowRef.current, true).width : 0),
-      arrowBoundaryOffset
+      arrowBoundaryOffset,
+      containerBounds
     });
 
     if (!position.position) {

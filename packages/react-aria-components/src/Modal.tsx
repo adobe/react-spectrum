@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay} from 'react-aria';
+import {applyContainerBounds, AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay, useUNSAFE_PortalContext} from 'react-aria';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DOMAttributes, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {filterDOMProps, isScrollable, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useObjectRef, useViewportSize} from '@react-aria/utils';
@@ -171,19 +171,36 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
   });
 
   let viewport = useViewportSize();
+  let {getContainerBounds} = useUNSAFE_PortalContext();
+  
   let pageHeight: number | undefined = undefined;
+  let containerBounds = getContainerBounds?.();
+  
   if (typeof document !== 'undefined') {
     let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
     // Prevent Firefox from adding scrollbars when the page has a fractional height.
     let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
     pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
+    
+    // If container bounds are provided, use those height instead
+    if (containerBounds) {
+      pageHeight = containerBounds.height;
+    }
   }
 
-  let style = {
+  // Build style object with CSS custom properties and positioning
+  let style: React.CSSProperties & {
+    '--visual-viewport-height'?: string,
+    '--page-height'?: string
+  } = {
     ...renderProps.style,
     '--visual-viewport-height': viewport.height + 'px',
     '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
   };
+
+  // If container bounds are provided, position the overlay relative to the container
+  // This ensures modals render within the web component's bounds, not the full viewport
+  applyContainerBounds(style, containerBounds, {center: true});
 
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
