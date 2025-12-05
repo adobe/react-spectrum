@@ -270,7 +270,7 @@ getLocalizationScript(locale, dictionary)
 
 ## React < 18
 
-In React 18, SSR works out of the box with no additional work. If you're using React 16 or 17, you will need to wrap your application in an [SSRProvider](../react-aria/SSRProvider.html) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context, which ensures that the HTML generated on the server matches the DOM structure hydrated on the client.
+In React 18, SSR works out of the box with no additional work. If you're using React 16 or 17, you will need to wrap your application in an [SSRProvider](react-aria:SSRProvider) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context, which ensures that the HTML generated on the server matches the DOM structure hydrated on the client.
 
 ```tsx
 import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';

@@ -64,7 +64,7 @@ function getBaseUrl(library) {
   let publicUrl = process.env.PUBLIC_URL;
   if (publicUrl) {
     let url = new URL(base);
-    url.pathname = publicUrl.replace(/\/$/, '') + url.pathname;
+    url.pathname = publicUrl.replace(/\/$/, '') + url.pathname.replace(/\/$/, '');
     base = url.href;
   }
   return base;
