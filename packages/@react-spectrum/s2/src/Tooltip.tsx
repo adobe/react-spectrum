@@ -23,7 +23,7 @@ import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {typ
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
-import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -35,10 +35,16 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
    *
    * @default 'top'
    */
-  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
+  /**
+   * The offset of the tooltip from the trigger.
+   *
+   * @default 4
+   */
+  offset?: number
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles {
   /** The content of the tooltip. */
   children: ReactNode
 }
@@ -139,7 +145,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
   let {
     containerPadding,
     crossOffset,
-    offset,
+    offset = 4,
     placement = 'top',
     shouldFlip
   } = useContext(InternalTooltipTriggerContext);

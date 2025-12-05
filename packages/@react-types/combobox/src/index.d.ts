@@ -84,7 +84,7 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.
-   * @default 'end'
+   * @default 'start'
    */
   align?: 'start' | 'end',
   /**
