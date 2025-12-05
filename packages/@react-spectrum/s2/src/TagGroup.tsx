@@ -297,6 +297,7 @@ function TagGroupInner<T>({
           <Provider
             values={[
               [RACTextContext, undefined],
+              [RACButtonContext, undefined],
               [TagGroupContext, {size, isEmphasized}]
             ]}>
             {/* invisible collection for measuring */}
@@ -525,11 +526,9 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphasized, isSelected}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
+
   return (
-    <Provider
-      values={[
-        [RACButtonContext, null]
-      ]}>
+    <>
       {isInRealDOM && (
         <div
           className={style({
@@ -574,6 +573,6 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
           isStaticColor={isEmphasized && isSelected}
           isDisabled={isDisabled} />
       )}
-    </Provider>
+    </>
   );
 }

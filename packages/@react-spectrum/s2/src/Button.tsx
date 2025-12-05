@@ -430,6 +430,14 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+  let {
+    fillStyle = 'fill',
+    size = 'M',
+    variant = 'primary',
+    staticColor,
+    styles,
+    children
+  } = props;
 
   return (
     <Link
@@ -440,28 +448,41 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        variant: props.variant || 'primary',
-        fillStyle: props.fillStyle || 'fill',
-        size: props.size || 'M',
-        staticColor: props.staticColor,
-        isStaticColor: !!props.staticColor,
+        variant,
+        fillStyle,
+        size,
+        staticColor,
+        isStaticColor: !!staticColor,
         isPending: false
-      }, props.styles)}>
-      <Provider
-        values={[
-          [SkeletonContext, null],
-          [TextContext, {
-            styles: style({paddingY: '--labelPadding', order: 1}),
-            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-            'data-rsp-slot': 'text'
-          }],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-      </Provider>
+      }, styles)}>
+      {(renderProps) => (<>
+        {variant === 'genai' || variant === 'premium'
+          ? (
+            <span
+              className={gradient({
+                ...renderProps,
+                // Retain hover styles when an overlay is open.
+                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                variant
+              })} />
+             )
+          : null}
+        <Provider
+          values={[
+            [SkeletonContext, null],
+            [TextContext, {
+              styles: style({paddingY: '--labelPadding', order: 1}),
+              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+              'data-rsp-slot': 'text'
+            }],
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+              styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            }]
+          ]}>
+          {typeof children === 'string' ? <Text>{children}</Text> : children}
+        </Provider>
+      </>)}
     </Link>
   );
 });
