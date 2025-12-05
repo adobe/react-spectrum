@@ -40,7 +40,7 @@ export function Tabs(props: TabsProps) {
 }
 
 const tabListStyles = tv({
-  base: 'flex gap-1',
+  base: 'flex',
   variants: {
     orientation: {
       horizontal: 'flex-row',
@@ -62,7 +62,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 
 const tabProps = tv({
   extend: focusRing,
-  base: 'group relative flex items-center cursor-default rounded-full px-4 py-1.5 text-sm font-medium transition forced-color-adjust-none',
+  base: 'group relative flex items-center cursor-default rounded-full px-3 py-1.5 text-sm font-medium transition forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
   variants: {
     isDisabled: {
       true: 'text-neutral-200 dark:text-neutral-600 forced-colors:text-[GrayText] selected:text-white dark:selected:text-neutral-500 forced-colors:selected:text-[HighlightText] selected:bg-neutral-200 dark:selected:bg-neutral-600 forced-colors:selected:bg-[GrayText]'

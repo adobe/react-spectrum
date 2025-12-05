@@ -93,6 +93,7 @@
   &[data-orientation=vertical] {
     height: 150px;
     display: block;
+    margin: var(--spacing-3) 0;
 
     .react-aria-Label,
     .react-aria-SliderOutput {
