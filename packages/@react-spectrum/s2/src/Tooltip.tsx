@@ -27,7 +27,7 @@ import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
+export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
   /** The content of the tooltip. */
   children: ReactNode,
   /**
@@ -35,13 +35,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
    *
    * @default 'top'
    */
-  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
-  /**
-   * The offset of the tooltip from the trigger.
-   *
-   * @default 4
-   */
-  offset?: number
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
 }
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles {
@@ -145,7 +139,6 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
   let {
     containerPadding,
     crossOffset,
-    offset = 4,
     placement = 'top',
     shouldFlip
   } = useContext(InternalTooltipTriggerContext);
@@ -172,7 +165,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       arrowBoundaryOffset={borderRadius}
       containerPadding={containerPadding}
       crossOffset={crossOffset}
-      offset={offset}
+      offset={4}
       placement={placement}
       shouldFlip={shouldFlip}
       ref={tooltipRef}
@@ -201,7 +194,6 @@ export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
   let {
     containerPadding,
     crossOffset,
-    offset,
     placement,
     shouldFlip,
     ...triggerProps
@@ -213,7 +205,6 @@ export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
         value={{
           containerPadding: containerPadding,
           crossOffset: crossOffset,
-          offset: offset,
           placement: placement,
           shouldFlip: shouldFlip
         }}>
