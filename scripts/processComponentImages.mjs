@@ -7,8 +7,8 @@ const OUTPUT_DIR = 'packages/dev/s2-docs/assets/component-illustrations';
 // Mappings from source file names to target page names
 const mappings = {
   'DateAndTime.avif': 'DatePicker.avif',
-  'DateAndTime(range).avif': 'DateRangePicker.avif',
-  'Slider(range).avif': 'RangeSlider.avif',
+  'DateAndTime(Range).avif': 'DateRangePicker.avif',
+  'Slider(Range).avif': 'RangeSlider.avif',
   'InLineAlert.avif': 'InlineAlert.avif',
   'CardsView.avif': 'CardView.avif',
   'Cards.avif': 'Card.avif',
@@ -20,9 +20,9 @@ const mappings = {
   'MigratingToSpectrum3.avif': 'MigratingToSpectrum3.avif',
   'MigratingToSpectrum2.avif': 'MigratingToSpectrum2.avif',
   "What'sNew.avif": 'WhatsNew.avif',
-  'Releases(numbers).avif': 'Releases.avif',
+  'Releases(Numbers).avif': 'Releases.avif',
   'Home.avif': 'Home.avif',
-  'McpServer.avif': 'McpServer.avif'
+  'MCPServer.avif': 'McpServer.avif'
 };
 
 function transformFilename(basename) {
