@@ -11,7 +11,10 @@
  */
 
 import {Content, Heading, InlineAlert, Link} from '@adobe/react-spectrum';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+// @ts-ignore
+import url from 'url:../pages/assets/wallpaper_collaborative_S2_desktop.webp';
 
 export function MigrationBanner({currentPage}) {
   if (!currentPage || !currentPage.filePath) {
@@ -93,34 +96,55 @@ export function MigrationBanner({currentPage}) {
         if (specialMappings[name]) {
           componentName = name;
           let s2Path = specialMappings[name];
-          s2Link = `https://react-spectrum.adobe.com/${s2Path}`;
+          s2Link = `../${s2Path}`;
         } else {
           componentName = name;
-          s2Link = `https://react-spectrum.adobe.com/${componentName}`;
+          s2Link = `../${componentName}`;
         }
       }
     }
 
     content = (
-      <>
-        <Heading>Spectrum 2 is now available</Heading>
-        <Content>
-          {componentName && (
-            <>
-              Check out the S2{' '}
-              <Link>
-                <a href={s2Link}>{componentName}</a>
-              </Link>
-              {' '}docs and the{' '}
-            </>
-          )}
-          {!componentName && 'Check out the '}
-          <Link>
-            <a href="https://react-spectrum.adobe.com/migrating.html">migration docs</a>
-          </Link>
-          .
-        </Content>
-      </>
+      <span
+        style={{
+          fontSize: '28px',
+          fontWeight: 700,
+          color: 'white',
+          lineHeight: 1.3
+        }}>
+        Spectrum 2 is now available! {componentName && (
+          <>
+            Check out the S2{' '}
+            <Link variant="overBackground">
+              <a href={s2Link}>{componentName}</a>
+            </Link>
+            {' '}docs and the{' '}
+          </>
+        )}
+        {!componentName && 'Check out the '}
+        <Link variant="overBackground">
+          <a href="../migrating">migration docs</a>
+        </Link>
+        .
+      </span>
+    );
+  }
+
+  if (section === 'v3') {
+    return (
+      <header
+        style={{
+          backgroundImage: `url(${url})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 30%',
+          padding: '48px',
+          marginBottom: '32px',
+          borderRadius: '12px'
+        }}>
+        <Flex direction="row" alignItems="center" gap="size-100" wrap>
+          {content}
+        </Flex>
+      </header>
     );
   }
 
