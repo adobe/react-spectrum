@@ -22,12 +22,12 @@ export const isSubpage = true;
 
 # v1.6.0
 
-Happy New Year! Our first release of 2025 includes a new [firstDayOfWeek](../Calendar#custom-first-day-of-week) prop for our calendar and date picker components, support for [CSS transitions](../styling#animation) in our overlay components, a new [Autocomplete](../Autocomplete) component in alpha, and a new [React Aria test utils](../testing#react-aria-test-utils) package.
+Happy New Year! Our first release of 2025 includes a new [firstDayOfWeek](../Calendar#display-options) prop for our calendar and date picker components, support for [CSS transitions](../styling#animation) in our overlay components, a new [Autocomplete](../Autocomplete) component in alpha, and a new [React Aria test utils](../testing#react-aria-test-utils) package.
 As always, a huge shoutout to everyone in the community for their feedback and contributions!
 
 **firstDayOfWeek:**
 
-By default, our date picker components determine the first day of the week from the locale. However, a common request was for the ability to override this for certain use cases regardless of the locale. [Calendar](../Calendar#display-options), [RangeCalendar](../RangeCalendar#display-options), [DatePicker](../DatePicker#display-options), and [DateRangePicker](../DateRangePicker#display-options) now support a `firstDayOfWeek` prop to enable this. In addition, our [@internationalized/date](../internationalized/date/) package now includes an option to override the locale in methods such as `startOfWeek`, `endOfWeek`, `getDayOfWeek`, and `getWeeksInMonth`.
+By default, our date picker components determine the first day of the week from the locale. However, a common request was for the ability to override this for certain use cases regardless of the locale. [Calendar](../Calendar#display-options), [RangeCalendar](../RangeCalendar#display-options), [DatePicker](../DatePicker#format-options), and [DateRangePicker](../DateRangePicker#format-options) now support a `firstDayOfWeek` prop to enable this. In addition, our [@internationalized/date](../internationalized/date/) package now includes an option to override the locale in methods such as `startOfWeek`, `endOfWeek`, `getDayOfWeek`, and `getWeeksInMonth`.
 
 **CSS transitions:**
 
