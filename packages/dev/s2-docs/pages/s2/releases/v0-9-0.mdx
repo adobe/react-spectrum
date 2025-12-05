@@ -36,7 +36,7 @@ Version 0.9.0 adds virtualization and async loading support to ComboBox and Pick
 
 Style macros passed to `UNSAFE_className` will now result in a TypeScript error. This is not allowed because `UNSAFE_className` is appended to the component's own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
 
-We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](react-aria:) with the [S2 style macro](../styling#style-macro) to create custom components. [Safe style properties](../styling#values) can be passed to the `styles` prop of an S2 component.
+We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](react-aria:/) with the [S2 style macro](../styling#style-macro) to create custom components. [Safe style properties](../styling#values) can be passed to the `styles` prop of an S2 component.
 
 
 ## Style macro updates
