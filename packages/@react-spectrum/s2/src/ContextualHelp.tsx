@@ -38,6 +38,11 @@ export interface ContextualHelpProps extends
   /** Contents of the Contextual Help popover. */
   children: ReactNode,
   /**
+   * The offset of the popover from the trigger button.
+   * @default 8
+   */
+  offset?: number,
+  /**
    * The size of the ActionButton.
    *
    * @default 'XS'
