@@ -62,7 +62,6 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    * By default, onClose will always be called on interaction outside the popover ref.
    */
   shouldCloseOnInteractOutside?: (element: Element) => boolean
-
   /**
    *  Nothing will be hidden above this element when a popup is modal.
    */
