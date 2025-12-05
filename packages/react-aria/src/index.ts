@@ -31,7 +31,7 @@ export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 export {useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from '@react-aria/menu';
 export {useMeter} from '@react-aria/meter';
 export {useNumberField} from '@react-aria/numberfield';
-export {DismissButton, ModalProvider, Overlay, OverlayContainer, OverlayProvider, useModal, useModalOverlay, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePopover, usePreventScroll, UNSAFE_PortalProvider} from '@react-aria/overlays';
+export {applyContainerBounds, DismissButton, ModalProvider, Overlay, OverlayContainer, OverlayProvider, useModal, useModalOverlay, useModalProvider, useOverlay, useOverlayPosition, useOverlayTrigger, usePopover, usePreventScroll, UNSAFE_PortalProvider, useUNSAFE_PortalContext} from '@react-aria/overlays';
 export {useProgressBar} from '@react-aria/progress';
 export {useRadio, useRadioGroup} from '@react-aria/radio';
 export {useSearchField} from '@react-aria/searchfield';

@@ -20,6 +20,8 @@ export {usePopover} from './usePopover';
 export {useModalOverlay} from './useModalOverlay';
 export {Overlay, useOverlayFocusContain} from './Overlay';
 export {UNSAFE_PortalProvider, useUNSAFE_PortalContext} from './PortalProvider';
+export {useIsInShadowRoot} from './useIsInShadowRoot';
+export {applyContainerBounds} from './containerBoundsUtils';
 
 export type {AriaPositionProps, PositionAria} from './useOverlayPosition';
 export type {AriaOverlayProps, OverlayAria} from './useOverlay';
