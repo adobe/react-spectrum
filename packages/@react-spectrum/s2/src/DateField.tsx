@@ -171,7 +171,7 @@ export function DateInputContainer(props: PropsWithChildren): ReactElement {
 
 export function DateInput(props: Omit<DateInputProps, 'children'>): ReactElement {
   return (
-    <AriaDateInput {...props}>
+    <AriaDateInput className="" {...props}>
       {(segment) => (
         <AriaDateSegment
           segment={segment}

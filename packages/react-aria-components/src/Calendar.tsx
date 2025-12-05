@@ -449,7 +449,7 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
       {...mergeProps(DOMProps, headerProps)}
       ref={ref}
       style={style}
-      className={className || 'react-aria-CalendarGridHeader'}>
+      className={className ?? 'react-aria-CalendarGridHeader'}>
       <tr>
         {weekDays.map((day, key) => React.cloneElement(children(day), {key}))}
       </tr>
@@ -514,7 +514,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
       {...DOMProps}
       ref={ref}
       style={style}
-      className={className || 'react-aria-CalendarGridBody'}>
+      className={className ?? 'react-aria-CalendarGridBody'}>
       {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
         <tr key={weekIndex}>
           {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (

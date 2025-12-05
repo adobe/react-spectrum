@@ -41,7 +41,7 @@ export function LibraryCards() {
           <Text slot="description">{TAB_DEFS['react-spectrum'].description}</Text>
         </Content>
         <Footer>
-          <LinkButton href="s2/index.html" variant="accent">Get started</LinkButton>
+          <LinkButton href="s2/" variant="accent">Get started</LinkButton>
         </Footer>
       </ProductCard>
 
@@ -52,7 +52,7 @@ export function LibraryCards() {
           <Text slot="description">{TAB_DEFS['react-aria'].description}</Text>
         </Content>
         <Footer>
-          <LinkButton href="react-aria/Autocomplete.html" variant="accent">Explore</LinkButton>
+          <LinkButton href="react-aria/" variant="accent">Explore</LinkButton>
         </Footer>
       </ProductCard>
 
@@ -63,7 +63,7 @@ export function LibraryCards() {
           <Text slot="description">{TAB_DEFS['internationalized'].description}</Text>
         </Content>
         <Footer>
-          <LinkButton href="internationalized/date/index.html" variant="accent">Show Packages</LinkButton>
+          <LinkButton href="internationalized/date/" variant="accent">Show Packages</LinkButton>
         </Footer>
       </ProductCard>
     </div>

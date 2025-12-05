@@ -10,23 +10,19 @@ governing permissions and limitations under the License. */}
 import {Layout} from '../../src/Layout';
 export default Layout;
 import docs from 'docs:@react-aria/ssr';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const section = 'Utilities';
-export const description = 'Implementing collections in React Aria';
+export const description = 'Ensure consistent auto-generated IDs between server and client in React 16 and 17.';
 
 # SSRProvider
 
-## Introduction
+<PageDescription>{docs.exports.SSRProvider.description}</PageDescription>
 
-If you're using React 16 or 17, `SSRProvider` should be used as a wrapper for the entire application during server side rendering.
-It works together with the [useId](useId.html) hook to ensure that auto generated ids are consistent
-between the client and server by resetting the id internal counter on each request.
-See the [server side rendering](ssr.html) docs for more information.
-
-**Note**: if you're using React 18 or newer, `SSRProvider` is not necessary and can be removed from your app. React Aria uses the
-[React.useId](https://react.dev/reference/react/useId) hook internally when using React 18, which ensures ids are consistent.
-
-## Example
+<InlineAlert variant="notice">
+  <Heading>React 16 or 17 only</Heading>
+  <Content>If you're using React 18 or newer, `SSRProvider` is not necessary and can be removed from your app. React Aria uses the [React.useId](https://react.dev/reference/react/useId) hook internally when using React 18, which ensures ids are consistent.</Content>
+</InlineAlert>
 
 ```tsx
 import {SSRProvider} from '@react-aria/ssr';
@@ -35,6 +31,12 @@ import {SSRProvider} from '@react-aria/ssr';
   <YourApp />
 </SSRProvider>
 ```
+
+## Introduction
+
+If you're using React 16 or 17, `SSRProvider` should be used as a wrapper for the entire application during server side rendering.
+It works together with the [useId](useId) hook to ensure that auto generated ids are consistent
+between the client and server by resetting the id internal counter on each request.
 
 ## API
 

@@ -12,6 +12,7 @@
 
 import {basename} from 'path';
 import fs from 'fs';
+import {getBaseUrl} from '../packages/dev/s2-docs/src/pageUtils.ts';
 import {globSync} from 'glob';
 import rehypeStringify from 'rehype-stringify';
 import remarkMdx from 'remark-mdx';
@@ -21,14 +22,12 @@ import {unified} from 'unified';
 import {visit} from 'unist-util-visit';
 import xml from 'xml';
 
-const publicUrl = process.env.PUBLIC_URL || 'http://localhost:1234';
+createFeed('react-aria', 'blog', 'React Aria Blog');
+createFeed('react-aria', 'releases', 'React Aria Releases');
+createFeed('s2', 'releases', 'React Spectrum Releases');
 
-createFeed('react-aria/blog', 'React Aria Blog');
-createFeed('react-aria/releases', 'React Aria Releases');
-createFeed('s2/releases', 'React Spectrum Releases');
-
-function createFeed(type, title) {
-  let files = globSync(`packages/dev/s2-docs/pages/${type}/*.mdx`, {ignore: [`packages/dev/s2-docs/pages/${type}/index.mdx`]});
+function createFeed(library, type, title) {
+  let files = globSync(`packages/dev/s2-docs/pages/${library}/${type}/*.mdx`, {ignore: [`packages/dev/s2-docs/pages/${library}/${type}/index.mdx`]});
   let posts = [];
 
   for (let file of files) {
@@ -65,11 +64,11 @@ function createFeed(type, title) {
 
     let entry = [
       {title},
-      {link: [{_attr: {rel: 'alternate', type: 'text/html', href: `${publicUrl}/${type}/${basename(file, '.mdx')}.html`}}]},
+      {link: [{_attr: {rel: 'alternate', type: 'text/html', href: `${getBaseUrl(library)}/${type}/${basename(file, '.mdx')}.html`}}]},
       {id: basename(file, '.mdx')},
       {updated: new Date(exports.date).toISOString()},
       {published: new Date(exports.date).toISOString()},
-      {summary: [{_attr: {type: 'text/html'}}, summary]},
+      {summary: [{_attr: {type: 'text/html'}}, summary]}
     ];
 
     if (exports.author) {
@@ -91,12 +90,12 @@ function createFeed(type, title) {
     feed: [
       {_attr: {xmlns: 'http://www.w3.org/2005/Atom'}},
       {title},
-      {link: `${publicUrl}/${type}/`},
+      {link: `${getBaseUrl(library)}/${type}/`},
       {updated: posts[0].entry[3].updated},
-      {id: `${publicUrl}/${type}.xml`},
+      {id: `${getBaseUrl(library)}/${type}.xml`},
       ...posts
     ]
   });
 
-  fs.writeFileSync(`packages/dev/s2-docs/dist/${type}.xml`, feed);
+  fs.writeFileSync(`packages/dev/s2-docs/dist/${library}/${type}.xml`, feed);
 }

@@ -15,6 +15,7 @@ import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 
 export const section = 'Interactions';
+export const description = 'Handles interactions with the clipboard, including copy and paste operations.';
 
 # useClipboard
 
@@ -33,8 +34,8 @@ This example shows a simple focusable element which supports copying a string wh
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/useClipboardExample.css"]}
 'use client';
 import React from 'react';
-import type {TextDropItem} from '@react-aria/dnd';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from 'react-aria';
+import {useClipboard} from 'react-aria';
 import './useClipboardExample.css';
 import 'vanilla-starter/theme.css';
 
@@ -97,7 +98,7 @@ This example copies two items, each of which contains representations as plain t
 ```tsx render
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd';
+import {useClipboard} from 'react-aria';
 
 function Copyable() {
   let {clipboardProps} = useClipboard({
@@ -196,7 +197,7 @@ The example below works with the above `Copyable` example using a custom app-spe
 ```tsx render
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd';
+import {useClipboard} from 'react-aria';
 
 ///- begin collapse -///
 function Copyable() {
@@ -285,8 +286,8 @@ This example accepts JPEG and PNG image files, and renders them by creating a lo
 ```tsx render
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd';
-import type {FileDropItem} from '@react-aria/dnd';
+import {useClipboard} from 'react-aria';
+import type {FileDropItem} from 'react-aria';
 
 function Pasteable() {
   let [file, setFile] = React.useState(null);
@@ -312,8 +313,8 @@ This example renders the file names within a dropped directory in a grid.
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/useClipboardGrid.css"]}
 'use client';
 import React from 'react';
-import {useClipboard} from '@react-aria/dnd'
-import type {DirectoryDropItem} from '@react-aria/dnd';
+import {useClipboard} from 'react-aria'
+import type {DirectoryDropItem} from 'react-aria';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import './useClipboardGrid.css';
@@ -362,8 +363,8 @@ If you need to temporarily disable copying and pasting, you can pass the `isDisa
 ```tsx render
 'use client';
 import React from 'react';
-import type {TextDropItem} from '@react-aria/dnd';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from 'react-aria';
+import {useClipboard} from 'react-aria';
 
 function Copyable() {
   let {clipboardProps} = useClipboard({

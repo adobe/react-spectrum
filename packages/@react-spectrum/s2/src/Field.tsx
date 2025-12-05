@@ -112,7 +112,8 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
                     value: 'currentColor'
                   }
                 })}
-                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined} />
+                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined}
+                aria-hidden={!includeNecessityIndicatorInAccessibilityName} />
             }
             {necessityIndicator === 'label' &&
               /* The necessity label is hidden to screen readers if the field is required because
@@ -195,13 +196,13 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
       {...otherProps}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
-        if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+        if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
       onTouchEnd={e => {
-        if (!(e.target as Element).closest('button,input,textarea')) {
+        if (!(e.target as Element).closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }

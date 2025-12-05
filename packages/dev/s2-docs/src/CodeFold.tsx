@@ -19,7 +19,8 @@ const trigger = style({
   whiteSpace: 'inherit',
   fontFamily: 'inherit',
   fontSize: 'inherit',
-  color: 'inherit'
+  color: 'inherit',
+  disableTapHighlight: true
 });
 
 const chevronStyles = style({
@@ -92,6 +93,7 @@ export function CodeFold({tokens}) {
         }
         let index = c.lastIndexOf('\n');
         if (index === 0) {
+          lastLine.unshift(c);
           break;
         } else if (index > 0) {
           lastLine.unshift(c.slice(index));

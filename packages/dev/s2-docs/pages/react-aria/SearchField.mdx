@@ -10,6 +10,7 @@ import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
 
 export const tags = ['input'];
 export const relatedPages = [{'title': 'useSearchField', 'url': 'https://react-spectrum.adobe.com/react-aria/useSearchField.html'}];
+export const description = 'Allows a user to enter and clear a search query.';
 
 # SearchField
 
@@ -68,7 +69,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.SearchField} links={docs.links} props={['isRequired', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true}}
 "use client";
@@ -102,7 +103,7 @@ function Example(props) {
 
 <Anatomy />
 
-```tsx links={{SearchField: '#searchfield', Button: 'Button.html'}}
+```tsx links={{SearchField: '#searchfield', Button: 'Button'}}
 <SearchField>
   <Label />
   <Input />
