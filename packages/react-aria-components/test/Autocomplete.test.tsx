@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import './installPointerEvent';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
 import React, {ReactNode, useState} from 'react';
@@ -382,7 +383,6 @@ let CustomFiltering = ({autocompleteProps = {}, inputProps = {}, children}: {aut
 
 describe('Autocomplete', () => {
   let user;
-  installPointerEvent();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -655,7 +655,7 @@ describe('Autocomplete', () => {
     let options = within(menu).getAllByRole('menuitem');
     let foo = options[0];
 
-    await user.click(foo);
+    await user.pointer({target: foo, keys: '[MouseLeft]'});
     expect(document.activeElement).toBe(input);
   });
 

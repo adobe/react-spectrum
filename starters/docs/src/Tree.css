@@ -54,8 +54,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  min-height: 28px;
-  padding: 0.25025rem 0.25025rem 0.25025rem 0.499625rem;
+  min-height: var(--spacing-8);
+  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-2);
+  box-sizing: border-box;
   --padding: var(--spacing-4);
   border-radius: var(--radius);
   outline: none;

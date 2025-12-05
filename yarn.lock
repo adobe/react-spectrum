@@ -4684,7 +4684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/packager-react-static@npm:^2.16.1":
+"@parcel/packager-react-static@npm:2.16.1":
   version: 2.16.1
   resolution: "@parcel/packager-react-static@npm:2.16.1"
   dependencies:
@@ -4696,6 +4696,21 @@ __metadata:
     nullthrows: "npm:^1.1.1"
     rsc-html-stream: "npm:^0.0.6"
   checksum: 10c0/e59822045dc9d35191cb8311d7f38b7eddaf4e2d742188a5b112d85ba981bf772a60b25ea4ad284c6bea85f90d17ffdc88adee204cef7815d3d6b8182002d6dd
+  languageName: node
+  linkType: hard
+
+"@parcel/packager-react-static@patch:@parcel/packager-react-static@npm%3A2.16.1#~/.yarn/patches/@parcel-packager-react-static-npm-2.16.1-138e4b8f05.patch":
+  version: 2.16.1
+  resolution: "@parcel/packager-react-static@patch:@parcel/packager-react-static@npm%3A2.16.1#~/.yarn/patches/@parcel-packager-react-static-npm-2.16.1-138e4b8f05.patch::version=2.16.1&hash=a4b1bc"
+  dependencies:
+    "@parcel/node-resolver-core": "npm:3.7.1"
+    "@parcel/plugin": "npm:2.16.1"
+    "@parcel/rust": "npm:2.16.1"
+    "@parcel/types": "npm:2.16.1"
+    "@parcel/utils": "npm:2.16.1"
+    nullthrows: "npm:^1.1.1"
+    rsc-html-stream: "npm:^0.0.6"
+  checksum: 10c0/5b79e522f42cb20a9a4db36edb19ecd6ebc75b21dbce4eaee199b5ba3b2b84ebe929b7a49e70a4f6e6bc0ed2ef0f409fa91435fa8bc278c3ca6a206c18e56d3f
   languageName: node
   linkType: hard
 
@@ -24732,7 +24747,7 @@ __metadata:
     "@parcel/core": "npm:^2.16.1"
     "@parcel/optimizer-data-url": "npm:^2.16.1"
     "@parcel/optimizer-terser": "npm:^2.16.1"
-    "@parcel/packager-react-static": "npm:^2.16.1"
+    "@parcel/packager-react-static": "patch:@parcel/packager-react-static@npm%3A2.16.1#~/.yarn/patches/@parcel-packager-react-static-npm-2.16.1-138e4b8f05.patch"
     "@parcel/packager-ts": "npm:^2.16.1"
     "@parcel/reporter-bundle-analyzer": "npm:^2.16.1"
     "@parcel/reporter-cli": "npm:^2.16.1"

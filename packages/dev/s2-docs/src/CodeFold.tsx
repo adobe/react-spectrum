@@ -93,6 +93,7 @@ export function CodeFold({tokens}) {
         }
         let index = c.lastIndexOf('\n');
         if (index === 0) {
+          lastLine.unshift(c);
           break;
         } else if (index > 0) {
           lastLine.unshift(c.slice(index));

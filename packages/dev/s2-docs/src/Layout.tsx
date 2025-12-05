@@ -160,6 +160,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {children} = props;
   let pages = await getPages();
   let currentPage = getCurrentPage(props.currentPage);
+  let isToastPage = currentPage.name === 'Toast.mdx' || currentPage.url?.includes('/s2/Toast');
   let isSubpage = currentPage.exports?.isSubpage;
   let section = currentPage.exports?.section;
   let isLongForm = isSubpage && section === 'Blog';
@@ -233,7 +234,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               }
             })}>
             <Header />
-            <MobileHeader toc={<OptimisticMobileToc />} />
+            <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
             <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
               <Nav />
               <Main
@@ -293,7 +294,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               </Main>
             </div>
           </div>
-          <ToastContainer placement="bottom" />
+          {!isToastPage && <ToastContainer placement="bottom" />}
         </body>
       </Provider>
     </Router>

@@ -6,7 +6,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['hierarchy', 'data', 'nested'];
 export const relatedPages = [
-  {title: 'Testing', url: './TreeView/testing'}
+  {title: 'Testing TreeView', url: './TreeView/testing'}
 ];
 export const description = 'Displays hierarchical data with selection and collapsing.';
 
@@ -146,9 +146,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string

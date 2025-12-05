@@ -6,7 +6,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['autocomplete', 'search', 'typeahead'];
 export const relatedPages = [
-  {title: 'Testing', url: './ComboBox/testing'}
+  {title: 'Testing ComboBox', url: './ComboBox/testing'}
 ];
 export const description = 'Combines a text input with a listbox, and allows a user to filter a list of options.';
 
@@ -156,8 +156,7 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {ComboBox, ComboBoxItem, useAsyncList} from '@react-spectrum/s2';
 
 function Example() {
   let list = useAsyncList({

@@ -6,7 +6,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['select', 'dropdown'];
 export const relatedPages = [
-  {title: 'Testing', url: './Picker/testing'}
+  {title: 'Testing Picker', url: './Picker/testing'}
 ];
 export const description = 'Displays a collapsible list of options, and allows a user to select one of them.';
 
@@ -153,8 +153,7 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {Picker, PickerItem, useAsyncList} from '@react-spectrum/s2';
 
 interface Character {
   name: string
