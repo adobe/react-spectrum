@@ -384,8 +384,8 @@ function Tab({item, state}) {
 
 By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
 
-1. Set up a <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [client side routing guide](routing.html) to learn how to set this up.
-2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#selection).
+1. Set up a <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [framework setup guide](../frameworks) to learn how to set this up.
+2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#controlled-selection).
 
 This example uses [React Router](https://reactrouter.com/en/main) to setup routes for each tab and synchronize the selection with the URL.
 

@@ -13,6 +13,12 @@
 const {Namer} = require('@parcel/plugin');
 const path = require('path');
 
+const mappings = {
+  TooltipTrigger: 'Tooltip',
+  ModalOverlay: 'Modal',
+  TabList: 'Tabs'
+};
+
 module.exports = new Namer({
   name({bundle, bundleGraph, options}) {
     if (!process.env.DOCS_ENV) {
@@ -78,7 +84,7 @@ module.exports = new Namer({
         }
 
         if (/use(.+?)\.html$/.test(basename)) {
-          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)\.html$/, '$1/use$1.html'));
+          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)\.html$/, (_, name) => `${mappings[name] || name}/use${name}.html`));
         }
 
         return path.join(...parts.slice(4, -1), basename);
@@ -94,7 +100,7 @@ module.exports = new Namer({
         }
 
         if (/use(.+?)(Trigger)?State\.html$/.test(basename)) {
-          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)State\.html$/, '$1/use$1$2State.html'));
+          return path.join(...parts.slice(4, -1), basename.replace(/use(.*?)(Trigger)?State\.html$/, '$1/use$1$2State.html'));
         }
 
         return path.join(...parts.slice(4, -1), basename);
