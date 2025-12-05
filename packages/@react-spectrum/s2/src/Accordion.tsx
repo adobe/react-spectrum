@@ -87,7 +87,6 @@ export const Accordion = forwardRef(function Accordion(props: AccordionProps, re
   );
 });
 
-// TODO: export these
 export interface AccordionItemState {
   /** Whether the accordion item is currently expanded. */
   readonly isExpanded: boolean,
@@ -149,6 +148,7 @@ export interface AccordionItemProps extends Omit<RenderProps<AccordionItemRender
   /** Whether the accordion item is expanded by default (uncontrolled). */
   defaultExpanded?: boolean
 }
+
 /**
  * A accordion item is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
  */

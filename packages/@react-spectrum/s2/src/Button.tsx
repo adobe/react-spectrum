@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
-import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
-import {centerBaseline} from './CenterBaseline';
-import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
-import {IconContext} from './Icon';
+import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
+import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {linearGradient} from '../style/spectrum-theme' with {type: 'macro'};
+import {centerBaseline} from './CenterBaseline';
+import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
+import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';

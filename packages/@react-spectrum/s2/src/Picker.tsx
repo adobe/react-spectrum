@@ -33,10 +33,11 @@ import {
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {AvatarContext} from './Avatar';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
-import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
+import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {
   checkbox,
   checkmark,
