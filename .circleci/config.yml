@@ -60,6 +60,13 @@ commands:
       - attach_workspace:
           at: /tmp/dist
       - aws-cli/install
+      - run:
+          name: Check AWS credentials
+          command: |
+            if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+              echo "AWS credentials not found"
+              circleci-agent step halt
+            fi
       - aws-s3/sync:
           arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
           from: /tmp/dist/s2-docs/<< parameters.dir >>

@@ -84,7 +84,7 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 let LINKS = {};
 export function setLinks(links) {
-  LINKS = links;
+  Object.assign(LINKS, links);
 }
 
 export function Type({type}: {type: TType}) {
@@ -543,7 +543,16 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                       <span className={isComponent ? codeStyles.attribute : codeStyles.variable}>{prop.name}</span>
                     </code>
                     {!prop.optional && showRequired
-                      ? <Asterisk size="M" className={style({marginStart: 8})} aria-label="Required" />
+                      ? <Asterisk
+                          size="M"
+                          className={style({
+                            marginStart: 4,
+                            '--iconPrimary': {
+                              type: 'fill',
+                              value: 'currentColor'
+                            }
+                          })}
+                          aria-label="Required" />
                       : null
                     }
                   </TableCell>

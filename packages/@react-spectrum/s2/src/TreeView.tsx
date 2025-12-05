@@ -12,6 +12,7 @@
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
+import {baseColor, colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {
   Button,
   ButtonContext,
@@ -31,7 +32,6 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {DOMRef, forwardRefType, GlobalDOMAttributes, Key, LoadingState} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -153,7 +153,10 @@ const treeRow = style({
   width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
-  color: 'body',
+  color: {
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral')
+  },
   outlineStyle: 'none',
   cursor: {
     default: 'default',

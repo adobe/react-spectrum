@@ -11,7 +11,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 export const tags = ['navigation'];
 export const relatedPages = [
   {title: 'useTabs', url: 'https://react-spectrum.adobe.com/react-aria/useTabs.html'},
-  {title: 'Testing', url: './Tabs/testing'}
+  {title: 'Testing Tabs', url: './Tabs/testing'}
 ];
 export const description = 'Organizes content into multiple sections and allows users to navigate between them.';
 
@@ -121,6 +121,7 @@ export const description = 'Organizes content into multiple sections and allows 
 import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
+import {Plus, Minus} from 'lucide-react';
 
 function Example() {
   let [tabs, setTabs] = useState([
@@ -158,8 +159,12 @@ function Example() {
           {item => <Tab>{item.title}</Tab>}
         </TabList>
         <div className="button-group">
-          <Button onPress={addTab}>Add tab</Button>
-          <Button onPress={removeTab}>Remove tab</Button>
+          <Button onPress={addTab} aria-label="Add tab">
+            <Plus />
+          </Button>
+          <Button onPress={removeTab} aria-label="Remove tab">
+            <Minus />
+          </Button>
         </div>
       </div>
       <TabPanels items={tabs}>

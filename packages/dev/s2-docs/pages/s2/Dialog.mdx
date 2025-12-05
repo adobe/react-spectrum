@@ -6,7 +6,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['modal', 'popup', 'overlay'];
 export const relatedPages = [
-  {title: 'Testing', url: './Dialog/testing'}
+  {title: 'Testing Dialog', url: './Dialog/testing'}
 ];
 export const description = 'An overlay shown above other content in an application.';
 
@@ -260,7 +260,7 @@ function DialogContainerExample() {
 
 ### Dialog
 
-```tsx links={{ButtonGroup: 'ButtonGroup'}}
+```tsx links={{ButtonGroup: 'ButtonGroup', Image:' Image'}}
 <Dialog>
   <Image slot="hero">
   <Heading slot="title" />
@@ -271,7 +271,7 @@ function DialogContainerExample() {
 </Dialog>
 ```
 
-<PropTable component={docs.exports.Dialog} links={docs.links} />
+<PropTable component={docs.exports.Dialog} links={docs.links} hideRenderProps />
 
 ### AlertDialog
 
@@ -288,11 +288,11 @@ function DialogContainerExample() {
 </FullscreenDialog>
 ```
 
-<PropTable component={docs.exports.FullscreenDialog} links={docs.links} />
+<PropTable component={docs.exports.FullscreenDialog} links={docs.links} hideRenderProps />
 
 ### CustomDialog
 
-<PropTable component={docs.exports.CustomDialog} links={docs.links} />
+<PropTable component={docs.exports.CustomDialog} links={docs.links} hideRenderProps />
 
 ### DialogTrigger
 

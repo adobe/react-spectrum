@@ -54,7 +54,10 @@ const standaloneCode = style({
   },
   overflow: 'auto',
   maxWidth: '--text-width',
-  marginX: 'auto'
+  marginX: {
+    default: 'auto',
+    ':is([data-example-switcher] *)': 0
+  }
 });
 
 interface CodeBlockProps extends VisualExampleProps {
@@ -158,7 +161,14 @@ function TruncatedCode({children, maxLines = 6, ...props}: TruncatedCodeProps) {
     </ExpandableCode>
   )
   : (
-    <div className={style({overflow: 'auto'})}>
+    <div
+      className={style({
+        overflow: 'auto',
+        '--code-padding-end': {
+          type: 'paddingEnd',
+          value: 64 // Extra space for the toolbar
+        }
+      })}>
       <Pre>
         <Code {...props}>{children}</Code>
       </Pre>

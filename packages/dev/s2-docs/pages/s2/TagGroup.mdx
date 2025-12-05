@@ -42,8 +42,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, TextField, Button} from '@react-spectrum/s2';
-import {useListData} from 'react-stately';
+import {TagGroup, Tag, TextField, Button, useListData} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -258,9 +257,12 @@ import {TagGroup, Tag} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{TagGroup: '#taggroup', Tag: '#tag'}}
+```tsx links={{TagGroup: '#taggroup', Tag: '#tag', Icon: 'icons', Avatar: 'Avatar', Image: 'Image'}}
 <TagGroup>
-  <Tag />
+  <Tag>
+    <Icon /> or <Avatar /> or <Image />
+    <Text />
+  </Tag>
 </TagGroup>
 ```
 

@@ -4,7 +4,7 @@ import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import {getBaseUrl, getRSCUrl} from './pageUtils';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
-import {setNavigationPromise} from './NavigationSuspense';
+import {setNavigationPromise} from './Router';
 import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
 
 let isClientLink = (link: HTMLAnchorElement) => {
@@ -158,7 +158,7 @@ async function navigate(pathname: string, push = false) {
 
 // Prefetch routes on pointerover
 // Use a delay to avoid prefetching when quickly moving over multiple links.
-const PREFETCH_DELAY_MS = 100;
+const PREFETCH_DELAY_MS = 65;
 let prefetchTimeout: ReturnType<typeof setTimeout> | null = null;
 let currentPrefetchLink: HTMLAnchorElement | null = null;
 
@@ -170,7 +170,11 @@ function clearPrefetchTimeout() {
   currentPrefetchLink = null;
 }
 
-document.addEventListener('pointerover', e => {
+document.addEventListener('pointerenter', e => {
+  if (e.pointerType !== 'mouse') {
+    return;
+  }
+
   let link = e.target instanceof Element ? e.target.closest('a') : null;
   
   // Clear any pending prefetch
@@ -185,8 +189,25 @@ document.addEventListener('pointerover', e => {
   }
 }, true);
 
+// Prefetch immediately on pointer down, with high priority.
+document.addEventListener('pointerdown', e => {
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
+
+  // Clear any pending prefetch
+  clearPrefetchTimeout();
+
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
+    currentPrefetchLink = link;
+    prefetchRoute(link.pathname + link.search + link.hash, 'high');
+  }
+}, true);
+
 // Clear prefetch timeout when pointer leaves a link
-document.addEventListener('pointerout', e => {
+document.addEventListener('pointerleave', e => {
+  if (e.pointerType !== 'mouse') {
+    return;
+  }
+
   let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (link && link === currentPrefetchLink) {
     clearPrefetchTimeout();
@@ -222,6 +243,7 @@ document.addEventListener('click', e => {
   if (
     link &&
     isClientLink(link) &&
+    link.pathname !== location.pathname &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)

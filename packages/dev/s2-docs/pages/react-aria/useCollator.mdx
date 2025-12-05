@@ -18,6 +18,8 @@ export const description = 'Wraps Intl.Collator and compares and sorts strings a
 
 # useCollator
 
+<PageDescription>{docs.exports.useCollator.description}</PageDescription>
+
 ## Introduction
 
 `useCollator` wraps a builtin browser [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator)
@@ -33,7 +35,7 @@ This example includes two textfields and compares the values of the two fields u
 ```tsx render
 'use client';
 import React from 'react';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from 'react-aria';
 
 function Example() {
   let [first, setFirst] = React.useState('');

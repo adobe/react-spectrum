@@ -117,7 +117,7 @@ function Example() {
   };
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 32, width: 320})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 32, width: 320, maxWidth: 'full'})}>
       {/*- begin highlight -*/}
       <TagGroup label="Animals" items={animals}>
         {item => <Tag>{item.name}</Tag>}
@@ -186,7 +186,7 @@ export default function Example() {
   let [showType, setShowType] = useState(false);
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 320, alignItems: 'center'})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, width: 320, maxWidth: 'full', alignItems: 'center'})}>
       <ToggleButtonGroup
         aria-label="Display options"
         selectionMode="multiple"
@@ -280,9 +280,8 @@ Many components support infinite scrolling via the `loadingState` and `onLoadMor
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string

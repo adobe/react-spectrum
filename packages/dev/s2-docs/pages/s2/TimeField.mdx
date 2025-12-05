@@ -3,7 +3,6 @@ export default Layout;
 
 import {TimeField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
-import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['date', 'input'];
 export const description = 'Allows a user to enter and edit time values using a keyboard.';
@@ -23,7 +22,7 @@ export const description = 'Allows a user to enter and edit time values using a 
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the time value, using objects in the <Link href={`${getBaseUrl('react-aria')}/internationalized/date/`}>@internationalized/date</Link> package. `TimeField` accepts plain <Link href={`${getBaseUrl('react-aria')}/internationalized/date/Time`}>Time</Link>, <Link href={`${getBaseUrl('react-aria')}/internationalized/date/CalendarDateTime`}>CalendarDateTime</Link>, or <Link href={`${getBaseUrl('react-aria')}/internationalized/date/ZonedDateTime`}>ZonedDateTime</Link>, but only displays the time.
+Use the `value` or `defaultValue` prop to set the time value, using objects in the [@internationalized/date](react-aria:internationalized/date/) package. `TimeField` accepts plain [Time](react-aria:internationalized/date/Time), [CalendarDateTime](react-aria:internationalized/date/CalendarDateTime), or [ZonedDateTime](react-aria:internationalized/date/ZonedDateTime), but only displays the time.
 
 ```tsx render
 "use client";
@@ -63,9 +62,9 @@ import {TimeField} from '@react-spectrum/s2';
 
 ## Forms
 
-Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
-```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
 import {Time} from '@internationalized/date';
 import {TimeField, Form, Button} from '@react-spectrum/s2';
