@@ -38,13 +38,51 @@ export function MigrationBanner({currentPage}) {
 
   let content;
   if (section === 'react-aria' || section === 'react-stately') {
+    // get page name from path
+    let pageName = currentPage.name.split('/').pop().replace('.html', '');
+    let targetLink;
+
+    if (section === 'react-aria') {
+      // logic from docsnamer, these are aria pages that arent subpages on new site
+      let topLevelHooks = /^use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)$/;
+
+      if (topLevelHooks.test(pageName)) {
+        targetLink = '../';
+      } else {
+        // logic from docsnamer, mapping of certain aria hooks that don't map 1:1 to their s2 parent
+        let mappings = {
+          TooltipTrigger: 'Tooltip',
+          ModalOverlay: 'Modal',
+          TabList: 'Tabs'
+        };
+
+        let componentName = pageName.replace(/^use(.+)$/, '$1');
+        componentName = mappings[componentName] || componentName;
+        targetLink = `../${componentName}`;
+      }
+    } else if (section === 'react-stately') {
+      // logic from docsnamer, these are stately pages that arent subpages on new site
+      let topLevelStateHooks = /^use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State$/;
+
+      if (topLevelStateHooks.test(pageName)) {
+        targetLink = '../';
+      } else {
+        // usetablistState goes up to Tabs
+        let componentName = pageName.replace(/^use(.+?)(Trigger)?State$/, '$1');
+        if (pageName === 'useTabListState') {
+          componentName = 'Tabs';
+        }
+        targetLink = `../${componentName}`;
+      }
+    }
+
     content = (
       <>
         <Heading>Migration in progress</Heading>
         <Content>
           This page is still being migrated to our new website. In the meantime, you can explore the new React Aria Components docs{' '}
           <Link>
-            <a href="https://react-aria.adobe.com/index.html">here</a>
+            <a href={targetLink}>here</a>
           </Link>
           .
         </Content>
