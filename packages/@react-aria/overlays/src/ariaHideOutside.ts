@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from '@react-aria/utils';
+import {createShadowTreeWalker, getOwnerDocument, getOwnerWindow, nodeContains} from '@react-aria/utils';
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
@@ -85,7 +85,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
       // Skip this node but continue to children if one of the targets is inside the node.
       for (let target of visibleNodes) {
-        if (node.contains(target)) {
+        if (nodeContains(node, target)) {
           return NodeFilter.FILTER_SKIP;
         }
       }
@@ -93,8 +93,11 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       return NodeFilter.FILTER_ACCEPT;
     };
 
-    let walker = document.createTreeWalker(
-      root,
+    let rootElement = root?.nodeType === Node.ELEMENT_NODE ? (root as Element) : null;
+    let doc = getOwnerDocument(rootElement);
+    let walker = createShadowTreeWalker(
+      doc,
+      root || doc,
       NodeFilter.SHOW_ELEMENT,
       {acceptNode}
     );
@@ -147,7 +150,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
       // If the parent element of the added nodes is not within one of the targets,
       // and not already inside a hidden node, hide all of the new children.
-      if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
+      if (![...visibleNodes, ...hiddenNodes].some(node => nodeContains(node, change.target as Element))) {
         for (let node of change.addedNodes) {
           if (
             (node instanceof HTMLElement || node instanceof SVGElement) &&
