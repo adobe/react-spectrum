@@ -152,8 +152,7 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 "use client";
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection} from 'react-aria-components';
-import {useAsyncList} from 'react-stately';
+import {Collection, useAsyncList} from 'react-aria-components';
 
 interface Character {
   name: string
@@ -340,8 +339,7 @@ ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is 
 
 ```tsx render
 "use client";
-import {useListData} from 'react-stately';
-import {ListBox, ListBoxItem, useDragAndDrop} from 'react-aria-components';
+import {ListBox, ListBoxItem, useDragAndDrop, useListData} from 'react-aria-components';
 
 function Example() {
   let list = useListData({
