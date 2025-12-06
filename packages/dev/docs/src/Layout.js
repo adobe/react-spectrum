@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
@@ -26,6 +25,7 @@ import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
+import {MigrationBanner} from './MigrationBanner';
 import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import path from 'path';
 import React from 'react';
@@ -108,7 +108,7 @@ function stripMarkdown(description) {
 }
 
 function isBlogSection(section) {
-  return section === 'blog' || section === 'releases';
+  return section === 'blog';
 }
 
 function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
@@ -252,6 +252,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
 }
 
 const CATEGORY_ORDER = [
+  'Foundation',
   'Introduction',
   'Concepts',
   'Application',
@@ -264,7 +265,8 @@ const CATEGORY_ORDER = [
   'Utilities'
 ];
 
-function Nav({currentPageName, pages}) {
+function Nav({currentPage, pages}) {
+  let currentPageName = currentPage.name;
   let currentParts = currentPageName.split('/');
   let isBlog = isBlogSection(currentParts[0]);
   let blogIndex = currentParts[0] + '/index.html';
@@ -286,18 +288,11 @@ function Nav({currentPageName, pages}) {
       return false;
     }
 
-    // Pages within same directory (react-spectrum/Alert.html)
-    if (currentParts.length > 1) {
-      return currentDir === pageDir && !INDEX_RE.test(p.name);
+    if (currentDir === 'v3') {
+      return pageDir === 'v3';
     }
 
-    // Top-level index pages (react-spectrum/index.html)
-    if (currentParts.length === 1 && pageParts.length > 1 && INDEX_RE.test(p.name)) {
-      return true;
-    }
-
-    // Other top-level pages
-    return !INDEX_RE.test(p.name) && pageParts.length === 1;
+    return true;
   });
 
   if (currentParts.length === 1) {
@@ -358,19 +353,17 @@ function Nav({currentPageName, pages}) {
     }
   }
 
-  let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
-  let currentPageIsIndex = INDEX_RE.test(currentPageName);
-  let sectionIndex = './index.html';
-  let back = '../index.html';
-  if (isBlog) {
-    sectionIndex = '/index.html';
-  } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
-    sectionIndex = '../index.html';
-    back = '../../index.html';
-  } else if (currentPageName === 'react-aria/examples/index.html') {
-    sectionIndex = '../index.html';
-    back = '../../index.html';
+  let title;
+  if (currentParts.length > 1) {
+    // rename stately sidenav header button to aria so the sidebars are exactly the same
+    // between react aria and stately
+    if (currentPageName.startsWith('react-stately') || currentPageName.startsWith('react-aria')) {
+      title = 'React Aria';
+    } else if (currentPageName.startsWith('v3/')) {
+      title = 'React Spectrum v3';
+    }
   }
+  let currentPageIsIndex = INDEX_RE.test(currentPageName);
 
   function SideNavItem({name, url, title, preRelease}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
@@ -396,38 +389,46 @@ function Nav({currentPageName, pages}) {
   };
 
   let sections = [];
-  if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
-    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
-    let interactions = {...pagesByType.interaction, Interactions, Focus};
-    let utilities = {Internationalization, 'Server Side Rendering': ssr, Utilities};
-    hooks = {...hooks, ...pagesByType.hook};
-    sections.push({pages: {Introduction, Concepts, Guides}});
+  if ((currentPage.filePath?.includes('@react-aria') || currentPage.filePath?.includes('@react-stately')) && ENABLE_PAGE_TYPES) {
+    let statelyPages = {};
+    let ariaOtherPages = {};
+
+    // need to filter stately from aria pages since the category names can be the same
+    for (let category in pagesByType.other) {
+      let categoryPages = pagesByType.other[category];
+
+      let statelyPagesInCategory = categoryPages.filter(p => p.filePath?.includes('@react-stately'));
+      let ariaPagesInCategory = categoryPages.filter(p => p.filePath?.includes('@react-aria'));
+
+      if (statelyPagesInCategory.length > 0) {
+        statelyPages[category] = statelyPagesInCategory;
+      }
+      if (ariaPagesInCategory.length > 0) {
+        ariaOtherPages[category] = ariaPagesInCategory;
+      }
+    }
+    // we only want the component hooks for now, so get rid of the top level pages and non component hooks
+    // eslint-disable-next-line no-unused-vars
+    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...ariaHooks} = ariaOtherPages;
+    ariaHooks = {...ariaHooks, ...pagesByType.hook};
+
+    // same sidebar structure for both react-aria and react-stately, aria first then stately
     sections.push({
-      title: 'Components',
-      pages: pagesByType.component,
-      isActive: isActive(pagesByType.component)
+      title: 'React Aria',
+      pages: ariaHooks,
+      isActive: isActive(ariaHooks)
     });
-    sections.push({
-      title: 'Hooks',
-      pages: hooks,
-      isActive: isActive(hooks)
-    });
-    if (pagesByType.pattern) {
+    if (Object.keys(statelyPages).length > 0) {
       sections.push({
-        title: 'Patterns',
-        pages: pagesByType.pattern,
-        isActive: isActive(pagesByType.pattern)
+        title: 'React Stately',
+        pages: statelyPages,
+        isActive: isActive(statelyPages)
       });
     }
+  } else if (currentPageName.startsWith('v3/')) {
+    // make sure we add all the react spectrum pages to the side nav, specifically the intro and concept section ones
     sections.push({
-      title: 'Interactions',
-      pages: interactions,
-      isActive: isActive(interactions)
-    });
-    sections.push({
-      title: 'Utilities',
-      pages: utilities,
-      isActive: isActive(utilities)
+      pages: {...pagesByType.other, ...pagesByType.component}
     });
   } else {
     sections.push({
@@ -446,12 +447,7 @@ function Nav({currentPageName, pages}) {
   return (
     <nav className={docStyles.nav} aria-labelledby="nav-title-id">
       <header>
-        {currentParts.length > 1 &&
-          <a href={back} className={docStyles.backBtn}>
-            <ChevronLeft aria-label="Back" />
-          </a>
-        }
-        <a href={sectionIndex} className={docStyles.homeBtn} id="nav-title-id">
+        <span className={docStyles.homeBtn} id="nav-title-id">
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -460,7 +456,7 @@ function Nav({currentPageName, pages}) {
           <h2 className={typographyStyles['spectrum-Heading4']}>
             {title}
           </h2>
-        </a>
+        </span>
       </header>
       {sections.map((section, i) => {
         let contents = categories.filter(c => section.pages[c]?.length).map(key => {
@@ -519,7 +515,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
-        <Nav currentPageName={currentPage.name} pages={pages} />
+        <Nav currentPage={currentPage} pages={pages} />
         <main className={toc.length === 0 ? docStyles.noToc : null}>
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
@@ -550,7 +546,8 @@ export function Layout(props) {
   return (
     <BaseLayout {...props}>
       <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(props.currentPage.name)})}>
-        <VersionBadge version={props.currentPage.preRelease} size="large" />
+        <MigrationBanner currentPage={props.currentPage} />
+        <VersionBadge version={props.currentPage.preRelease} size="large" style={{display: 'block'}} />
         {props.children}
       </article>
     </BaseLayout>
@@ -596,6 +593,10 @@ export function BlogPostLayout(props) {
 }
 
 export function Time({date}) {
+  // redirect pages won't supply date
+  if (!date) {
+    return null;
+  }
   // treat date as local time rather than UTC
   let localDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   return (

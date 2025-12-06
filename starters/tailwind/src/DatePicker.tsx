@@ -9,7 +9,6 @@ import {
 } from 'react-aria-components';
 import { Calendar } from './Calendar';
 import { DateInput } from './DateField';
-import { Dialog } from './Dialog';
 import { Description, FieldError, FieldGroup, Label } from './Field';
 import { Popover } from './Popover';
 import { composeTailwindRenderProps } from './utils';
@@ -36,10 +35,8 @@ export function DatePicker<T extends DateValue>(
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <Popover>
-        <Dialog>
-          <Calendar />
-        </Dialog>
+      <Popover className="p-2">
+        <Calendar />
       </Popover>
     </AriaDatePicker>
   );

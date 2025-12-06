@@ -106,8 +106,7 @@ interface, which is a generic interface to access sequential unique keyed data. 
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
 but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTableState} /> from
 `@react-stately/table` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information,
-and [Collection Interface](/react-stately/Collection.html) for internal details.
+See [Collection Components](v3:collections.html) for more information.
 
 Data is defined using the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TableHeader} />, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Column} />, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TableBody} />, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Row} />, and <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Cell} /> components, which support both static and dynamic data.
 See the examples in the [usage](#usage) section below for details on how to use these components.
@@ -116,11 +115,11 @@ In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTa
 manages the state necessary for multiple selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
-For more information, see [Selection](/react-stately/selection.html).
+For more information, see [Selection](v3:selection.html).
 
 ## Example
 
-Tables are complex [collection components](../react-stately/collections.html) that are built up from many child elements
+Tables are complex [collection components](v3:collections.html) that are built up from many child elements
 including columns, rows, and cells. In this example, we'll use the standard HTML table elements along with hooks from React
 Aria for each child. You may also use other elements like `<div>` to render these components as appropriate.
 Since there are many pieces, we'll walk through each of them one by one.
@@ -270,7 +269,7 @@ Now that we've covered the table header, let's move on to the body. We'll use
 the <TypeLink links={docs.links} type={docs.exports.useTableRow} /> hook to render each row in the table.
 Table rows can be focused and navigated to using the keyboard via the arrow keys. In addition, table rows
 can optionally support selection via mouse, touch, or keyboard. Clicking, tapping, or pressing the <Keyboard>Space</Keyboard>
-key anywhere in the row selects it. Row actions are also supported, see [below](#row-and-cell-actions) for details.
+key anywhere in the row selects it. Row actions are also supported, see [below](#row-actions) for details.
 
 We'll use the <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} /> object exposed
 by the `state` to determine if a row is selected, and render a pink background if so. We'll also use the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
@@ -385,7 +384,7 @@ hook. It is passed the `parentKey` of the cell, which refers to the row the cell
 checks or unchecks the checkbox, the row will be added or removed from the Table's selection.
 
 The `Checkbox` component used in this example is independent and can be used separately from `Table`. The code is
-available below. See [useCheckbox](useCheckbox.html) for documentation.
+available below. See [useCheckbox](../Checkbox/useCheckbox.html) for documentation.
 
 ```tsx example export=true render=false
 import {useTableSelectionCheckbox} from '@react-aria/table';
@@ -415,7 +414,7 @@ the checkbox will be shown as checked, and when only some rows are selected, the
 The user can check or uncheck the checkbox to select all or clear the selection, respectively.
 
 **Note**: Always ensure that the cell has accessible content, even when the checkbox is hidden (i.e. in single selection mode). The
-[VisuallyHidden](VisuallyHidden.html) component can be used to do this.
+[VisuallyHidden](../VisuallyHidden) component can be used to do this.
 
 ```tsx example export=true render=false
 import {useTableSelectAllCheckbox} from '@react-aria/table';
@@ -482,7 +481,7 @@ examples of how to use the Table component that we've built.
 
 ### Checkbox
 
-The `Checkbox` component used in the above example is used to implement row selection. It is built using the [useCheckbox](useCheckbox.html)
+The `Checkbox` component used in the above example is used to implement row selection. It is built using the [useCheckbox](../Checkbox/useCheckbox.html)
 hook, and can be shared with many other components.
 
 <details>
@@ -698,7 +697,7 @@ tr[data-href] {
 
 #### Client side routing
 
-The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [framework setup guide](../frameworks) to learn how to set this up.
 
 ### Sorting
 
@@ -707,7 +706,7 @@ the `allowsSorting` prop. The Table accepts a `sortDescriptor` prop that defines
 When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update
 the `sortDescriptor` appropriately.
 
-This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](../useAsyncList.html) hook.
 See the docs for more information on how to perform server side sorting.
 
 ```tsx example
@@ -1053,7 +1052,7 @@ function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, 
 
 ### Button
 
-The `Button` component is used in the above example to represent the table column header title. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to represent the table column header title. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -1074,7 +1073,7 @@ function Button(props) {
 ### Resizer
 
 As described above, we need to implement an element that the user can drag/interact with to resize a column. Here we'll use the <TypeLink links={docs.links} type={docs.exports.useTableColumnResize} />
-hook to create a visible resizer div for physical drag operations and a visually hidden input responsible for keyboard and screenreader interactions, similar to a [slider](useSlider.html).
+hook to create a visible resizer div for physical drag operations and a visually hidden input responsible for keyboard and screenreader interactions, similar to a [slider](../Slider/useSlider.html).
 Users can press and drag on the visible resizer to trigger the `onResize` callbacks and update the tracked column widths accordingly. When focused, keyboard users can begin resizing the column by pressing <Keyboard>Enter</Keyboard>.
 Once resizing is activated, they can use the arrow keys to trigger the same resize events and press <Keyboard>Enter</Keyboard>, <Keyboard>Esc</Keyboard>, or <Keyboard>Space</Keyboard> to exit resizing. Touch screen reader users can swipe
 left or right to focus the column's resizer input and swipe up and down to resize the column.

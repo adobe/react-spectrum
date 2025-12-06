@@ -8,7 +8,6 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import { DateInput } from './DateField';
-import { Dialog } from './Dialog';
 import { Description, FieldError, FieldGroup, Label } from './Field';
 import { Popover } from './Popover';
 import { RangeCalendar } from './RangeCalendar';
@@ -40,10 +39,8 @@ export function DateRangePicker<T extends DateValue>(
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <Popover>
-        <Dialog>
-          <RangeCalendar />
-        </Dialog>
+      <Popover className="p-2">
+        <RangeCalendar />
       </Popover>
     </AriaDateRangePicker>
   );

@@ -41,9 +41,9 @@ export interface NumberFieldAria extends ValidationResult {
   groupProps: GroupDOMAttributes,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the increment button, to be passed to [useButton](useButton.html). */
+  /** Props for the increment button, to be passed to `useButton`. */
   incrementButtonProps: AriaButtonProps,
-  /** Props for the decrement button, to be passed to [useButton](useButton.html). */
+  /** Props for the decrement button, to be passed to `useButton`. */
   decrementButtonProps: AriaButtonProps,
   /** Props for the number field's description element, if any. */
   descriptionProps: DOMAttributes,

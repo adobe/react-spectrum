@@ -59,7 +59,6 @@ async function run() {
       [NextJS App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/next-build-stats.txt)
       [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)
       [Size diff since last release](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/size-diff.txt)
-      [Docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/docs/index.html)
       [Storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook/index.html?path=/story/accordion--default)
       [S2 Storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-s2/index.html)
       [S2 docs](https://d1pzu54gtk2aed.cloudfront.net/main/${process.env.CIRCLE_SHA1}/)
@@ -83,7 +82,6 @@ async function run() {
 
   * [View the storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook/index.html?path=/story/accordion--default)
   * [View the S2 storybook](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/storybook-s2/index.html)
-  * [View the v3 docs](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/docs/index.html)
   * [View the S2 docs](https://d1pzu54gtk2aed.cloudfront.net/pr/${process.env.CIRCLE_SHA1}/)
   * [View the React Aria docs](https://d5iwopk28bdhl.cloudfront.net/pr/${process.env.CIRCLE_SHA1}/)`
       });
