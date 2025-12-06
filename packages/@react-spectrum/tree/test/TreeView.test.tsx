@@ -518,7 +518,7 @@ describe('Tree', () => {
     let rows = getAllByRole('row');
     expect(rows).toHaveLength(1);
 
-    expect(rows[0]).toHaveAttribute('aria-label', 'Test');
+    expect(rows[0]).toHaveAttribute('aria-label', 'test row');
   });
 
   describe('general interactions', () => {

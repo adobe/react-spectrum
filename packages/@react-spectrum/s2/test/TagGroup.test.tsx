@@ -15,6 +15,18 @@ import React from 'react';
 import {Tag, TagGroup} from '../src';
 import userEvent from '@testing-library/user-event';
 
+
+let TestTagGroup = ({tagGroupProps, itemProps}) => (
+  <TagGroup data-testid="group" {...tagGroupProps}>
+    <Tag {...itemProps} id="cat">Cat</Tag>
+    <Tag {...itemProps} id="dog">Dog</Tag>
+    <Tag {...itemProps} id="kangaroo">Kangaroo</Tag>
+  </TagGroup>
+);
+
+let renderTagGroup = (tagGroupProps = {}, itemProps = {}) => render(<TestTagGroup {...{tagGroupProps, itemProps}} />);
+
+
 describe('TagGroup', () => {
   let user;
   beforeAll(() => {
@@ -51,5 +63,13 @@ describe('TagGroup', () => {
     act(() => {jest.runAllTimers();});
     expect(onRemove).toHaveBeenCalledTimes(1);
     expect(onRemove).toHaveBeenCalledWith(new Set(['chocolate']));
+  });
+
+  it('should aria label on tags', () => {
+    let {getAllByRole} = renderTagGroup({label: 'TagGroup label'}, {'aria-label': 'Test'});
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('aria-label', 'Test');
+    }
   });
 });

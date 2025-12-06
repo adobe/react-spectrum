@@ -15,11 +15,12 @@ import {announce} from '@react-aria/live-announcer';
 import {CloseButton} from './CloseButton';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope, useKeyboard} from 'react-aria';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {lightDark, style} from '../style' with {type: 'macro'};
+import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -74,7 +75,7 @@ const actionBarStyles = style({
   }
 });
 
-export interface ActionBarProps extends SlotProps {
+export interface ActionBarProps extends SlotProps, StyleProps, DOMProps {
   /** A list of ActionButtons to display. */
   children: ReactNode,
   /** Whether the ActionBar should be displayed with a emphasized style. */
@@ -106,7 +107,8 @@ export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, re
 });
 
 const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps & {isExiting: boolean}, ref: ForwardedRef<HTMLDivElement | null>) {
-  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting} = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting, slot, ...otherProps} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // Store the last count greater than zero so that we can retain it while rendering the fade-out animation.
@@ -158,6 +160,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
     <FocusScope restoreFocus>
       <div
         ref={objectRef}
+        {...otherProps}
         {...keyboardProps}
         className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
         style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`}}>
