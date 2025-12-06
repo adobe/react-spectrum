@@ -48,13 +48,14 @@ export function MigrationBanner({currentPage}) {
       let topLevelHooks = /^use(Clipboard|Collator|.*Formatter|Drag.*|Drop.*|Field|Filter|Focus.*|Hover|Id|IsSSR|Keyboard|Label|Landmark|Locale|.*Press|Move|ObjectRef)$/;
 
       if (topLevelHooks.test(pageName)) {
-        targetLink = '../';
+        targetLink = '.';
       } else {
         // logic from docsnamer, mapping of certain aria hooks that don't map 1:1 to their s2 parent
         let mappings = {
           TooltipTrigger: 'Tooltip',
           ModalOverlay: 'Modal',
-          TabList: 'Tabs'
+          TabList: 'Tabs',
+          Dialog: 'Modal'
         };
 
         let componentName = pageName.replace(/^use(.+)$/, '$1');

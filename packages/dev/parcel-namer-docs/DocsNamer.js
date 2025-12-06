@@ -16,7 +16,8 @@ const path = require('path');
 const mappings = {
   TooltipTrigger: 'Tooltip',
   ModalOverlay: 'Modal',
-  TabList: 'Tabs'
+  TabList: 'Tabs',
+  Dialog: 'Modal'
 };
 
 module.exports = new Namer({
