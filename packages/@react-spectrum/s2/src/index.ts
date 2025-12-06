@@ -94,7 +94,7 @@ export {pressScale} from './pressScale';
 export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
 export {useListData, useTreeData, useAsyncList} from 'react-stately';
 
-export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps} from './Accordion';
+export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps, AccordionItemState, AccordionItemRenderProps} from './Accordion';
 export type {ActionBarProps} from './ActionBar';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionButtonGroupProps} from './ActionButtonGroup';

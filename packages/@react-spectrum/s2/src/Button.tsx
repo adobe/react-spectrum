@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, lightDark, linearGradient, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
@@ -19,6 +19,7 @@ import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {linearGradient} from '../style/spectrum-theme' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {SkeletonContext} from './Skeleton';
