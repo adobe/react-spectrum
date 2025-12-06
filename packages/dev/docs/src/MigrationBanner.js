@@ -33,7 +33,7 @@ export function MigrationBanner({currentPage}) {
   let isIndexPage = /^(?:[^/]+\/)?index\.html$/.test(currentPage.name);
 
   // only have banner on react-stately index page, not other index pages. Also skip releases
-  if ((isIndexPage && section !== 'react-stately') || currentPage.name.startsWith('v3/releases/')) {
+  if ((isIndexPage && section !== 'react-stately') || currentPage.name.startsWith('v3/releases/') || currentPage.name === 'v3/Support.html') {
     return null;
   }
 
@@ -64,10 +64,10 @@ export function MigrationBanner({currentPage}) {
       }
     } else if (section === 'react-stately') {
       // logic from docsnamer, these are stately pages that arent subpages on new site
-      let topLevelStateHooks = /^use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State$/;
+      let topLevelStateHooks = /^(use(MultipleSelection|List|SingleSelectList|Drag.*|Drop.*|Overlay.*|Toggle)State)|(useListData|useAsyncList|useTreeData)$/;
 
       if (topLevelStateHooks.test(pageName)) {
-        targetLink = '../';
+        targetLink = '.';
       } else {
         // usetablistState goes up to Tabs
         let componentName = pageName.replace(/^use(.+?)(Trigger)?State$/, '$1');
