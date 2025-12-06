@@ -52,14 +52,14 @@ helps achieve accessible popovers that can be styled as needed.
 * **Positioning** – The popover is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window. Scrolling is prevented outside the popover to avoid unintentionally repositioning or closing it.
 
 **Note**: `usePopover` only handles the overlay itself. It should be combined
-with [useDialog](../Dialog/useDialog.html) to create fully accessible popovers. Other overlays
+with [useDialog](../Modal/useDialog.html) to create fully accessible popovers. Other overlays
 such as menus may also be placed in a popover.
 
 ## Anatomy
 
 <Anatomy />
 
-A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](../Dialog/useDialog.html), or another element such as a [menu](../Menu/useMenu.html) or [listbox](../ListBox/useListBox.html) when used within a component such as a [select](../Select/useSelect.html) or [combobox](../ComboBox/useComboBox.html).
+A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](../Modal/useDialog.html), or another element such as a [menu](../Menu/useMenu.html) or [listbox](../ListBox/useListBox.html) when used within a component such as a [select](../Select/useSelect.html) or [combobox](../ComboBox/useComboBox.html).
 
 `usePopover` returns props that you should spread onto the appropriate elements, as well as the computed placement of the popover relative to the trigger:
 
@@ -205,7 +205,7 @@ import {Dialog} from 'your-component-library';
 
 ### Dialog
 
-The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](../Dialog/useDialog.html) hook, and can also be used in other overlay containers such as [modals](../Modal/useModalOverlay.html).
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](../Modal/useDialog.html) hook, and can also be used in other overlay containers such as [modals](../Modal/useModalOverlay.html).
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
