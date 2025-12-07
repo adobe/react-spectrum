@@ -38,11 +38,6 @@ export interface ContextualHelpProps extends
   /** Contents of the Contextual Help popover. */
   children: ReactNode,
   /**
-   * The offset of the popover from the trigger button.
-   * @default 8
-   */
-  offset?: number,
-  /**
    * The size of the ActionButton.
    *
    * @default 'XS'
@@ -69,11 +64,10 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
   let {
     children,
     defaultOpen,
-    // containerPadding = 24, // See popover() above. Issue noted in Popover.tsx.
+    containerPadding = 8,
     size = 'XS',
     crossOffset,
     isOpen,
-    offset = 8,
     onOpenChange,
     placement = 'bottom start',
     shouldFlip,
@@ -112,8 +106,8 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         padding="none"
         placement={placement}
         shouldFlip={shouldFlip}
-        // not working => containerPadding={containerPadding}
-        offset={offset}
+        containerPadding={containerPadding}
+        offset={8}
         crossOffset={crossOffset}
         hideArrow>
         <div
