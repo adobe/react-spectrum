@@ -325,7 +325,8 @@ function CodeSandboxDialog({getExampleFiles, codeRef, files, urls, entry, deps, 
       {({close}) => (<>
         <Heading slot="title">Create a CodeSandbox</Heading>
         <Content>
-          <p>This will open a new tab with a CodeSandbox containing this example. If you see a 403 error, please log in to CodeSandbox and try again. If you are already logged in, please logout and log back in and then try again.</p>
+          <p>This will create an editable sandbox with this example in a new tab.</p>
+          <p><strong>Troubleshooting:</strong> If the sandbox fails to open or isn't created, try logging in to CodeSandbox first. If you're already logged in, try signing out and back in.</p>
         </Content>
 
         <ButtonGroup>
