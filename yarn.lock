@@ -58,7 +58,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-ui@npm:1.2.1, @adobe/react-spectrum-ui@npm:^1.2.1":
+"@adobe/react-spectrum-ui@npm:1.2.1":
   version: 1.2.1
   resolution: "@adobe/react-spectrum-ui@npm:1.2.1"
   peerDependencies:
@@ -68,7 +68,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-workflow-color@npm:1.1.1, @adobe/react-spectrum-workflow-color@npm:^1.1.1":
+"@adobe/react-spectrum-workflow-color@npm:1.1.1":
   version: 1.1.1
   resolution: "@adobe/react-spectrum-workflow-color@npm:1.1.1"
   peerDependencies:
@@ -88,7 +88,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-workflow@npm:^2.4.0":
+"@adobe/react-spectrum-workflow@npm:2.4.0":
   version: 2.4.0
   resolution: "@adobe/react-spectrum-workflow@npm:2.4.0"
   peerDependencies:
@@ -24745,9 +24745,9 @@ __metadata:
   dependencies:
     "@actions/core": "npm:^1.10.0"
     "@actions/github": "npm:^1.1.0"
-    "@adobe/react-spectrum-ui": "npm:^1.2.1"
-    "@adobe/react-spectrum-workflow": "npm:^2.4.0"
-    "@adobe/react-spectrum-workflow-color": "npm:^1.1.1"
+    "@adobe/react-spectrum-ui": "npm:1.2.1"
+    "@adobe/react-spectrum-workflow": "npm:2.4.0"
+    "@adobe/react-spectrum-workflow-color": "npm:1.1.1"
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@babel/eslint-parser": "npm:^7.27.1"

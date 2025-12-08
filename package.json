@@ -73,9 +73,9 @@
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^1.1.0",
-    "@adobe/react-spectrum-ui": "^1.2.1",
-    "@adobe/react-spectrum-workflow": "^2.4.0",
-    "@adobe/react-spectrum-workflow-color": "^1.1.1",
+    "@adobe/react-spectrum-ui": "1.2.1",
+    "@adobe/react-spectrum-workflow": "2.4.0",
+    "@adobe/react-spectrum-workflow-color": "1.1.1",
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.3",
     "@babel/eslint-parser": "^7.27.1",
