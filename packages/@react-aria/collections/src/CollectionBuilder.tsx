@@ -18,6 +18,7 @@ import {FocusableContext} from '@react-aria/interactions';
 import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
@@ -113,6 +114,23 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
     return document.getCollection();
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // React 19.2 introduced activities, which when started as hidden on the dom can play funky with the collection
+  // To avoid this we force a one time re-render if the collection fails to populate
+  const [, forceStoreRerender] = useState(0); // simple state to force a re-render
+  useLayoutEffect(function forceRefreshCollection() {
+    // Do not do anything if the collection has been pre-populated successfully
+    if (collection.size > 0) {
+      return;
+    }
+    // Re-create the collection
+    const nextValue = getSnapshot();
+    if (nextValue.size > 0) {
+      forceStoreRerender(c => c + 1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collection.size === 0]); // don't run effect once we have a populated collection
+
   return {collection, document};
 }
 
