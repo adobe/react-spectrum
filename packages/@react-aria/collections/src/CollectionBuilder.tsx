@@ -18,8 +18,8 @@ import {FocusableContext} from '@react-aria/interactions';
 import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useIsSSR} from '@react-aria/ssr';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
