@@ -157,6 +157,7 @@ async function build() {
       const to = path.join(dir, 'packages', path.dirname(p));
 
       if (from !== to) {
+        console.log(`Copying ${from} to ${to}`);
         fs.cpSync(from, to, {dereference: true, recursive: true});
       } else {
         console.log(`Skipping copy for ${from} to ${to} as they are the same`);
