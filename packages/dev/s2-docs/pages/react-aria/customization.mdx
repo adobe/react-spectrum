@@ -257,7 +257,7 @@ Some potential use cases for Hooks are:
 
 As described [above](#contexts), each React Aria component exports a corresponding context. You can build a custom implementation of a component using Hooks by consuming from the relevant context with <TypeLink links={docs.links} type={docs.exports.useContextProps} />.
 
-This example shows how a custom checkbox could be set up using `CheckboxContext` from `react-aria-components` and the [useCheckbox](https://react-spectrum.adobe.com/react-aria/useCheckbox.html) hook from `react-aria`.
+This example shows how a custom checkbox could be set up using `CheckboxContext` from `react-aria-components` and the [useCheckbox](Checkbox/useCheckbox.html) hook from `react-aria`.
 
 ```tsx
 import type {CheckboxProps} from 'react-aria-components';
@@ -295,7 +295,7 @@ Since `MyCheckbox` consumes from `CheckboxContext` it can be used within other R
 
 You can also provide values for React Aria Components from a Hook-based implementation. This allows you to customize the parent component of a larger pattern, while reusing the existing implementations of the child elements from React Aria Components.
 
-This example shows how a custom number field could be set up. First, follow the docs for [useNumberField](useNumberField), and then use [Provider](#provider) to send values returned by the hook to each of the child elements via their corresponding contexts.
+This example shows how a custom number field could be set up. First, follow the docs for [useNumberField](NumberField/useNumberField.html), and then use [Provider](#provider) to send values returned by the hook to each of the child elements via their corresponding contexts.
 
 ```tsx
 import type {NumberFieldProps} from 'react-aria-components';
