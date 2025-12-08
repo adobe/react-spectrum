@@ -66,33 +66,10 @@ async function processImages(sourceDir) {
 
   let processedCount = 0;
 
-  // Process background images
-  const backgrounds = [
-    {src: 'Backgrounds/Gradient_Light_@2x.png', dest: 'light/gradient-bg.avif'},
-    {src: 'Backgrounds/Gradient_Dark_@2x.png', dest: 'dark/gradient-bg.avif'}
-  ];
-
-  for (const bg of backgrounds) {
-    const srcPath = path.join(sourceDir, bg.src);
-    const destPath = path.join(OUTPUT_DIR, bg.dest);
-    
-    if (fs.existsSync(srcPath)) {
-      try {
-        await sharp(srcPath)
-          .avif({quality: 80})
-          .toFile(destPath);
-        console.log(`✓ ${bg.src} -> ${bg.dest}`);
-        processedCount++;
-      } catch (err) {
-        console.error(`✗ Error processing ${bg.src}:`, err.message);
-      }
-    }
-  }
-
-  // Process Light mode and Dark mode directories
+  // Process Light and Dark directories
   const modes = [
-    {srcFolder: 'Light mode', destFolder: 'light'},
-    {srcFolder: 'Dark mode', destFolder: 'dark'}
+    {srcFolder: 'Light', destFolder: 'light'},
+    {srcFolder: 'Dark', destFolder: 'dark'}
   ];
 
   for (const mode of modes) {

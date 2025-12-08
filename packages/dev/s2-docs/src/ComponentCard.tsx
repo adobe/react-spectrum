@@ -343,17 +343,6 @@ function ComponentIllustration({name, href}: IllustrationProps) {
 
   return (
     <div className={illustrationContainer}>
-      {/* Background gradient */}
-      <picture>
-        <source srcSet={BackgroundLight} media="(prefers-color-scheme: light)" />
-        <source srcSet={BackgroundDark} media="(prefers-color-scheme: dark)" />
-        <img
-          src={BackgroundLight}
-          alt=""
-          aria-hidden="true"
-          className={backgroundStyles}
-          loading="lazy" />
-      </picture>
       {/* Component illustration */}
       <picture>
         <source srcSet={light} media="(prefers-color-scheme: light)" />
