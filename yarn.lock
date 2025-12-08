@@ -9421,7 +9421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/blocks@npm:8.6.14":
+"@storybook/blocks@npm:8.6.14, @storybook/blocks@npm:^8.6.14":
   version: 8.6.14
   resolution: "@storybook/blocks@npm:8.6.14"
   dependencies:
@@ -24791,6 +24791,7 @@ __metadata:
     "@storybook/addon-links": "npm:^8.6.14"
     "@storybook/addon-onboarding": "npm:^8.6.14"
     "@storybook/addon-themes": "npm:^8.6.14"
+    "@storybook/blocks": "npm:^8.6.14"
     "@storybook/components": "npm:^8.6.14"
     "@storybook/manager-api": "npm:^8.6.14"
     "@storybook/preview": "npm:^8.6.14"
