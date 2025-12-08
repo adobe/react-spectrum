@@ -681,6 +681,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     contents = (
       <RACTabs
         {...props}
+        className=""
         style={{display: 'contents'}}>
         {props.children}
       </RACTabs>

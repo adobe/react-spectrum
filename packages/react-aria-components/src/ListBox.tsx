@@ -422,6 +422,10 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
   delete DOMProps.id;
   delete DOMProps.onClick;
 
+  if (ElementType === 'a' && optionProps.tabIndex == null) {
+    optionProps.tabIndex = -1;
+  }
+
   return (
     <ElementType
       {...mergeProps(DOMProps, renderProps, optionProps, hoverProps, focusProps, draggableItem?.dragProps, droppableItem?.dropProps)}

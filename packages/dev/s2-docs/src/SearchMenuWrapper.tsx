@@ -6,9 +6,9 @@ import {flushSync} from 'react-dom';
 import {preloadSearchMenu} from './SearchMenuTrigger';
 import React, {lazy, useState} from 'react';
 import {Modal as S2Modal} from '../../../@react-spectrum/s2/src/Modal';
-import {SearchMenu} from './SearchMenu';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
+const SearchMenu = lazy(() => import('./SearchMenu').then(({SearchMenu}) => ({default: SearchMenu})));
 const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
 
 let underlayStyle = style({
@@ -52,7 +52,7 @@ let modalStyle = style({
 });
 
 
-export default function SearchMenuWrapper({pages, currentPage}) {
+export default function SearchMenuWrapper() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   let openSearchMenu = async () => {
@@ -87,17 +87,16 @@ export default function SearchMenuWrapper({pages, currentPage}) {
     <>
       <div className={style({display: {default: 'none', lg: 'flex'}})}>
         <DialogTrigger isOpen={searchOpen} onOpenChange={() => {openSearchMenu();}} >
-          <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-pointer">Explore Components</Button>
+          <Button onHoverStart={() => preloadSearchMenu()} className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 pressed:scale-95 cursor-pointer">Explore Components</Button>
           <ModalOverlay
             style={{zIndex: 21}}
             isDismissable
             className={underlayStyle}>
             <Modal className={modalStyle}>
               <SearchMenu
-                pages={pages}
-                currentPage={currentPage}
                 onClose={closeSearchMenu}
                 initialSearchValue=""
+                initialTag="components"
                 isSearchOpen={searchOpen} />
             </Modal>
           </ModalOverlay>
@@ -105,9 +104,9 @@ export default function SearchMenuWrapper({pages, currentPage}) {
       </div>
       <div className={style({display: {default: 'flex', lg: 'none'}})}>
         <DialogTrigger>
-          <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-pointer">Explore Components</Button>
+          <Button className="font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 pressed:scale-95 cursor-pointer">Explore Components</Button>
           <S2Modal size="fullscreenTakeover">
-            <MobileSearchMenu pages={pages} currentPage={currentPage} />
+            <MobileSearchMenu initialTag="components" />
           </S2Modal>
         </DialogTrigger>
       </div>

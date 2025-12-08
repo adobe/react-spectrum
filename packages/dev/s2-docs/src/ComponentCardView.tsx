@@ -17,16 +17,24 @@ interface ComponentCardGridProps {
   items: ComponentCardItem[],
   ariaLabel?: string,
   size?: 'S' | 'M' | 'L',
+  currentUrl?: string,
   onAction?: (key: Key) => void,
   renderEmptyState?: () => React.ReactNode
 }
 
-export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAction, renderEmptyState}: ComponentCardGridProps) {
+export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', currentUrl, onAction, renderEmptyState}: ComponentCardGridProps) {
   return (
     <InternalCardViewContext.Provider value={{ElementType: ListBoxItem, layout: 'grid'}}>
       <ListBox
         aria-label={ariaLabel}
         layout="grid"
+        selectionMode="single"
+        selectionBehavior="replace"
+        // @ts-ignore
+        linkBehavior="override"
+        autoFocus={!!currentUrl}
+        selectedKeys={currentUrl ? [currentUrl] : []}
+        disallowEmptySelection
         onAction={onAction}
         className={style({
           display: {
@@ -43,6 +51,7 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
             default: 12,
             md: 16
           },
+          scrollPadding: 8,
           marginX: {
             default: -12,
             md: 0
@@ -55,7 +64,8 @@ export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', onAct
             isEmpty: 'center'
           },
           overflow: 'auto',
-          flexGrow: 1
+          flexGrow: 1,
+          position: 'relative'
         })}
         renderEmptyState={renderEmptyState}
         items={items}>

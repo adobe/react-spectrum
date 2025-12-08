@@ -411,7 +411,7 @@ const radius = {
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
-type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | keyof typeof baseSpacing | (string & {});
+type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | number | (string & {});
 
 let gridTrack = (value: GridTrack) => {
   if (typeof value === 'string') {
@@ -421,7 +421,7 @@ let gridTrack = (value: GridTrack) => {
 };
 
 let gridTrackSize = (value: GridTrackSize) => {
-  return value in baseSpacing ? baseSpacing[value] : value;
+  return typeof value === 'number' ? size(value) : value;
 };
 
 const transitionProperty = {
@@ -773,7 +773,7 @@ export const style = createTheme({
       },
       code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
-    fontSize: new ExpandedProperty<keyof typeof fontSize>(['fontSize', 'lineHeight'], (value) => {
+    fontSize: new ExpandedProperty<keyof typeof fontSize>(['--fs', 'fontSize'], (value) => {
       if (typeof value === 'number') {
         return {
           '--fs': `pow(1.125, ${value})`,

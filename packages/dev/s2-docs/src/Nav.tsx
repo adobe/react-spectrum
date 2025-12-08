@@ -3,10 +3,11 @@
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
-import {getPageFromPathname, getSnapshot, subscribe} from './NavigationSuspense';
 import {Link} from 'react-aria-components';
-import type {Page, PageProps} from '@parcel/rsc';
-import React, {createContext, useContext, useEffect, useRef, useState, useSyncExternalStore} from 'react';
+import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
+import type {Page} from '@parcel/rsc';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {usePendingPage, useRouter} from './Router';
 
 type SectionValue = Page[] | Map<string, Page[]>;
 
@@ -14,8 +15,16 @@ function isSectionMap(value: SectionValue): value is Map<string, Page[]> {
   return value instanceof Map;
 }
 
-export function Nav({pages, currentPage}: PageProps) {
-  let currentLibrary = getLibraryFromPage(currentPage);
+export function Nav() {
+  let {pages, currentPage} = useRouter();
+  let [maskSize, setMaskSize] = useState(0);
+  let displayPage = usePendingPage();
+
+  if (currentPage.exports?.hideNav) {
+    return null;
+  }
+
+  let currentLibrary = getLibraryFromPage(displayPage);
   let sections = new Map<string, SectionValue>();
   let sectionLibrary = new Map();
   for (let page of pages) {
@@ -36,7 +45,7 @@ export function Nav({pages, currentPage}: PageProps) {
 
     let section = page.exports?.section ?? 'Components';
     let group = page.exports?.group ?? undefined;
-    if (section === '') {
+    if (section === '' || page.exports?.isSubpage) {
       continue;
     }
 
@@ -46,7 +55,7 @@ export function Nav({pages, currentPage}: PageProps) {
       if (value instanceof Map) {
         groupMap = value;
       } else {
-        groupMap = new Map<string, Page[]>(); 
+        groupMap = new Map<string, Page[]>();
       }
       let groupPages = groupMap.get(section) ?? [];
       groupPages.push(page);
@@ -61,11 +70,6 @@ export function Nav({pages, currentPage}: PageProps) {
 
     sectionLibrary.set(section, library);
   }
-
-  let [maskSize, setMaskSize] = useState(0);
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const pendingPage = snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
-  let displayUrl = pendingPage?.url ?? currentPage.url;
 
   let sortedSections = [...sections].sort((a, b) => {
     if (a[0] === 'Overview') {
@@ -82,7 +86,7 @@ export function Nav({pages, currentPage}: PageProps) {
     if (b[0] === 'Guides') {
       return -1;
     }
-    
+
     return a[0].localeCompare(b[0]);
   });
 
@@ -128,7 +132,7 @@ export function Nav({pages, currentPage}: PageProps) {
                       .filter(page => !page.exports?.isSubpage)
                       .map(page => (
                         <SideNavItem key={page.url}>
-                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayUrl}>
+                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayPage.url}>
                             {title(page)}
                           </SideNavLink>
                         </SideNavItem>
@@ -155,7 +159,7 @@ export function Nav({pages, currentPage}: PageProps) {
                 })
                 .filter(page => !page.exports?.isSubpage)
                 .map(page => (
-                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
+                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === displayPage.url}>{title(page)}</SideNavLink></SideNavItem>
               ))}
             </SideNav>
           );
@@ -181,7 +185,7 @@ export function Nav({pages, currentPage}: PageProps) {
                     .filter(page => !page.exports?.isSubpage)
                     .map(page => (
                       <SideNavItem key={page.url}>
-                        <SideNavLink href={page.url} isSelected={page.url === currentPage.url}>
+                        <SideNavLink href={page.url} isSelected={page.url === displayPage.url}>
                           {title(page)}
                         </SideNavLink>
                       </SideNavItem>
@@ -229,11 +233,6 @@ function SideNavSection({title, children}) {
 
 const SideNavContext = createContext('');
 
-export function usePendingPage(pages: Page[]): Page | null {
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  return snapshot.pathname ? getPageFromPathname(pages, snapshot.pathname) : null;
-}
-
 export function SideNav({children, isNested = false}) {
   return (
     <ul
@@ -271,12 +270,14 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
-  let {...linkProps} = props;
+  let {isExternal, ...linkProps} = props;
   
   return (
     <Link
       {...linkProps}
       ref={linkRef}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
       className={style({
@@ -311,6 +312,11 @@ export function SideNavLink(props) {
             }
           })(renderProps)} />
         {props.children}
+        {isExternal && (
+          <LinkOutIcon
+            aria-label="(opens in a new tab)"
+            className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})} />
+        )}
       </>)}
     </Link>
   );
@@ -320,7 +326,7 @@ function useCurrentSection() {
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article :is(h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -357,10 +363,11 @@ export function OnPageNav({children}) {
   );
 }
 
-export function MobileOnPageNav({children, currentPage}) {
+export function MobileOnPageNav({children}) {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article > :is(h1,h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     elements.reverse();
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {

@@ -4,14 +4,15 @@ import {Badge, pressScale, Text} from '@react-spectrum/s2';
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 // @ts-ignore
 import BetaApp from '@react-spectrum/s2/icons/BetaApp';
-import {flushSync} from 'react-dom';
+import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {Link} from 'react-aria-components';
 // @ts-ignore
-import {PageProps} from '@parcel/rsc';
+import {Link} from 'react-aria-components';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
+import {useLayoutEffect} from '@react-aria/utils';
+import {useRouter} from './Router';
 
 function getButtonText(currentPage) {
   return getLibraryLabel(getLibraryFromPage(currentPage));
@@ -35,7 +36,7 @@ const libraryStyles = style({
       default: 'transparent'
     }
   },
-  marginStart: space(14)
+  marginStart: space(26)
 });
 
 const linkStyle = {
@@ -65,14 +66,15 @@ const iconStyles = style({
   paddingX: space(6)
 });
 
-export default function Header(props: PageProps) {
-  const {pages, currentPage} = props;
+export default function Header() {
+  const {currentPage} = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const searchMenuId = useId();
   let ref = useRef(null);
   let docsRef = useRef(null);
   let releasesRef = useRef(null);
   let blogRef = useRef(null);
+  let renderCallback = useRef<(() => void) | null>(null);
 
   let openSearchMenu = async () => {
     if (!document.startViewTransition) {
@@ -82,10 +84,19 @@ export default function Header(props: PageProps) {
 
     // Preload SearchMenu so it is ready to render immediately.
     await preloadSearchMenu();
-    document.startViewTransition(() => {
-      flushSync(() => {
+
+    // Don't transition the entire page.
+    document.documentElement.style.viewTransitionName = 'none';
+    let viewTransition = document.startViewTransition(() => {
+      // Wait until next render. Using flushSync causes flickering.
+      return new Promise<void>(resolve => {
+        renderCallback.current = resolve;
         setSearchOpen((prev) => !prev);
       });
+    });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
     });
   };
 
@@ -95,45 +106,36 @@ export default function Header(props: PageProps) {
       return;
     }
 
-    document.startViewTransition(() => {
-      flushSync(() => {
+    document.documentElement.style.viewTransitionName = 'none';
+    let viewTransition = document.startViewTransition(() => {
+      return new Promise<void>(resolve => {
+        renderCallback.current = resolve;
         setSearchOpen(false);
       });
     });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
+    });
   };
 
-  let handleActionButtonKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'ArrowDown' && !searchOpen) {
-      e.preventDefault();
-      openSearchMenu();
-    }
-  };
+  useLayoutEffect(() => {
+    renderCallback.current?.();
+    renderCallback.current = null;
+  });
 
   let library = getLibraryFromPage(currentPage);
-  let subdirectory = 's2';
+  let subdirectory: 's2' | 'react-aria' = 's2';
   if (library === 'internationalized' || library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
 
-  let homepage = '';
-  let docs = '';
-  let release = '';
-  let blog = '';
-  for (let page of pages) {
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && !page.name.includes('releases') && !page.name.includes('blog') && !page.name.includes('examples')) {
-      homepage = page.url;
-    }
-    if (page.name.includes(subdirectory) && page.name.includes('getting-started.html')) {
-      docs = page.url;
-    }
-    if (page.name.includes(subdirectory) && page.name.includes('index.html') && page.name.includes('releases')) {
-      release = page.url;
-    }
-    if (page.name.includes('react-aria') && page.name.includes('index.html') && page.name.includes('blog')) {
-      blog = page.url;
-    }
-  }
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
+  let docs = `${baseUrl}/getting-started`;
+  let release = `${baseUrl}/releases/`;
+  let blog = `${getBaseUrl('react-aria')}/blog/`;
 
   return (
     <>
@@ -148,11 +150,7 @@ export default function Header(props: PageProps) {
           })}>
           <div className={style({justifySelf: 'start'})}>
             <Link
-              aria-label="Open menu and search"
-              aria-expanded={searchOpen}
-              aria-controls={searchOpen ? searchMenuId : undefined}
               href={homepage}
-              onKeyDown={handleActionButtonKeyDown}
               ref={ref}
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
@@ -167,8 +165,6 @@ export default function Header(props: PageProps) {
             </Link>
           </div>
           <SearchMenuTrigger
-            pages={pages}
-            currentPage={currentPage}
             onOpen={openSearchMenu}
             onClose={closeSearchMenu}
             isSearchOpen={searchOpen}
