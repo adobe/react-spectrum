@@ -26,14 +26,14 @@
     "lucide-react": "^0.517.0",
     "react": "^19.2.0",
     "react-aria-components": "latest",
-    "react-dom": "^19.1.0",
+    "react-dom": "^19.2.0",
     "storybook": "^8.6.14",
     "storybook-dark-mode": "^4.0.2",
     "typescript": "5.3.3"
   },
   "resolutions": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
     "@types/mime": "3.0.4",
     "jackspeak": "2.1.1"
   }
