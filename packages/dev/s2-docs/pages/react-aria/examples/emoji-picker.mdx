@@ -22,7 +22,8 @@ import {SearchField} from 'vanilla-starter/SearchField';
 import _emojis from 'emojibase-data/en/compact.json';
 import './EmojiPicker.css';
 
-const emojis = _emojis.filter((e) => !e.label.startsWith('regional indicator'));
+type Emoji = (typeof _emojis)[0];
+const emojis = _emojis.filter((e: Emoji) => typeof e.label === 'string' && !e.label.startsWith('regional indicator'));
 
 export default function EmojiPicker() {
   let {contains} = useFilter({ sensitivity: 'base' });
@@ -43,8 +44,8 @@ export default function EmojiPicker() {
               minSpace: new Size(4, 4),
               preserveAspectRatio: true,
             }}>
-            <ListBox className="emoji-list" items={emojis} aria-label="Emoji list" layout="grid">
-              {(item) => <EmojiItem id={item.unicode} item={item} />}
+            <ListBox className="emoji-list" items={emojis as Emoji[]} aria-label="Emoji list" layout="grid">
+              {(item: Emoji) => <EmojiItem id={String(item.unicode)} item={item} />}
             </ListBox>
           </Virtualizer>
         </Autocomplete>
@@ -53,12 +54,12 @@ export default function EmojiPicker() {
   );
 }
 
-function EmojiItem({ id, item }: { id: string; item: (typeof emojis)[0] }) {
+function EmojiItem({ id, item }: { id: string; item: Emoji }) {
   return (
     <ListBoxItem
       id={id}
       value={item}
-      textValue={item.label + (item.tags || []).join(' ')}
+      textValue={(item.label || '') + (Array.isArray(item.tags) ? item.tags.join(' ') : '')}
       className="emoji-item">
       {item.unicode}
     </ListBoxItem>

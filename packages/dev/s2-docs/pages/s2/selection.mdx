@@ -338,7 +338,7 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection, type Key} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -352,7 +352,7 @@ const rows = [
 ///- end collapse -///
 
 function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set());
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<Key>());
 
   ///- begin highlight -///
   function performBulkAction() {
@@ -475,7 +475,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
-  let [selectedKey, setSelectedKey] = useState<Key>('kangaroo');
+  let [selectedKey, setSelectedKey] = useState<Key | null>('kangaroo');
 
   return (
     <div>
@@ -1518,8 +1518,16 @@ const items = [
 import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+type PokemonItem = {
+  id: number;
+  name: string;
+  type: string;
+  level: number;
+  children?: PokemonItem[];
+};
+
 ///- begin collapse -///
-let items = [
+let items: PokemonItem[] = [
   {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
     {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
       {id: 3, name: 'Venusaur', type: 'Grass', level: 83}

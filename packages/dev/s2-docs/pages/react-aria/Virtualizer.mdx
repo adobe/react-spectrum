@@ -16,7 +16,7 @@ export const description = 'Renders a scrollable collection of data using custom
 import {Virtualizer, ListLayout} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
-let items = [];
+let items: {id: number, name: string}[] = [];
 for (let i = 0; i < 5000; i++) {
   items.push({id: i, name: `Item ${i}`});
 }
@@ -51,7 +51,7 @@ import {Virtualizer, ListLayout} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.'.split(' ');
-let items = [];
+let items: {id: number, name: string}[] = [];
 for (let i = 0; i < 5000; i++) {
   let words = Math.max(2, Math.floor(Math.random() * 25));
   let name = lorem.slice(0, words).join(' ');
@@ -113,7 +113,8 @@ let albumOptions = [
 ];
 ///- end collapse -///
 
-let albums = [];
+type Album = {id: number, image: string, title: string, artist: string};
+let albums: Album[] = [];
 for (let i = 0; i < 1000; i++) {
   albums.push({
     id: i,
@@ -424,7 +425,8 @@ for (let i = 0; images.length < 500; i++) {
 import {Virtualizer, TableLayout} from 'react-aria-components';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from 'vanilla-starter/Table';
 
-let rows = [];
+type Row = { id: number; foo: string; bar: string; baz: string };
+let rows: Row[] = [];
 for (let i = 0; i < 1000; i++) {
   rows.push({ id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}` });
 }

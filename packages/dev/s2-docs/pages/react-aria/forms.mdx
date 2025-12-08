@@ -75,12 +75,13 @@ import {Button} from 'vanilla-starter/Button';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let form = event.target as HTMLFormElement;
+    let formData = new FormData(form);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    form.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />

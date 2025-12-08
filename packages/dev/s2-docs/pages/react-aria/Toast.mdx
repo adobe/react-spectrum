@@ -191,7 +191,7 @@ Toasts can be programmatically dismissed using the key returned from `queue.add(
   import {useState} from 'react';
 
   function Example() {
-    let [toastKey, setToastKey] = useState(null);
+    let [toastKey, setToastKey] = useState<string | null>(null);
 
     return (
       <Button
@@ -221,7 +221,7 @@ Toasts can be programmatically dismissed using the key returned from `queue.add(
   import {useState} from 'react';
 
   function Example() {
-    let [toastKey, setToastKey] = useState(null);
+    let [toastKey, setToastKey] = useState<string | null>(null);
 
     return (
       <Button

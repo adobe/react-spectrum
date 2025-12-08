@@ -105,6 +105,7 @@ async function extractExamples() {
       "noEmit": true,
       "jsx": "preserve",
       "noUnusedLocals": true,
+      "skipLibCheck": true,
       "paths": {
         "vanilla-starter/*": ["../../starters/docs/src/*"],
         "tailwind-starter/*": ["../../starters/tailwind/src/*"]

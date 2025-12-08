@@ -97,7 +97,7 @@ import {Button, UNSTABLE_ToastQueue as ToastQueue, Text} from '@react-spectrum/s
 import {useState} from 'react';
 
 function Example() {
-  let [close, setClose] = useState(null);
+  let [close, setClose] = useState<(() => void) | null>(null);
 
   return (
     <Button

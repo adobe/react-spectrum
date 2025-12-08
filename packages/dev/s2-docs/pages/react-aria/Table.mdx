@@ -506,8 +506,8 @@ const columns = [
 ];
 ///- end collapse -///
 
-const initialWidths = new Map([
-  ['file', '1fr'],
+const initialWidths = new Map<string, number>([
+  ['file', 300],
   ['size', 80],
   ['date', 100]
 ]);
@@ -605,7 +605,7 @@ function ReorderableTable() {
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).name
+      'text/plain': list.getItem(key)?.name ?? ''
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
