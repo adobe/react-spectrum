@@ -41,13 +41,13 @@ Use the `value` or `defaultValue` prop to set the date value, using objects in t
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
 import {useDateFormatter} from 'react-aria';
 import {DateField} from 'vanilla-starter/DateField';
 import {useState} from 'react';
 
 function Example() {
-  let [date, setDate] = useState(parseDate('2020-02-03'));
+  let [date, setDate] = useState<CalendarDate | null>(parseDate('2020-02-03'));
   let formatter = useDateFormatter({ dateStyle: 'full' });
 
   return (

@@ -42,18 +42,18 @@ Use the `value` or `defaultValue` prop to set the color value, and `onChange` to
 ```tsx render
 "use client";
 import {ColorField} from 'vanilla-starter/ColorField';
-import {parseColor} from 'react-aria-components';
+import {parseColor, type Color} from 'react-aria-components';
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState(parseColor('#e73623'));
+  let [value, setValue] = useState<Color | null>(parseColor('#e73623'));
 
   return (
     <div>
       <ColorField
         label="Primary color"
         placeholder="Enter a color"
-        value={value}
+        value={value ?? undefined}
         onChange={setValue} />
       <pre style={{fontSize: 12}}>Current value: {value?.toString('hex')}</pre>
     </div>
@@ -68,18 +68,18 @@ By default, ColorField displays a hex value. Set the `colorSpace` and `channel` 
 ```tsx render
 "use client";
 import {ColorField} from 'vanilla-starter/ColorField';
-import {parseColor} from 'react-aria-components';
+import {parseColor, type Color} from 'react-aria-components';
 import {useState} from 'react';
 
 function Example() {
-  let [color, setColor] = useState(parseColor('#7f007f'));
+  let [color, setColor] = useState<Color | null>(parseColor('#7f007f'));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <ColorField
         label="Hue"
 
-        value={color}
+        value={color ?? undefined}
         onChange={setColor}
         /*- begin highlight -*/
         colorSpace="hsl"
@@ -87,13 +87,13 @@ function Example() {
         {/*- end highlight -*/}
       <ColorField
         label="Saturation"
-        value={color}
+        value={color ?? undefined}
         onChange={setColor}
         colorSpace="hsl"
         channel="saturation" />
       <ColorField
         label="Lightness"
-        value={color}
+        value={color ?? undefined}
         onChange={setColor}
         colorSpace="hsl"
         channel="lightness" />

@@ -221,7 +221,7 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, TableBody, Row, Cell, type Selection} from 'react-aria-components';
 import {Checkbox} from 'vanilla-starter/Checkbox';
 import {useState} from 'react';
 
@@ -235,7 +235,7 @@ const rows = [
 ///- end collapse -///
 
 function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set());
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
   ///- begin highlight -///
   function performBulkAction() {
@@ -608,7 +608,6 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {useState} from 'react';
 
 <Table
   aria-label="Table"
@@ -730,7 +729,6 @@ const files = [
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {useState} from 'react';
 
 ///- begin collapse -///
 const files = [

@@ -45,9 +45,9 @@ a detailed explanation of its implementation.
 'use client';
 import React from 'react';
 import {Button} from 'vanilla-starter/Button';
-import {MyToastRegion} from './MyToastRegion.tsx'
+import {MyToastRegion} from './MyToastRegion'
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
-import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
+import {UNSTABLE_ToastQueue as ToastQueue} from 'react-aria-components';
 
 // Define the type for your toast content.
 interface MyToastContent {
