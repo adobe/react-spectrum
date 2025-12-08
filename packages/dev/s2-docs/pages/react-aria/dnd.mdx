@@ -9,8 +9,6 @@ import RootDropPosition from '@react-aria/dnd/docs/RootDropPosition.svg';
 import Anatomy from '@react-aria/dnd/docs/Anatomy.svg';
 import DragAffordance from '@react-aria/dnd/docs/DragAffordance.svg';
 import {GroupedPropTable} from '../../src/PropTable';
-import {PokemonListBox} from './PokemonListBox';
-import {PokemonGridList} from './PokemonGridList';
 
 export const section = 'Guides';
 export const description = 'How to implement drag and drop.';
@@ -377,7 +375,7 @@ Use the `onItemDrop` event to enable dropping on items. When a valid drag hovers
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DraggableCOMPONENT.tsx']}
 "use client";
 import {useDragAndDrop} from 'react-aria-components';
-import {PokemonCOMPONENT, type Pokemon} from './PokemonCOMPONENT';
+import {PokemonCOMPONENT} from './PokemonCOMPONENT';
 import {DraggableCOMPONENT} from './DraggableCOMPONENT';
 
 function DroppableCOMPONENT() {
@@ -418,7 +416,7 @@ Use the `onInsert` event to enable dropping between items. React Aria renders a 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/PokemonCOMPONENT.tsx', 'packages/dev/s2-docs/pages/react-aria/DraggableCOMPONENT.tsx']}
 "use client";
 import {useDragAndDrop, isTextDropItem, DropIndicator, useListData} from 'react-aria-components';
-import {PokemonCOMPONENT, type Pokemon} from './PokemonCOMPONENT';
+import {PokemonCOMPONENT} from './PokemonCOMPONENT';
 import {DraggableCOMPONENT} from './DraggableCOMPONENT';
 
 function DroppableCOMPONENT() {

@@ -37,7 +37,7 @@ This example shows how to make a simple drop target that accepts plain text data
 import React from 'react';
 import type {TextDropItem} from 'react-aria';
 import {useDrop} from 'react-aria';
-import {Draggable} from './Draggable.tsx';
+import {Draggable} from './Draggable';
 import './useDragExample.css';
 import 'vanilla-starter/theme.css';
 
@@ -82,7 +82,7 @@ The example below finds the first available item that includes a custom app-spec
 'use client';
 import React from 'react';
 import {useDrop} from 'react-aria';
-import {Draggable} from './Draggable.tsx';
+import {Draggable} from './Draggable';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
@@ -294,7 +294,7 @@ This example logs all events that occur within the drop target:
 'use client';
 import React from 'react';
 import {useDrop} from 'react-aria';
-import {Draggable} from './Draggable.tsx';
+import {Draggable} from './Draggable';
 
 function DropTarget() {
   let [events, setEvents] = React.useState([]);
@@ -327,7 +327,7 @@ If you need to temporarily disable dropping, you can pass the `isDisabled` optio
 import React from 'react';
 import type {TextDropItem} from 'react-aria';
 import {useDrop} from 'react-aria';
-import {Draggable} from './Draggable.tsx';
+import {Draggable} from './Draggable';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
