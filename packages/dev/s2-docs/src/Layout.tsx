@@ -8,6 +8,8 @@ import '../src/client';
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
 // @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
+// @ts-ignore
+import rspFavicon from 'url:../assets/favicon.ico';
 import './anatomy.css';
 import './footer.css';
 import {ClassAPI} from './ClassAPI';
@@ -103,7 +105,7 @@ const getFaviconUrl = (currentPage: Page): string => {
     case 'internationalized':
       return internationalizedFavicon;
     default:
-      return 'https://www.adobe.com/favicon.ico';
+      return rspFavicon;
   }
 };
 

@@ -1,10 +1,11 @@
 import '../../src/client';
 import '@react-spectrum/s2/page.css';
 import {Home} from './home/Home';
+import rspFavicon from 'url:../../assets/favicon.ico';
 
 export const section = 'Overview';
 export const title = 'Home';
-export const description = 'A React implementation of Spectrum, Adobe\'s design system.';
+export const description = 'Build high quality, accessible UI with the cohesive look and feel of Adobe.';
 export const omitFromNav = true;
 export const hideFromSearch = true;
 
@@ -12,10 +13,10 @@ export const hideFromSearch = true;
   <head>
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {/* <link rel="icon" href={reactAriaFavicon} /> */}
+    <link rel="icon" href={rspFavicon} />
     <title>React Spectrum</title>
     <meta rel="preload" as="font" href="https://use.typekit.net/af/ca4cba/0000000000000000775c55a1/31/l?primer=f592e0a4b9356877842506ce344308576437e4f677d7c9b78ca2162e6cad991a&fvd=n1&v=3" crossOrigin="" />
-    <meta name="description" content="Craft world-class accessible components with custom styles." />
+    <meta name="description" content={description} />
     <meta name="keywords" content="accessibility,components,react,headless,style-free" />
     <meta name="twitter:card" content="summary_large_image" />
     {/* <meta name="twitter:image" content={ogImage} /> */}
@@ -23,7 +24,7 @@ export const hideFromSearch = true;
     <meta property="og:type" content="website" />
     <meta property="og:url" content={props.currentPage.url} />
     {/* <meta property="og:image" content={ogImage} /> */}
-    <meta property="og:description" content="Craft world-class accessible components with custom styles." />
+    <meta property="og:description" content={description} />
     <meta property="og:locale" content="en_US" />
     <link rel="canonical" href={props.currentPage.url} />
     <script
@@ -34,13 +35,13 @@ export const hideFromSearch = true;
           '@type': 'Article',
           author: 'Adobe Inc',
           headline: 'React Spectrum',
-          description: 'Craft world-class accessible components with custom styles.',
+          description,
           // image: ogImage,
           publisher: {
             '@type': 'Organization',
             url: 'https://www.adobe.com',
             name: 'Adobe',
-            logo: 'https://www.adobe.com/favicon.ico'
+            logo: rspFavicon
           }
         }
       )}} />

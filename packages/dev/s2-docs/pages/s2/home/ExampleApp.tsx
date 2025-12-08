@@ -38,13 +38,13 @@ export function ExampleApp({showArrows}: {showArrows?: boolean} = {}) {
         {!detail && page === 'home' && showArrows && <HomeArrows />}
         {!detail && page === 'photos' && showArrows &&
           <Arrows>
-            <Arrow textX={75} x1={120} x2={160} y={130} href="Button.html">Button</Arrow>
-            <Arrow textX={38} x1={120} x2={160} y={618} href="ActionButton.html">ActionButton</Arrow>
-            <Arrow textX={632} y={24} points="662,34 662,64" marker="markerEnd" href="SearchField.html">SearchField</Arrow>
-            <Arrow textX={1040} y={24} points="1064,34 1064,64" marker="markerEnd" href="Popover.html">Popover</Arrow>
-            <Arrow textX={1206} x1={1198} x2={1158} y={82} marker="markerEnd" href="Menu.html">Menu</Arrow>
-            <Arrow textX={1206} x1={1198} x2={1142} y={150} marker="markerEnd" href="SegmentedControl.html">SegmentedControl</Arrow>
-            <Arrow textX={1206} x1={1198} x2={1142} y={350} marker="markerEnd" href="CardView.html">CardView</Arrow>
+            <Arrow textX={75} x1={120} x2={160} y={130} href="Button">Button</Arrow>
+            <Arrow textX={38} x1={120} x2={160} y={618} href="ActionButton">ActionButton</Arrow>
+            <Arrow textX={632} y={24} points="662,34 662,64" marker="markerEnd" href="SearchField">SearchField</Arrow>
+            <Arrow textX={1040} y={24} points="1064,34 1064,64" marker="markerEnd" href="Popover">Popover</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1158} y={82} marker="markerEnd" href="Menu">Menu</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1142} y={150} marker="markerEnd" href="SegmentedControl">SegmentedControl</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1142} y={350} marker="markerEnd" href="CardView">CardView</Arrow>
           </Arrows>
         }
         {!detail && page === 'ideas' && showArrows && <IdeasArrows />}
@@ -109,27 +109,27 @@ function Detail({detail, img, setDetail, showArrows}: any) {
       </ExampleApp2>
       {showArrows && 
         <Arrows>
-          <Arrow textX={35} x1={120} x2={160} y={82} href="ActionButton.html">ActionButton</Arrow>
-          <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup.html">ToggleButtonGroup</Arrow>
-          <Arrow textX={212} y={24} points="250,34 250,64" href="Breadcrumbs.html">Breadcrumbs</Arrow>
-          <Arrow textX={1040} y={24} points="1064,34 1064,64" marker="markerEnd" href="Popover.html">Popover</Arrow>
-          <Arrow textX={1206} x1={1198} x2={1158} y={82} href="Menu.html">Menu</Arrow>
+          <Arrow textX={35} x1={120} x2={160} y={82} href="ActionButton">ActionButton</Arrow>
+          <Arrow textX={0} x1={120} x2={160} y={178} href="ToggleButtonGroup">ToggleButtonGroup</Arrow>
+          <Arrow textX={212} y={24} points="250,34 250,64" href="Breadcrumbs">Breadcrumbs</Arrow>
+          <Arrow textX={1040} y={24} points="1064,34 1064,64" marker="markerEnd" href="Popover">Popover</Arrow>
+          <Arrow textX={1206} x1={1198} x2={1158} y={82} href="Menu">Menu</Arrow>
           {panel === 'layers' && <>
-            <Arrow textX={1206} x1={1198} x2={1050} y={168} href="TreeView.html">TreeView</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1050} y={168} href="TreeView">TreeView</Arrow>
           </>}
           {panel === 'properties' && <>
-            <Arrow textX={1206} x1={1198} x2={1100} y={168} href="Slider.html">Slider</Arrow>
-            <Arrow textX={1206} points="900,290 900,280 1198,280" marker="markerStart" y={280} href="ComboBox.html">ComboBox</Arrow>
-            <Arrow textX={1206} x1={1198} x2={1100} y={304} href="NumberField.html">NumberField</Arrow>
-            <Arrow textX={1206} x1={1198} x2={890} y={365} href="Checkbox.html">Checkbox</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1100} y={168} href="Slider">Slider</Arrow>
+            <Arrow textX={1206} points="900,290 900,280 1198,280" marker="markerStart" y={280} href="ComboBox">ComboBox</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1100} y={304} href="NumberField">NumberField</Arrow>
+            <Arrow textX={1206} x1={1198} x2={890} y={365} href="Checkbox">Checkbox</Arrow>
           </>}
           {panel === 'comments' && <>
-            <Arrow textX={1206} x1={1198} x2={1092} y={208} href="TextArea.html">TextArea</Arrow>
-            <Arrow textX={1206} x1={1198} x2={1092} y={248} href="Button.html">Button</Arrow>
-            <Arrow textX={1206} points="842,370 842,360 1198,360" marker="markerStart" y={360} href="Avatar.html">Avatar</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1092} y={208} href="TextArea">TextArea</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1092} y={248} href="Button">Button</Arrow>
+            <Arrow textX={1206} points="842,370 842,360 1198,360" marker="markerStart" y={360} href="Avatar">Avatar</Arrow>
           </>}
           {panel === 'assets' && <>
-            <Arrow textX={1206} x1={1198} x2={1050} y={320} href="Card.html">Card</Arrow>
+            <Arrow textX={1206} x1={1198} x2={1050} y={320} href="Card">Card</Arrow>
           </>}
         </Arrows>
       }

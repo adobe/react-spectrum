@@ -126,13 +126,13 @@ export function HomeArrows() {
 
   return (
     <Arrows>
-      <Arrow textX={75} x1={120} x2={160} y={130} href="Button.html">Button</Arrow>
-      <Arrow textX={38} x1={120} x2={160} y={618} href="ActionButton.html">ActionButton</Arrow>
-      {!isScrolled && <Arrow textX={56} x1={120} x2={250} y={520} href="DropZone.html">DropZone</Arrow>}
-      <Arrow textX={632} y={24} points="662,34 662,64" marker="markerEnd" href="SearchField.html">SearchField</Arrow>
-      <Arrow textX={1040} y={24} points="1064,34 1064,64" marker="markerEnd" href="Popover.html">Popover</Arrow>
-      <Arrow textX={1206} x1={1198} x2={1158} y={82} marker="markerEnd" href="Menu.html">Menu</Arrow>
-      {!isScrolled && <Arrow textX={1206} x1={1198} x2={1120} y={520} href="Card.html">Card</Arrow>}
+      <Arrow textX={75} x1={120} x2={160} y={130} href="Button">Button</Arrow>
+      <Arrow textX={38} x1={120} x2={160} y={618} href="ActionButton">ActionButton</Arrow>
+      {!isScrolled && <Arrow textX={56} x1={120} x2={250} y={520} href="DropZone">DropZone</Arrow>}
+      <Arrow textX={632} y={24} points="662,34 662,64" marker="markerEnd" href="SearchField">SearchField</Arrow>
+      <Arrow textX={1040} y={24} points="1064,34 1064,64" marker="markerEnd" href="Popover">Popover</Arrow>
+      <Arrow textX={1206} x1={1198} x2={1158} y={82} marker="markerEnd" href="Menu">Menu</Arrow>
+      {!isScrolled && <Arrow textX={1206} x1={1198} x2={1120} y={520} href="Card">Card</Arrow>}
     </Arrows>
   );
 }
