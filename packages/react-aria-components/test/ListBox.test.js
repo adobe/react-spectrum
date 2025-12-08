@@ -1863,35 +1863,77 @@ describe('ListBox', () => {
   });
 
   if (React.version.startsWith('19')) {
-    describe('Activity', () => {
-      function ActivityListbox(props) {
-        let [mode, setMode] = React.useState('hidden');
+    describe('supports Activity', () => {
 
-        return (
-          <>
-            <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
-              Set {mode === 'hidden' ? 'visible' : 'hidden'}
-            </Button>
+      describe('when initially hidden', () => {
+        function ActivityListbox() {
+          let [mode, setMode] = React.useState('hidden');
 
-            <React.Activity mode={mode}>
-              <p>List should be visible</p>
+          return (
+            <>
+              <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
+                Set {mode === 'hidden' ? 'visible' : 'hidden'}
+              </Button>
 
-              <ListBox aria-label="Activity Listbox">
-                <ListBoxItem>Item 1</ListBoxItem>
-                <ListBoxItem>Item 2</ListBoxItem>
-                <ListBoxItem>Item 3</ListBoxItem>
-                <ListBoxItem>Item 4</ListBoxItem>
-                <ListBoxItem>Item 5</ListBoxItem>
-              </ListBox>
-            </React.Activity>
-          </>
-        );
-      }
-      it('should support activity', async () => {
-        let {getAllByRole, getByRole} = render(<ActivityListbox />);
-        let button = getByRole('button');
-        await user.click(button);
-        expect(getAllByRole('option')).toHaveLength(5);
+              <React.Activity mode={mode}>
+                <p>List should be visible</p>
+
+                <ListBox aria-label="Activity Listbox">
+                  <ListBoxItem>Item 1</ListBoxItem>
+                  <ListBoxItem>Item 2</ListBoxItem>
+                  <ListBoxItem>Item 3</ListBoxItem>
+                  <ListBoxItem>Item 4</ListBoxItem>
+                  <ListBoxItem>Item 5</ListBoxItem>
+                </ListBox>
+              </React.Activity>
+            </>
+          );
+        }
+        it('should show and hide the elements', async () => {
+          let {getAllByRole, getByRole, queryAllByRole} = render(<ActivityListbox />);
+          let button = getByRole('button');
+          expect(queryAllByRole('option')).toHaveLength(0);
+          await user.click(button);
+          expect(getAllByRole('option')).toHaveLength(5);
+          await user.click(button);
+          expect(queryAllByRole('option')).toHaveLength(0);
+        });
+      });
+
+      describe('when initially visible', () => {
+        function ActivityListbox() {
+          let [mode, setMode] = React.useState('visible');
+
+          return (
+            <>
+              <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
+                Set {mode === 'hidden' ? 'visible' : 'hidden'}
+              </Button>
+
+              <React.Activity mode={mode}>
+                <p>List should be visible</p>
+
+                <ListBox aria-label="Activity Listbox">
+                  <ListBoxItem>Item 1</ListBoxItem>
+                  <ListBoxItem>Item 2</ListBoxItem>
+                  <ListBoxItem>Item 3</ListBoxItem>
+                  <ListBoxItem>Item 4</ListBoxItem>
+                  <ListBoxItem>Item 5</ListBoxItem>
+                </ListBox>
+              </React.Activity>
+            </>
+          );
+        }
+
+        it('should show and hide the elements', async () => {
+          let {getAllByRole, getByRole, queryAllByRole} = render(<ActivityListbox initialMode="visible" />);
+          let button = getByRole('button');
+          expect(getAllByRole('option')).toHaveLength(5);
+          await user.click(button);
+          expect(queryAllByRole('option')).toHaveLength(0);
+          await user.click(button);
+          expect(getAllByRole('option')).toHaveLength(5);
+        });
       });
     });
   }
