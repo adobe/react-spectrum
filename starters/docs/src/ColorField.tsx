@@ -5,7 +5,6 @@ import {
   Input,
   ValidationResult
 } from 'react-aria-components';
-import {Text} from './Content';
 import {Label, FieldError, Description} from './Form';
 
 import './ColorField.css';
