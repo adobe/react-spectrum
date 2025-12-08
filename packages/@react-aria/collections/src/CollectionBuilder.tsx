@@ -19,6 +19,7 @@ import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
@@ -113,6 +114,21 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
     return document.getCollection();
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // Support React 19 Activities by forcing a re-render after mount to pick up the changes if we need to
+  const [, forceStoreRerender] = useState(collection);
+  useLayoutEffect(function updateStoreInstance() {
+    if (collection.size > 0) {
+      return; // don't need to do anything if we already have items
+    }
+    const nextValue = getSnapshot();
+    if (nextValue.size > 0) {
+      forceStoreRerender(nextValue);
+    }
+  // this effect really only needs to run when the size is 0
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collection.size === 0]);
+
   return {collection, document};
 }
 
