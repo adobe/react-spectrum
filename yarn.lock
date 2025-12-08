@@ -58,7 +58,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-ui@npm:1.2.1":
+"@adobe/react-spectrum-ui@npm:1.2.1, @adobe/react-spectrum-ui@npm:^1.2.1":
   version: 1.2.1
   resolution: "@adobe/react-spectrum-ui@npm:1.2.1"
   peerDependencies:
@@ -68,7 +68,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-workflow-color@npm:1.1.1":
+"@adobe/react-spectrum-workflow-color@npm:1.1.1, @adobe/react-spectrum-workflow-color@npm:^1.1.1":
   version: 1.1.1
   resolution: "@adobe/react-spectrum-workflow-color@npm:1.1.1"
   peerDependencies:
@@ -85,6 +85,16 @@ __metadata:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   checksum: 10c0/65de62192cc28528befd5e8faaa3c6d188638501571df13ef045079f0a20e4cf41f352c06c4b0fe6ea17a9f037368fd774e41b9a36379a755dad8409a6f72ace
+  languageName: node
+  linkType: hard
+
+"@adobe/react-spectrum-workflow@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@adobe/react-spectrum-workflow@npm:2.4.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+  checksum: 10c0/13939b30fed9bee4cc31c57bbe00fc9881bdba46704f2db64864dba5334093bcc9a4944f66e1a2be65713351ee61bece9870053ec3e55c0fdad0d98af66c562f
   languageName: node
   linkType: hard
 
@@ -6973,8 +6983,8 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
-    react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     react-lowlight: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7501,10 +7511,10 @@ __metadata:
     json5: "npm:^2.2.3"
     lz-string: "npm:^1.5.0"
     markdown-to-jsx: "npm:^6.11.0"
-    react: "npm:^19"
+    react: "npm:^19.2.0"
     react-aria: "npm:^3.40.0"
     react-aria-components: "npm:^1.7.1"
-    react-dom: "npm:^19"
+    react-dom: "npm:^19.2.0"
     react-stately: "npm:^3.38.0"
     remark-mdx: "npm:^3.1.0"
     remark-parse: "npm:^11.0.0"
@@ -24638,7 +24648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^19, react-dom@npm:^19.1.0":
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0":
   version: 19.1.0
   resolution: "react-dom@npm:19.1.0"
   dependencies:
@@ -24646,6 +24656,17 @@ __metadata:
   peerDependencies:
     react: ^19.1.0
   checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:^19.2.0":
+  version: 19.2.1
+  resolution: "react-dom@npm:19.2.1"
+  dependencies:
+    scheduler: "npm:^0.27.0"
+  peerDependencies:
+    react: ^19.2.1
+  checksum: 10c0/e56b6b3d72314df580ca800b70a69a21c6372703c8f45d9b5451ca6519faefb2496d76ffa9c5adb94136d2bbf2fd303d0dfc208a2cd77ede3132877471af9470
   languageName: node
   linkType: hard
 
@@ -24724,6 +24745,9 @@ __metadata:
   dependencies:
     "@actions/core": "npm:^1.10.0"
     "@actions/github": "npm:^1.1.0"
+    "@adobe/react-spectrum-ui": "npm:^1.2.1"
+    "@adobe/react-spectrum-workflow": "npm:^2.4.0"
+    "@adobe/react-spectrum-workflow-color": "npm:^1.1.1"
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@babel/eslint-parser": "npm:^7.27.1"
@@ -24829,10 +24853,10 @@ __metadata:
     postcss: "npm:^8.4.24"
     postcss-custom-properties: "npm:^13.2.0"
     postcss-import: "npm:^15.1.0"
-    react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     react-frame-component: "npm:^5.0.0"
-    react-test-renderer: "npm:^19.1.0"
+    react-test-renderer: "npm:^19.2.0"
     recast: "npm:^0.23"
     recursive-readdir: "npm:^2.2.2"
     regenerator-runtime: "npm:0.13.3"
@@ -24918,7 +24942,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^19, react@npm:^19.1.0":
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.1.0
   resolution: "react@npm:19.1.0"
   checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
@@ -24929,6 +24953,13 @@ __metadata:
   version: 19.1.1
   resolution: "react@npm:19.1.1"
   checksum: 10c0/8c9769a2dfd02e603af6445058325e6c8a24b47b185d0e461f66a6454765ddcaecb3f0a90184836c68bb509f3c38248359edbc42f0d07c23eb500a5c30c87b4e
+  languageName: node
+  linkType: hard
+
+"react@npm:^19.2.0":
+  version: 19.2.1
+  resolution: "react@npm:19.2.1"
+  checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
   languageName: node
   linkType: hard
 
@@ -25910,6 +25941,13 @@ __metadata:
   version: 0.26.0
   resolution: "scheduler@npm:0.26.0"
   checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "scheduler@npm:0.27.0"
+  checksum: 10c0/4f03048cb05a3c8fddc45813052251eca00688f413a3cee236d984a161da28db28ba71bd11e7a3dd02f7af84ab28d39fb311431d3b3772fed557945beb00c452
   languageName: node
   linkType: hard
 
