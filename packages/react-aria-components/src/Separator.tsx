@@ -42,6 +42,9 @@ export class SeparatorNode extends CollectionNode<any> {
   }
 }
 
+/**
+ * A separator is a visual divider between two groups of content, e.g. groups of menu items or sections of a page.
+ */
 export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 

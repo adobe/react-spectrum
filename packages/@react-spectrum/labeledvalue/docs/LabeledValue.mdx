@@ -66,7 +66,7 @@ An object with `start` and `end` properties may also be provided to format a num
 
 ### Dates and times
 
-The `value` prop may be set to a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object, or one of the types from [@internationalized/date](../internationalized/date/index.html) to display a date or time, which is formatted according to the user's locale.
+The `value` prop may be set to a JavaScript [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object, or one of the types from [@internationalized/date](react-aria:internationalized/date/) to display a date or time, which is formatted according to the user's locale.
 
 ```tsx example
 import {today, getLocalTimeZone} from '@internationalized/date';
@@ -74,7 +74,7 @@ import {today, getLocalTimeZone} from '@internationalized/date';
 <LabeledValue label="Date modified" value={today(getLocalTimeZone()).subtract({weeks: 1})} />
 ```
 
-By default, the formatting depends on the type of value provided. Above, a [CalendarDate](../internationalized/date/CalendarDate.html) is provided, so only the date is displayed. To display a time, pass a [Time](../internationalized/date/Time.html) object. You can also provide a [CalendarDateTime](../internationalized/date/CalendarDateTime.html) or [ZonedDateTime](../internationalized/date/ZonedDateTime.html) to display a date with a time.
+By default, the formatting depends on the type of value provided. Above, a [CalendarDate](react-aria:internationalized/date/CalendarDate) is provided, so only the date is displayed. To display a time, pass a [Time](react-aria:internationalized/date/Time) object. You can also provide a [CalendarDateTime](react-aria:internationalized/date/CalendarDateTime) or [ZonedDateTime](react-aria:internationalized/date/ZonedDateTime) to display a date with a time.
 
 ```tsx example
 import {now, getLocalTimeZone} from '@internationalized/date';

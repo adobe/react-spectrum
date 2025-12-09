@@ -225,6 +225,7 @@ module.exports = new Packager({
       if (mainAsset && mainAsset.meta.isMDX && !mainAsset.meta.hidden) {
         let meta = mainAsset.meta;
         pages.push({
+          filePath: mainAsset.filePath,
           url: urlJoin(b.target.publicUrl, rename(b)),
           name: rename(b),
           title: meta.navigationTitle ?? meta.title,
