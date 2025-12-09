@@ -216,6 +216,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
       isHovered: lightDark('accent-1000', 'accent-600'),
       isPressed: lightDark('accent-1000', 'accent-600'),
       isFocusVisible: lightDark('accent-1000', 'accent-600'),
+      isDisabled: 'transparent',
       isInvalid: {
         default: 'negative-900',
         isHovered: {
@@ -234,6 +235,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
       isHovered: lightDark('accent-1000', 'accent-600'),
       isPressed: lightDark('accent-1000', 'accent-600'),
       isFocusVisible: lightDark('accent-1000', 'accent-600'),
+      isDisabled: 'transparent',
       isInvalid: {
         default: 'negative-900',
         isHovered: {
@@ -369,7 +371,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} />
+                <CalendarGrid months={i} key={i} firstDayOfWeek={props.firstDayOfWeek} />
               ))}
             </div>
             {isInvalid && (
@@ -543,7 +545,6 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
     return state.isSelected(checkDate);
   };
 
-  // TODO: account for first day of week here as well
   // Starting from the current day, find the first day before it in the current week that is not selected.
   // Then, the span of selected days is the current day minus the first unselected day.
   let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => {
@@ -556,7 +557,6 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
   } else if (isSelected) {
     selectionSpan = dayIndex;
   }
-  console.log('first unselected', firstUnselectedInRangeInWeek, date, selectionSpan)
   let prevDay = date.subtract({days: 1});
   let nextDay = date.add({days: 1});
 
