@@ -166,5 +166,5 @@ export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
 export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps} from './TreeView';
-export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor, Color, Key, Selection} from 'react-aria-components';
+export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor, Color, Key, Selection, RouterConfig} from 'react-aria-components';
 export type {ListData, TreeData, AsyncListData} from 'react-stately';
