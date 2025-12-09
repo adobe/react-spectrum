@@ -155,7 +155,8 @@ const treeRow = style({
   font: 'ui',
   color: {
     default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral')
+    isSelected: baseColor('neutral'),
+    forcedColors: 'ButtonText'
   },
   outlineStyle: 'none',
   cursor: {

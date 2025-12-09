@@ -4701,7 +4701,7 @@ __metadata:
 
 "@parcel/packager-react-static@patch:@parcel/packager-react-static@npm%3A2.16.1#~/.yarn/patches/@parcel-packager-react-static-npm-2.16.1-138e4b8f05.patch":
   version: 2.16.1
-  resolution: "@parcel/packager-react-static@patch:@parcel/packager-react-static@npm%3A2.16.1#~/.yarn/patches/@parcel-packager-react-static-npm-2.16.1-138e4b8f05.patch::version=2.16.1&hash=a4b1bc"
+  resolution: "@parcel/packager-react-static@patch:@parcel/packager-react-static@npm%3A2.16.1#~/.yarn/patches/@parcel-packager-react-static-npm-2.16.1-138e4b8f05.patch::version=2.16.1&hash=8e9116"
   dependencies:
     "@parcel/node-resolver-core": "npm:3.7.1"
     "@parcel/plugin": "npm:2.16.1"
@@ -4710,7 +4710,7 @@ __metadata:
     "@parcel/utils": "npm:2.16.1"
     nullthrows: "npm:^1.1.1"
     rsc-html-stream: "npm:^0.0.6"
-  checksum: 10c0/5b79e522f42cb20a9a4db36edb19ecd6ebc75b21dbce4eaee199b5ba3b2b84ebe929b7a49e70a4f6e6bc0ed2ef0f409fa91435fa8bc278c3ca6a206c18e56d3f
+  checksum: 10c0/cc49c27a7db23b02a1b605b67dba4c7a8bb2ad53c48d609513b606f5a55f306ddefe31d1dd224f335e2449d57c695f487e538e7355cdbf0bc03428412c8622e5
   languageName: node
   linkType: hard
 
