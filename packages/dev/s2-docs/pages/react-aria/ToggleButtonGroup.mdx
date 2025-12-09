@@ -93,12 +93,13 @@ import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator} 
 import 'vanilla-starter/SegmentedControl.css';
 
 function SegmentedControlItem(props: ToggleButtonProps) {
+  let children = typeof props.children === 'function' ? props.children({} as any) : props.children;
   return (
     <ToggleButton {...props} className="segmented-control-item">
       {/*- begin highlight -*/}
       <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
       {/*- end highlight -*/}
-      <span>{props.children}</span>
+      <span>{children}</span>
     </ToggleButton>
   );
 }

@@ -268,7 +268,7 @@ import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
 import {useActionState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-function action(prevState, formData: FormData) {
+function action(prevState: {values: Record<string, FormDataEntryValue>, errors: {username: string}}, formData: FormData) {
   return {
     values: Object.fromEntries(formData),
     errors: {
@@ -278,7 +278,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {});
+  let [{values, errors}, formAction] = useActionState(action, {values: {}, errors: {username: ''}});
 
   return (
     <Form
@@ -291,13 +291,13 @@ function Example() {
         label="Username"
         name="username"
         placeholder="Enter your username"
-        defaultValue={values?.username}
+        defaultValue={typeof values?.username === 'string' ? values.username : undefined}
         isRequired />
       <TextField
         label="Password"
         name="password"
         placeholder="Enter your password"
-        defaultValue={values?.password}
+        defaultValue={typeof values?.password === 'string' ? values.password : undefined}
         type="password"
         isRequired />
       <ButtonGroup>

@@ -343,9 +343,9 @@ function Example() {
       {function renderItem(item) {
         return (
           <TreeItem title={item.value.title}>
-            <Collection items={item.children}>
+            {item.children && <Collection items={item.children}>
               {renderItem}
-            </Collection>
+            </Collection>}
           </TreeItem>
         )
       }}

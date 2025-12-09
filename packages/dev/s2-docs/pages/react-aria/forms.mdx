@@ -270,7 +270,7 @@ import {TextField} from 'vanilla-starter/TextField';
 import {Button} from 'vanilla-starter/Button';
 import {useActionState} from 'react';
 
-function action(prevState, formData: FormData) {
+function action(prevState: {values: Record<string, FormDataEntryValue>, errors: {username: string}}, formData: FormData) {
   return {
     values: Object.fromEntries(formData),
     errors: {
@@ -280,7 +280,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {});
+  let [{values, errors}, formAction] = useActionState(action, {values: {}, errors: {username: ''}});
 
   return (
     <Form
@@ -293,13 +293,13 @@ function Example() {
         label="Username"
         name="username"
         placeholder="Enter your username"
-        defaultValue={values?.username}
+        defaultValue={typeof values?.username === 'string' ? values.username : undefined}
         isRequired />
       <TextField
         label="Password"
         name="password"
         placeholder="Enter your password"
-        defaultValue={values?.password}
+        defaultValue={typeof values?.password === 'string' ? values.password : undefined}
         type="password"
         isRequired />
       <Button type="submit">Submit</Button>
