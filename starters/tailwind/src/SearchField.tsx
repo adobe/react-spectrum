@@ -14,7 +14,7 @@ export interface SearchFieldProps extends AriaSearchFieldProps {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
-  placeholder?: string
+  placeholder?: string;
 }
 
 export function SearchField(
