@@ -111,4 +111,4 @@ export const NotificationBadgesCustomWidth: ActionButtonStory = {
       <ActionButton styles={style({width: 200})} {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
       <ActionButton styles={style({width: 200})} {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
     </div>)
-}
+};
