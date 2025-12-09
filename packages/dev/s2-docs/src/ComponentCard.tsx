@@ -295,7 +295,7 @@ const backgroundStyles = style({
 const illustrationStyles = style({
   position: 'relative',
   width: 'full',
-  height: 'full',
+  aspectRatio: '8/5',
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'
@@ -356,19 +356,16 @@ function ComponentIllustration({name, href}: IllustrationProps) {
   const [light, dark] = illustration;
 
   return (
-    <div className={illustrationContainer}>
-      {/* Component illustration */}
-      <picture>
-        <source srcSet={light} media="(prefers-color-scheme: light)" />
-        <source srcSet={dark} media="(prefers-color-scheme: dark)" />
-        <img
+    <Image
           src={light}
           alt=""
           aria-hidden="true"
-          className={illustrationStyles}
-          loading="lazy" />
-      </picture>
-    </div>
+      width={960}
+      height={600}
+      styles={illustrationStyles}>
+      <source srcSet={light} media="(prefers-color-scheme: light)" />
+      <source srcSet={dark} media="(prefers-color-scheme: dark)" />
+    </Image>
   );
 }
 
@@ -408,7 +405,7 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
         <span className={releaseText}>{releaseVersion}</span>
       </div>
     );
-  } else if (href.includes('react-aria/examples/') && !href.endsWith('index.html')) {
+  } else if (href.includes('examples/') && !href.endsWith('/')) {
     preview = <ExampleImage name={href} />;
   } else {
     preview = <ComponentIllustration name={name} href={href} />;
