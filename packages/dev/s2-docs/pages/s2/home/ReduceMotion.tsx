@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {UNSAFE_PortalProvider} from 'react-aria';
-import {UNSTABLE_ToastContainer as ToastContainer, Button, UNSTABLE_ToastQueue as ToastQueue, Switch} from '@react-spectrum/s2';
+import {ToastContainer, Button, ToastQueue, Switch} from '@react-spectrum/s2';
 
 export function ReduceMotion() {
   let ref = useRef(null);
