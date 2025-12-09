@@ -532,9 +532,9 @@ function SelectableItem({id, children}) {
 <ListBox
   aria-label="Animated ListBox"
   selectionMode="single">
-  <SelectableItem>Home</SelectableItem>
-  <SelectableItem>Getting Started</SelectableItem>
-  <SelectableItem>Components</SelectableItem>
+  <SelectableItem id="home">Home</SelectableItem>
+  <SelectableItem id="getting-started">Getting Started</SelectableItem>
+  <SelectableItem id="components">Components</SelectableItem>
 </ListBox>
 ```
 
@@ -969,8 +969,16 @@ const items = [
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {Collection} from 'react-aria-components';
 
+type Pokemon = {
+  id: number;
+  name: string;
+  type: string;
+  level: number;
+  children?: Pokemon[];
+};
+
 ///- begin collapse -///
-let items = [
+let items: Pokemon[] = [
   {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
     {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
       {id: 3, name: 'Venusaur', type: 'Grass', level: 83}

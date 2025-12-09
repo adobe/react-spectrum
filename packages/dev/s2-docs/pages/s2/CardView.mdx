@@ -486,7 +486,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
         <Content>
           <Text slot="title">{item.description || item.alt_description}</Text>
           <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-            <Avatar src={item.user.profile_image.small} size={size} />
+            <Avatar src={item.user.profile_image.small} size={size === 'S' ? 24 : size === 'M' ? 32 : size === 'L' ? 40 : 32} />
             <Text slot="description">{item.user.name}</Text>
           </div>
         </Content>
