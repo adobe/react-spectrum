@@ -29,7 +29,7 @@ import ButtonGroupLight from 'url:../assets/component-illustrations/light/Button
 import ButtonLight from 'url:../assets/component-illustrations/light/Button.avif';
 import CalendarDark from 'url:../assets/component-illustrations/dark/Calendar.avif';
 import CalendarLight from 'url:../assets/component-illustrations/light/Calendar.avif';
-import {Card, CardPreview, CardProps, Content, Text} from '@react-spectrum/s2';
+import {Card, CardPreview, CardProps, Content, Image, Text} from '@react-spectrum/s2';
 import CardDark from 'url:../assets/component-illustrations/dark/Card.avif';
 import CardLight from 'url:../assets/component-illustrations/light/Card.avif';
 import CardViewDark from 'url:../assets/component-illustrations/dark/CardView.avif';
@@ -101,6 +101,8 @@ import MenuDark from 'url:../assets/component-illustrations/dark/Menu.avif';
 import MenuLight from 'url:../assets/component-illustrations/light/Menu.avif';
 import MeterDark from 'url:../assets/component-illustrations/dark/Meter.avif';
 import MeterLight from 'url:../assets/component-illustrations/light/Meter.avif';
+import MigratingDark from 'url:../assets/component-illustrations/dark/MigratingToSpectrum2.avif';
+import MigratingLight from 'url:../assets/component-illustrations/light/MigratingToSpectrum3.avif';
 import NumberFieldDark from 'url:../assets/component-illustrations/dark/NumberField.avif';
 import NumberFieldLight from 'url:../assets/component-illustrations/light/NumberField.avif';
 import {Page} from '@parcel/rsc';
@@ -179,16 +181,15 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Accordion': [AccordionLight, AccordionDark],
   'ActionBar': [ActionBarLight, ActionBarDark],
   'ActionButton': [ActionButtonLight, ActionButtonDark],
-  'ActionButtonGroup': [ButtonGroupLight, ButtonGroupDark],
-  'ActionGroup': [ActionGroupLight, ActionGroupDark],
+  'ActionButtonGroup': [ActionGroupLight, ActionGroupDark],
   'ActionMenu': [ActionMenuLight, ActionMenuDark],
+  'Autocomplete': [ComboBoxLight, ComboBoxDark],
   'Avatar': [AvatarLight, AvatarDark],
   'AvatarGroup': [AvatarGroupLight, AvatarGroupDark],
   'Badge': [BadgeLight, BadgeDark],
   'Breadcrumbs': [BreadcrumbsLight, BreadcrumbsDark],
   'Button': [ButtonLight, ButtonDark],
   'ButtonGroup': [ButtonGroupLight, ButtonGroupDark],
-  'Calendar': [CalendarLight, CalendarDark],
   'Card': [CardLight, CardDark],
   'CardView': [CardViewLight, CardViewDark],
   'Checkbox': [CheckboxLight, CheckboxDark],
@@ -209,6 +210,8 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'DisclosureGroup': [AccordionLight, AccordionDark],
   'Divider': [DividerLight, DividerDark],
   'DropZone': [DropZoneLight, DropZoneDark],
+  'Form': [FormsLight, FormsDark],
+  'GridList': [CardViewLight, CardViewDark],
   'Icons': [IconsLight, IconsDark],
   'IllustratedMessage': [IllustratedMessageLight, IllustratedMessageDark],
   'Illustrations': [IllustrationsLight, IllustrationsDark],
@@ -218,6 +221,8 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'LinkButton': [LinkButtonLight, LinkButtonDark],
   'Menu': [MenuLight, MenuDark],
   'Meter': [MeterLight, MeterDark],
+  'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
+  'Modal': [DialogLight, DialogDark],
   'NumberField': [NumberFieldLight, NumberFieldDark],
   'Picker': [PickerLight, PickerDark],
   'Popover': [PopoverLight, PopoverDark],
@@ -231,6 +236,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'SegmentedControl': [SegmentedControlLight, SegmentedControlDark],
   'Select': [PickerLight, PickerDark],
   'SelectBoxGroup': [SelectBoxGroupLight, SelectBoxGroupDark],
+  'Separator': [DividerLight, DividerDark],
   'Skeleton': [SkeletonLight, SkeletonDark],
   'Slider': [SliderLight, SliderDark],
   'StatusLight': [StatusLightLight, StatusLightDark],
@@ -245,6 +251,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Toast': [ToastLight, ToastDark],
   'ToggleButton': [ToggleButtonLight, ToggleButtonDark],
   'ToggleButtonGroup': [ToggleButtonGroupLight, ToggleButtonGroupDark],
+  'Toolbar': [ActionGroupLight, ActionGroupDark],
   'Tooltip': [TooltipLight, TooltipDark],
   'Tree': [TreeLight, TreeDark],
   'TreeView': [TreeLight, TreeDark],
@@ -255,8 +262,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'MCP Server': [McpServerLight, McpServerDark],
   'Styling': [StyleLight, StyleDark],
   'Style Macro': [StyleMacroLight, StyleMacroDark],
-  'Getting Started': [GettingStartedLight, GettingStartedDark],
-  'Client Side Routing': [ClientSideRoutingLight, ClientSideRoutingDark],
+  'Getting started': [GettingStartedLight, GettingStartedDark],
   'Framework setup': [FrameworksLight, FrameworksDark],
   // Blog posts - map to existing component illustrations
   'Building a Button Part 1: Press Events': [ButtonLight, ButtonDark],
@@ -268,7 +274,19 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'How we internationalized our number field': [NumberFieldLight, NumberFieldDark],
   'Improving Internationalization Support in Our Date and Time Components': [DatePickerLight, DatePickerDark],
   'Accessible Color Descriptions for Improved Color Pickers': [ColorFieldLight, ColorFieldDark],
-  'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark]
+  'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
+  'Introducing React Spectrum': [MigratingLight, MigratingDark],
+  // Internationalized
+  'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
+  'Calendar': [CalendarLight, CalendarDark],
+  'CalendarDate': [CalendarLight, CalendarDark],
+  'CalendarDateTime': [DateFieldLight, DateFieldDark],
+  'Time': [TimeFieldLight, TimeFieldDark],
+  'ZonedDateTime': [DatePickerLight, DatePickerDark],
+  'DateFormatter': [DatePickerLight, DatePickerDark],
+  'Internationalized Number': [NumberFieldLight, NumberFieldDark],
+  'NumberFormatter': [NumberFieldLight, NumberFieldDark],
+  'NumberParser': [NumberFieldLight, NumberFieldDark]
 };
 
 const illustrationContainer = style({
@@ -357,9 +375,9 @@ function ComponentIllustration({name, href}: IllustrationProps) {
 
   return (
     <Image
-          src={light}
-          alt=""
-          aria-hidden="true"
+      src={light}
+      alt=""
+      aria-hidden="true"
       width={960}
       height={600}
       styles={illustrationStyles}>
