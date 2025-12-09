@@ -1433,7 +1433,6 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Server from '@react-spectrum/s2/illustrations/linear/Server';
 import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
 import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
-import type {ReactNode} from 'react';
 
 ///- begin collapse -///
 const items = [
@@ -1457,7 +1456,7 @@ const items = [
       {item.illustration}
       <Text slot="label">{item.name}</Text>
     </SelectBox>
-  )) as unknown as ReactNode}
+  ))}
 </SelectBoxGroup>
 ```
 
