@@ -126,7 +126,7 @@ function Example() {
         label="Favorite Animal"
         placeholder="Select an animal"
         /*- begin highlight -*/
-        selectedKey={animal ?? undefined}
+        selectedKey={animal}
         onSelectionChange={setAnimal}>
         {/*- end highlight -*/}
         <ComboBoxItem id="koala">Koala</ComboBoxItem>
@@ -231,7 +231,7 @@ function ControlledComboBox() {
         placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
-        selectedKey={fieldState.selectedKey ?? undefined}
+        selectedKey={fieldState.selectedKey}
         inputValue={fieldState.inputValue}
         onSelectionChange={onSelectionChange}
         onInputChange={onInputChange}>

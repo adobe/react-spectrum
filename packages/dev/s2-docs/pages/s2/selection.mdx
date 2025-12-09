@@ -1569,9 +1569,9 @@ let items: PokemonItem[] = [
     return (
       <TreeViewItem textValue={item.name}>
         <TreeViewItemContent>{item.name}</TreeViewItemContent>
-        {item.children && item.children.length > 0 && <Collection items={item.children}>
+        <Collection items={item.children}>
           {renderItem}
-        </Collection>}
+        </Collection>
       </TreeViewItem>
     )
   }}

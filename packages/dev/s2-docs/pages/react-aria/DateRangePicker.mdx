@@ -58,13 +58,13 @@ function Example() {
     <>
       <DateRangePicker
         ///- begin highlight -///
-        value={range ?? undefined}
+        value={range}
         onChange={setRange} />
         {/*- end highlight -*/}
       <p>Selected range: {range ? formatter.formatRange(
-          range.start.toDate(getLocalTimeZone()),
-          range.end.toDate(getLocalTimeZone())
-        ) : '--'}</p>
+        range.start.toDate(getLocalTimeZone()),
+        range.end.toDate(getLocalTimeZone())
+      ) : '--'}</p>
     </>
   );
 }

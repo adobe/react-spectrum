@@ -53,7 +53,7 @@ function Example() {
       <ColorField
         label="Primary color"
         placeholder="Enter a color"
-        value={value ?? undefined}
+        value={value}
         onChange={setValue} />
       <pre style={{fontSize: 12}}>Current value: {value?.toString('hex')}</pre>
     </div>
@@ -79,7 +79,7 @@ function Example() {
       <ColorField
         label="Hue"
 
-        value={color ?? undefined}
+        value={color}
         onChange={setColor}
         /*- begin highlight -*/
         colorSpace="hsl"
@@ -87,13 +87,13 @@ function Example() {
         {/*- end highlight -*/}
       <ColorField
         label="Saturation"
-        value={color ?? undefined}
+        value={color}
         onChange={setColor}
         colorSpace="hsl"
         channel="saturation" />
       <ColorField
         label="Lightness"
-        value={color ?? undefined}
+        value={color}
         onChange={setColor}
         colorSpace="hsl"
         channel="lightness" />

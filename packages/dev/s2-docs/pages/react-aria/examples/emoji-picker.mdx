@@ -23,7 +23,7 @@ import _emojis from 'emojibase-data/en/compact.json';
 import './EmojiPicker.css';
 
 type Emoji = (typeof _emojis)[0];
-const emojis = _emojis.filter((e: Emoji) => typeof e.label === 'string' && !e.label.startsWith('regional indicator'));
+const emojis: Emoji[] = _emojis.filter((e) => typeof e.label === 'string' && !e.label.startsWith('regional indicator'));
 
 export default function EmojiPicker() {
   let {contains} = useFilter({ sensitivity: 'base' });
@@ -44,8 +44,8 @@ export default function EmojiPicker() {
               minSpace: new Size(4, 4),
               preserveAspectRatio: true,
             }}>
-            <ListBox className="emoji-list" items={emojis as Emoji[]} aria-label="Emoji list" layout="grid">
-              {(item: Emoji) => <EmojiItem id={String(item.unicode)} item={item} />}
+            <ListBox className="emoji-list" items={emojis} aria-label="Emoji list" layout="grid">
+              {(item) => <EmojiItem id={String(item.unicode)} item={item} />}
             </ListBox>
           </Virtualizer>
         </Autocomplete>
