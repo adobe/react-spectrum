@@ -1,8 +1,9 @@
 @import "./theme.css";
 
 .react-aria-RangeCalendar {
-  width: fit-content;
+  width: calc(var(--spacing-9) * 7);
   max-width: 100%;
+  container-type: inline-size;
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
@@ -19,8 +20,9 @@
     }
   }
 
-  table {
+  .react-aria-CalendarGrid {
     border-collapse: collapse;
+    border-spacing: 0;
   }
 
   [slot=errorMessage] {
@@ -30,12 +32,14 @@
 
   .react-aria-CalendarCell {
     margin: 2px 0;
-    padding: 0 2px;
+    padding: 0 calc(var(--gap) / 2);
     position: relative;
     z-index: 1;
 
     span {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       height: 100%;
       border-radius: 9999px;
@@ -61,7 +65,7 @@
         border-start-start-radius: 9999px;
         border-end-start-radius: 9999px;
         border-inline-start-width: 0.5px;
-        margin-inline-start: 1.5px;
+        margin-inline-start: calc(var(--gap) / 2 - 0.5px);
         padding-inline-start: 0;
       }
 
@@ -70,7 +74,7 @@
         border-end-end-radius: 9999px;
         border-start-end-radius: 9999px;
         border-inline-end-width: 0.5px;
-        margin-inline-end: 1.5px;
+        margin-inline-end: calc(var(--gap) / 2 - 0.5px);
         padding-inline-end: 0;
       }
 

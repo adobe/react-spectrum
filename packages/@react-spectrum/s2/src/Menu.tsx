@@ -157,11 +157,18 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
       default: 'transparent',
-      isFocused: baseColor('gray-100').isFocusVisible
+      isFocused: {
+        default: baseColor('gray-100').isFocusVisible,
+        forcedColors: 'Highlight'
+      }
     }
   },
   color: {
     default: baseColor('neutral'),
+    forcedColors: {
+      default: 'ButtonText',
+      isFocused: 'HighlightText'
+    },
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -191,10 +198,11 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'default',
+  forcedColorAdjust: 'none'
 }, getAllowedOverrides());
 
-export let checkmark = style({
+export let checkmark = style<{isSelected: boolean, isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   visibility: {
     default: 'hidden',
     isSelected: 'visible'
@@ -205,7 +213,10 @@ export let checkmark = style({
     type: 'fill',
     value: {
       default: 'currentColor',
-      forcedColors: 'Highlight'
+      forcedColors: {
+        default: 'Highlight',
+        isFocused: 'HighlightText'
+      }
     }
   },
   marginEnd: 'text-to-control',

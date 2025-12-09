@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import NoLibrariesBrands_L from 'illustration:./S2_lin_noLibrariesBrands_160.svg';
 import NoLibrariesBrands_M from 'illustration:./S2_lin_noLibrariesBrands_96.svg';
 import NoLibrariesBrands_S from 'illustration:./S2_lin_noLibrariesBrands_48.svg';

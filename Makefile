@@ -157,13 +157,13 @@ s2-docs-stage:
 	DOCS_ENV=stage PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/robots.txt
-	$(MAKE) starters
+	$(MAKE) build-starters
 
 s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
-	$(MAKE) starters
+	$(MAKE) build-starters
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
@@ -184,7 +184,7 @@ build-s2-docs:
 	yarn parcel build 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx' --dist-dir dist/s2-docs/s2/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
 	yarn parcel build 'packages/@react-{aria,stately}/*/docs/*.mdx'  --dist-dir dist/s2-docs/react-aria/$(PUBLIC_URL) --public-url $(PUBLIC_URL)
 
-starters:
+build-starters:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
 	mv starters/docs/storybook-static dist/s2-docs/react-aria-starter
