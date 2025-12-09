@@ -223,6 +223,7 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 "use client";
 import {Table, TableHeader, Column, TableBody, Row, Cell, type Selection} from 'react-aria-components';
 import {Checkbox} from 'vanilla-starter/Checkbox';
+import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 ///- begin collapse -///
@@ -240,9 +241,9 @@ function Example() {
   ///- begin highlight -///
   function performBulkAction() {
     if (selectedKeys === 'all') {
-      // perform action on all items
+      alert('Performing action on all items');
     } else {
-      // perform action on selected items in selectedKeys
+      alert(`Performing action on selected items: ${[...selectedKeys].join(', ')}`);
     }
   }
   ///- end highlight -///
@@ -272,6 +273,11 @@ function Example() {
           )}
         </TableBody>
       </Table>
+      {(selectedKeys === 'all' || (selectedKeys instanceof Set && selectedKeys.size > 0)) && (
+        <div style={{marginTop: '16px', padding: '8px'}}>
+          <Button onPress={performBulkAction}>Delete Selected</Button>
+        </div>
+      )}
       <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
     </div>
   );
