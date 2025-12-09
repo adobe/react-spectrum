@@ -38,8 +38,6 @@ import CheckboxDark from 'url:../assets/component-illustrations/dark/Checkbox.av
 import CheckboxGroupDark from 'url:../assets/component-illustrations/dark/CheckboxGroup.avif';
 import CheckboxGroupLight from 'url:../assets/component-illustrations/light/CheckboxGroup.avif';
 import CheckboxLight from 'url:../assets/component-illustrations/light/Checkbox.avif';
-import ClientSideRoutingDark from 'url:../assets/component-illustrations/dark/ClientSideRouting.avif';
-import ClientSideRoutingLight from 'url:../assets/component-illustrations/light/ClientSideRouting.avif';
 import CollectionDark from 'url:../assets/component-illustrations/dark/Collection.avif';
 import CollectionLight from 'url:../assets/component-illustrations/light/Collection.avif';
 import ColorAreaDark from 'url:../assets/component-illustrations/dark/ColorArea.avif';
