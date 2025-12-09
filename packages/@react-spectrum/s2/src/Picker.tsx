@@ -331,7 +331,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     );
   }
   let scale = useScale();
-  let {direction: dir} = useLocale();
 
   return (
     <AriaSelect
