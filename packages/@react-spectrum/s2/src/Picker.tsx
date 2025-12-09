@@ -34,7 +34,7 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -57,6 +57,7 @@ import {
   listboxItem,
   LOADER_ROW_HEIGHTS
 } from './ComboBox';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,

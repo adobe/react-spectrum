@@ -61,7 +61,7 @@ export function CalendarHeader() {
       <Button variant="quiet" slot="previous">
         {direction === 'rtl' ? <ChevronRight aria-hidden size={18} /> : <ChevronLeft aria-hidden size={18} />}
       </Button>
-      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-lg text-center mx-2 text-neutral-900 dark:text-neutral-200" />
+      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-lg text-center mx-2 my-0 text-neutral-900 dark:text-neutral-200" />
       <Button variant="quiet" slot="next">
         {direction === 'rtl' ? <ChevronLeft aria-hidden size={18} /> : <ChevronRight aria-hidden size={18} />}
       </Button>
