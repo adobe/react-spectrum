@@ -881,18 +881,18 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   </TableHeader>
   <TableBody>
     {/*- begin highlight -*/}
-    <Row>
+    <Row onAction={() => alert('Opening Games')}>
     {/*- end highlight -*/}
       <Cell>Games</Cell>
       <Cell>File folder</Cell>
       <Cell>6/7/2020</Cell>
     </Row>
-    <Row>
+    <Row onAction={() => alert('Opening Documents')}>
       <Cell>Documents</Cell>
       <Cell>File folder</Cell>
       <Cell>4/7/2021</Cell>
     </Row>
-    <Row>
+    <Row onAction={() => alert('Opening Photos')}>
       <Cell>Photos</Cell>
       <Cell>File folder</Cell>
       <Cell>11/20/2010</Cell>
@@ -1210,7 +1210,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
       <Cell>56</Cell>
     </Row>
     {/*- begin highlight -*/}
-    <Row id="venusaur">
+    <Row id="venusaur" isDisabled>
     {/*- end highlight -*/}
       <Cell>Venusaur</Cell>
       <Cell>Grass, Poison</Cell>

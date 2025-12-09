@@ -213,18 +213,18 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   </TableHeader>
   <TableBody>
     {/*- begin highlight -*/}
-    <Row>
+    <Row href="https://adobe.com/" target="_blank">
       {/*- end highlight -*/}
       <Cell>Adobe</Cell>
       <Cell>https://adobe.com/</Cell>
       <Cell>January 28, 2023</Cell>
     </Row>
-    <Row>
+    <Row href="https://google.com/" target="_blank">
       <Cell>Google</Cell>
       <Cell>https://google.com/</Cell>
       <Cell>April 5, 2023</Cell>
     </Row>
-    <Row>
+    <Row href="https://nytimes.com/" target="_blank">
       <Cell>New York Times</Cell>
       <Cell>https://nytimes.com/</Cell>
       <Cell>July 12, 2023</Cell>
@@ -314,7 +314,7 @@ function TableWithDividers() {
                 <Cell
                   /*- begin highlight -*/
                   showDivider={column.showDivider}
-                  align={column.align as 'start' | 'center' | 'end' | undefined}>
+                  align={column.align}>
                   {/*- end highlight -*/}
                   {item[column.id]}
                 </Cell>
@@ -597,7 +597,7 @@ function Example(props) {
             <Cell>Water</Cell>
             <Cell>56</Cell>
           </Row>
-          <Row id="venusaur">
+          <Row id="venusaur" isDisabled>
             <Cell>Venusaur</Cell>
             <Cell>Grass, Poison</Cell>
             <Cell>83</Cell>

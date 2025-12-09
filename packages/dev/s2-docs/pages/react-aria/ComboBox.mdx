@@ -91,6 +91,7 @@ function Example() {
     /*- begin highlight -*/
     <ComboBox
       label="Preferred fruit or vegetable"
+      placeholder="Select an option"
       defaultItems={options}>
       {section => (
         <ListBoxSection id={section.name}>
@@ -123,6 +124,7 @@ function Example() {
     <div>
       <ComboBox
         label="Favorite Animal"
+        placeholder="Select an animal"
         /*- begin highlight -*/
         selectedKey={animal ?? undefined}
         onSelectionChange={setAnimal}>
@@ -157,6 +159,7 @@ function Example(props) {
       <ComboBox
         {...props}
         label="Favorite Animal"
+        placeholder="Select an animal"
         /*- begin highlight -*/
         /* PROPS */
         inputValue={value}
@@ -225,6 +228,7 @@ function ControlledComboBox() {
     <div>
       <ComboBox
         label="Engineering major"
+        placeholder="Select a major"
         /*- begin highlight -*/
         defaultItems={options}
         selectedKey={fieldState.selectedKey ?? undefined}
@@ -258,6 +262,7 @@ function Example() {
   return (
     <ComboBox
       label="Favorite Animal"
+      placeholder="Select an animal"
       allowsEmptyCollection
       inputValue={inputValue}
       onInputChange={setInputValue}>
@@ -292,6 +297,7 @@ import {Form} from 'vanilla-starter/Form';;
 <Form>
   <ComboBox
     label="Animal"
+    placeholder="e.g. Cat"
     /*- begin highlight -*/
     name="animal"
     isRequired

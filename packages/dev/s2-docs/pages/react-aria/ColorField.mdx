@@ -22,7 +22,7 @@ export const description = 'Allows users to edit a hex color or individual color
     docs={vanillaDocs.exports.ColorField}
     links={vanillaDocs.links}
     props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
-    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
     type="vanilla"
     files={["starters/docs/src/ColorField.tsx", "starters/docs/src/ColorField.css"]} />
   <VisualExample
@@ -52,6 +52,7 @@ function Example() {
     <div>
       <ColorField
         label="Primary color"
+        placeholder="Enter a color"
         value={value ?? undefined}
         onChange={setValue} />
       <pre style={{fontSize: 12}}>Current value: {value?.toString('hex')}</pre>
