@@ -160,7 +160,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {children} = props;
   let pages = await getPages();
   let currentPage = getCurrentPage(props.currentPage);
-  let isToastPage = currentPage.name === 'Toast.mdx' || currentPage.url?.includes('/s2/Toast');
+  let isToastPage = currentPage.name === 's2/Toast';
   let isSubpage = currentPage.exports?.isSubpage;
   let section = currentPage.exports?.section;
   let isLongForm = isSubpage && section === 'Blog';
