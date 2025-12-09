@@ -403,6 +403,16 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 import {CardView, Collection, SkeletonCollection, Card, CardPreview, Image, Content, Text, Avatar, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+type Item = {
+  id: string;
+  description?: string;
+  alt_description?: string;
+  urls: {regular: string};
+  width: number;
+  height: number;
+  user: {name: string; profile_image: {small: string}};
+};
+
 export default function Example(props) {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
@@ -433,7 +443,7 @@ export default function Example(props) {
       onLoadMore={props.loadingState ? undefined : list.loadMore}
       styles={style({width: 'full', height: 500})}>
       <Collection items={loadingState === 'loading' ? [] : list.items}>
-        {item => <PhotoCard item={item} />}
+        {item => <PhotoCard item={item} layout={props.layout || 'waterfall'} />}
       </Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         /*- begin highlight -*/
@@ -442,14 +452,15 @@ export default function Example(props) {
           {() => (
             <PhotoCard
               item={{
-                id: Math.random(),
+                id: String(Math.random()),
                 user: {name: 'Placeholder name', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
-              }} />
+              }}
+              layout={props.layout || 'waterfall'} />
           )}
         </SkeletonCollection>
       )}

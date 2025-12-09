@@ -299,7 +299,7 @@ function TableWithDividers() {
           <Column
             /*- begin highlight -*/
             showDivider={column.showDivider}
-            align={column.align}
+            align={column.align as 'start' | 'center' | 'end' | undefined}
             /*- end highlight -*/
             isRowHeader={column.isRowHeader}>
             {column.name}
@@ -405,7 +405,7 @@ Render an `<EditableCell>` instead of a `<Cell>` to allow users to edit the valu
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key, type ColumnProps} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import User from '@react-spectrum/s2/icons/User';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -654,7 +654,7 @@ function SortableTable() {
       aria-label="Favorite pokemon"
       styles={style({width: 400, maxWidth: 'full'})}
       ///- begin highlight -///
-      sortDescriptor={sortDescriptor}
+      sortDescriptor={sortDescriptor ?? undefined}
       onSortChange={setSortDescriptor}
       ///- end highlight -///
     >
@@ -749,7 +749,7 @@ const columns = [
 ];
 ///- end collapse -///
 
-const initialWidths = new Map([
+const initialWidths = new Map<string, string | number>([
   ['file', '1fr'],
   ['size', 80],
   ['date', 100]

@@ -41,13 +41,14 @@ Use the `value` or `defaultValue` prop to set the selected date range, using obj
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
 import {useDateFormatter} from 'react-aria';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
+import type {RangeValue} from '@react-types/shared';
 import {useState} from 'react';
 
 function Example() {
-  let [range, setRange] = useState({
+  let [range, setRange] = useState<RangeValue<CalendarDate> | null>({
     start: parseDate('2025-02-03'),
     end: parseDate('2025-02-12')
   });
@@ -57,13 +58,13 @@ function Example() {
     <>
       <DateRangePicker
         ///- begin highlight -///
-        value={range}
+        value={range ?? undefined}
         onChange={setRange} />
         {/*- end highlight -*/}
-      <p>Selected range: {formatter.formatRange(
-        range.start.toDate(getLocalTimeZone()),
-        range.end.toDate(getLocalTimeZone())
-      )}</p>
+      <p>Selected range: {range ? formatter.formatRange(
+          range.start.toDate(getLocalTimeZone()),
+          range.end.toDate(getLocalTimeZone())
+        ) : '--'}</p>
     </>
   );
 }
