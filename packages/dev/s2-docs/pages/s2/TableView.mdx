@@ -314,7 +314,7 @@ function TableWithDividers() {
                 <Cell
                   /*- begin highlight -*/
                   showDivider={column.showDivider}
-                  align={column.align}>
+                  align={column.align as 'start' | 'center' | 'end' | undefined}>
                   {/*- end highlight -*/}
                   {item[column.id]}
                 </Cell>

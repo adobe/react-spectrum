@@ -13,16 +13,17 @@ export interface ColorFieldProps extends AriaColorFieldProps {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string;
 }
 
 export function ColorField(
-  { label, description, errorMessage, ...props }: ColorFieldProps
+  { label, description, errorMessage, placeholder, ...props }: ColorFieldProps
 ) {
   return (
     (
       <AriaColorField {...props}>
         {label && <Label>{label}</Label>}
-        <Input className="react-aria-Input inset" />
+        <Input className="react-aria-Input inset" placeholder={placeholder} />
         {description && <Description>{description}</Description>}
         <FieldError>{errorMessage}</FieldError>
       </AriaColorField>
