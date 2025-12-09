@@ -79,7 +79,7 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
