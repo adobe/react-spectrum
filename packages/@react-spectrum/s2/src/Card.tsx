@@ -654,6 +654,7 @@ const avatarSize = {
 
 export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and avatar.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
@@ -706,6 +707,7 @@ const buttonSize = {
 
 export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and thumbnail.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
