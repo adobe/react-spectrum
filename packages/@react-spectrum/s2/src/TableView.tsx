@@ -562,7 +562,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
                 {children}
               </ColumnWithMenu>
             ) : (
-              <ColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection}>
+              <ColumnContents align={align} allowsSorting={allowsSorting} sortDirection={sortDirection}>
                 {children}
               </ColumnContents>
             )
@@ -577,7 +577,14 @@ const columnContentWrapper = style({
   minWidth: 0,
   display: 'flex',
   alignItems: 'center',
-  width: 'full'
+  width: 'full',
+  justifyContent: {
+    align: {
+      default: 'start',
+      center: 'center',
+      end: 'end'
+    }
+  }
 });
 
 const sortIcon = style({
@@ -594,13 +601,13 @@ const sortIcon = style({
   }
 });
 
-interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
+interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'align' | 'children'> {}
 
 function ColumnContents(props: ColumnContentProps) {
-  let {allowsSorting, sortDirection, children} = props;
+  let {align, allowsSorting, sortDirection, children} = props;
 
   return (
-    <div className={columnContentWrapper}>
+    <div className={columnContentWrapper({align})}>
       {allowsSorting && (
         <Provider
           values={[
@@ -613,7 +620,7 @@ function ColumnContents(props: ColumnContentProps) {
           )}
         </Provider>
       )}
-      <span className={style({truncate: true, width: 'full'})}>
+      <span className={columnHeaderText}>
         {children}
       </span>
     </div>
@@ -946,7 +953,10 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: baseColor('neutral'),
+  color: {
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral')
+  },
   paddingY: centerPadding(),
   minHeight: {
     default: 40,

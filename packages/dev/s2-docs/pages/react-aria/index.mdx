@@ -26,6 +26,7 @@ import {getBaseUrl} from '../../src/pageUtils';
 
 export const section = 'Overview';
 export const title = 'Home';
+export const omitFromNav = true;
 export const hideFromSearch = true;
 export const description = 'Accessible, high quality UI components and hooks for building design systems.';
 
@@ -81,7 +82,7 @@ export const description = 'Accessible, high quality UI components and hooks for
         <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 font-semibold ring-1 ring-black/5">
           <a href="blog/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Blog</a>
           <a href="releases/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Releases</a>
-          <a href={getBaseUrl('s2')} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
+          <a href={getBaseUrl('s2') + '/'} className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">React Spectrum</a>
           <a href="internationalized/date/" className="no-underline hidden md:inline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">Internationalized</a>
           <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="no-underline transition text-zinc-900/80 dark:text-white/70 hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring dark:outline-white">
             <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
@@ -106,7 +107,9 @@ export const description = 'Accessible, high quality UI components and hooks for
 
         <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
           <a href="getting-started" className="no-underline bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95 cursor-pointer">Get Started</a>
-          <SearchMenuWrapperServer currentPage={props.currentPage} />
+          <SearchMenuWrapperServer currentPage={props.currentPage}>
+            <span className="block font-spectrum no-underline bg-white/60 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 group-pressed:scale-95 cursor-pointer focus-ring group-focus-visible:outline-2">Explore Components</span>
+          </SearchMenuWrapperServer>
         </div>
 
         <div className="relative pt-10 md:pt-20 md:mt-20">
@@ -628,10 +631,12 @@ export const description = 'Accessible, high quality UI components and hooks for
           <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
         </a>
 
-        <a href="components" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
-          <CardTitle>View Components <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
-          <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
-        </a>
+        <SearchMenuWrapperServer currentPage={props.currentPage}>
+          <span className="block text-start no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%] cursor-pointer group-focus-visible:!outline-blue-600 group-focus-visible:dark:!outline-blue-500 group-focus-visible:!outline-2">
+            <CardTitle>View Components <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>
+            <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
+          </span>
+        </SearchMenuWrapperServer>
 
         <a href="examples/" className="no-underline card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
           <CardTitle>Explore Examples <ArrowRight aria-hidden className="inline w-5 h-5 mb-1 align-middle" /></CardTitle>

@@ -146,9 +146,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string
@@ -231,7 +230,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<TreeItem>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. See the [selection guide](selection?component=Tree#selection-behavior) for more details.
+Use the `href` prop on a `<TreeItem>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework.
 
 ```tsx render
 "use client";
@@ -351,7 +350,7 @@ function Example(props) {
 
 ## API
 
-```tsx links={{TreeView: '#treeview', TreeViewItem: '#treeviewitem', TreeViewItemContent: '#treeviewitemcontent', TreeViewLoadMoreItem: '#treeloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons'}}
+```tsx links={{TreeView: '#treeview', TreeViewItem: '#treeviewitem', TreeViewItemContent: '#treeviewitemcontent', TreeViewLoadMoreItem: '#treeviewloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <TreeView>
   <TreeViewItem>
     <TreeViewItemContent>

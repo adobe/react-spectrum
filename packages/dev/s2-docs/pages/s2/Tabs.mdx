@@ -62,6 +62,8 @@ import Settings from '@react-spectrum/s2/illustrations/gradient/generic1/GearSet
 import {ActionButton, ActionButtonGroup, Tabs, TabList, Tab, TabPanel, Collection} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
+import AddCircle from '@react-spectrum/s2/icons/AddCircle';
+import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 
 function Example() {
   let [tabs, setTabs] = useState([
@@ -98,8 +100,12 @@ function Example() {
           {item => <Tab>{item.title}</Tab>}
         </TabList>
         <ActionButtonGroup density="compact" size="S">
-          <ActionButton onPress={addTab}>Add tab</ActionButton>
-          <ActionButton onPress={removeTab}>Remove tab</ActionButton>
+          <ActionButton onPress={addTab} aria-label="Add tab">
+            <AddCircle />
+          </ActionButton>
+          <ActionButton onPress={removeTab} aria-label="Remove tab">
+            <RemoveCircle />
+          </ActionButton>
         </ActionButtonGroup>
       </div>
       {/*- begin highlight -*/}
@@ -259,7 +265,7 @@ function Example() {
 
 ## API
 
-```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanel: '#tabpanel', Icon: 'icons'}}
+```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanel: '#tabpanel', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <Tabs>
   <TabList>
     <Tab>

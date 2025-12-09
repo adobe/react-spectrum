@@ -26,6 +26,13 @@
     --grid-item-size: 150px;
   }
 
+  @media (width < 500px) {
+    &[data-layout=grid] {
+      --grid-item-size: 150px;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
   &[data-layout=stack] {
     grid-template-columns: auto;
     align-items: center;
@@ -158,6 +165,7 @@
     object-fit: cover;
     padding-bottom: var(--spacing-2);
     -webkit-user-drag: none;
+    -webkit-touch-callout: none;
     flex-shrink: 0;
   }
 

@@ -10,10 +10,9 @@ import vanillaDocs from 'docs:vanilla-starter/Button';
 import tailwindDocs from 'docs:tailwind-starter/Button';
 import '../../tailwind/tailwind.css';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['btn'];
-export const relatedPages = [{'title': 'useButton', 'url': 'https://react-spectrum.adobe.com/react-aria/useButton.html'}];
+export const relatedPages = [{'title': 'useButton', 'url': 'Button/useButton.html'}];
 export const description = 'Allows a user to perform an action, with mouse, touch, and keyboard interactions.';
 
 # Button
@@ -50,7 +49,7 @@ export const description = 'Allows a user to perform an action, with mouse, touc
 
 Use the `onPress` prop to handle interactions via mouse, keyboard, and touch. This is similar to `onClick`, but normalized for consistency across browsers, devices, and interaction methods. Read our [blog post](blog/building-a-button-part-1) to learn more.
 
-The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See <Link href={`${getBaseUrl('react-aria')}/usePress`}>usePress</Link> for more details.
+The `onPressStart`, `onPressEnd`, and `onPressChange` events are also emitted as the user interacts with the button. Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which provides information about the target and interaction method. See [usePress](usePress) for more details.
 
 ```tsx render
 "use client";

@@ -9,7 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
-export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'https://react-spectrum.adobe.com/react-aria/useDateRangePicker.html'}];
+export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'DateRangePicker/useDateRangePicker.html'}];
 export const description = 'Combines two DateFields and a RangeCalendar popover to allow users to enter or select a date range.';
 
 # DateRangePicker
@@ -112,7 +112,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={vanillaDocs.exports.DateRangePicker} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
+import {useLocale} from 'react-aria-components';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'vanilla-starter/Form';;
@@ -155,7 +155,7 @@ function Example(props) {
 
 <Anatomy />
 
-```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', Dialog: 'Dialog', RangeCalendar: 'RangeCalendar'}}
+```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', RangeCalendar: 'RangeCalendar'}}
 <DateRangePicker>
   <Label />
   <Group>
@@ -166,9 +166,7 @@ function Example(props) {
   <Text slot="description" />
   <FieldError />
   <Popover>
-    <Dialog>
-      <RangeCalendar />
-    </Dialog>
+    <RangeCalendar />
   </Popover>
 </DateRangePicker>
 ```

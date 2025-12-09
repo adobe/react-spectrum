@@ -9,7 +9,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
 export const relatedPages = [
-  {title: 'useSelect', url: 'https://react-spectrum.adobe.com/react-aria/useSelect.html'},
+  {title: 'useSelect', url: 'Select/useSelect.html'},
   {title: 'Testing Select', url: './Select/testing'}
 ];
 export const description = 'Displays a collapsible list of options and allows a user to select one of them.';
@@ -279,7 +279,7 @@ function Example(props) {
   let [animal, setAnimal] = useState("bison");
 
   return (
-    <div>
+    <>
       <Select
         {...props}
         label="Pick an animal"
@@ -297,7 +297,7 @@ function Example(props) {
         <SelectItem id="skunk">Skunk</SelectItem>
       </Select>
       <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
-    </div>
+    </>
   );
 }
 ```
