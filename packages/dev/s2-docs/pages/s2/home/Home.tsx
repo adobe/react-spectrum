@@ -256,7 +256,7 @@ export function Home() {
             <span className={swapSizer} aria-hidden>with React Spectrum</span>
           </span>
         </h1>
-        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>React Spectrum gives you the power to build high quality, accessible UI with the cohesive look and feel of Adobe. </p>
+        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature look and feel</p>
         <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 56})}>
           <LinkButton size="XL" staticColor="white" href="getting-started">Get started</LinkButton>
           <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum">Explore components</LinkButton>
