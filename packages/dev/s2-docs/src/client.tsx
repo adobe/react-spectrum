@@ -5,7 +5,7 @@ import {getBaseUrl, getRSCUrl} from './pageUtils';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
 import {setNavigationPromise} from './Router';
-import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {ToastQueue} from '@react-spectrum/s2';
 
 let isClientLink = (link: HTMLAnchorElement) => {
   return (

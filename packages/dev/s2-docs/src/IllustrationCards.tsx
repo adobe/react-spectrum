@@ -3,7 +3,7 @@
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 // eslint-disable-next-line monorepo/no-internal-import
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
-import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
