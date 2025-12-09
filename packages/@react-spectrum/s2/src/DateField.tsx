@@ -49,7 +49,9 @@ const segmentContainer = style({
   flexShrink: 1,
   minWidth: 0,
   height: 'full',
-  overflow: 'hidden',
+  overflowX: 'auto',
+  overflowY: 'hidden',
+  scrollbarWidth: 'none',
   display: 'flex',
   alignItems: 'center',
   textWrap: 'nowrap'
@@ -145,9 +147,6 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
               styles={style({
                 ...fieldInput(),
                 textWrap: 'nowrap',
-                overflowX: 'auto',
-                overflowY: 'hidden',
-                scrollbarWidth: 'none',
                 paddingX: 'edge-to-text'
               })({size})}>
               <DateInputContainer>
