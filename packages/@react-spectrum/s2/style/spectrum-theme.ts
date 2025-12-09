@@ -934,6 +934,7 @@ export const style = createTheme({
     overscrollBehaviorX: ['auto', 'contain', 'none'] as const,
     overscrollBehaviorY: ['auto', 'contain', 'none'] as const,
     scrollBehavior: ['auto', 'smooth'] as const,
+    scrollbarWidth: ['none', 'auto', 'thin'] as const,
     order: new ArbitraryProperty<number>('order'),
 
     pointerEvents: ['none', 'auto'] as const,
