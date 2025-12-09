@@ -3,10 +3,10 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {Collection, DragAndDropHooks} from 'react-aria-components';
 
 export interface Pokemon {
-  id: number,
+  id?: number,
   name: string,
   type: string,
-  level: number,
+  level?: number,
   children?: Pokemon[]
 }
 

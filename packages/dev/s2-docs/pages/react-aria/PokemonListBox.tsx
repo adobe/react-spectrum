@@ -3,10 +3,10 @@ import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {DragAndDropHooks, Text} from 'react-aria-components';
 
 export interface Pokemon {
-  id: number,
+  id?: number,
   name: string,
   type: string,
-  level: number
+  level?: number
 }
 
 interface PokemonListBoxProps {

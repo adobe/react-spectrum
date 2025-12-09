@@ -473,7 +473,7 @@ function DroppableCOMPONENT() {
     ///- end highlight -///
   });
 
-  return <PokemonCOMPONENT items={list.items as any} dragAndDropHooks={dragAndDropHooks} />;
+  return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />;
 }
 
 <div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
@@ -531,7 +531,7 @@ function ReorderableCOMPONENT() {
     ///- end highlight -///
   });
 
-  return <PokemonCOMPONENT items={list.items as any} dragAndDropHooks={dragAndDropHooks} />
+  return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 ```
 
@@ -719,7 +719,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
   });
   ///- end focus -///
 
-  return <PokemonCOMPONENT items={list.items as any} dragAndDropHooks={dragAndDropHooks} />
+  return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
 <div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
@@ -837,7 +837,7 @@ function DraggableCOMPONENT() {
     ///- end highlight -///
   });
 
-  return <PokemonCOMPONENT items={list.items as any} dragAndDropHooks={dragAndDropHooks} />
+  return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
 <div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>
@@ -898,7 +898,7 @@ function DraggableCOMPONENT() {
     ///- end highlight -///
   });
 
-  return <PokemonCOMPONENT items={list.items as any} dragAndDropHooks={dragAndDropHooks} />
+  return <PokemonCOMPONENT items={list.items} dragAndDropHooks={dragAndDropHooks} />
 }
 
 <div style={{display: 'flex', gap: 12, flexWrap: 'wrap', width: '100%', justifyContent: 'center'}}>

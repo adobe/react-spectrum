@@ -270,7 +270,7 @@ import {TextField} from 'vanilla-starter/TextField';
 import {Button} from 'vanilla-starter/Button';
 import {useActionState} from 'react';
 
-function action(prevState: {values: Record<string, FormDataEntryValue>, errors: {username: string}}, formData: FormData) {
+function action(prevState, formData: FormData) {
   return {
     values: Object.fromEntries(formData),
     errors: {
