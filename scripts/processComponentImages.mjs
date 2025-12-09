@@ -6,6 +6,7 @@ const OUTPUT_DIR = 'packages/dev/s2-docs/assets/component-illustrations';
 
 // Mappings from source file names to target page names
 const mappings = {
+  // Component mappings - special cases where auto-conversion doesn't match
   'DateAndTime.avif': 'DatePicker.avif',
   'DateAndTime(Range).avif': 'DateRangePicker.avif',
   'Slider(Range).avif': 'RangeSlider.avif',
@@ -17,8 +18,9 @@ const mappings = {
   'SwatchGroup.avif': 'ColorSwatchPicker.avif',
   'TreeView.avif': 'Tree.avif',
   'SelectBox.avif': 'SelectBoxGroup.avif',
-  'MigratingToSpectrum3.avif': 'MigratingToSpectrum3.avif',
-  'MigratingToSpectrum2.avif': 'MigratingToSpectrum2.avif',
+  'ClientSideRouting.avif': 'Frameworks.avif',
+  'MigratingToSpectrum3.avif': 'Migrating.avif',
+  'MigratingToSpectrum2.avif': 'Migrating.avif',
   "What'sNew.avif": 'WhatsNew.avif',
   'Releases(Numbers).avif': 'Releases.avif',
   'Home.avif': 'Home.avif',
