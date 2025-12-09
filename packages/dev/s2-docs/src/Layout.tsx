@@ -16,7 +16,7 @@ import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
-import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
+import {Divider, Provider, ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getCurrentPage, getPages} from './getPages';
 import {getLibraryFromPage, getLibraryLabel} from './library';
