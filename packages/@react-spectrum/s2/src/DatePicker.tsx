@@ -187,6 +187,9 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               styles={style({
                 ...fieldInput(),
                 textWrap: 'nowrap',
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                scrollbarWidth: 'none',
                 paddingStart: 'edge-to-text',
                 paddingEnd: {
                   size: {

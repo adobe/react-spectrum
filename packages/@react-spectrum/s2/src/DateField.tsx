@@ -144,6 +144,10 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
               size={size}
               styles={style({
                 ...fieldInput(),
+                textWrap: 'nowrap',
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                scrollbarWidth: 'none',
                 paddingX: 'edge-to-text'
               })({size})}>
               <DateInputContainer>
