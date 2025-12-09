@@ -44,7 +44,7 @@ of a complete color picker rather than only a hue color wheel. `useColorWheel` h
 touch-friendly color wheels that can be styled as needed.
 
 * Support for adjusting the hue of an HSL or HSB color value
-* Support for mouse, touch, and keyboard via the [useMove](useMove.html) hook
+* Support for mouse, touch, and keyboard via the [useMove](../useMove) hook
 * Multi-touch support
 * Pressing on the track moves the thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
@@ -81,7 +81,7 @@ to assistive technologies.
 This example shows how to build a simple color wheel with a draggable thumb to adjust the hue value of a color. Styling for
 the track background and positioning of the thumb are provided by `useColorWheel` in the returned `style` prop for each element.
 The visually hidden `<input>` element inside the thumb is used to represent the color wheel to assistive technology. The thumb also 
-uses the [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
+uses the [useFocusRing](../useFocusRing) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
 import {useColorWheel} from '@react-aria/color';

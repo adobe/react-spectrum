@@ -41,19 +41,19 @@ type: interaction
 
 ## Introduction
 
-Collection components built with hooks such as [useListBox](useListBox.html), [useTable](useTable.html), and [useGridList](useGridList.html) can support drag and drop interactions. Users can drag multiple selected items at once, or drag individual non-selected items.
+Collection components built with hooks such as [useListBox](ListBox/useListBox.html), [useTable](Table/useTable.html), and [useGridList](GridList/useGridList.html) can support drag and drop interactions. Users can drag multiple selected items at once, or drag individual non-selected items.
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop.
 
-See the [drag and drop introduction](dnd.html) to learn more.
+See the [drag and drop introduction](dnd) to learn more.
 
 ### Implementation
 
-The <TypeLink links={docs.links} type={docs.exports.useDraggableCollection} /> hook implements drag interactions within any [collection component](../react-stately/collections.html), using state managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDraggableCollectionState} />. The <TypeLink links={docs.links} type={docs.exports.useDraggableItem} /> hook should be added to each individual item within the collection to make it draggable, combining props from the relevant hook (e.g. `useOption`). These hooks integrate with React Aria's [selection](../react-stately/selection.html) system to enable dragging multiple selected items at once.
+The <TypeLink links={docs.links} type={docs.exports.useDraggableCollection} /> hook implements drag interactions within any [collection component](v3:collections.html), using state managed by <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDraggableCollectionState} />. The <TypeLink links={docs.links} type={docs.exports.useDraggableItem} /> hook should be added to each individual item within the collection to make it draggable, combining props from the relevant hook (e.g. `useOption`). These hooks integrate with React Aria's [selection](v3:selection.html) system to enable dragging multiple selected items at once.
 
 ## Example
 
-This example renders a ListBox using the [useListBox](useListBox.html) hook, and adds support for dragging items. The highlighted code sections below show the main additions for drag and drop compared with a normal listbox.
+This example renders a ListBox using the [useListBox](ListBox/useListBox.html) hook, and adds support for dragging items. The highlighted code sections below show the main additions for drag and drop compared with a normal listbox.
 
 ```tsx example export=true
 import {useListBox, useOption} from '@react-aria/listbox';
@@ -189,7 +189,7 @@ function Option({ item, state, dragState }) {
 
 ### DropTarget
 
-The `DropTarget` component used above is defined below. See [useDrop](useDrop.html) for more details and documentation.
+The `DropTarget` component used above is defined below. See [useDrop](useDrop) for more details and documentation.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -413,7 +413,7 @@ Many operating systems display these in the form of a cursor change, e.g. a plus
 
 The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged items.
 
-This example removes the dragged items from the UI when a move operation is completed. It uses the [useListData](../react-stately/useListData.html) hook to help manage and update the list of items. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+This example removes the dragged items from the UI when a move operation is completed. It uses the [useListData](useListData.html) hook to help manage and update the list of items. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
@@ -465,7 +465,7 @@ The drag source can also control which drop operations are allowed for the data.
 
 ## Reordering
 
-Drag and drop can be combined in the same collection component to allow reordering items. See [useDroppableCollection](useDroppableCollection.html) for more details.
+Drag and drop can be combined in the same collection component to allow reordering items. See [useDroppableCollection](./useDroppableCollection.html) for more details.
 
 ```tsx example export=true render=false
 import {useDroppableCollectionState} from '@react-stately/dnd';
@@ -598,7 +598,7 @@ function DropIndicator(props) {
 ///- end highlight -///
 ```
 
-Now, we can render an example ListBox, which allows the user to reorder items. The `onReorder` event is triggered when the user drops dragged items which originated within the same collection. As above, [useListData](../react-stately/useListData.html) is used to manage the list items in this example, but it is not a requirement.
+Now, we can render an example ListBox, which allows the user to reorder items. The `onReorder` event is triggered when the user drops dragged items which originated within the same collection. As above, [useListData](./useListData.html) is used to manage the list items in this example, but it is not a requirement.
 
 ```tsx example
 import {useListData} from '@react-stately/data';
