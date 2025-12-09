@@ -72,6 +72,7 @@ export function ShareUrlProvider(props: ProviderProps<string | null>) {
 export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
+  let [showCodeSandbox, setShowCodeSandbox] = useState(false);
   let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
   let {library} = useContext(CodePlatterContext);
   if (!type) {
@@ -126,7 +127,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Copy link</Text>
                 </MenuItem>
               }
-              {files && 
+              {files &&
                 <MenuItem
                   onAction={() => {
                     let filesToDownload = getCodeSandboxFiles(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
@@ -157,16 +158,16 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text>Install with shadcn</Text>
                 </MenuItem>
               }
-              {files && 
+              {files &&
                 <MenuItem
                   onAction={() => {
-                    createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+                    setShowCodeSandbox(true);
                   }}>
                   <Polygon4 />
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
               }
-              {files && type !== 's2' && 
+              {files && type !== 's2' &&
                 <MenuItem
                   onAction={() => {
                     createStackBlitz(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
@@ -191,6 +192,11 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
       <div ref={codeRef}>
         {children}
       </div>
+      <DialogContainer onDismiss={() => setShowCodeSandbox(false)}>
+        {showCodeSandbox &&
+          <CodeSandboxDialog getExampleFiles={getExampleFiles} codeRef={codeRef} files={files} urls={urls} entry={entry} deps={deps} type={type} />
+        }
+      </DialogContainer>
       <DialogContainer onDismiss={() => setShowShadcn(false)}>
         {showShadcn &&
           <ShadcnDialog registryUrl={registryUrl} />
@@ -306,6 +312,32 @@ function ShadcnDialog({registryUrl}) {
               close();
             }}>
             Copy and close
+          </Button>
+        </ButtonGroup>
+      </>)}
+    </Dialog>
+  );
+}
+
+function CodeSandboxDialog({getExampleFiles, codeRef, files, urls, entry, deps, type}) {
+  return (
+    <Dialog size="L">
+      {({close}) => (<>
+        <Heading slot="title">Create a CodeSandbox</Heading>
+        <Content>
+          <p>This will create an editable sandbox with this example in a new tab.</p>
+          <p><strong>Troubleshooting:</strong> If the sandbox fails to open or isn't created, try logging in to CodeSandbox first. If you're already logged in, try signing out and back in.</p>
+        </Content>
+
+        <ButtonGroup>
+          <Button variant="secondary" slot="close">Cancel</Button>
+          <Button
+            variant="accent"
+            onPress={() => {
+              createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+              close();
+            }}>
+            Open in CodeSandbox
           </Button>
         </ButtonGroup>
       </>)}
