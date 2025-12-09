@@ -89,12 +89,7 @@ export interface PickerStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /**
-   * Whether the picker should be displayed with a quiet style.
-   * @private
-   */
-  isQuiet?: boolean
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 type SelectionMode = 'single' | 'multiple';
@@ -137,8 +132,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...fieldInput(),
   outlineStyle: {
     default: 'none',
-    isFocusVisible: 'solid',
-    isQuiet: 'none'
+    isFocusVisible: 'solid'
   },
   position: 'relative',
   textAlign: 'start',
@@ -154,21 +148,16 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   },
   transition: 'default',
   paddingX: {
-    default: 'edge-to-text',
-    isQuiet: 0
+    default: 'edge-to-text'
   },
   backgroundColor: {
     default: baseColor('gray-100'),
     isOpen: 'gray-200',
-    isDisabled: 'disabled',
-    isQuiet: 'transparent'
+    isDisabled: 'disabled'
   },
   color: {
     default: baseColor('neutral'),
     isDisabled: 'disabled'
-  },
-  maxWidth: {
-    isQuiet: 'max'
   },
   disableTapHighlight: true
 });
@@ -222,10 +211,7 @@ const invalidBorder = style({
 });
 
 const valueStyles = style({
-  flexGrow: {
-    default: 1,
-    isQuiet: 0
-  },
+  flexGrow: 1,
   truncate: true,
   display: 'flex',
   alignItems: 'center'
@@ -297,7 +283,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     UNSAFE_className = '',
     UNSAFE_style,
     placeholder = stringFormatter.format('picker.placeholder'),
-    isQuiet,
     loadingState,
     onLoadMore,
     ...pickerProps
@@ -347,7 +332,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   }
   let scale = useScale();
   let {direction: dir} = useLocale();
-  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
 
   return (
     <AriaSelect
@@ -370,7 +354,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               size={size}
               labelPosition={labelPosition}
               labelAlign={labelAlign}
-              isQuiet={isQuiet}
               necessityIndicator={necessityIndicator}
               contextualHelp={props.contextualHelp}>
               {label}
@@ -378,7 +361,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
             <PickerButton
               loadingState={loadingState}
               isOpen={isOpen}
-              isQuiet={isQuiet}
               isFocusVisible={isFocusVisible}
               size={size}
               isInvalid={isInvalid}
@@ -408,22 +390,15 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 hideArrow
                 padding="none"
                 offset={menuOffset}
-                crossOffset={isQuiet ? RTLFlipOffset * -12 : undefined}
                 placement={`${direction} ${align}` as Placement}
                 shouldFlip={shouldFlip}
                 UNSAFE_style={{
-                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                  width: menuWidth ? `${menuWidth}px` : undefined
                 }}
                 styles={style({
-                  minWidth: {
-                    default: '--trigger-width',
-                    isQuiet: 192
-                  },
-                  width: {
-                    default: '--trigger-width',
-                    isQuiet: '[calc(var(--trigger-width) - 24)]'
-                  }
-                })(props)}>
+                  minWidth: '--trigger-width',
+                  width: '--trigger-width'
+                })}>
                 <div
                   className={style({
                     display: 'flex',
@@ -492,7 +467,6 @@ interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omi
 const PickerButton = createHideableComponent(function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
   let {
     isOpen,
-    isQuiet,
     isFocusVisible,
     size,
     isInvalid,
@@ -529,12 +503,11 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         className={renderProps => inputButton({
           ...renderProps,
           size: size,
-          isOpen,
-          isQuiet
+          isOpen
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
+            <SelectValue className={valueStyles + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
               {({selectedItems, defaultChildren}) => {
                 return (
                   <Provider
@@ -593,8 +566,8 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
             <ChevronIcon
               size={size}
               className={iconStyles({isLoading: loadingState === 'loading'})} />
-            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-            {isInvalid && !isDisabled && !isQuiet &&
+            {isFocusVisible && <span className={quietFocusLine} /> }
+            {isInvalid && !isDisabled &&
               // @ts-ignore known limitation detecting functions from the theme
               <div className={invalidBorder({...renderProps, size})} />
             }
