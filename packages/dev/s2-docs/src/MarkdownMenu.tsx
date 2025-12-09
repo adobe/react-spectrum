@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {ActionButton, Menu, MenuItem, MenuTrigger, Text, ToastQueue} from '@react-spectrum/s2';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import {getLibraryFromUrl, getLibraryLabel} from './library';

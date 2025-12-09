@@ -5,7 +5,7 @@ import {getBaseUrl, getRSCUrl} from './pageUtils';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {type ReactElement} from 'react';
 import {setNavigationPromise} from './Router';
-import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {ToastQueue} from '@react-spectrum/s2';
 
 let isClientLink = (link: HTMLAnchorElement) => {
   return (
@@ -15,7 +15,8 @@ let isClientLink = (link: HTMLAnchorElement) => {
     (!link.target || link.target === '_self') &&
     link.origin === location.origin &&
     !link.hasAttribute('download') &&
-    link.href.startsWith(getBaseUrl((process.env.LIBRARY as any) || 'react-aria'))
+    link.href.startsWith(getBaseUrl((process.env.LIBRARY as any) || 'react-aria')) &&
+    !link.pathname.endsWith('.html') // links with .html are from the old website
   );
 };
 
