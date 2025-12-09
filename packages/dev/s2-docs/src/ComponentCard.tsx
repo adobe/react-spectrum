@@ -75,6 +75,8 @@ import DropZoneLight from 'url:../assets/component-illustrations/light/DropZone.
 import {ExampleImage} from './ExampleList';
 import FormsDark from 'url:../assets/component-illustrations/dark/Forms.avif';
 import FormsLight from 'url:../assets/component-illustrations/light/Forms.avif';
+import FrameworksDark from 'url:../assets/component-illustrations/dark/Frameworks.avif';
+import FrameworksLight from 'url:../assets/component-illustrations/light/Frameworks.avif';
 import GettingStartedDark from 'url:../assets/component-illustrations/dark/GettingStarted.avif';
 import GettingStartedLight from 'url:../assets/component-illustrations/light/GettingStarted.avif';
 import IconsDark from 'url:../assets/component-illustrations/dark/Icons.avif';
@@ -254,7 +256,19 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Styling': [StyleLight, StyleDark],
   'Style Macro': [StyleMacroLight, StyleMacroDark],
   'Getting Started': [GettingStartedLight, GettingStartedDark],
-  'Client Side Routing': [ClientSideRoutingLight, ClientSideRoutingDark]
+  'Client Side Routing': [ClientSideRoutingLight, ClientSideRoutingDark],
+  'Framework setup': [FrameworksLight, FrameworksDark],
+  // Blog posts - map to existing component illustrations
+  'Building a Button Part 1: Press Events': [ButtonLight, ButtonDark],
+  'Building a Button Part 2: Hover Interactions': [ButtonLight, ButtonDark],
+  'Building a Button Part 3: Keyboard Focus Behavior': [ButtonLight, ButtonDark],
+  'Creating an accessible autocomplete experience': [ComboBoxLight, ComboBoxDark],
+  'Taming the dragon: Accessible drag and drop': [DropZoneLight, DropZoneDark],
+  'Date and Time Pickers for All': [DatePickerLight, DatePickerDark],
+  'How we internationalized our number field': [NumberFieldLight, NumberFieldDark],
+  'Improving Internationalization Support in Our Date and Time Components': [DatePickerLight, DatePickerDark],
+  'Accessible Color Descriptions for Improved Color Pickers': [ColorFieldLight, ColorFieldDark],
+  'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark]
 };
 
 const illustrationContainer = style({
