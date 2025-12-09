@@ -153,15 +153,7 @@ async function build() {
         continue;
       }
 
-      const from = path.join(srcDir, 'packages', path.dirname(p));
-      const to = path.join(dir, 'packages', path.dirname(p));
-
-      if (from !== to) {
-        console.log(`Copying ${from} to ${to}`);
-        fs.cpSync(from, to, {dereference: true, recursive: true});
-      } else {
-        console.log(`Skipping copy for ${from} to ${to} as they are the same`);
-      }
+      fs.cpSync(path.join(srcDir, 'packages', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)), {dereference: true, recursive: true});
 
       if (!p.includes('@react-types')) {
         delete json.types;

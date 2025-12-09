@@ -88,16 +88,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/react-spectrum-workflow@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@adobe/react-spectrum-workflow@npm:2.4.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
-  checksum: 10c0/13939b30fed9bee4cc31c57bbe00fc9881bdba46704f2db64864dba5334093bcc9a4944f66e1a2be65713351ee61bece9870053ec3e55c0fdad0d98af66c562f
-  languageName: node
-  linkType: hard
-
 "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum":
   version: 0.0.0-use.local
   resolution: "@adobe/react-spectrum@workspace:packages/@adobe/react-spectrum"
@@ -9421,7 +9411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/blocks@npm:8.6.14, @storybook/blocks@npm:^8.6.14":
+"@storybook/blocks@npm:8.6.14":
   version: 8.6.14
   resolution: "@storybook/blocks@npm:8.6.14"
   dependencies:
@@ -24648,18 +24638,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0":
-  version: 19.1.0
-  resolution: "react-dom@npm:19.1.0"
-  dependencies:
-    scheduler: "npm:^0.26.0"
-  peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
-  languageName: node
-  linkType: hard
-
-"react-dom@npm:^19.2.0":
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^19.2.0":
   version: 19.2.1
   resolution: "react-dom@npm:19.2.1"
   dependencies:
@@ -24745,9 +24724,6 @@ __metadata:
   dependencies:
     "@actions/core": "npm:^1.10.0"
     "@actions/github": "npm:^1.1.0"
-    "@adobe/react-spectrum-ui": "npm:1.2.1"
-    "@adobe/react-spectrum-workflow": "npm:2.4.0"
-    "@adobe/react-spectrum-workflow-color": "npm:1.1.1"
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@babel/eslint-parser": "npm:^7.27.1"
@@ -24791,7 +24767,6 @@ __metadata:
     "@storybook/addon-links": "npm:^8.6.14"
     "@storybook/addon-onboarding": "npm:^8.6.14"
     "@storybook/addon-themes": "npm:^8.6.14"
-    "@storybook/blocks": "npm:^8.6.14"
     "@storybook/components": "npm:^8.6.14"
     "@storybook/manager-api": "npm:^8.6.14"
     "@storybook/preview": "npm:^8.6.14"
@@ -24943,21 +24918,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
-  version: 19.1.0
-  resolution: "react@npm:19.1.0"
-  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
-  languageName: node
-  linkType: hard
-
-"react@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0":
-  version: 19.1.1
-  resolution: "react@npm:19.1.1"
-  checksum: 10c0/8c9769a2dfd02e603af6445058325e6c8a24b47b185d0e461f66a6454765ddcaecb3f0a90184836c68bb509f3c38248359edbc42f0d07c23eb500a5c30c87b4e
-  languageName: node
-  linkType: hard
-
-"react@npm:^19.2.0":
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react@npm:^19.2.0":
   version: 19.2.1
   resolution: "react@npm:19.2.1"
   checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
