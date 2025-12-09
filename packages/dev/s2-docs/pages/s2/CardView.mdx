@@ -438,9 +438,8 @@ export default function Example(props) {
       layout="waterfall"
       ///- begin highlight -///
       loadingState={loadingState}
-      onLoadMore={list.loadMore}
-      ///- end highlight -///
       onLoadMore={props.loadingState ? undefined : list.loadMore}
+      ///- end highlight -///
       styles={style({width: 'full', height: 500})}>
       <Collection items={loadingState === 'loading' ? [] : list.items}>
         {item => <PhotoCard item={item} layout={props.layout || 'waterfall'} />}
