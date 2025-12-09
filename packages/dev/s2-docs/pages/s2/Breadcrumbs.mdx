@@ -27,7 +27,7 @@ import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 
 ```tsx render
 "use client";
-import {Breadcrumbs, Breadcrumb, type Key} from '@react-spectrum/s2';
+import {Breadcrumbs, Breadcrumb, Collection, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
@@ -45,8 +45,10 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <Breadcrumbs items={breadcrumbs} onAction={navigate}>
-      {item => <Breadcrumb>{item.label}</Breadcrumb>}
+    <Breadcrumbs onAction={navigate}>
+      <Collection items={breadcrumbs}>
+        {item => <Breadcrumb key={item.id}>{item.label}</Breadcrumb>}
+      </Collection>
     </Breadcrumbs>
     /*- end highlight -*/
   );
