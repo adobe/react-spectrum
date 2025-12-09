@@ -52,7 +52,7 @@ export function PokemonTree(props: PokemonTreeProps) {
       dragAndDropHooks={dragAndDropHooks}>
       {function renderItem(item: Pokemon) {
         return (
-          <TreeItem title={<><strong>{item.name}</strong> – <em>{item.type}</em></>} textValue={item.name}>
+          <TreeItem title={`${item.name} – ${item.type}`} textValue={item.name}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
