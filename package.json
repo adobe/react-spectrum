@@ -270,7 +270,7 @@
         "assets": [
           "packages/@react-spectrum/s2/**",
           "packages/dev/s2-docs/src/**",
-          "packages/dev/s2-docs/pages/s2/**"
+          "packages/dev/s2-docs/pages/s2/**/*.{mdx,tsx,ts,js}"
         ],
         "types": [
           "css"
