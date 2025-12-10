@@ -5,7 +5,7 @@ import {getPrefetchedPromise, prefetchRoute} from './prefetch';
 import {getRSCUrl, isClientLink} from './pageUtils';
 import {type ReactElement} from 'react';
 import {setNavigationPromise} from './Router';
-import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {ToastQueue} from '@react-spectrum/s2';
 
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({

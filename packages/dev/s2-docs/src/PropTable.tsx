@@ -186,7 +186,7 @@ function Rows({props, showDefault, showRequired}: {props: TInterface['properties
           </code>
         </TableCell>
         {showDefault &&
-          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
+          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}, whiteSpace: 'nowrap'})}>
             <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
             {prop.default
               ? <span className={codeStyle}><Code lang="tsx">{prop.default}</Code></span>

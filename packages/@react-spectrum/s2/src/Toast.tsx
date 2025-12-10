@@ -19,7 +19,7 @@ import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
 import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, useEvent} from '@react-aria/utils';
+import {filterDOMProps, isWebKit, useEvent} from '@react-aria/utils';
 import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope, useModalOverlay} from 'react-aria';
@@ -64,15 +64,20 @@ export interface SpectrumToastValue extends DOMProps {
   shouldCloseOnAction?: boolean
 }
 
+let globalReduceMotion = false;
 function startViewTransition(fn: () => void, type: string) {
   if ('startViewTransition' in document) {
     // Safari doesn't support :active-view-transition-type() yet, so we fall back to a class on the html element.
     document.documentElement.classList.add(toastCss[type]);
+    if (globalReduceMotion) {
+      document.documentElement.classList.add(toastCss.reduceMotion);
+    }
+
     let viewTransition = document.startViewTransition(() => flushSync(fn));
 
     viewTransition.ready.catch(() => {});
     viewTransition.finished.then(() => {
-      document.documentElement.classList.remove(toastCss[type]);
+      document.documentElement.classList.remove(toastCss[type], toastCss.reduceMotion);
     });
   } else {
     fn();
@@ -179,7 +184,7 @@ const toastRegion = style({
     }
   },
   boxSizing: 'border-box',
-  maxHeight: 'screen',
+  maxHeight: 'full',
   borderRadius: 'lg'
 });
 
@@ -265,7 +270,8 @@ const toastStyle = style({
   boxShadow: {
     default: 'elevated',
     isExpanded: 'none'
-  }
+  },
+  willChange: 'transform'
 });
 
 const toastBody = style({
@@ -379,6 +385,16 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
     }
   } : undefined);
 
+  let prefersReducedMotion = useMediaQuery('(prefers-reduced-motion)');
+  let reduceMotion = props['PRIVATE_forceReducedMotion'] ?? prefersReducedMotion;
+  useEffect(() => {
+    let oldGlobalReduceMotion = globalReduceMotion;
+    globalReduceMotion = reduceMotion;
+    return () => {
+      globalReduceMotion = oldGlobalReduceMotion;
+    };
+  }, [reduceMotion]);
+
   return (
     <ToastRegion
       {...props}
@@ -398,7 +414,10 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
               className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
               onClick={collapse} />
           )}
-          <SpectrumToastList placement={placement} align={align} />
+          <SpectrumToastList
+            placement={placement}
+            align={align}
+            reduceMotion={reduceMotion} />
           <div className={toastCss['toast-controls'] + controls({isExpanded})}>
             <ActionButton
               size="S"
@@ -420,7 +439,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
   );
 }
 
-function SpectrumToastList({placement, align}) {
+function SpectrumToastList({placement, align, reduceMotion}) {
   let {isExpanded, toggleExpanded} = useContext(ToastContainerContext)!;
 
   // Attach click handler to ref since ToastList doesn't pass through onClick/onPress.
@@ -431,8 +450,6 @@ function SpectrumToastList({placement, align}) {
       toggleExpanded();
     }
   });
-
-  let reduceMotion = useMediaQuery('(prefers-reduced-motion)');
 
   return (
     <ToastList<SpectrumToastValue>
@@ -500,7 +517,8 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           viewTransitionName: toast.key + (props.reduceMotion ? '-' + index : ''),
           viewTransitionClass: [toastCss.toast, toastCss['background-toast']].map(c => CSS.escape(c)).join(' ')
         }}
-        className={toastCss.toast + toastStyle({variant: toast.content.variant || 'info', index, isExpanded})} />
+        className={toastCss.toast + toastStyle({variant: toast.content.variant || 'info', index, isExpanded})}
+        ref={fixSafariTransform} />
     );
   }
 
@@ -568,4 +586,15 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
         UNSAFE_className={ctx && isMain ? toastCss['toast-close'] : undefined} />
     </Toast>
   );
+}
+
+function fixSafariTransform(el: HTMLDivElement | null) {
+  // Safari has a bug where the toasts display in the wrong position (CSS transform is not applied correctly).
+  // Work around this by removing it, forcing a reflow, and re-applying.
+  if (el && isWebKit()) {
+    let translate = el.style.translate;
+    el.style.translate = '';
+    el.offsetHeight;
+    el.style.translate = translate;
+  }
 }

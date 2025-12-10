@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import AudioWave_L from 'illustration:./S2_lin_audioWave_160.svg';
 import AudioWave_M from 'illustration:./S2_lin_audioWave_96.svg';
 import AudioWave_S from 'illustration:./S2_lin_audioWave_48.svg';

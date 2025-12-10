@@ -20,7 +20,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
-  base: 'w-9 h-9 text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
+  base: 'w-[calc(100cqw/7)] aspect-square text-sm cursor-default rounded-full flex items-center justify-center forced-color-adjust-none [-webkit-tap-highlight-color:transparent]',
   variants: {
     isSelected: {
       false: 'text-neutral-900 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 pressed:bg-neutral-300 dark:pressed:bg-neutral-600',
@@ -40,7 +40,7 @@ export function Calendar<T extends DateValue>(
   { errorMessage, ...props }: CalendarProps<T>
 ) {
   return (
-    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans')}>
+    <AriaCalendar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col font-sans w-[calc(9*var(--spacing)*7)] max-w-full @container')}>
       <CalendarHeader />
       <CalendarGrid className="border-spacing-0">
         <CalendarGridHeader />
@@ -61,7 +61,7 @@ export function CalendarHeader() {
       <Button variant="quiet" slot="previous">
         {direction === 'rtl' ? <ChevronRight aria-hidden size={18} /> : <ChevronLeft aria-hidden size={18} />}
       </Button>
-      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-lg text-center mx-2 my-0 text-neutral-900 dark:text-neutral-200" />
+      <Heading className="flex-1 font-sans font-semibold [font-variation-settings:normal] text-base text-center mx-2 my-0 text-neutral-900 dark:text-neutral-200" />
       <Button variant="quiet" slot="next">
         {direction === 'rtl' ? <ChevronLeft aria-hidden size={18} /> : <ChevronRight aria-hidden size={18} />}
       </Button>

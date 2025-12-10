@@ -323,6 +323,7 @@ export function SideNavLink(props) {
 }
 
 function useCurrentSection() {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
@@ -348,7 +349,7 @@ function useCurrentSection() {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return selected;
 }

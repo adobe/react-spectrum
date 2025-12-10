@@ -177,10 +177,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@adobe/spectrum-tokens@npm:^13.15.1":
-  version: 13.15.1
-  resolution: "@adobe/spectrum-tokens@npm:13.15.1"
-  checksum: 10c0/745543f734fc9a4a69f3eb93b05370e6591dd034f0ac79b85b9a9089ae0cbd7a166633bb562f25eab4cc377e6136648de7e052e600ed8a03f6e306c6dc1e19ed
+"@adobe/spectrum-tokens@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "@adobe/spectrum-tokens@npm:14.0.0"
+  checksum: 10c0/b94015d75786babf53144225fccfe3d989eb66e2ab5686e5e2feba73c49f83533e2ea0a7c4e9b0d47e5622d89bcad1b32cf39b61c2a6e3ae4690a20b79672b4c
   languageName: node
   linkType: hard
 
@@ -7366,7 +7366,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.15.1"
+    "@adobe/spectrum-tokens": "npm:^14.0.0"
     "@parcel/plugin": "npm:^2.0.0"
     "@svgr/core": "npm:^8.1.0"
     "@svgr/plugin-jsx": "npm:^8.1.0"
@@ -7536,7 +7536,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.15.1"
+    "@adobe/spectrum-tokens": "npm:^14.0.0"
     "@internationalized/date": "npm:^3.10.0"
     "@internationalized/number": "npm:^3.6.5"
     "@parcel/macros": "npm:^2.16.3"
@@ -7553,6 +7553,7 @@ __metadata:
     "@react-stately/utils": "npm:^3.10.8"
     "@react-types/dialog": "npm:^3.5.22"
     "@react-types/grid": "npm:^3.3.6"
+    "@react-types/overlays": "npm:^3.9.2"
     "@react-types/provider": "npm:^3.8.13"
     "@react-types/shared": "npm:^3.32.1"
     "@react-types/table": "npm:^3.13.4"

@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import ArrowUp_L from 'illustration:./S2_lin_arrowUp_160.svg';
 import ArrowUp_M from 'illustration:./S2_lin_arrowUp_96.svg';
 import ArrowUp_S from 'illustration:./S2_lin_arrowUp_48.svg';
