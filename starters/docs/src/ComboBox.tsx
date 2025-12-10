@@ -19,6 +19,7 @@ export interface ComboBoxProps<T extends object>
   label?: string;
   description?: string | null;
   errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string,
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 

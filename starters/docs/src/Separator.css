@@ -1,7 +1,7 @@
 @import "./theme.css";
 
 .react-aria-Separator {
-  background-color: var(--gray-800);
+  background-color: var(--gray-500);
   border-style: none;
   border-radius: 1px;
   height: 2px;
