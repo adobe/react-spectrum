@@ -194,10 +194,10 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
           isFocusVisible: lightDark('accent-1000', 'accent-600'),
           isDisabled: 'transparent',
           isInvalid: {
-            default: 'negative-900',
-            isHovered: 'negative-1000',
-            isPressed: 'negative-1000',
-            isFocusVisible: 'negative-1000'
+            default: lightDark('negative-900', 'negative-700'),
+            isHovered: lightDark('negative-1000', 'negative-600'),
+            isPressed: lightDark('negative-1000', 'negative-600'),
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
           }
         },
         range: {
@@ -218,15 +218,15 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
       isFocusVisible: lightDark('accent-1000', 'accent-600'),
       isDisabled: 'transparent',
       isInvalid: {
-        default: 'negative-900',
+        default: lightDark('negative-900', 'negative-700'),
         isHovered: {
-          default: 'negative-1000',
-          isUnavailable: 'negative-900'
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
         },
-        isPressed: 'negative-1000',
+        isPressed: lightDark('negative-1000', 'negative-600'),
         isFocusVisible: {
-          default: 'negative-1000',
-          isUnavailable: 'negative-900'
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
         }
       }
     },
@@ -237,15 +237,15 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
       isFocusVisible: lightDark('accent-1000', 'accent-600'),
       isDisabled: 'transparent',
       isInvalid: {
-        default: 'negative-900',
+        default: lightDark('negative-900', 'negative-700'),
         isHovered: {
-          default: 'negative-1000',
-          isUnavailable: 'negative-900'
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
         },
-        isPressed: 'negative-1000',
+        isPressed: lightDark('negative-1000', 'negative-600'),
         isFocusVisible: {
-          default: 'negative-1000',
-          isUnavailable: 'negative-900'
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
         }
       }
     },
