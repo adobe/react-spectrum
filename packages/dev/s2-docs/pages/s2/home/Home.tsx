@@ -42,7 +42,6 @@ import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
 import { getBaseUrl } from "../../../src/pageUtils";
-import './home.css';
 import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
 
 const container = style({
