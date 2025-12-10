@@ -13,7 +13,7 @@ export interface ColorFieldProps extends AriaColorFieldProps {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
-  placeholder?: string;
+  placeholder?: string
 }
 
 export function ColorField(
