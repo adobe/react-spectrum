@@ -25,7 +25,6 @@ yarn config set npmAuthToken --home abc
 yarn config set unsafeHttpWhitelist --home localhost
 npm set registry $registry
 
-echo 'build Spectrum 2 + Next.js test app'
 cd starters/docs
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
