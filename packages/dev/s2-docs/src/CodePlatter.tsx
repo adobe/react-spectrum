@@ -2,15 +2,15 @@
 
 import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
-import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import type {DownloadFiles} from './CodeBlock';
+import {getCodeSandboxFiles} from './CodeSandbox';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
-import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
+// import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import React, {createContext, ProviderProps, ReactNode, RefObject, useContext, useRef, useState} from 'react';
 import {ShadcnCommand} from './ShadcnCommand';
@@ -72,7 +72,7 @@ export function ShareUrlProvider(props: ProviderProps<string | null>) {
 export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
-  let [showCodeSandbox, setShowCodeSandbox] = useState(false);
+  // let [showCodeSandbox, setShowCodeSandbox] = useState(false);
   let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
   let {library} = useContext(CodePlatterContext);
   if (!type) {
@@ -158,7 +158,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text>Install with shadcn</Text>
                 </MenuItem>
               }
-              {files &&
+              {/* {files &&
                 <MenuItem
                   onAction={() => {
                     setShowCodeSandbox(true);
@@ -166,7 +166,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Polygon4 />
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
-              }
+              } */}
               {files &&
                 <MenuItem
                   onAction={() => {
@@ -192,11 +192,11 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
       <div ref={codeRef}>
         {children}
       </div>
-      <DialogContainer onDismiss={() => setShowCodeSandbox(false)}>
+      {/* <DialogContainer onDismiss={() => setShowCodeSandbox(false)}>
         {showCodeSandbox &&
           <CodeSandboxDialog getExampleFiles={getExampleFiles} codeRef={codeRef} files={files} urls={urls} entry={entry} deps={deps} type={type} />
         }
-      </DialogContainer>
+      </DialogContainer> */}
       <DialogContainer onDismiss={() => setShowShadcn(false)}>
         {showShadcn &&
           <ShadcnDialog registryUrl={registryUrl} />
@@ -319,31 +319,31 @@ function ShadcnDialog({registryUrl}) {
   );
 }
 
-function CodeSandboxDialog({getExampleFiles, codeRef, files, urls, entry, deps, type}) {
-  return (
-    <Dialog size="L">
-      {({close}) => (<>
-        <Heading slot="title">Create a CodeSandbox</Heading>
-        <Content>
-          <p>This will create an editable sandbox with this example in a new tab.</p>
-          <p><strong>Troubleshooting:</strong> If the sandbox fails to open or isn't created, try logging in to CodeSandbox first. If you're already logged in, try signing out and back in.</p>
-        </Content>
+// function CodeSandboxDialog({getExampleFiles, codeRef, files, urls, entry, deps, type}) {
+//   return (
+//     <Dialog size="L">
+//       {({close}) => (<>
+//         <Heading slot="title">Create a CodeSandbox</Heading>
+//         <Content>
+//           <p>This will create an editable sandbox with this example in a new tab.</p>
+//           <p><strong>Troubleshooting:</strong> If the sandbox fails to open or isn't created, try logging in to CodeSandbox first. If you're already logged in, try signing out and back in.</p>
+//         </Content>
 
-        <ButtonGroup>
-          <Button variant="secondary" slot="close">Cancel</Button>
-          <Button
-            variant="accent"
-            onPress={() => {
-              createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
-              close();
-            }}>
-            Open in CodeSandbox
-          </Button>
-        </ButtonGroup>
-      </>)}
-    </Dialog>
-  );
-}
+//         <ButtonGroup>
+//           <Button variant="secondary" slot="close">Cancel</Button>
+//           <Button
+//             variant="accent"
+//             onPress={() => {
+//               createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+//               close();
+//             }}>
+//             Open in CodeSandbox
+//           </Button>
+//         </ButtonGroup>
+//       </>)}
+//     </Dialog>
+//   );
+// }
 
 const pulseAnimation = keyframes(`
   0% {
