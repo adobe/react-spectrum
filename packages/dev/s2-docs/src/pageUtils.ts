@@ -38,3 +38,17 @@ export function getRSCUrl(pathname: string) {
   url.hash = '';
   return url.href;
 }
+
+export function isClientLink(link: HTMLAnchorElement) {
+  let baseUrl = process.env.LIBRARY ? getBaseUrl(process.env.LIBRARY as any) : 'http://localhost:1234';
+  return (
+    link &&
+    link instanceof HTMLAnchorElement &&
+    link.href &&
+    (!link.target || link.target === '_self') &&
+    link.origin === location.origin &&
+    !link.hasAttribute('download') &&
+    link.href.startsWith(baseUrl) &&
+    !link.pathname.endsWith('.html') // links with .html are from the old website
+  );
+}

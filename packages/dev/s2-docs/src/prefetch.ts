@@ -1,7 +1,8 @@
 'use client';
 
+import {DOMRefValue} from '@react-types/shared';
 import {fetchRSC} from '@parcel/rsc/client';
-import {getRSCUrl} from './pageUtils';
+import {getRSCUrl, isClientLink} from './pageUtils';
 import {type ReactElement} from 'react';
 
 const prefetchPromises = new Map<string, Promise<ReactElement>>();
@@ -41,4 +42,26 @@ export function prefetchRoute(pathname: string, priority: RequestPriority = 'low
 
 export function getPrefetchedPromise(rscPath: string): Promise<ReactElement> | undefined {
   return prefetchPromises.get(rscPath);
+}
+
+let observer = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver(entries => {
+  for (let entry of entries) {
+    if (entry.isIntersecting && entry.target instanceof HTMLAnchorElement) {
+      let link = entry.target;
+      prefetchRoute(link.pathname + link.search + link.hash);
+    }
+  }
+}) : null;
+
+export function registerLink(element: HTMLAnchorElement | null) {
+  if (!element || !isClientLink(element) || element.pathname === location.pathname) {
+    return;
+  }
+  
+  observer?.observe(element);
+  return () => observer?.unobserve(element);
+}
+
+export function registerSpectrumLink(value: DOMRefValue<HTMLAnchorElement> | null) {
+  return registerLink(value?.UNSAFE_getDOMNode() || null);
 }

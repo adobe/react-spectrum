@@ -1,8 +1,5 @@
-'use client';
-
 import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
-import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 export function BackgroundColorsDisclosure() {
