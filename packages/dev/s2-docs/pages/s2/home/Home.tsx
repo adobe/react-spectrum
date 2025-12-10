@@ -212,7 +212,11 @@ export function Home() {
               type: 'width',
               value: `[round(pow(1.125, ${fontSizeToken('heading-size-xxxl')}) * var(--s2-font-size-base, 14) / 16 * 1rem, 1px)]`
             },
-            fontSize: '[clamp(1rem, 6vw, var(--headingFontSize))]',
+            '--bodyFontSize': {
+              type: 'width',
+              value: `[round(pow(1.125, ${fontSizeToken('body-size-xxxl')}) * var(--s2-font-size-base, 14) / 16 * 1rem, 1px)]`
+            },
+            fontSize: '[clamp(var(--bodyFontSize), 6vw, var(--headingFontSize))]',
             marginY: 0,
             color: 'white'
           })}>
