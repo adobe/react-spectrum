@@ -242,7 +242,7 @@ A <TypeLink links={docs.links} type={docs.links[docs.exports.DirectoryDropItem.i
 ```tsx render
 "use client";
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useDragAndDrop, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, Collection} from 'react-aria-components';
+import {useDragAndDrop, DIRECTORY_DRAG_TYPE, type DirectoryDropItem, isDirectoryDropItem, Collection} from 'react-aria-components';
 import {useState} from 'react';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';
@@ -262,14 +262,14 @@ function DroppableTree() {
     acceptedDragTypes: [DIRECTORY_DRAG_TYPE],
     async onRootDrop(e) {
       // Read entries in directory and update state with relevant info.
-      let getFiles = async (dir: {getEntries(): AsyncIterable<{name: string, kind: string}>}): Promise<DirItem[]> => {
+      let getFiles = async (dir: DirectoryDropItem): Promise<DirItem[]> => {
         let files: DirItem[] = [];
         for await (let entry of dir.getEntries()) {
           files.push({
             id: Math.random(),
             name: entry.name,
             kind: entry.kind,
-            children: entry.kind === 'directory' ? await getFiles(entry as any) : []
+            children: entry.kind === 'directory' ? await getFiles(entry) : []
           });
         }
         return files;
