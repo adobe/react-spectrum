@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import CardTapPayment_L from 'illustration:./S2_fill_cardTapPayment_generic2_160.svg';
 import CardTapPayment_M from 'illustration:./S2_fill_cardTapPayment_generic2_96.svg';
 import CardTapPayment_S from 'illustration:./S2_fill_cardTapPayment_generic2_48.svg';

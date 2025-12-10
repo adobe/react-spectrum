@@ -32,7 +32,10 @@ export const focusRing = () => ({
     default: 'none',
     isFocusVisible: 'solid'
   },
-  outlineColor: 'focus-ring',
+  outlineColor: {
+    default: 'focus-ring',
+    forcedColors: 'Highlight'
+  },
   outlineWidth: 2,
   outlineOffset: 2
 } as const);

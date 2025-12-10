@@ -29,7 +29,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['lion']));
 
   return (
-    <div>
+    <>
       <CardView
         aria-label="Nature photos"
         ///- begin highlight -///
@@ -37,7 +37,7 @@ function Example() {
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         ///- end highlight -///
-        styles={style({width: 360, height: 520})}
+        styles={style({width: 360, maxWidth: 'full', height: 520})}
       >
         <AssetCard id="desert" textValue="Desert Sunset">
           <CardPreview>
@@ -77,7 +77,7 @@ function Example() {
         </AssetCard>
       </CardView>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -92,7 +92,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['rulers']));
 
   return (
-    <div className={style({width: 'full', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'})}>
+    <>
       <MenuTrigger>
         <ActionButton>View</ActionButton>
         <Menu
@@ -109,7 +109,7 @@ function Example() {
         </Menu>
       </MenuTrigger>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -128,7 +128,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['aws']));
 
   return (
-    <div className={style({width: 'full', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'})}>
+    <>
       <SelectBoxGroup
         aria-label="Cloud providers"
         ///- begin highlight -///
@@ -152,7 +152,7 @@ function Example() {
         </SelectBox>
       </SelectBoxGroup>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -178,7 +178,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
 
   return (
-    <div>
+    <>
       <TableView
         aria-label="Sandwich contents"
         ///- begin highlight -///
@@ -204,7 +204,7 @@ function Example() {
         </TableBody>
       </TableView>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -219,7 +219,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
 
   return (
-    <div>
+    <>
       <TagGroup
         label="Sandwich contents"
         ///- begin highlight -///
@@ -236,7 +236,7 @@ function Example() {
         <Tag id="ham">Ham</Tag>
       </TagGroup>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -254,7 +254,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['bold']));
 
   return (
-    <div>
+    <>
       <ToggleButtonGroup
         aria-label="Text style"
         ///- begin highlight -///
@@ -277,7 +277,7 @@ function Example() {
         </ToggleButton>
       </ToggleButtonGroup>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -292,7 +292,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['project']));
 
   return (
-    <div>
+    <>
       <TreeView
         aria-label="Files"
         defaultExpandedKeys={['documents', 'photos', 'project']}
@@ -301,7 +301,7 @@ function Example() {
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         ///- end highlight -///
-        styles={style({height: 250, width: 360})}
+        styles={style({height: 250, width: 360, maxWidth: 'full'})}
       >
         <TreeViewItem id="documents" textValue="Documents">
           <TreeViewItemContent>Documents</TreeViewItemContent>
@@ -323,7 +323,7 @@ function Example() {
         </TreeViewItem>
       </TreeView>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -416,7 +416,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['lion']));
 
   return (
-    <div>
+    <>
       <CardView
         aria-label="Nature photos"
         ///- begin highlight -///
@@ -424,7 +424,7 @@ function Example() {
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         ///- end highlight -///
-        styles={style({width: 360, height: 320})}
+        styles={style({width: 360, maxWidth: 'full', height: 320})}
       >
         <AssetCard id="desert" textValue="Desert Sunset">
           <CardPreview>
@@ -464,7 +464,7 @@ function Example() {
         </AssetCard>
       </CardView>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -479,7 +479,7 @@ function Example() {
   let [selectedKey, setSelectedKey] = useState<Key>('kangaroo');
 
   return (
-    <div>
+    <>
       <ComboBox
         label="Favorite Animal"
         placeholder="Select an animal"
@@ -496,7 +496,7 @@ function Example() {
         <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
       </ComboBox>
       <p className={style({font: 'body'})}>selectedKey: {selectedKey}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -511,7 +511,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['grid']));
 
   return (
-    <div className={style({width: 'full', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'})}>
+    <>
       <MenuTrigger>
         <ActionButton>View</ActionButton>
         <Menu
@@ -528,7 +528,7 @@ function Example() {
         </Menu>
       </MenuTrigger>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -543,7 +543,7 @@ function Example() {
   let [selectedKey, setSelectedKey] = useState<Key>('month');
 
   return (
-    <div>
+    <>
       <SegmentedControl
         aria-label="Time granularity"
         ///- begin highlight -///
@@ -557,7 +557,7 @@ function Example() {
         <SegmentedControlItem id="year">Year</SegmentedControlItem>
       </SegmentedControl>
       <p className={style({font: 'body'})}>selectedKey: {selectedKey}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -575,7 +575,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['aws']));
 
   return (
-    <div className={style({width: 'full', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center'})}>
+    <>
       <SelectBoxGroup
         aria-label="Cloud provider"
         ///- begin highlight -///
@@ -599,7 +599,7 @@ function Example() {
         </SelectBox>
       </SelectBoxGroup>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -623,7 +623,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
 
   return (
-    <div>
+    <>
       <TableView
         aria-label="Sandwich contents"
         ///- begin highlight -///
@@ -647,7 +647,7 @@ function Example() {
         </TableBody>
       </TableView>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -662,7 +662,7 @@ function Example() {
   let [selectedKey, setSelectedKey] = useState<Key>('files');
 
   return (
-    <div>
+    <>
       <Tabs
         aria-label="Tabs"
         ///- begin highlight -///
@@ -680,7 +680,7 @@ function Example() {
         <TabPanel id="settings">Settings content</TabPanel>
       </Tabs>
       <p className={style({font: 'body'})}>selectedKey: {selectedKey}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -695,7 +695,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
 
   return (
-    <div>
+    <>
       <TagGroup
         label="Sandwich contents"
         ///- begin highlight -///
@@ -710,7 +710,7 @@ function Example() {
         <Tag id="tuna">Tuna Salad</Tag>
       </TagGroup>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -728,7 +728,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['left']));
 
   return (
-    <div>
+    <>
       <ToggleButtonGroup
         aria-label="Text alignment"
         ///- begin highlight -///
@@ -751,7 +751,7 @@ function Example() {
         </ToggleButton>
       </ToggleButtonGroup>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -766,7 +766,7 @@ function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['documents']));
 
   return (
-    <div>
+    <>
       <TreeView
         aria-label="Files"
         defaultExpandedKeys={['documents', 'photos']}
@@ -775,7 +775,7 @@ function Example() {
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
         ///- end highlight -///
-        styles={style({height: 250, width: 360})}
+        styles={style({height: 250, width: 360, maxWidth: 'full'})}
       >
         <TreeViewItem id="documents" textValue="Documents">
           <TreeViewItemContent>Documents</TreeViewItemContent>
@@ -791,7 +791,7 @@ function Example() {
         </TreeViewItem>
       </TreeView>
       <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -903,7 +903,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
   aria-label="Files"
   selectionMode="multiple"
   defaultExpandedKeys={['computer']}
-  styles={style({height: 250, width: 360})}>
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}>
   <TreeViewItem id="computer" textValue="My Computer">
     <TreeViewItemContent>My Computer</TreeViewItemContent>
     <TreeViewItem
@@ -1026,7 +1026,7 @@ const files = [
   /*- begin highlight -*/
   onAction={id => alert(`Opening ${id}`)}
   /*- end highlight -*/
-  styles={style({height: 250, width: 360})}>
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}>
   <TreeViewItem id="computer" textValue="My Computer">
     <TreeViewItemContent>My Computer</TreeViewItemContent>
     <Collection items={files}>
@@ -1292,7 +1292,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <TreeView
   aria-label="Pokemon evolution"
-  styles={style({height: 250, width: 360})}
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}
   defaultExpandedKeys={['bulbasaur', 'ivysaur']}
   selectionMode="multiple">
   <TreeViewItem id="bulbasaur" textValue="Bulbasaur">
@@ -1545,7 +1545,7 @@ let items = [
 
 <TreeView
   aria-label="Pokemon evolution"
-  styles={style({height: 250, width: 360})}
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}
   defaultExpandedKeys={[1, 2]}
   selectionMode="multiple"
   ///- begin highlight -///

@@ -291,7 +291,8 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     orientation = 'horizontal',
     staticColor = props.staticColor,
     isQuiet = props.isQuiet,
-    size = props.size || 'M'
+    size = props.size || 'M',
+    isDisabled
   } = ctx || {};
 
   let {isProgressVisible} = usePendingState(isPending);
@@ -299,6 +300,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
   return (
     <RACButton
       {...props}
+      isDisabled={props.isDisabled ?? isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
