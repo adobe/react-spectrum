@@ -92,6 +92,7 @@ publish: build
 	yarn publish
 
 publish-nightly: build
+	git update-index --refresh
 	yarn version:nightly
 	yarn publish:nightly
 
