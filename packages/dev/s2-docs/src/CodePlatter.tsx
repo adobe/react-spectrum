@@ -250,6 +250,27 @@ function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name:
     }
   }
 
+  if (code.includes('export default function')) {
+    return code
+      // Add function wrapper around raw JSX in examples.
+      .replace(/\n<((?:.|\n)+)/, (_, code) => {
+        let res = '\nexport default function Example() {\n  return (\n    <';
+        let lines = code.split('\n');
+        res += lines.shift();
+
+        for (let line of lines) {
+          res += '\n    ' + line;
+        }
+
+        res += '\n  );\n}\n';
+        return res;
+      })
+      // Resolve urls
+      .replace(/import (.*?) from ['"](url:.*?)['"]/g, (_, name, specifier) => {
+        return `const ${name} = '${urls[specifier]}'`;
+      });
+  }
+
   return code
     // Export the last function
     .replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport default function Example$2')
