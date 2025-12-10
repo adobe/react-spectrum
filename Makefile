@@ -92,7 +92,8 @@ publish: build
 	yarn publish
 
 publish-nightly: build
-	git update-index --refresh
+	rm -f .git/index
+	git reset
 	yarn version:nightly
 	yarn publish:nightly
 
