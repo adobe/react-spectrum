@@ -50,7 +50,7 @@ export const isQuiet: Story = {
     </Picker>
   ),
   play: Default.play
-}
+};
 
 export const WithSections: Story = {
   ...Sections,
