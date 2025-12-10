@@ -34,6 +34,6 @@ yarn config set npmRegistryServer $registry
 yarn install --no-immutable
 yarn up react-aria-components tailwindcss-react-aria-components
 cd ../..
-make build-starters-pr
+make build-starters
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill

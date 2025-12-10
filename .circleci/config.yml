@@ -974,9 +974,9 @@ workflows:
             branches:
               only: main
       - verdaccio:
-          # filters:
-          #   branches:
-          #     only: main
+          filters:
+            branches:
+              only: main
           requires:
             - install
       - v-rsp-cra-18:
@@ -1030,7 +1030,6 @@ workflows:
           name: deploy-s3-commit
           requires:
             - s2-docs
-            - v-starters
           filters:
             branches:
               ignore: main
