@@ -14,12 +14,13 @@ export const description = 'Provides layout and alignment for a grouping of fiel
 
 ```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} type="s2"
 import {Form, TextField, Checkbox, ButtonGroup, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>
   <TextField label="Name" placeholder="Enter your full name" />
   <TextField label="Email" type="email" placeholder="Enter your email" />
   <Checkbox>I agree to the terms</Checkbox>
-  <ButtonGroup>
+  <ButtonGroup styles={style({gridColumnStart: 'field'})}>
     <Button type="submit" variant="primary">Submit</Button>
     <Button type="reset" variant="secondary">Reset</Button>
   </ButtonGroup>

@@ -59,9 +59,9 @@ HTML lists are meant for static content, rather than lists with rich interaction
 * **Async loading** – Support for loading items asynchronously, with infinite and virtualized scrolling.
 * **Keyboard navigation** – List items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
-* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](../quality#supported-screen-readers) to ensure announcements and behaviors are consistent.
 
-**Note**: Use `useGridList` when your list items may contain interactive elements such as buttons, checkboxes, menus, etc. within them. If your list items contain only static content such as text and images, then consider using [useListBox](useListBox.html) instead for a slightly better screen reader experience (especially on mobile).
+**Note**: Use `useGridList` when your list items may contain interactive elements such as buttons, checkboxes, menus, etc. within them. If your list items contain only static content such as text and images, then consider using [useListBox](../ListBox/useListBox.html) instead for a slightly better screen reader experience (especially on mobile).
 
 ## Anatomy
 
@@ -100,18 +100,17 @@ interface, which is a generic interface to access sequential unique keyed data. 
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
 but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> from
 `@react-stately/list` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information,
-and [Collection Interface](/react-stately/Collection.html) for internal details.
+See [Collection Components](v3:collections.html) for more information.
 
 In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
 manages the state necessary for multiple selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
-For more information, see [Selection](/react-stately/selection.html).
+For more information, see [Selection](v3:selection.html).
 
 ## Example
 
-Lists are [collection components](../react-stately/collections.html) that include rows as child elements.
+Lists are [collection components](v3:collections.html) that include rows as child elements.
 In this example, we'll use the standard HTML unordered list elements along with hooks from React
 Aria for each child. You may also use other elements like `<div>` to render these components as appropriate.
 We'll walk through creating the list container and list item, then add some additional behavior such as selection.
@@ -314,7 +313,7 @@ examples of how to use the List component that we've built.
 
 ### Checkbox
 
-The `Checkbox` component is used in the above example for row selection. It is built using the [useCheckbox](useCheckbox.html) hook, and can be shared with many other components.
+The `Checkbox` component is used in the above example for row selection. It is built using the [useCheckbox](../Checkbox/useCheckbox.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -338,7 +337,7 @@ function Checkbox(props) {
 
 ### Button
 
-The `Button` component is used in the above example to show how rows can contain interactive elements. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to show how rows can contain interactive elements. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -506,11 +505,11 @@ Items in a GridList may also be links to another page or website. This can be ac
 
 #### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [framework setup guide](../frameworks) to learn how to set this up.
 
 ### Asynchronous loading
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. You may additionally want to display a spinner to indicate the loading state to the user, or support features like infinite scroll to load more data.
+This example uses the [useAsyncList](../useAsyncList.html) hook to handle asynchronous loading of data from a server. You may additionally want to display a spinner to indicate the loading state to the user, or support features like infinite scroll to load more data.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';

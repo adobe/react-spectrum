@@ -29,7 +29,7 @@ const ColorContext = createContext<Color>('gray');
 
 const tagStyles = tv({
   extend: focusRing,
-  base: 'transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 font-sans',
+  base: 'transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 font-sans [-webkit-tap-highlight-color:transparent]',
   variants: {
     color: {
       gray: '',

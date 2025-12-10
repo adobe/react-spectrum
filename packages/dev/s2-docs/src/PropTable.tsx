@@ -162,12 +162,21 @@ function Rows({props, showDefault, showRequired}: {props: TInterface['properties
   return properties.map((prop, index) => (
     <React.Fragment key={index}>
       <TableRow>
-        <TableCell role="rowheader" hideBorder={!!prop.description}>
+        <TableCell role="rowheader" hideBorder={!!prop.description} styles={style({whiteSpace: 'nowrap'})}>
           <code className={codeStyle}>
             <span className={codeStyles.attribute}>{prop.name}</span>
           </code>
           {!prop.optional && showRequired
-            ? <Asterisk size="M" className={style({marginStart: 4})} aria-label="Required" />
+            ? <Asterisk
+                size="M"
+                className={style({
+                  marginStart: 4,
+                  '--iconPrimary': {
+                    type: 'fill',
+                    value: 'currentColor'
+                  }
+                })}
+                aria-label="Required" />
             : null
           }
         </TableCell>
@@ -177,7 +186,7 @@ function Rows({props, showDefault, showRequired}: {props: TInterface['properties
           </code>
         </TableCell>
         {showDefault &&
-          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
+          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}, whiteSpace: 'nowrap'})}>
             <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
             {prop.default
               ? <span className={codeStyle}><Code lang="tsx">{prop.default}</Code></span>

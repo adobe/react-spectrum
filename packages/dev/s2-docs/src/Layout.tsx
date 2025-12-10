@@ -8,13 +8,15 @@ import '../src/client';
 import internationalizedFavicon from 'url:../assets/internationalized.ico';
 // @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
+// @ts-ignore
+import rspFavicon from 'url:../assets/favicon.ico';
 import './anatomy.css';
 import './footer.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
-import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
+import {Divider, Provider, ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getCurrentPage, getPages} from './getPages';
 import {getLibraryFromPage, getLibraryLabel} from './library';
@@ -103,7 +105,7 @@ const getFaviconUrl = (currentPage: Page): string => {
     case 'internationalized':
       return internationalizedFavicon;
     default:
-      return 'https://www.adobe.com/favicon.ico';
+      return rspFavicon;
   }
 };
 
@@ -160,6 +162,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {children} = props;
   let pages = await getPages();
   let currentPage = getCurrentPage(props.currentPage);
+  let isToastPage = currentPage.name === 's2/Toast';
   let isSubpage = currentPage.exports?.isSubpage;
   let section = currentPage.exports?.section;
   let isLongForm = isSubpage && section === 'Blog';
@@ -233,7 +236,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               }
             })}>
             <Header />
-            <MobileHeader toc={<OptimisticMobileToc />} />
+            <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
             <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
               <Nav />
               <Main
@@ -293,7 +296,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               </Main>
             </div>
           </div>
-          <ToastContainer placement="bottom" />
+          {!isToastPage && <ToastContainer placement="bottom" />}
         </body>
       </Provider>
     </Router>

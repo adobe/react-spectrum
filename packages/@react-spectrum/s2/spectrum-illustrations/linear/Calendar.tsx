@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Calendar_L from 'illustration:./S2_lin_calendar_160.svg';
 import Calendar_M from 'illustration:./S2_lin_calendar_96.svg';
 import Calendar_S from 'illustration:./S2_lin_calendar_48.svg';

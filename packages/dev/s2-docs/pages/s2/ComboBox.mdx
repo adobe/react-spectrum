@@ -6,7 +6,7 @@ import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['autocomplete', 'search', 'typeahead'];
 export const relatedPages = [
-  {title: 'Testing', url: './ComboBox/testing'}
+  {title: 'Testing ComboBox', url: './ComboBox/testing'}
 ];
 export const description = 'Combines a text input with a listbox, and allows a user to filter a list of options.';
 
@@ -156,8 +156,7 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {ComboBox, ComboBoxItem, useAsyncList} from '@react-spectrum/s2';
 
 function Example() {
   let list = useAsyncList({
@@ -231,7 +230,7 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<ComboBoxItem>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
+Use the `href` prop on a `<ComboBoxItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
 
 ```tsx render
 "use client";
@@ -443,7 +442,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection', Icon: 'icons', Avatar: 'Avatar'}}
+```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection', Icon: 'icons', Avatar: 'Avatar', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}
 <ComboBox>
   <ComboBoxItem>
     <Icon /> or <Avatar />

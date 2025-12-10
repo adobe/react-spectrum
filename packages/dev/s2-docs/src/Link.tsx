@@ -3,12 +3,27 @@
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getBaseUrl} from './pageUtils';
 import {LinkProps, Link as S2Link} from '@react-spectrum/s2';
+import {mergeRefs} from '@react-aria/utils';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
-import React from 'react';
+import React, {Ref, useMemo} from 'react';
+import {registerLink, registerSpectrumLink} from './prefetch';
+
+export function BaseLink({ref, ...props}: LinkProps & {ref?: Ref<HTMLAnchorElement>}) {
+  return (
+    <RACLink
+      {...props}
+      ref={useMemo(() => mergeRefs(ref, registerLink), [ref])} />
+  );
+}
 
 export function Link({href, ...props}: LinkProps) {
+  if (href?.startsWith('s2:') || href?.startsWith('react-aria:')) {
+    let url = new URL(href);
+    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
+  }
+
   return (
-    <S2Link {...props} href={href} {...getAnchorProps(href)} />
+    <S2Link {...props} ref={registerSpectrumLink} href={href} {...getAnchorProps(href)} />
   );
 }
 
@@ -43,7 +58,7 @@ export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | '
 }
 
 export function CodeLink(props: RACLinkProps) {
-  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: isHovered ? 'underline solid' : 'underline dotted'})} />;
+  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
 }
 
 const titleLink = style({

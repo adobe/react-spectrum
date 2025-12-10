@@ -2,8 +2,7 @@
 
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {Folder, File} from 'lucide-react';
-import {useDragAndDrop, isTextDropItem} from 'react-aria-components';
-import {useListData} from 'react-stately';
+import {useDragAndDrop, isTextDropItem, useListData} from 'react-aria-components';
 import React from 'react';
 
 function BidirectionalDnDListBox(props) {

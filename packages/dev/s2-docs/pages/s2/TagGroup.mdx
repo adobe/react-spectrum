@@ -42,8 +42,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ```tsx render type="s2"
 "use client";
-import {TagGroup, Tag, TextField, Button} from '@react-spectrum/s2';
-import {useListData} from 'react-stately';
+import {TagGroup, Tag, TextField, Button, useListData} from '@react-spectrum/s2';
 import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -164,7 +163,7 @@ import {TagGroup, Tag, Image, Text} from '@react-spectrum/s2';
 
 ### Links
 
-Use the `href` prop on a `<Tag>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework.
+Use the `href` prop on a `<Tag>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework.
 
 ```tsx render type="s2"
 "use client";
@@ -258,7 +257,7 @@ import {TagGroup, Tag} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{TagGroup: '#taggroup', Tag: '#tag', Icon: 'icons', Avatar: 'Avatar', Image: 'Image'}}
+```tsx links={{TagGroup: '#taggroup', Tag: '#tag', Icon: 'icons', Avatar: 'Avatar', Image: 'Image', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <TagGroup>
   <Tag>
     <Icon /> or <Avatar /> or <Image />

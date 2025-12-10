@@ -35,7 +35,7 @@ import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
 import {control, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, HelpTextProps, LabelableProps, Node, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel, helpTextStyles} from './Field';
 import {flushSync} from 'react-dom';
 import {FormContext, useFormProps} from './Form';
@@ -52,7 +52,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes> {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, LabelableProps {
   /** The children of the tag. */
   children: ReactNode
 }
@@ -297,6 +297,7 @@ function TagGroupInner<T>({
           <Provider
             values={[
               [RACTextContext, undefined],
+              [RACButtonContext, undefined],
               [TagGroupContext, {size, isEmphasized}]
             ]}>
             {/* invisible collection for measuring */}
@@ -525,11 +526,9 @@ export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({ch
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphasized, isSelected}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
+
   return (
-    <Provider
-      values={[
-        [RACButtonContext, null]
-      ]}>
+    <>
       {isInRealDOM && (
         <div
           className={style({
@@ -574,6 +573,6 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM, isEmphas
           isStaticColor={isEmphasized && isSelected}
           isDisabled={isDisabled} />
       )}
-    </Provider>
+    </>
   );
 }
