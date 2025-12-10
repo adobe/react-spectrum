@@ -16,5 +16,6 @@ type Story = StoryFn<typeof NumberField>;
 export const Example: Story = (args) => <NumberField {...args} />;
 
 Example.args = {
-  label: 'Cookies'
+  label: 'Cookies',
+  placeholder: '-'
 };

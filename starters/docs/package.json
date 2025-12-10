@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "packageManager": "yarn@4.2.2",
+  "browserslist": ["last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions"],
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
