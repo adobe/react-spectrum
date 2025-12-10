@@ -12,7 +12,7 @@ import BreadcrumbsSvg from '@react-spectrum/docs/pages/assets/component-illustra
 import ButtonGroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ButtonGroup.svg';
 import ButtonSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 import CalendarSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
-import {Card, CardPreview, CardProps, Content, Text} from '@react-spectrum/s2';
+import {CardProps} from '@react-spectrum/s2';
 import CardSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Card.svg';
 import CardViewSvg from '@react-spectrum/docs/pages/assets/component-illustrations/CardView.svg';
 import CheckboxGroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/CheckboxGroup.svg';
@@ -26,6 +26,7 @@ import ColorSwatchPickerSvg from '@react-spectrum/docs/pages/assets/component-il
 import ColorSwatchSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ColorSwatch.svg';
 import ColorWheelSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ColorWheel.svg';
 import ComboBoxSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ComboBox.svg';
+import {ComponentCardClient} from './ComponentCardClient';
 import ContextualHelpSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ContextualHelp.svg';
 import DateFieldSvg from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import DatePickerSvg from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
@@ -310,15 +311,14 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
   }
 
   return (
-    <Card {...otherProps} id={id} href={href} size={size} textValue={name}>
-      <CardPreview>
-        {preview}
-      </CardPreview>
-      <Content>
-        <Text slot="title">{name}</Text>
-        {description && <Text slot="description">{description}</Text>}
-      </Content>
-    </Card>
+    <ComponentCardClient
+      {...otherProps}
+      id={id}
+      href={href}
+      size={size}
+      name={name}
+      description={description}
+      preview={preview} />
   );
 }
 
