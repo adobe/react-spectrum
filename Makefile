@@ -162,6 +162,7 @@ s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
+	$(MAKE) build-starters
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
@@ -185,6 +186,7 @@ build-s2-docs:
 build-starters:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
+	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mv starters/docs/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter
 	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	mv starters/tailwind/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter
