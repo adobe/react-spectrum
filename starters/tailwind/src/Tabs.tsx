@@ -19,7 +19,7 @@ import { focusRing } from './utils';
 import { twMerge } from 'tailwind-merge';
 
 const tabsStyles = tv({
-  base: 'flex gap-4 font-sans',
+  base: 'flex gap-4 font-sans max-w-full',
   variants: {
     orientation: {
       horizontal: 'flex-col',
@@ -40,7 +40,7 @@ export function Tabs(props: TabsProps) {
 }
 
 const tabListStyles = tv({
-  base: 'flex',
+  base: 'flex max-w-full p-1 -m-1 overflow-x-auto overflow-y-clip [scrollbar-width:none]',
   variants: {
     orientation: {
       horizontal: 'flex-row',

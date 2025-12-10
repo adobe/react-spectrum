@@ -21,7 +21,8 @@ export const description = 'A container for a set of interactive controls, such 
   import {ToggleButton} from 'vanilla-starter/ToggleButton';
   import {Button} from 'vanilla-starter/Button';
   import {Select, SelectItem} from 'vanilla-starter/Select';
-  import {Group, Separator} from 'react-aria-components';
+  import {Separator} from 'vanilla-starter/Separator';
+  import {Group} from 'react-aria-components';
   import {Bold, Italic, Underline, ClipboardCopy, Scissors, ClipboardPaste} from 'lucide-react';
 
   <Toolbar/* PROPS */>
@@ -36,7 +37,7 @@ export const description = 'A container for a set of interactive controls, such 
         <Underline size={16} />
       </ToggleButton>
     </ToggleButtonGroup>
-    <Separator orientation="vertical" />
+    <Separator />
     <Group aria-label="Clipboard">
       <Button aria-label="Copy">
         <ClipboardCopy size={16} />
@@ -48,7 +49,7 @@ export const description = 'A container for a set of interactive controls, such 
         <ClipboardPaste size={16} />
       </Button>
     </Group>
-    <Separator orientation="vertical" />
+    <Separator />
     <Select aria-label="Font" defaultSelectedKey="helvetica">
       <SelectItem id="helvetica">Helvetica</SelectItem>
       <SelectItem id="times">Times</SelectItem>

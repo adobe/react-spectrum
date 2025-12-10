@@ -140,7 +140,7 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.15.1",
+    "@adobe/spectrum-tokens": "^14.0.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
@@ -164,6 +164,7 @@
     "@react-stately/utils": "^3.10.8",
     "@react-types/dialog": "^3.5.22",
     "@react-types/grid": "^3.3.6",
+    "@react-types/overlays": "^3.9.2",
     "@react-types/provider": "^3.8.13",
     "@react-types/shared": "^3.32.1",
     "@react-types/table": "^3.13.4",

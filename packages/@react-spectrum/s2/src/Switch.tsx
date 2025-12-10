@@ -57,6 +57,7 @@ const wrapper = style({
   transition: 'colors',
   color: {
     default: baseColor('neutral'),
+    forcedColors: 'ButtonText',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'

@@ -142,7 +142,8 @@ describe('ToggleButtonGroup', () => {
   });
 
   it('should support horizontal keyboard navigation', async () => {
-    let {getAllByRole} = renderGroup();
+    let {getAllByRole, getByRole} = renderGroup();
+    expect(getByRole('radiogroup')).toHaveAttribute('aria-orientation', 'horizontal');
     let radios = getAllByRole('radio');
     await user.tab();
     expect(document.activeElement).toBe(radios[0]);
@@ -155,7 +156,8 @@ describe('ToggleButtonGroup', () => {
   });
 
   it('should support vertical keyboard navigation', async () => {
-    let {getAllByRole} = renderGroup({orientation: 'vertical'});
+    let {getAllByRole, getByRole} = renderGroup({orientation: 'vertical'});
+    expect(getByRole('radiogroup')).toHaveAttribute('aria-orientation', 'vertical');
     let radios = getAllByRole('radio');
     await user.tab();
     expect(document.activeElement).toBe(radios[0]);
