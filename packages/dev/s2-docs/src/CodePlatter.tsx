@@ -167,7 +167,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
               }
-              {files && type !== 's2' &&
+              {files &&
                 <MenuItem
                   onAction={() => {
                     createStackBlitz(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
