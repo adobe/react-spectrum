@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import MegaphonePromoteExpressive_L from 'illustration:./S2_lin_megaphonePromote_Expressive_160.svg';
 import MegaphonePromoteExpressive_M from 'illustration:./S2_lin_megaphonePromote_Expressive_96.svg';
 import MegaphonePromoteExpressive_S from 'illustration:./S2_lin_megaphonePromote_Expressive_48.svg';
