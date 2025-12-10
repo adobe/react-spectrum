@@ -42,9 +42,8 @@ Use the `value` or `defaultValue` prop to set the selected date range, using obj
 ```tsx render
 "use client";
 import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
+import {useDateFormatter, type RangeValue} from 'react-aria';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
-import type {RangeValue} from '@react-types/shared';
 import {useState} from 'react';
 
 function Example() {

@@ -604,8 +604,8 @@ function ReorderableTable() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key)?.name ?? ''
+    getItems: (keys, items: typeof list.items) => items.map(item => ({
+      'text/plain': item.name
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {

@@ -310,7 +310,7 @@ function Example() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': tree.getItem(key)?.value.title ?? ''})),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);

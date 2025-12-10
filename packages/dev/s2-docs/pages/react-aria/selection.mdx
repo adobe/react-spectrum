@@ -273,7 +273,7 @@ function Example() {
           )}
         </TableBody>
       </Table>
-      {(selectedKeys === 'all' || (selectedKeys instanceof Set && selectedKeys.size > 0)) && (
+      {(selectedKeys === 'all' || selectedKeys.size > 0) && (
         <div style={{marginTop: '16px', padding: '8px'}}>
           <Button onPress={performBulkAction}>Delete Selected</Button>
         </div>

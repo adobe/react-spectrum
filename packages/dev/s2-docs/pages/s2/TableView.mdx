@@ -284,10 +284,10 @@ const rows = [
 ///- end collapse -///
 
 const columns = [
-  {id: 'name', name: 'Name', isRowHeader: true, showDivider: true},
-  {id: 'type', name: 'Type', align: 'center', showDivider: true},
-  {id: 'level', name: 'Level', align: 'end'}
-];
+  {id: 'name', name: 'Name', isRowHeader: true, showDivider: true, align: undefined},
+  {id: 'type', name: 'Type', isRowHeader: false, showDivider: true, align: 'center'},
+  {id: 'level', name: 'Level', isRowHeader: false, showDivider: false, align: 'end'}
+] as const;
 
 function TableWithDividers() {
   return (
@@ -299,7 +299,7 @@ function TableWithDividers() {
           <Column
             /*- begin highlight -*/
             showDivider={column.showDivider}
-            align={column.align as 'start' | 'center' | 'end' | undefined}
+            align={column.align}
             /*- end highlight -*/
             isRowHeader={column.isRowHeader}>
             {column.name}
@@ -314,7 +314,7 @@ function TableWithDividers() {
                 <Cell
                   /*- begin highlight -*/
                   showDivider={column.showDivider}
-                  align={column.align as 'start' | 'center' | 'end' | undefined}>
+                  align={column.align}>
                   {/*- end highlight -*/}
                   {item[column.id]}
                 </Cell>

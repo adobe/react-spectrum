@@ -270,7 +270,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function action(prevState, formData: FormData) {
   return {
-    values: Object.fromEntries(formData),
+    values: Object.fromEntries(formData) as Record<string, string>,
     errors: {
       username: 'Sorry, this username is taken.'
     }
@@ -278,7 +278,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {values: {}, errors: {username: ''}});
+  let [{values, errors}, formAction] = useActionState<{values?: Record<string, string>, errors?: Record<string, string>}, FormData>(action, {});
 
   return (
     <Form
@@ -291,13 +291,13 @@ function Example() {
         label="Username"
         name="username"
         placeholder="Enter your username"
-        defaultValue={typeof values?.username === 'string' ? values.username : undefined}
+        defaultValue={values?.username}
         isRequired />
       <TextField
         label="Password"
         name="password"
         placeholder="Enter your password"
-        defaultValue={typeof values?.password === 'string' ? values.password : undefined}
+        defaultValue={values?.password}
         type="password"
         isRequired />
       <ButtonGroup>

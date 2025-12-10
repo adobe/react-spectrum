@@ -41,6 +41,35 @@ async function extractExamples() {
       return m;
     });
 
+    // Replace /* PROPS */ placeholders with initialProps values from code fence metadata
+    // Match initialProps={{ ... }} handling one level of nested braces
+    // Skip blocks with propsObject attribute since those props don't go directly on the component
+    code = code.replace(/```tsx([^\n]*initialProps=\{\{((?:[^{}]|\{[^{}]*\})*)\}\}[^\n]*)\n([\s\S]*?)```/g, (m, meta, propsStr, inner) => {
+      // Skip if props go to a different object (e.g. propsObject="layoutOptions")
+      if (meta.includes('propsObject=')) {
+        return m;
+      }
+      if (inner.includes('/* PROPS */')) {
+        // Parse the initialProps using json5, e.g. "isLoading: true" -> {isLoading: true}
+        let parsed = json5.parse(`{${propsStr}}`);
+        // Convert to JSX props string, but skip props that are already in the code
+        let props = Object.entries(parsed).map(([key, value]) => {
+          // Skip if this prop is already present in the inner code (to avoid duplicates)
+          let propRegex = new RegExp(`\\b${key.replace('-', '\\-')}\\s*=`);
+          if (propRegex.test(inner)) {
+            return '';
+          }
+          if (typeof value === 'string') {
+            return ` ${key}="${value}"`;
+          }
+          return ` ${key}={${JSON.stringify(value)}}`;
+        }).join('');
+        inner = inner.replace(/\/\* PROPS \*\//g, props);
+        return '```tsx' + meta + '\n' + inner + '```';
+      }
+      return m;
+    });
+
     let res = await transformAsync({
       filename: page,
       code: Buffer.from(code),
