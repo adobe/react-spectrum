@@ -428,15 +428,14 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
   }
 
   return (
-    <Card {...otherProps} id={id} href={href} size={size} textValue={name}>
-      <CardPreview>
-        {preview}
-      </CardPreview>
-      <Content>
-        <Text slot="title">{name}</Text>
-        {description && <Text slot="description">{description}</Text>}
-      </Content>
-    </Card>
+    <ComponentCardClient
+      {...otherProps}
+      id={id}
+      href={href}
+      size={size}
+      name={name}
+      description={description}
+      preview={preview} />
   );
 }
 

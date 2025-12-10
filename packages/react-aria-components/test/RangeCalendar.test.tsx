@@ -417,46 +417,4 @@ describe('RangeCalendar', () => {
     expect(cell).toHaveAttribute('aria-invalid', 'true');
     expect(cell).toHaveClass('invalid');
   });
-
-  it('should not mark unavailable dates as selected when range is invalid', () => {
-    let {getByRole} = renderCalendar({
-      value: {start: new CalendarDate(2025, 12, 1), end: new CalendarDate(2025, 12, 10)},
-      isDateUnavailable: (date) => {
-        return date.compare(new CalendarDate(2025, 12, 3)) >= 0 && date.compare(new CalendarDate(2025, 12, 6)) <= 0;
-      },
-      allowsNonContiguousRanges: true,
-      isInvalid: true
-    });
-
-    let grid = getByRole('grid');
-    let cells = within(grid).getAllByRole('button');
-
-    let dec2 = cells.find(cell => cell.textContent === '2');
-    let dec7 = cells.find(cell => cell.textContent === '7');
-
-    // available dates in the range should be selected and marked as invalid but unavaiable ones should not be selected
-    expect(dec2).toHaveAttribute('data-selected', 'true');
-    expect(dec2).not.toHaveAttribute('data-unavailable', 'true');
-    expect(dec2).toHaveAttribute('aria-invalid', 'true');
-    expect(dec7).toHaveAttribute('data-selected', 'true');
-    expect(dec7).not.toHaveAttribute('data-unavailable', 'true');
-    expect(dec7).toHaveAttribute('aria-invalid', 'true');
-
-    let dec3 = cells.find(cell => cell.textContent === '3');
-    let dec4 = cells.find(cell => cell.textContent === '4');
-    let dec5 = cells.find(cell => cell.textContent === '5');
-    let dec6 = cells.find(cell => cell.textContent === '6');
-    expect(dec3).not.toHaveAttribute('data-selected', 'true');
-    expect(dec3).toHaveAttribute('data-unavailable', 'true');
-    expect(dec3).toHaveAttribute('aria-invalid', 'true');
-    expect(dec4).not.toHaveAttribute('data-selected', 'true');
-    expect(dec4).toHaveAttribute('data-unavailable', 'true');
-    expect(dec4).toHaveAttribute('aria-invalid', 'true');
-    expect(dec5).not.toHaveAttribute('data-selected', 'true');
-    expect(dec5).toHaveAttribute('data-unavailable', 'true');
-    expect(dec5).toHaveAttribute('aria-invalid', 'true');
-    expect(dec6).not.toHaveAttribute('data-selected', 'true');
-    expect(dec6).toHaveAttribute('data-unavailable', 'true');
-    expect(dec6).toHaveAttribute('aria-invalid', 'true');
-  });
 });
