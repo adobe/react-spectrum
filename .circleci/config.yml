@@ -775,14 +775,14 @@ jobs:
           name: build s2-next off verdaccio
           command: |
             ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-starters.sh
+            ./scripts/verdaccio-build-starters.sh
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
 
       - persist_to_workspace:
-          root: verdaccio_dist
+          root: dist
           paths:
-            - '*/verdaccio/starters'
+            - 's2-docs/'
 
   deploy:
     docker:
