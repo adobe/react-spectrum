@@ -8,9 +8,7 @@ import { ActionButton, Button, pressScale, createIcon } from '@react-spectrum/s2
 import { useRef, useState } from 'react';
 import { ToggleButtonGroup as RACToggleButtonGroup, ToggleButton as RACToggleButton, useLocale } from 'react-aria-components';
 
-const XS = `@container (min-width: ${480 / 16}rem)`;
 const SM = `@container (min-width: ${(640 / 16)}rem)`;
-const MD = `@container (min-width: ${(768 / 16)}rem)`;
 const LG = `@container (width > ${(1024 / 16)}rem)`;
 
 const textStyle = style({

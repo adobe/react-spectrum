@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, TextArea } from "@react-spectrum/s2";
+import { Avatar } from "@react-spectrum/s2";
 import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 
 export function Typography() {
