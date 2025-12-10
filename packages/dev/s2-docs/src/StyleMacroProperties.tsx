@@ -18,7 +18,7 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
         {spacingTypeValues['baseSpacing'].map((val, idx) => (
           <React.Fragment key={idx}>
             {idx > 0 && Punctuation(' | ')}
-            <span className={codeStyles.string}>'{val}'</span>
+            {val}
           </React.Fragment>
         ))}
       </code>
@@ -31,7 +31,7 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
         {spacingTypeValues['negativeSpacing'].map((val, idx) => (
           <React.Fragment key={idx}>
             {idx > 0 && Punctuation(' | ')}
-            <span className={codeStyles.string}>'{val}'</span>
+            {val}
           </React.Fragment>
         ))}
       </code>
@@ -79,7 +79,7 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
   'code': {
     description: 'Use for source code.'
   },
-  'LengthPercentage': {
+  'lengthPercentage': {
     description: <>A CSS length value with percentage or viewport units. e.g. <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code></>
   },
   'number': {
@@ -118,6 +118,19 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
             </DisclosureTitle>
             <DisclosurePanel>
               <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+                {propDef.mapping && (
+                  <div>
+                    <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Maps to</h4>
+                    <code className={codeStyle}>
+                      {propDef.mapping.map((mappedProp, i) => (
+                        <React.Fragment key={i}>
+                          {i > 0 && Punctuation(', ')}
+                          <span className={codeStyles.attribute}>{mappedProp}</span>
+                        </React.Fragment>
+                      ))}
+                    </code>
+                  </div>
+                )}
                 {/* for color and backgroundColor, skip values list and render disclosures directly since the contents of the disclosures cover the mapped values */}
                 {(() => {
                   if (propertyName === 'color') {
@@ -254,19 +267,6 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                   }
                   return null;
                 })}
-                {propDef.mapping && (
-                  <div>
-                    <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Maps to</h4>
-                    <code className={codeStyle}>
-                      {propDef.mapping.map((mappedProp, i) => (
-                        <React.Fragment key={i}>
-                          {i > 0 && Punctuation(', ')}
-                          <span className={codeStyles.attribute}>{mappedProp}</span>
-                        </React.Fragment>
-                      ))}
-                    </code>
-                  </div>
-                )}
                 {propDef.description && (
                   <div className={style({font: 'body'})}>
                     {propDef.description}

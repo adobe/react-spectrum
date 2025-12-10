@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// Properties that use PercentageProperty (accept LengthPercentage in addition to mapped values)
+// Properties that use PercentageProperty (accept lengthPercentage in addition to mapped values)
 const percentageProperties = new Set([
   'top', 'left', 'bottom', 'right',
   'insetStart', 'insetEnd',
@@ -19,7 +19,7 @@ const percentageProperties = new Set([
   'textIndent', 'translateX', 'translateY'
 ]);
 
-// Properties that use SizingProperty (accept number and LengthPercentage in addition to mapped values)
+// Properties that use SizingProperty (accept number and lengthPercentage in addition to mapped values)
 const sizingProperties = new Set([
   'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
   'flexBasis', 'containIntrinsicWidth', 'containIntrinsicHeight'
@@ -450,11 +450,11 @@ export function getAdditionalTypes(propertyName: string): string[] {
   }
 
   if (sizingProperties.has(propertyName)) {
-    types.push('number', 'LengthPercentage');
+    types.push('number', 'lengthPercentage');
   }
 
   if (percentageProperties.has(propertyName)) {
-    types.push('LengthPercentage');
+    types.push('lengthPercentage');
   }
 
   return types;
