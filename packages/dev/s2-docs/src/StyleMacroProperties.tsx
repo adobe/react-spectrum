@@ -50,7 +50,6 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
     description: 'Default spacing between the edge of a pill-shaped control and its text. Relative to control height.'
   },
   'baseColors': {
-    description: <><code>baseColors</code> consists of the following values below:</>,
     body: (
       <>
         <SemanticColorsDisclosure />
@@ -152,8 +151,22 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                   return (
                     <div>
                       <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
-                      <code className={codeStyle}>
+                      <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
                         {values.map((value, i) => {
+                          let valueDesc = styleMacroValueDesc[value];
+                          // special case handling for font and spacing specific value descriptions so they don't get rendered for
+                          // other properties that may include the same values (e.g. heading in Colors)
+                          let shouldShowDescription = false;
+                          if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
+                            shouldShowDescription = true;
+                          } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
+                            shouldShowDescription = true;
+                          } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
+                            shouldShowDescription = true;
+                          } else if (value === 'baseColors' && propertyName !== 'color' && propertyName !== 'backgroundColor') {
+                            shouldShowDescription = true;
+                          }
+
                           let content;
                           if (links[value]) {
                             content = (
@@ -172,101 +185,48 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                           }
 
                           return (
-                            <React.Fragment key={i}>
-                              {i > 0 && Punctuation(' | ')}
-                              {content}
-                            </React.Fragment>
+                            <li key={i} className={style({font: 'body'})}>
+                              <code className={codeStyle}>
+                                {content}
+                              </code>
+                              {shouldShowDescription && valueDesc?.description && (
+                                <div className={style({marginTop: 4})}>
+                                  {valueDesc.description}
+                                </div>
+                              )}
+                              {shouldShowDescription && valueDesc?.body && (
+                                <div className={style({marginTop: 8})}>
+                                  {valueDesc.body}
+                                </div>
+                              )}
+                            </li>
                           );
                         })}
                         {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
                         {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
+                          let typeDesc = styleMacroValueDesc[typeName];
                           return (
-                            <React.Fragment key={`type-${i}`}>
-                              {(values.length > 0 || i > 0) && Punctuation(' | ')}
-                              <span className={codeStyles.variable}>{typeName}</span>
-                            </React.Fragment>
+                            <li key={`type-${i}`} className={style({font: 'body'})}>
+                              <code className={codeStyle}>
+                                <span className={codeStyles.variable}>{typeName}</span>
+                              </code>
+                              {typeDesc?.description && (
+                                <div className={style({marginTop: 4})}>
+                                  {typeDesc.description}
+                                </div>
+                              )}
+                              {typeDesc?.body && (
+                                <div className={style({marginTop: 8})}>
+                                  {typeDesc.body}
+                                </div>
+                              )}
+                            </li>
                           );
                         })}
-                      </code>
+                      </ul>
                     </div>
                   );
                 })()}
-                {values.map((value, i) => {
-                  let valueDesc = styleMacroValueDesc[value];
-                  // special case handling for font and spacing specific value descriptions so they don't get rendered for
-                  // other properties that may include the same values (e.g. heading in Colors)
-                  // skip baseColors here as it will be rendered after
-                  let shouldShowDescription = false;
-                  if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
-                    shouldShowDescription = true;
-                  } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
-                    shouldShowDescription = true;
-                  } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
-                    shouldShowDescription = true;
-                  }
-
-                  if (shouldShowDescription && (valueDesc?.description || valueDesc?.body)) {
-                    return (
-                      <div key={`value-desc-${i}`}>
-                        <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
-                          <code className={codeStyle}>
-                            <span className={codeStyles.string}>'{value}'</span>
-                          </code>
-                        </h4>
-                        {valueDesc.description && (
-                          <p className={style({font: 'body', marginBottom: 8})}>
-                            {valueDesc.description}
-                          </p>
-                        )}
-                        {valueDesc.body}
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-                {/* show S2Typography for "fontSize" property and "font" shorthand specificatlly */}
-                {(propertyName === 'fontSize' || propertyName === 'font') && (
-                  <S2Typography />
-                )}
-                {/* for other color property names show baseColors description since the value list is displayed still */}
-                {values.includes('baseColors') && styleMacroValueDesc['baseColors'] && (propertyName !== 'color' && propertyName !== 'backgroundColor') && (
-                  <div>
-                    {styleMacroValueDesc['baseColors'].description && (
-                      <p className={style({font: 'body', marginBottom: 8})}>
-                        {styleMacroValueDesc['baseColors'].description}
-                      </p>
-                    )}
-                    {styleMacroValueDesc['baseColors'].body}
-                  </div>
-                )}
-                {/* for the types that have descriptions, we add them below with the associated descriptions and/or mappings */}
-                {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                  let typeLink = styleMacroValueDesc[typeName];
-                  if (typeLink?.description || typeLink?.body) {
-                    // dont render the type name for properties that only have one special value (e.g. baseSpacing) that has an associated description
-                    // so that we don't double up on rendering the value name
-                    let shouldSkipTypeName = values.length === 0 && propDef.additionalTypes?.length === 1;
-
-                    return (
-                      <div key={`type-desc-${i}`}>
-                        {!shouldSkipTypeName && (
-                          <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
-                            <code className={codeStyle}>
-                              <span className={codeStyles.variable}>{typeName}</span>
-                            </code>
-                          </h4>
-                        )}
-                        {typeLink.description && (
-                          <p className={style({font: 'body', marginBottom: 8})}>
-                            {typeLink.description}
-                          </p>
-                        )}
-                        {typeLink.body}
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
                 {propDef.description && (
                   <div className={style({font: 'body'})}>
                     {propDef.description}
