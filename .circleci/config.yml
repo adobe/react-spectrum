@@ -85,6 +85,9 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
+      - run:
+          name: Clean Yarn cache
+          command: yarn cache clean
 
       - run:
           name: Write npmrc
