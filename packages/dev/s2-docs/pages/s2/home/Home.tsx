@@ -42,6 +42,8 @@ import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
 import { getBaseUrl } from "../../../src/pageUtils";
+import './home.css';
+import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -61,129 +63,90 @@ const container = style({
 const swapWrapper = style({
   display: 'inline-block',
   position: 'relative',
-  height: '[1em]',
+  height: '[1.2em]',
   overflow: 'hidden',
   verticalAlign: 'baseline',
   whiteSpace: 'nowrap',
-  lineHeight: '[1em]',
+  lineHeight: '[1.2]',
   marginEnd: 12
 });
 
-const swapItem = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0
-});
-
 // Track that scrolls vertically through all the items.
+// Use 3D to ensure crisp text rendering.
+// With 3x hold time vs transition time:
+//   Total units: (6 holds × 3) + (6 transitions × 1) = 18 + 6 = 24 units
+//   Each transition = 100/24 = 4.17%
+//   Each hold = 3 × 4.17% = 12.5%
 const slideTrack = keyframes(`
   0% {
-    transform: translateY(0%);
+    transform: translate3d(0, 0, 0);
   }
-  15% {
-    transform: translateY(0%);
+  12.5% {
+    transform: translate3d(0, 0, 0);
   }
-  16% {
-    transform: translateY(-16.666%);
+  16.67% {
+    transform: translate3d(0, -1.2em, 0);
   }
-  31% {
-    transform: translateY(-16.666%);
+  29.17% {
+    transform: translate3d(0, -1.2em, 0);
   }
-  32% {
-    transform: translateY(-33.333%);
+  33.33% {
+    transform: translate3d(0, -2.4em, 0);
   }
-  47% {
-    transform: translateY(-33.333%);
+  45.83% {
+    transform: translate3d(0, -2.4em, 0);
   }
-  48% {
-    transform: translateY(-50%);
+  50% {
+    transform: translate3d(0, -3.6em, 0);
   }
-  63% {
-    transform: translateY(-50%);
+  62.5% {
+    transform: translate3d(0, -3.6em, 0);
   }
-  64% {
-    transform: translateY(-66.666%);
+  66.67% {
+    transform: translate3d(0, -4.8em, 0);
   }
-  79% {
-    transform: translateY(-66.666%);
+  79.17% {
+    transform: translate3d(0, -4.8em, 0);
   }
-  80% {
-    transform: translateY(-83.333%);
+  83.33% {
+    transform: translate3d(0, -6em, 0);
   }
-  95% {
-    transform: translateY(-83.333%);
+  95.83% {
+    transform: translate3d(0, -6em, 0);
   }
   100% {
-    transform: translateY(0%);
+    transform: translate3d(0, -7.2em, 0);
   }
 `);
 
 const swapTrack = style({
-  animation: slideTrack,
-  animationDuration: 15000,
-  animationTimingFunction: 'linear',
-  animationIterationCount: 'infinite',
-  display: 'flex',
+  position: 'relative',
+  display: {
+    default: 'none',
+    sm: 'flex'
+  },
   flexDirection: 'column',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
+  height: '[1.2em]',
+  overflow: 'hidden',
+  fontSize: '[1em]',
+  willChange: 'transform'
 });
 
 // for measuring longest word
 const swapSizer = style({
-  opacity: 0,
+  display: {default: 'block', sm: 'none'},
   whiteSpace: 'nowrap'
 });
 
-
 const swapRow = style({
-  display: 'block',
-  height: '[1em]',
-  lineHeight: '[1em]'
-});
-
-const slidePolish = keyframes(`
-  0%, 45% {
-    transform: translateY(0%);
-  }
-  50% {
-    transform: translateY(100%);
-  }
-  50.01%, 95% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-`);
-
-const slideSpeed = keyframes(`
-  0%, 45% {
-    transform: translateY(-100%);
-  }
-  50% {
-    transform: translateY(0%);
-  }
-  95% {
-    transform: translateY(0%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-`);
-
-const swapPolish = style({
-  animation: slidePolish,
-  animationDuration: 5000,
-  animationTimingFunction: 'in-out',
-  animationIterationCount: 'infinite'
-});
-
-const swapSpeed = style({
-  animation: slideSpeed,
-  animationDuration: 5000,
-  animationTimingFunction: 'in-out',
-  animationIterationCount: 'infinite'
+  animation: slideTrack,
+  animationDuration: 15000,
+  animationTimingFunction: 'linear',
+  animationIterationCount: 'infinite',
+  lineHeight: '[1.2]',
+  height: '[1.2em]',
+  backfaceVisibility: 'hidden'
 });
 
 export function Home() {
@@ -242,17 +205,29 @@ export function Home() {
         </div>
       </nav>
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
-        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>
-          <span className={swapWrapper} >Build apps </span>
+        <h1
+          id={headingId}
+          className={style({
+            font: 'heading-3xl',
+            '--headingFontSize': {
+              type: 'width',
+              value: `[round(pow(1.125, ${fontSizeToken('heading-size-xxxl')}) * var(--s2-font-size-base, 14) / 16 * 1rem, 1px)]`
+            },
+            fontSize: '[clamp(1rem, 6vw, var(--headingFontSize))]',
+            marginY: 0,
+            color: 'white'
+          })}>
+          <span className={swapWrapper}>Build apps </span>
           <span className={swapWrapper}>
-            <span className={swapTrack}>
+            <div className={swapTrack}>
               <span className={swapRow}>with polish</span>
               <span className={swapRow}>with speed</span>
               <span className={swapRow}>with ease</span>
               <span className={swapRow}>with accessibility</span>
               <span className={swapRow}>with consistency</span>
               <span className={swapRow}>with React Spectrum</span>
-            </span>
+              <span className={swapRow}>with polish</span>
+            </div>
             <span className={swapSizer} aria-hidden>with React Spectrum</span>
           </span>
         </h1>
@@ -430,7 +405,7 @@ export function Home() {
               <h4 className={style({font: 'title', marginTop: 0})}>Button.tsx</h4>
               <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {hstack} from './style-utils' with {type: 'macro'};
-            
+
 const buttonStyle = style({
   ...focusRing(),
   ...hstack(4)
@@ -483,21 +458,21 @@ const buttonStyle = style({
             description="Comprehensive markdown docs, llms.txt, and an agent-friendly MCP server."
             illustration={<Sparkles />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-              
+
           </Feature>
           <Feature
             title="SSR"
             description="Server-side rendering and React Server Components support, maximizing Core Web Vitals with zero layout thrashing."
             illustration={<Server />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-              
+
           </Feature>
           <Feature
             title="Small bundle"
             description="Aggressive tree-shaking and atomic CSS resulting in reduced bundle sizes and faster runtime performance."
             illustration={<SpeedFast />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-              
+
           </Feature>
         </Section>
       </main>
