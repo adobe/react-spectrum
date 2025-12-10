@@ -24,7 +24,13 @@ const mappings = {
   "What'sNew.avif": 'WhatsNew.avif',
   'Releases(Numbers).avif': 'Releases.avif',
   'Home.avif': 'Home.avif',
-  'MCPServer.avif': 'McpServer.avif'
+  'MCPServer.avif': 'McpServer.avif',
+  'ColorPicker.avif': 'ColorPicker.avif',
+  'DragAndDrop.avif': 'DragAndDrop.avif',
+  'FileTrigger.avif': 'FileTrigger.avif',
+  'FocusRing.avif': 'FocusRing.avif',
+  'FocusScope.avif': 'FocusScope.avif',
+  'RangeCalendar.avif': 'RangeCalendar.avif'
 };
 
 function transformFilename(basename) {

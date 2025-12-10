@@ -1,6 +1,5 @@
-/* eslint-disable rulesdir/imports */
-/* eslint-disable monorepo/no-internal-import */
-
+import AccessibilityDark from 'url:../assets/component-illustrations/dark/Accessibility.avif';
+import AccessibilityLight from 'url:../assets/component-illustrations/light/Accessibility.avif';
 import AccordionDark from 'url:../assets/component-illustrations/dark/Accordion.avif';
 import AccordionLight from 'url:../assets/component-illustrations/light/Accordion.avif';
 import ActionBarDark from 'url:../assets/component-illustrations/dark/ActionBar.avif';
@@ -11,8 +10,10 @@ import ActionGroupDark from 'url:../assets/component-illustrations/dark/ActionGr
 import ActionGroupLight from 'url:../assets/component-illustrations/light/ActionGroup.avif';
 import ActionMenuDark from 'url:../assets/component-illustrations/dark/ActionMenu.avif';
 import ActionMenuLight from 'url:../assets/component-illustrations/light/ActionMenu.avif';
-// @ts-ignore
-import AdobeDefaultSvg from '@react-spectrum/docs/pages/assets/component-illustrations/AdobeDefault.svg';
+import AdobeDark from 'url:../assets/component-illustrations/dark/Adobe.avif';
+import AdobeLight from 'url:../assets/component-illustrations/light/Adobe.avif';
+import AutocompleteDark from 'url:../assets/component-illustrations/dark/Autocomplete.avif';
+import AutocompleteLight from 'url:../assets/component-illustrations/light/Autocomplete.avif';
 import AvatarDark from 'url:../assets/component-illustrations/dark/Avatar.avif';
 import AvatarGroupDark from 'url:../assets/component-illustrations/dark/AvatarGroup.avif';
 import AvatarGroupLight from 'url:../assets/component-illustrations/light/AvatarGroup.avif';
@@ -29,21 +30,25 @@ import ButtonGroupLight from 'url:../assets/component-illustrations/light/Button
 import ButtonLight from 'url:../assets/component-illustrations/light/Button.avif';
 import CalendarDark from 'url:../assets/component-illustrations/dark/Calendar.avif';
 import CalendarLight from 'url:../assets/component-illustrations/light/Calendar.avif';
-import {Card, CardPreview, CardProps, Content, Image, Text} from '@react-spectrum/s2';
 import CardDark from 'url:../assets/component-illustrations/dark/Card.avif';
 import CardLight from 'url:../assets/component-illustrations/light/Card.avif';
+import {CardProps, Image} from '@react-spectrum/s2';
 import CardViewDark from 'url:../assets/component-illustrations/dark/CardView.avif';
 import CardViewLight from 'url:../assets/component-illustrations/light/CardView.avif';
 import CheckboxDark from 'url:../assets/component-illustrations/dark/Checkbox.avif';
 import CheckboxGroupDark from 'url:../assets/component-illustrations/dark/CheckboxGroup.avif';
 import CheckboxGroupLight from 'url:../assets/component-illustrations/light/CheckboxGroup.avif';
 import CheckboxLight from 'url:../assets/component-illustrations/light/Checkbox.avif';
+import ClipboardDark from 'url:../assets/component-illustrations/dark/Clipboard.avif';
+import ClipboardLight from 'url:../assets/component-illustrations/light/Clipboard.avif';
 import CollectionDark from 'url:../assets/component-illustrations/dark/Collection.avif';
 import CollectionLight from 'url:../assets/component-illustrations/light/Collection.avif';
 import ColorAreaDark from 'url:../assets/component-illustrations/dark/ColorArea.avif';
 import ColorAreaLight from 'url:../assets/component-illustrations/light/ColorArea.avif';
 import ColorFieldDark from 'url:../assets/component-illustrations/dark/ColorField.avif';
 import ColorFieldLight from 'url:../assets/component-illustrations/light/ColorField.avif';
+import ColorPickerDark from 'url:../assets/component-illustrations/dark/ColorPicker.avif';
+import ColorPickerLight from 'url:../assets/component-illustrations/light/ColorPicker.avif';
 import ColorSliderDark from 'url:../assets/component-illustrations/dark/ColorSlider.avif';
 import ColorSliderLight from 'url:../assets/component-illustrations/light/ColorSlider.avif';
 import ColorSwatchDark from 'url:../assets/component-illustrations/dark/ColorSwatch.avif';
@@ -54,6 +59,7 @@ import ColorWheelDark from 'url:../assets/component-illustrations/dark/ColorWhee
 import ColorWheelLight from 'url:../assets/component-illustrations/light/ColorWheel.avif';
 import ComboBoxDark from 'url:../assets/component-illustrations/dark/ComboBox.avif';
 import ComboBoxLight from 'url:../assets/component-illustrations/light/ComboBox.avif';
+import {ComponentCardClient} from './ComponentCardClient';
 import ContextualHelpDark from 'url:../assets/component-illustrations/dark/ContextualHelp.avif';
 import ContextualHelpLight from 'url:../assets/component-illustrations/light/ContextualHelp.avif';
 import DateFieldDark from 'url:../assets/component-illustrations/dark/DateField.avif';
@@ -68,15 +74,27 @@ import DisclosureDark from 'url:../assets/component-illustrations/dark/Disclosur
 import DisclosureLight from 'url:../assets/component-illustrations/light/Disclosure.avif';
 import DividerDark from 'url:../assets/component-illustrations/dark/Divider.avif';
 import DividerLight from 'url:../assets/component-illustrations/light/Divider.avif';
+import DragAndDropDark from 'url:../assets/component-illustrations/dark/DragAndDrop.avif';
+import DragAndDropLight from 'url:../assets/component-illustrations/light/DragAndDrop.avif';
 import DropZoneDark from 'url:../assets/component-illustrations/dark/DropZone.avif';
 import DropZoneLight from 'url:../assets/component-illustrations/light/DropZone.avif';
 import {ExampleImage} from './ExampleList';
+import FileTriggerDark from 'url:../assets/component-illustrations/dark/FileTrigger.avif';
+import FileTriggerLight from 'url:../assets/component-illustrations/light/FileTrigger.avif';
+import FocusRingDark from 'url:../assets/component-illustrations/dark/FocusRing.avif';
+import FocusRingLight from 'url:../assets/component-illustrations/light/FocusRing.avif';
+import FocusScopeDark from 'url:../assets/component-illustrations/dark/FocusScope.avif';
+import FocusScopeLight from 'url:../assets/component-illustrations/light/FocusScope.avif';
 import FormsDark from 'url:../assets/component-illustrations/dark/Forms.avif';
 import FormsLight from 'url:../assets/component-illustrations/light/Forms.avif';
 import FrameworksDark from 'url:../assets/component-illustrations/dark/Frameworks.avif';
 import FrameworksLight from 'url:../assets/component-illustrations/light/Frameworks.avif';
 import GettingStartedDark from 'url:../assets/component-illustrations/dark/GettingStarted.avif';
 import GettingStartedLight from 'url:../assets/component-illustrations/light/GettingStarted.avif';
+import GroupDark from 'url:../assets/component-illustrations/dark/Group.avif';
+import GroupLight from 'url:../assets/component-illustrations/light/Group.avif';
+import HoverDark from 'url:../assets/component-illustrations/dark/Hover.avif';
+import HoverLight from 'url:../assets/component-illustrations/light/Hover.avif';
 import IconsDark from 'url:../assets/component-illustrations/dark/Icons.avif';
 import IconsLight from 'url:../assets/component-illustrations/light/Icons.avif';
 import IllustratedMessageDark from 'url:../assets/component-illustrations/dark/IllustratedMessage.avif';
@@ -87,8 +105,8 @@ import ImageDark from 'url:../assets/component-illustrations/dark/Image.avif';
 import ImageLight from 'url:../assets/component-illustrations/light/Image.avif';
 import InlineAlertDark from 'url:../assets/component-illustrations/dark/InlineAlert.avif';
 import InlineAlertLight from 'url:../assets/component-illustrations/light/InlineAlert.avif';
-// @ts-ignore
-import InternationalizedDefaultSvg from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDefault.svg';
+import KeyboardDark from 'url:../assets/component-illustrations/dark/Keyboard.avif';
+import KeyboardLight from 'url:../assets/component-illustrations/light/Keyboard.avif';
 import LinkButtonDark from 'url:../assets/component-illustrations/dark/LinkButton.avif';
 import LinkButtonLight from 'url:../assets/component-illustrations/light/LinkButton.avif';
 import LinkDark from 'url:../assets/component-illustrations/dark/Link.avif';
@@ -99,8 +117,10 @@ import MenuDark from 'url:../assets/component-illustrations/dark/Menu.avif';
 import MenuLight from 'url:../assets/component-illustrations/light/Menu.avif';
 import MeterDark from 'url:../assets/component-illustrations/dark/Meter.avif';
 import MeterLight from 'url:../assets/component-illustrations/light/Meter.avif';
-import MigratingDark from 'url:../assets/component-illustrations/dark/MigratingToSpectrum2.avif';
-import MigratingLight from 'url:../assets/component-illustrations/light/MigratingToSpectrum3.avif';
+import MigratingDark from 'url:../assets/component-illustrations/dark/Migrating.avif';
+import MigratingLight from 'url:../assets/component-illustrations/light/Migrating.avif';
+import MoveDark from 'url:../assets/component-illustrations/dark/Move.avif';
+import MoveLight from 'url:../assets/component-illustrations/light/Move.avif';
 import NumberFieldDark from 'url:../assets/component-illustrations/dark/NumberField.avif';
 import NumberFieldLight from 'url:../assets/component-illustrations/light/NumberField.avif';
 import {Page} from '@parcel/rsc';
@@ -108,6 +128,8 @@ import PickerDark from 'url:../assets/component-illustrations/dark/Picker.avif';
 import PickerLight from 'url:../assets/component-illustrations/light/Picker.avif';
 import PopoverDark from 'url:../assets/component-illustrations/dark/Popover.avif';
 import PopoverLight from 'url:../assets/component-illustrations/light/Popover.avif';
+import PressDark from 'url:../assets/component-illustrations/dark/Press.avif';
+import PressLight from 'url:../assets/component-illustrations/light/Press.avif';
 import ProgressBarDark from 'url:../assets/component-illustrations/dark/ProgressBar.avif';
 import ProgressBarLight from 'url:../assets/component-illustrations/light/ProgressBar.avif';
 import ProgressCircleDark from 'url:../assets/component-illustrations/dark/ProgressCircle.avif';
@@ -121,8 +143,6 @@ import RangeCalendarLight from 'url:../assets/component-illustrations/light/Rang
 import RangeSliderDark from 'url:../assets/component-illustrations/dark/RangeSlider.avif';
 import RangeSliderLight from 'url:../assets/component-illustrations/light/RangeSlider.avif';
 import React from 'react';
-// @ts-ignore
-import ReactAriaDefaultSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ReactAriaDefault.svg';
 import SearchFieldDark from 'url:../assets/component-illustrations/dark/SearchField.avif';
 import SearchFieldLight from 'url:../assets/component-illustrations/light/SearchField.avif';
 import SegmentedControlDark from 'url:../assets/component-illustrations/dark/SegmentedControl.avif';
@@ -150,6 +170,8 @@ import TabsDark from 'url:../assets/component-illustrations/dark/Tabs.avif';
 import TabsLight from 'url:../assets/component-illustrations/light/Tabs.avif';
 import TagGroupDark from 'url:../assets/component-illustrations/dark/TagGroup.avif';
 import TagGroupLight from 'url:../assets/component-illustrations/light/TagGroup.avif';
+import TestingDark from 'url:../assets/component-illustrations/dark/Testing.avif';
+import TestingLight from 'url:../assets/component-illustrations/light/Testing.avif';
 import TextAreaDark from 'url:../assets/component-illustrations/dark/TextArea.avif';
 import TextAreaLight from 'url:../assets/component-illustrations/light/TextArea.avif';
 import TextFieldDark from 'url:../assets/component-illustrations/dark/TextField.avif';
@@ -166,6 +188,8 @@ import TooltipDark from 'url:../assets/component-illustrations/dark/Tooltip.avif
 import TooltipLight from 'url:../assets/component-illustrations/light/Tooltip.avif';
 import TreeDark from 'url:../assets/component-illustrations/dark/Tree.avif';
 import TreeLight from 'url:../assets/component-illustrations/light/Tree.avif';
+import UtilityDark from 'url:../assets/component-illustrations/dark/Utility.avif';
+import UtilityLight from 'url:../assets/component-illustrations/light/Utility.avif';
 
 export interface ComponentCardItem {
   id: string,
@@ -181,7 +205,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'ActionButton': [ActionButtonLight, ActionButtonDark],
   'ActionButtonGroup': [ActionGroupLight, ActionGroupDark],
   'ActionMenu': [ActionMenuLight, ActionMenuDark],
-  'Autocomplete': [ComboBoxLight, ComboBoxDark],
+  'Autocomplete': [AutocompleteLight, AutocompleteDark],
   'Avatar': [AvatarLight, AvatarDark],
   'AvatarGroup': [AvatarGroupLight, AvatarGroupDark],
   'Badge': [BadgeLight, BadgeDark],
@@ -194,6 +218,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'CheckboxGroup': [CheckboxGroupLight, CheckboxGroupDark],
   'ColorArea': [ColorAreaLight, ColorAreaDark],
   'ColorField': [ColorFieldLight, ColorFieldDark],
+  'ColorPicker': [ColorPickerLight, ColorPickerDark],
   'ColorSlider': [ColorSliderLight, ColorSliderDark],
   'ColorSwatch': [ColorSwatchLight, ColorSwatchDark],
   'ColorSwatchPicker': [ColorSwatchPickerLight, ColorSwatchPickerDark],
@@ -208,8 +233,12 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'DisclosureGroup': [AccordionLight, AccordionDark],
   'Divider': [DividerLight, DividerDark],
   'DropZone': [DropZoneLight, DropZoneDark],
+  'FileTrigger': [FileTriggerLight, FileTriggerDark],
+  'FocusRing': [FocusRingLight, FocusRingDark],
+  'FocusScope': [FocusScopeLight, FocusScopeDark],
   'Form': [FormsLight, FormsDark],
   'GridList': [CardViewLight, CardViewDark],
+  'Group': [GroupLight, GroupDark],
   'Icons': [IconsLight, IconsDark],
   'IllustratedMessage': [IllustratedMessageLight, IllustratedMessageDark],
   'Illustrations': [IllustrationsLight, IllustrationsDark],
@@ -217,6 +246,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'InlineAlert': [InlineAlertLight, InlineAlertDark],
   'Link': [LinkLight, LinkDark],
   'LinkButton': [LinkButtonLight, LinkButtonDark],
+  'ListBox': [CardViewLight, CardViewDark],
   'Menu': [MenuLight, MenuDark],
   'Meter': [MeterLight, MeterDark],
   'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
@@ -253,27 +283,62 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Tooltip': [TooltipLight, TooltipDark],
   'Tree': [TreeLight, TreeDark],
   'TreeView': [TreeLight, TreeDark],
+  'Virtualizer': [CardViewLight, CardViewDark],
+  'VisuallyHidden': [AccessibilityLight, AccessibilityDark],
   // Guides
   'Collections': [CollectionLight, CollectionDark],
+  'Customization': [StyleLight, StyleDark],
+  'Drag and Drop': [DragAndDropLight, DragAndDropDark],
   'Forms': [FormsLight, FormsDark],
-  'Selection': [SelectionLight, SelectionDark],
-  'MCP Server': [McpServerLight, McpServerDark],
-  'Styling': [StyleLight, StyleDark],
-  'Style Macro': [StyleMacroLight, StyleMacroDark],
-  'Getting started': [GettingStartedLight, GettingStartedDark],
   'Framework setup': [FrameworksLight, FrameworksDark],
+  'Getting started': [GettingStartedLight, GettingStartedDark],
+  'MCP Server': [McpServerLight, McpServerDark],
+  'Quality': [AccessibilityLight, AccessibilityDark],
+  'Selection': [SelectionLight, SelectionDark],
+  'Style Macro': [StyleMacroLight, StyleMacroDark],
+  'Styling': [StyleLight, StyleDark],
+  'Testing': [TestingLight, TestingDark],
+  // Hooks - interaction hooks
+  'useClipboard': [ClipboardLight, ClipboardDark],
+  'useDrag': [DragAndDropLight, DragAndDropDark],
+  'useDrop': [DragAndDropLight, DragAndDropDark],
+  'useFocus': [FocusRingLight, FocusRingDark],
+  'useFocusRing': [FocusRingLight, FocusRingDark],
+  'useFocusVisible': [FocusRingLight, FocusRingDark],
+  'useFocusWithin': [FocusRingLight, FocusRingDark],
+  'useHover': [HoverLight, HoverDark],
+  'useKeyboard': [KeyboardLight, KeyboardDark],
+  'useLongPress': [PressLight, PressDark],
+  'useMove': [MoveLight, MoveDark],
+  'usePress': [PressLight, PressDark],
+  // Hooks - utility hooks
+  'I18nProvider': [UtilityLight, UtilityDark],
+  'mergeProps': [UtilityLight, UtilityDark],
+  'PortalProvider': [UtilityLight, UtilityDark],
+  'SSRProvider': [UtilityLight, UtilityDark],
+  'useCollator': [UtilityLight, UtilityDark],
+  'useDateFormatter': [DatePickerLight, DatePickerDark],
+  'useField': [FormsLight, FormsDark],
+  'useFilter': [UtilityLight, UtilityDark],
+  'useId': [UtilityLight, UtilityDark],
+  'useIsSSR': [UtilityLight, UtilityDark],
+  'useLabel': [FormsLight, FormsDark],
+  'useLandmark': [AccessibilityLight, AccessibilityDark],
+  'useLocale': [UtilityLight, UtilityDark],
+  'useNumberFormatter': [NumberFieldLight, NumberFieldDark],
+  'useObjectRef': [UtilityLight, UtilityDark],
   // Blog posts - map to existing component illustrations
-  'Building a Button Part 1: Press Events': [ButtonLight, ButtonDark],
-  'Building a Button Part 2: Hover Interactions': [ButtonLight, ButtonDark],
-  'Building a Button Part 3: Keyboard Focus Behavior': [ButtonLight, ButtonDark],
-  'Creating an accessible autocomplete experience': [ComboBoxLight, ComboBoxDark],
-  'Taming the dragon: Accessible drag and drop': [DropZoneLight, DropZoneDark],
+  'Building a Button Part 1: Press Events': [PressLight, PressDark],
+  'Building a Button Part 2: Hover Interactions': [HoverLight, HoverDark],
+  'Building a Button Part 3: Keyboard Focus Behavior': [KeyboardLight, KeyboardDark],
+  'Creating an accessible autocomplete experience': [AutocompleteLight, AutocompleteDark],
+  'Taming the dragon: Accessible drag and drop': [DragAndDropLight, DragAndDropDark],
   'Date and Time Pickers for All': [DatePickerLight, DatePickerDark],
   'How we internationalized our number field': [NumberFieldLight, NumberFieldDark],
   'Improving Internationalization Support in Our Date and Time Components': [DatePickerLight, DatePickerDark],
-  'Accessible Color Descriptions for Improved Color Pickers': [ColorFieldLight, ColorFieldDark],
+  'Accessible Color Descriptions for Improved Color Pickers': [ColorPickerLight, ColorPickerDark],
   'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
-  'Introducing React Spectrum': [MigratingLight, MigratingDark],
+  'Introducing React Spectrum': [AdobeLight, AdobeDark],
   // Internationalized
   'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
   'Calendar': [CalendarLight, CalendarDark],
@@ -317,21 +382,13 @@ const illustrationStyles = style({
   pointerEvents: 'none'
 });
 
-const defaultIllustrationStyles = style({
-  position: 'relative',
-  maxWidth: 'calc(100% - 16px)',
-  maxHeight: 'calc(100% - 16px)',
-  userSelect: 'none',
-  pointerEvents: 'none'
-});
-
-function getDefaultIllustration(href: string) {
+function getDefaultIllustration(href: string): [string, string] {
   if (href.includes('/internationalized/')) {
-    return InternationalizedDefaultSvg;
+    return [DateRangePickerLight, DateRangePickerDark];
   } else if (href.includes('/react-aria/')) {
-    return ReactAriaDefaultSvg;
+    return [AccessibilityLight, AccessibilityDark];
   }
-  return AdobeDefaultSvg;
+  return [AdobeLight, AdobeDark];
 }
 
 const releaseText = style({
@@ -346,29 +403,7 @@ interface IllustrationProps {
 }
 
 function ComponentIllustration({name, href}: IllustrationProps) {
-  const illustration = componentIllustrations[name];
-
-  if (!illustration) {
-    // Return the default library logo for components without illustrations
-    const DefaultIllustration = getDefaultIllustration(href);
-    return (
-      <div className={illustrationContainer}>
-        {/* Background gradient */}
-        <picture>
-          <source srcSet={BackgroundLight} media="(prefers-color-scheme: light)" />
-          <source srcSet={BackgroundDark} media="(prefers-color-scheme: dark)" />
-          <img
-            src={BackgroundLight}
-            alt=""
-            aria-hidden="true"
-            className={backgroundStyles}
-            loading="lazy" />
-        </picture>
-        <DefaultIllustration aria-hidden="true" className={defaultIllustrationStyles} />
-      </div>
-    );
-  }
-
+  const illustration = componentIllustrations[name] || getDefaultIllustration(href);
   const [light, dark] = illustration;
 
   return (
