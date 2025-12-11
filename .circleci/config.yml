@@ -67,18 +67,28 @@ commands:
               echo "AWS credentials not found"
               circleci-agent step halt
             fi
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
+      - run:
+          name: Configure AWS CLI for concurrent requests
+          command: aws configure set default.s3.max_concurrent_requests 100
+      - run:
+          name: Copy immutable assets to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=31536000,immutable" \
+              --exclude "*.html" --exclude "*.rsc" --exclude "*.txt" --exclude "*.json" --exclude "*.md" --exclude "*.xml"
+      - run:
+          name: Copy HTML and text files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --exclude "*" --include "*.html" --include "*.txt" --include "*.json" --include "*.md" --include "*.xml"
+      - run:
+          name: Copy RSC files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/x-component;charset=utf-8" \
+              --exclude "*" --include "*.rsc"
 
 jobs:
   install:
