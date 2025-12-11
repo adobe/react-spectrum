@@ -142,7 +142,7 @@ interface StyleMacroPropertiesProps {
 }
 
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
-  let propertyNames = Object.keys(properties);
+  let propertyNames = Object.keys(properties).sort();
 
   return (
     <Accordion allowsMultipleExpanded>
@@ -195,6 +195,11 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                             {styleMacroValueDesc['baseColors'].body}
                           </Accordion>
                         );
+                      }
+
+                      // for fontSize and font, render typography examples
+                      if (propertyName === 'fontSize' || propertyName === 'font') {
+                        return <S2Typography />;
                       }
 
                       // for borderColor, outlineColor, fill, and stroke, render color swatches
