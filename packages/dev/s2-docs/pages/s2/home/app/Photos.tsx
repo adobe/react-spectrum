@@ -8,17 +8,25 @@ import { useAsyncList } from 'react-stately';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
+const pages = [
+  () => import('./photos-1.json'),
+  () => import('./photos-2.json'),
+  () => import('./photos-3.json'),
+  () => import('./photos-4.json')
+];
+
 export function Photos(props: any) {
   let [layout, setLayout] = useState<'waterfall' | 'grid'>('waterfall');
   let {direction} = useLocale();
   let list = useAsyncList<any, number | null>({
-    async load({signal, cursor, items}) {
+    async load({cursor, items}) {
       let page = cursor || 1;
-      let res = await fetch(
-        `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
-        {signal}
-      );
-      let nextItems = await res.json();
+      let next = pages[page - 1];
+      if (!next) {
+        return {items: []};
+      }
+
+      let nextItems: any[] = await next();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map(i => i.id));
       nextItems = nextItems.filter((i: any) => !existingKeys.has(i.id) && (i.description || i.alt_description));
