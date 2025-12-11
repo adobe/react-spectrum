@@ -495,6 +495,422 @@ const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
   },
   'gridRowEnd': {
     'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end'
+  },
+  'marginStart': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/margin-inline-start#auto'
+  },
+  'marginEnd': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/margin-inline-end#auto'
+  },
+  'marginTop': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/margin-top#auto'
+  },
+  'marginBottom': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/margin-bottom#auto'
+  },
+  'insetStart': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/inset-inline-start#auto'
+  },
+  'insetEnd': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/inset-inline-end#auto'
+  },
+  'top': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/top#auto'
+  },
+  'left': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/left#auto'
+  },
+  'bottom': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/bottom#auto'
+  },
+  'right': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/right#auto'
+  },
+  'height': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/height#auto'
+  },
+  'width': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/width#auto'
+  },
+  'minHeight': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/min-height#auto'
+  },
+  'minWidth': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/min-width#auto'
+  },
+  'maxHeight': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/max-height#none'
+  },
+  'maxWidth': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/max-width#none'
+  },
+  'flexBasis': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-basis#auto'
+  },
+  'containIntrinsicWidth': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-width#auto'
+  },
+  'containIntrinsicHeight': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-height#auto'
+  },
+  'aspectRatio': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio#auto'
+  },
+  'position': {
+    'absolute': 'https://developer.mozilla.org/en-US/docs/Web/CSS/position#absolute',
+    'fixed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/position#fixed',
+    'relative': 'https://developer.mozilla.org/en-US/docs/Web/CSS/position#relative',
+    'sticky': 'https://developer.mozilla.org/en-US/docs/Web/CSS/position#sticky',
+    'static': 'https://developer.mozilla.org/en-US/docs/Web/CSS/position#static'
+  },
+  'caretColor': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/caret-color#auto',
+    'transparent': 'https://developer.mozilla.org/en-US/docs/Web/CSS/caret-color#color_value'
+  },
+  'borderStyle': {
+    'solid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-style#solid',
+    'dashed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-style#dashed',
+    'dotted': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-style#dotted',
+    'double': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-style#double',
+    'hidden': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-style#hidden',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-style#none'
+  },
+  'outlineStyle': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-style#none',
+    'solid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-style#solid',
+    'dashed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-style#dashed',
+    'dotted': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-style#dotted',
+    'double': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-style#double',
+    'inset': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-style#inset'
+  },
+  'transform': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform'
+  },
+  'boxDecorationBreak': {
+    'slice': 'https://developer.mozilla.org/en-US/docs/Web/CSS/box-decoration-break#slice',
+    'clone': 'https://developer.mozilla.org/en-US/docs/Web/CSS/box-decoration-break#clone'
+  },
+  'hyphens': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/hyphens#none',
+    'manual': 'https://developer.mozilla.org/en-US/docs/Web/CSS/hyphens#manual',
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/hyphens#auto'
+  },
+  'lineClamp': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/line-clamp'
+  },
+  'listStyleType': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#none',
+    'disc': 'https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#disc',
+    'decimal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type#decimal'
+  },
+  'listStylePosition': {
+    'inside': 'https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-position#inside',
+    'outside': 'https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-position#outside'
+  },
+  'textTransform': {
+    'uppercase': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform#uppercase',
+    'lowercase': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform#lowercase',
+    'capitalize': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform#capitalize',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform#none'
+  },
+  'textAlign': {
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-align#start',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-align#center',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-align#end',
+    'justify': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-align#justify'
+  },
+  'verticalAlign': {
+    'baseline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#baseline',
+    'top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#top',
+    'middle': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#middle',
+    'bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#bottom',
+    'text-top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#text-top',
+    'text-bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#text-bottom',
+    'sub': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#sub',
+    'super': 'https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align#super'
+  },
+  'textDecoration': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration#none',
+    'underline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-line#underline',
+    'overline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-line#overline',
+    'line-through': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-line#line-through'
+  },
+  'textOverflow': {
+    'ellipsis': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-overflow#ellipsis',
+    'clip': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-overflow#clip'
+  },
+  'whiteSpace': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/white-space#normal',
+    'nowrap': 'https://developer.mozilla.org/en-US/docs/Web/CSS/white-space#nowrap',
+    'pre': 'https://developer.mozilla.org/en-US/docs/Web/CSS/white-space#pre',
+    'pre-line': 'https://developer.mozilla.org/en-US/docs/Web/CSS/white-space#pre-line',
+    'pre-wrap': 'https://developer.mozilla.org/en-US/docs/Web/CSS/white-space#pre-wrap',
+    'break-spaces': 'https://developer.mozilla.org/en-US/docs/Web/CSS/white-space#break-spaces'
+  },
+  'textWrap': {
+    'wrap': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap#wrap',
+    'nowrap': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap#nowrap',
+    'balance': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap#balance',
+    'pretty': 'https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap#pretty'
+  },
+  'wordBreak': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/word-break#normal',
+    'break-all': 'https://developer.mozilla.org/en-US/docs/Web/CSS/word-break#break-all',
+    'keep-all': 'https://developer.mozilla.org/en-US/docs/Web/CSS/word-break#keep-all',
+    'break-word': 'https://developer.mozilla.org/en-US/docs/Web/CSS/word-break#break-word'
+  },
+  'overflowWrap': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap#normal',
+    'anywhere': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap#anywhere',
+    'break-word': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap#break-word'
+  },
+  'display': {
+    'block': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#block',
+    'inline-block': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#inline-block',
+    'inline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#inline',
+    'flex': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#flex',
+    'inline-flex': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#inline-flex',
+    'grid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#grid',
+    'inline-grid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#inline-grid',
+    'contents': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#contents',
+    'list-item': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#list-item',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/display#none'
+  },
+  'alignContent': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#normal',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#center',
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#end',
+    'space-between': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#space-between',
+    'space-around': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#space-around',
+    'space-evenly': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#space-evenly',
+    'baseline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#baseline',
+    'stretch': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-content#stretch'
+  },
+  'alignItems': {
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items#end',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items#center',
+    'baseline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items#baseline',
+    'stretch': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items#stretch'
+  },
+  'justifyContent': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#normal',
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#end',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#center',
+    'space-between': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#space-between',
+    'space-around': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#space-around',
+    'space-evenly': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#space-evenly',
+    'stretch': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#stretch'
+  },
+  'justifyItems': {
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-items#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-items#end',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-items#center',
+    'stretch': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-items#stretch'
+  },
+  'alignSelf': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-self#auto',
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-self#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-self#end',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-self#center',
+    'stretch': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-self#stretch',
+    'baseline': 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-self#baseline'
+  },
+  'justifySelf': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self#auto',
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self#end',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self#center',
+    'stretch': 'https://developer.mozilla.org/en-US/docs/Web/CSS/justify-self#stretch'
+  },
+  'flexDirection': {
+    'row': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction#row',
+    'column': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction#column',
+    'row-reverse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction#row-reverse',
+    'column-reverse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction#column-reverse'
+  },
+  'flexWrap': {
+    'wrap': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap#wrap',
+    'wrap-reverse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap#wrap-reverse',
+    'nowrap': 'https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap#nowrap'
+  },
+  'gridAutoFlow': {
+    'row': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#row',
+    'column': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#column',
+    'dense': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#dense',
+    'row dense': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#row_dense',
+    'column dense': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow#column_dense'
+  },
+  'gridAutoRows': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows#auto',
+    'min-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows#min-content',
+    'max-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows#max-content',
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows'
+  },
+  'gridAutoColumns': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns#auto',
+    'min-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns#min-content',
+    'max-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns#max-content',
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns'
+  },
+  'gridTemplateColumns': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns#auto',
+    'min-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns#min-content',
+    'max-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns#max-content',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns#none',
+    'subgrid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns#subgrid',
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns'
+  },
+  'gridTemplateRows': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows#auto',
+    'min-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows#min-content',
+    'max-content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows#max-content',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows#none',
+    'subgrid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows#subgrid',
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows'
+  },
+  'gridTemplateAreas': {
+    'string[]': 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-areas'
+  },
+  'float': {
+    'inline-start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/float#inline-start',
+    'inline-end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/float#inline-end',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/float#right',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/float#left',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/float#none'
+  },
+  'clear': {
+    'inline-start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/clear#inline-start',
+    'inline-end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/clear#inline-end',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/clear#left',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/clear#right',
+    'both': 'https://developer.mozilla.org/en-US/docs/Web/CSS/clear#both',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/clear#none'
+  },
+  'overflowX': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-x#auto',
+    'hidden': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-x#hidden',
+    'clip': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-x#clip',
+    'visible': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-x#visible',
+    'scroll': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-x#scroll'
+  },
+  'overflowY': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-y#auto',
+    'hidden': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-y#hidden',
+    'clip': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-y#clip',
+    'visible': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-y#visible',
+    'scroll': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-y#scroll'
+  },
+  'overscrollBehaviorX': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior-x#auto',
+    'contain': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior-x#contain',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior-x#none'
+  },
+  'overscrollBehaviorY': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior-y#auto',
+    'contain': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior-y#contain',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior-y#none'
+  },
+  'boxSizing': {
+    'border-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#border-box',
+    'content-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#content-box'
+  },
+  'tableLayout': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/table-layout#auto',
+    'fixed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/table-layout#fixed'
+  },
+  'order': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/order'
+  },
+  'pointerEvents': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events#none',
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events#auto'
+  },
+  'userSelect': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/user-select#none',
+    'text': 'https://developer.mozilla.org/en-US/docs/Web/CSS/user-select#text',
+    'all': 'https://developer.mozilla.org/en-US/docs/Web/CSS/user-select#all',
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/user-select#auto'
+  },
+  'visibility': {
+    'visible': 'https://developer.mozilla.org/en-US/docs/Web/CSS/visibility#visible',
+    'hidden': 'https://developer.mozilla.org/en-US/docs/Web/CSS/visibility#hidden',
+    'collapse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/visibility#collapse'
+  },
+  'cursor': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#auto',
+    'default': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#default',
+    'pointer': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#pointer',
+    'wait': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#wait',
+    'text': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#text',
+    'move': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#move',
+    'help': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#help',
+    'not-allowed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#not-allowed',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#none'
+  },
+  'objectFit': {
+    'contain': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#contain',
+    'cover': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#cover',
+    'fill': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#fill',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#none',
+    'scale-down': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#scale-down'
+  },
+  'zIndex': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/z-index'
+  },
+  'boxShadow': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow#none'
+  },
+  'filter': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/filter#none'
+  },
+  'opacity': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/opacity'
+  },
+  'outlineOffset': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/outline-offset'
+  },
+  'backgroundSize': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-size#auto',
+    'cover': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-size#cover',
+    'contain': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-size#contain'
+  },
+  'backgroundImage': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-image'
+  },
+  'transitionDelay': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transition-delay',
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transition-delay'
+  },
+  'transitionDuration': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transition-duration',
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transition-duration'
+  },
+  'animation': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation'
+  },
+  'animationDuration': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration',
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration'
+  },
+  'animationDelay': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-delay',
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-delay'
+  },
+  'animationIterationCount': {
+    'string': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-iteration-count',
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-iteration-count'
+  },
+  'rotate': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/rotate'
+  },
+  'scaleX': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scale'
+  },
+  'scaleY': {
+    'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scale'
   }
 };
 
@@ -531,21 +947,27 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
   for (let [name, values] of Object.entries(propertiesMapping)) {
     let links: {[value: string]: {href: string, isRelative?: boolean}} = {};
 
+    // check for property specific MDN links
     if (mdnPropertyLinks[name]) {
-      let [key, value] = Object.entries(mdnPropertyLinks[name])[0];
-      links[key] = {href: value};
-      values = [key];
-    } else {
-      // see if the property has any common types that should link to MDN instead
-      for (let value of values) {
-        // make sure not to overwrite number in sizing properties and pill in other sections aka effects
-        if ((value === 'number' && sizingProperties.has(name)) || (value === 'pill' && propertyCategory !== 'dimensions')) {
-          continue;
-        }
+      for (let [key, href] of Object.entries(mdnPropertyLinks[name])) {
+        links[key] = {href};
+      }
+    }
 
-        if (mdnTypeLinks[value]) {
-          links[value] = {href: mdnTypeLinks[value]};
-        }
+    // see if the property has any common types that should link to MDN
+    for (let value of values) {
+      // skip if we already have a property specific link
+      if (links[value]) {
+        continue;
+      }
+
+      // make sure not to overwrite number in sizing properties and pill in other sections aka effects
+      if ((value === 'number' && sizingProperties.has(name)) || (value === 'pill' && propertyCategory !== 'dimensions')) {
+        continue;
+      }
+
+      if (mdnTypeLinks[value]) {
+        links[value] = {href: mdnTypeLinks[value]};
       }
     }
 
