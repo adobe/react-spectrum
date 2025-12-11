@@ -308,7 +308,7 @@ function DropTarget() {
     onDrop: onEvent
   });
   return (
-    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto', overflow: 'auto'}}>
+    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto', overflow: 'auto'}} aria-label="Drop events">
       {events.map((e, i) => <li key={i}>{e}</li>)}
     </ul>
   );

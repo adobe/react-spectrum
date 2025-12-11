@@ -115,7 +115,7 @@ function Example() {
   return (
     <div>
       {/*- begin highlight -*/}
-      <ListBox items={animals}>
+      <ListBox aria-label="Animals" items={animals}>
         {item => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
       {/*- end highlight -*/}
@@ -254,7 +254,7 @@ let people = [
   {id: 6, name: 'Jane'}
 ];
 
-<ListBox>
+<ListBox aria-label="Grouped items">
   <ListBoxSection>
     <Header>Animals</Header>
     {/*- begin highlight -*/}
