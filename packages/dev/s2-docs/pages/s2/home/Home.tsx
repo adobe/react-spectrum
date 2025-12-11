@@ -84,7 +84,7 @@ const swapWrapper = style({
 //   Total units: (6 holds × 10) + (6 transitions × 1) = 60 + 6 = 66 units
 //   Each transition = 100/66 = 1.515%
 //   Each hold = 10 × 1.515% = 15.152%
-const slideTrack = keyframes(`
+const slideTrack: string = keyframes(`
   0% {
     transform: translate3d(0, 0, 0);
   }
@@ -154,8 +154,7 @@ const swapRow = style({
   animationTimingFunction: 'linear',
   animationIterationCount: 'infinite',
   lineHeight: '[1.2]',
-  height: '[1.2em]',
-  backfaceVisibility: 'hidden'
+  height: '[1.2em]'
 });
 
 export function Home() {
