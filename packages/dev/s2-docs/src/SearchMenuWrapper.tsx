@@ -36,7 +36,7 @@ let modalStyle = style({
   width: 'full',
   // 1280px matches body
   maxWidth: '[min(1280px, 95vw)]',
-  backgroundColor: 'elevated',
+  backgroundColor: 'layer-1',
   paddingX: 16,
   paddingY: 8,
   zIndex: 10,
