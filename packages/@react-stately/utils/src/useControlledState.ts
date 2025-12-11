@@ -20,8 +20,13 @@ const useEarlyEffect: typeof React.useLayoutEffect = typeof document !== 'undefi
 export function useControlledState<T, C = T>(value: Exclude<T, undefined>, defaultValue: Exclude<T, undefined> | undefined, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void];
 export function useControlledState<T, C = T>(value: Exclude<T, undefined> | undefined, defaultValue: Exclude<T, undefined>, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void];
 export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange?: (v: C, ...args: any[]) => void): [T, (value: SetStateAction<T>, ...args: any[]) => void] {
+  // Store the value in both state and a ref. The state value will only be used when uncontrolled.
+  // The ref is used to track the most current value, which is passed to the function setState callback.
+  let [stateValue, setStateValue] = useState(value || defaultValue);
+  let valueRef = useRef(stateValue);
+
+  let isControlledRef = useRef(value !== undefined);
   let isControlled = value !== undefined;
-  let isControlledRef = useRef(isControlled);
   useEffect(() => {
     let wasControlled = isControlledRef.current;
     if (wasControlled !== isControlled && process.env.NODE_ENV !== 'production') {
@@ -30,41 +35,32 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
     isControlledRef.current = isControlled;
   }, [isControlled]);
 
-  // The state value will only be used when uncontrolled.
-  let [stateValue, setStateValue] = useState(defaultValue);
-
-  let currentValue = isControlled ? value : stateValue;
-
-  // The ref is used to track the most current value, which is passed to the function setState callback.
-  let currentValueRef = useRef(currentValue);
   // After each render, update the ref to the current value.
   // This ensures that the setState callback argument is reset.
   // Note: the effect should not have any dependencies so that controlled values always reset.
+  let currentValue = isControlled ? value : stateValue;
   useEarlyEffect(() => {
-    currentValueRef.current = currentValue;
+    valueRef.current = currentValue;
   });
 
-  const [, forceUpdate] = useReducer(() => ({}), {});
-
+  let [, forceUpdate] = useReducer(() => ({}), {});
   let setValue = useCallback((value: SetStateAction<T>, ...args: any[]) => {
     // @ts-ignore - TS doesn't know that T cannot be a function.
-    let newValue = typeof value === 'function' ? value(currentValueRef.current) : value;
-    if (!Object.is(currentValueRef.current, newValue)) {
+    let newValue = typeof value === 'function' ? value(valueRef.current) : value;
+    if (!Object.is(valueRef.current, newValue)) {
       // Update the ref so that the next setState callback has the most recent value.
-      currentValueRef.current = newValue;
+      valueRef.current = newValue;
 
-      if (!isControlled) {
-        setStateValue(newValue);
-      }
+      setStateValue(newValue);
+
+      // Always trigger a re-render, even when controlled, so that the layout effect above runs to reset the value.
+      forceUpdate();
 
       // Trigger onChange. Note that if setState is called multiple times in a single event,
       // onChange will be called for each one instead of only once.
       onChange?.(newValue, ...args);
-
-      // Always trigger a rerender, so that the early effect above runs to reset the value.
-      forceUpdate();
     }
-  }, [isControlled, onChange]);
+  }, [onChange]);
 
   return [currentValue, setValue];
 }
