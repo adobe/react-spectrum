@@ -126,6 +126,36 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
   },
   'none': {
     description: 'No value applied.'
+  },
+  'full': {
+    description: <>Resolves to <code className={codeStyle}>100%</code>.</>
+  },
+  'screen': {
+    description: <>Resolves to <code className={codeStyle}>100vh</code> for height or <code className={codeStyle}>100vw</code> for width.</>
+  },
+  'emphasized': {
+    description: 'Shadow for emphasized states.'
+  },
+  'elevated': {
+    description: 'Shadow for elevated surfaces.'
+  },
+  'dragged': {
+    description: 'Shadow for elements being dragged.'
+  },
+  'square': {
+    description: <>1:1 aspect ratio.</>
+  },
+  'video': {
+    description: <>16:9 aspect ratio.</>
+  },
+  'colors': {
+    description: 'Transition property for color related properties: color, background-color, border-color, fill, and stroke.'
+  },
+  'opacity': {
+    description: 'Transition property for opacity.'
+  },
+  'shadow': {
+    description: 'Transition property for box-shadow.'
   }
 };
 
@@ -307,18 +337,32 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                             <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
                               {values.map((value, i) => {
                                 let valueDesc = styleMacroValueDesc[value];
+
+                                // special case for 'full' for border radius property
+                                if (value === 'full' && propertyName.includes('Radius')) {
+                                  valueDesc = {
+                                    description: <>Resolves to <code className={codeStyle}>9999px</code> for fully rounded corners.</>
+                                  };
+                                }
+
                                 // special case handling for font and spacing specific value descriptions so they don't get rendered for
                                 // other properties that may include the same values (e.g. heading in Colors)
                                 let shouldShowDescription = false;
                                 if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
                                   shouldShowDescription = true;
-                                } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
+                                } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && (propertyName === 'lineHeight' || propertyName === 'fontWeight')) {
                                   shouldShowDescription = true;
                                 } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
                                   shouldShowDescription = true;
                                 } else if (value === 'baseColors' && propertyName !== 'color' && propertyName !== 'backgroundColor') {
                                   shouldShowDescription = true;
+                                } else if (valueDesc && !['ui', 'heading', 'title', 'body', 'detail', 'code', 'fontSize'].includes(value)) {
+                                  // Show description for all other values that have one
+                                  shouldShowDescription = true;
                                 }
+                                // TODO need to hide screen description in background blend mode
+                                // TODO make property -> value -> mdn mapping, mdnTypeLinks is too general, might be able to use mdnPropertyLinks
+
 
                                 let content;
                                 if (links[value]) {
