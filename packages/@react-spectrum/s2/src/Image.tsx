@@ -60,7 +60,16 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
    * A group of images to coordinate between, matching the group passed to the `<ImageCoordinator>` component.
    * If not provided, the default image group is used.
    */
-  group?: ImageGroup
+  group?: ImageGroup,
+  /**
+   * Child `<source>` elements defining alternate versions of an image for different display/device scenarios.
+   */
+  children?: ReactNode,
+  /**
+   * Associates the image with a microdata object.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/itemprop).
+   */
+  itemProp?: string
 }
 
 interface ImageContextValue extends ImageProps {
@@ -167,7 +176,9 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     referrerPolicy,
     slot,
     width,
-    height
+    height,
+    children,
+    itemProp
   } = props;
   let hidden = (props as ImageContextValue).hidden;
   
@@ -238,31 +249,45 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
   let errorState = !isSkeleton && state === 'error' && renderError?.();
   let isRevealed = state === 'revealed' && !isSkeleton;
   let isTransitioning = isRevealed && loadTime > 200;
-  return useMemo(() => hidden ? null : (
-    <div
-      ref={domRef}
-      slot={slot || undefined}
-      style={UNSAFE_style}
-      className={UNSAFE_className + mergeStyles(wrapperStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
-      {errorState}
-      {!errorState && (
-        <img
-          {...getFetchPriorityProp(fetchPriority)}
-          src={src || undefined}
-          alt={alt}
-          crossOrigin={crossOrigin}
-          decoding={decoding}
-          loading={loading}
-          referrerPolicy={referrerPolicy}
-          width={width}
-          height={height}
-          ref={imgRef}
-          onLoad={onLoad}
-          onError={onError}
-          className={imgStyles({isRevealed, isTransitioning})} />
-        )}
-    </div>
-  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, width, height, onLoad, onError, isRevealed, isTransitioning]);
+  return useMemo(() => {
+    let img = (
+      <img
+        {...getFetchPriorityProp(fetchPriority)}
+        src={src || undefined}
+        alt={alt}
+        crossOrigin={crossOrigin}
+        decoding={decoding}
+        loading={loading}
+        referrerPolicy={referrerPolicy}
+        width={width}
+        height={height}
+        ref={imgRef}
+        itemProp={itemProp}
+        onLoad={onLoad}
+        onError={onError}
+        className={imgStyles({isRevealed, isTransitioning})} />
+    );
+
+    if (children) {
+      img = (
+        <picture>
+          {children}
+          {img}
+        </picture>
+      );
+    }
+
+    return hidden ? null : (
+      <div
+        ref={domRef}
+        slot={slot || undefined}
+        style={UNSAFE_style}
+        className={UNSAFE_className + mergeStyles(wrapperStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
+        {errorState}
+        {!errorState && img}
+      </div>
+    );
+  }, [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, width, height, onLoad, onError, isRevealed, isTransitioning, children, itemProp]);
 });
 
 function getFetchPriorityProp(fetchPriority?: 'high' | 'low' | 'auto'): Record<string, string | undefined> {

@@ -1,23 +1,11 @@
 'use client-entry';
 
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
-import {getBaseUrl, getRSCUrl} from './pageUtils';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
+import {getRSCUrl, isClientLink} from './pageUtils';
 import {type ReactElement} from 'react';
 import {setNavigationPromise} from './Router';
-import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
-
-let isClientLink = (link: HTMLAnchorElement) => {
-  return (
-    link &&
-    link instanceof HTMLAnchorElement &&
-    link.href &&
-    (!link.target || link.target === '_self') &&
-    link.origin === location.origin &&
-    !link.hasAttribute('download') &&
-    link.href.startsWith(getBaseUrl((process.env.LIBRARY as any) || 'react-aria'))
-  );
-};
+import {ToastQueue} from '@react-spectrum/s2';
 
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({

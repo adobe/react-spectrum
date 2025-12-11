@@ -6,7 +6,8 @@ import vanillaDocs from 'docs:vanilla-starter/CommandPalette';
 import '../../tailwind/tailwind.css';
 
 export const tags = ['combobox', 'typeahead', 'input'];
-export const relatedPages = [{'title': 'useAutocomplete', 'url': 'https://react-spectrum.adobe.com/react-aria/useAutocomplete.html'}];
+export const version = 'rc';
+export const relatedPages = [{'title': 'useAutocomplete', 'url': 'Autocomplete/useAutocomplete.html'}];
 export const description = 'Allows users to search or filter a list of suggestions.';
 
 # Autocomplete
@@ -1080,7 +1081,6 @@ function AsyncLoadingExample() {
   return (
     <Autocomplete
       /*- begin highlight -*/
-      filter={null}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}>
       {/*- end highlight -*/}

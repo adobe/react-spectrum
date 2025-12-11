@@ -166,7 +166,11 @@ const fieldGroupStyles = style({
   transition: 'default',
   borderColor: {
     default: baseColor('gray-300'),
-    isInvalid: baseColor('negative'),
+    forcedColors: 'ButtonBorder',
+    isInvalid: {
+      default: baseColor('negative'),
+      forcedColors: 'Mark'
+    },
     isFocusWithin: {
       default: 'gray-900',
       isInvalid: 'negative-1000',
@@ -177,10 +181,17 @@ const fieldGroupStyles = style({
       forcedColors: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25',
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: 'Field'
+  },
   color: {
     default: baseColor('neutral'),
-    isDisabled: 'disabled'
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   cursor: {
     default: 'text',
@@ -202,7 +213,8 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
         }
       }}
       onTouchEnd={e => {
-        if (!(e.target as Element).closest('button,input,textarea,[role="button"]')) {
+        let target = e.target as HTMLElement;
+        if (!target.isContentEditable && !target.closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
           (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
@@ -234,7 +246,10 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
         backgroundColor: 'transparent',
         color: {
           default: 'inherit',
-          '::placeholder': 'gray-600'
+          '::placeholder': {
+            default: 'gray-600',
+            forcedColors: 'GrayText'
+          }
         },
         fontFamily: 'inherit',
         fontSize: 'inherit',
@@ -266,8 +281,14 @@ export const helpTextStyles = style({
   font: controlFont(),
   color: {
     default: 'neutral-subdued',
-    isInvalid: 'negative',
-    isDisabled: 'disabled'
+    isInvalid: {
+      default: 'negative',
+      forcedColors: 'Mark'
+    },
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   '--iconPrimary': {
     type: 'fill',
@@ -327,7 +348,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
                 type: 'fill',
                 value: {
                   default: 'negative',
-                  forcedColors: 'ButtonText'
+                  forcedColors: 'Mark'
                 }
               }
             })}),

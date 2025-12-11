@@ -68,15 +68,15 @@ commands:
               circleci-agent step halt
             fi
       - aws-s3/sync:
+          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
+          from: /tmp/dist/s2-docs/<< parameters.dir >>
+          to: << parameters.bucket >>
+      - aws-s3/sync:
           arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
           from: /tmp/dist/s2-docs/<< parameters.dir >>
           to: << parameters.bucket >>
       - aws-s3/sync:
           arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
           from: /tmp/dist/s2-docs/<< parameters.dir >>
           to: << parameters.bucket >>
 
@@ -85,7 +85,6 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-
       - run:
           name: Write npmrc
           command: |
@@ -485,21 +484,6 @@ jobs:
           paths:
             - '*/storybook-s2/'
 
-  docs:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make website
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
   docs-production:
     executor: rsp-xlarge
     steps:
@@ -524,6 +508,21 @@ jobs:
       - run:
           name: build s2 docs
           command: make s2-docs
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
+  s2-docs-stage:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs-stage
 
       - persist_to_workspace:
           root: dist
@@ -566,37 +565,6 @@ jobs:
           root: /tmp/verdaccio-workspace
           paths:
             - storage
-
-  v-docs:
-    executor: rsp-2xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - attach_workspace:
-          at: /tmp/verdaccio-workspace
-
-      - run:
-          name: build docs off verdaccio
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-
-      - run:
-          name: build docs off verdaccio retry
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-          when: on_fail
-
-      - persist_to_workspace:
-          root: verdaccio_dist
-          paths:
-            - '*/verdaccio/docs'
 
   v-rsp-cra-18:
     executor: rsp-xlarge
@@ -793,6 +761,28 @@ jobs:
           paths:
             - '*/verdaccio/publish-stats'
 
+  v-starters:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-starters.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
   deploy:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
@@ -973,13 +963,10 @@ workflows:
       - storybook-s2:
           requires:
             - install
-      - docs:
-          requires:
-            - install
       - s2-docs:
           requires:
             - install
-      - s2-docs-production:
+      - s2-docs-stage:
           requires:
             - install
           filters:
@@ -991,9 +978,6 @@ workflows:
               only: main
           requires:
             - install
-      - v-docs:
-          requires:
-            - verdaccio
       - v-rsp-cra-18:
           requires:
             - verdaccio
@@ -1024,6 +1008,9 @@ workflows:
             - v-webpack-4
             - v-nextjs
             - v-rsp-cra-18
+      - v-starters:
+          requires:
+            - verdaccio
       - deploy:
           requires:
             - lint
@@ -1038,7 +1025,6 @@ workflows:
             - test-esm
             - storybook
             - storybook-s2
-            - docs
       - deploy-s3-stage:
           name: deploy-s3-commit
           requires:
@@ -1050,13 +1036,13 @@ workflows:
           name: deploy-s3-main
           requires:
             - s2-docs
-            - s2-docs-production
+            - s2-docs-stage
+            - v-starters
           filters:
             branches:
               only: main
       - deploy-verdaccio:
           requires:
-            - v-docs
             - v-rsp-cra-18
             - v-webpack-4
             - v-nextjs

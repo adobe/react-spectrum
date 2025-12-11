@@ -18,7 +18,7 @@ export function StarterKits() {
   return (
     <section className={style({display: 'flex', gap: 16, flexWrap: 'wrap'})}>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <Card href={`../react-aria-starter.${gitHash}.zip`}>
+        <Card href={`react-aria-starter.${gitHash}.zip`} download>
           <div className={style({display: 'flex', alignItems: 'center'})}>
             <svg viewBox="0 0 1000 1000" className={preview}>
               <rect fill="#639" width="100%" height="100%" />
@@ -31,10 +31,10 @@ export function StarterKits() {
             <Download />
           </div>
         </Card>
-        <Link isStandalone variant="secondary" href="../react-aria-starter/index.html" target="_blank" UNSAFE_style={{width: 'fit-content'}}>Preview</Link>
+        <Link isStandalone variant="secondary" href="react-aria-starter/" target="_blank" UNSAFE_style={{width: 'fit-content'}}>Preview</Link>
       </div>
       <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-        <Card href={`../react-aria-tailwind-starter.${gitHash}.zip`}>
+        <Card href={`react-aria-tailwind-starter.${gitHash}.zip`} download>
           <div className={style({display: 'flex', alignItems: 'center'})}>
             <svg fill="none" viewBox="-4 -4 62 41" className={preview}>
               <g clipPath="url(#prefix__clip0)">
@@ -53,7 +53,7 @@ export function StarterKits() {
             <Download />
           </div>
         </Card>
-        <Link isStandalone variant="secondary" href="../react-aria-tailwind-starter/index.html" target="_blank" UNSAFE_style={{width: 'fit-content'}}>Preview</Link>
+        <Link isStandalone variant="secondary" href="react-aria-tailwind-starter/" target="_blank" UNSAFE_style={{width: 'fit-content'}}>Preview</Link>
       </div>
     </section>
   );

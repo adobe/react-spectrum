@@ -6,7 +6,6 @@ import {
   TreeItemContent as AriaTreeItemContent,
   Button,
   TreeItemProps as AriaTreeItemProps,
-  TreeItemContentProps as AriaTreeItemContentProps,
   TreeProps
 } from 'react-aria-components';
 import { ChevronRight } from "lucide-react";
@@ -16,7 +15,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative font-sans w-48 flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-neutral-900 dark:text-neutral-200 bg-white dark:bg-neutral-900 border-t dark:border-t-neutral-700 border-transparent first:border-t-0 -outline-offset-2 first:rounded-t-lg last:rounded-b-lg',
+  base: 'relative font-sans flex group gap-3 cursor-default select-none py-1 px-3 text-sm text-neutral-900 dark:text-neutral-200 bg-white dark:bg-neutral-900 border-t dark:border-t-neutral-700 border-transparent first:border-t-0 -outline-offset-2 first:rounded-t-lg last:rounded-b-lg',
   variants: {
     isSelected: {
       false: 'hover:bg-neutral-100 pressed:bg-neutral-100 dark:hover:bg-neutral-800 dark:pressed:bg-neutral-800',
@@ -32,7 +31,7 @@ export function Tree<T extends object>(
   { children, ...props }: TreeProps<T>
 ) {
   return (
-    <AriaTree {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg')}>
+    <AriaTree {...props} className={composeTailwindRenderProps(props.className, 'w-48 max-w-full overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg')}>
       {children}
     </AriaTree>
   );

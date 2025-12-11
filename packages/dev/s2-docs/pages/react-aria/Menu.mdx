@@ -8,7 +8,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['dropdown'];
 export const relatedPages = [
-  {title: 'useMenu', url: 'https://react-spectrum.adobe.com/react-aria/useMenu.html'},
+  {title: 'useMenu', url: 'Menu/useMenu.html'},
   {title: 'Testing Menu', url: './Menu/testing'}
 ];
 export const description = 'Displays a list of actions or options that a user can choose.';
@@ -226,7 +226,7 @@ Wrap a `<MenuItem>` with a `<SubmenuTrigger>` to create a submenu.
 
 ```tsx render hideImports
 "use client";
-import {MenuTrigger, SubmenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, SubmenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 
 <MenuTrigger>
@@ -261,7 +261,7 @@ Separators may be added between menu items or sections in order to create non-la
 
 ```tsx render hideImports
 "use client";
-import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Separator} from 'react-aria-components';
 import {Button} from 'vanilla-starter/Button';
 
@@ -289,7 +289,7 @@ Use the `href` prop on a `<MenuItem>` to create a link. See the [framework setup
 
 ```tsx render hideImports
 "use client";
-import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Button} from 'vanilla-starter/Button';
 
 <MenuTrigger>
@@ -441,7 +441,6 @@ function Example() {
 "use client";
 import {Pressable} from 'react-aria-components';
 import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
-import {Button} from 'vanilla-starter/Button';
 
 <MenuTrigger>
   {/*- begin highlight -*/}

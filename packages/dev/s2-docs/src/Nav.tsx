@@ -1,9 +1,9 @@
 'use client';
 
+import {BaseLink} from './Link';
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
-import {Link} from 'react-aria-components';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
@@ -273,7 +273,7 @@ export function SideNavLink(props) {
   let {isExternal, ...linkProps} = props;
   
   return (
-    <Link
+    <BaseLink
       {...linkProps}
       ref={linkRef}
       target={isExternal ? '_blank' : undefined}
@@ -318,11 +318,12 @@ export function SideNavLink(props) {
             className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})} />
         )}
       </>)}
-    </Link>
+    </BaseLink>
   );
 }
 
 function useCurrentSection() {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
@@ -348,7 +349,7 @@ function useCurrentSection() {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return selected;
 }

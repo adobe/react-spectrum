@@ -80,6 +80,7 @@
   padding-bottom: var(--spacing-4);
   background: var(--overlay-background);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  min-width: 0;
   max-width: 250px;
   overflow: clip;
   position: relative;

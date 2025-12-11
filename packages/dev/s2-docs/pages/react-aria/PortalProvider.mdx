@@ -38,16 +38,16 @@ elements into a single container at the root of the app or to control the order 
 ## Example
 
 The example below shows how you can use `UNSAFE_PortalProvider` to portal your Toasts to an arbitrary container. Note that
-the Toast in this example is taken directly from the [React Aria Components Toast documentation](Toast#example), please visit that page for
+the Toast in this example is taken directly from the [React Aria Components Toast documentation](Toast), please visit that page for
 a detailed explanation of its implementation.
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/MyToastRegion.tsx"]}
 'use client';
 import React from 'react';
 import {Button} from 'vanilla-starter/Button';
-import {MyToastRegion} from './MyToastRegion.tsx'
+import {MyToastRegion} from './MyToastRegion'
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
-import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
+import {UNSTABLE_ToastQueue as ToastQueue} from 'react-aria-components';
 
 // Define the type for your toast content.
 interface MyToastContent {

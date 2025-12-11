@@ -31,7 +31,7 @@ import {TimeField} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [time, setTime] = useState(new Time(11, 45));
+  let [time, setTime] = useState<Time | null>(new Time(11, 45));
   
   return (
     <>

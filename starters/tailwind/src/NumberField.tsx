@@ -15,17 +15,18 @@ export interface NumberFieldProps extends AriaNumberFieldProps {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string
 }
 
 export function NumberField(
-  { label, description, errorMessage, ...props }: NumberFieldProps
+  { label, description, errorMessage, placeholder, ...props }: NumberFieldProps
 ) {
   return (
     <AriaNumberField {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
       <Label>{label}</Label>
       <FieldGroup>
         {renderProps => (<>
-          <Input className="w-20" />
+          <Input className="w-20" placeholder={placeholder} />
           <div className={fieldBorderStyles({...renderProps, class: 'flex flex-col border-s h-full'})}>
             <StepperButton slot="increment">
               <ChevronUp aria-hidden className="w-4 h-4" />

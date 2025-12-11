@@ -9,7 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
 export const tags = ['calendar'];
-export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html'}];
+export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'RangeCalendar/useRangeCalendar.html'}];
 export const description = 'Displays one or more date grids and allows users to select a contiguous range of dates.';
 
 # RangeCalendar
@@ -161,12 +161,10 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={vanillaDocs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria-components';
 import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 import {useState} from 'react';
 
 function Example(props) {
-  let {locale} = useLocale();
   let now = today(getLocalTimeZone());
   let [range, setRange] = useState({
     start: now.add({days: 6}),

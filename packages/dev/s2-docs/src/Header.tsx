@@ -1,14 +1,12 @@
 'use client';
 
-import {Badge, pressScale, Text} from '@react-spectrum/s2';
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
-// @ts-ignore
-import BetaApp from '@react-spectrum/s2/icons/BetaApp';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-// @ts-ignore
 import {Link} from 'react-aria-components';
+// @ts-ignore
+import {pressScale} from '@react-spectrum/s2';
 import React, {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -170,10 +168,6 @@ export default function Header() {
             isSearchOpen={searchOpen}
             overlayId={searchMenuId} />
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <Badge variant="indigo" size="M" styles={style({marginEnd: 8})}>
-              <BetaApp />
-              <Text>Beta Preview</Text>
-            </Badge>
             <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
             <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>

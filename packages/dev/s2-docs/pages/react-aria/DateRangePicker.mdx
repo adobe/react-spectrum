@@ -9,7 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
-export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'https://react-spectrum.adobe.com/react-aria/useDateRangePicker.html'}];
+export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'DateRangePicker/useDateRangePicker.html'}];
 export const description = 'Combines two DateFields and a RangeCalendar popover to allow users to enter or select a date range.';
 
 # DateRangePicker
@@ -41,13 +41,13 @@ Use the `value` or `defaultValue` prop to set the selected date range, using obj
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
+import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
+import {useDateFormatter, type RangeValue} from 'react-aria';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {useState} from 'react';
 
 function Example() {
-  let [range, setRange] = useState({
+  let [range, setRange] = useState<RangeValue<CalendarDate> | null>({
     start: parseDate('2025-02-03'),
     end: parseDate('2025-02-12')
   });
@@ -60,10 +60,10 @@ function Example() {
         value={range}
         onChange={setRange} />
         {/*- end highlight -*/}
-      <p>Selected range: {formatter.formatRange(
+      <p>Selected range: {range ? formatter.formatRange(
         range.start.toDate(getLocalTimeZone()),
         range.end.toDate(getLocalTimeZone())
-      )}</p>
+      ) : '--'}</p>
     </>
   );
 }
@@ -155,7 +155,7 @@ function Example(props) {
 
 <Anatomy />
 
-```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', Dialog: 'Dialog', RangeCalendar: 'RangeCalendar'}}
+```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', RangeCalendar: 'RangeCalendar'}}
 <DateRangePicker>
   <Label />
   <Group>
@@ -166,9 +166,7 @@ function Example(props) {
   <Text slot="description" />
   <FieldError />
   <Popover>
-    <Dialog>
-      <RangeCalendar />
-    </Dialog>
+    <RangeCalendar />
   </Popover>
 </DateRangePicker>
 ```
