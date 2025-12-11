@@ -127,8 +127,7 @@ const slideTrack = keyframes(`
 const swapTrack = style({
   position: 'relative',
   display: {
-    default: 'none',
-    sm: 'flex',
+    default: 'flex',
     '@media (prefers-reduced-motion: reduce)': 'none'
   },
   flexDirection: 'column',
@@ -141,8 +140,7 @@ const swapTrack = style({
 
 const swapSizer = style({
   display: {
-    default: 'block',
-    sm: 'none',
+    default: 'none',
     '@media (prefers-reduced-motion: reduce)': 'block'
   },
   whiteSpace: 'nowrap'
@@ -522,7 +520,7 @@ function HomeH1(props) {
   return (
     <h1
       {...otherProps}
-      style={{'--width-per-em': getTitleTextWidth('Build apps with React Spectrum')} as any}
+      style={{'--width-per-em': getTitleTextWidth('React Spectrum')} as any}
       className={style({
         font: 'heading-3xl',
         // This variable is used to calculate the line height.
