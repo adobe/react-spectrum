@@ -308,7 +308,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
         className={imgStyles({isRevealed, isTransitioning})} />
     );
 
-    if (typeof srcProp === 'object') {
+    if (Array.isArray(srcProp)) {
       img = (
         <picture>
           {srcProp.map((source, i) => {
