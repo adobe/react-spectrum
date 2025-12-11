@@ -5,7 +5,7 @@ import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
-import { Divider, Link, LinkButton, Provider, Tab, TabList, TabPanel, Tabs } from "@react-spectrum/s2";
+import { Button, Divider, Link, LinkButton, Provider, Tab, TabList, TabPanel, Tabs } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
 import { Rems } from "./Rems";
 // import { PressAnimation } from "./Press";
@@ -42,6 +42,8 @@ import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
 import { getBaseUrl } from "../../../src/pageUtils";
+import SearchMenuWrapperServer from "../../../src/SearchMenuWrapperServer";
+import type {Page} from "@parcel/rsc";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -186,7 +188,7 @@ const swapSpeed = style({
   animationIterationCount: 'infinite'
 });
 
-export function Home() {
+export function Home({currentPage}: {currentPage: Page}) {
   let headingId = useId();
   return (
     <body
@@ -259,7 +261,9 @@ export function Home() {
         <p className={style({font: 'body-3xl', marginY: 0, color: 'white', textWrap: 'balance'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design.</p>
         <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 96})}>
           <LinkButton size="XL" staticColor="white" href="getting-started">Get started</LinkButton>
-          <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum">Explore components</LinkButton>
+          <SearchMenuWrapperServer currentPage={currentPage}>
+            <Button size="XL" staticColor="white" variant="secondary">Explore components</Button>
+          </SearchMenuWrapperServer>
         </div>
         <section aria-label="Example app" className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
           <ExampleApp showArrows />
@@ -504,7 +508,9 @@ const buttonStyle = style({
           <h2 className={style({font: 'heading-2xl', color: 'white'})}>Ready to get started?</h2>
           <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}})}>
             <LinkButton size="XL" staticColor="white" href="getting-started">Install and setup</LinkButton>
-            <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum">Explore components</LinkButton>
+            <SearchMenuWrapperServer currentPage={currentPage}>
+              <Button size="XL" staticColor="white">Explore components</Button>
+            </SearchMenuWrapperServer>
           </div>
         </section>
       </main>

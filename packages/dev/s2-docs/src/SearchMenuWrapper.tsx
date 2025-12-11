@@ -1,7 +1,6 @@
 'use client';
 
-import '../tailwind/home.global.css';
-import {Button, DialogTrigger, Modal, ModalOverlay} from 'react-aria-components';
+import {Button, ButtonContext, ButtonProps, DialogTrigger, Modal, ModalOverlay} from 'react-aria-components';
 import {flushSync} from 'react-dom';
 import {preloadSearchMenu} from './SearchMenuTrigger';
 import React, {lazy, ReactNode, useState} from 'react';
@@ -86,8 +85,10 @@ export default function SearchMenuWrapper({children}: {children: ReactNode}) {
   return (
     <>
       <div className={style({display: {default: 'none', lg: 'flex'}})}>
-        <DialogTrigger isOpen={searchOpen} onOpenChange={() => {openSearchMenu();}} >
-          <Button onHoverStart={() => preloadSearchMenu()} className="bg-transparent border-0 p-0 group font-[inherit] outline-0">{children}</Button>
+        <DialogTrigger isOpen={searchOpen} onOpenChange={() => {openSearchMenu();}}>
+          <ButtonContext value={{onHoverStart: () => preloadSearchMenu()}}>
+            {children}
+          </ButtonContext>
           <ModalOverlay
             style={{
               zIndex: 21,
@@ -108,7 +109,7 @@ export default function SearchMenuWrapper({children}: {children: ReactNode}) {
       </div>
       <div className={style({display: {default: 'flex', lg: 'none'}})}>
         <DialogTrigger>
-          <Button className="bg-transparent border-0 p-0 group font-[inherit] outline-0">{children}</Button>
+          {children}
           <S2Modal size="fullscreenTakeover">
             <MobileSearchMenu initialTag="components" />
           </S2Modal>
@@ -116,4 +117,8 @@ export default function SearchMenuWrapper({children}: {children: ReactNode}) {
       </div>
     </>
   );
+}
+
+export function SearchMenuButton(props: ButtonProps) {
+  return <Button {...props} />;
 }
