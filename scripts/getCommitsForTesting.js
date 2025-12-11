@@ -2,6 +2,14 @@ const Octokit = require('@octokit/rest');
 const fs = require('fs');
 let {parseArgs} = require('util');
 
+/**
+ * Instructions:
+ * 
+ * 1. Update Octokit to use your token
+ * 2. Run the following script: node scripts/getCommitsForTesting.js 2025-10-07 2025-10-18
+ * 3. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar -> split text to columns -> separator: comma
+ */
+
 const octokit = new Octokit();
 
 let options = {
@@ -38,21 +46,25 @@ async function writeTestingCSV() {
       let info = await getPR(num);
 
       // Get testing instructions if it exists
-      let content = info.data.body;
-      const match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
-      let testInstructions = '';
-      if (match) {
-        testInstructions = match[1];
-        testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
-        testInstructions = testInstructions.trim();
-        testInstructions = escapeCSV(testInstructions);
-      }
+      // let content = info.data.body;
+      // let match = undefined;
+      // if (content) {
+      //   match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
+      // }
+      // let testInstructions = '';
+      // if (match) {
+      //   testInstructions = match[1];
+      //   testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
+      //   testInstructions = testInstructions.trim();
+      //   testInstructions = escapeCSV(testInstructions);
+      // }
 
-      if (testInstructions.length > 350) {
-        row.push('See PR for testing instructions');
-      } else {
-        row.push(testInstructions);
-      }
+      // if (testInstructions.length > 350) {
+      //   row.push('See PR for testing instructions');
+      // } else {
+      //   row.push(testInstructions);
+      // }
+      row.push(',');
       row.push(info.data.html_url);
 
       if ((/\bs2\b/gi).test(title)) {
