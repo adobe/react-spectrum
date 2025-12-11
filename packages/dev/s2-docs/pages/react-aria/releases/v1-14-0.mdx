@@ -1,0 +1,81 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'December 16, 2025';
+export const title = 'v1.14.0';
+export const description = "";
+export const isSubpage = true;
+
+# v1.14.0
+
+## Enhancements
+
+* SearchField
+  * Add `isReadOnly` and `isRequired` to render props - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9025)
+* Tooltip
+  * Add `closeOnPress` prop on Tooltip - [@komkanit](https://github.com/komkanit) - [PR](https://github.com/adobe/react-spectrum/pull/9027)
+* Miscellaneous
+  * Support `setState` callback in `useControlledState` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9041)
+  * Support animated transitions between tab panels - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9077)
+
+## Fixes
+
+* ComboBox
+  * Fix ComboBox VoiceOver announcement not respecting `aria-label` of ListBoxItem - [@simonselg](https://github.com/simonselg) - [PR](https://github.com/adobe/react-spectrum/pull/8908)
+* Date and Time
+  * Enhance error handling for absolute date and datetime strings - [@komkanit](https://github.com/komkanit) - [PR](https://github.com/adobe/react-spectrum/pull/8987)
+* Disclosure
+  * Prevent incorrectly showing Disclosure content when `isDisabled` is toggled - [@Scotty0448](https://github.com/Scotty0448) - [PR](https://github.com/adobe/react-spectrum/pull/9045)
+* GridList
+  * Export `GridListSectionProps` - [@iagodahlem](https://github.com/iagodahlem) - [PR](https://github.com/adobe/react-spectrum/pull/8993)
+* Link
+  * Fix LinkProps type - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9113)
+* Listbox
+  * Fix Listbox drag and drop when ListBox row has row actions - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9150)
+  * Add focus events to ListBoxItem - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9271)
+* Menu
+  * Ensure Input `autoFocus` works when opening Modal from MenuItem via keyboard - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8881)
+* NumberField
+  * Prevent NumberField from incrementing or decrementing if the user is scrolling on mobile - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8474), [PR](https://github.com/adobe/react-spectrum/pull/9305)
+* Overlays
+  * Fix overlay positioning and flipping when boundary container is set - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8848)
+* Select
+  * Support `allowsEmptyCollection` in Select component - [@devgru](https://github.com/devgru) - [PR](https://github.com/adobe/react-spectrum/pull/8984)
+* Table
+  * Fix incorrect JSDOC default for Table's `disabledBehavior` - [@abeljohn0](https://github.com/abeljohn0) - [PR](https://github.com/adobe/react-spectrum/pull/9042)
+  * Fix crash in React Aria Table drag and drop when keyboard navigating - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8645)
+* TextArea
+  * Remove obsolete TextArea validation workaround - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9019)
+* Miscellaneous
+  * Fix duplicate capture events in React Aria components - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/8917)
+  * Add root to `scrollParents` - [@valsid](https://github.com/valsid) - [PR](https://github.com/adobe/react-spectrum/pull/8981)
+  * Properly handle 0 as row ID - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9087)
+  * Fix `createLeafComponent` type - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9133)
+  * Prevent browsers from throwing "signal is aborted without reason" when aborting load - [@huozhi](https://github.com/huozhi) - [PR](https://github.com/adobe/react-spectrum/pull/9156)
+  * Refactor MCP servers into separate packages  - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9061)
+  * Fix DragPreview in Safari - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9200)
+  * Export `useUNSAFE_PortalContext` from react-aria - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8978)
+  * Updates for React compiler - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9012), [PR](https://github.com/adobe/react-spectrum/pull/9054)
+  
+## Under Construction
+
+* Autocomplete
+  * Fix links not opening in new tab on meta key modifier - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/8997)
+* Test Utils
+  * Add CheckboxGroup/Dialog/RadioGroup test utils - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/9039)
+
+## Released packages
