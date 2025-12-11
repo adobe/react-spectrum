@@ -3,7 +3,7 @@ import {Table, TableHeader, Column, TableBody, Row, Cell} from 'vanilla-starter/
 import {DragAndDropHooks} from 'react-aria-components';
 
 export interface Pokemon {
-  id?: number,
+  id: number,
   name: string,
   type: string,
   level?: number
