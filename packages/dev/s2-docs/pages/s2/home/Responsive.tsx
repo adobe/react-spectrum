@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { Resizable } from "./DarkMode";
 import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { ExampleApp } from "./ExampleApp";
@@ -101,7 +101,7 @@ function Tick({name, pos}: {name: string, pos: number}) {
 }
 
 function MiniTicks() {
-  let ticks = [];
+  let ticks: React.ReactElement[] = [];
   for (let i = 0; i < 1536; i += 16) {
     ticks.push(
       <div
@@ -121,5 +121,5 @@ function MiniTicks() {
     );
   }
 
-  return ticks;
+  return <>{ticks}</>;
 }

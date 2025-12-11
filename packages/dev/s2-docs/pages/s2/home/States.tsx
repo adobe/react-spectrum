@@ -1,9 +1,8 @@
 'use client';
-import { Checkbox, Divider, Picker, PickerItem, pressScale } from "@react-spectrum/s2";
+import { Checkbox, Divider, Picker, PickerItem } from "@react-spectrum/s2";
 import { focusRing, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { useRef, useState } from "react";
-import { useFocusVisible } from "react-aria";
-import { Button, ToggleButton } from "react-aria-components";
+import { Button } from "react-aria-components";
 
 export function States() {
   let ref = useRef(null);

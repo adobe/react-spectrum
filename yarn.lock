@@ -7479,6 +7479,7 @@ __metadata:
     "@react-spectrum/utils": "npm:^3.12.6"
     "@react-types/shared": "npm:^3.30.0"
     "@react-types/textfield": "npm:^3.12.3"
+    axe-playwright: "npm:^2.2.2"
     emojibase-data: "npm:^16.0.3"
     fast-glob: "npm:^3.3.3"
     globals-docs: "npm:^2.4.1"
@@ -7486,6 +7487,7 @@ __metadata:
     json5: "npm:^2.2.3"
     lz-string: "npm:^1.5.0"
     markdown-to-jsx: "npm:^6.11.0"
+    playwright: "npm:^1.57.0"
     react: "npm:^19"
     react-aria: "npm:^3.40.0"
     react-aria-components: "npm:^1.7.1"
@@ -10554,6 +10556,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/junit-report-builder@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@types/junit-report-builder@npm:3.0.2"
+  checksum: 10c0/3848c5247a57597695c86ab7a80cf64ba0bfcbc39e067e9e2e051eea80608a95261de065298aaaaee795b137b076f5ab3acb4e3ba003ee637a9dfd9715f86456
+  languageName: node
+  linkType: hard
+
 "@types/keyv@npm:^3.1.1":
   version: 3.1.4
   resolution: "@types/keyv@npm:3.1.4"
@@ -12117,6 +12126,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axe-core@npm:^4.10.1":
+  version: 4.11.0
+  resolution: "axe-core@npm:4.11.0"
+  checksum: 10c0/7d7020a568a824c303711858c2fcfe56d001d27e46c0c2ff75dc31b436cfddfd4857a301e70536cc9e64829d25338f7fb782102d23497ebdc66801e9900fc895
+  languageName: node
+  linkType: hard
+
+"axe-html-reporter@npm:2.2.11":
+  version: 2.2.11
+  resolution: "axe-html-reporter@npm:2.2.11"
+  dependencies:
+    mustache: "npm:^4.0.1"
+  peerDependencies:
+    axe-core: ">=3"
+  checksum: 10c0/7f56c06e28aea591762c10f151bd48efbf7cff6a4a783a8074e779d283366a745085be64de72e6f9208006bab8dedc83681c8a9a691c9904886244d579375acd
+  languageName: node
+  linkType: hard
+
 "axe-html-reporter@npm:2.2.3":
   version: 2.2.3
   resolution: "axe-html-reporter@npm:2.2.3"
@@ -12139,6 +12166,21 @@ __metadata:
   peerDependencies:
     playwright: ">1.0.0"
   checksum: 10c0/8b94702e8848c8e794f4a7464006289e3f4be2031fb784cbd59e6724bca49bcc00502a4d564921467c04e0c34279b9ba40f3422d6ad893657b909d4624daa763
+  languageName: node
+  linkType: hard
+
+"axe-playwright@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "axe-playwright@npm:2.2.2"
+  dependencies:
+    "@types/junit-report-builder": "npm:^3.0.2"
+    axe-core: "npm:^4.10.1"
+    axe-html-reporter: "npm:2.2.11"
+    junit-report-builder: "npm:^5.1.1"
+    picocolors: "npm:^1.1.1"
+  peerDependencies:
+    playwright: ">1.0.0"
+  checksum: 10c0/d035ef497ccce07086052fcfb2c633d1ca26e0593a90897b84d92e3d9c4696aa00631ecd8d85c6fdff6372b5aab48314075c97ab7e0bfc59314159d4db1e0ccc
   languageName: node
   linkType: hard
 
@@ -20247,6 +20289,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"junit-report-builder@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "junit-report-builder@npm:5.1.1"
+  dependencies:
+    lodash: "npm:^4.17.21"
+    make-dir: "npm:^3.1.0"
+    xmlbuilder: "npm:^15.1.1"
+  checksum: 10c0/28a7c3d98719d5e4f213ad58ad2a068bfdb41ad8fa05c80aa74fcc6e215abb9c582a897a8fa0a59cb2a7fe2f32cf3f1c469c9d9f27386ab5d9c48362e365d851
+  languageName: node
+  linkType: hard
+
 "jwa@npm:^1.4.1":
   version: 1.4.1
   resolution: "jwa@npm:1.4.1"
@@ -20980,7 +21033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2":
+"make-dir@npm:^3.0.0, make-dir@npm:^3.0.2, make-dir@npm:^3.1.0":
   version: 3.1.0
   resolution: "make-dir@npm:3.1.0"
   dependencies:
@@ -23893,6 +23946,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"picocolors@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "picocolors@npm:1.1.1"
+  checksum: 10c0/e2e3e8170ab9d7c7421969adaa7e1b31434f789afb9b3f115f6b96d91945041ac3ceb02e9ec6fe6510ff036bcc0bf91e69a1772edc0b707e12b19c0f2d6bcf58
+  languageName: node
+  linkType: hard
+
 "picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1":
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
@@ -24032,7 +24092,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.14.0, playwright@npm:^1.45.3":
+"playwright-core@npm:1.57.0":
+  version: 1.57.0
+  resolution: "playwright-core@npm:1.57.0"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/798e35d83bf48419a8c73de20bb94d68be5dde68de23f95d80a0ebe401e3b83e29e3e84aea7894d67fa6c79d2d3d40cc5bcde3e166f657ce50987aaa2421b6a9
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.14.0":
   version: 1.45.3
   resolution: "playwright@npm:1.45.3"
   dependencies:
@@ -24044,6 +24113,21 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10c0/3516ca49deb589171ac6525c0367f2ff948514d791d197f3cc0a135154c2df08a4d7cd11a810e187f35ae9ca490b37ca3a92fb3eb51560f03aefcaca0613efdb
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.45.3, playwright@npm:^1.57.0":
+  version: 1.57.0
+  resolution: "playwright@npm:1.57.0"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.57.0"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10c0/ab03c99a67b835bdea9059f516ad3b6e42c21025f9adaa161a4ef6bc7ca716dcba476d287140bb240d06126eb23f889a8933b8f5f1f1a56b80659d92d1358899
   languageName: node
   linkType: hard
 
@@ -29550,6 +29634,13 @@ __metadata:
   version: 1.0.1
   resolution: "xml@npm:1.0.1"
   checksum: 10c0/04bcc9b8b5e7b49392072fbd9c6b0f0958bd8e8f8606fee460318e43991349a68cbc5384038d179ff15aef7d222285f69ca0f067f53d071084eb14c7fdb30411
+  languageName: node
+  linkType: hard
+
+"xmlbuilder@npm:^15.1.1":
+  version: 15.1.1
+  resolution: "xmlbuilder@npm:15.1.1"
+  checksum: 10c0/665266a8916498ff8d82b3d46d3993913477a254b98149ff7cff060d9b7cc0db7cf5a3dae99aed92355254a808c0e2e3ec74ad1b04aa1061bdb8dfbea26c18b8
   languageName: node
   linkType: hard
 

@@ -7,6 +7,11 @@ import {type ReactElement} from 'react';
 import {setNavigationPromise} from './Router';
 import {ToastQueue} from '@react-spectrum/s2';
 
+if ('scrollRestoration' in history) {
+  // Disable browser's automatic scroll restoration since we handle it manually
+  history.scrollRestoration = 'manual';
+}
+
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({
   // Intercept HMR window reloads, and do it with RSC instead.
@@ -19,15 +24,55 @@ let updateRoot = hydrate({
 let currentNavigationId = 0;
 let currentAbortController: AbortController | null = null;
 
+interface HistoryState {
+  scrollTop?: number,
+  windowScrollTop?: number
+}
+
+function getScrollContainer(): HTMLElement | null {
+  return document.querySelector('main');
+}
+
+function saveScrollPosition() {
+  let scrollContainer = getScrollContainer();
+  let scrollTop = scrollContainer?.scrollTop ?? 0;
+  let windowScrollTop = window.scrollY;
+  let state: HistoryState = {
+    ...(history.state as HistoryState | null),
+    scrollTop,
+    windowScrollTop
+  };
+  history.replaceState(state, '', location.href);
+}
+
+function restoreScrollPosition(state: HistoryState | null) {
+  if (state?.scrollTop != null || state?.windowScrollTop != null) {
+    requestAnimationFrame(() => {
+      let scrollContainer = getScrollContainer();
+      if (scrollContainer && state.scrollTop != null) {
+        scrollContainer.scrollTop = state.scrollTop;
+      }
+      if (state.windowScrollTop != null) {
+        window.scrollTo(0, state.windowScrollTop);
+      }
+    });
+  }
+}
+
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
-async function navigate(pathname: string, push = false) {
+async function navigate(pathname: string, push = false, popstateState: HistoryState | null = null) {
   let url = new URL(pathname, location.href);
   let basePath = url.pathname;
   let pathAnchor = url.hash.slice(1);
   let currentPath = location.pathname;
   let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
+  
+  // Save scroll position to current history entry before navigating away
+  if (push) {
+    saveScrollPosition();
+  }
   
   if (isSamePageAnchor) {
     if (push) {
@@ -86,10 +131,19 @@ async function navigate(pathname: string, push = false) {
             push = false;
           }
 
-          // Reset scroll if navigating to a different page without an anchor
-          if (currentPath !== newBasePath && !newPathAnchor) {
+          // Handle scroll position
+          if (popstateState) {
+            // Restore scroll position from history state (back/forward navigation)
+            restoreScrollPosition(popstateState);
+          } else if (currentPath !== newBasePath && !newPathAnchor) {
+            // Reset scroll for forward navigation to a different page without an anchor
+            let scrollContainer = getScrollContainer();
+            if (scrollContainer) {
+              scrollContainer.scrollTop = 0;
+            }
             window.scrollTo(0, 0);
           } else if (newPathAnchor) {
+            // Scroll to anchor
             let element = document.getElementById(newPathAnchor);
             if (element) {
               element.scrollIntoView();
@@ -244,10 +298,21 @@ document.addEventListener('click', e => {
   }
 });
 
-// When the user clicks the back button, navigate with RSC.
-window.addEventListener('popstate', () => {
-  navigate(location.pathname + location.search + location.hash);
+// When the user clicks the back/forward button, navigate with RSC.
+window.addEventListener('popstate', (e) => {
+  navigate(location.pathname + location.search + location.hash, false, e.state as HistoryState | null);
 });
+
+// Save scroll position to history state when scrolling stops.
+let scrollSaveTimeout: ReturnType<typeof setTimeout> | null = null;
+function onScroll() {
+  if (scrollSaveTimeout) {
+    clearTimeout(scrollSaveTimeout);
+  }
+  scrollSaveTimeout = setTimeout(saveScrollPosition, 150);
+}
+
+window.addEventListener('scroll', onScroll, {passive: true, capture: true});
 
 function scrollToCurrentHash() {
   if (!location.hash || location.hash === '#') {
@@ -276,7 +341,5 @@ function scrollToCurrentHash() {
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   scrollToCurrentHash();
 } else {
-  window.addEventListener('DOMContentLoaded', () => {
-    scrollToCurrentHash();
-  }, {once: true});
+  window.addEventListener('DOMContentLoaded', scrollToCurrentHash, {once: true});
 }

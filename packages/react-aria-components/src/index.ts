@@ -155,5 +155,5 @@ export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollection
 export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFieldState, ColorFormat, ColorPickerState, ColorSliderState, ColorSpace, ColorWheelState, ComboBoxState, DateFieldState, DatePickerState, DateRangePickerState, DisclosureState, DisclosureGroupState, Key, ListState, NumberFieldState, OverlayTriggerState, QueuedToast, RadioGroupState, RangeCalendarState, RootMenuTriggerState, SearchFieldState, Selection, SelectState, SliderState, SortDescriptor, SortDirection, SelectionMode, TableState, TabListState, TimeFieldState, ToastOptions, ToastState, ToggleGroupState, ToggleState, TooltipTriggerState, TreeState, ListData, TreeData, AsyncListData} from 'react-stately';
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
-export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {RangeValue, ValidationResult, RouterConfig} from '@react-types/shared';
 export type {SelectableCollectionContextValue} from './RSPContexts';

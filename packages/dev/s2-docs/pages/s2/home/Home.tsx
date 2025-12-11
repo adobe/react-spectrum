@@ -1,11 +1,14 @@
 import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
+// @ts-ignore
 import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
+// @ts-ignore
 import { Code } from "../../../src/Code";
+// @ts-ignore
 import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
-import { Button, Divider, Link, LinkButton, Provider, Tab, TabList, TabPanel, Tabs } from "@react-spectrum/s2";
+import { Button, Divider, Link, LinkButton, Provider } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
 import { Rems } from "./Rems";
 // import { PressAnimation } from "./Press";
@@ -33,6 +36,7 @@ import { Typography } from "./Typography";
 import { States } from "./States";
 import { useId } from "react";
 import { Responsive } from "./Responsive";
+// @ts-ignore
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 import { ReduceMotion } from "./ReduceMotion";
 import { Colors } from "./Colors";
@@ -40,7 +44,9 @@ import '../../../src/footer.css';
 // @ts-ignore
 import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
+// @ts-ignore
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
+// @ts-ignore
 import { getBaseUrl } from "../../../src/pageUtils";
 import SearchMenuWrapperServer from "../../../src/SearchMenuWrapperServer";
 import type {Page} from "@parcel/rsc";
@@ -69,13 +75,6 @@ const swapWrapper = style({
   whiteSpace: 'nowrap',
   lineHeight: '[1em]',
   marginEnd: 12
-});
-
-const swapItem = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0
 });
 
 // Track that scrolls vertically through all the items.
@@ -144,50 +143,6 @@ const swapRow = style({
   lineHeight: '[1em]'
 });
 
-const slidePolish = keyframes(`
-  0%, 45% {
-    transform: translateY(0%);
-  }
-  50% {
-    transform: translateY(100%);
-  }
-  50.01%, 95% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-`);
-
-const slideSpeed = keyframes(`
-  0%, 45% {
-    transform: translateY(-100%);
-  }
-  50% {
-    transform: translateY(0%);
-  }
-  95% {
-    transform: translateY(0%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-`);
-
-const swapPolish = style({
-  animation: slidePolish,
-  animationDuration: 5000,
-  animationTimingFunction: 'in-out',
-  animationIterationCount: 'infinite'
-});
-
-const swapSpeed = style({
-  animation: slideSpeed,
-  animationDuration: 5000,
-  animationTimingFunction: 'in-out',
-  animationIterationCount: 'infinite'
-});
-
 export function Home({currentPage}: {currentPage: Page}) {
   let headingId = useId();
   return (
@@ -247,6 +202,7 @@ export function Home({currentPage}: {currentPage: Page}) {
         <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>
           <span className={swapWrapper} >Build apps </span>
           <span className={swapWrapper}>
+            {/* @ts-ignore */}
             <span className={swapTrack}>
               <span className={swapRow}>with polish</span>
               <span className={swapRow}>with speed</span>
@@ -434,7 +390,7 @@ export function Home({currentPage}: {currentPage: Page}) {
               <h4 className={style({font: 'title', marginTop: 0})}>Button.tsx</h4>
               <Pre><Code lang="tsx">{`import {style, focusRing} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {hstack} from './style-utils' with {type: 'macro'};
-            
+
 const buttonStyle = style({
   ...focusRing(),
   ...hstack(4)
@@ -487,21 +443,21 @@ const buttonStyle = style({
             description="Comprehensive markdown docs, llms.txt, and an agent-friendly MCP server."
             illustration={<Sparkles />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-              
+
           </Feature>
           <Feature
             title="SSR"
             description="Server-side rendering and React Server Components support, maximizing Core Web Vitals."
             illustration={<Server />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-              
+
           </Feature>
           <Feature
             title="Small bundle"
             description="Aggressive tree-shaking and atomic CSS result in small bundle sizes and fast runtime performance."
             illustration={<SpeedFast />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
-              
+
           </Feature>
         </Section>
         <section className={style({paddingY: 64})}>

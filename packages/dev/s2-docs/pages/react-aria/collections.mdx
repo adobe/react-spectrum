@@ -115,7 +115,7 @@ function Example() {
   return (
     <div>
       {/*- begin highlight -*/}
-      <ListBox items={animals}>
+      <ListBox aria-label="Animals" items={animals}>
         {item => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
       {/*- end highlight -*/}
@@ -176,15 +176,17 @@ const items = [
   {id: 4, name: 'Pikachu', type: 'Electric'}
 ];
 
+type Orientation = 'vertical' | 'horizontal';
+
 export default function Example() {
-  let [layout, setLayout] = useState('vertical');
+  let [layout, setLayout] = useState<Orientation>('vertical');
 
   return (
     <div>
       <ToggleButtonGroup
         aria-label="Layout"
         selectedKeys={[layout]}
-        onSelectionChange={keys => setLayout([...keys][0])}
+        onSelectionChange={keys => setLayout([...keys][0] as Orientation)}
         disallowEmptySelection
         style={{marginBottom: 8}}>
         <ToggleButton id="vertical">Vertical</ToggleButton>
@@ -254,7 +256,7 @@ let people = [
   {id: 6, name: 'Jane'}
 ];
 
-<ListBox>
+<ListBox aria-label="Grouped items">
   <ListBoxSection>
     <Header>Animals</Header>
     {/*- begin highlight -*/}

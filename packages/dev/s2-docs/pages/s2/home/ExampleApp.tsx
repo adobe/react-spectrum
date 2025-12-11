@@ -2,6 +2,7 @@
 import HelpCircle from '@react-spectrum/s2/icons/HelpCircle';
 import Apps from '@react-spectrum/s2/icons/AppsAll';
 import Search from '@react-spectrum/s2/icons/Search';
+// @ts-ignore
 import { AdobeLogo } from '../../../src/icons/AdobeLogo';
 import { style } from "@react-spectrum/s2/style" with { type: 'macro' };
 import { Card, CardPreview, Image, Content, Text, ActionButton, SearchField, ActionButtonGroup, Provider } from '@react-spectrum/s2';
@@ -21,7 +22,6 @@ import { Ideas, IdeasArrows } from './app/Ideas';
 const XS = `@container (min-width: ${480 / 16}rem)`;
 const SM = `@container (min-width: ${(640 / 16)}rem)`;
 const MD = `@container (min-width: ${(768 / 16)}rem)`;
-const LG = `@container (width > ${(1024 / 16)}rem)`;
 
 export function ExampleApp({showArrows}: {showArrows?: boolean} = {}) {
   let [page, setPage] = useState<'photos' | 'home' | 'ideas'>('photos');

@@ -2,7 +2,7 @@
 import ViewGridFluid from '@react-spectrum/s2/icons/ViewGridFluid';
 import ViewGrid from '@react-spectrum/s2/icons/ViewGrid';
 import { style } from "@react-spectrum/s2/style" with { type: 'macro' };
-import { Card, CardPreview, CardView, Collection, SkeletonCollection, Image, Text, ActionButton, ActionBar, SegmentedControl, SegmentedControlItem } from '@react-spectrum/s2';
+import { Card, CardPreview, CardView, Collection, SkeletonCollection, Image, SegmentedControl, SegmentedControlItem } from '@react-spectrum/s2';
 import { useLocale } from 'react-aria';
 import { useAsyncList } from 'react-stately';
 import { useRef, useState } from 'react';
