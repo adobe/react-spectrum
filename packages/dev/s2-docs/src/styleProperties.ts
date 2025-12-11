@@ -44,8 +44,8 @@ const negativeSpacingProperties = new Set([
 ]);
 
 // Spacing values used across multiple properties
-const baseSpacingValues = ['0', '2', '4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '56', '64', '80', '96'];
-const negativeBaseSpacingValues = ['-2', '-4', '-8', '-12', '-16', '-20', '-24', '-28', '-32', '-36', '-40', '-44', '-48', '-56', '-64', '-80', '-96'];
+const baseSpacingValues = [0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 56, 64, 80, 96];
+const negativeBaseSpacingValues = [-2, -4, -8, -12, -16, -20, -24, -28, -32, -36, -40, -44, -48, -56, -64, -80, -96];
 const relativeSpacingValues = ['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'];
 const heightBaseValues = ['auto', 'full', 'min', 'max', 'fit', 'screen'];
 const fontSize = [
@@ -86,7 +86,7 @@ const colorPropertyValues: {[key: string]: string[]} = {
   stroke: ['none', 'currentColor', 'baseColors']
 };
 
-const dimensionsPropertyValues: {[key: string]: string[]} = {
+const dimensionsPropertyValues: {[key: string]: (string | number)[]} = {
   borderSpacing: [],
   flexBasis: ['auto', 'full'],
   rowGap: relativeSpacingValues,
@@ -99,12 +99,12 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   maxHeight: [...heightBaseValues, 'none'],
   minWidth: heightBaseValues,
   maxWidth: [...heightBaseValues, 'none'],
-  borderStartWidth: ['0', '1', '2', '4'],
-  borderEndWidth: ['0', '1', '2', '4'],
-  borderTopWidth: ['0', '1', '2', '4'],
-  borderBottomWidth: ['0', '1', '2', '4'],
+  borderStartWidth: [0, 1, 2, 4],
+  borderEndWidth: [0, 1, 2, 4],
+  borderTopWidth: [0, 1, 2, 4],
+  borderBottomWidth: [0, 1, 2, 4],
   borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'],
-  strokeWidth: ['0', '1', '2'],
+  strokeWidth: [0, 1, 2],
   marginStart: ['auto'],
   marginEnd: ['auto'],
   marginTop: ['auto'],
@@ -138,7 +138,7 @@ const dimensionsPropertyValues: {[key: string]: string[]} = {
   aspectRatio: ['auto', 'square', 'video', 'number / number']
 };
 
-const textPropertyValues: {[key: string]: string[]} = {
+const textPropertyValues: {[key: string]: (string | number)[]} = {
   fontFamily: ['sans', 'serif', 'code'],
   fontSize: fontSize,
   fontWeight: ['normal', 'medium', 'bold', 'extra-bold', 'black', 'heading', 'title', 'detail'],
@@ -159,7 +159,7 @@ const textPropertyValues: {[key: string]: string[]} = {
   boxDecorationBreak: ['slice', 'clone']
 };
 
-const effectsPropertyValues: {[key: string]: string[]} = {
+const effectsPropertyValues: {[key: string]: (string | number)[]} = {
   boxShadow: ['emphasized', 'elevated', 'dragged', 'none'],
   filter: ['emphasized', 'elevated', 'dragged', 'none'],
   borderTopStartRadius: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
@@ -181,7 +181,7 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   opacity: ['number'],
   outlineStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'inset'],
   outlineOffset: ['number'],
-  outlineWidth: ['0', '1', '2', '4'],
+  outlineWidth: [0, 1, 2, 4],
   transition: ['default', 'colors', 'opacity', 'shadow', 'transform', 'all', 'none'],
   transitionDelay: ['string', 'number'],
   transitionDuration: ['string', 'number'],
@@ -196,7 +196,7 @@ const effectsPropertyValues: {[key: string]: string[]} = {
   animationPlayState: ['paused', 'running']
 };
 
-const layoutPropertyValues: {[key: string]: string[]} = {
+const layoutPropertyValues: {[key: string]: (string | number)[]} = {
   display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'],
   alignContent: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'baseline', 'stretch'],
   alignItems: ['start', 'end', 'center', 'baseline', 'stretch'],
@@ -237,7 +237,7 @@ const layoutPropertyValues: {[key: string]: string[]} = {
   order: ['number']
 };
 
-const miscPropertyValues: {[key: string]: string[]} = {
+const miscPropertyValues: {[key: string]: (string | number)[]} = {
   pointerEvents: ['none', 'auto'],
   touchAction: ['auto', 'none', 'pan-x', 'pan-y', 'manipulation', 'pinch-zoom'],
   userSelect: ['none', 'text', 'all', 'auto'],
@@ -259,7 +259,7 @@ const miscPropertyValues: {[key: string]: string[]} = {
   caretColor: ['auto', 'transparent']
 };
 
-const shorthandMapping: {[key: string]: {values: string[], mapping: string[]}} = {
+const shorthandMapping: {[key: string]: {values: (string | number)[], mapping: string[]}} = {
   padding: {
     values: relativeSpacingValues,
     mapping: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd']
@@ -309,15 +309,15 @@ const shorthandMapping: {[key: string]: {values: string[], mapping: string[]}} =
     mapping: ['scrollMarginTop', 'scrollMarginBottom']
   },
   borderWidth: {
-    values: ['0', '1', '2', '4'],
+    values: [0, 1, 2, 4],
     mapping: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth']
   },
   borderXWidth: {
-    values: ['0', '1', '2', '4'],
+    values: [0, 1, 2, 4],
     mapping: ['borderStartWidth', 'borderEndWidth']
   },
   borderYWidth: {
-    values: ['0', '1', '2', '4'],
+    values: [0, 1, 2, 4],
     mapping: ['borderTopWidth', 'borderBottomWidth']
   },
   borderRadius: {
@@ -428,7 +428,7 @@ const conditionMapping: {[key: string]: string[]} = {
   '2xl': ['@media (min-width: ${pxToRem(1536)})']
 };
 
-const properties: {[key: string]: {[key: string]: string[]}} = {
+const properties: {[key: string]: {[key: string]: (string | number)[]}} = {
   color: colorPropertyValues,
   dimensions: dimensionsPropertyValues,
   text: textPropertyValues,
@@ -502,11 +502,17 @@ const propertyDescriptions: {[key: string]: string} = {
   'transitionShorthand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
   'animationShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
   'truncateShortHand': 'Applying this shorthand will enable text truncation.',
-  'fontShortHand': 'The "fontSize" provided defines the values this shorthand sets on the mapped values.'
+  'fontShortHand': 'The "fontSize" provided defines the values this shorthand sets on the mapped values.',
+  'borderStartWidth': 'These values map to pixels.',
+  'borderEndWidth': 'These values map to pixels.',
+  'borderTopWidth': 'These values map to pixels.',
+  'borderBottomWidth': 'These values map to pixels.',
+  'outlineWidth': 'These values map to pixels.',
+  'strokeWidth': 'These values map to pixels.'
 };
 
 interface StyleMacroPropertyDefinition {
-  values: string[],
+  values: (string | number)[],
   additionalTypes?: string[],
   links?: {[value: string]: {href: string, isRelative?: boolean}},
   description?: string,

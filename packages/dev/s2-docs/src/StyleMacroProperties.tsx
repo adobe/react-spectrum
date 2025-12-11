@@ -18,7 +18,7 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
         {spacingTypeValues['baseSpacing'].map((val, idx) => (
           <React.Fragment key={idx}>
             {idx > 0 && Punctuation(' | ')}
-            {val}
+            <span className={codeStyles.number}>{val}</span>
           </React.Fragment>
         ))}
       </code>
@@ -31,7 +31,7 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
         {spacingTypeValues['negativeSpacing'].map((val, idx) => (
           <React.Fragment key={idx}>
             {idx > 0 && Punctuation(' | ')}
-            {val}
+            <span className={codeStyles.number}>{val}</span>
           </React.Fragment>
         ))}
       </code>
@@ -116,123 +116,149 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
               </code>
             </DisclosureTitle>
             <DisclosurePanel>
-              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-                {propDef.mapping && (
-                  <div>
-                    <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Maps to</h4>
-                    <code className={codeStyle}>
-                      {propDef.mapping.map((mappedProp, i) => (
-                        <React.Fragment key={i}>
-                          {i > 0 && Punctuation(', ')}
-                          <span className={codeStyles.attribute}>{mappedProp}</span>
-                        </React.Fragment>
-                      ))}
-                    </code>
-                  </div>
-                )}
-                {/* for color and backgroundColor, skip values list and render disclosures directly since the contents of the disclosures cover the mapped values */}
-                {(() => {
-                  if (propertyName === 'color') {
-                    return (
-                      <Accordion allowsMultipleExpanded>
-                        <TextColorsDisclosure />
-                        {styleMacroValueDesc['baseColors'].body}
-                      </Accordion>
-                    );
-                  }
-                  if (propertyName === 'backgroundColor') {
-                    return (
-                      <Accordion allowsMultipleExpanded>
-                        <BackgroundColorsDisclosure />
-                        {styleMacroValueDesc['baseColors'].body}
-                      </Accordion>
-                    );
-                  }
-                  return (
-                    <div>
-                      <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
-                      <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
-                        {values.map((value, i) => {
-                          let valueDesc = styleMacroValueDesc[value];
-                          // special case handling for font and spacing specific value descriptions so they don't get rendered for
-                          // other properties that may include the same values (e.g. heading in Colors)
-                          let shouldShowDescription = false;
-                          if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
-                            shouldShowDescription = true;
-                          } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
-                            shouldShowDescription = true;
-                          } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
-                            shouldShowDescription = true;
-                          } else if (value === 'baseColors' && propertyName !== 'color' && propertyName !== 'backgroundColor') {
-                            shouldShowDescription = true;
-                          }
+              {(() => {
+                // if all values are numbers, we will render with pipes instead of bullets
+                let allValuesAreNumbers = values.every(v => typeof v === 'number');
 
-                          let content;
-                          if (links[value]) {
-                            content = (
-                              <ColorLink
-                                href={links[value].href}
-                                type="variable"
-                                rel={links[value].isRelative ? undefined : 'noreferrer'}
-                                target={links[value].isRelative ? undefined : '_blank'}>
-                                {value}
-                              </ColorLink>
-                            );
-                          } else if (value === 'baseColors') {
-                            content = <span className={codeStyles.variable}>{value}</span>;
-                          } else {
-                            content = <span className={codeStyles.string}>'{value}'</span>;
-                          }
+                return (
+                  <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+                    {propDef.mapping && (
+                      <div>
+                        <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Maps to</h4>
+                        <code className={codeStyle}>
+                          {propDef.mapping.map((mappedProp, i) => (
+                            <React.Fragment key={i}>
+                              {i > 0 && Punctuation(', ')}
+                              <span className={codeStyles.attribute}>{mappedProp}</span>
+                            </React.Fragment>
+                          ))}
+                        </code>
+                      </div>
+                    )}
+                    {(() => {
+                      // for color and backgroundColor, skip values list and render disclosures directly since the contents of the disclosures cover the mapped values
+                      if (propertyName === 'color') {
+                        return (
+                          <Accordion allowsMultipleExpanded>
+                            <TextColorsDisclosure />
+                            {styleMacroValueDesc['baseColors'].body}
+                          </Accordion>
+                        );
+                      }
+                      if (propertyName === 'backgroundColor') {
+                        return (
+                          <Accordion allowsMultipleExpanded>
+                            <BackgroundColorsDisclosure />
+                            {styleMacroValueDesc['baseColors'].body}
+                          </Accordion>
+                        );
+                      }
 
-                          return (
-                            <li key={i} className={style({font: 'body'})}>
+                      return (
+                        <div>
+                          <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                          {allValuesAreNumbers ? (
+                            <div>
                               <code className={codeStyle}>
-                                {content}
+                                {values.map((value, i) => (
+                                  <React.Fragment key={i}>
+                                    {i > 0 && Punctuation(' | ')}
+                                    <span className={codeStyles.number}>{value}</span>
+                                  </React.Fragment>
+                                ))}
                               </code>
-                              {shouldShowDescription && valueDesc?.description && (
-                                <div className={style({marginTop: 4})}>
-                                  {valueDesc.description}
+                              {propDef.description && (
+                                <div className={style({marginTop: 8, font: 'body'})}>
+                                  {propDef.description}
                                 </div>
                               )}
-                              {shouldShowDescription && valueDesc?.body && (
-                                <div className={style({marginTop: 8})}>
-                                  {valueDesc.body}
-                                </div>
-                              )}
-                            </li>
-                          );
-                        })}
-                        {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
-                        {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                          let typeDesc = styleMacroValueDesc[typeName];
-                          return (
-                            <li key={`type-${i}`} className={style({font: 'body'})}>
-                              <code className={codeStyle}>
-                                <span className={codeStyles.variable}>{typeName}</span>
-                              </code>
-                              {typeDesc?.description && (
-                                <div className={style({marginTop: 4})}>
-                                  {typeDesc.description}
-                                </div>
-                              )}
-                              {typeDesc?.body && (
-                                <div className={style({marginTop: 8})}>
-                                  {typeDesc.body}
-                                </div>
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  );
-                })()}
-                {propDef.description && (
-                  <div className={style({font: 'body'})}>
-                    {propDef.description}
+                            </div>
+                          ) : (
+                            <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
+                              {values.map((value, i) => {
+                                let valueDesc = styleMacroValueDesc[value];
+                                // special case handling for font and spacing specific value descriptions so they don't get rendered for
+                                // other properties that may include the same values (e.g. heading in Colors)
+                                let shouldShowDescription = false;
+                                if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
+                                  shouldShowDescription = true;
+                                } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
+                                  shouldShowDescription = true;
+                                } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
+                                  shouldShowDescription = true;
+                                } else if (value === 'baseColors' && propertyName !== 'color' && propertyName !== 'backgroundColor') {
+                                  shouldShowDescription = true;
+                                }
+
+                                let content;
+                                if (links[value]) {
+                                  content = (
+                                    <ColorLink
+                                      href={links[value].href}
+                                      type="variable"
+                                      rel={links[value].isRelative ? undefined : 'noreferrer'}
+                                      target={links[value].isRelative ? undefined : '_blank'}>
+                                      {value}
+                                    </ColorLink>
+                                  );
+                                } else if (value === 'baseColors') {
+                                  content = <span className={codeStyles.variable}>{value}</span>;
+                                } else {
+                                  content = <span className={codeStyles.string}>'{value}'</span>;
+                                }
+
+                                return (
+                                  <li key={i} className={style({font: 'body'})}>
+                                    <code className={codeStyle}>
+                                      {content}
+                                    </code>
+                                    {shouldShowDescription && valueDesc?.description && (
+                                      <div className={style({marginTop: 4})}>
+                                        {valueDesc.description}
+                                      </div>
+                                    )}
+                                    {shouldShowDescription && valueDesc?.body && (
+                                      <div className={style({marginTop: 8})}>
+                                        {valueDesc.body}
+                                      </div>
+                                    )}
+                                  </li>
+                                );
+                              })}
+                              {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
+                              {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
+                                let typeDesc = styleMacroValueDesc[typeName];
+                                return (
+                                  <li key={`type-${i}`} className={style({font: 'body'})}>
+                                    <code className={codeStyle}>
+                                      <span className={codeStyles.variable}>{typeName}</span>
+                                    </code>
+                                    {typeDesc?.description && (
+                                      <div className={style({marginTop: 4})}>
+                                        {typeDesc.description}
+                                      </div>
+                                    )}
+                                    {typeDesc?.body && (
+                                      <div className={style({marginTop: 8})}>
+                                        {typeDesc.body}
+                                      </div>
+                                    )}
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })()}
+                    {propDef.description && !allValuesAreNumbers && (
+                      <div className={style({font: 'body'})}>
+                        {propDef.description}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                );
+              })()}
             </DisclosurePanel>
           </Disclosure>
         );
