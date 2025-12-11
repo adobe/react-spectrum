@@ -5,12 +5,13 @@ import {SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['toggle group', 'tabs'];
+export const description = 'A mutually exclusive group of buttons used for view switching.';
 
 # SegmentedControl
 
 <PageDescription>{docs.exports.SegmentedControl.description}</PageDescription>
 
-```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2"
+```tsx render docs={docs.exports.SegmentedControl} links={docs.links} props={['isJustified', 'isDisabled']} initialProps={{'aria-label': 'Time granularity'}} type="s2" wide
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 
 <SegmentedControl/* PROPS */>
@@ -38,16 +39,16 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
   <SegmentedControlItem id="left">
     {/*- begin highlight -*/}
     <AlignLeft />
-    <Text>Align left</Text>
+    <Text>Left</Text>
     {/*- end highlight -*/}
   </SegmentedControlItem>
   <SegmentedControlItem id="center">
     <AlignCenter />
-    <Text>Align center</Text>
+    <Text>Center</Text>
   </SegmentedControlItem>
   <SegmentedControlItem id="right">
     <AlignRight />
-    <Text>Align right</Text>
+    <Text>Right</Text>
   </SegmentedControlItem>
 </SegmentedControl>
 ```
@@ -78,21 +79,21 @@ import AlignRight from '@react-spectrum/s2/icons/AlignRight';
 
 ## Selection
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of a `<SegmentedControlItem>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tabs#single-selection) for more details.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of a `<SegmentedControlItem>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tabs#single-selection) for more details.
 
 ```tsx render
 "use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {SegmentedControl, SegmentedControlItem, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [selected, setSelected] = useState('month');
+  let [selected, setSelected] = useState<Key>('month');
 
   return (
     <div>
       <SegmentedControl
         /*- begin highlight -*/
-        selectedKey={selected} 
+        selectedKey={selected}
         onSelectionChange={setSelected}
         /*- end highlight -*/
         aria-label="Time granularity">
@@ -109,7 +110,7 @@ function Example() {
 
 ## API
 
-```tsx links={{SegmentedControl: '#segmentedcontrol', SegmentedControlItem: '#segmentedcontrolitem'}}
+```tsx links={{SegmentedControl: '#segmentedcontrol', SegmentedControlItem: '#segmentedcontrolitem', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <SegmentedControl>
   <SegmentedControlItem>
     <Icon />

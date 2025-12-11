@@ -20,6 +20,7 @@
     position: relative;
     text-decoration: none;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 
     &[data-hovered],
     &[data-focus-visible] {

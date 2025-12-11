@@ -3,6 +3,7 @@
 import * as babel from '@babel/parser';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
+import {getBaseUrl} from '../src/pageUtils.ts';
 import glob from 'fast-glob';
 import path from 'path';
 import {Project} from 'ts-morph';
@@ -42,6 +43,34 @@ function cleanTypeText(t) {
   // Remove duplicate type parameters.
   cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
   return cleaned;
+}
+
+/**
+ * Transform relative URLs to use .md extension instead of .html or no extension.
+ * Preserves query params and hash fragments.
+ */
+function transformRelativeUrl(href) {
+  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
+    return href;
+  }
+  
+  // Split href into path and query/hash parts
+  const match = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+  if (!match) {
+    return href;
+  }
+  
+  let [, pathPart, queryPart = '', hashPart = ''] = match;
+  
+  if (pathPart.endsWith('.html')) {
+    // Replace .html with .md
+    pathPart = pathPart.slice(0, -5) + '.md';
+  } else if (pathPart && !pathPart.match(/\.[a-zA-Z0-9]+$/)) {
+    // Add .md to paths without an extension
+    pathPart = pathPart + '.md';
+  }
+  
+  return pathPart + queryPart + hashPart;
 }
 
 function getIconNames() {
@@ -283,10 +312,10 @@ function extractJSXText(node, file) {
 function resolveComponentPath(componentName, file) {
   let roots = COMPONENT_SRC_ROOTS;
   if (file?.path) {
-    if (file.path.includes(path.join('pages', 'react-aria'))) {
-      roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-    } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
       roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+      roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
     }
   }
 
@@ -395,10 +424,10 @@ function generatePropTable(componentName, file) {
   if (!componentPath) {
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -473,10 +502,10 @@ function generateInterfaceTable(interfaceName, file) {
   if (!ifacePath) {
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -1113,6 +1142,16 @@ function remarkDocsComponentsToMarkdown() {
           }
         }
 
+        if (href && (href.startsWith('s2:') || href.startsWith('react-aria:'))) {
+          let url = new URL(href);
+          href = getBaseUrl(url.protocol.slice(0, -1)) + '/' + url.pathname;
+        }
+
+        // Convert .html links to .md for relative links
+        if (href && !href.startsWith('http') && !href.startsWith('//') && href.endsWith('.html')) {
+          href = href.replace(/\.html$/, '.md');
+        }
+
         // Check for aria-label attribute first
         const ariaLabelAttr = node.attributes?.find(a => a.name === 'aria-label');
         let ariaLabel = '';
@@ -1143,6 +1182,9 @@ function remarkDocsComponentsToMarkdown() {
 
         const childrenText = extractText(node.children);
         const linkText = ariaLabel || childrenText || href;
+
+        // Transform relative links to use .md extension
+        href = transformRelativeUrl(href);
 
         if (href) {
           const linkNode = {
@@ -1543,6 +1585,11 @@ function remarkDocsComponentsToMarkdown() {
         .join('\n');
     });
 
+    // Transform relative links to use .md extension.
+    visit(tree, 'link', (node) => {
+      node.url = transformRelativeUrl(node.url);
+    });
+
     // Append "Related Types" section if we collected any.
     if (relatedTypes.size > 0) {
       const newNodes = [
@@ -1592,10 +1639,10 @@ function generateClassAPITable(className, file) {
     // Fallback: deep search for class declaration
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -1764,10 +1811,10 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
   if (!componentPath) {
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const matches = glob.sync(roots.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
@@ -1865,10 +1912,10 @@ function generateFunctionOptionsTable(functionName, file) {
     // Fallback deep search similar to other helpers.
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -1992,80 +2039,12 @@ function generateLibraryLlmsTxt(lib, files) {
 }
 
 /**
- * Generate root llms.txt file that includes all documentation.
- */
-function generateRootLlmsTxt(docsByLibrary) {
-  let txt = '# React Spectrum Libraries\n\n';
-  txt += '> Complete documentation for React Spectrum libraries including React Spectrum (S2), React Aria, and Internationalized.\n\n';
-
-  // Add root-level documentation
-  if (docsByLibrary['root'].length > 0) {
-    txt += '## Getting Started\n';
-    const sorted = docsByLibrary['root'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  // Add S2 documentation
-  if (docsByLibrary['s2'].length > 0) {
-    txt += '## React Spectrum (S2)\n';
-    const sorted = docsByLibrary['s2'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](s2/${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](s2/${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  // Add React Aria documentation
-  if (docsByLibrary['react-aria'].length > 0) {
-    txt += '## React Aria Components\n';
-    const sorted = docsByLibrary['react-aria'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](react-aria/${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](react-aria/${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  // Add Internationalized documentation
-  if (docsByLibrary['internationalized'].length > 0) {
-    txt += '## Internationalized\n';
-    const sorted = docsByLibrary['internationalized'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](internationalized/${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](internationalized/${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  const llmsPath = path.join(DIST_ROOT, 'llms.txt');
-  fs.writeFileSync(llmsPath, txt.trim() + '\n', 'utf8');
-  console.log('Generated', path.relative(REPO_ROOT, llmsPath));
-}
-
-/**
  * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of each file.
  * React-specific JSX elements such as <PageDescription> and <PropTable> are replaced with plain markdown equivalents so
  * that the resulting *.md files can be consumed by LLMs.
  */
 async function main() {
-  const mdxFiles = await glob('**/*.mdx', {
+  const mdxFiles = await glob('*/**/*.mdx', {
     cwd: S2_DOCS_PAGES_ROOT,
     absolute: true
   });
@@ -2092,7 +2071,15 @@ async function main() {
         listItemIndent: 'one'
       });
 
-    const markdown = String(await processor.process({value: mdContent, path: filePath}));
+    let markdown = String(await processor.process({value: mdContent, path: filePath}));
+
+    // Convert markdown links ending in .html to .md (relative links only)
+    markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+\.html)\)/g, (match, text, url) => {
+      if (!url.startsWith('http') && !url.startsWith('//')) {
+        return `[${text}](${url.replace(/\.html$/, '.md')})`;
+      }
+      return match;
+    });
 
     const relativePath = path.relative(S2_DOCS_PAGES_ROOT, filePath);
     const outPath = path.join(DIST_ROOT, relativePath).replace(/\.mdx$/, '.md');
@@ -2142,10 +2129,6 @@ async function main() {
   // Generate library-specific llms.txt files
   generateLibraryLlmsTxt('s2', docsByLibrary['s2']);
   generateLibraryLlmsTxt('react-aria', docsByLibrary['react-aria']);
-  generateLibraryLlmsTxt('internationalized', docsByLibrary['internationalized']);
-
-  // Generate root llms.txt that includes all documentation
-  generateRootLlmsTxt(docsByLibrary);
 }
 
 main().catch((err) => {

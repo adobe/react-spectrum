@@ -12,7 +12,7 @@ import BreadcrumbsSvg from '@react-spectrum/docs/pages/assets/component-illustra
 import ButtonGroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ButtonGroup.svg';
 import ButtonSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 import CalendarSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
-import {Card, CardPreview, CardProps, Content, Text} from '@react-spectrum/s2';
+import {CardProps} from '@react-spectrum/s2';
 import CardSvg from '@react-spectrum/docs/pages/assets/component-illustrations/Card.svg';
 import CardViewSvg from '@react-spectrum/docs/pages/assets/component-illustrations/CardView.svg';
 import CheckboxGroupSvg from '@react-spectrum/docs/pages/assets/component-illustrations/CheckboxGroup.svg';
@@ -26,6 +26,7 @@ import ColorSwatchPickerSvg from '@react-spectrum/docs/pages/assets/component-il
 import ColorSwatchSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ColorSwatch.svg';
 import ColorWheelSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ColorWheel.svg';
 import ComboBoxSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ComboBox.svg';
+import {ComponentCardClient} from './ComponentCardClient';
 import ContextualHelpSvg from '@react-spectrum/docs/pages/assets/component-illustrations/ContextualHelp.svg';
 import DateFieldSvg from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import DatePickerSvg from '@react-spectrum/docs/pages/assets/component-illustrations/DatePicker.svg';
@@ -258,12 +259,20 @@ const illustrationStyles = style({
 });
 
 function getDefaultIllustration(href: string) {
-  if (href.includes('/react-aria/')) {
-    return ReactAriaDefaultSvg;
-  } else if (href.includes('/internationalized/')) {
+  if (href.includes('/internationalized/')) {
     return InternationalizedDefaultSvg;
+  } else if (href.includes('/react-aria/')) {
+    return ReactAriaDefaultSvg;
   }
   return AdobeDefaultSvg;
+}
+
+function getReleaseVersionLabel(href: string) {
+  let match = href.match(/releases\/(v[\w-]+)\.html$/i);
+  if (!match) {
+    return null;
+  }
+  return match[1].replace(/-/g, '.');
 }
 
 interface ComponentCardProps extends Omit<CardProps, 'children'> {
@@ -276,7 +285,14 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
   let IllustrationComponent = componentIllustrations[name] || getDefaultIllustration(href);
   let overrides = propOverrides[name] || {};
   let preview;
-  if (href.includes('react-aria/examples/') && !href.endsWith('index.html')) {
+  let releaseVersion = getReleaseVersionLabel(href);
+  if (releaseVersion) {
+    preview = (
+      <div className={style({width: '100%', aspectRatio: '3 / 2', backgroundColor: 'var(--anatomy-gray-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 0})}>
+        <span className={style({font: 'heading-lg', color: 'var(--anatomy-gray-900)'})}>{releaseVersion}</span>
+      </div>
+    );
+  } else if (href.includes('react-aria/examples/') && !href.endsWith('index.html')) {
     preview = <ExampleImage name={href} />;
   } else {
     preview = (
@@ -295,15 +311,14 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
   }
 
   return (
-    <Card {...otherProps} id={id} href={href} size={size} textValue={name}>
-      <CardPreview>
-        {preview}
-      </CardPreview>
-      <Content>
-        <Text slot="title">{name}</Text>
-        {description && <Text slot="description">{description}</Text>}
-      </Content>
-    </Card>
+    <ComponentCardClient
+      {...otherProps}
+      id={id}
+      href={href}
+      size={size}
+      name={name}
+      description={description}
+      preview={preview} />
   );
 }
 

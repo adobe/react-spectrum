@@ -60,7 +60,7 @@ keywords: [menu trigger, dropdown, action menu]
 
 ## Content
 
-Menu follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), Menu accepts `<Item>` elements as children, each with a `key` prop. Basic usage of Menu, seen in the example above, shows multiple items populated with a string. Static collections, as in this example, can be used when the full list of items is known ahead of time.
+Menu follows the [Collection Components](collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), Menu accepts `<Item>` elements as children, each with a `key` prop. Basic usage of Menu, seen in the example above, shows multiple items populated with a string. Static collections, as in this example, can be used when the full list of items is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the items come from an external data source such as an API call, or update over time. Providing the data in this way allows for Menu to automatically cache the rendering of each item, which dramatically improves performance.
 
@@ -125,7 +125,7 @@ function Example() {
 ## Selection
 Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+See the `react-stately` [Selection docs](selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
 import type {Selection} from '@adobe/react-spectrum';

@@ -141,7 +141,8 @@ const cellStyles = style({
     isOutsideMonth: 'none'
   },
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  disableTapHighlight: true
 });
 
 const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single' | 'range'}>({
@@ -174,7 +175,10 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
   forcedColorAdjust: 'none',
   backgroundColor: {
     default: 'transparent',
-    isHovered: 'gray-100',
+    isHovered: {
+      default: 'gray-100',
+      isUnavailable: 'transparent'
+    },
     isPressed: 'gray-100',
     isDisabled: 'transparent',
     isToday: {
@@ -188,10 +192,22 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
           isHovered: lightDark('accent-1000', 'accent-600'),
           isPressed: lightDark('accent-1000', 'accent-600'),
           isFocusVisible: lightDark('accent-1000', 'accent-600'),
-          isDisabled: 'transparent'
+          isDisabled: 'transparent',
+          isInvalid: {
+            default: lightDark('negative-900', 'negative-700'),
+            isHovered: lightDark('negative-1000', 'negative-600'),
+            isPressed: lightDark('negative-1000', 'negative-600'),
+            isFocusVisible: lightDark('negative-1000', 'negative-600')
+          }
         },
         range: {
-          isHovered: 'blue-500'
+          isHovered: {
+            default: 'blue-500',
+            isInvalid: {
+              default: 'negative-300',
+              isUnavailable: 'transparent'
+            }
+          }
         }
       }
     },
@@ -199,15 +215,40 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
       default: lightDark('accent-900', 'accent-700'),
       isHovered: lightDark('accent-1000', 'accent-600'),
       isPressed: lightDark('accent-1000', 'accent-600'),
-      isFocusVisible: lightDark('accent-1000', 'accent-600')
+      isFocusVisible: lightDark('accent-1000', 'accent-600'),
+      isDisabled: 'transparent',
+      isInvalid: {
+        default: lightDark('negative-900', 'negative-700'),
+        isHovered: {
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
+        },
+        isPressed: lightDark('negative-1000', 'negative-600'),
+        isFocusVisible: {
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
+        }
+      }
     },
     isSelectionEnd: {
       default: lightDark('accent-900', 'accent-700'),
       isHovered: lightDark('accent-1000', 'accent-600'),
       isPressed: lightDark('accent-1000', 'accent-600'),
-      isFocusVisible: lightDark('accent-1000', 'accent-600')
+      isFocusVisible: lightDark('accent-1000', 'accent-600'),
+      isDisabled: 'transparent',
+      isInvalid: {
+        default: lightDark('negative-900', 'negative-700'),
+        isHovered: {
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
+        },
+        isPressed: lightDark('negative-1000', 'negative-600'),
+        isFocusVisible: {
+          default: lightDark('negative-1000', 'negative-600'),
+          isUnavailable: lightDark('negative-900', 'negative-700')
+        }
+      }
     },
-    isUnavailable: 'transparent',
     forcedColors: {
       default: 'transparent',
       isToday: 'ButtonFace',
@@ -258,7 +299,7 @@ const unavailableStyles = style({
   backgroundColor: '[currentColor]'
 });
 
-const selectionSpanStyles = style({
+const selectionSpanStyles = style<{isInvalid?: boolean}>({
   position: 'absolute',
   zIndex: -1,
   top: 0,
@@ -269,6 +310,7 @@ const selectionSpanStyles = style({
   borderStyle: 'dashed',
   borderColor: {
     default: 'blue-800', // focus-indicator-color
+    isInvalid: 'negative-900',
     forcedColors: {
       default: 'ButtonText'
     }
@@ -277,6 +319,7 @@ const selectionSpanStyles = style({
   borderEndRadius: 'full',
   backgroundColor: {
     default: 'blue-subtle',
+    isInvalid: 'negative-100',
     forcedColors: {
       default: 'Highlight'
     }
@@ -328,7 +371,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} />
+                <CalendarGrid months={i} key={i} firstDayOfWeek={props.firstDayOfWeek} />
               ))}
             </div>
             {isInvalid && (
@@ -353,14 +396,14 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
         isolation: 'isolate'
       })}
       offset={{months: props.months}}>
-      <CalendarGridHeader>
+      <CalendarGridHeader className="">
         {(day) => (
           <CalendarHeaderCell>
             {day}
           </CalendarHeaderCell>
         )}
       </CalendarGridHeader>
-      <CalendarGridBody>
+      <CalendarGridBody className="">
         {(date) => (
           <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
         )}
@@ -480,29 +523,51 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
   let {weekIndex, dayIndex, date, renderProps, state, isRangeSelection} = props;
   let {getDatesInWeek} = state;
   let ref = useRef<HTMLDivElement>(null);
-  let {isUnavailable, formattedDate, isSelected} = renderProps!;
+  let {isUnavailable, formattedDate, isSelected, isSelectionStart, isSelectionEnd, isInvalid} = renderProps!;
+  // only apply the selection start/end styles if the start/end date is actually selectable (aka not unavailable)
+  // or if the range is invalid and thus we still want to show the styles even if the start/end date is an unavailable one
+  isSelectionStart = isSelectionStart && (!isUnavailable || isInvalid);
+  isSelectionEnd = isSelectionEnd && (!isUnavailable || isInvalid);
+
   let startDate = startOfMonth(date);
   let datesInWeek = getDatesInWeek(weekIndex, startDate);
+
+  let isDateInRange = (checkDate: CalendarDate) => {
+    if (!('highlightedRange' in state) || !state.highlightedRange) {
+      return state.isSelected(checkDate);
+    }
+    // if invalid, check if date is within the full range boundaries
+    if (isInvalid) {
+      return checkDate.compare(state.highlightedRange.start) >= 0 &&
+             checkDate.compare(state.highlightedRange.end) <= 0;
+    }
+
+    return state.isSelected(checkDate);
+  };
 
   // Starting from the current day, find the first day before it in the current week that is not selected.
   // Then, the span of selected days is the current day minus the first unselected day.
   let firstUnselectedInRangeInWeek = datesInWeek.slice(0, dayIndex + 1).reverse().findIndex((date, i) => {
-    return date && i > 0 && (!state.isSelected(date) || date.month !== props.date.month);
+    return date && i > 0 && (!isDateInRange(date) || date.month !== props.date.month);
   });
+
   let selectionSpan = -1;
   if (firstUnselectedInRangeInWeek > -1 && isSelected) {
     selectionSpan = firstUnselectedInRangeInWeek - 1;
   } else if (isSelected) {
     selectionSpan = dayIndex;
   }
-
   let prevDay = date.subtract({days: 1});
   let nextDay = date.add({days: 1});
+
+  // when invalid, show background for all selected dates (including unavailable) to make continuous range appearance
+  // when valid, only show background for available selected dates
   let isBackgroundStyleApplied = (
     isSelected
     && isRangeSelection
-    && (state.isSelected(prevDay)
-      || (nextDay.month === date.month && state.isSelected(nextDay)))
+    && (isInvalid || !isUnavailable)
+    && (isDateInRange(prevDay)
+      || (nextDay.month === date.month && isDateInRange(nextDay)))
     );
 
   return (
@@ -518,13 +583,13 @@ const CalendarCellInner = (props: Omit<CalendarCellProps, 'children'> & {isRange
       <div
         ref={ref}
         style={pressScale(ref, {})(renderProps!)}
-        className={cellInnerStyles({...renderProps!, selectionMode: isRangeSelection ? 'range' : 'single'})}>
+        className={cellInnerStyles({...renderProps!, isSelectionStart, isSelectionEnd, selectionMode: isRangeSelection ? 'range' : 'single'})}>
         <div>
           {formattedDate}
         </div>
         {isUnavailable && <div className={unavailableStyles} role="presentation" />}
       </div>
-      {isBackgroundStyleApplied && <div style={{'--selection-span': selectionSpan} as CSSProperties} className={selectionSpanStyles} role="presentation" />}
+      {isBackgroundStyleApplied && <div style={{'--selection-span': selectionSpan} as CSSProperties} className={selectionSpanStyles({isInvalid})} role="presentation" />}
     </div>
   );
 };

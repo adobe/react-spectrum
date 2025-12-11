@@ -60,7 +60,7 @@ export function MouseAnimation(): ReactNode {
           mouseRef.current!.animate({
             transform: [
               'translate(10px, 10px)',
-              'translate(110px, 14px)'
+              'translate(105px, 14px)'
             ]
           }, {duration: 2000, fill: 'forwards', easing: 'ease-in-out'});
         }
@@ -97,7 +97,7 @@ export function MouseAnimation(): ReactNode {
         perform() {
           mouseRef.current!.animate({
             transform: [
-              'translate(110px, 14px)',
+              'translate(105px, 14px)',
               'translate(170px, 150px)'
             ]
           }, {duration: 1500, fill: 'forwards', easing: 'ease-in-out'});
@@ -151,20 +151,20 @@ export function MouseAnimation(): ReactNode {
         </g>
       </svg>
       <TooltipTrigger isOpen={tooltip === 'edit'} onOpenChange={(o) => onOpenChange('edit', o)}>
-        <Button aria-label="Edit" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'edit' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
+        <Button aria-label="Edit" variant="secondary" className={`relative ${hovered === 'edit' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
           <PencilIcon aria-hidden className="inline w-5 h-5" />
         </Button>
         <Tooltip>Edit</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'share'} onOpenChange={(o) => onOpenChange('share', o)}>
-        <Button aria-label="Share" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'share' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
+        <Button aria-label="Share" variant="secondary" className={`relative ${hovered === 'share' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
           <ShareIcon aria-hidden className="inline w-5 h-5" />
         </Button>
         <Tooltip>Share</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'settings'} onOpenChange={(o) => onOpenChange('settings', o)}>
         <ButtonContext.Provider value={{isPressed}}>
-          <Button aria-label="Settings" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'settings' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
+          <Button aria-label="Settings" variant="secondary" className={`relative ${hovered === 'settings' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
             <CogIcon aria-hidden className="inline w-5 h-5" />
           </Button>
         </ButtonContext.Provider>

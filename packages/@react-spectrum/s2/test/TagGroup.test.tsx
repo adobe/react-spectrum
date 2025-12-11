@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2025 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
-import {Tag, TagGroup} from '../';
+import {Tag, TagGroup} from '../src';
+import userEvent from '@testing-library/user-event';
+
 
 let TestTagGroup = ({tagGroupProps, itemProps}) => (
   <TagGroup data-testid="group" {...tagGroupProps}>
@@ -24,9 +26,43 @@ let TestTagGroup = ({tagGroupProps, itemProps}) => (
 
 let renderTagGroup = (tagGroupProps = {}, itemProps = {}) => render(<TestTagGroup {...{tagGroupProps, itemProps}} />);
 
+
 describe('TagGroup', () => {
+  let user;
   beforeAll(() => {
     jest.useFakeTimers();
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    act(() => jest.runAllTimers());
+  });
+
+  afterAll(function () {
+    jest.restoreAllMocks();
+  });
+
+  it('remove button should work', async () => {
+    let onRemove = jest.fn();
+    let {getAllByLabelText} = render(
+      <TagGroup
+        label="Ice cream categories"
+        size="M"
+        onRemove={onRemove}>
+        <Tag id="chocolate">Chocolate</Tag>
+        <Tag id="mint">Mint</Tag>
+        <Tag id="strawberry">Strawberry</Tag>
+        <Tag id="vanilla">Vanilla</Tag>
+      </TagGroup>
+    );
+
+    let removeButtons = getAllByLabelText('Remove');
+    expect(removeButtons).toHaveLength(4);
+    await user.click(removeButtons[0]);
+    act(() => {jest.runAllTimers();});
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenCalledWith(new Set(['chocolate']));
   });
 
   it('should aria label on tags', () => {

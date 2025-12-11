@@ -1,22 +1,35 @@
 'use client';
 
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getBaseUrl} from './pageUtils';
 import {LinkProps, Link as S2Link} from '@react-spectrum/s2';
+import {mergeRefs} from '@react-aria/utils';
 import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
-import React from 'react';
+import React, {Ref, useMemo} from 'react';
+import {registerLink, registerSpectrumLink} from './prefetch';
 
-export function Link({href, ...props}: LinkProps) {
+export function BaseLink({ref, ...props}: LinkProps & {ref?: Ref<HTMLAnchorElement>}) {
   return (
-    <S2Link {...props} href={href} {...getAnchorProps(href)} />
+    <RACLink
+      {...props}
+      ref={useMemo(() => mergeRefs(ref, registerLink), [ref])} />
   );
 }
 
-export function getAnchorProps(href) {
-  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|^#/.test(href)) {
-    return {};
+export function Link({href, ...props}: LinkProps) {
+  if (href?.startsWith('s2:') || href?.startsWith('react-aria:')) {
+    let url = new URL(href);
+    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
   }
 
-  if (/^\//.test(href)) {
+  return (
+    <S2Link {...props} ref={registerSpectrumLink} href={href} {...getAnchorProps(href)} />
+  );
+}
+
+const baseUrl = getBaseUrl((process.env.LIBRARY as any) || 'react-aria');
+export function getAnchorProps(href) {
+  if (!/^http/.test(href) || href.startsWith(baseUrl)) {
     return {};
   }
 
@@ -45,17 +58,12 @@ export function ColorLink({type, ...props}: RACLinkProps & {type?: 'keyword' | '
 }
 
 export function CodeLink(props: RACLinkProps) {
-  return <RACLink {...props} style={({isHovered}) => ({textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
+  return <RACLink {...props} style={({isHovered}) => ({cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: isHovered ? 'solid' : 'dotted'})} />;
 }
 
 const titleLink = style({
   ...focusRing(),
-  font: 'heading',
-  fontSize: {
-    // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
-    default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-    lg: 'heading'
-  },
+  font: 'title',
   marginY: 0,
   color: {
     default: 'heading',

@@ -30,7 +30,7 @@ export interface ActionMenuProps<T> extends
   Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
   StyleProps, DOMProps, AriaLabelingProps {
   /**
-   * The size of the Trigger and Menu.
+   * The size of the Menu.
    *
    * @default 'M'
    */

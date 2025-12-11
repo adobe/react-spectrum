@@ -78,6 +78,7 @@ const slider = style({
   },
   color: {
     default: 'neutral-subdued',
+    forcedColors: 'ButtonText',
     isDisabled: 'disabled'
   },
   columnGap: {
@@ -250,10 +251,14 @@ export let thumb = style<SliderThumbRenderProps & {size: 'S' | 'M' | 'L' | 'XL',
     isDragging: 'gray-900',
     isDisabled: 'disabled',
     forcedColors: {
+      default: 'ButtonBorder',
       isDisabled: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25'
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: 'ButtonFace'
+  }
 });
 
 const trackStyling = {
@@ -272,11 +277,13 @@ const trackStyling = {
   }
 } as const;
 
-export let upperTrack = style<{isDisabled?: boolean, trackStyle: 'thin' | 'thick'}>({
+export let upperTrack = style<{isDisabled?: boolean, isStaticColor?: boolean, trackStyle: 'thin' | 'thick'}>({
   ...trackStyling,
   position: 'absolute',
   backgroundColor: {
     default: 'gray-300',
+    isStaticColor: 'transparent-overlay-300',
+    forcedColors: 'ButtonFace',
     isDisabled: 'disabled'
   },
   translateY: '-50%',
@@ -410,6 +417,7 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProp
   let domRef = useFocusableRef(ref, inputRef);
   let {direction} = useLocale();
   let cssDirection = direction === 'rtl' ? 'right' : 'left';
+  let isStaticColor = props['PRIVATE_staticColor'];
 
   return (
     <SliderBase
@@ -427,7 +435,7 @@ export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProp
 
           return (
             <>
-              <div className={upperTrack({isDisabled, trackStyle})} />
+              <div className={upperTrack({isDisabled, isStaticColor, trackStyle})} />
               <div style={{width: `${Math.abs(fillWidth) * 100}%`, [cssDirection]: `${offset * 100}%`}} className={filledTrack({isDisabled, isEmphasized, trackStyle})} />
               <SliderThumb  className={thumbContainer} index={0} name={props.name} form={props.form} ref={thumbRef} style={(renderProps) => pressScale(thumbRef, {transform: 'translate(-50%, -50%)'})({...renderProps, isPressed: renderProps.isDragging})}>
                 {(renderProps) => (

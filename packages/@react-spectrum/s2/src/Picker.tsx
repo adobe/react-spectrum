@@ -34,7 +34,7 @@ import {
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
-import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {box, iconStyles as checkboxIconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -57,6 +57,7 @@ import {
   listboxItem,
   LOADER_ROW_HEIGHTS
 } from './ComboBox';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -91,14 +92,13 @@ export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * Whether the picker should be displayed with a quiet style.
-   * @private
    */
   isQuiet?: boolean
 }
 
 type SelectionMode = 'single' | 'multiple';
 export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
-  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>,
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -363,6 +363,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
         <>
           <InternalPickerContext.Provider value={{size}}>
             <FieldLabel
+              includeNecessityIndicatorInAccessibilityName
               isDisabled={isDisabled}
               isRequired={isRequired}
               size={size}

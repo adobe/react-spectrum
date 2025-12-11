@@ -14,6 +14,7 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import {InterfaceType} from '../../src/types';
 
 export const section = 'Utilities';
+export const description = 'Provides accessibility and labeling support for form field components.';
 
 # useField
 
@@ -25,14 +26,13 @@ The `useField` hook associates a form control with a label, and an optional desc
 
 By default, `useField` assumes that the label is a native HTML `<label>` element. However, if you are labeling a non-native form element, be sure to use an element other than a `<label>` and set the `labelElementType` prop appropriately.
 
-{/* not implemented yet */}
-{/* **Note**: Many other React Aria hooks such as [useTextField](useTextField.html), [useSelect](useSelect.html), and [useComboBox](useComboBox.html) already include support for description and error message elements. If you're using one of those hooks, there's no need to use `useField`. */}
+**Note**: Many other React Aria hooks such as [useTextField](TextField/useTextField.html), [useSelect](Select/useSelect.html), and [useComboBox](ComboBox/useComboBox.html) already include support for description and error message elements. If you're using one of those hooks, there's no need to use `useField`.
 
 ## Example
 
 ```tsx render
 'use client';
-import {useField} from '@react-aria/label';
+import {useField} from 'react-aria';
 
 function ContactPicker(props) {
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
@@ -50,7 +50,7 @@ function ContactPicker(props) {
         <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>
       }
       {props.errorMessage &&
-        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>
+        <div {...errorMessageProps} style={{color: '#b00020', fontSize: 12}}>{props.errorMessage}</div>
       }
     </div>
   );

@@ -50,7 +50,7 @@ and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/o
 not possible to style consistently cross browser. `useListBox` helps achieve accessible
 listbox components that can be styled as needed.
 
-Note: `useListBox` only handles the list itself. For a dropdown similar to a `<select>`, see [useSelect](useSelect.html).
+Note: `useListBox` only handles the list itself. For a dropdown similar to a `<select>`, see [useSelect](../Select/useSelect.html).
 
 * Exposed to assistive technology as a `listbox` using ARIA
 * Support for single, multiple, or no selection
@@ -108,14 +108,13 @@ interface, which is a generic interface to access sequential unique keyed data. 
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
 but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> from
 `@react-stately/list` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information,
-and [Collection Interface](/react-stately/Collection.html) for internal details.
+See [Collection Components](v3:collections.html) for more information.
 
 In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
 manages the state necessary for multiple selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
-For more information, see [Selection](/react-stately/selection.html).
+For more information, see [Selection](v3:selection.html).
 
 ## Example
 
@@ -221,7 +220,7 @@ function Option({item, state}) {
 
 ## Dynamic collections
 
-`ListBox` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+`ListBox` follows the [Collection Components API](v3:collections.html), accepting both static and dynamic collections.
 The example above shows static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -255,7 +254,7 @@ function Example() {
 
 ListBox supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the `react-stately` [Selection docs](v3:selection.html) for more details.
 
 ```tsx example
 import type {Selection} from 'react-stately';
@@ -438,7 +437,7 @@ as needed to apply to the main text element of the option and its description. T
 reader announcement.
 
 **NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.).
-For these cases, see [useGridList](useGridList.html) instead.**
+For these cases, see [useGridList](../GridList/useGridList.html) instead.**
 
 To implement this, we'll update the `Option` component to apply the ARIA properties
 returned by <TypeLink links={docs.links} type={docs.exports.useOption} /> to the appropriate
@@ -505,7 +504,7 @@ function Option({item, state}) {
 
 ## Asynchronous loading
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+This example uses the [useAsyncList](../useAsyncList.html) hook to handle asynchronous loading
 of data from a server. You may additionally want to display a spinner to indicate the loading
 state to the user, or support features like infinite scroll to load more data.
 
@@ -651,13 +650,13 @@ function Option({item, state}) {
 
 ### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [framework setup guide](../frameworks) to learn how to set this up.
 
 ## Disabled items
 
 `useListBox` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See [Collections](v3:collections.html) for more details.
 
 Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
 `useOption` can be used to style the item appropriately.

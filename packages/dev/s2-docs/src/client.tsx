@@ -1,24 +1,11 @@
 'use client-entry';
 
-import {clearPendingPage} from './Nav';
 import {fetchRSC, hydrate} from '@parcel/rsc/client';
 import {getPrefetchedPromise, prefetchRoute} from './prefetch';
+import {getRSCUrl, isClientLink} from './pageUtils';
 import {type ReactElement} from 'react';
-import {setNavigationPromise} from './NavigationSuspense';
-import {UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
-
-let isClientLink = (link: HTMLAnchorElement, pathname: string) => {
-  return (
-    link &&
-    link instanceof HTMLAnchorElement &&
-    link.href &&
-    (!link.target || link.target === '_self') &&
-    link.origin === location.origin &&
-    link.pathname !== location.pathname &&
-    !link.hasAttribute('download') &&
-    link.pathname.startsWith(pathname)
-  );
-};
+import {setNavigationPromise} from './Router';
+import {ToastQueue} from '@react-spectrum/s2';
 
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({
@@ -36,8 +23,26 @@ let currentAbortController: AbortController | null = null;
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
 async function navigate(pathname: string, push = false) {
-  let [basePath] = pathname.split('#');
-  let rscPath = basePath.replace('.html', '.rsc');
+  let url = new URL(pathname, location.href);
+  let basePath = url.pathname;
+  let pathAnchor = url.hash.slice(1);
+  let currentPath = location.pathname;
+  let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
+  
+  if (isSamePageAnchor) {
+    if (push) {
+      history.pushState(null, '', pathname);
+    }
+    
+    // Scroll to the anchor
+    let element = document.getElementById(pathAnchor);
+    if (element) {
+      element.scrollIntoView();
+    }
+    return;
+  }
+  
+  let rscPath = getRSCUrl(pathname);
   
   // Cancel any in-flight navigation
   if (currentAbortController) {
@@ -108,7 +113,6 @@ async function navigate(pathname: string, push = false) {
         return;
       }
       
-      clearPendingPage();
       try {
         let errorRes = await fetchRSC<ReactElement>('/error.rsc');
         
@@ -135,13 +139,14 @@ async function navigate(pathname: string, push = false) {
     }
   })();
   
-  // Store the promise for NavigationSuspense to use
-  setNavigationPromise(navigationPromise, pathname);
+  url.hash = '';
+  url.search = '';
+  setNavigationPromise(navigationPromise, url.href);
 }
 
 // Prefetch routes on pointerover
 // Use a delay to avoid prefetching when quickly moving over multiple links.
-const PREFETCH_DELAY_MS = 100;
+const PREFETCH_DELAY_MS = 65;
 let prefetchTimeout: ReturnType<typeof setTimeout> | null = null;
 let currentPrefetchLink: HTMLAnchorElement | null = null;
 
@@ -153,15 +158,17 @@ function clearPrefetchTimeout() {
   currentPrefetchLink = null;
 }
 
-document.addEventListener('pointerover', e => {
-  let link = (e.target as Element).closest('a');
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+document.addEventListener('pointerenter', e => {
+  if (e.pointerType !== 'mouse') {
+    return;
+  }
+
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname)) {
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -170,23 +177,38 @@ document.addEventListener('pointerover', e => {
   }
 }, true);
 
+// Prefetch immediately on pointer down, with high priority.
+document.addEventListener('pointerdown', e => {
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
+
+  // Clear any pending prefetch
+  clearPrefetchTimeout();
+
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
+    currentPrefetchLink = link;
+    prefetchRoute(link.pathname + link.search + link.hash, 'high');
+  }
+}, true);
+
 // Clear prefetch timeout when pointer leaves a link
-document.addEventListener('pointerout', e => {
-  let link = (e.target as Element).closest('a');
+document.addEventListener('pointerleave', e => {
+  if (e.pointerType !== 'mouse') {
+    return;
+  }
+
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (link && link === currentPrefetchLink) {
     clearPrefetchTimeout();
   }
 }, true);
 
 document.addEventListener('focus', e => {
-  let link = (e.target as Element).closest('a');
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   
   // Clear any pending prefetch
   clearPrefetchTimeout();
   
-  if (link && isClientLink(link, publicUrlPathname)) {
+  if (link && isClientLink(link) && link.pathname !== location.pathname) {
     currentPrefetchLink = link;
     prefetchTimeout = setTimeout(() => {
       prefetchRoute(link.pathname + link.search + link.hash);
@@ -197,7 +219,7 @@ document.addEventListener('focus', e => {
 
 // Clear prefetch timeout when focus leaves a link
 document.addEventListener('blur', e => {
-  let link = (e.target as Element).closest('a');
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (link && link === currentPrefetchLink) {
     clearPrefetchTimeout();
   }
@@ -205,12 +227,11 @@ document.addEventListener('blur', e => {
 
 // Intercept link clicks to perform RSC navigation.
 document.addEventListener('click', e => {
-  let link = (e.target as Element).closest('a');
-  let publicUrl = process.env.PUBLIC_URL || '/';
-  let publicUrlPathname = publicUrl.startsWith('http') ? new URL(publicUrl).pathname : publicUrl;
+  let link = e.target instanceof Element ? e.target.closest('a') : null;
   if (
     link &&
-    isClientLink(link, publicUrlPathname) &&
+    isClientLink(link) &&
+    link.pathname !== location.pathname &&
     e.button === 0 && // left clicks only
     !e.metaKey && // open in new tab (mac)
     !e.ctrlKey && // open in new tab (windows)
@@ -227,3 +248,35 @@ document.addEventListener('click', e => {
 window.addEventListener('popstate', () => {
   navigate(location.pathname + location.search + location.hash);
 });
+
+function scrollToCurrentHash() {
+  if (!location.hash || location.hash === '#') {
+    return;
+  }
+
+  let anchorId = location.hash.slice(1);
+  try {
+    anchorId = decodeURIComponent(anchorId);
+  } catch {
+    // Fall back to raw hash
+  }
+
+  if (!anchorId) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    let element = document.getElementById(anchorId);
+    if (element) {
+      element.scrollIntoView();
+    }
+  });
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  scrollToCurrentHash();
+} else {
+  window.addEventListener('DOMContentLoaded', () => {
+    scrollToCurrentHash();
+  }, {once: true});
+}

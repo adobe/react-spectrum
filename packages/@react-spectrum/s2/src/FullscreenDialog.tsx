@@ -35,7 +35,8 @@ const heading = style({
   gridArea: 'heading',
   flexGrow: 1,
   marginY: 0,
-  font: 'heading'
+  font: 'title-2xl',
+  color: 'heading'
 });
 
 const header = style({
@@ -43,7 +44,7 @@ const header = style({
   marginX: {
     sm: 'auto'
   },
-  font: 'body-lg'
+  font: 'body'
 });
 
 const content =  style({

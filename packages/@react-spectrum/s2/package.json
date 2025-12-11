@@ -140,7 +140,7 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.15.1",
+    "@adobe/spectrum-tokens": "^14.0.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
@@ -151,7 +151,7 @@
   "dependencies": {
     "@internationalized/date": "^3.10.0",
     "@internationalized/number": "^3.6.5",
-    "@parcel/macros": "^2.16.1",
+    "@parcel/macros": "^2.16.3",
     "@react-aria/calendar": "^3.9.2",
     "@react-aria/collections": "^3.0.0",
     "@react-aria/focus": "^3.21.2",
@@ -175,8 +175,8 @@
     "react-stately": "^3.42.0"
   },
   "peerDependencies": {
-    "react": "^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
