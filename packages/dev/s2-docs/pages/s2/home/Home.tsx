@@ -1,10 +1,7 @@
 import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-// @ts-ignore
-import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
-// @ts-ignore
-import { Code } from "../../../src/Code";
-// @ts-ignore
-import { Pre } from "../../../src/CodePlatter";
+import { getColorScale } from "@react-spectrum/s2-docs/src//color.macro" with {type: 'macro'};
+import { Code } from "@react-spectrum/s2-docs/src//Code";
+import { Pre } from "@react-spectrum/s2-docs/src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
@@ -40,15 +37,14 @@ import { Responsive } from "./Responsive";
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 import { ReduceMotion } from "./ReduceMotion";
 import { Colors } from "./Colors";
-import '../../../src/footer.css';
+import '@react-spectrum/s2-docs/src/footer.css';
 // @ts-ignore
 import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 // @ts-ignore
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
-// @ts-ignore
-import { getBaseUrl } from "../../../src/pageUtils";
-import SearchMenuWrapperServer from "../../../src/SearchMenuWrapperServer";
+import { getBaseUrl } from "@react-spectrum/s2-docs/src/pageUtils";
+import SearchMenuWrapperServer from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
 import type {Page} from "@parcel/rsc";
 
 const container = style({
