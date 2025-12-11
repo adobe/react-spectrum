@@ -1,7 +1,7 @@
 import {Layout} from '../../src/Layout';
 import {InlineAlert, Heading, Content, Link} from '@react-spectrum/s2';
 import {StyleMacroProperties} from '../../src/StyleMacroProperties';
-import {getPropertyDefinitions, getShorthandDefinitions} from '../../src/styleProperties';
+import {getPropertyDefinitions} from '../../src/styleProperties';
 export default Layout;
 
 export const section = 'Components';
@@ -24,7 +24,7 @@ All Spectrum 2 color tokens are available across color properties (e.g., `backgr
 
 ## Text
 
-Spectrum 2 typography can be applied via the `font` [shorthand](#shorthands), which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+Spectrum 2 typography can be applied via the `font` shorthand, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
 Note that `font` should be applied on a per element basis rather than globally so as to properly conform with Spectrum designs.
 
 ```tsx
@@ -51,12 +51,6 @@ Note that `font` should be applied on a per element basis rather than globally s
 ## Misc
 
 <StyleMacroProperties properties={getPropertyDefinitions('misc')} />
-
-## Shorthands
-
-Shorthands apply their provided value to commonly grouped properties.
-
-<StyleMacroProperties properties={getShorthandDefinitions('shorthand')} />
 
 ## Conditions
 

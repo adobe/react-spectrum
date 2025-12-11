@@ -500,10 +500,10 @@ const propertyDescriptions: {[key: string]: string} = {
   'scaleY': 'Accepts a number or percentage string.',
   'scaleShortHand': 'Accepts a number or percentage string.',
   'aspectRatio': 'Also accepts a ratio in the format number/number (e.g., 16/9, 4/3).',
-  'transitionShorthand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
+  'transitionShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
   'animationShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
   'truncateShortHand': 'Applying this shorthand will enable text truncation.',
-  'fontShortHand': 'The "fontSize" provided defines the values this shorthand sets on the mapped values.',
+  'fontShortHand': 'The fontSize provided defines the values this shorthand sets on the mapped values.',
   'borderStartWidth': 'These values map to pixels.',
   'borderEndWidth': 'These values map to pixels.',
   'borderTopWidth': 'These values map to pixels.',
@@ -579,6 +579,21 @@ export function getShorthandDefinitions(): {[key: string]: StyleMacroPropertyDef
       mapping: shorthandDef.mapping,
       description: propertyDescriptions[`${shorthandName}ShortHand`]
     };
+  }
+
+  return result;
+}
+
+export function getPropertyToShorthandsMapping(): {[propertyName: string]: string[]} {
+  let result: {[propertyName: string]: string[]} = {};
+
+  for (let [shorthandName, shorthandDef] of Object.entries(shorthandMapping)) {
+    for (let propertyName of shorthandDef.mapping) {
+      if (!result[propertyName]) {
+        result[propertyName] = [];
+      }
+      result[propertyName].push(shorthandName);
+    }
   }
 
   return result;

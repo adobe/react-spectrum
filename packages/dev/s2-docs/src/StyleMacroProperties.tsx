@@ -3,10 +3,10 @@ import {BackgroundColorsDisclosure, Color, GlobalColorsDisclosure, SemanticColor
 import {styles as codeStyles} from './Code';
 import {ColorLink} from './Link';
 import {colorSwatch} from './color.macro' with {type: 'macro'};
+import {getPropertyToShorthandsMapping, getShorthandDefinitions, spacingTypeValues} from './styleProperties';
 import {Punctuation} from './types';
 import React, {ReactNode} from 'react';
 import {S2Typography} from './S2Typography';
-import {spacingTypeValues} from './styleProperties';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
@@ -143,6 +143,8 @@ interface StyleMacroPropertiesProps {
 
 export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
   let propertyNames = Object.keys(properties).sort();
+  let propertyToShorthands = getPropertyToShorthandsMapping();
+  let shorthandDefs = getShorthandDefinitions();
 
   return (
     <Accordion allowsMultipleExpanded>
@@ -150,6 +152,7 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
         let propDef = properties[propertyName];
         let values = propDef.values;
         let links = propDef.links || {};
+        let associatedShorthands = propertyToShorthands[propertyName] || [];
 
         return (
           <Disclosure key={index} id={propertyName}>
@@ -386,6 +389,51 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                   </div>
                 );
               })()}
+              {associatedShorthands.length > 0 && (
+                <div className={style({marginTop: 16})}>
+                  <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
+                    Shorthands
+                  </h4>
+                  {associatedShorthands.map((shorthandName, idx) => {
+                    let shorthandDef = shorthandDefs[shorthandName];
+                    return (
+                      <div key={idx} className={style({marginBottom: 12})}>
+                        <code className={codeStyle}>
+                          <span className={codeStyles.attribute}>{shorthandName}</span>
+                        </code>
+                        {shorthandDef.mapping && (
+                          <div className={style({marginTop: 4, font: 'body'})}>
+                            Maps to:{' '}
+                            <code className={codeStyle}>
+                              {shorthandDef.mapping.map((prop, i) => (
+                                <React.Fragment key={i}>
+                                  {i > 0 && ', '}
+                                  <span className={codeStyles.attribute}>{prop}</span>
+                                </React.Fragment>
+                              ))}
+                            </code>
+                          </div>
+                        )}
+                        {shorthandDef.description && (
+                          <div className={style({marginTop: 4, font: 'body'})}>
+                            {shorthandName === 'font' && propertyName === 'color' ? (
+                              <>
+                                The{' '}
+                                <ColorLink href="#text" type="variable">
+                                  fontSize
+                                </ColorLink>
+                                {' '}provided defines the values this shorthand sets on the mapped values.
+                              </>
+                            ) : (
+                              shorthandDef.description
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </DisclosurePanel>
           </Disclosure>
         );
