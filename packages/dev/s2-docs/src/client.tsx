@@ -19,34 +19,37 @@ let updateRoot = hydrate({
 let currentNavigationId = 0;
 let currentAbortController: AbortController | null = null;
 
-// Store scroll positions by pathname
-const scrollPositions = new Map<string, {scrollTop: number, windowScrollTop: number}>();
-
-// Track the current pathname so we can save scroll position on popstate
-// (when popstate fires, location.pathname has already changed to the destination)
-let currentPathname = location.pathname;
+interface HistoryState {
+  scrollTop?: number,
+  windowScrollTop?: number
+}
 
 function getScrollContainer(): HTMLElement | null {
   return document.querySelector('main');
 }
 
-// Save scroll position for a given pathname
-function saveScrollPosition(pathname: string) {
+function saveScrollPosition() {
   let scrollContainer = getScrollContainer();
   let scrollTop = scrollContainer?.scrollTop ?? 0;
   let windowScrollTop = window.scrollY;
-  scrollPositions.set(pathname, {scrollTop, windowScrollTop});
+  let state: HistoryState = {
+    ...(history.state as HistoryState | null),
+    scrollTop,
+    windowScrollTop
+  };
+  history.replaceState(state, '', location.href);
 }
 
-function restoreScrollPosition(pathname: string) {
-  let position = scrollPositions.get(pathname);
-  if (position) {
+function restoreScrollPosition(state: HistoryState | null) {
+  if (state?.scrollTop != null || state?.windowScrollTop != null) {
     requestAnimationFrame(() => {
       let scrollContainer = getScrollContainer();
-      if (scrollContainer) {
-        scrollContainer.scrollTop = position.scrollTop;
+      if (scrollContainer && state.scrollTop != null) {
+        scrollContainer.scrollTop = state.scrollTop;
       }
-      window.scrollTo(0, position.windowScrollTop);
+      if (state.windowScrollTop != null) {
+        window.scrollTo(0, state.windowScrollTop);
+      }
     });
   }
 }
@@ -54,17 +57,17 @@ function restoreScrollPosition(pathname: string) {
 // A very simple router. When we navigate, we'll fetch a new RSC payload from the server,
 // and in a React transition, stream in the new page. Once complete, we'll pushState to
 // update the URL in the browser.
-async function navigate(pathname: string, push = false, restoreScroll = false) {
+async function navigate(pathname: string, push = false, popstateState: HistoryState | null = null) {
   let url = new URL(pathname, location.href);
   let basePath = url.pathname;
   let pathAnchor = url.hash.slice(1);
   let currentPath = location.pathname;
   let isSamePageAnchor = (!basePath || basePath === currentPath) && pathAnchor;
   
-  // Save scroll position before navigating away
-  // For push: use location.pathname (still the current page)
-  // For popstate: use currentPathname (because location.pathname already changed)
-  saveScrollPosition(push ? location.pathname : currentPathname);
+  // Save scroll position to current history entry before navigating away
+  if (push) {
+    saveScrollPosition();
+  }
   
   if (isSamePageAnchor) {
     if (push) {
@@ -124,9 +127,9 @@ async function navigate(pathname: string, push = false, restoreScroll = false) {
           }
 
           // Handle scroll position
-          if (restoreScroll) {
-            // Restore scroll position from saved positions (back/forward navigation)
-            restoreScrollPosition(newBasePath);
+          if (popstateState) {
+            // Restore scroll position from history state (back/forward navigation)
+            restoreScrollPosition(popstateState);
           } else if (currentPath !== newBasePath && !newPathAnchor) {
             // Reset scroll for forward navigation to a different page without an anchor
             let scrollContainer = getScrollContainer();
@@ -141,9 +144,6 @@ async function navigate(pathname: string, push = false, restoreScroll = false) {
               element.scrollIntoView();
             }
           }
-
-          // Update tracked pathname after navigation completes
-          currentPathname = newBasePath;
 
           queueMicrotask(() => {
             window.dispatchEvent(new CustomEvent('rsc-navigation'));
@@ -294,10 +294,20 @@ document.addEventListener('click', e => {
 });
 
 // When the user clicks the back/forward button, navigate with RSC.
-// Pass restoreScroll=true to restore scroll position from saved positions.
-window.addEventListener('popstate', () => {
-  navigate(location.pathname + location.search + location.hash, false, true);
+window.addEventListener('popstate', (e) => {
+  navigate(location.pathname + location.search + location.hash, false, e.state as HistoryState | null);
 });
+
+// Save scroll position to history state when scrolling stops.
+let scrollSaveTimeout: ReturnType<typeof setTimeout> | null = null;
+function onScroll() {
+  if (scrollSaveTimeout) {
+    clearTimeout(scrollSaveTimeout);
+  }
+  scrollSaveTimeout = setTimeout(saveScrollPosition, 150);
+}
+
+window.addEventListener('scroll', onScroll, {passive: true, capture: true});
 
 function scrollToCurrentHash() {
   if (!location.hash || location.hash === '#') {
