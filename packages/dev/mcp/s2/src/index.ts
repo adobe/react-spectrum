@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /// <reference types="node" />
 import {errorToString} from '../../shared/src/utils.js';
-import {listIconNames, listIllustrationNames, loadIconAliases, loadIllustrationAliases} from './s2-data.js';
+import {listIconNames, listIllustrationNames, loadIconAliases, loadIllustrationAliases, loadStyleMacroPropertyValues} from './s2-data.js';
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {startServer} from '../../shared/src/server.js';
 import {z} from 'zod';
@@ -85,6 +85,39 @@ import {z} from 'zod';
             }
           }
           return {content: [{type: 'text', text: JSON.stringify(Array.from(results).sort((a, b) => a.localeCompare(b)), null, 2)}]};
+        }
+      );
+
+      server.registerTool(
+        'get_style_macro_property_values',
+        {
+          title: 'Get style macro property values',
+          description: 'Returns the allowed values for a given S2 style macro property (including expanded color/spacing value lists where applicable).',
+          inputSchema: {propertyName: z.string()}
+        },
+        async ({propertyName}) => {
+          const name = String(propertyName ?? '').trim();
+          if (!name) {
+            throw new Error('Provide a non-empty propertyName.');
+          }
+
+          const all = loadStyleMacroPropertyValues();
+          let def = all[name];
+          if (!def) {
+            // fallback to case-insensitive lookup
+            const lower = name.toLowerCase();
+            const matchKey = Object.keys(all).find(k => k.toLowerCase() === lower);
+            if (matchKey) {
+              def = all[matchKey];
+            }
+          }
+
+          if (!def) {
+            const available = Object.keys(all).sort((a, b) => a.localeCompare(b));
+            throw new Error(`Unknown style macro property '${name}'. Available properties: ${available.join(', ')}`);
+          }
+
+          return {content: [{type: 'text', text: JSON.stringify(def, null, 2)}]};
         }
       );
     });
