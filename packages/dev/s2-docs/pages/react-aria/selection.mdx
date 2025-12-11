@@ -221,8 +221,9 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, TableBody, Row, Cell, type Selection} from 'react-aria-components';
 import {Checkbox} from 'vanilla-starter/Checkbox';
+import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 ///- begin collapse -///
@@ -235,14 +236,14 @@ const rows = [
 ///- end collapse -///
 
 function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set());
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
   ///- begin highlight -///
   function performBulkAction() {
     if (selectedKeys === 'all') {
-      // perform action on all items
+      alert('Performing action on all items');
     } else {
-      // perform action on selected items in selectedKeys
+      alert(`Performing action on selected items: ${[...selectedKeys].join(', ')}`);
     }
   }
   ///- end highlight -///
@@ -272,6 +273,11 @@ function Example() {
           )}
         </TableBody>
       </Table>
+      {(selectedKeys === 'all' || selectedKeys.size > 0) && (
+        <div style={{marginTop: '16px', padding: '8px'}}>
+          <Button onPress={performBulkAction}>Delete Selected</Button>
+        </div>
+      )}
       <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
     </div>
   );
@@ -532,9 +538,9 @@ function SelectableItem({id, children}) {
 <ListBox
   aria-label="Animated ListBox"
   selectionMode="single">
-  <SelectableItem>Home</SelectableItem>
-  <SelectableItem>Getting Started</SelectableItem>
-  <SelectableItem>Components</SelectableItem>
+  <SelectableItem id="home">Home</SelectableItem>
+  <SelectableItem id="getting-started">Getting Started</SelectableItem>
+  <SelectableItem id="components">Components</SelectableItem>
 </ListBox>
 ```
 
@@ -608,13 +614,11 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {useState} from 'react';
 
 <Table
   aria-label="Table"
   selectionMode="multiple"
-  /* PROPS */
-  selectionMode="multiple">
+  /* PROPS */>
   <TableHeader>
     <Column isRowHeader>Name</Column>
     <Column>Type</Column>
@@ -730,7 +734,6 @@ const files = [
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {useState} from 'react';
 
 ///- begin collapse -///
 const files = [
@@ -971,8 +974,16 @@ const items = [
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {Collection} from 'react-aria-components';
 
+type Pokemon = {
+  id: number;
+  name: string;
+  type: string;
+  level: number;
+  children?: Pokemon[];
+};
+
 ///- begin collapse -///
-let items = [
+let items: Pokemon[] = [
   {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
     {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
       {id: 3, name: 'Venusaur', type: 'Grass', level: 83}

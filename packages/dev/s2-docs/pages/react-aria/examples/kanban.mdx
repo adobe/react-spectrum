@@ -139,7 +139,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys, items) {
+    getItems(keys, items: typeof tickets) {
       return items.map((item) => ({
         'issue-id': item.id,
         'text/plain': item.title

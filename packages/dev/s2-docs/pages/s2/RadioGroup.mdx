@@ -34,7 +34,7 @@ import {RadioGroup, Radio} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [selected, setSelected] = useState(null);
+  let [selected, setSelected] = useState<string | null>(null);
 
   return (
     <>

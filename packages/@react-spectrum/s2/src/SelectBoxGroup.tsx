@@ -21,6 +21,7 @@ import {
   Provider
 } from 'react-aria-components';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Orientation} from '@react-types/shared';
+import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from '../src/Icon';
 import {pressScale} from './pressScale';
@@ -33,7 +34,7 @@ export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
-  children: ReactNode,
+  children: ReactNode | ((item: T) => ReactNode),
   /**
    * The layout direction of the content in each SelectBox.
    * @default 'vertical'
@@ -384,7 +385,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
 /**
  * SelectBoxGroup allows users to select one or more options from a list.
  */
-export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
 
   let {

@@ -299,7 +299,7 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
 
 ```tsx render hideImports
 "use client";
-import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {Table, TableHeader, Column, TableBody} from 'vanilla-starter/Table';
 
 <Table aria-label="Search results">
   <TableHeader>
@@ -506,7 +506,7 @@ const columns = [
 ];
 ///- end collapse -///
 
-const initialWidths = new Map([
+const initialWidths = new Map<string, number | string>([
   ['file', '1fr'],
   ['size', 80],
   ['date', 100]
@@ -604,8 +604,8 @@ function ReorderableTable() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).name
+    getItems: (keys, items: typeof list.items) => items.map(item => ({
+      'text/plain': item.name
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {

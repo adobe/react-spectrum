@@ -89,16 +89,18 @@ Render a [SelectionIndicator](selection#animated-selectionindicator) within each
 
 ```tsx render files={['starters/docs/src/SegmentedControl.css']}
 "use client";
-import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator} from 'react-aria-components';
+import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator, composeRenderProps} from 'react-aria-components';
 import 'vanilla-starter/SegmentedControl.css';
 
 function SegmentedControlItem(props: ToggleButtonProps) {
   return (
     <ToggleButton {...props} className="segmented-control-item">
       {/*- begin highlight -*/}
-      <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+      {composeRenderProps(props.children, (children) => (<>
+        <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+        <span>{children}</span>
+      </>))}
       {/*- end highlight -*/}
-      <span>{props.children}</span>
     </ToggleButton>
   );
 }

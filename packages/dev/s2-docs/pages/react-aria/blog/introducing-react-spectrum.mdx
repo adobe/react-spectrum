@@ -93,16 +93,18 @@ Building a component with React Aria and React Stately looks like this: call the
 
 import {useSwitch, useFocusRing, VisuallyHidden} from 'react-aria';
 import {useToggleState} from 'react-stately';
+import {useRef} from 'react';
 
 function Switch(props) {
   let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state);
+  let ref = useRef(null);
+  let {inputProps} = useSwitch(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} />
+        <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       <svg width={40} height={24} aria-hidden="true" style={{marginRight: 4}}>
         <rect x={4} y={4} width={32} height={16} rx={8} fill={state.isSelected ? 'orange' : 'gray'} />
@@ -132,13 +134,16 @@ We've designed the APIs in React Spectrum to be easy to use. The following examp
 ```tsx render
 'use client';
 
-import {Picker, PickerItem, PickerSection, Text} from '@react-spectrum/s2';
+import {Header, Heading, Picker, PickerItem, PickerSection, Text} from '@react-spectrum/s2';
 import User from '@react-spectrum/s2/icons/User';
 import UserEdit from '@react-spectrum/s2/icons/UserEdit';
 import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 
 <Picker label="Options">
-  <PickerSection title="Permission">
+  <PickerSection>
+    <Header>
+      <Heading>Permission</Heading>
+    </Header>
     <PickerItem textValue="Read">
       <User />
       <Text>Read</Text>

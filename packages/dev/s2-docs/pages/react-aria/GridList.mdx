@@ -373,6 +373,16 @@ import {Collection, Text} from 'react-aria-components';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
 import {useAsyncList} from '@react-stately/data';
 
+type Item = {
+  id: string;
+  description?: string;
+  alt_description?: string;
+  urls: {regular: string};
+  width: number;
+  height: number;
+  user: {name: string};
+};
+
 function AsyncLoadingExample() {
   let list = useAsyncList<Item, number | null>({
     async load({signal, cursor, items}) {
@@ -866,7 +876,7 @@ function Example() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
+    getItems: (keys, items: typeof list.items) => items.map(item => ({'text/plain': item.title})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
