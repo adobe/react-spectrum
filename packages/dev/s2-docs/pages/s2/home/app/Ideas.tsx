@@ -1,6 +1,5 @@
 import {
   Card, CardView,
-  CardViewProps,
   Collection,
   CollectionCardPreview,
   Content, Image, SkeletonCollection,

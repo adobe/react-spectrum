@@ -6,7 +6,6 @@ import {
   TreeItemContent as AriaTreeItemContent,
   Button,
   TreeItemProps as AriaTreeItemProps,
-  TreeItemContentProps as AriaTreeItemContentProps,
   TreeProps
 } from 'react-aria-components';
 import { ChevronRight } from "lucide-react";

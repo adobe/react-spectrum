@@ -75,12 +75,12 @@ function Example() {
       selectionMode="multiple"
       styles={style({width: 'full'})}>
       {/*- begin highlight -*/}
-      {(item) => (
-        <SelectBox>
+      {((item) => (
+        <SelectBox id={item.id} textValue={item.name}>
           {item.illustration}
           <Text slot="label">{item.name}</Text>
         </SelectBox>
-      )}
+      ))}
       {/*- end highlight -*/}
     </SelectBoxGroup>
   );

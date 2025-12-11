@@ -12,6 +12,7 @@ import { Avatar, Button, Form, TextField } from '@react-spectrum/s2';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import Search from '@react-spectrum/s2/icons/Search';
 import More from '@react-spectrum/s2/icons/More';
+// @ts-ignore
 import {AdobeLogo} from '../../../src/icons/AdobeLogo';
 import {animate, useIntersectionObserver} from '@react-spectrum/docs/pages/react-aria/home/utils';
 import {TextFieldRef} from '@react-types/textfield';

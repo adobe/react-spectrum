@@ -92,7 +92,6 @@ export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * Whether the picker should be displayed with a quiet style.
-   * @private
    */
   isQuiet?: boolean
 }

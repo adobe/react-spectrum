@@ -22,7 +22,6 @@ export const description = 'Provides users with a way to navigate nested hierarc
   ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Tree.tsx", "starters/docs/src/Tree.css"]}
   "use client";
   import {Tree, TreeItem} from 'vanilla-starter/Tree';
-  import {Button} from 'vanilla-starter/Button';
 
   <Tree
     /* PROPS */
@@ -311,7 +310,7 @@ function Example() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': tree.getItem(key).value.title})),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -344,9 +343,9 @@ function Example() {
       {function renderItem(item) {
         return (
           <TreeItem title={item.value.title}>
-            <Collection items={item.children}>
+            {item.children && <Collection items={item.children}>
               {renderItem}
-            </Collection>
+            </Collection>}
           </TreeItem>
         )
       }}

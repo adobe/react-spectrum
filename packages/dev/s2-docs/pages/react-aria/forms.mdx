@@ -75,12 +75,13 @@ import {Button} from 'vanilla-starter/Button';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let form = event.target as HTMLFormElement;
+    let formData = new FormData(form);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    form.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />
@@ -226,9 +227,7 @@ In some cases, validating in realtime can be helpful, such as when meeting passw
 
 ```tsx render
 'use client';
-import {Form} from 'vanilla-starter/Form';
 import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 function Example() {
@@ -273,7 +272,7 @@ import {useActionState} from 'react';
 
 function action(prevState, formData: FormData) {
   return {
-    values: Object.fromEntries(formData),
+    values: Object.fromEntries(formData) as Record<string, string>,
     errors: {
       username: 'Sorry, this username is taken.'
     }
@@ -281,7 +280,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {});
+  let [{values, errors}, formAction] = useActionState<{values?: Record<string, string>, errors?: Record<string, string>}, FormData>(action, {});
 
   return (
     <Form

@@ -29,7 +29,7 @@ import {mergeProps} from 'react-aria';
 import {useLongPress, usePress} from '@react-aria/interactions';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let [mode, setMode] = React.useState('Activate');
 
   /*- begin focus -*/

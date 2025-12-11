@@ -83,11 +83,11 @@ Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The
 
 ```tsx render
 "use client";
-import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {SegmentedControl, SegmentedControlItem, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [selected, setSelected] = useState('month');
+  let [selected, setSelected] = useState<Key>('month');
 
   return (
     <div>
