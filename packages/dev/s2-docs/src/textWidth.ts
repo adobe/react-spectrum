@@ -1,6 +1,6 @@
 // Map of characters to width per em, generated from Adobe Clean Spectrum VF.
 // Multiply by the font size to get the pixel width.
-let letters: Record<string, number> = {
+export let letters: Record<string, number> = {
   '0': 0.5467998461797813,
   '1': 0.33863281002940315,
   '2': 0.4949392889121938,
