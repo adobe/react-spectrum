@@ -60,12 +60,13 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let target = event.target as HTMLFormElement;
+    let formData = new FormData(target);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    target.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />

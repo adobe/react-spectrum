@@ -65,12 +65,13 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let target = event.target as HTMLFormElement;
+    let formData = new FormData(target);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    target.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />
@@ -269,7 +270,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function action(prevState, formData: FormData) {
   return {
-    values: Object.fromEntries(formData),
+    values: Object.fromEntries(formData) as Record<string, string>,
     errors: {
       username: 'Sorry, this username is taken.'
     }
@@ -277,7 +278,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {});
+  let [{values, errors}, formAction] = useActionState<{values?: Record<string, string>, errors?: Record<string, string>}, FormData>(action, {});
 
   return (
     <Form

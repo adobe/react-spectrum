@@ -85,7 +85,6 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-
       - run:
           name: Write npmrc
           command: |
@@ -762,6 +761,28 @@ jobs:
           paths:
             - '*/verdaccio/publish-stats'
 
+  v-starters:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-starters.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
   deploy:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
@@ -987,6 +1008,9 @@ workflows:
             - v-webpack-4
             - v-nextjs
             - v-rsp-cra-18
+      - v-starters:
+          requires:
+            - verdaccio
       - deploy:
           requires:
             - lint
@@ -1013,6 +1037,7 @@ workflows:
           requires:
             - s2-docs
             - s2-docs-stage
+            - v-starters
           filters:
             branches:
               only: main

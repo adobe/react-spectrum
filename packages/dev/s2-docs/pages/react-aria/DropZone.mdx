@@ -18,9 +18,10 @@ export const description = 'An area into which one or multiple objects can be dr
   import {DropZone} from 'vanilla-starter/DropZone';
   import {Text} from 'react-aria-components';
   import {useState} from 'react';
+  import React from 'react';
 
   function Example() {
-    let [content, setContent] = useState(null);
+    let [content, setContent] = useState<string | React.ReactElement | null>(null);
     return (
       <DropZone
         // Determine whether dragged content should be accepted.
@@ -58,9 +59,10 @@ export const description = 'An area into which one or multiple objects can be dr
   import {DropZone} from 'tailwind-starter/DropZone';
   import {Text} from 'react-aria-components';
   import {useState} from 'react';
+  import React from 'react';
 
   function Example() {
-    let [content, setContent] = useState(null);
+    let [content, setContent] = useState<string | React.ReactElement | null>(null);
     return (
       <DropZone
         // Determine whether dragged content should be accepted.

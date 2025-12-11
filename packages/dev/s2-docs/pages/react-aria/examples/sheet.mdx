@@ -57,9 +57,9 @@ function Sheet() {
   let bodyTranslate = useTransform(y, [0, h], [SHEET_MARGIN - SHEET_RADIUS, 0]);
   let bodyBorderRadius = useTransform(y, [0, h], [SHEET_RADIUS, 0]);
 
-  useMotionValueEvent(bodyScale, 'change', v => root.style.scale = `${v}`);
-  useMotionValueEvent(bodyTranslate, 'change', v => root.style.translate = `0 ${v}px`);
-  useMotionValueEvent(bodyBorderRadius, 'change', v => root.style.borderRadius = `${v}px`);
+  useMotionValueEvent(bodyScale, 'change', v => { if (root) root.style.scale = `${v}`; });
+  useMotionValueEvent(bodyTranslate, 'change', v => { if (root) root.style.translate = `0 ${v}px`; });
+  useMotionValueEvent(bodyBorderRadius, 'change', v => { if (root) root.style.borderRadius = `${v}px`; });
 
   return (
     <>

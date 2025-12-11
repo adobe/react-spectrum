@@ -3,9 +3,7 @@ import {
   OverlayArrow,
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
-  composeRenderProps,
-  PopoverContext,
-  useSlottedContext
+  composeRenderProps
 } from 'react-aria-components';
 import React from 'react';
 import {tv} from 'tailwind-variants';

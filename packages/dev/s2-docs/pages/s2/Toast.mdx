@@ -97,7 +97,7 @@ import {Button, ToastQueue, Text} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [close, setClose] = useState(null);
+  let [close, setClose] = useState<(() => void) | null>(null);
 
   return (
     <Button

@@ -122,7 +122,6 @@ import {useState} from 'react';
 import Server from '@react-spectrum/s2/illustrations/linear/Server';
 import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
 import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
-import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane';
 
 function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['aws']));
@@ -339,7 +338,8 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, ActionBar, ActionButton, Text, type Selection, type Key} from '@react-spectrum/s2';
+import Delete from '@react-spectrum/s2/icons/Delete';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
@@ -353,14 +353,14 @@ const rows = [
 ///- end collapse -///
 
 function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set());
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<Key>());
 
   ///- begin highlight -///
-  function performBulkAction() {
+  function performBulkAction(selectedKeys: Selection) {
     if (selectedKeys === 'all') {
-      // perform action on all items
+      alert('Performing action on all items');
     } else {
-      // perform action on selected items in selectedKeys
+      alert(`Performing action on selected items: ${[...selectedKeys].join(', ')}`);
     }
   }
   ///- end highlight -///
@@ -373,7 +373,15 @@ function Example() {
         selectionMode="multiple"
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
-        styles={style({width: 'full'})}>
+        renderActionBar={(selectedKeys) => (
+          <ActionBar>
+            <ActionButton onPress={() => performBulkAction(selectedKeys)}>
+              <Delete />
+              <Text>Delete</Text>
+            </ActionButton>
+          </ActionBar>
+        )}
+        styles={style({width: 'full', height: 200})}>
         <TableHeader>
           <Column isRowHeader>Name</Column>
           <Column>Type</Column>
@@ -476,7 +484,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
-  let [selectedKey, setSelectedKey] = useState<Key>('kangaroo');
+  let [selectedKey, setSelectedKey] = useState<Key | null>('kangaroo');
 
   return (
     <>
@@ -861,7 +869,6 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 "use client";
 import {TableView, TableHeader, Column, Row, TableBody, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useState} from 'react';
 
 <TableView
   aria-label="Table"
@@ -972,7 +979,6 @@ const photos = [
 "use client";
 import {TableView, TableHeader, Column, Row, TableBody, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useState} from 'react';
 
 ///- begin collapse -///
 const files = [
@@ -1155,7 +1161,6 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Server from '@react-spectrum/s2/illustrations/linear/Server';
 import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
 import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
-import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane';
 
 <SelectBoxGroup
   aria-label="Cloud providers"
@@ -1428,7 +1433,6 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import Server from '@react-spectrum/s2/illustrations/linear/Server';
 import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
 import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
-import PaperAirplane from '@react-spectrum/s2/illustrations/linear/Paperairplane';
 
 ///- begin collapse -///
 const items = [
@@ -1447,12 +1451,12 @@ const items = [
   ///- end highlight -///
   styles={style({width: 'full'})}
   items={items}>
-  {item => (
+  {((item) => (
     <SelectBox textValue={item.name}>
       {item.illustration}
       <Text slot="label">{item.name}</Text>
     </SelectBox>
-  )}
+  ))}
 </SelectBoxGroup>
 ```
 
@@ -1523,8 +1527,16 @@ const items = [
 import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
+type PokemonItem = {
+  id: number;
+  name: string;
+  type: string;
+  level: number;
+  children?: PokemonItem[];
+};
+
 ///- begin collapse -///
-let items = [
+let items: PokemonItem[] = [
   {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
     {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
       {id: 3, name: 'Venusaur', type: 'Grass', level: 83}

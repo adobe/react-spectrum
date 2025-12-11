@@ -92,6 +92,7 @@ publish: build
 	yarn publish
 
 publish-nightly: build
+	git update-index --refresh
 	yarn version:nightly
 	yarn publish:nightly
 
@@ -123,7 +124,7 @@ website-production:
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 
 check-examples:
-	node scripts/extractExamples.mjs
+	node scripts/extractExamplesS2.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:
@@ -157,7 +158,6 @@ s2-docs-stage:
 	DOCS_ENV=stage PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/robots.txt
-	$(MAKE) build-starters
 
 s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
@@ -187,7 +187,8 @@ build-s2-docs:
 build-starters:
 	$(MAKE) starter-zip
 	$(MAKE) tailwind-starter
-	mv starters/docs/storybook-static dist/s2-docs/react-aria-starter
-	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
-	mv starters/tailwind/storybook-static dist/s2-docs/react-aria-tailwind-starter
-	mv starters/tailwind/react-aria-tailwind-starter.zip dist/s2-docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
+	mv starters/docs/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter
+	mv starters/docs/react-aria-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-starter.$$(git rev-parse --short HEAD).zip
+	mv starters/tailwind/storybook-static dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter
+	mv starters/tailwind/react-aria-tailwind-starter.zip dist/s2-docs/react-aria/$(PUBLIC_URL)/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip

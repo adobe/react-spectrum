@@ -1,6 +1,9 @@
 import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
+// @ts-ignore
 import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
+// @ts-ignore
 import { Code } from "../../../src/Code";
+// @ts-ignore
 import { Pre } from "../../../src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
@@ -33,6 +36,7 @@ import { Typography } from "./Typography";
 import { States } from "./States";
 import { useId } from "react";
 import { Responsive } from "./Responsive";
+// @ts-ignore
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 import { ReduceMotion } from "./ReduceMotion";
 import { Colors } from "./Colors";
@@ -40,7 +44,9 @@ import '../../../src/footer.css';
 // @ts-ignore
 import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
+// @ts-ignore
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
+// @ts-ignore
 import { getBaseUrl } from "../../../src/pageUtils";
 import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
 import { letters } from "../../../src/textWidth";

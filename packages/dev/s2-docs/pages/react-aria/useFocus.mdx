@@ -26,7 +26,7 @@ import React from 'react';
 import {useFocus} from 'react-aria';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let {focusProps} = useFocus({
     onFocus: e => setEvents(
       events => [...events, 'focus']

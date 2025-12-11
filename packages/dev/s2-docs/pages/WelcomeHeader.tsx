@@ -1,5 +1,6 @@
 import {ProductCard, Content, Footer, Text, LinkButton} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+// @ts-ignore
 import {TAB_DEFS} from '../src/constants';
 // @ts-ignore
 import url from 'url:../assets/wallpaper_collaborative_S2_desktop.webp';

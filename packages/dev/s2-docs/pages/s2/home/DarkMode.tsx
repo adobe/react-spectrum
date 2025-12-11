@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { mergeProps, useFocusRing, useMove } from "react-aria";
 // @ts-ignore
 import Nubbin from '../../../../../@react-spectrum/s2/ui-icons/S2_MoveHorizontalTableWidget.svg';
-import { AppFrame, ExampleApp } from "./ExampleApp";
+import { AppFrame } from "./ExampleApp";
 
 export function DarkMode() {
   let containerRef = useRef(null);
