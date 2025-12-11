@@ -7,6 +7,11 @@ import {type ReactElement} from 'react';
 import {setNavigationPromise} from './Router';
 import {ToastQueue} from '@react-spectrum/s2';
 
+if ('scrollRestoration' in history) {
+  // Disable browser's automatic scroll restoration since we handle it manually
+  history.scrollRestoration = 'manual';
+}
+
 // Hydrate initial RSC payload embedded in the HTML.
 let updateRoot = hydrate({
   // Intercept HMR window reloads, and do it with RSC instead.
