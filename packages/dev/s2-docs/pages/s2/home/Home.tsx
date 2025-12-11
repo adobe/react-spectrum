@@ -256,8 +256,8 @@ export function Home() {
             <span className={swapSizer} aria-hidden>with React Spectrum</span>
           </span>
         </h1>
-        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design</p>
-        <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 56})}>
+        <p className={style({font: 'body-3xl', marginY: 0, color: 'white', textWrap: 'balance'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design.</p>
+        <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 96})}>
           <LinkButton size="XL" staticColor="white" href="getting-started">Get started</LinkButton>
           <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum">Explore components</LinkButton>
         </div>
@@ -271,7 +271,7 @@ export function Home() {
           description="React Spectrum makes interfaces more accessible, flexible, and easier to maintain, while giving users a seamless experience no matter where they are.">
           <Feature
             title="Dark mode"
-            description="Deliver effortless dark and light mode support with no extra styling needed."
+            description="Deliver effortless light and dark mode support with no extra styling needed."
             illustration={<Lightbulb />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <DarkMode />
@@ -285,7 +285,7 @@ export function Home() {
           </Feature>
           <Feature
             title="Global ready by default"
-            description="Automatically mirrors component layouts, and formats text for different languages, currencies, dates, and locales."
+            description="Component layouts automatically mirrors, and format text for different languages, currencies, dates, and locales."
             illustration={<Translate />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Provider
@@ -325,14 +325,14 @@ export function Home() {
           </Feature> */}
           <Feature
             title="High contrast mode"
-            description="Support for high contrast mode included, ensuring a clear and readable experience based on preference."
+            description="Support for high contrast mode is included, ensuring a clear and readable experience based on preference."
             illustration={<Accessibility />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <HCM />
           </Feature>
           <Feature
             title="Adaptive font sizes"
-            description="Fonts scale automatically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
+            description="Fonts scale automatically according to user preferences and screen size using rem-based typography, allowing your text to scale naturally."
             illustration={<TextIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <Rems />
@@ -356,28 +356,28 @@ export function Home() {
             <SubmenuAnimation />
           </Feature>
         </Section> */}
-        <Section title="Everything you need to build beautiful apps" description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
+        <Section title="Everything you need to build beautiful apps." description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
           <Feature
             title="Icons"
-            description="Spectrum icon support for your product. Use the icon search to simplify finding the right icon the right experience."
+            description={<>With hundreds of Spectrum icons to choose from, use our <Link href="icons" variant="secondary">icon search</Link> to find the right icon for the right experience.</>}
             illustration={<VectorDraw />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Icons />
           </Feature>
           <Feature
             title="Illustrations"
-            description="Rich illustrations that help bring your interface to life. Use the illustration search to find the right illustration for your product."
+            description={<>Rich illustrations help bring your interface to life. Use our <Link href="illustrations" variant="secondary">illustration search</Link> to find the right illustration for your product.</>}
             illustration={<IllustrationIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Illustrations />
           </Feature>
         </Section>
         <Section
-          title={<>Rapidly style custom components with Style Macros</>}
+          title={<>Rapidly style custom components with Style Macros.</>}
           description={<>Easily use Spectrum tokens like colors, spacing, and typography in your own custom components with style macros. Styles are <strong>colocated</strong> with your component code, allowing you to <strong>develop more efficiently</strong> and <strong>refactor with confidence</strong> – no more CSS conflicts or specificity issues. Style macros generate atomic CSS at build time, so you get tiny bundle sizes and fast runtime performance.</>}>
           <Feature
             title="Colors"
-            description="Access the full range of Spectrum color tokens when you need them."
+            description="Convenient access to the full range of Spectrum color tokens."
             illustration={<Color />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ColorScales />
@@ -469,14 +469,14 @@ const buttonStyle = style({
           </Feature>
           <Feature
             title="Responsive design"
-            description="Adaptive UI built on Spectrum's responsive layout definitions.... *needs work"
+            description="Adapt your application for any screen size using our built-in breakpoints, or define your own."
             illustration={<Phone />}
             style={{gridColumn: 'span 6'}}>
             <Responsive />
           </Feature>
         </Section>
         <Section
-          title="Built for modern development and the modern web"
+          title="Built for modern development and the modern web."
           description="With AI-ready documentation, server side and runtime performance optimizations, React Spectrum helps you build modern, scalable apps without compromise.">
           <Feature
             title="AI-ready"
@@ -487,19 +487,26 @@ const buttonStyle = style({
           </Feature>
           <Feature
             title="SSR"
-            description="Server-side rendering and React Server Components support, maximizing Core Web Vitals with zero layout thrashing."
+            description="Server-side rendering and React Server Components support, maximizing Core Web Vitals."
             illustration={<Server />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
           <Feature
             title="Small bundle"
-            description="Aggressive tree-shaking and atomic CSS resulting in reduced bundle sizes and faster runtime performance."
+            description="Aggressive tree-shaking and atomic CSS result in small bundle sizes and fast runtime performance."
             illustration={<SpeedFast />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
               
           </Feature>
         </Section>
+        <section className={style({paddingY: 64})}>
+          <h2 className={style({font: 'heading-2xl', color: 'white'})}>Ready to get started?</h2>
+          <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}})}>
+            <LinkButton size="XL" staticColor="white" href="getting-started">Install and setup</LinkButton>
+            <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum">Explore components</LinkButton>
+          </div>
+        </section>
       </main>
       <footer
         className={style({
@@ -537,7 +544,7 @@ function Section({title, description, children}: any) {
   return (
     <section aria-labelledby={headingId} className={style({paddingY: 64})}>
       <h2 id={headingId} className={style({font: 'heading-2xl', color: 'white'})}>{title}</h2>
-      <p className={style({font: 'body-2xl', color: 'white', maxWidth: '80%', marginBottom: 64})}>{description}</p>
+      <p className={style({font: 'body-2xl', color: 'white', maxWidth: '80%', marginBottom: 64, textWrap: 'balance'})}>{description}</p>
       <div className={style({display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16})}>
         {children}
       </div>

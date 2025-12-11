@@ -60,8 +60,12 @@ export function States() {
         className={style({
           gridArea: 'props',
           display: 'flex',
-          alignItems: 'center',
-          columnGap: 16
+          flexDirection: 'column',
+          alignItems: {
+            default: 'center',
+            xl: 'start'
+          },
+          gap: 16
         })}>
         <Picker
           label="Variant"
