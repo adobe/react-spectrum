@@ -354,7 +354,7 @@ describe('TooltipTrigger', function () {
   it('does not close if the trigger is clicked with the keyboard when shouldCloseOnPress is false',  async () => {
     let {getByRole, getByLabelText} = render(
       <Provider theme={theme}>
-        <TooltipTrigger onOpenChange={onOpenChange} delay={0} closeOnPress={false}>
+        <TooltipTrigger onOpenChange={onOpenChange} delay={0} shouldCloseOnPress={false}>
           <ActionButton aria-label="trigger" />
           <Tooltip>Helpful information.</Tooltip>
         </TooltipTrigger>
