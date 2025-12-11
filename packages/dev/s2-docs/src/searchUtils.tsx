@@ -1,14 +1,15 @@
 'use client';
 
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
-import {getLibraryFromPage} from './library';
+import {getBaseUrl} from './pageUtils';
 // @ts-ignore
+import {getLibraryFromPage} from './library';
 import {iconList, useIconFilter} from './IconSearchView';
 import {Key} from 'react-aria-components';
+ 
 import {type Library, TAB_DEFS} from './constants';
-// eslint-disable-next-line monorepo/no-internal-import
-import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 // @ts-ignore
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import {Page} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -37,7 +38,8 @@ export interface Section {
 
 export interface Tag {
   id: string,
-  name: string
+  name: string,
+  href?: string
 }
 
 /**
@@ -349,7 +351,7 @@ export function getOrderedLibraries(currentPage: Page) {
 
 export function getResourceTags(library: Library): Tag[] {
   if (library === 'react-spectrum') {
-    return [{id: 'icons', name: 'Icons'}];
+    return [{id: 'icons', name: 'Icons'}, {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}];
   }
   return [];
 }
