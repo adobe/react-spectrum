@@ -48,7 +48,9 @@ import bg from 'data-url:./bg.svg';
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
 // @ts-ignore
 import { getBaseUrl } from "../../../src/pageUtils";
+// @ts-ignore
 import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
+// @ts-ignore
 import { letters } from "../../../src/textWidth";
 
 const container = style({
