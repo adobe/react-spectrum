@@ -408,15 +408,15 @@ function ComponentIllustration({name, href}: IllustrationProps) {
 
   return (
     <Image
-      src={light}
+      src={[
+        {srcSet: light, colorScheme: 'light'},
+        {srcSet: dark, colorScheme: 'dark'}
+      ]}
       alt=""
       aria-hidden="true"
       width={960}
       height={600}
-      styles={illustrationStyles}>
-      <source srcSet={light} media="(prefers-color-scheme: light)" />
-      <source srcSet={dark} media="(prefers-color-scheme: dark)" />
-    </Image>
+      styles={illustrationStyles} />
   );
 }
 
@@ -443,16 +443,13 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
     preview = (
       <div className={illustrationContainer}>
         {/* Background gradient */}
-        <picture>
-          <source srcSet={BackgroundLight} media="(prefers-color-scheme: light)" />
-          <source srcSet={BackgroundDark} media="(prefers-color-scheme: dark)" />
-          <img
-            src={BackgroundLight}
-            alt=""
-            aria-hidden="true"
-            className={backgroundStyles}
-            loading="lazy" />
-        </picture>
+        <Image
+          alt=""
+          styles={backgroundStyles}
+          src={[
+            {srcSet: BackgroundLight, colorScheme: 'light'},
+            {srcSet: BackgroundDark, colorScheme: 'dark'}
+          ]} />
         <span className={releaseText}>{releaseVersion}</span>
       </div>
     );
