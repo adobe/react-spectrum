@@ -418,11 +418,11 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                           <div className={style({marginTop: 4, font: 'body'})}>
                             {shorthandName === 'font' && propertyName === 'color' ? (
                               <>
-                                The{' '}
+                                Accepts the same values as{' '}
                                 <ColorLink href="#text" type="variable">
                                   fontSize
                                 </ColorLink>
-                                {' '}provided defines the values this shorthand sets on the mapped values.
+                                . The fontSize provided defines the values this shorthand sets on the mapped values.
                               </>
                             ) : (
                               shorthandDef.description

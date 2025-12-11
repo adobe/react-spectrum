@@ -365,11 +365,11 @@ const shorthandMapping: {[key: string]: {values: (string | number)[], mapping: s
     mapping: ['alignItems', 'justifyItems']
   },
   placeContent: {
-    values: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'baseline', 'stretch'],
+    values: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'stretch'],
     mapping: ['alignContent', 'justifyContent']
   },
   placeSelf: {
-    values: ['auto', 'start', 'end', 'center', 'stretch', 'baseline'],
+    values: ['auto', 'start', 'end', 'center', 'stretch'],
     mapping: ['alignSelf', 'justifySelf']
   },
   gap: {
@@ -409,7 +409,7 @@ const shorthandMapping: {[key: string]: {values: (string | number)[], mapping: s
     mapping: ['animation', 'animationDuration', 'animationTimingFunction']
   },
   truncate: {
-    values: ['true'],
+    values: ['boolean'],
     mapping: ['overflowX', 'overflowY', 'textOverflow', 'whiteSpace']
   },
   font: {
@@ -502,8 +502,8 @@ const propertyDescriptions: {[key: string]: string} = {
   'aspectRatio': 'Also accepts a ratio in the format number/number (e.g., 16/9, 4/3).',
   'transitionShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
   'animationShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
-  'truncateShortHand': 'Applying this shorthand will enable text truncation.',
-  'fontShortHand': 'The fontSize provided defines the values this shorthand sets on the mapped values.',
+  'truncateShortHand': 'Accepts a boolean value. Applying this shorthand will set the required style macro properties to enable text truncation.',
+  'fontShortHand': 'Accepts the same values as fontSize. The fontSize provided defines the values this shorthand sets on the mapped values.',
   'borderStartWidth': 'These values map to pixels.',
   'borderEndWidth': 'These values map to pixels.',
   'borderTopWidth': 'These values map to pixels.',
