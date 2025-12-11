@@ -1,7 +1,8 @@
 import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
-import {BackgroundColorsDisclosure, GlobalColorsDisclosure, SemanticColorsDisclosure, TextColorsDisclosure} from './S2Colors';
+import {BackgroundColorsDisclosure, Color, GlobalColorsDisclosure, SemanticColorsDisclosure, TextColorsDisclosure} from './S2Colors';
 import {styles as codeStyles} from './Code';
 import {ColorLink} from './Link';
+import {colorSwatch} from './color.macro' with {type: 'macro'};
 import {Punctuation} from './types';
 import React, {ReactNode} from 'react';
 import {S2Typography} from './S2Typography';
@@ -9,6 +10,45 @@ import {spacingTypeValues} from './styleProperties';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
+
+function BaseColorsAccordion() {
+  return (
+    <div className={style({marginTop: 16})}>
+      <Accordion allowsMultipleExpanded>
+        {styleMacroValueDesc['baseColors'].body}
+      </Accordion>
+    </div>
+  );
+}
+
+function NoneValueListItem() {
+  return (
+    <li className={style({font: 'body'})}>
+      <code className={codeStyle}>
+        <span className={codeStyles.string}>'none'</span>
+      </code>
+      <div className={style({marginTop: 4})}>
+        {styleMacroValueDesc['none'].description}
+      </div>
+    </li>
+  );
+}
+
+function CurrentColorListItem({links}: {links: {[value: string]: {href: string, isRelative?: boolean}}}) {
+  return (
+    <li className={style({font: 'body'})}>
+      <code className={codeStyle}>
+        <ColorLink
+          href={links['currentColor'].href}
+          type="variable"
+          rel="noreferrer"
+          target="_blank">
+          currentColor
+        </ColorLink>
+      </code>
+    </li>
+  );
+}
 
 const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: ReactNode}> = {
   'baseSpacing': {
@@ -83,6 +123,9 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
   },
   'number': {
     description: <>A numeric value in pixels e.g. <code className={codeStyle}>20</code>. Will be converted to rem and scaled on touch devices.</>
+  },
+  'none': {
+    description: 'No value applied.'
   }
 };
 
@@ -118,7 +161,7 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
             <DisclosurePanel>
               {(() => {
                 // if all values are numbers, we will render with pipes instead of bullets
-                let allValuesAreNumbers = values.every(v => typeof v === 'number');
+                let allValuesAreNumbers = values.length > 0 && values.every(v => typeof v === 'number');
 
                 return (
                   <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
@@ -151,6 +194,85 @@ export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
                             <BackgroundColorsDisclosure />
                             {styleMacroValueDesc['baseColors'].body}
                           </Accordion>
+                        );
+                      }
+
+                      // for borderColor, outlineColor, fill, and stroke, render color swatches
+                      if (propertyName === 'borderColor') {
+                        return (
+                          <div>
+                            <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                            <div className="sb-unstyled" style={{columnWidth: 120}}>
+                              <Color name="negative" className={colorSwatch('negative', 'borderColor')} />
+                              <Color name="disabled" className={colorSwatch('disabled', 'borderColor')} />
+                            </div>
+                            <BaseColorsAccordion />
+                          </div>
+                        );
+                      }
+
+                      if (propertyName === 'outlineColor') {
+                        return (
+                          <div>
+                            <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                            <div className="sb-unstyled" style={{columnWidth: 120}}>
+                              <Color name="focus-ring" className={colorSwatch('focus-ring', 'outlineColor')} />
+                            </div>
+                            <BaseColorsAccordion />
+                          </div>
+                        );
+                      }
+
+                      if (propertyName === 'fill') {
+                        return (
+                          <div>
+                            <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                            <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
+                              <NoneValueListItem />
+                              <CurrentColorListItem links={links} />
+                            </ul>
+                            <div className="sb-unstyled" style={{columnWidth: 120, marginTop: 12}}>
+                              <Color name="accent" className={colorSwatch('accent', 'fill')} />
+                              <Color name="neutral" className={colorSwatch('neutral', 'fill')} />
+                              <Color name="negative" className={colorSwatch('negative', 'fill')} />
+                              <Color name="informative" className={colorSwatch('informative', 'fill')} />
+                              <Color name="positive" className={colorSwatch('positive', 'fill')} />
+                              <Color name="notice" className={colorSwatch('notice', 'fill')} />
+                              <Color name="gray" className={colorSwatch('gray', 'fill')} />
+                              <Color name="red" className={colorSwatch('red', 'fill')} />
+                              <Color name="orange" className={colorSwatch('orange', 'fill')} />
+                              <Color name="yellow" className={colorSwatch('yellow', 'fill')} />
+                              <Color name="chartreuse" className={colorSwatch('chartreuse', 'fill')} />
+                              <Color name="celery" className={colorSwatch('celery', 'fill')} />
+                              <Color name="green" className={colorSwatch('green', 'fill')} />
+                              <Color name="seafoam" className={colorSwatch('seafoam', 'fill')} />
+                              <Color name="cyan" className={colorSwatch('cyan', 'fill')} />
+                              <Color name="blue" className={colorSwatch('blue', 'fill')} />
+                              <Color name="indigo" className={colorSwatch('indigo', 'fill')} />
+                              <Color name="purple" className={colorSwatch('purple', 'fill')} />
+                              <Color name="fuchsia" className={colorSwatch('fuchsia', 'fill')} />
+                              <Color name="magenta" className={colorSwatch('magenta', 'fill')} />
+                              <Color name="pink" className={colorSwatch('pink', 'fill')} />
+                              <Color name="turquoise" className={colorSwatch('turquoise', 'fill')} />
+                              <Color name="cinnamon" className={colorSwatch('cinnamon', 'fill')} />
+                              <Color name="brown" className={colorSwatch('brown', 'fill')} />
+                              <Color name="silver" className={colorSwatch('silver', 'fill')} />
+                            </div>
+                            <BaseColorsAccordion />
+                          </div>
+                        );
+                      }
+
+                      if (propertyName === 'stroke') {
+                        return (
+                          <div>
+                            <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                            <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
+                              <NoneValueListItem />
+                              <CurrentColorListItem links={links} />
+                            </ul>
+                            <BaseColorsAccordion />
+                          </div>
                         );
                       }
 

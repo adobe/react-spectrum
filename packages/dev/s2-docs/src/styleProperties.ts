@@ -468,7 +468,8 @@ export const spacingTypeValues = {
 // a mapping of value to mdn links that should be replaced in place
 const mdnTypeLinks: {[key: string]: string} = {
   'string': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
-  'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number'
+  'number': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
+  'currentColor': 'https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword'
 };
 
 // a mapping of value to links that should be replaced in place with the provided string
