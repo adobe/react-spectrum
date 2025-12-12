@@ -142,14 +142,23 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
   'video': {
     description: <>16:9 aspect ratio.</>
   },
+  'default': {
+    description: 'Sets transition property to color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, and backdrop-filter.'
+  },
   'colors': {
-    description: 'Transition property for color related properties: color, background-color, border-color, fill, and stroke.'
+    description: 'Sets transition property to color, background-color, border-color, text-decoration-color, fill, and stroke.'
   },
   'opacity': {
-    description: 'Transition property for opacity.'
+    description: 'Sets transition property to opacity.'
   },
   'shadow': {
-    description: 'Transition property for box-shadow.'
+    description: 'Sets transition property to box-shadow.'
+  },
+  'transform': {
+    description: 'Sets transition property to transform, translate, scale, and rotate properties.'
+  },
+  'all': {
+    description: 'Sets transition to all animatable properties.'
   }
 };
 
@@ -351,14 +360,16 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                                   shouldShowDescription = true;
                                 } else if (value === 'baseColors' && propertyName !== 'color' && propertyName !== 'backgroundColor') {
                                   shouldShowDescription = true;
-                                } else if (valueDesc && !['ui', 'heading', 'title', 'body', 'detail', 'code', 'fontSize'].includes(value)) {
+                                } else if (['default', 'colors', 'opacity', 'shadow', 'transform', 'all'].includes(value) && propertyName === 'transition') {
+                                  // show description for transition-specific values only when rendering transition property so they don't leak
+                                  shouldShowDescription = true;
+                                } else if (value === 'screen' && (propertyName === 'backgroundBlendMode' || propertyName === 'mixBlendMode')) {
+                                  // don't show dimension description for blend mode screen value
+                                  shouldShowDescription = false;
+                                } else if (valueDesc && !['ui', 'heading', 'title', 'body', 'detail', 'code', 'fontSize', 'default', 'colors', 'opacity', 'shadow', 'transform', 'all'].includes(value)) {
                                   // Show description for all other values that have one
                                   shouldShowDescription = true;
                                 }
-                                // TODO need to hide screen description in background blend mode
-                                // TODO make property -> value -> mdn mapping, mdnTypeLinks is too general, might be able to use mdnPropertyLinks
-
-
                                 let content;
                                 if (links[value]) {
                                   content = (
