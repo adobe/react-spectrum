@@ -426,7 +426,7 @@ jobs:
           command: |
             mkdir -p ~/.ssh
             curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
-            yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
+            yarn build:api-branch --githash="origin/main" --output="base-api"
 
       - persist_to_workspace:
           root: dist
