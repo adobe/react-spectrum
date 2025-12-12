@@ -46,6 +46,10 @@ import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" 
 import { getBaseUrl } from "@react-spectrum/s2-docs/src/pageUtils";
 import SearchMenuWrapperServer from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
 import type {Page} from "@parcel/rsc";
+// @ts-ignore
+import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
+// @ts-ignore
+import { letters } from "../../../src/textWidth";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -65,78 +69,90 @@ const container = style({
 const swapWrapper = style({
   display: 'inline-block',
   position: 'relative',
-  height: '[1em]',
+  height: '[1.2em]',
   overflow: 'hidden',
   verticalAlign: 'baseline',
   whiteSpace: 'nowrap',
-  lineHeight: '[1em]',
-  marginEnd: 12
+  lineHeight: '[1.2]'
 });
 
 // Track that scrolls vertically through all the items.
-const slideTrack = keyframes(`
+// Use 3D to ensure crisp text rendering.
+// With 10x hold time vs transition time:
+//   Total units: (6 holds × 10) + (6 transitions × 1) = 60 + 6 = 66 units
+//   Each transition = 100/66 = 1.515%
+//   Each hold = 10 × 1.515% = 15.152%
+const slideTrack: string = keyframes(`
   0% {
-    transform: translateY(0%);
+    transform: translate3d(0, 0, 0);
   }
-  15% {
-    transform: translateY(0%);
+  15.15% {
+    transform: translate3d(0, 0, 0);
   }
-  16% {
-    transform: translateY(-16.666%);
+  16.67% {
+    transform: translate3d(0, -1.2em, 0);
   }
-  31% {
-    transform: translateY(-16.666%);
+  31.82% {
+    transform: translate3d(0, -1.2em, 0);
   }
-  32% {
-    transform: translateY(-33.333%);
+  33.33% {
+    transform: translate3d(0, -2.4em, 0);
   }
-  47% {
-    transform: translateY(-33.333%);
+  48.48% {
+    transform: translate3d(0, -2.4em, 0);
   }
-  48% {
-    transform: translateY(-50%);
+  50% {
+    transform: translate3d(0, -3.6em, 0);
   }
-  63% {
-    transform: translateY(-50%);
+  65.15% {
+    transform: translate3d(0, -3.6em, 0);
   }
-  64% {
-    transform: translateY(-66.666%);
+  66.67% {
+    transform: translate3d(0, -4.8em, 0);
   }
-  79% {
-    transform: translateY(-66.666%);
+  81.82% {
+    transform: translate3d(0, -4.8em, 0);
   }
-  80% {
-    transform: translateY(-83.333%);
+  83.33% {
+    transform: translate3d(0, -6em, 0);
   }
-  95% {
-    transform: translateY(-83.333%);
+  98.48% {
+    transform: translate3d(0, -6em, 0);
   }
   100% {
-    transform: translateY(0%);
+    transform: translate3d(0, -7.2em, 0);
   }
 `);
 
 const swapTrack = style({
-  animation: slideTrack,
-  animationDuration: 15000,
-  animationTimingFunction: 'linear',
-  animationIterationCount: 'infinite',
-  display: 'flex',
+  position: 'relative',
+  display: {
+    default: 'flex',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  },
   flexDirection: 'column',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
+  height: '[1.2em]',
+  overflow: 'hidden',
+  fontSize: '[1em]',
+  willChange: 'transform'
 });
 
-// for measuring longest word
 const swapSizer = style({
-  opacity: 0,
+  display: {
+    default: 'none',
+    '@media (prefers-reduced-motion: reduce)': 'block'
+  },
   whiteSpace: 'nowrap'
 });
-
 
 const swapRow = style({
-  display: 'block',
-  height: '[1em]',
-  lineHeight: '[1em]'
+  animation: slideTrack,
+  animationDuration: 10000,
+  animationTimingFunction: 'linear',
+  animationIterationCount: 'infinite',
+  lineHeight: '[1.2]',
+  height: '[1.2em]'
 });
 
 export function Home({currentPage}: {currentPage: Page}) {
@@ -195,22 +211,22 @@ export function Home({currentPage}: {currentPage: Page}) {
         </div>
       </nav>
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
-        <h1 id={headingId} className={style({font: 'heading-3xl', marginY: 0, color: 'white'})}>
-          <span className={swapWrapper} >Build apps </span>
+        <HomeH1 id={headingId}>
+          <span className={swapWrapper}>Build apps with&nbsp;</span>
           <span className={swapWrapper}>
-            {/* @ts-ignore */}
-            <span className={swapTrack}>
-              <span className={swapRow}>with polish</span>
-              <span className={swapRow}>with speed</span>
-              <span className={swapRow}>with ease</span>
-              <span className={swapRow}>with accessibility</span>
-              <span className={swapRow}>with consistency</span>
-              <span className={swapRow}>with React Spectrum</span>
-            </span>
-            <span className={swapSizer} aria-hidden>with React Spectrum</span>
+            <div className={swapTrack}>
+              <span className={swapRow}>polish</span>
+              <span className={swapRow}>speed</span>
+              <span className={swapRow}>ease</span>
+              <span className={swapRow}>accessibility</span>
+              <span className={swapRow}>consistency</span>
+              <span className={swapRow}>React Spectrum</span>
+              <span className={swapRow} aria-hidden>polish</span>
+            </div>
+            <span className={swapSizer} aria-hidden>React Spectrum</span>
           </span>
-        </h1>
-        <p className={style({font: 'body-3xl', marginY: 0, color: 'white', textWrap: 'balance'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design.</p>
+        </HomeH1>
+        <p className={style({font: {default: 'body-2xl', md: 'body-3xl'}, marginY: 0, color: 'white', textWrap: 'balance'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design.</p>
         <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 96})}>
           <LinkButton size="XL" staticColor="white" href="getting-started">Get started</LinkButton>
           <SearchMenuWrapperServer currentPage={currentPage}>
@@ -495,6 +511,46 @@ const buttonStyle = style({
       </footer>
     </body>
   );
+}
+
+function getTitleTextWidth(text: string) {
+  let width = 0;
+  for (let c of text) {
+    let w = letters[c];
+    if (w != null) {
+      width += w;
+    }
+  }
+
+  return width;
+}
+
+function HomeH1(props) {
+  let {children, ...otherProps} = props;
+  return (
+    <h1
+      {...otherProps}
+      style={{'--width-per-em': getTitleTextWidth('React Spectrum')} as any}
+      className={style({
+        font: 'heading-3xl',
+        // This variable is used to calculate the line height.
+        // Normally it is set by the fontSize, but the custom clamp prevents this.
+        '--fs': {
+          type: 'opacity',
+          value: 'pow(1.125, 10)' // heading-2xl
+        },
+        '--headingFontSize': {
+          type: 'width',
+          value: `[round(pow(1.125, ${fontSizeToken('heading-size-xxxl')}) * var(--s2-font-size-base, 14) / 16 * 1rem, 1px)]`
+        },
+        // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
+        fontSize: `clamp(${35 / 16}rem, (100vw - 40px) / var(--width-per-em), var(--headingFontSize))`,
+        marginY: 0,
+        color: 'white'
+      })}>
+      {children}
+    </h1>
+  )
 }
 
 function Section({title, description, children}: any) {
