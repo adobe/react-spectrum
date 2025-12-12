@@ -49,47 +49,6 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
-commands:
-  deploy-s3:
-    parameters:
-      dir:
-        type: string
-      bucket:
-        type: string
-    steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - aws-cli/install
-      - run:
-          name: Check AWS credentials
-          command: |
-            if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-              echo "AWS credentials not found"
-              circleci-agent step halt
-            fi
-      - run:
-          name: Configure AWS CLI for concurrent requests
-          command: aws configure set default.s3.max_concurrent_requests 100
-      - run:
-          name: Copy immutable assets to S3
-          command: |
-            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
-              --cache-control "public,max-age=31536000,immutable" \
-              --exclude "*.html" --exclude "*.rsc" --exclude "*.txt" --exclude "*.json" --exclude "*.md" --exclude "*.xml"
-      - run:
-          name: Copy HTML and text files to S3
-          command: |
-            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
-              --cache-control "public,max-age=300,stale-while-revalidate=300" \
-              --exclude "*" --include "*.html" --include "*.txt" --include "*.json" --include "*.md" --include "*.xml"
-      - run:
-          name: Copy RSC files to S3
-          command: |
-            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
-              --cache-control "public,max-age=300,stale-while-revalidate=300" \
-              --content-type "text/x-component;charset=utf-8" \
-              --exclude "*" --include "*.rsc"
-
 jobs:
   install:
     executor: rsp-large
