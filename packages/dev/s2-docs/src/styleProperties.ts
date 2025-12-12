@@ -259,162 +259,205 @@ const miscPropertyValues: {[key: string]: (string | number)[]} = {
   caretColor: ['auto', 'transparent']
 };
 
-const shorthandMapping: {[key: string]: {values: (string | number)[], mapping: string[]}} = {
+const shorthandMapping: {[key: string]: {values: (string | number)[], mapping: string[], category: string}} = {
   padding: {
     values: relativeSpacingValues,
-    mapping: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd']
+    mapping: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'],
+    category: 'dimensions'
   },
   paddingX: {
     values: relativeSpacingValues,
-    mapping: ['paddingStart', 'paddingEnd']
+    mapping: ['paddingStart', 'paddingEnd'],
+    category: 'dimensions'
   },
   paddingY: {
     values: relativeSpacingValues,
-    mapping: ['paddingTop', 'paddingBottom']
+    mapping: ['paddingTop', 'paddingBottom'],
+    category: 'dimensions'
   },
   margin: {
     values: ['auto'],
-    mapping: ['marginTop', 'marginBottom', 'marginStart', 'marginEnd']
+    mapping: ['marginTop', 'marginBottom', 'marginStart', 'marginEnd'],
+    category: 'dimensions'
   },
   marginX: {
     values: ['auto'],
-    mapping: ['marginStart', 'marginEnd']
+    mapping: ['marginStart', 'marginEnd'],
+    category: 'dimensions'
   },
   marginY: {
     values: ['auto'],
-    mapping: ['marginTop', 'marginBottom']
+    mapping: ['marginTop', 'marginBottom'],
+    category: 'dimensions'
   },
   scrollPadding: {
     values: [],
-    mapping: ['scrollPaddingTop', 'scrollPaddingBottom', 'scrollPaddingStart', 'scrollPaddingEnd']
+    mapping: ['scrollPaddingTop', 'scrollPaddingBottom', 'scrollPaddingStart', 'scrollPaddingEnd'],
+    category: 'dimensions'
   },
   scrollPaddingX: {
     values: [],
-    mapping: ['scrollPaddingStart', 'scrollPaddingEnd']
+    mapping: ['scrollPaddingStart', 'scrollPaddingEnd'],
+    category: 'dimensions'
   },
   scrollPaddingY: {
     values: [],
-    mapping: ['scrollPaddingTop', 'scrollPaddingBottom']
+    mapping: ['scrollPaddingTop', 'scrollPaddingBottom'],
+    category: 'dimensions'
   },
   scrollMargin: {
     values: [],
-    mapping: ['scrollMarginTop', 'scrollMarginBottom', 'scrollMarginStart', 'scrollMarginEnd']
+    mapping: ['scrollMarginTop', 'scrollMarginBottom', 'scrollMarginStart', 'scrollMarginEnd'],
+    category: 'dimensions'
   },
   scrollMarginX: {
     values: [],
-    mapping: ['scrollMarginStart', 'scrollMarginEnd']
+    mapping: ['scrollMarginStart', 'scrollMarginEnd'],
+    category: 'dimensions'
   },
   scrollMarginY: {
     values: [],
-    mapping: ['scrollMarginTop', 'scrollMarginBottom']
+    mapping: ['scrollMarginTop', 'scrollMarginBottom'],
+    category: 'dimensions'
   },
   borderWidth: {
     values: [0, 1, 2, 4],
-    mapping: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth']
+    mapping: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth'],
+    category: 'dimensions'
   },
   borderXWidth: {
     values: [0, 1, 2, 4],
-    mapping: ['borderStartWidth', 'borderEndWidth']
+    mapping: ['borderStartWidth', 'borderEndWidth'],
+    category: 'dimensions'
   },
   borderYWidth: {
     values: [0, 1, 2, 4],
-    mapping: ['borderTopWidth', 'borderBottomWidth']
+    mapping: ['borderTopWidth', 'borderBottomWidth'],
+    category: 'dimensions'
   },
   borderRadius: {
     values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
-    mapping: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius']
+    mapping: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius'],
+    category: 'effects'
   },
   borderTopRadius: {
     values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
-    mapping: ['borderTopStartRadius', 'borderTopEndRadius']
+    mapping: ['borderTopStartRadius', 'borderTopEndRadius'],
+    category: 'effects'
   },
   borderBottomRadius: {
     values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
-    mapping: ['borderBottomStartRadius', 'borderBottomEndRadius']
+    mapping: ['borderBottomStartRadius', 'borderBottomEndRadius'],
+    category: 'effects'
   },
   borderStartRadius: {
     values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
-    mapping: ['borderTopStartRadius', 'borderBottomStartRadius']
+    mapping: ['borderTopStartRadius', 'borderBottomStartRadius'],
+    category: 'effects'
   },
   borderEndRadius: {
     values: ['none', 'sm', 'default', 'lg', 'xl', 'full', 'pill'],
-    mapping: ['borderTopEndRadius', 'borderBottomEndRadius']
+    mapping: ['borderTopEndRadius', 'borderBottomEndRadius'],
+    category: 'effects'
   },
   translate: {
     values: ['full'],
-    mapping: ['translateX', 'translateY']
+    mapping: ['translateX', 'translateY'],
+    category: 'dimensions'
   },
   scale: {
     values: ['number', '${number}%'],
-    mapping: ['scaleX', 'scaleY']
+    mapping: ['scaleX', 'scaleY'],
+    category: 'dimensions'
   },
   inset: {
     values: ['auto', 'full'],
-    mapping: ['top', 'bottom', 'insetStart', 'insetEnd']
+    mapping: ['top', 'bottom', 'insetStart', 'insetEnd'],
+    category: 'dimensions'
   },
   insetX: {
     values: ['auto', 'full'],
-    mapping: ['insetStart', 'insetEnd']
+    mapping: ['insetStart', 'insetEnd'],
+    category: 'dimensions'
   },
   insetY: {
     values: ['auto', 'full'],
-    mapping: ['top', 'bottom']
+    mapping: ['top', 'bottom'],
+    category: 'dimensions'
   },
   placeItems: {
     values: ['start', 'end', 'center', 'stretch'],
-    mapping: ['alignItems', 'justifyItems']
+    mapping: ['alignItems', 'justifyItems'],
+    category: 'layout'
   },
   placeContent: {
     values: ['normal', 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly', 'stretch'],
-    mapping: ['alignContent', 'justifyContent']
+    mapping: ['alignContent', 'justifyContent'],
+    category: 'layout'
   },
   placeSelf: {
     values: ['auto', 'start', 'end', 'center', 'stretch'],
-    mapping: ['alignSelf', 'justifySelf']
+    mapping: ['alignSelf', 'justifySelf'],
+    category: 'layout'
   },
   gap: {
     values: relativeSpacingValues,
-    mapping: ['rowGap', 'columnGap']
+    mapping: ['rowGap', 'columnGap'],
+    category: 'dimensions'
   },
   size: {
     values: heightBaseValues,
-    mapping: ['width', 'height']
+    mapping: ['width', 'height'],
+    category: 'dimensions'
   },
   minSize: {
     values: heightBaseValues,
-    mapping: ['minWidth', 'minHeight']
+    mapping: ['minWidth', 'minHeight'],
+    category: 'dimensions'
   },
   maxSize: {
     values: [...heightBaseValues, 'none'],
-    mapping: ['maxWidth', 'maxHeight']
+    mapping: ['maxWidth', 'maxHeight'],
+    category: 'dimensions'
   },
   overflow: {
     values: ['auto', 'hidden', 'clip', 'visible', 'scroll'],
-    mapping: ['overflowX', 'overflowY']
+    mapping: ['overflowX', 'overflowY'],
+    category: 'layout'
   },
   overscrollBehavior: {
     values: ['auto', 'contain', 'none'],
-    mapping: ['overscrollBehaviorX', 'overscrollBehaviorY']
+    mapping: ['overscrollBehaviorX', 'overscrollBehaviorY'],
+    category: 'layout'
   },
   gridArea: {
     values: ['string'],
-    mapping: ['gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd']
+    mapping: ['gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd'],
+    category: 'layout'
   },
+  // TODO: make sure this is merged
   transition: {
     values: ['default', 'colors', 'opacity', 'shadow', 'transform', 'all', 'none'],
-    mapping: ['transition', 'transitionDuration', 'transitionTimingFunction']
+    mapping: ['transition', 'transitionDuration', 'transitionTimingFunction'],
+    category: 'effects'
   },
+  // TODO: make sure this is merged
   animation: {
     values: ['string'],
-    mapping: ['animation', 'animationDuration', 'animationTimingFunction']
+    mapping: ['animation', 'animationDuration', 'animationTimingFunction'],
+    category: 'effects'
   },
   truncate: {
     values: ['boolean'],
-    mapping: ['overflowX', 'overflowY', 'textOverflow', 'whiteSpace']
+    mapping: ['overflowX', 'overflowY', 'textOverflow', 'whiteSpace'],
+    // this spans several categories, but text feels the most appropriate over layout
+    category: 'text'
   },
   font: {
     values: [...fontSize],
-    mapping: ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'color']
+    mapping: ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'color'],
+    // put this in text since that seemed to make the most sense, but note it includes color
+    category: 'text'
   }
 };
 
@@ -1244,47 +1287,30 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
       description: propertyDescriptions[name]
     };
   }
-  return result;
-}
 
-export function getShorthandDefinitions(): {[key: string]: StyleMacroPropertyDefinition} {
-  let result: {[key: string]: StyleMacroPropertyDefinition} = {};
-
+  // add relevant shorthands to the property category too
   for (let [shorthandName, shorthandDef] of Object.entries(shorthandMapping)) {
-    let values = shorthandDef.values;
-    let links: {[value: string]: {href: string, isRelative?: boolean}} = {};
+    if (shorthandDef.category === propertyCategory) {
+      let values = shorthandDef.values;
+      let links: {[value: string]: {href: string, isRelative?: boolean}} = {};
 
-    for (let value of values) {
-      if (value === 'pill' && shorthandName.includes('border')) {
-        continue;
+      for (let value of values) {
+        if (value === 'pill' && shorthandName.includes('border')) {
+          continue;
+        }
+
+        if (mdnTypeLinks[value]) {
+          links[value] = {href: mdnTypeLinks[value]};
+        }
       }
 
-      if (mdnTypeLinks[value]) {
-        links[value] = {href: mdnTypeLinks[value]};
-      }
-    }
-
-    result[shorthandName] = {
-      values,
-      additionalTypes: getAdditionalTypes(shorthandDef.mapping[0]),
-      links: Object.keys(links).length > 0 ? links : undefined,
-      mapping: shorthandDef.mapping,
-      description: propertyDescriptions[`${shorthandName}ShortHand`]
-    };
-  }
-
-  return result;
-}
-
-export function getPropertyToShorthandsMapping(): {[propertyName: string]: string[]} {
-  let result: {[propertyName: string]: string[]} = {};
-
-  for (let [shorthandName, shorthandDef] of Object.entries(shorthandMapping)) {
-    for (let propertyName of shorthandDef.mapping) {
-      if (!result[propertyName]) {
-        result[propertyName] = [];
-      }
-      result[propertyName].push(shorthandName);
+      result[shorthandName] = {
+        values,
+        additionalTypes: getAdditionalTypes(shorthandDef.mapping[0]),
+        links: Object.keys(links).length > 0 ? links : undefined,
+        mapping: shorthandDef.mapping,
+        description: propertyDescriptions[`${shorthandName}ShortHand`]
+      };
     }
   }
 
