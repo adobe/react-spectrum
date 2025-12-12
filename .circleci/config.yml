@@ -201,6 +201,7 @@ jobs:
           key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
   test-ssr:
+    parallelism: 2
     executor: rsp-xlarge
     steps:
       - restore_cache:
@@ -208,7 +209,10 @@ jobs:
 
       - run:
           name: test ssr
-          command: yarn test:ssr
+          command: |
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.ssr.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test:ssr ${TESTFILES}
 
   test:
     parallelism: 3
@@ -237,6 +241,7 @@ jobs:
           path: ~/junit
 
   test-ssr-16:
+    parallelism: 2
     executor: rsp-xlarge
     steps:
       - restore_cache:
@@ -245,9 +250,12 @@ jobs:
       - run:
           name: test ssr
           command: |
-            yarn test:ssr
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.ssr.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test:ssr ${TESTFILES}
 
   test-ssr-17:
+    parallelism: 2
     executor: rsp-xlarge
     steps:
       - restore_cache:
@@ -256,9 +264,12 @@ jobs:
       - run:
           name: test ssr
           command: |
-            yarn test:ssr
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.ssr.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test:ssr ${TESTFILES}
 
   test-ssr-18:
+    parallelism: 2
     executor: rsp-xlarge
     steps:
       - restore_cache:
@@ -267,9 +278,12 @@ jobs:
       - run:
           name: test ssr
           command: |
-            yarn test:ssr
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.ssr.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test:ssr ${TESTFILES}
 
   test-ssr-canary:
+    parallelism: 2
     executor: rsp-xlarge
     steps:
       - restore_cache:
@@ -278,7 +292,9 @@ jobs:
       - run:
           name: test ssr
           command: |
-            yarn test:ssr
+            shopt -s globstar
+            TESTFILES=$(circleci tests glob "packages/**/*.ssr.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
+            yarn test:ssr ${TESTFILES}
 
   test-16:
     parallelism: 3
