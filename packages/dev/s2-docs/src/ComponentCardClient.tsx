@@ -2,6 +2,7 @@
 import {Card, CardPreview, CardProps, Content, Text} from '@react-spectrum/s2';
 import {ReactNode, useEffect, useRef} from 'react';
 import {registerSpectrumLink} from './prefetch';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface ComponentCardProps extends Omit<CardProps, 'children'> {
   preview: ReactNode,
@@ -30,7 +31,7 @@ export function ComponentCardClient(props: ComponentCardProps) {
       <CardPreview>
         {preview}
       </CardPreview>
-      <Content>
+      <Content styles={style({alignContent: 'start'})}>
         <Text slot="title">{name}</Text>
         {description && <Text slot="description">{description}</Text>}
       </Content>
