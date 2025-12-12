@@ -92,6 +92,8 @@ publish: build
 	yarn publish
 
 publish-nightly: build
+	rm -f .git/index
+	git reset
 	yarn version:nightly
 	yarn publish:nightly
 
@@ -123,7 +125,7 @@ website-production:
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
 
 check-examples:
-	node scripts/extractExamples.mjs
+	node scripts/extractExamplesS2.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
 
 starter:

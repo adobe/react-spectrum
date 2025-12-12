@@ -14,35 +14,13 @@
 import {animate} from '@react-spectrum/docs/pages/react-aria/home/utils';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
-import {lightDark, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import { ActionButton, ActionMenu, Menu, MenuItem, SubmenuTrigger } from '@react-spectrum/s2';
-import More from '@react-spectrum/s2/icons/More';
-
-const popover = style({
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: {
-      default: 'layer-2',
-      forcedColors: 'Background'
-    }
-  },
-  backgroundColor: '--s2-container-bg',
-  borderRadius: 'lg',
-  boxShadow: 'elevated',
-  outlineStyle: 'solid',
-  outlineWidth: 1,
-  outlineColor: {
-    default: lightDark('transparent-white-25', 'gray-200'),
-    forcedColors: 'ButtonBorder'
-  },
-  padding: 8,
-  width: 'fit'
-});
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import { ActionMenu, Menu, MenuItem, SubmenuTrigger } from '@react-spectrum/s2';
 
 export function SubmenuAnimation(): JSX.Element {
   let ref = useRef<HTMLDivElement>(null);
-  let [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
-  let [hovered, setHovered] = useState('Option 1');
+  let [, setIsSubmenuOpen] = useState(false);
+  let [, setHovered] = useState('Option 1');
   let isAnimating = useRef(false);
   let mouseRef = useRef<SVGSVGElement>(null);
   let [mouseWidth, setMouseWidth] = useState(12);

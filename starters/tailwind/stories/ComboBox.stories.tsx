@@ -11,7 +11,8 @@ const meta: Meta<typeof ComboBox> = {
   },
   tags: ['autodocs'],
   args: {
-    label: 'Ice cream flavor'
+    label: 'Ice cream flavor',
+    placeholder: 'Choose a flavor'
   }
 };
 

@@ -440,11 +440,11 @@ export function useSectionTagsForDisplay(
   }, [sections, hasAllBeenShown]);
 }
 
-export function sortItemsForDisplay<T extends {name: string, date?: string}>(items: T[], searchValue: string): T[] {
+export function sortItemsForDisplay<T extends {name: string, href: string, date?: string}>(items: T[], searchValue: string): T[] {
   if (searchValue.trim().length === 0) {
     return [...items].sort((a, b) => {
-      const aIsIntro = a.name === 'Introduction';
-      const bIsIntro = b.name === 'Introduction';
+      const aIsIntro = a.href.endsWith('/');
+      const bIsIntro = b.href.endsWith('/');
 
       // Date sorting for Blog/Releases
       if (a.date && b.date) {

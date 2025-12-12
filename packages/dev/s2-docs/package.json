@@ -67,5 +67,9 @@
   "alias": {
     "tailwind-starter": "../../../starters/tailwind/src",
     "vanilla-starter": "../../../starters/docs/src"
+  },
+  "devDependencies": {
+    "axe-playwright": "^2.2.2",
+    "playwright": "^1.57.0"
   }
 }

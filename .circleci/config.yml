@@ -86,10 +86,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Clean Yarn cache
-          command: yarn cache clean
-
-      - run:
           name: Write npmrc
           command: |
             if [ $NPM_PASSWORD ]; then

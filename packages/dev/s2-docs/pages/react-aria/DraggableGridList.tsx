@@ -1,6 +1,6 @@
 'use client';
 import {useDragAndDrop} from 'react-aria-components';
-import {PokemonGridList, Pokemon} from './PokemonGridList';
+import {PokemonGridList, type Pokemon} from './PokemonGridList';
 
 export function DraggableGridList() {
   let {dragAndDropHooks} = useDragAndDrop<Pokemon>({
