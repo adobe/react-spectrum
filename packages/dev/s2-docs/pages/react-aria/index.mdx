@@ -20,6 +20,7 @@ import {Popover} from 'tailwind-starter/Popover';
 import {Button} from 'tailwind-starter/Button';
 import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
 import reactAriaFavicon from 'url:../../assets/react-aria.ico';
+import {InteractiveReactAriaLogo} from '../../src/icons/InteractiveReactAriaLogo';
 import SearchMenuWrapperServer from '../../src/SearchMenuWrapperServer';
 import {SearchMenuButton} from '../../src/SearchMenuWrapper';
 import {getCurrentPage, getPages} from '../../src/getPages';
@@ -103,6 +104,12 @@ export const description = 'Accessible, high quality UI components and hooks for
       </nav>
 
       <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60">
+        <div className="flex flex-col items-center mb-10 md:mb-14 [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none select-none">
+          <div className="h-[144px] aspect-[212/198]">
+            <InteractiveReactAriaLogo />
+          </div>
+          <p className="mt-4 text-[92px] font-extrabold text-center text-black dark:text-white m-0 leading-none">React Aria</p>
+        </div>
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold m-0 mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Craft world-class accessible components with custom styles.</GradientText></h1>
         <p className="m-0 text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-3xl mx-auto [text-wrap:balance]">Over 50 components with built-in behavior, adaptive interactions, top-tier accessibility, and internationalization out of the box, ready for your styles.</p>
 
