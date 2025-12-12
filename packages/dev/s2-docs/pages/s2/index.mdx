@@ -1,6 +1,6 @@
 import '../../src/client';
-import '@react-spectrum/s2/page.css';
 import {Home} from './home/Home';
+import {Provider} from '@react-spectrum/s2';
 import rspFavicon from 'url:../../assets/favicon.ico';
 
 export const section = 'Overview';
@@ -9,7 +9,7 @@ export const description = 'Build high quality, accessible UI with the cohesive 
 export const omitFromNav = true;
 export const hideFromSearch = true;
 
-<html lang="en">
+<Provider elementType="html" locale="en">
   <head>
     <meta charSet="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,5 +46,5 @@ export const hideFromSearch = true;
         }
       )}} />
   </head>
-  <Home />
-</html>
+  <Home currentPage={props.currentPage} />
+</Provider>

@@ -293,6 +293,7 @@ export function AppFrame({children, inert, hidden, page, onPageChange}: any) {
         <Sidebar page={page} onPageChange={onPageChange} />
         <div
           data-content
+          inert={!children}
           className={style({
             gridArea: 'content',
             backgroundColor: 'base',

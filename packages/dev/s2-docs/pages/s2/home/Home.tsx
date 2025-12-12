@@ -1,14 +1,11 @@
 import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
-// @ts-ignore
-import { getColorScale } from "../../../src/color.macro" with {type: 'macro'};
-// @ts-ignore
-import { Code } from "../../../src/Code";
-// @ts-ignore
-import { Pre } from "../../../src/CodePlatter";
+import { getColorScale } from "@react-spectrum/s2-docs/src//color.macro" with {type: 'macro'};
+import { Code } from "@react-spectrum/s2-docs/src//Code";
+import { Pre } from "@react-spectrum/s2-docs/src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
-import { Divider, Link, LinkButton, Provider } from "@react-spectrum/s2";
+import { Button, Divider, Link, LinkButton, Provider } from "@react-spectrum/s2";
 import { Mobile } from "./Mobile";
 import { Rems } from "./Rems";
 // import { PressAnimation } from "./Press";
@@ -40,14 +37,15 @@ import { Responsive } from "./Responsive";
 import { mergeStyles } from "../../../../../@react-spectrum/s2/style/runtime";
 import { ReduceMotion } from "./ReduceMotion";
 import { Colors } from "./Colors";
-import '../../../src/footer.css';
+import '@react-spectrum/s2-docs/src/footer.css';
 // @ts-ignore
 import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 // @ts-ignore
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
-// @ts-ignore
-import { getBaseUrl } from "../../../src/pageUtils";
+import { getBaseUrl } from "@react-spectrum/s2-docs/src/pageUtils";
+import SearchMenuWrapperServer from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
+import type {Page} from "@parcel/rsc";
 // @ts-ignore
 import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
 // @ts-ignore
@@ -64,7 +62,8 @@ const container = style({
   position: 'relative',
   overflow: 'clip',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  rowGap: 12
 });
 
 // Animated heading sliding in from the top.
@@ -157,7 +156,7 @@ const swapRow = style({
   height: '[1.2em]'
 });
 
-export function Home() {
+export function Home({currentPage}: {currentPage: Page}) {
   let headingId = useId();
   return (
     <body
@@ -228,10 +227,12 @@ export function Home() {
             <span className={swapSizer} aria-hidden>React Spectrum</span>
           </span>
         </HomeH1>
-        <p className={style({font: 'body-3xl', marginY: 0, color: 'white'})}>React Spectrum gives you the power to build high quality, accessible UI with the cohesive look and feel of Adobe. </p>
-        <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 56})}>
+        <p className={style({font: {default: 'body-2xl', md: 'body-3xl'}, marginY: 0, color: 'white', textWrap: 'balance'})}>React Spectrum empowers you to build high quality, accessible, cohesive apps with Adobe's signature design.</p>
+        <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}, marginTop: 32, marginBottom: 96})}>
           <LinkButton size="XL" staticColor="white" href="getting-started">Get started</LinkButton>
-          <LinkButton size="XL" staticColor="white" variant="secondary" href="react-spectrum">Explore components</LinkButton>
+          <SearchMenuWrapperServer currentPage={currentPage}>
+            <Button size="XL" staticColor="white" variant="secondary">Explore components</Button>
+          </SearchMenuWrapperServer>
         </div>
         <section aria-label="Example app" className={style({height: 'calc(100svh - 24px)', maxHeight: size(600)})}>
           <ExampleApp showArrows />
@@ -240,10 +241,10 @@ export function Home() {
       <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600})}>
         <Section
           title="Build Once. Adapt Everywhere."
-          description="React Spectrum makes interfaces more accessible, flexible, and easier to maintain, while giving users a seamless experience no matter where they are.">
+          description="React Spectrum makes interfaces more accessible, flexible, and maintainable, giving users a seamless experience no matter where they are.">
           <Feature
             title="Dark mode"
-            description="Deliver effortless dark and light mode support with no extra styling needed."
+            description="Deliver effortless light and dark mode support with no extra styling needed."
             illustration={<Lightbulb />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <DarkMode />
@@ -257,7 +258,7 @@ export function Home() {
           </Feature>
           <Feature
             title="Global ready by default"
-            description="Automatically mirrors component layouts, and formats text for different languages, currencies, dates, and locales."
+            description="Components automatically mirror their layout and format text for different languages, currencies, dates, and locales."
             illustration={<Translate />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Provider
@@ -297,14 +298,14 @@ export function Home() {
           </Feature> */}
           <Feature
             title="High contrast mode"
-            description="Support for high contrast mode included, ensuring a clear and readable experience based on preference."
+            description="Support for high contrast mode is included, ensuring a clear and readable experience based on preference."
             illustration={<Accessibility />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <HCM />
           </Feature>
           <Feature
             title="Adaptive font sizes"
-            description="Fonts scale automatically according to user preferences and screen size, fully compatible with rem-based typography, allowing your text to scale naturally."
+            description="Fonts scale automatically according to user preferences and screen size using rem-based typography, allowing your text to scale naturally."
             illustration={<TextIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 4'}})}>
             <Rems />
@@ -328,28 +329,28 @@ export function Home() {
             <SubmenuAnimation />
           </Feature>
         </Section> */}
-        <Section title="Everything you need to build beautiful apps" description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
+        <Section title="Everything you need to build beautiful apps." description="Bring your interface to life with expressive icons, Spectrum colors, and rich illustrations. Every detail works together to make your product look polished and on-brand.">
           <Feature
             title="Icons"
-            description="Spectrum icon support for your product. Use the icon search to simplify finding the right icon the right experience."
+            description={<>With hundreds of Spectrum icons to choose from, use our <Link href="icons" variant="secondary">icon search</Link> to find the right icon for the right experience.</>}
             illustration={<VectorDraw />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Icons />
           </Feature>
           <Feature
             title="Illustrations"
-            description="Rich illustrations that help bring your interface to life. Use the illustration search to find the right illustration for your product."
+            description={<>Rich illustrations help bring your interface to life. Use our <Link href="illustrations" variant="secondary">illustration search</Link> to find the right illustration for your product.</>}
             illustration={<IllustrationIcon />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Illustrations />
           </Feature>
         </Section>
         <Section
-          title={<>Rapidly style custom components with Style Macros</>}
+          title={<>Rapidly style custom components with Style Macros.</>}
           description={<>Easily use Spectrum tokens like colors, spacing, and typography in your own custom components with style macros. Styles are <strong>colocated</strong> with your component code, allowing you to <strong>develop more efficiently</strong> and <strong>refactor with confidence</strong> – no more CSS conflicts or specificity issues. Style macros generate atomic CSS at build time, so you get tiny bundle sizes and fast runtime performance.</>}>
           <Feature
             title="Colors"
-            description="Access the full range of Spectrum color tokens when you need them."
+            description="Convenient access to the full range of Spectrum color tokens."
             illustration={<Color />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ColorScales />
@@ -363,21 +364,21 @@ export function Home() {
           </Feature>
           <Feature
             title="Object styles"
-            description="Follow Spectrum's foundational design principles using object style tokens."
+            description="Apply Spectrum’s foundational design principles using object-style tokens."
             illustration={<Shapes />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ObjectStyles />
           </Feature>
           <Feature
             title="States and variants"
-            description="Define the states needed for your custom components, all in one place using Spectrum tokens."
+            description="Define the states for your custom components all in one place using Spectrum tokens."
             illustration={<Layers />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <States />
           </Feature>
           <Feature
             title="Reusable utilities"
-            description="Macros are functions that can be used to create reusable style utilities for your own components."
+            description="Use macros to create reusable style utilities for your own components."
             illustration={<CodeBrackets />}
             styles={style({gridColumnStart: {default: 'span 6', xl: 'span 3'}})}>
             <div className={style({display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1, justifyContent: 'space-between'})}>
@@ -441,14 +442,14 @@ const buttonStyle = style({
           </Feature>
           <Feature
             title="Responsive design"
-            description="Adaptive UI built on Spectrum's responsive layout definitions.... *needs work"
+            description="Adapt your application for any screen size using our built-in breakpoints, or define your own."
             illustration={<Phone />}
             style={{gridColumn: 'span 6'}}>
             <Responsive />
           </Feature>
         </Section>
         <Section
-          title="Built for modern development and the modern web"
+          title="Built for modern development and the modern web."
           description="With AI-ready documentation, server side and runtime performance optimizations, React Spectrum helps you build modern, scalable apps without compromise.">
           <Feature
             title="AI-ready"
@@ -459,19 +460,28 @@ const buttonStyle = style({
           </Feature>
           <Feature
             title="SSR"
-            description="Server-side rendering and React Server Components support, maximizing Core Web Vitals with zero layout thrashing."
+            description="Server-side rendering and React Server Components support maximize Core Web Vitals."
             illustration={<Server />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
 
           </Feature>
           <Feature
             title="Small bundle"
-            description="Aggressive tree-shaking and atomic CSS resulting in reduced bundle sizes and faster runtime performance."
+            description="Aggressive tree-shaking and atomic CSS produce smaller bundles and faster runtime performance."
             illustration={<SpeedFast />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
 
           </Feature>
         </Section>
+        <section className={style({paddingY: 64})}>
+          <h2 className={style({font: 'heading-2xl', color: 'white'})}>Ready to get started?</h2>
+          <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}})}>
+            <LinkButton size="XL" staticColor="white" href="getting-started">Install and setup</LinkButton>
+            <SearchMenuWrapperServer currentPage={currentPage}>
+              <Button size="XL" staticColor="white">Explore components</Button>
+            </SearchMenuWrapperServer>
+          </div>
+        </section>
       </main>
       <footer
         className={style({
@@ -548,8 +558,8 @@ function Section({title, description, children}: any) {
   let headingId = useId();
   return (
     <section aria-labelledby={headingId} className={style({paddingY: 64})}>
-      <h2 id={headingId} className={style({font: 'heading-2xl', color: 'white'})}>{title}</h2>
-      <p className={style({font: 'body-2xl', color: 'white', maxWidth: '80%', marginBottom: 64})}>{description}</p>
+      <h2 id={headingId} className={style({font: {default: 'heading-xl', sm: 'heading-2xl'}, color: 'white'})}>{title}</h2>
+      <p className={style({font: {default: 'body-xl', sm: 'body-2xl'}, color: 'white', maxWidth: {default: 'full', lg: '75%'}, marginBottom: 64, textWrap: 'balance'})}>{description}</p>
       <div className={style({display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16})}>
         {children}
       </div>
@@ -561,11 +571,11 @@ function Feature({title, description, illustration, children, style: styleProp, 
   let headingId = useId();
   return (
     <section aria-labelledby={headingId} className={mergeStyles(container, styles)} style={styleProp}>
-      <div className={style({display: 'flex', flexDirection: {default: 'column', sm: 'row'}, gap: 12, alignItems: 'start', marginBottom: 12})}>
+      <div className={style({display: 'flex', flexDirection: {default: 'column', sm: 'row'}, gap: 12, alignItems: 'start'})}>
         <div style={{marginTop: -12, marginInlineStart: -12}}>
           {illustration}
         </div>
-        <div>
+        <div className={style({display: 'flex', flexDirection: 'column', rowGap: 4})}>
           <h3 id={headingId} className={style({font: 'heading', marginY: 0})}>{title}</h3>
           <p className={style({font: 'body-lg', marginY: 0})}>{description}</p>
         </div>
