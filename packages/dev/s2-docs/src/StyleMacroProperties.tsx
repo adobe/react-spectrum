@@ -213,11 +213,6 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                             </React.Fragment>
                           ))}
                         </code>
-                        {/* {propDef.description && (
-                          <div className={style({marginTop: 8, font: 'body'})}>
-                            {propDef.description}
-                          </div>
-                        )} */}
                       </div>
                     )}
                     {(() => {
