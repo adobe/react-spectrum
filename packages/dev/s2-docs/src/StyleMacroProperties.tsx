@@ -175,6 +175,8 @@ interface StyleMacroPropertiesProps {
   sort?: boolean
 }
 
+let sizingProperties = ['width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 'flexBasis', 'containIntrinsicWidth', 'containIntrinsicHeight'];
+
 export function StyleMacroProperties({properties, sort = true}: StyleMacroPropertiesProps) {
   let propertyNames = sort ? Object.keys(properties).sort() : Object.keys(properties);
   let propertyToShorthands = getPropertyToShorthandsMapping();
@@ -366,6 +368,9 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                                 } else if (value === 'screen' && (propertyName === 'backgroundBlendMode' || propertyName === 'mixBlendMode')) {
                                   // don't show dimension description for blend mode screen value
                                   shouldShowDescription = false;
+                                } else if (value === 'number') {
+                                  // only show number description for sizing properties (width, height, etc.)
+                                  shouldShowDescription = sizingProperties.includes(propertyName);
                                 } else if (valueDesc && !['ui', 'heading', 'title', 'body', 'detail', 'code', 'fontSize', 'default', 'colors', 'opacity', 'shadow', 'transform', 'all'].includes(value)) {
                                   // Show description for all other values that have one
                                   shouldShowDescription = true;
@@ -408,17 +413,19 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                               {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
                               {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
                                 let typeDesc = styleMacroValueDesc[typeName];
+                                // make sure only to show "number" description for sizing properties
+                                let shouldShowTypeDescription = typeName !== 'number' || sizingProperties.includes(propertyName);
                                 return (
                                   <li key={`type-${i}`} className={style({font: 'body'})}>
                                     <code className={codeStyle}>
                                       <span className={codeStyles.variable}>{typeName}</span>
                                     </code>
-                                    {typeDesc?.description && (
+                                    {shouldShowTypeDescription && typeDesc?.description && (
                                       <div className={style({marginTop: 4})}>
                                         {typeDesc.description}
                                       </div>
                                     )}
-                                    {typeDesc?.body && (
+                                    {shouldShowTypeDescription && typeDesc?.body && (
                                       <div className={style({marginTop: 8})}>
                                         {typeDesc.body}
                                       </div>

@@ -1215,6 +1215,11 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
       }
     }
 
+    // if values array is empty but we have MDN links, add value (ensures flexShrink/etc get values)
+    if (values.length === 0 && Object.keys(links).length > 0) {
+      values = Object.keys(links);
+    }
+
     // see if the property has any common types that should link to MDN
     for (let value of values) {
       // skip if we already have a property specific link
