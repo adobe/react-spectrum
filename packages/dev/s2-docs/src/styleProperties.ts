@@ -839,17 +839,6 @@ const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
     'hidden': 'https://developer.mozilla.org/en-US/docs/Web/CSS/visibility#hidden',
     'collapse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/visibility#collapse'
   },
-  'cursor': {
-    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#auto',
-    'default': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#default',
-    'pointer': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#pointer',
-    'wait': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#wait',
-    'text': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#text',
-    'move': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#move',
-    'help': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#help',
-    'not-allowed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#not-allowed',
-    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#none'
-  },
   'objectFit': {
     'contain': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#contain',
     'cover': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit#cover',
@@ -911,6 +900,241 @@ const mdnPropertyLinks: {[key: string]: {[value: string]: string}} = {
   },
   'scaleY': {
     'number': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scale'
+  },
+  'backgroundClip': {
+    'border-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-clip#border-box',
+    'padding-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-clip#padding-box',
+    'content-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-clip#content-box',
+    'text': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-clip#text'
+  },
+  'backgroundAttachment': {
+    'fixed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-attachment#fixed',
+    'local': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-attachment#local',
+    'scroll': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-attachment#scroll'
+  },
+  'backgroundRepeat': {
+    'repeat': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat#repeat',
+    'no-repeat': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat#no-repeat',
+    'repeat-x': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat#repeat-x',
+    'repeat-y': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat#repeat-y',
+    'round': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat#round',
+    'space': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat#space'
+  },
+  'backgroundOrigin': {
+    'border-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-origin#border-box',
+    'padding-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-origin#padding-box',
+    'content-box': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-origin#content-box'
+  },
+  'backgroundPosition': {
+    'bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'left bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'left top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'right bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'right top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position',
+    'top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-position'
+  },
+  'backgroundBlendMode': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#normal',
+    'multiply': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#multiply',
+    'screen': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#screen',
+    'overlay': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#overlay',
+    'darken': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#darken',
+    'lighten': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#lighten',
+    'color-dodge': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#color-dodge',
+    'color-burn': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#color-burn',
+    'hard-light': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#hard-light',
+    'soft-light': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#soft-light',
+    'difference': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#difference',
+    'exclusion': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#exclusion',
+    'hue': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#hue',
+    'saturation': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#saturation',
+    'color': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#color',
+    'luminosity': 'https://developer.mozilla.org/en-US/docs/Web/CSS/background-blend-mode#luminosity'
+  },
+  'mixBlendMode': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#normal',
+    'multiply': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#multiply',
+    'screen': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#screen',
+    'overlay': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#overlay',
+    'darken': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#darken',
+    'lighten': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#lighten',
+    'color-dodge': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#color-dodge',
+    'color-burn': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#color-burn',
+    'hard-light': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#hard-light',
+    'soft-light': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#soft-light',
+    'difference': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#difference',
+    'exclusion': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#exclusion',
+    'hue': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#hue',
+    'saturation': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#saturation',
+    'color': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#color',
+    'luminosity': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#luminosity',
+    'plus-darker': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#plus-darker',
+    'plus-lighter': 'https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode#plus-lighter'
+  },
+  'forcedColorAdjust': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/forced-color-adjust#auto',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/forced-color-adjust#none'
+  },
+  'colorScheme': {
+    'light': 'https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme#light',
+    'dark': 'https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme#dark',
+    'light dark': 'https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme'
+  },
+  'transitionTimingFunction': {
+    'default': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function',
+    'linear': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transition-timing-function#linear',
+    'in': 'https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-in',
+    'out': 'https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-out',
+    'in-out': 'https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-in-out'
+  },
+  'animationDirection': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-direction#normal',
+    'reverse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-direction#reverse',
+    'alternate': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-direction#alternate',
+    'alternate-reverse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-direction#alternate-reverse'
+  },
+  'animationFillMode': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode#none',
+    'forwards': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode#forwards',
+    'backwards': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode#backwards',
+    'both': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode#both'
+  },
+  'animationTimingFunction': {
+    'default': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timing-function',
+    'linear': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timing-function#linear',
+    'in': 'https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-in',
+    'out': 'https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-out',
+    'in-out': 'https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function#ease-in-out'
+  },
+  'animationPlayState': {
+    'paused': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-play-state#paused',
+    'running': 'https://developer.mozilla.org/en-US/docs/Web/CSS/animation-play-state#running'
+  },
+  'contain': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#none',
+    'strict': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#strict',
+    'content': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#content',
+    'size': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#size',
+    'inline-size': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#inline-size',
+    'layout': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#layout',
+    'style': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#style',
+    'paint': 'https://developer.mozilla.org/en-US/docs/Web/CSS/contain#paint'
+  },
+  'captionSide': {
+    'top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/caption-side#top',
+    'bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/caption-side#bottom'
+  },
+  'borderCollapse': {
+    'collapse': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-collapse#collapse',
+    'separate': 'https://developer.mozilla.org/en-US/docs/Web/CSS/border-collapse#separate'
+  },
+  'breakBefore': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#auto',
+    'avoid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#avoid',
+    'all': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#all',
+    'avoid-page': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#avoid-page',
+    'page': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#page',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#left',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#right',
+    'column': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-before#column'
+  },
+  'breakInside': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-inside#auto',
+    'avoid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-inside#avoid',
+    'avoid-page': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-inside#avoid-page',
+    'avoid-column': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-inside#avoid-column'
+  },
+  'breakAfter': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#auto',
+    'avoid': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#avoid',
+    'all': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#all',
+    'avoid-page': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#avoid-page',
+    'page': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#page',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#left',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#right',
+    'column': 'https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#column'
+  },
+  'scrollBehavior': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior#auto',
+    'smooth': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior#smooth'
+  },
+  'touchAction': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action#auto',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action#none',
+    'pan-x': 'https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action#pan-x',
+    'pan-y': 'https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action#pan-y',
+    'manipulation': 'https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action#manipulation',
+    'pinch-zoom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action#pinch-zoom'
+  },
+  'isolation': {
+    'isolate': 'https://developer.mozilla.org/en-US/docs/Web/CSS/isolation#isolate',
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/isolation#auto'
+  },
+  'transformOrigin': {
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'top right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'bottom right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'bottom left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/transform-origin'
+  },
+  'resize': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/resize#none',
+    'vertical': 'https://developer.mozilla.org/en-US/docs/Web/CSS/resize#vertical',
+    'horizontal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/resize#horizontal',
+    'both': 'https://developer.mozilla.org/en-US/docs/Web/CSS/resize#both'
+  },
+  'scrollSnapType': {
+    'x': 'https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-type#x',
+    'y': 'https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-type#y',
+    'both': 'https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-type#both',
+    'x mandatory': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type#mandatory',
+    'y mandatory': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type#mandatory',
+    'both mandatory': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-type#mandatory'
+  },
+  'scrollSnapAlign': {
+    'start': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-align#start',
+    'end': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-align#end',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-align#center',
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-align#none'
+  },
+  'scrollSnapStop': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-stop#normal',
+    'always': 'https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-snap-stop#always'
+  },
+  'appearance': {
+    'none': 'https://developer.mozilla.org/en-US/docs/Web/CSS/appearance#none',
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/appearance#auto'
+  },
+  'objectPosition': {
+    'bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'center': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'left': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'left bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'left top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'right': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'right bottom': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'right top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position',
+    'top': 'https://developer.mozilla.org/en-US/docs/Web/CSS/object-position'
+  },
+  'willChange': {
+    'auto': 'https://developer.mozilla.org/en-US/docs/Web/CSS/will-change#auto',
+    'scroll-position': 'https://developer.mozilla.org/en-US/docs/Web/CSS/will-change#scroll-position',
+    'contents': 'https://developer.mozilla.org/en-US/docs/Web/CSS/will-change#contents',
+    'transform': 'https://developer.mozilla.org/en-US/docs/Web/CSS/will-change'
+  },
+  'unicodeBidi': {
+    'normal': 'https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-bidi#normal',
+    'embed': 'https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-bidi#embed',
+    'bidi-override': 'https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-bidi#bidi-override',
+    'isolate': 'https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-bidi#isolate',
+    'isolate-override': 'https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-bidi#isolate-override',
+    'plaintext': 'https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-bidi#plaintext'
   }
 };
 

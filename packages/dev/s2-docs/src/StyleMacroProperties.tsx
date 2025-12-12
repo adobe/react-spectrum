@@ -27,9 +27,6 @@ function NoneValueListItem() {
       <code className={codeStyle}>
         <span className={codeStyles.string}>'none'</span>
       </code>
-      <div className={style({marginTop: 4})}>
-        {styleMacroValueDesc['none'].description}
-      </div>
     </li>
   );
 }
@@ -124,9 +121,6 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
   'number': {
     description: <>A numeric value in pixels e.g. <code className={codeStyle}>20</code>. Will be converted to rem and scaled on touch devices.</>
   },
-  'none': {
-    description: 'No value applied.'
-  },
   'full': {
     description: <>Resolves to <code className={codeStyle}>100%</code>.</>
   },
@@ -168,11 +162,12 @@ interface StyleMacroPropertyDefinition {
 }
 
 interface StyleMacroPropertiesProps {
-  properties: {[propertyName: string]: StyleMacroPropertyDefinition}
+  properties: {[propertyName: string]: StyleMacroPropertyDefinition},
+  sort?: boolean
 }
 
-export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
-  let propertyNames = Object.keys(properties).sort();
+export function StyleMacroProperties({properties, sort = true}: StyleMacroPropertiesProps) {
+  let propertyNames = sort ? Object.keys(properties).sort() : Object.keys(properties);
   let propertyToShorthands = getPropertyToShorthandsMapping();
   let shorthandDefs = getShorthandDefinitions();
 
