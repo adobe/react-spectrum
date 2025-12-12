@@ -796,6 +796,8 @@ jobs:
   deploy:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
+    environment:
+      AZCOPY_CONCURRENCY_VALUE: "1000"
     steps:
       - attach_workspace:
           at: /tmp/dist
@@ -818,6 +820,8 @@ jobs:
   deploy-verdaccio:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
+    environment:
+      AZCOPY_CONCURRENCY_VALUE: "1000"
     steps:
       - attach_workspace:
           at: /tmp/verdaccio_dist
@@ -841,6 +845,8 @@ jobs:
   deploy-production:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
+    environment:
+      AZCOPY_CONCURRENCY_VALUE: "1000"
     steps:
       - attach_workspace:
           at: /tmp/dist
