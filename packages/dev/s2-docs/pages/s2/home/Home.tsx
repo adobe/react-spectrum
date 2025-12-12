@@ -62,7 +62,8 @@ const container = style({
   position: 'relative',
   overflow: 'clip',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  rowGap: 12
 });
 
 // Animated heading sliding in from the top.
@@ -240,7 +241,7 @@ export function Home({currentPage}: {currentPage: Page}) {
       <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600})}>
         <Section
           title="Build Once. Adapt Everywhere."
-          description="React Spectrum makes interfaces more accessible, flexible, and easier to maintain, while giving users a seamless experience no matter where they are.">
+          description="React Spectrum makes interfaces more accessible, flexible, and maintainable, giving users a seamless experience no matter where they are.">
           <Feature
             title="Dark mode"
             description="Deliver effortless light and dark mode support with no extra styling needed."
@@ -257,7 +258,7 @@ export function Home({currentPage}: {currentPage: Page}) {
           </Feature>
           <Feature
             title="Global ready by default"
-            description="Component layouts automatically mirrors, and format text for different languages, currencies, dates, and locales."
+            description="Components automatically mirror their layout and format text for different languages, currencies, dates, and locales."
             illustration={<Translate />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <Provider
@@ -363,21 +364,21 @@ export function Home({currentPage}: {currentPage: Page}) {
           </Feature>
           <Feature
             title="Object styles"
-            description="Follow Spectrum's foundational design principles using object style tokens."
+            description="Apply Spectrum’s foundational design principles using object-style tokens."
             illustration={<Shapes />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3', xl: 'span 2'}})}>
             <ObjectStyles />
           </Feature>
           <Feature
             title="States and variants"
-            description="Define the states needed for your custom components, all in one place using Spectrum tokens."
+            description="Define the states for your custom components all in one place using Spectrum tokens."
             illustration={<Layers />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 3'}})}>
             <States />
           </Feature>
           <Feature
             title="Reusable utilities"
-            description="Macros are functions that can be used to create reusable style utilities for your own components."
+            description="Use macros to create reusable style utilities for your own components."
             illustration={<CodeBrackets />}
             styles={style({gridColumnStart: {default: 'span 6', xl: 'span 3'}})}>
             <div className={style({display: 'flex', flexDirection: 'column', gap: 16, flexGrow: 1, justifyContent: 'space-between'})}>
@@ -459,14 +460,14 @@ const buttonStyle = style({
           </Feature>
           <Feature
             title="SSR"
-            description="Server-side rendering and React Server Components support, maximizing Core Web Vitals."
+            description="Server-side rendering and React Server Components support maximize Core Web Vitals."
             illustration={<Server />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
 
           </Feature>
           <Feature
             title="Small bundle"
-            description="Aggressive tree-shaking and atomic CSS result in small bundle sizes and fast runtime performance."
+            description="Aggressive tree-shaking and atomic CSS produce smaller bundles and faster runtime performance."
             illustration={<SpeedFast />}
             styles={style({gridColumnStart: {default: 'span 6', lg: 'span 2'}})}>
 
@@ -557,8 +558,8 @@ function Section({title, description, children}: any) {
   let headingId = useId();
   return (
     <section aria-labelledby={headingId} className={style({paddingY: 64})}>
-      <h2 id={headingId} className={style({font: 'heading-2xl', color: 'white'})}>{title}</h2>
-      <p className={style({font: 'body-2xl', color: 'white', maxWidth: '80%', marginBottom: 64, textWrap: 'balance'})}>{description}</p>
+      <h2 id={headingId} className={style({font: {default: 'heading-xl', sm: 'heading-2xl'}, color: 'white'})}>{title}</h2>
+      <p className={style({font: {default: 'body-xl', sm: 'body-2xl'}, color: 'white', maxWidth: {default: 'full', lg: '75%'}, marginBottom: 64, textWrap: 'balance'})}>{description}</p>
       <div className={style({display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16})}>
         {children}
       </div>
@@ -570,11 +571,11 @@ function Feature({title, description, illustration, children, style: styleProp, 
   let headingId = useId();
   return (
     <section aria-labelledby={headingId} className={mergeStyles(container, styles)} style={styleProp}>
-      <div className={style({display: 'flex', flexDirection: {default: 'column', sm: 'row'}, gap: 12, alignItems: 'start', marginBottom: 12})}>
+      <div className={style({display: 'flex', flexDirection: {default: 'column', sm: 'row'}, gap: 12, alignItems: 'start'})}>
         <div style={{marginTop: -12, marginInlineStart: -12}}>
           {illustration}
         </div>
-        <div>
+        <div className={style({display: 'flex', flexDirection: 'column', rowGap: 4})}>
           <h3 id={headingId} className={style({font: 'heading', marginY: 0})}>{title}</h3>
           <p className={style({font: 'body-lg', marginY: 0})}>{description}</p>
         </div>
