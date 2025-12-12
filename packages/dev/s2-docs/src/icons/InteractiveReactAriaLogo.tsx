@@ -577,9 +577,8 @@ export function InteractiveReactAriaLogo(props: Props) {
     <div
       className={className}
       style={{touchAction: 'none', overflow: 'visible', outline: 'none', willChange: 'transform'}}
-      // @eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
-      role="img"
+      role="button"
       aria-label="Interactive React Aria logo. Click or press Space/Enter to rotate the connector, drag to stretch, or use arrow keys."
       {...focusProps}
       {...keyboardProps}>
