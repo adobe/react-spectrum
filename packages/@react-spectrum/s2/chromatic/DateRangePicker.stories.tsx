@@ -128,4 +128,4 @@ export const FirstDayOfWeek: Story = {
     value: {start: startDate, end: endDate}
   },
   play: OpenPicker.play
-}
+};
