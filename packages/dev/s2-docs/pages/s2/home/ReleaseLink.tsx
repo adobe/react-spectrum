@@ -1,7 +1,7 @@
 'use client';
 
 import { style } from "@react-spectrum/s2/style" with {type: 'macro'};
-import { BaseLink } from "../../../src/Link";
+import { BaseLink } from "@react-spectrum/s2-docs/src/Link";
 import { StatusLight, pressScale } from "@react-spectrum/s2";
 import { useRef } from "react";
 

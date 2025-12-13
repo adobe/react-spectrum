@@ -1,13 +1,13 @@
 'use client';
 
 import {CSSProperties, useId, useRef, useState} from 'react';
-import SearchMenuTrigger, {preloadSearchMenu} from '../../../src/SearchMenuTrigger';
+import SearchMenuTrigger, {preloadSearchMenu} from '@react-spectrum/s2-docs/src/SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
-import { HeaderLink, Link } from '../../../src/Link';
+import { HeaderLink, Link } from '@react-spectrum/s2-docs/src/Link';
 import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
-import { getBaseUrl } from '../../../src/pageUtils';
-import GithubLogo from '../../../src/icons/GithubLogo';
-import { NpmLogo } from '../../../src/icons/NpmLogo';
+import { getBaseUrl } from '@react-spectrum/s2-docs/src/pageUtils';
+import GithubLogo from '@react-spectrum/s2-docs/src/icons/GithubLogo';
+import { NpmLogo } from '@react-spectrum/s2-docs/src/icons/NpmLogo';
 
 export default function HomeHeader() {
   const [searchOpen, setSearchOpen] = useState(false);

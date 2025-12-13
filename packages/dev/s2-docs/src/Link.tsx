@@ -126,7 +126,7 @@ const linkStyle = style({
 });
 
 export function HeaderLink(props: RACLinkProps & {staticColor?: 'auto' | 'white', styles?: StyleString}) {
-  let {staticColor, styles = '', ...otherProps} = props;
+  let {staticColor, styles, ...otherProps} = props;
   let ref = useRef(null);
   return (
     <BaseLink
