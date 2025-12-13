@@ -56,7 +56,7 @@ export function useFilter(options?: Intl.CollatorOptions): Filter {
   }, [collator]);
 
   let contains = useCallback((string, substring) => {
-    if (substring.length === 0) {
+    if (substring.length === 0 || string.length < substring.length) {
       return true;
     }
 
