@@ -44,7 +44,7 @@ import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 // @ts-ignore
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
-import SearchMenuWrapperServer, { RouterWrapperServer } from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
+import SearchMenuWrapperServer from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
 import type {Page} from "@parcel/rsc";
 // @ts-ignore
 import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
@@ -173,9 +173,7 @@ export function Home({currentPage}: {currentPage: Page}) {
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%'
       }}>
-      <RouterWrapperServer currentPage={currentPage}>
-        <HomeHeader />
-      </RouterWrapperServer>
+      <HomeHeader />
       <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
         <ReleaseLink />
         <HomeH1 id={headingId}>
