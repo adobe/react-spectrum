@@ -15,7 +15,7 @@ const BASE_URL = {
 
 export function getBaseUrl(library: 'react-aria' | 's2') {
   let env = process.env.DOCS_ENV;
-  let base = env 
+  let base = env && process.env.LIBRARY 
     ? BASE_URL[env][library]
     : `http://localhost:1234/${library}`;
   let publicUrl = process.env.PUBLIC_URL;
