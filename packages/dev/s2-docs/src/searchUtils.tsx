@@ -70,6 +70,8 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
   };
 }
 
+const END_SECTIONS = ['blog', 'releases'];
+
 /**
  * Builds sections from pages for a given library.
  * Sorts sections with 'Components' first.
@@ -97,7 +99,15 @@ export function buildSectionsFromPages(pages: Page[], library: Library): Section
       if (b.id === 'components') {
         return 1;
       }
-      return 0;
+      let ai = END_SECTIONS.indexOf(a.id);
+      let bi = END_SECTIONS.indexOf(b.id);
+      if (ai >= 0) {
+        return bi < 0 ? 1 : (ai - bi);
+      }
+      if (bi >= 0) {
+        return ai < 0 ? -1 : (bi - ai);
+      }
+      return a.name.localeCompare(b.name);
     });
 }
 
