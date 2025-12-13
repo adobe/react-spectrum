@@ -6,6 +6,7 @@
 @plugin 'tailwindcss-animate';
 @source "../../docs/pages/react-aria/home/*.tsx";
 @import "../../docs/pages/react-aria/home/home.css";
+@source "../pages/react-aria/HomeHeader.tsx";
 @source "../src/SearchMenuWrapper.tsx";
 
 @font-face {

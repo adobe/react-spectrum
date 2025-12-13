@@ -22,22 +22,31 @@ body {
 
 .header-background {
   @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
-  background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
-    radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
-    conic-gradient(from 30deg at 50% 60%,
-      oklch(var(--l) var(--c) 220),
-      oklch(min(var(--l), 86%) var(--c) 260),
-      oklch(var(--l) var(--c) 300),
-      oklch(var(--l) var(--c) 340),
-      oklch(var(--l) var(--c) 0),
-      oklch(var(--l) var(--c) 40),
-      oklch(var(--l) var(--c) 60),
-      oklch(max(var(--l), 44%) var(--c) 100),
-      oklch(max(var(--l), 38%) var(--c) 140),
-      oklch(var(--l) var(--c) 180),
-      oklch(var(--l) var(--c) 220)
-    );
-  background-repeat: no-repeat;
+  overflow: clip;
+
+  &::before {
+    content: '';
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: -90%;
+    width: 200%;
+    height: 200%;
+    background-size: cover;
+    background-position: center 500px;
+    background-image: url("data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAAAwAgCdASoQAA0ABUB8JagBTAsxQGK/PhxgMAD+9CUuaXiaU4cS9Akke4UYeBZhhgRvJHs5ehqWSzpgqOxE+D7sQT4eGK1/Tt2ljz590jgIyAAA");
+    mask-type: luminance;
+    mask: linear-gradient(transparent, white 10% 30%, transparent 50%);
+    mask-position: 0px -50%;
+    opacity: 70%;
+    filter: blur(40px);
+    contain: paint;
+
+    @media (prefers-color-scheme: light) {
+      filter: blur(40px) invert(1) hue-rotate(180deg);
+      opacity: 60%;
+    }
+  }
 }
 
 main > section > h2 {

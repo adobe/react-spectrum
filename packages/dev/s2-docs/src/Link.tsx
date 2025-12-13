@@ -28,6 +28,17 @@ export function Link({href, ...props}: LinkProps) {
   );
 }
 
+export function LinkButton({href, ...props}: LinkButtonProps) {
+  if (href?.startsWith('s2:') || href?.startsWith('react-aria:')) {
+    let url = new URL(href);
+    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
+  }
+
+  return (
+    <S2LinkButton {...props} ref={registerSpectrumLink} href={href} {...getAnchorProps(href)} />
+  );
+}
+
 const baseUrl = getBaseUrl((process.env.LIBRARY as any) || 'react-aria');
 export function getAnchorProps(href) {
   if (!/^http/.test(href) || href.startsWith(baseUrl)) {
