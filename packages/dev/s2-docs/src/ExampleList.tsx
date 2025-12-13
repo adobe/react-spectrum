@@ -1,29 +1,29 @@
 import {Card, CardPreview, Content, Image, ImageCoordinator, Text} from '@react-spectrum/s2';
-import crud from 'url:../pages/react-aria/examples/crud.png';
-import crudDark from 'url:../pages/react-aria/examples/crud-dark.png';
-import emojiPicker from 'url:../pages/react-aria/examples/emoji-picker.png';
-import emojiPickerDark from 'url:../pages/react-aria/examples/emoji-picker-dark.png';
-import iosList from 'url:react-aria-components/docs/examples/ios-list.png';
-import iosListDark from 'url:../pages/react-aria/examples/ios-list-dark.png';
-import kanban from 'url:../pages/react-aria/examples/kanban.png';
-import kanbanDark from 'url:../pages/react-aria/examples/kanban-dark.png';
+import crud from 'url:../pages/react-aria/examples/crud.png?as=avif&quality=50';
+import crudDark from 'url:../pages/react-aria/examples/crud-dark.png?as=avif&quality=50';
+import emojiPicker from 'url:../pages/react-aria/examples/emoji-picker.png?as=avif&quality=50';
+import emojiPickerDark from 'url:../pages/react-aria/examples/emoji-picker-dark.png?as=avif&quality=50';
+import iosList from 'url:/packages/react-aria-components/docs/examples/ios-list.png?as=avif&quality=50';
+import iosListDark from 'url:../pages/react-aria/examples/ios-list-dark.png?as=avif&quality=50';
+import kanban from 'url:../pages/react-aria/examples/kanban.png?as=avif&quality=50';
+import kanbanDark from 'url:../pages/react-aria/examples/kanban-dark.png?as=avif&quality=50';
 import path from 'path';
-import photos from 'url:../pages/react-aria/examples/photos.png';
-import photosDark from 'url:../pages/react-aria/examples/photos-dark.png';
-import rippleButton from 'url:react-aria-components/docs/examples/ripple-button.png';
-import sheet from 'url:../pages/react-aria/examples/sheet.png';
-import sheetDark from 'url:../pages/react-aria/examples/sheet-dark.png';
+import photos from 'url:../pages/react-aria/examples/photos.png?as=avif&quality=50';
+import photosDark from 'url:../pages/react-aria/examples/photos-dark.png?as=avif&quality=50';
+import rippleButton from 'url:/packages/react-aria-components/docs/examples/ripple-button.png?as=avif&quality=50';
+import sheet from 'url:../pages/react-aria/examples/sheet.png?as=avif&quality=50';
+import sheetDark from 'url:../pages/react-aria/examples/sheet-dark.png?as=avif&quality=50';
 import {size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import swipeableTabs from 'url:../pages/react-aria/examples//swipeable-tabs.png';
-import swipeableTabsDark from 'url:../pages/react-aria/examples//swipeable-tabs-dark.png';
+import swipeableTabs from 'url:../pages/react-aria/examples//swipeable-tabs.png?as=avif&quality=50';
+import swipeableTabsDark from 'url:../pages/react-aria/examples//swipeable-tabs-dark.png?as=avif&quality=50';
 
-const images = {
+export const images: Record<string, [string, string]> = {
   'ios-list': [iosList, iosListDark],
   'emoji-picker': [emojiPicker, emojiPickerDark],
   'kanban': [kanban, kanbanDark],
   'photos': [photos, photosDark],
   'crud': [crud, crudDark],
-  'ripple-button': rippleButton,
+  'ripple-button': [rippleButton, rippleButton],
   'sheet': [sheet, sheetDark],
   'swipeable-tabs': [swipeableTabs, swipeableTabsDark]
 };

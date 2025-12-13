@@ -19,6 +19,7 @@ import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
 import {useRouter} from './Router';
 import './SearchMenu.css';
+import {preloadComponentImages} from './ComponentCard';
 
 export const divider = style({
   marginY: 8,
@@ -77,7 +78,8 @@ export function SearchMenu(props: SearchMenuProps) {
     isIconsSelected,
     selectedItems,
     selectedSectionName,
-    getPlaceholderText
+    getPlaceholderText,
+    sections
   } = useSearchMenuState({
     pages,
     currentPage,
@@ -139,7 +141,7 @@ export function SearchMenu(props: SearchMenuProps) {
                   {tab.icon}
                 </div>
                 <div>
-                  <span style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-2xl'})}>
+                  <span style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-xl', fontWeight: 'bold'})}>
                     {tab.label}
                   </span>
                   <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
@@ -174,7 +176,10 @@ export function SearchMenu(props: SearchMenuProps) {
                     resourceTags={tabResourceTags}
                     selectedTagId={selectedTagId}
                     onSectionSelectionChange={handleTagSelectionChange}
-                    onResourceSelectionChange={handleTagSelectionChange} />
+                    onResourceSelectionChange={handleTagSelectionChange}
+                    onHover={tag => {
+                      preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
+                    }} />
                   {isIconsSelected ? (
                     <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<IconSearchSkeleton />}>
