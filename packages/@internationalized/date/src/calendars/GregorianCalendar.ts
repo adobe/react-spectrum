@@ -109,6 +109,14 @@ export class GregorianCalendar implements Calendar {
     return 12;
   }
 
+  getMaxMonths(): number {
+    return 12
+  }
+
+  getMaxDays(): number {
+    return 31;
+  }
+
   getDaysInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 366 : 365;
   }
