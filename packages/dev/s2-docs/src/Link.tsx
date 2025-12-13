@@ -19,7 +19,7 @@ export function BaseLink({ref, ...props}: LinkProps & {ref?: Ref<HTMLAnchorEleme
 export function Link({href, ...props}: LinkProps) {
   if (href?.startsWith('s2:') || href?.startsWith('react-aria:')) {
     let url = new URL(href);
-    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname + url.hash;
+    href = getBaseUrl(url.protocol.slice(0, -1) as any) + '/' + url.pathname;
   }
 
   return (
