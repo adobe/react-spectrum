@@ -92,7 +92,7 @@ export function MobileHeader({toc}) {
   let library = getLibraryFromPage(currentPage);
   let icon = TAB_DEFS[library].icon;
   let subdirectory: 's2' | 'react-aria' = 's2';
-  if (library === 'internationalized' || library === 'react-aria') {
+  if (library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }

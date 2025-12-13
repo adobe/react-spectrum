@@ -110,7 +110,7 @@ export default function Header() {
 
   let library = getLibraryFromPage(currentPage);
   let subdirectory: 's2' | 'react-aria' = 's2';
-  if (library === 'internationalized' || library === 'react-aria') {
+  if (library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }

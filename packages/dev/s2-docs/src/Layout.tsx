@@ -5,8 +5,6 @@ import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement, ReactNode} from 'react';
 import '../src/client';
 // @ts-ignore
-import internationalizedFavicon from 'url:../assets/internationalized.ico';
-// @ts-ignore
 import reactAriaFavicon from 'url:../assets/react-aria.ico';
 // @ts-ignore
 import rspFavicon from 'url:../assets/favicon.ico';
@@ -102,8 +100,6 @@ const getFaviconUrl = (currentPage: Page): string => {
   switch (library) {
     case 'react-aria':
       return reactAriaFavicon;
-    case 'internationalized':
-      return internationalizedFavicon;
     default:
       return rspFavicon;
   }

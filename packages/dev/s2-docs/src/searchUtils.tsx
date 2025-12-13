@@ -345,7 +345,7 @@ export function getPageTitle(page: Page): string {
  * This allows pages to appear in a different section in search results than in navigation.
  */
 export function getSearchSection(page: Page): string {
-  return (page.exports?.searchSection as string) ?? (page.exports?.section as string) ?? 'Components';
+  return (page.exports?.searchSection as string) ?? (page.exports?.group as string) ?? (page.exports?.section as string) ?? 'Components';
 }
 
 export function getOrderedLibraries(currentPage: Page) {
