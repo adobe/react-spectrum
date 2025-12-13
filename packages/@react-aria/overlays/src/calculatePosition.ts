@@ -309,7 +309,6 @@ function getMaxHeight(
     top: Math.max(boundaryDimensions.top + boundaryToContainerTransformOffset, (visualViewport?.offsetTop ?? boundaryDimensions.top) + boundaryToContainerTransformOffset),
     bottom: Math.min((boundaryDimensions.top + boundaryDimensions.height + boundaryToContainerTransformOffset), (visualViewport?.offsetTop ?? 0) + (visualViewport?.height ?? 0))
   };
-
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
@@ -561,7 +560,28 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
   // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
   // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
-  let containerOffsetWithBoundary: Offset = getPosition(boundaryElement, container,  false);
+  // when boundaryElement is body or HTML and container is not the documentElement (aka submenu's parent menu in v3), we need the container position relative to the viewport
+  // since boundaryDimensions for body/html is already in viewport coordinate space
+  let containerOffsetWithBoundary: Offset;
+  if ((boundaryElement.tagName === 'BODY' || boundaryElement.tagName === 'HTML') && !isViewportContainer) {
+    // get container position relative to the viewport to properly transform between coordinate systems
+    // Use getRect instead of getOffset because boundaryDimensions for BODY/HTML is in viewport coordinate space,
+    // not document coordinate space
+    let containerRect = getRect(container, false);
+    // the offset should be negative because if container is at viewport position x,y, then viewport top (aka 0)
+    // is at position -x,y in container-relative coordinates
+    containerOffsetWithBoundary = {
+      top: -(containerRect.top - boundaryDimensions.top),
+      left: -(containerRect.left - boundaryDimensions.left),
+      width: 0,
+      height: 0
+    };
+  } else if ((boundaryElement.tagName === 'BODY' || boundaryElement.tagName === 'HTML') && isViewportContainer) {
+    // both are the same viewport container, no offset needed
+    containerOffsetWithBoundary = {top: 0, left: 0, width: 0, height: 0};
+  } else {
+    containerOffsetWithBoundary = getPosition(boundaryElement, container, false);
+  }
 
   let isContainerDescendentOfBoundary = boundaryElement.contains(container);
   return calculatePositionInternal(
