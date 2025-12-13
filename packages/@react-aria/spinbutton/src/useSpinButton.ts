@@ -256,9 +256,8 @@ export function useSpinButton(
           if (!isSpinning.current && isUp.current) {
             onIncrement?.();
           }
-        } else {
-          clearAsync();
         }
+        clearAsync();
         isUp.current = false;
         setIsIncrementPressed(null);
       },
@@ -296,9 +295,8 @@ export function useSpinButton(
           if (!isSpinning.current && isUp.current) {
             onDecrement?.();
           }
-        } else {
-          clearAsync();
         }
+        clearAsync();
         isUp.current = false;
         setIsDecrementPressed(null);
       },
