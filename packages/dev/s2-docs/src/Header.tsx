@@ -4,10 +4,11 @@ import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {Link} from 'react-aria-components';
+import {HeaderLink} from './Link';
 // @ts-ignore
+import {Link} from 'react-aria-components';
 import {pressScale} from '@react-spectrum/s2';
-import React, {CSSProperties, useId, useRef, useState} from 'react';
+import React, {useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useRouter} from './Router';
@@ -37,41 +38,14 @@ const libraryStyles = style({
   marginStart: space(26)
 });
 
-const linkStyle = {
-  ...focusRing(),
-  font: 'ui',
-  textDecoration: 'none',
-  transition: 'default',
-  backgroundColor: {
-    default: {
-      ...baseColor('gray-100'),
-      default: 'transparent'
-    }
-  },
-  height: 32,
-  paddingX: 'edge-to-text',
-  display: 'flex',
-  alignItems: 'center',
-  borderRadius: 'lg'
-} as const;
-
-const linkStyles = style({
-  ...linkStyle
-});
-
-const iconStyles = style({
-  ...linkStyle,
-  paddingX: space(6)
-});
-
 export default function Header() {
   const {currentPage} = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const searchMenuId = useId();
   let ref = useRef(null);
-  let docsRef = useRef(null);
-  let releasesRef = useRef(null);
-  let blogRef = useRef(null);
+  let iconRef = useRef<HTMLDivElement | null>(null);
+  let labelRef = useRef<HTMLDivElement | null>(null);
+  let searchRef = useRef<HTMLDivElement | null>(null);
   let renderCallback = useRef<(() => void) | null>(null);
 
   let openSearchMenu = async () => {
@@ -85,9 +59,15 @@ export default function Header() {
 
     // Don't transition the entire page.
     document.documentElement.style.viewTransitionName = 'none';
+    iconRef.current!.style.viewTransitionName = 'search-menu-icon';
+    labelRef.current!.style.viewTransitionName = 'search-menu-label';
+    searchRef.current!.style.viewTransitionName = 'search-menu-search-field';
     let viewTransition = document.startViewTransition(() => {
       // Wait until next render. Using flushSync causes flickering.
       return new Promise<void>(resolve => {
+        iconRef.current!.style.viewTransitionName = '';
+        labelRef.current!.style.viewTransitionName = '';
+        searchRef.current!.style.viewTransitionName = '';
         renderCallback.current = resolve;
         setSearchOpen((prev) => !prev);
       });
@@ -109,11 +89,17 @@ export default function Header() {
       return new Promise<void>(resolve => {
         renderCallback.current = resolve;
         setSearchOpen(false);
+        iconRef.current!.style.viewTransitionName = 'search-menu-icon';
+        labelRef.current!.style.viewTransitionName = 'search-menu-label';
+        searchRef.current!.style.viewTransitionName = 'search-menu-search-field';
       });
     });
 
     viewTransition.finished.then(() => {
       document.documentElement.style.viewTransitionName = '';
+      iconRef.current!.style.viewTransitionName = '';
+      labelRef.current!.style.viewTransitionName = '';
+      searchRef.current!.style.viewTransitionName = '';
     });
   };
 
@@ -153,25 +139,27 @@ export default function Header() {
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
               <div className={style({display: 'flex', alignItems: 'center'})}>
-                <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
+                <div ref={iconRef}>
                   {getButtonIcon(currentPage)}
                 </div>
-                <span className={style({font: 'ui-2xl', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'} as CSSProperties}>
+                <span className={style({font: 'ui-xl', fontWeight: 'extra-bold', marginStart: 8})} ref={labelRef}>
                   {getButtonText(currentPage)}
                 </span>
               </div>
             </Link>
           </div>
-          <SearchMenuTrigger
-            onOpen={openSearchMenu}
-            onClose={closeSearchMenu}
-            isSearchOpen={searchOpen}
-            overlayId={searchMenuId} />
+          <div ref={searchRef}>
+            <SearchMenuTrigger
+              onOpen={openSearchMenu}
+              onClose={closeSearchMenu}
+              isSearchOpen={searchOpen}
+              overlayId={searchMenuId} />
+          </div>
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
-            <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
-            <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
-            <Link aria-label="React Spectrum GitHub repo" className={renderProps => iconStyles({...renderProps})} href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></Link>
+            <HeaderLink href={docs}>Docs</HeaderLink>
+            <HeaderLink href={release}>Releases</HeaderLink>
+            <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
+            <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
           </div>
         </div>
       </header>
