@@ -1,10 +1,10 @@
 import React from 'react';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 
-export const AdobeLogo = ({className = '', size = 32}) => {
+export const AdobeLogo = ({size}: {size?: number}) => {
   return (
     <svg
-      className={className}
+      className={style({size: 28, flexShrink: 0})}
       style={{display: 'block', width: size, height: size}}
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden

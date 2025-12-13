@@ -7,6 +7,7 @@ import GithubLogo from './icons/GithubLogo';
 import {HeaderLink} from './Link';
 // @ts-ignore
 import {Link} from 'react-aria-components';
+import {NpmLogo} from './icons/NpmLogo';
 import {pressScale} from '@react-spectrum/s2';
 import React, {useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
@@ -120,6 +121,7 @@ export default function Header() {
   let docs = `${baseUrl}/getting-started`;
   let release = `${baseUrl}/releases/`;
   let blog = `${getBaseUrl('react-aria')}/blog/`;
+  let npm = subdirectory === 's2' ? '@react-spectrum/s2' : 'react-aria-components';
 
   return (
     <>
@@ -160,6 +162,7 @@ export default function Header() {
             <HeaderLink href={release}>Releases</HeaderLink>
             <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
             <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
+            <HeaderLink aria-label="npm" href={`https://npmjs.com/${npm}`} target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
           </div>
         </div>
       </header>

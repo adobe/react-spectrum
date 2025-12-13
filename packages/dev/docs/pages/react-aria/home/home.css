@@ -41,6 +41,7 @@ body {
     opacity: 70%;
     filter: blur(40px);
     contain: paint;
+    will-change: transform; /* Speeds up filter in Safari */
 
     @media (prefers-color-scheme: light) {
       filter: blur(40px) invert(1) hue-rotate(180deg);

@@ -89,6 +89,13 @@ export function TitleLink(props: RACLinkProps) {
 
 const linkStyle = style({
   ...focusRing(),
+  outlineColor: {
+    default: 'focus-ring',
+    staticColor: {
+      auto: 'transparent-overlay-1000',
+      white: 'white'
+    }
+  },
   font: 'ui',
   color: {
     default: 'neutral',

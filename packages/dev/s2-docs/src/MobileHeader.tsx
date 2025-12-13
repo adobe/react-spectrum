@@ -3,7 +3,7 @@
 import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getBaseUrl} from './pageUtils';
-import {getLibraryFromPage} from './library';
+import {getLibraryFromPage, getLibraryIcon} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Link, Modal, ModalOverlay} from 'react-aria-components';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
@@ -90,7 +90,7 @@ export function MobileHeader({toc}) {
 
   let {currentPage} = useRouter();
   let library = getLibraryFromPage(currentPage);
-  let icon = TAB_DEFS[library].icon;
+  let icon = getLibraryIcon(library);
   let subdirectory: 's2' | 'react-aria' = 's2';
   if (library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage

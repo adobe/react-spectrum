@@ -4,7 +4,7 @@ import {CSSProperties, useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from '@react-spectrum/s2-docs/src/SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
 import { HeaderLink, Link } from '@react-spectrum/s2-docs/src/Link';
-import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import { space, style } from '@react-spectrum/s2/style' with {type: 'macro'};
 import { getBaseUrl } from '@react-spectrum/s2-docs/src/pageUtils';
 import GithubLogo from '@react-spectrum/s2-docs/src/icons/GithubLogo';
 import { NpmLogo } from '@react-spectrum/s2-docs/src/icons/NpmLogo';
@@ -87,28 +87,51 @@ export default function HomeHeader() {
     <nav
       className={style({
         marginX: 'auto',
-        paddingY: 16,
-        paddingX: {default: 16, sm: 40},
-        maxWidth: 1600,
+        paddingTop: {
+          default: 12,
+          lg: 20
+        },
+        paddingBottom: 16,
+        paddingX: 12,
+        maxWidth: 1440,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         position: 'relative',
         isolation: 'isolate'
       })}>
-      <Link href="." staticColor="white" styles={style({zIndex: 2})}>
-        <span className={style({font: 'title', color: 'white', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none'})}>
+      <Link
+        href="."
+        staticColor="white"
+        UNSAFE_style={{lineHeight: '0'}}
+        styles={style({
+          zIndex: 2,
+          marginStart: {
+            default: 0,
+            '@media (width >= 1440px)': space(38)
+          }
+        })}>
+        <span 
+          className={style({
+            display: 'inline-flex',
+            alignItems: 'center',
+            columnGap: {
+              default: 12,
+              lg: 8
+            },
+            textDecoration: 'none'
+          })}>
           <svg
             ref={iconRef}
             style={{display: searchOpen ? 'none' : undefined} as CSSProperties}
             aria-label="Adobe"
-            height="22"
+            className={style({size: 28})}
             viewBox="0 0 501.71 444.05">
             <path
               d="m297.58 444.05-36.45-101.4h-91.46l76.87-193.53 116.65 294.93h138.52L316.8 0H186.23L0 444.05h297.58z"
               fill="#fff" />
           </svg>
-          <span ref={labelRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Spectrum</span>
+          <span ref={labelRef} className={style({font: {default: 'heading-sm', lg: 'ui-xl'}, fontWeight: 'extra-bold', color: 'white'})} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Spectrum</span>
         </span>
       </Link>
       <div className={style({position: 'absolute', insetStart: 0, width: 'full', display: {default: 'none', xl: 'flex'}, justifyContent: 'center'})}>

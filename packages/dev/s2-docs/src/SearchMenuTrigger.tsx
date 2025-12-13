@@ -26,17 +26,14 @@ export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | '
 }
 
 let underlayStyle = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: 'full',
-  height: '--page-height',
+  position: 'fixed',
+  inset: 0,
   isolation: 'isolate',
   backgroundColor: 'transparent-black-500'
 });
 
 let modalStyle = style({
-  position: 'sticky',
+  position: 'fixed',
   top: 8,
   width: 'full',
   // 1280px matches body

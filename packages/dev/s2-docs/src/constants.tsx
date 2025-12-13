@@ -14,7 +14,7 @@ export const TAB_DEFS: Record<Library, TabDef> = {
   'react-spectrum': {
     label: 'React Spectrum',
     description: "Components for Adobe's Spectrum design system",
-    icon: <AdobeLogo size={28} />
+    icon: <AdobeLogo />
   },
   'react-aria': {
     label: 'React Aria',

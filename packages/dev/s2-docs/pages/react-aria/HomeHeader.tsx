@@ -5,7 +5,7 @@ import SearchMenuTrigger, {preloadSearchMenu} from '@react-spectrum/s2-docs/src/
 import {useLayoutEffect} from '@react-aria/utils';
 import {HeaderLink} from '@react-spectrum/s2-docs/src/Link';
 import { ReactAriaLogo } from '@react-spectrum/s2-docs/src/icons/ReactAriaLogo';
-import { style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import { space, style } from '@react-spectrum/s2/style' with {type: 'macro'};
 import GithubLogo from '@react-spectrum/s2-docs/src/icons/GithubLogo';
 import { NpmLogo } from '@react-spectrum/s2-docs/src/icons/NpmLogo';
 
@@ -84,12 +84,46 @@ export default function HomeHeader() {
   });  
 
   return (
-    <nav className="absolute top-4 left-4 right-4 flex items-center justify-between gap-4">
-      <a href="." className="no-underline inline-flex items-center gap-2 font-bold px-4 z-2 rounded dark:text-white/80 focus-ring dark:outline-white">
+    <nav 
+      className={style({
+        position: 'absolute',
+        top: {
+          default: 12,
+          lg: 20
+        },
+        insetX: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
+        maxWidth: 1440,
+        marginX: {
+          lg: 'auto'
+        },
+        paddingX: 12
+      })}>
+      <a
+        href="."
+        className={style({
+          outlineColor: 'transparent-overlay-1000',
+          textDecoration: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          columnGap: {
+            default: 12,
+            lg: 8
+          },
+          marginStart: {
+            default: 0,
+            '@media (width >= 1440px)': space(38)
+          },
+          zIndex: 2,
+          borderRadius: 'default'
+        })}>
         <div ref={iconRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>
           <ReactAriaLogo />
         </div>
-        <h2 className="text-lg m-0 text-black [font-weight:800] dark:text-white/80" ref={labelRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Aria</h2>
+        <h2 className={style({marginY: 0, font: {default: 'heading-sm', lg: 'ui-xl'}, fontWeight: 'extra-bold', color: 'transparent-overlay-800'})} ref={labelRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Aria</h2>
       </a>
 
       <div className={style({position: 'absolute', insetStart: 0, width: 'full', display: {default: 'none', xl: 'flex'}, justifyContent: 'center'})}>
