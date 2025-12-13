@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, DroppableCollectionReorderEvent, isTextDropItem, Key, ListLayout, Menu, MenuTrigger, Popover, Selection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
@@ -245,7 +245,9 @@ export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disabledBehavior: 'selection'
+    disabledBehavior: 'selection',
+    selectionPropagation: false,
+    selectionStrategy: 'all'
   },
   argTypes: {
     selectionMode: {
@@ -259,6 +261,11 @@ export const TreeExampleStatic: StoryObj<typeof TreeExampleStaticRender> = {
     disabledBehavior: {
       control: 'radio',
       options: ['selection', 'all']
+    },
+    selectionPropagation: {control: 'boolean'},
+    selectionStrategy: {
+      control: 'radio',
+      options: ['all', 'child', 'parent']
     }
   },
   parameters: {
@@ -431,8 +438,13 @@ const TreeExampleDynamicRender = <T extends object>(args: TreeProps<T>): JSX.Ele
     getChildren: item => item.childItems
   });
 
+  let onSelectionChange = s => {
+    args.onSelectionChange?.(s);
+    action('onSelectionChange')(s);
+  };
+
   return (
-    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={onSelectionChange}>
       {(item) => (
         <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
@@ -1271,4 +1283,56 @@ export const HugeVirtualizedTree: StoryObj<typeof VirtualizedTreeRender> = {
     items: treeData
   },
   render: (args) => <HugeVirtualizedTreeRender {...args} />
+};
+
+export const Selected: StoryObj<typeof TreeExampleDynamicRender> = {
+  args: {
+    selectionBehavior: 'toggle',
+    selectionMode: 'multiple',
+    selectionPropagation: false,
+    selectionStrategy: 'all'
+  },
+  argTypes: {
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionPropagation: {control: 'boolean'},
+    selectionStrategy: {
+      control: 'radio',
+      options: ['all', 'child', 'parent']
+    }
+  },
+  render: (args) => <TreeExampleDynamicRender {...args} selectedKeys={['project-2']} />
+};
+
+const ControlledSelectionTreeRender = <T extends object>(args: TreeProps<T>) => {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
+
+  let selectProjects = () => {
+    if (selectedKeys !== 'all' && !selectedKeys.has('projects')) {
+      setSelectedKeys(new Set([...selectedKeys, 'projects']));
+    }
+  };
+
+  return (
+    <>
+      <button onClick={selectProjects}>Select Projects</button>
+      <TreeExampleDynamicRender {...args} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} />
+    </>
+  );
+};
+
+export const ControlledSelectionTree: StoryObj<typeof TreeExampleDynamicRender> = {
+  ...TreeExampleDynamic,
+  args: {
+    ...TreeExampleDynamic.args,
+    selectionMode: 'multiple'
+  },
+  name: 'Controlled selection',
+  render: (args) => <ControlledSelectionTreeRender {...args} />
 };

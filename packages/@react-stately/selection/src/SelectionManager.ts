@@ -36,7 +36,7 @@ interface SelectionManagerOptions {
  */
 export class SelectionManager implements MultipleSelectionManager {
   collection: Collection<Node<unknown>>;
-  private state: MultipleSelectionState;
+  protected state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean | null;
   private layoutDelegate: LayoutDelegate | null;
@@ -47,6 +47,14 @@ export class SelectionManager implements MultipleSelectionManager {
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
     this._isSelectAll = null;
     this.layoutDelegate = options?.layoutDelegate || null;
+  }
+
+  protected get selection(): ISelection {
+    return this.state.selectedKeys;
+  }
+
+  protected setSelection(selection: ISelection) {
+    this.state.setSelectedKeys(selection);
   }
 
   /**
@@ -116,9 +124,9 @@ export class SelectionManager implements MultipleSelectionManager {
    * The currently selected keys in the collection.
    */
   get selectedKeys(): Set<Key> {
-    return this.state.selectedKeys === 'all'
+    return this.selection === 'all'
       ? new Set(this.getSelectAllKeys())
-      : this.state.selectedKeys;
+      : this.selection;
   }
 
   /**
@@ -141,9 +149,9 @@ export class SelectionManager implements MultipleSelectionManager {
     if (mappedKey == null) {
       return false;
     }
-    return this.state.selectedKeys === 'all'
+    return this.selection === 'all'
       ? this.canSelectItem(mappedKey)
-      : this.state.selectedKeys.has(mappedKey);
+      : this.selection.has(mappedKey);
   }
 
   /**
@@ -161,7 +169,7 @@ export class SelectionManager implements MultipleSelectionManager {
       return false;
     }
 
-    if (this.state.selectedKeys === 'all') {
+    if (this.selection === 'all') {
       return true;
     }
 
@@ -170,14 +178,14 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     let allKeys = this.getSelectAllKeys();
-    let selectedKeys = this.state.selectedKeys;
+    let selectedKeys = this.selection;
     this._isSelectAll = allKeys.every(k => selectedKeys.has(k));
     return this._isSelectAll;
   }
 
   get firstSelectedKey(): Key | null {
     let first: Node<unknown> | null = null;
-    for (let key of this.state.selectedKeys) {
+    for (let key of this.selectedKeys) {
       let item = this.collection.getItem(key);
       if (!first || (item && compareNodeOrder(this.collection, item, first) < 0)) {
         first = item;
@@ -189,7 +197,7 @@ export class SelectionManager implements MultipleSelectionManager {
 
   get lastSelectedKey(): Key | null {
     let last: Node<unknown> | null = null;
-    for (let key of this.state.selectedKeys) {
+    for (let key of this.selectedKeys) {
       let item = this.collection.getItem(key);
       if (!last || (item && compareNodeOrder(this.collection, item, last) > 0)) {
         last = item;
@@ -228,10 +236,10 @@ export class SelectionManager implements MultipleSelectionManager {
     let selection: Selection;
 
     // Only select the one key if coming from a select all.
-    if (this.state.selectedKeys === 'all') {
+    if (this.selection === 'all') {
       selection = new Selection([mappedToKey], mappedToKey, mappedToKey);
     } else {
-      let selectedKeys = this.state.selectedKeys as Selection;
+      let selectedKeys = this.selection as Selection;
       let anchorKey = selectedKeys.anchorKey ?? mappedToKey;
       selection = new Selection(selectedKeys, anchorKey, mappedToKey);
       for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey ?? mappedToKey)) {
@@ -245,7 +253,7 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     }
 
-    this.state.setSelectedKeys(selection);
+    this.setSelection(selection);
   }
 
   private getKeyRange(from: Key, to: Key) {
@@ -285,7 +293,7 @@ export class SelectionManager implements MultipleSelectionManager {
     return [];
   }
 
-  private getKey(key: Key) {
+  protected getKey(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
       // ¯\_(ツ)_/¯
@@ -327,7 +335,7 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    let keys = new Selection(this.state.selectedKeys === 'all' ? this.getSelectAllKeys() : this.state.selectedKeys);
+    let keys = new Selection(this.selection === 'all' ? this.getSelectAllKeys() : this.selection);
     if (keys.has(mappedKey)) {
       keys.delete(mappedKey);
       // TODO: move anchor to last selected key...
@@ -342,7 +350,7 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    this.state.setSelectedKeys(keys);
+    this.setSelection(keys);
   }
 
   /**
@@ -362,7 +370,7 @@ export class SelectionManager implements MultipleSelectionManager {
       ? new Selection([mappedKey], mappedKey, mappedKey)
       : new Selection();
 
-    this.state.setSelectedKeys(selection);
+    this.setSelection(selection);
   }
 
   /**
@@ -384,7 +392,7 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     }
 
-    this.state.setSelectedKeys(selection);
+    this.setSelection(selection);
   }
 
   private getSelectAllKeys() {
