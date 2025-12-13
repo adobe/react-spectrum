@@ -79,14 +79,6 @@ export function Nav() {
       return 1;
     }
 
-    if (a[0] === 'Guides') {
-      return 1;
-    }
-
-    if (b[0] === 'Guides') {
-      return -1;
-    }
-
     return a[0].localeCompare(b[0]);
   });
 
