@@ -19,6 +19,20 @@ type Props = {
   topRadiusY?: number
 };
 
+function clamp01(x: number) {
+  return Math.max(0, Math.min(1, x));
+}
+
+// Linear interpolation
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}
+
+function smoothstep(edge0: number, edge1: number, x: number) {
+  let t = clamp01((x - edge0) / (edge1 - edge0));
+  return t * t * (3 - 2 * t);
+}
+
 function getLocalPoint(svg: SVGSVGElement, clientX: number, clientY: number, viewBoxWidth: number, viewBoxHeight: number) {
   let rect = svg.getBoundingClientRect();
   let x = (clientX - rect.left) * (viewBoxWidth / rect.width);
@@ -555,6 +569,20 @@ export function InteractiveReactAriaLogo(props: Props) {
   let b = points[1]; // bottom-left
   let c = points[2]; // bottom-right
 
+  // Increase gooiness a bit as the dots move away from rest so detached connections round off
+  // rather than retaining the sharper composed silhouette.
+  let detachment = useMemo(() => {
+    let dTop = Math.hypot(a.x - REST_TOP.x, a.y - REST_TOP.y);
+    let dBL = Math.hypot(b.x - REST_BOTTOM_LEFT.x, b.y - REST_BOTTOM_LEFT.y);
+    let dBR = Math.hypot(c.x - REST_BOTTOM_RIGHT.x, c.y - REST_BOTTOM_RIGHT.y);
+    // 60 is the resistance scale used for both pointer + keyboard; allow a bit more before maxing out.
+    return smoothstep(20, 90, Math.max(dTop, dBL, dBR));
+  }, [a, b, c]);
+
+  let gooBlur = useMemo(() => lerp(10, 14, detachment), [detachment]);
+  let gooAlphaSlope = useMemo(() => lerp(25, 22, detachment), [detachment]);
+  let gooAlphaIntercept = useMemo(() => lerp(-12, -13.5, detachment), [detachment]);
+
   // Memoize the connector path calculation with rotation
   let connectorPath = useMemo(
     () => getConnectorPath(a, b, c, connectorRotation),
@@ -596,19 +624,19 @@ export function InteractiveReactAriaLogo(props: Props) {
         <defs>
           {/* Gooey filter: blur + high-contrast alpha threshold to create merging effect */}
           <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation={gooBlur} result="blur" />
             <feColorMatrix
               in="blur"
               mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -12"
+              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${gooAlphaSlope} ${gooAlphaIntercept}`}
               result="goo" />
             <feComposite in="SourceGraphic" in2="goo" operator="atop" />
           </filter>
 
           {/* Mask for the focus ring - shape + offset as cutout to create gap */}
-          <mask id={ringMaskId} x="-100%" y="-100%" width="300%" height="300%">
+          <mask id={ringMaskId} x="-500%" y="-500%" width="1100%" height="1100%">
             {/* White background = visible area, using large absolute coords to prevent clipping */}
-            <rect x={-viewBoxWidth} y={-viewBoxHeight} width={viewBoxWidth * 3} height={viewBoxHeight * 3} fill="white" />
+            <rect x={-viewBoxWidth * 5} y={-viewBoxHeight * 5} width={viewBoxWidth * 10} height={viewBoxHeight * 10} fill="white" />
             {/* Shapes expanded by ringOffset as black = cutout, with gooey filter for merged edges */}
             <g filter={`url(#${filterId})`}>
               <circle cx={c.x} cy={c.y} r={radius + ringOffset} fill="black" />
