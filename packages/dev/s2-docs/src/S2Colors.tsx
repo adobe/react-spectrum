@@ -151,7 +151,7 @@ function ColorScale({scale}) {
   ));
 }
 
-function Color({name, className}) {
+export function Color({name, className}) {
   return (
     <div className={style({display: 'flex', gap: 8, marginBottom: 4, font: 'ui', alignItems: 'center', breakInside: 'avoid'})}>
       <div className={typeof className === 'function' ? className({}) : className} />
