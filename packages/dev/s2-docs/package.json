@@ -2,7 +2,6 @@
   "name": "@react-spectrum/s2-docs",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "start": "parcel 'pages/**/*.mdx' --config .parcelrc-s2-docs",
     "start:s2": "DOCS_ENV=dev LIBRARY=s2 parcel 'pages/s2/**/*.mdx' -p 4321 --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
