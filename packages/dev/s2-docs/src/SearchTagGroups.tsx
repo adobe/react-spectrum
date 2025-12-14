@@ -60,7 +60,7 @@ export function SearchTagGroups({
                 items={sectionTags}
                 UNSAFE_style={isMobile ? {whiteSpace: 'nowrap'} : undefined}>
                 {(tag) => (
-                  <Tag key={tag.id} id={tag.id} onHoverStart={() => onHover?.(tag.id)}>
+                  <Tag key={tag.id} id={tag.id} onHoverStart={() => onHover?.(tag.id)} onPressStart={() => onHover?.(tag.id)}>
                     {tag.name}
                   </Tag>
                 )}

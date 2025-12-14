@@ -1,10 +1,11 @@
+import {mergeStyles} from '../../../../@react-spectrum/s2/style/runtime';
 import React from 'react';
-import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro' };
 
-export const AdobeLogo = ({size}: {size?: number}) => {
+export const AdobeLogo = ({styles, size}: {styles?: StyleString, size?: number}) => {
   return (
     <svg
-      className={style({size: 28, flexShrink: 0})}
+      className={mergeStyles(style({size: 28, flexShrink: 0}), styles)}
       style={{display: 'block', width: size, height: size}}
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden

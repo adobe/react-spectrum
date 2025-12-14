@@ -1,9 +1,10 @@
+import {mergeStyles} from '../../../../@react-spectrum/s2/style/runtime';
 import React from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {style, StyleString} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-export const ReactAriaLogo = () => {
+export const ReactAriaLogo = ({styles}: {styles?: StyleString}) => {
   return (
-    <svg className={style({width: 28, height: 27, flexShrink: 0})} viewBox="0 0 28 27" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
+    <svg className={mergeStyles(style({width: 28, height: 27, flexShrink: 0}), styles)} viewBox="0 0 28 27" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
       <circle cx="22.3718" cy="20.4558" r="5.62767" fill="#EB1000" />
       <circle cx="5.62767" cy="20.4558" r="5.62767" fill="#EB1000" />
       <ellipse cx="14.1713" cy="5.66926" rx="5.58336" ry="5.66926" fill="#EB1000" />

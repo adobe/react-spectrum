@@ -122,8 +122,8 @@ export function MobileHeader({toc}) {
     }
 
     let viewTransition = document.startViewTransition(() => {
-      if (labelRef.current) {
-        labelRef.current.style.viewTransitionName = '';
+      if (labelRef.current && window.scrollY === 0) {
+        labelRef.current.style.viewTransitionName = !isOpen ? 'search-menu-label' : '';
       }
 
       // Wait until next render. Using flushSync causes flickering.
@@ -139,6 +139,7 @@ export function MobileHeader({toc}) {
 
     viewTransition.finished.then(() => {
       document.documentElement.style.viewTransitionName = '';
+      labelRef.current!.style.viewTransitionName = '';
       setTransitioning(false);
     });
   };
