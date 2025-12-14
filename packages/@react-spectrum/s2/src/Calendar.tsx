@@ -14,6 +14,7 @@ import {ActionButton, Header, HeaderContext, Heading, HeadingContext, pressScale
 import {
   Calendar as AriaCalendar,
   CalendarCell as AriaCalendarCell,
+  CalendarContext as AriaCalendarContext,
   CalendarGrid as AriaCalendarGrid,
   CalendarHeaderCell as AriaCalendarHeaderCell,
   CalendarProps as AriaCalendarProps,
@@ -28,9 +29,11 @@ import {
   ContextValue,
   DateValue,
   Provider,
+  RangeCalendarContext,
   RangeCalendarState,
   RangeCalendarStateContext,
-  Text
+  Text,
+  useSlottedContext
 } from 'react-aria-components';
 import {AriaCalendarGridProps} from '@react-aria/calendar';
 import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
@@ -371,7 +374,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} firstDayOfWeek={props.firstDayOfWeek} />
+                <CalendarGrid months={i} key={i} />
               ))}
             </div>
             {isInvalid && (
@@ -387,7 +390,11 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 });
 
 export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & PropsWithChildren & {months: number}): ReactElement => {
-  // use isolation to start a new stacking context so that we can use zIndex -1 for the selection span.
+  let rangeCalendarProps = useSlottedContext(RangeCalendarContext);
+  let calendarProps = useSlottedContext(AriaCalendarContext);
+  let firstDayOfWeek = rangeCalendarProps?.firstDayOfWeek ?? calendarProps?.firstDayOfWeek;
+
+   // use isolation to start a new stacking context so that we can use zIndex -1 for the selection span.
   return (
     <AriaCalendarGrid
       className={style({
@@ -405,7 +412,7 @@ export const CalendarGrid = (props: Omit<AriaCalendarGridProps, 'children'> & Pr
       </CalendarGridHeader>
       <CalendarGridBody className="">
         {(date) => (
-          <CalendarCell date={date} firstDayOfWeek={props.firstDayOfWeek} />
+          <CalendarCell date={date} firstDayOfWeek={firstDayOfWeek} />
         )}
       </CalendarGridBody>
     </AriaCalendarGrid>
@@ -510,6 +517,7 @@ const CalendarCell = (props: Omit<CalendarCellProps, 'children'> & {firstDayOfWe
   let isFirstWeek = weekIndex === 0;
   let isFirstChild = dayIndex === 0;
   let isLastChild = dayIndex === 6;
+
   return (
     <AriaCalendarCell
       date={props.date}

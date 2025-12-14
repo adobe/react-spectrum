@@ -109,7 +109,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
                 alignItems: 'start'
               })}>
               {Array.from({length: visibleMonths}).map((_, i) => (
-                <CalendarGrid months={i} key={i} firstDayOfWeek={props.firstDayOfWeek} />
+                <CalendarGrid months={i} key={i} />
               ))}
             </div>
             {isInvalid && (
