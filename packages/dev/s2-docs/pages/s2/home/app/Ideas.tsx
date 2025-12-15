@@ -14,14 +14,10 @@ import { Arrow, Arrows } from './Arrows';
 export function Ideas() {
   let {locale} = useLocale();
   let list = useAsyncList<Topic, number | null>({
-    async load({signal, cursor}) {
-      let page = cursor || 1;
-      let res = await fetch(
-        `https://api.unsplash.com/topics?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
-        {signal}
-      );
-      let items = (await res.json()).filter((topic: Topic) => !!topic.preview_photos);
-      return {items, cursor: items.length ? page + 1 : null};
+    async load() {
+      let res = await import('./topics.json');
+      let items = res.filter((topic: Topic) => !!topic.preview_photos);
+      return {items};
     }
   });
 

@@ -73,7 +73,7 @@ const argTypes = {
   children: {
     control: {disable: true}
   },
-  closeOnPress: {
+  shouldCloseOnPress: {
     control: 'boolean'
   }
 };
@@ -117,7 +117,7 @@ export default {
       <Tooltip>Change Name</Tooltip>
     ],
     onOpenChange: action('openChange'),
-    closeOnPress: true
+    shouldCloseOnPress: true
   },
   argTypes: argTypes
 } as Meta<typeof TooltipTrigger>;

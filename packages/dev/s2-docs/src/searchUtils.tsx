@@ -1,14 +1,16 @@
 'use client';
 
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
-import {getLibraryFromPage} from './library';
+import {getBaseUrl} from './pageUtils';
 // @ts-ignore
+import {getLibraryFromPage} from './library';
 import {iconList, useIconFilter} from './IconSearchView';
 import {Key} from 'react-aria-components';
+
 import {type Library, TAB_DEFS} from './constants';
+// @ts-ignore
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-// @ts-ignore
 import {Page} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -37,7 +39,8 @@ export interface Section {
 
 export interface Tag {
   id: string,
-  name: string
+  name: string,
+  href?: string
 }
 
 /**
@@ -72,15 +75,15 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
  * Sorts sections with 'Components' first.
  */
 export function buildSectionsFromPages(pages: Page[], library: Library): Section[] {
-  const filteredPages = pages.filter(page => 
-    getLibraryFromPage(page) === library && 
+  const filteredPages = pages.filter(page =>
+    getLibraryFromPage(page) === library &&
     !page.exports?.hideFromSearch
   );
 
   const components = filteredPages.map(transformPageToComponentItem);
 
   const sectionNames = Array.from(new Set(components.map(c => c.section || 'Components')));
-  
+
   return sectionNames
     .map(sectionName => ({
       id: sectionName.toLowerCase(),
@@ -349,7 +352,7 @@ export function getOrderedLibraries(currentPage: Page) {
 
 export function getResourceTags(library: Library): Tag[] {
   if (library === 'react-spectrum') {
-    return [{id: 'icons', name: 'Icons'}];
+    return [{id: 'icons', name: 'Icons'}, {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}];
   }
   return [];
 }
@@ -420,10 +423,10 @@ export function useSectionTagsForDisplay(
   isOpen: boolean
 ): Tag[] {
   const [hasAllBeenShown, setHasAllBeenShown] = useState<boolean>(false);
-  
+
   // Track if "All" should be triggered (search value exists and no resource is selected)
   const shouldTriggerAll = searchValue.trim().length > 0 && !resourceTagIds.includes(selectedTagId);
-  
+
   // Once "All" has been shown, keep showing it
   if (shouldTriggerAll && !hasAllBeenShown) {
     setHasAllBeenShown(true);
@@ -501,7 +504,7 @@ export function SearchEmptyState({searchValue, libraryLabel}: {searchValue: stri
   );
 }
 
-export const LazyIconSearchView = React.lazy(() => 
+export const LazyIconSearchView = React.lazy(() =>
   import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView}))
 );
 
@@ -518,70 +521,70 @@ export interface SearchMenuState {
   selectedLibrary: Library,
   setSelectedLibrary: (library: Library) => void,
   orderedLibraries: ReturnType<typeof getOrderedLibraries>,
-  
+
   // Search state
   searchValue: string,
   setSearchValue: (value: string) => void,
-  
+
   // Section state
   sections: Section[],
   filteredSections: Section[],
   sectionTags: Tag[],
   sectionTagsForDisplay: Tag[],
-  
+
   // Resource tags (icons, etc.)
   resourceTags: Tag[],
   resourceTagIds: string[],
-  
+
   // Tag selection
   selectedTagId: string,
   setSelectedTagId: (id: string) => void,
   handleTagSelectionChange: (keys: Iterable<Key>) => void,
-  
+
   // Icons
   filteredIcons: typeof iconList,
   iconFilter: ReturnType<typeof useIconFilter>,
   isIconsSelected: boolean,
-  
+
   // Computed items
   selectedItems: ComponentItem[],
   selectedSectionName: string,
-  
+
   // Helpers
   getPlaceholderText: (libraryLabel: string) => string
 }
 
 export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuState {
   const {pages, currentPage, initialSearchValue = '', initialTag} = options;
-  
+
   // Library state
   const currentLibrary = getLibraryFromPage(currentPage);
   const [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
   const orderedLibraries = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
-  
+
   // Search state
   const [searchValue, setSearchValue] = useState(initialSearchValue);
-  
+
   // Build sections for the selected library
   const {sections, filteredSections} = useLibrarySections(
     pages || [],
     selectedLibrary,
     searchValue
   );
-  
+
   // Section and resource tags
   const sectionTags = useMemo(() => sections.map(s => ({id: s.id, name: s.name})), [sections]);
   const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
   const resourceTagIds = useMemo(() => resourceTags.map(t => t.id), [resourceTags]);
-  
+
   // Compute initial selected section
   const initialSelectedSection = useMemo(() => {
-    const currentSection = sections.find(s => 
+    const currentSection = sections.find(s =>
       s.children.some(c => c.href === currentPage.url)
     );
     return initialTag || currentSection?.id || currentPage.exports?.section?.toLowerCase() || 'components';
   }, [initialTag, currentPage, sections]);
-  
+
   // Tag selection
   const [selectedTagId, setSelectedTagId] = useSearchTagSelection(
     searchValue,
@@ -590,7 +593,7 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     initialSelectedSection,
     options.isOpen
   );
-  
+
   // Section tags for display (includes "All" when searching)
   const sectionTagsForDisplay = useSectionTagsForDisplay(
     sections,
@@ -599,12 +602,12 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     resourceTagIds,
     options.isOpen
   );
-  
+
   // Icons
   const filteredIcons = useFilteredIcons(searchValue);
   const iconFilter = useIconFilter();
   const isIconsSelected = selectedTagId === 'icons';
-  
+
   // Handler for tag selection change (works with TagGroup's onSelectionChange)
   const handleTagSelectionChange = useCallback((keys: Iterable<Key>) => {
     const firstKey = Array.from(keys)[0] as string;
@@ -612,12 +615,12 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
       setSelectedTagId(firstKey);
     }
   }, [setSelectedTagId]);
-  
+
   // Computed selected items
   const selectedItems = useMemo(() => {
     return getItemsForSection(filteredSections, selectedTagId, searchValue, resourceTagIds);
   }, [filteredSections, selectedTagId, searchValue, resourceTagIds]);
-  
+
   // Computed section name for aria-label
   const selectedSectionName = useMemo(() => {
     if (selectedTagId === 'all') {
@@ -627,12 +630,12 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
       || (sections.find(s => s.id === selectedTagId)?.name)
       || 'Items';
   }, [filteredSections, sections, selectedTagId]);
-  
+
   // Helper to get placeholder text based on selected resource tag
   const getPlaceholderText = useCallback((libraryLabel: string) => {
     const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
-    return selectedResourceTag 
-      ? `Search ${selectedResourceTag.name}` 
+    return selectedResourceTag
+      ? `Search ${selectedResourceTag.name}`
       : `Search ${libraryLabel}`;
   }, [resourceTags, selectedTagId]);
 
@@ -640,41 +643,41 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
   if (!options.isOpen && searchValue) {
     setSearchValue('');
   }
-  
+
   return {
     // Library state
     selectedLibrary,
     setSelectedLibrary,
     orderedLibraries,
-    
+
     // Search state
     searchValue,
     setSearchValue,
-    
+
     // Section state
     sections,
     filteredSections,
     sectionTags,
     sectionTagsForDisplay,
-    
+
     // Resource tags
     resourceTags,
     resourceTagIds,
-    
+
     // Tag selection
     selectedTagId,
     setSelectedTagId,
     handleTagSelectionChange,
-    
+
     // Icons
     filteredIcons,
     iconFilter,
     isIconsSelected,
-    
+
     // Computed items
     selectedItems,
     selectedSectionName,
-    
+
     // Helpers
     getPlaceholderText
   };
