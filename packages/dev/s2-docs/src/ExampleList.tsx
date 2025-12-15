@@ -1,4 +1,4 @@
-import {Card, CardPreview, Content, Text} from '@react-spectrum/s2';
+import {Card, CardPreview, Content, Image, ImageCoordinator, Text} from '@react-spectrum/s2';
 import crud from 'url:../pages/react-aria/examples/crud.png';
 import crudDark from 'url:../pages/react-aria/examples/crud-dark.png';
 import emojiPicker from 'url:../pages/react-aria/examples/emoji-picker.png';
@@ -50,30 +50,32 @@ export function ExampleList({tag, pages}) {
         }
       })}>
       <meta itemProp="name" content="Examples" />
-      {examples.map(example => (
-        <li
-          key={example.url}
-          itemProp="itemListElement"
-          itemScope
-          itemType="https://schema.org/ListItem">
-          <div
-            className={style({display: 'contents'})}
-            itemProp="item"
+      <ImageCoordinator>
+        {examples.map(example => (
+          <li
+            key={example.url}
+            itemProp="itemListElement"
             itemScope
-            itemType="https://schema.org/TechArticle">
-            <meta itemProp="url" content={example.url} />
-            <Card href={example.url}>
-              <CardPreview>
-                <ExampleImage name={example.name} />
-              </CardPreview>
-              <Content>
-                <Text slot="title" itemProp="headline">{getTitle(example)}</Text>
-                {example.exports?.description ? <Text slot="description" itemProp="description">{example.exports?.description}</Text> : null}
-              </Content>
-            </Card>
-          </div>
-        </li>
-      ))}
+            itemType="https://schema.org/ListItem">
+            <div
+              className={style({display: 'contents'})}
+              itemProp="item"
+              itemScope
+              itemType="https://schema.org/TechArticle">
+              <meta itemProp="url" content={example.url} />
+              <Card href={example.url}>
+                <CardPreview>
+                  <ExampleImage name={example.name} itemProp="image" />
+                </CardPreview>
+                <Content>
+                  <Text slot="title" itemProp="headline">{getTitle(example)}</Text>
+                  {example.exports?.description ? <Text slot="description" itemProp="description">{example.exports?.description}</Text> : null}
+                </Content>
+              </Card>
+            </div>
+          </li>
+        ))}
+      </ImageCoordinator>
     </ul>
   );
 }
@@ -88,18 +90,21 @@ const image = style({
   pointerEvents: 'none'
 });
 
-export function ExampleImage({name}) {
+export function ExampleImage({name, itemProp}: {name: string, itemProp?: string}) {
   let img = images[path.basename(name)];
   if (!Array.isArray(img)) {
-    return <img src={img} alt="" className={image} />;
+    return <Image src={img} alt="" styles={image} />;
   }
 
   let [light, dark] = img;
   return (
-    <picture>
-      <source srcSet={light} media="(prefers-color-scheme: light)" />
-      <source srcSet={dark} media="(prefers-color-scheme: dark)" />
-      <img src={light} alt="" itemProp="image" className={image} />
-    </picture>
+    <Image
+      src={[
+        {srcSet: light, colorScheme: 'light'},
+        {srcSet: dark, colorScheme: 'dark'}
+      ]}
+      alt=""
+      itemProp={itemProp}
+      styles={image} />
   );
 }

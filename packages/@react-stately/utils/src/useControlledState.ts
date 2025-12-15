@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {SetStateAction, useCallback, useEffect, useRef, useState} from 'react';
+import React, {SetStateAction, useCallback, useEffect, useReducer, useRef, useState} from 'react';
 
 // Use the earliest effect possible to reset the ref below.
 const useEarlyEffect: typeof React.useLayoutEffect = typeof document !== 'undefined'
@@ -43,6 +43,7 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
     valueRef.current = currentValue;
   });
 
+  let [, forceUpdate] = useReducer(() => ({}), {});
   let setValue = useCallback((value: SetStateAction<T>, ...args: any[]) => {
     // @ts-ignore - TS doesn't know that T cannot be a function.
     let newValue = typeof value === 'function' ? value(valueRef.current) : value;
@@ -50,8 +51,10 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
       // Update the ref so that the next setState callback has the most recent value.
       valueRef.current = newValue;
 
-      // Always trigger a setState, even when controlled, so that the layout effect above runs to reset the value.
       setStateValue(newValue);
+
+      // Always trigger a re-render, even when controlled, so that the layout effect above runs to reset the value.
+      forceUpdate();
 
       // Trigger onChange. Note that if setState is called multiple times in a single event,
       // onChange will be called for each one instead of only once.
