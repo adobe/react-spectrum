@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
+import {AriaPopoverProps, DismissButton, PopoverAria} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
 import {mergeProps, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import {Overlay} from './Overlay';
+import {Overlay} from '@react-spectrum/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
 import React, {ForwardedRef, forwardRef, ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
+import {usePopover} from './usePopover';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, FocusWithinProps, StyleProps {
   children: ReactNode,
@@ -237,17 +238,3 @@ function Arrow(props: ArrowProps) {
     </svg>
   );
 }
-
-/**
- * More explanation on popover tips.
- * - I tried changing the calculation of the popover placement in an effort to get it squarely onto the pixel grid.
- * This did not work because the problem was in the svg partial pixel end of the path in the popover right and popover bottom.
- * - I tried creating an extra 'bandaid' path that matched the background color and would overlap the popover border.
- * This didn't work because the border on the svg triangle didn't extend all the way to match nicely with the popover border.
- * - I tried getting the client bounding box and setting the svg to that partial pixel value
- * This didn't work because again the issue was inside the svg
- * - I didn't try drawing the svg backwards
- * This could still be tried
- * - I tried changing the calculation of the popover placement AND the svg height/width so that they were all rounded
- * This seems to have done the trick.
- */

@@ -15,7 +15,7 @@ export {useOverlayTrigger} from './useOverlayTrigger';
 export {usePreventScroll} from './usePreventScroll';
 export {ModalProvider, useModalProvider, OverlayProvider, OverlayContainer, useModal} from './useModal';
 export {DismissButton} from './DismissButton';
-export {ariaHideOutside, keepVisible} from './ariaHideOutside';
+export {ariaHideOutside} from './ariaHideOutside';
 export {usePopover} from './usePopover';
 export {useModalOverlay} from './useModalOverlay';
 export {Overlay, useOverlayFocusContain} from './Overlay';

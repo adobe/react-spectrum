@@ -7204,7 +7204,6 @@ __metadata:
   resolution: "@react-spectrum/overlays@workspace:packages/@react-spectrum/overlays"
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/i18n": "npm:^3.12.13"
     "@react-aria/interactions": "npm:^3.25.6"
     "@react-aria/overlays": "npm:^3.30.0"
     "@react-aria/utils": "npm:^3.31.0"

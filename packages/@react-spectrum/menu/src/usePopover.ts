@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ariaHideOutside, AriaPositionProps, keepVisible, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {ariaHideOutside, AriaPositionProps, useOverlay, usePreventScroll} from '@react-aria/overlays';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
@@ -119,7 +119,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   useEffect(() => {
     if (state.isOpen && popoverRef.current) {
       if (isNonModal) {
-        return keepVisible(groupRef?.current ?? popoverRef.current);
+        return;
       } else {
         return ariaHideOutside([groupRef?.current ?? popoverRef.current], {shouldUseInert: true});
       }

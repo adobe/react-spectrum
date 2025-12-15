@@ -40,7 +40,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.13",
     "@react-aria/interactions": "^3.25.6",
     "@react-aria/overlays": "^3.30.0",
     "@react-aria/utils": "^3.31.0",
