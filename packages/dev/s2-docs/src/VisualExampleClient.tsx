@@ -444,6 +444,9 @@ export function Control({name}: {name: string}) {
       if (name === 'placement' && control.value.elements.length === 22) {
         return <PlacementControl control={control} value={value} onChange={onChange} />;
       }
+      if (name === 'src') {
+        return <StringControl control={control} value={value} onChange={onChange} />;
+      }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':
       return <NumberControl control={control} value={value} onChange={onChange} />;

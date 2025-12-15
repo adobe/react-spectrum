@@ -99,12 +99,12 @@ export function ExampleImage({name, itemProp}: {name: string, itemProp?: string}
   let [light, dark] = img;
   return (
     <Image
-      src={light}
+      src={[
+        {srcSet: light, colorScheme: 'light'},
+        {srcSet: dark, colorScheme: 'dark'}
+      ]}
       alt=""
       itemProp={itemProp}
-      styles={image}>
-      <source srcSet={light} media="(prefers-color-scheme: light)" />
-      <source srcSet={dark} media="(prefers-color-scheme: dark)" />
-    </Image>
+      styles={image} />
   );
 }
