@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
+import {AriaPopoverProps, DismissButton, PopoverAria} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
@@ -21,6 +21,7 @@ import overrideStyles from './overlays.css';
 import React, {ForwardedRef, forwardRef, ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
+import {usePopover} from './usePopover';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, FocusWithinProps, StyleProps {
   children: ReactNode,
