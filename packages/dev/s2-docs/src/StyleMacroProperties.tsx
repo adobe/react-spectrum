@@ -1,5 +1,5 @@
 import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
-import {BackgroundColorsDisclosure, Color, GlobalColorsDisclosure, SemanticColorsDisclosure, TextColorsDisclosure} from './S2Colors';
+import {BackgroundColorsDisclosure, Color, GlobalColorsDisclosure, HCMColorsDisclosure, SemanticColorsDisclosure, TextColorsDisclosure, TransparentColorsDisclosure} from './S2Colors';
 import {styles as codeStyles} from './Code';
 import {ColorLink} from './Link';
 import {colorSwatch} from './color.macro' with {type: 'macro'};
@@ -91,6 +91,8 @@ const styleMacroValueDesc: Record<string, {description?: ReactNode, body?: React
       <>
         <SemanticColorsDisclosure />
         <GlobalColorsDisclosure />
+        <TransparentColorsDisclosure />
+        <HCMColorsDisclosure />
       </>
     )
   },
@@ -216,21 +218,34 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                       </div>
                     )}
                     {(() => {
-                      // for color and backgroundColor, skip values list and render disclosures directly since the contents of the disclosures cover the mapped values
                       if (propertyName === 'color') {
                         return (
-                          <Accordion allowsMultipleExpanded>
-                            <TextColorsDisclosure />
-                            {styleMacroValueDesc['baseColors'].body}
-                          </Accordion>
+                          <div>
+                            <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                            <div className="sb-unstyled" style={{columnWidth: 120}}>
+                              <Color name="black" className={colorSwatch('black', 'color')} />
+                              <Color name="white" className={colorSwatch('white', 'color')} />
+                            </div>
+                            <Accordion allowsMultipleExpanded styles={style({marginTop: 16})}>
+                              <TextColorsDisclosure />
+                              {styleMacroValueDesc['baseColors'].body}
+                            </Accordion>
+                          </div>
                         );
                       }
                       if (propertyName === 'backgroundColor') {
                         return (
-                          <Accordion allowsMultipleExpanded>
-                            <BackgroundColorsDisclosure />
-                            {styleMacroValueDesc['baseColors'].body}
-                          </Accordion>
+                          <div>
+                            <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
+                            <div className="sb-unstyled" style={{columnWidth: 120}}>
+                              <Color name="black" className={colorSwatch('black', 'backgroundColor')} />
+                              <Color name="white" className={colorSwatch('white', 'backgroundColor')} />
+                            </div>
+                            <Accordion allowsMultipleExpanded styles={style({marginTop: 16})}>
+                              <BackgroundColorsDisclosure />
+                              {styleMacroValueDesc['baseColors'].body}
+                            </Accordion>
+                          </div>
                         );
                       }
 
@@ -245,6 +260,8 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                           <div>
                             <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
                             <div className="sb-unstyled" style={{columnWidth: 120}}>
+                              <Color name="black" className={colorSwatch('black', 'borderColor')} />
+                              <Color name="white" className={colorSwatch('white', 'borderColor')} />
                               <Color name="negative" className={colorSwatch('negative', 'borderColor')} />
                               <Color name="disabled" className={colorSwatch('disabled', 'borderColor')} />
                             </div>
@@ -258,6 +275,8 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                           <div>
                             <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
                             <div className="sb-unstyled" style={{columnWidth: 120}}>
+                              <Color name="black" className={colorSwatch('black', 'outlineColor')} />
+                              <Color name="white" className={colorSwatch('white', 'outlineColor')} />
                               <Color name="focus-ring" className={colorSwatch('focus-ring', 'outlineColor')} />
                             </div>
                             <BaseColorsAccordion />
@@ -274,6 +293,8 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                               <CurrentColorListItem links={links} />
                             </ul>
                             <div className="sb-unstyled" style={{columnWidth: 120, marginTop: 12}}>
+                              <Color name="black" className={colorSwatch('black', 'fill')} />
+                              <Color name="white" className={colorSwatch('white', 'fill')} />
                               <Color name="accent" className={colorSwatch('accent', 'fill')} />
                               <Color name="neutral" className={colorSwatch('neutral', 'fill')} />
                               <Color name="negative" className={colorSwatch('negative', 'fill')} />
@@ -313,6 +334,10 @@ export function StyleMacroProperties({properties, sort = true}: StyleMacroProper
                               <NoneValueListItem />
                               <CurrentColorListItem links={links} />
                             </ul>
+                            <div className="sb-unstyled" style={{columnWidth: 120, marginTop: 12}}>
+                              <Color name="black" className={colorSwatch('black', 'stroke')} />
+                              <Color name="white" className={colorSwatch('white', 'stroke')} />
+                            </div>
                             <BaseColorsAccordion />
                           </div>
                         );

@@ -58,7 +58,7 @@ const fontSize = [
 ];
 
 const colorPropertyValues: {[key: string]: string[]} = {
-  color: ['accent', 'neutral', 'neutral-subdued', 'negative', 'disabled', 'heading', 'title', 'body', 'detail', 'code', 'auto', 'baseColors'],
+  color: ['accent', 'neutral', 'neutral-subdued', 'negative', 'disabled', 'heading', 'title', 'body', 'detail', 'code', 'auto', 'black', 'white', 'baseColors'],
   backgroundColor: [
     'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
     'negative', 'negative-subtle', 'informative', 'informative-subtle',
@@ -72,18 +72,18 @@ const colorPropertyValues: {[key: string]: string[]} = {
     'magenta', 'magenta-subtle', 'pink', 'pink-subtle',
     'turquoise', 'turquoise-subtle', 'cinnamon', 'cinnamon-subtle',
     'brown', 'brown-subtle', 'silver', 'silver-subtle',
-    'disabled', 'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated', 'baseColors'
+    'disabled', 'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated', 'black', 'white', 'baseColors'
   ],
-  borderColor: ['negative', 'disabled', 'baseColors'],
-  outlineColor: ['focus-ring', 'baseColors'],
+  borderColor: ['negative', 'disabled', 'black', 'white', 'baseColors'],
+  outlineColor: ['focus-ring', 'black', 'white', 'baseColors'],
   fill: [
     'none', 'currentColor',
     'accent', 'neutral', 'negative', 'informative', 'positive', 'notice',
     'gray', 'red', 'orange', 'yellow', 'chartreuse', 'celery', 'green',
     'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta',
-    'pink', 'turquoise', 'cinnamon', 'brown', 'silver', 'baseColors'
+    'pink', 'turquoise', 'cinnamon', 'brown', 'silver', 'black', 'white', 'baseColors'
   ],
-  stroke: ['none', 'currentColor', 'baseColors']
+  stroke: ['none', 'currentColor', 'black', 'white', 'baseColors']
 };
 
 const dimensionsPropertyValues: {[key: string]: (string | number)[]} = {
@@ -1222,12 +1222,12 @@ const propertyDescriptions: {[key: string]: string} = {
   'rotate': 'Accepts a number (treated as degrees) or a string with units (deg, rad, grad, turn).',
   'scaleX': 'Accepts a number or percentage string.',
   'scaleY': 'Accepts a number or percentage string.',
-  'scaleShortHand': 'Accepts a number or percentage string.',
+  'scaleShorthand': 'Accepts a number or percentage string.',
   'aspectRatio': 'Also accepts a ratio in the format number/number (e.g., 16/9, 4/3).',
-  'transitionShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
-  'animationShortHand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
-  'truncateShortHand': 'Accepts a boolean value. Applying this shorthand will set the required style macro properties to enable text truncation.',
-  'fontShortHand': 'Accepts the same values as fontSize. The fontSize provided defines the values this shorthand sets on the mapped values.',
+  'transitionShorthand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
+  'animationShorthand': 'This shorthand explicitly defines duration as 150 and the timing function as "default".',
+  'truncateShorthand': 'Accepts a boolean value. Applying this shorthand will set the required style macro properties to enable text truncation.',
+  'fontShorthand': 'Accepts the same values as fontSize. The fontSize provided defines the values this shorthand sets on the mapped values.',
   'borderStartWidth': 'These values map to pixels.',
   'borderEndWidth': 'These values map to pixels.',
   'borderTopWidth': 'These values map to pixels.',
@@ -1309,7 +1309,7 @@ export function getPropertyDefinitions(propertyCategory: string): {[key: string]
         additionalTypes: getAdditionalTypes(shorthandDef.mapping[0]),
         links: Object.keys(links).length > 0 ? links : undefined,
         mapping: shorthandDef.mapping,
-        description: propertyDescriptions[`${shorthandName}ShortHand`]
+        description: propertyDescriptions[`${shorthandName}Shorthand`]
       };
     }
   }
