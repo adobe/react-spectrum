@@ -156,8 +156,8 @@ let arrow = style({
   },
   translateX: {
     placement: {
-      left: -4,
-      right: 4
+      left: '-25%',
+      right: '25%'
     }
   },
   strokeWidth: 1,
