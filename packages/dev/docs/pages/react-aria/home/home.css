@@ -22,10 +22,19 @@
 
 .home .header-background {
   @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
-  overflow: clip;
+  /* overflow: clip; */
+
+  background:
+    linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
+    radial-gradient(50% 22% at 25% 72%, light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), #BF67D0), transparent),
+    radial-gradient(50% 22% at 62% 75%, light-dark(#FACA85, #EDB35F), transparent),
+    radial-gradient(150% 30% at 50% 70%, light-dark(#EDE8FF, #6D33F7), transparent),
+    linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
+  /* mask-type: luminance;
+  mask: linear-gradient(white 0% 80%, transparent); */
 
   &::before {
-    content: '';
+    /* content: '';
     z-index: -1;
     position: absolute;
     top: 0;
@@ -40,13 +49,13 @@
     mask-position: 0px -50%;
     opacity: 70%;
     filter: blur(40px);
-    contain: paint;
+    contain: paint; */
     will-change: transform; /* Speeds up filter in Safari */
 
-    @media (prefers-color-scheme: light) {
+    /* @media (prefers-color-scheme: light) {
       filter: blur(40px) invert(1) hue-rotate(180deg);
       opacity: 60%;
-    }
+    } */
   }
 }
 

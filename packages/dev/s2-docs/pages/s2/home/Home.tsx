@@ -174,7 +174,7 @@ export function Home({currentPage}: {currentPage: Page}) {
         backgroundSize: '100%'
       }}>
       <HomeHeader />
-      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
+      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024, isolation: 'isolate'})}>
         <ReleaseLink />
         <HomeH1 id={headingId}>
           <span className={swapWrapper}>Build apps with&nbsp;</span>
@@ -202,7 +202,7 @@ export function Home({currentPage}: {currentPage: Page}) {
           <ExampleApp showArrows />
         </section>
       </header>
-      <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600})}>
+      <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600, isolation: 'isolate'})}>
         <Section
           title="Build Once. Adapt Everywhere."
           description="React Spectrum makes interfaces more accessible, flexible, and maintainable, giving users a seamless experience no matter where they are.">

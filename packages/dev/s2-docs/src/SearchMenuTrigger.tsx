@@ -260,7 +260,12 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
           // @ts-ignore
           viewTransitionName: 'search-menu-underlay'
         }}>
-        <Modal className={modalStyle}>
+        <Modal
+          className={modalStyle}
+          style={{
+            // @ts-ignore
+            viewTransitionName: 'search-menu'
+          }}>
           <SearchMenu
             onClose={onClose}
             overlayId={overlayId}

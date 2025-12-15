@@ -27,6 +27,8 @@ import {getBaseUrl} from '../../src/pageUtils';
 import {Provider, Button as S2Button} from '@react-spectrum/s2';
 import {LinkButton} from '../../src/Link';
 import HomeHeader from './HomeHeader';
+import {Video} from '../../src/Video';
+import videoUrl from 'url:./assets/website.mp4';
 
 export const section = 'Overview';
 export const title = 'Home';
@@ -79,11 +81,11 @@ export const description = 'Accessible, high quality UI components and hooks for
           <div>
             <h2 className="text-3xl md:text-4xl my-0 text-balance"><GradientText>Meet our new docs!</GradientText></h2>
             <p className="mt-4 mb-0 md:mb-4 text-balance text-lg md:text-xl max-w-xl text-slate-700 dark:text-slate-400">All-new content and search experience. Interactive CSS and Tailwind examples to get you started quickly – just install with shadcn. New guides and full example apps. MCP server and AI integrations.</p>
-            <LearnMoreLink href="getting-started" className="text-pink-600 dark:text-pink-500 hover:bg-pink-400/[15%] mt-3 mb-0">Check it out</LearnMoreLink>
+            <LearnMoreLink href="getting-started" className="text-indigo-600 dark:text-indigo-400 hover:bg-indigo-400/[15%] mt-3 mb-0">Check it out</LearnMoreLink>
           </div>
           <div className="flex-1">
-            <div className="w-fit rounded-lg overflow-clip justify-self-end">
-              <div className="block w-full max-w-xl xl:w-auto xl:h-[250px] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center" style={{aspectRatio: '16/9'}}>Insert video here</div>
+            <div className="w-fit rounded-lg overflow-clip justify-self-end outline outline-0 outline-blue-600 dark:outline-blue-500 has-focus-visible:outline-2">
+              <Video src={videoUrl} muted autoPlay loop preload="metadata" playsInline aria-label="Video of docs features" className="block w-full max-w-xl xl:w-auto xl:h-[250px] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center outline-none" style={{aspectRatio: '16/9'}} />
             </div>
           </div>
         </section>
