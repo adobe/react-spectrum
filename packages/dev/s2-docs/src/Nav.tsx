@@ -164,8 +164,8 @@ export function Nav() {
                 <SideNav>
                   {pages
                     .sort((a, b) => {
-                      const aIntro = isIntroduction(a);
-                      const bIntro = isIntroduction(b);
+                      const aIntro = a.url.endsWith('getting-started');
+                      const bIntro = b.url.endsWith('getting-started');
                       if (aIntro && !bIntro) {
                         return -1;
                       }
