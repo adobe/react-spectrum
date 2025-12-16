@@ -5,11 +5,9 @@ import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement, ReactNode} from 'react';
 import '../src/client';
 // @ts-ignore
-import internationalizedFavicon from 'url:../assets/internationalized.ico';
+import reactAriaFavicon from 'url:../assets/react-aria-favicon.svg';
 // @ts-ignore
-import reactAriaFavicon from 'url:../assets/react-aria.ico';
-// @ts-ignore
-import rspFavicon from 'url:../assets/favicon.ico';
+import rspFavicon from 'url:../assets/rsp-favicon.svg';
 import './anatomy.css';
 import './footer.css';
 import {ClassAPI} from './ClassAPI';
@@ -77,11 +75,12 @@ const getTitle = (currentPage: Page): string => {
 
 const getOgImageUrl = (currentPage: Page): string => {
   let currentURL = new URL(currentPage.url);
+  let publicUrl = process.env.PUBLIC_URL || '';
   let path = currentURL.pathname || '/';
   if (path.endsWith('/')) {
     path += 'index';
   }
-  return new URL(`/og${path}.png`, currentURL).href;
+  return new URL(`${publicUrl}/og${path}.png`, currentURL).href;
 };
 
 const getDescription = (currentPage: Page): string => {
@@ -102,8 +101,6 @@ const getFaviconUrl = (currentPage: Page): string => {
   switch (library) {
     case 'react-aria':
       return reactAriaFavicon;
-    case 'internationalized':
-      return internationalizedFavicon;
     default:
       return rspFavicon;
   }
