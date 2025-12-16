@@ -838,10 +838,10 @@ jobs:
     steps:
       - deploy-s3:
           dir: react-aria
-          bucket: s3://react-aria-production
+          bucket: s3://react-aria-prod
       - deploy-s3:
           dir: s2
-          bucket: s3://react-spectrum-production
+          bucket: s3://react-spectrum-prod
 
   comment:
     executor: rsp
