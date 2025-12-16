@@ -262,6 +262,7 @@
   display: block;
   max-height: inherit;
   overflow: auto;
+  border-radius: inherit;
   forced-color-adjust: none;
   outline: none;
   box-sizing: border-box;

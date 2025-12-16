@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 import {ArrowRight} from 'lucide-react';
+import {BaseLink} from '@react-spectrum/s2-docs/src/Link';
 import React, {ForwardedRef, HTMLAttributes, ReactNode} from 'react';
+import {twMerge} from 'tailwind-merge';
 
 export function Window({children, className = '', isBackground = false, toolbar}: {children: ReactNode, className?: string, isBackground?: boolean, toolbar: ReactNode}): ReactNode {
   return (
@@ -33,7 +35,7 @@ export function FileTab({children, className = ''}: {children: ReactNode, classN
 }
 
 export function AddressBar({children}: {children: ReactNode}): ReactNode {
-  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 ml-20 sm:mx-auto my-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
+  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 ml-20 flex-1 text-center sm:flex-none sm:mx-auto my-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
 }
 
 export function GradientText({children}: {children: ReactNode}): ReactNode {
@@ -74,7 +76,7 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
         ? <polyline points={points} {...markerProps} className="stroke-slate-800 dark:stroke-white fill-none" />
         : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} className="stroke-slate-800 dark:stroke-white" />
       }
-      <a href={href} target="_blank" className="pointer-events-auto outline-hidden rounded-xs focus:outline-blue-600 dark:focus:outline-blue-500 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
+      <a href={href} target="_blank" className="pointer-events-auto outline-hidden rounded-xs outline-0 outline-solid focus-visible:outline-2 focus-visible:outline-black dark:focus-visible:outline-white outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
     </>
   );
 }
@@ -85,8 +87,8 @@ React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLD
   return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:bg-[Highlight]! forced-colors:mix-blend-normal!" {...props} />;
 });
 
-export function LearnMoreLink({href, className}: {href: string, className: string}): ReactNode {
-  return <a href={href} className={`group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95 ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+export function LearnMoreLink({children, href, className}: {children?: string, href: string, className: string}): ReactNode {
+  return <BaseLink href={href} className={twMerge('group inline-block mt-6 mb-12 no-underline text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95', className)}>{children || 'Learn more'}<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></BaseLink>;
 }
 
 export function Scrollable({children, className = ''}: {children: ReactNode, className?: string}): ReactNode {
