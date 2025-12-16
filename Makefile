@@ -171,7 +171,7 @@ s2-docs-production:
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
-	node scripts/buildRegistry.mjs
+	LIBRARY=react-aria node scripts/buildRegistry.mjs
 	yarn build:s2-docs
 	node scripts/createFeedS2.mjs
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
