@@ -5,7 +5,7 @@ import {style, StyleString} from '@react-spectrum/s2/style' with { type: 'macro'
 export const AdobeLogo = ({styles, size}: {styles?: StyleString, size?: number}) => {
   return (
     <svg
-      className={mergeStyles(style({size: 28, flexShrink: 0}), styles)}
+      className={mergeStyles(style({size: 26, flexShrink: 0}), styles)}
       style={{display: 'block', width: size, height: size}}
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden

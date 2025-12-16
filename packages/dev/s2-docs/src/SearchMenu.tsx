@@ -137,14 +137,14 @@ export function SearchMenu(props: SearchMenuProps) {
           {orderedTabs.map((tab, i) => (
             <Tab key={tab.id} id={tab.id}>
               <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                <div style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-icon' : undefined} as CSSProperties}>
+                <div className={style({width: 26, flexShrink: 0, display: 'flex', justifyContent: 'center'})} style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-icon' : undefined} as CSSProperties}>
                   {tab.icon}
                 </div>
                 <div>
-                  <span style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-label' : undefined} as CSSProperties} className={style({font: 'ui-xl', fontWeight: 'bold'})}>
+                  <span style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-label' : undefined} as CSSProperties} className={style({font: 'heading-sm', fontWeight: 'bold'})}>
                     {tab.label}
                   </span>
-                  <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
+                  <div className={style({fontSize: 'ui', marginTop: 2})}>{tab.description}</div>
                 </div>
               </div>
             </Tab>

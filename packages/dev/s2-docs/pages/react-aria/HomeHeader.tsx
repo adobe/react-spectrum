@@ -111,7 +111,7 @@ export default function HomeHeader() {
           alignItems: 'center',
           columnGap: {
             default: 12,
-            lg: 8
+            lg: space(10)
           },
           marginStart: {
             default: 0,
@@ -123,7 +123,7 @@ export default function HomeHeader() {
         <div ref={iconRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>
           <ReactAriaLogo />
         </div>
-        <h2 className={style({marginY: 0, font: {default: 'heading-sm', lg: 'ui-xl'}, fontWeight: 'extra-bold', color: 'transparent-overlay-800'})} ref={labelRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Aria</h2>
+        <h2 className={style({marginY: 0, font: 'heading-sm', fontWeight: 'extra-bold', color: 'transparent-overlay-800'})} ref={labelRef} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Aria</h2>
       </a>
 
       <div className={style({position: 'absolute', insetStart: 0, width: 'full', display: {default: 'none', xl: 'flex'}, justifyContent: 'center'})}>

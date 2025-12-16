@@ -26,6 +26,11 @@ const libraryStyles = style({
   ...focusRing(),
   paddingX: 12, 
   display: 'flex',
+  alignItems: 'center',
+  columnGap: {
+    default: 12,
+    lg: space(10)
+  },
   textDecoration: 'none',
   minHeight: 48,
   borderRadius: 'lg',
@@ -140,14 +145,12 @@ export default function Header() {
               ref={ref}
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
-              <div className={style({display: 'flex', alignItems: 'center'})}>
-                <div ref={iconRef}>
-                  {getButtonIcon(currentPage)}
-                </div>
-                <span className={style({font: 'ui-xl', fontWeight: 'extra-bold', marginStart: 8})} ref={labelRef}>
-                  {getButtonText(currentPage)}
-                </span>
+              <div ref={iconRef}>
+                {getButtonIcon(currentPage)}
               </div>
+              <span className={style({font: 'heading-sm', fontWeight: 'extra-bold'})} ref={labelRef}>
+                {getButtonText(currentPage)}
+              </span>
             </Link>
           </div>
           <div ref={searchRef}>

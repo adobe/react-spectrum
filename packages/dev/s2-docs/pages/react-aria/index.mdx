@@ -19,7 +19,7 @@ import {TextField} from 'tailwind-starter/TextField';
 import {Popover} from 'tailwind-starter/Popover';
 import {Button} from 'tailwind-starter/Button';
 import ogImage from 'url:../../assets/ReactAriaOpenGraph.webp';
-import reactAriaFavicon from 'url:../../assets/react-aria.ico';
+import reactAriaFavicon from 'url:../../assets/react-aria-favicon.svg';
 import SearchMenuWrapperServer,  {RouterWrapperServer} from '../../src/SearchMenuWrapperServer';
 import {SearchMenuButton} from '../../src/SearchMenuWrapper';
 import {getCurrentPage, getPages} from '../../src/getPages';
@@ -75,16 +75,16 @@ export const description = 'Accessible, high quality UI components and hooks for
         )}} />
     </head>
     <body className="m-0" style={{'--s2-container-bg': 'light-dark(white, black)'}}>
-      <header className="relative header-background isolate pt-32">
+      <header className="relative header-background isolate pt-20 md:pt-32">
         <HomeHeader />
-        <section className="p-6 box-border overflow-clip bg-white dark:bg-zinc-800/80 dark:backdrop-saturate-200 card-shadow w-fit max-w-[calc(100%-40px)] mx-auto rounded-xl flex items-center flex-col xl:flex-row gap-8">
+        <section className="p-4 md:p-6 box-border overflow-clip bg-white dark:bg-zinc-800/80 dark:backdrop-saturate-200 card-shadow w-fit max-w-[calc(100%-40px)] mx-auto rounded-xl flex items-center flex-col xl:flex-row gap-8">
           <div>
             <h2 className="text-3xl md:text-4xl my-0 text-balance"><GradientText>Meet our new docs!</GradientText></h2>
             <p className="mt-4 mb-0 md:mb-4 text-balance text-lg md:text-xl max-w-xl text-slate-700 dark:text-slate-400">All-new content and search experience. Interactive CSS and Tailwind examples to get you started quickly – just install with shadcn. New guides and full example apps. MCP server and AI integrations.</p>
             <LearnMoreLink href="getting-started" className="text-indigo-600 dark:text-indigo-400 hover:bg-indigo-400/[15%] mt-3 mb-0">Check it out</LearnMoreLink>
           </div>
           <div className="flex-1">
-            <div className="w-fit rounded-lg overflow-clip justify-self-end outline outline-0 outline-blue-600 dark:outline-blue-500 has-focus-visible:outline-2">
+            <div className="w-fit -m-2 md:m-0 rounded-lg overflow-clip justify-self-end outline outline-0 outline-blue-600 dark:outline-blue-500 has-focus-visible:outline-2">
               <Video src={videoUrl} muted autoPlay loop preload="metadata" playsInline aria-label="Video of docs features" className="block w-full max-w-xl xl:w-auto xl:h-[250px] bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center outline-none" style={{aspectRatio: '16/9'}} />
             </div>
           </div>

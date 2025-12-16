@@ -117,7 +117,7 @@ export default function HomeHeader() {
             alignItems: 'center',
             columnGap: {
               default: 12,
-              lg: 8
+              lg: space(10)
             },
             textDecoration: 'none'
           })}>
@@ -131,7 +131,7 @@ export default function HomeHeader() {
               d="m297.58 444.05-36.45-101.4h-91.46l76.87-193.53 116.65 294.93h138.52L316.8 0H186.23L0 444.05h297.58z"
               fill="#fff" />
           </svg>
-          <span ref={labelRef} className={style({font: {default: 'heading-sm', lg: 'ui-xl'}, fontWeight: 'extra-bold', color: 'white'})} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Spectrum</span>
+          <span ref={labelRef} className={style({font: 'heading-sm', fontWeight: 'extra-bold', color: 'white'})} style={{display: searchOpen ? 'none' : undefined} as CSSProperties}>React Spectrum</span>
         </span>
       </Link>
       <div className={style({position: 'absolute', insetStart: 0, width: 'full', display: {default: 'none', xl: 'flex'}, justifyContent: 'center'})}>

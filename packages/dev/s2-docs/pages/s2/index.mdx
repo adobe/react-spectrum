@@ -1,8 +1,9 @@
 import '../../src/client';
 import {Home} from './home/Home';
 import {Provider} from '@react-spectrum/s2';
-import rspFavicon from 'url:../../assets/favicon.ico';
+import rspFavicon from 'url:../../assets/rsp-favicon.svg';
 import {RouterWrapperServer} from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
+import {getBaseUrl} from '../../src/pageUtils';
 
 export const section = 'Overview';
 export const title = 'Home';
@@ -21,11 +22,11 @@ export const hideFromSearch = true;
       <meta name="description" content={description} />
       <meta name="keywords" content="accessibility,components,react,headless,style-free" />
       <meta name="twitter:card" content="summary_large_image" />
-      {/* <meta name="twitter:image" content={ogImage} /> */}
+      <meta name="twitter:image" content={`${getBaseUrl('s2')}/og/index.png`} />
       <meta property="og:title" content="React Spectrum" />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={props.currentPage.url} />
-      {/* <meta property="og:image" content={ogImage} /> */}
+      <meta property="og:image" content={`${getBaseUrl('s2')}/og/index.png`} />
       <meta property="og:description" content={description} />
       <meta property="og:locale" content="en_US" />
       <link rel="canonical" href={props.currentPage.url} />
