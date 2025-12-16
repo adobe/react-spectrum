@@ -76,7 +76,7 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
         ? <polyline points={points} {...markerProps} className="stroke-slate-800 dark:stroke-white fill-none" />
         : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} className="stroke-slate-800 dark:stroke-white" />
       }
-      <a href={href} target="_blank" className="pointer-events-auto outline-hidden rounded-xs focus:outline-blue-600 dark:focus:outline-blue-500 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
+      <a href={href} target="_blank" className="pointer-events-auto outline-hidden rounded-xs outline-0 outline-solid focus-visible:outline-2 focus-visible:outline-black dark:focus-visible:outline-white outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
     </>
   );
 }
