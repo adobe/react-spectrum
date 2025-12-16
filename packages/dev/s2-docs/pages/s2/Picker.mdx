@@ -153,8 +153,7 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {Picker, PickerItem, useAsyncList} from '@react-spectrum/s2';
 
 interface Character {
   name: string
@@ -192,7 +191,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<PickerItem>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
+Use the `href` prop on a `<PickerItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
 
 ```tsx render
 "use client";

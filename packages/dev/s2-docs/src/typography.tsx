@@ -60,11 +60,20 @@ function AnchorLink({anchorId, isHovered, level, headingText}) {
 
 const h1 = style({
   font: 'heading-3xl',
+  // This variable is used to calculate the line height.
+  // Normally it is set by the fontSize, but the custom clamp prevents this.
+  '--fs': {
+    type: 'opacity',
+    value: {
+      default: 'pow(1.125, 10)', // heading-2xl
+      isLongForm: 'pow(1.125, 8)' // heading-xl
+    }
+  },
   fontSize: {
     default: {
       // On mobile, adjust heading to fit in the viewport, and clamp between a min and max font size.
-      default: 'clamp(35px, (100vw - 32px) / var(--width-per-em), 55px)',
-      isLongForm: 'heading-xl'
+      default: `clamp(${35 / 16}rem, (100vw - 32px) / var(--width-per-em), ${55 / 16}rem)`,
+      isLongForm: `clamp(${35 / 16}rem, (100vw - 32px) / var(--width-per-em), ${44 / 16}rem)`
     },
     lg: {
       default: 'heading-3xl',
@@ -80,7 +89,7 @@ const h1 = style({
 
 export function H1({children, isLongForm, ...props}) {
   return (
-    <h1 {...props} id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1({isLongForm})}>
+    <h1 {...props} data-anchor-link id="top" style={{'--width-per-em': getTextWidth(children)} as any} className={h1({isLongForm})}>
       {children}
     </h1>
   );
@@ -90,7 +99,7 @@ export function H2({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h2 {...props} id={id} className={style({font: 'heading-lg', marginTop: 48, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance'})} {...hoverProps}>
+    <h2 {...props} data-anchor-link id={id} className={style({font: 'heading-lg', marginTop: 48, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: 'clip'})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={2} headingText={children} />
     </h2>
@@ -101,7 +110,7 @@ export function H3({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h3 {...props} id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance'})} {...hoverProps}>
+    <h3 {...props} data-anchor-link id={id} className={style({font: 'heading', marginTop: 36, marginBottom: 24, maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: 'clip'})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={3} headingText={children} />
     </h3>
@@ -112,7 +121,7 @@ export function H4({children, ...props}) {
   let {hoverProps, isHovered} = useHover({});
   let id = anchorId(children);
   return (
-    <h4 {...props} id={id} className={style({font: 'heading-sm', maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance'})} {...hoverProps}>
+    <h4 {...props} data-anchor-link id={id} className={style({font: 'heading-sm', maxWidth: '--text-width', marginX: 'auto', textWrap: 'balance', position: 'relative', overflowX: 'clip'})} {...hoverProps}>
       {children}
       <AnchorLink anchorId={id} isHovered={isHovered} level={4} headingText={children} />
     </h4>

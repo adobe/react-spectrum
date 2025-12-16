@@ -60,7 +60,7 @@ function getUrl(name: string) {
     return `${baseUrl}/${name.slice(11)}`;
   } else if (library === 's2') {
     return `${baseUrl}/${name.slice(3)}`;
-  } else if (!process.env.DOCS_ENV) {
+  } else if (!process.env.LIBRARY) {
     return `http://localhost:1234/${name}`;
   } else {
     throw new Error('Unknown page: ' + name);

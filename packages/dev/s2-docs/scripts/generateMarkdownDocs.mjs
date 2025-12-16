@@ -12,6 +12,33 @@ import remarkStringify from 'remark-stringify';
 import {unified} from 'unified';
 import {visit} from 'unist-util-visit';
 
+const BASE_URL = {
+  dev: {
+    'react-aria': 'http://localhost:1234',
+    's2': 'http://localhost:4321'
+  },
+  stage: {
+    'react-aria': 'https://d5iwopk28bdhl.cloudfront.net',
+    's2': 'https://d1pzu54gtk2aed.cloudfront.net'
+  },
+  prod: {
+    'react-aria': 'https://react-aria.adobe.com',
+    's2': 'https://react-spectrum.adobe.com'
+  }
+};
+
+function getBaseUrl(library) {
+  let env = process.env.DOCS_ENV;
+  let base = env 
+    ? BASE_URL[env][library]
+    : `http://localhost:1234/${library}`;
+  let publicUrl = process.env.PUBLIC_URL;
+  if (publicUrl) {
+    base += publicUrl.replace(/\/$/, '');
+  }
+  return base;
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const S2_SRC_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/src');
@@ -937,61 +964,243 @@ function remarkDocsComponentsToMarkdown() {
           exampleTitles = Array.isArray(parsed) ? parsed : [];
         }
 
-        // Fallback default titles when none were provided.
-        if (exampleTitles.length === 0) {
-          exampleTitles = ['Vanilla CSS', 'Tailwind'];
-        }
-
-        // Children may include whitespace/text nodes – filter to VisualExample elements.
         const visualChildren = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample');
+        const codeChildren = (node.children || []).filter(c => c.type === 'code');
 
         // Build replacement markdown nodes.
         const newNodes = [];
 
-        visualChildren.forEach((vChild, i) => {
-          const title = exampleTitles[i] || `Example ${i + 1}`;
+        if (visualChildren.length > 0) {
+          if (exampleTitles.length === 0) {
+            exampleTitles = ['Vanilla CSS', 'Tailwind'];
+          }
 
-          // ## {title} example
-          newNodes.push({
-            type: 'heading',
-            depth: 2,
-            children: [{type: 'text', value: `${title} example`}]
+          visualChildren.forEach((vChild, i) => {
+            const title = exampleTitles[i] || `Example ${i + 1}`;
+
+            // ## {title} example
+            newNodes.push({
+              type: 'heading',
+              depth: 2,
+              children: [{type: 'text', value: `${title} example`}]
+            });
+
+            // Extract files attribute from VisualExample
+            const filesAttr = vChild.attributes?.find(a => a.name === 'files');
+            let fileList = [];
+            if (filesAttr) {
+              if (filesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+                const parsed = parseExpression(filesAttr.value.value, file);
+                fileList = Array.isArray(parsed) ? parsed : [];
+              } else if (Array.isArray(filesAttr.value)) {
+                fileList = filesAttr.value;
+              }
+            }
+
+            fileList.forEach(fp => {
+              const absPath = path.join(REPO_ROOT, fp);
+              if (!fs.existsSync(absPath)) {return;}
+              const contents = fs.readFileSync(absPath, 'utf8');
+              const ext = path.extname(fp).slice(1);
+
+              // ### {filename}
+              newNodes.push({
+                type: 'heading',
+                depth: 3,
+                children: [{type: 'text', value: path.basename(fp)}]
+              });
+
+              // ```{lang}\n{contents}\n```
+              newNodes.push({
+                type: 'code',
+                lang: ext || undefined,
+                meta: '',
+                value: contents
+              });
+            });
           });
+        }
 
-          // Extract files attribute from VisualExample
-          const filesAttr = vChild.attributes?.find(a => a.name === 'files');
-          let fileList = [];
-          if (filesAttr) {
-            if (filesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-              const parsed = parseExpression(filesAttr.value.value, file);
-              fileList = Array.isArray(parsed) ? parsed : [];
-            } else if (Array.isArray(filesAttr.value)) {
-              fileList = filesAttr.value;
+        // Handle code block children (type="vanilla"|"tailwind" and files=[...])
+        if (codeChildren.length > 0) {
+          // Parse metadata from code blocks to extract type and files
+          const parseCodeMeta = (meta) => {
+            if (!meta) {return {};}
+            const result = {};
+            
+            // Extract type
+            const typeMatch = meta.match(/type=["']([^"']+)["']/);
+            if (typeMatch) {
+              result.type = typeMatch[1];
+            }
+            
+            // Extract files={[...]}
+            const filesMatch = meta.match(/files=\{(\[[^\]]+\])\}/);
+            if (filesMatch) {
+              try {
+                result.files = JSON.parse(filesMatch[1]);
+              } catch {
+                const parsed = parseExpression(filesMatch[1], file);
+                if (Array.isArray(parsed)) {
+                  result.files = parsed;
+                }
+              }
+            }
+            
+            return result;
+          };
+
+          const typeToTitle = {
+            'vanilla': 'Vanilla CSS',
+            'tailwind': 'Tailwind'
+          };
+
+          // Check if this is a "component" type ExampleSwitcher (each code block gets its own example title)
+          const typeAttr = node.attributes?.find(a => a.name === 'type');
+          let switcherType = null;
+          if (typeAttr) {
+            if (typeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+              switcherType = typeAttr.value.value.replace(/['"`]/g, '').trim();
+            } else if (typeof typeAttr.value === 'string') {
+              switcherType = typeAttr.value.trim();
             }
           }
 
-          fileList.forEach(fp => {
-            const absPath = path.join(REPO_ROOT, fp);
-            if (!fs.existsSync(absPath)) {return;}
-            const contents = fs.readFileSync(absPath, 'utf8');
-            const ext = path.extname(fp).slice(1);
+          if (switcherType === 'component' && exampleTitles.length > 0) {
+            // Each code block gets its own heading from the examples array
+            codeChildren.forEach((codeChild, i) => {
+              const title = exampleTitles[i] || `Example ${i + 1}`;
+              const meta = parseCodeMeta(codeChild.meta);
 
-            // ### {filename}
-            newNodes.push({
-              type: 'heading',
-              depth: 3,
-              children: [{type: 'text', value: path.basename(fp)}]
+              // ## {title} example
+              newNodes.push({
+                type: 'heading',
+                depth: 2,
+                children: [{type: 'text', value: `${title} example`}]
+              });
+
+              // Clean up the code value
+              let codeValue = codeChild.value;
+              if (codeValue.startsWith('"use client";\n')) {
+                codeValue = codeValue.slice(14);
+              }
+              // Remove docs rendering-specific comments
+              codeValue = codeValue
+                .split('\n')
+                .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
+                .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
+                .join('\n');
+
+              newNodes.push({
+                type: 'code',
+                lang: codeChild.lang || 'tsx',
+                meta: '',
+                value: codeValue
+              });
+
+              // Add referenced files for this specific example
+              if (meta.files && Array.isArray(meta.files)) {
+                meta.files.forEach(fp => {
+                  const absPath = path.join(REPO_ROOT, fp);
+                  if (!fs.existsSync(absPath)) {return;}
+                  const contents = fs.readFileSync(absPath, 'utf8');
+                  const ext = path.extname(fp).slice(1);
+
+                  // ### {filename}
+                  newNodes.push({
+                    type: 'heading',
+                    depth: 3,
+                    children: [{type: 'text', value: path.basename(fp)}]
+                  });
+
+                  // ```{lang}\n{contents}\n```
+                  newNodes.push({
+                    type: 'code',
+                    lang: ext || undefined,
+                    meta: '',
+                    value: contents
+                  });
+                });
+              }
+            });
+          } else {
+            // Group code blocks by type (vanilla, tailwind, etc.)
+            const codeBlocksByType = new Map();
+            codeChildren.forEach((codeChild) => {
+              const meta = parseCodeMeta(codeChild.meta);
+              const type = meta.type || 'vanilla';
+              if (!codeBlocksByType.has(type)) {
+                codeBlocksByType.set(type, []);
+              }
+              codeBlocksByType.get(type).push({code: codeChild, meta});
             });
 
-            // ```{lang}\n{contents}\n```
-            newNodes.push({
-              type: 'code',
-              lang: ext || undefined,
-              meta: '',
-              value: contents
-            });
-          });
-        });
+            // Process each type group
+            for (const [type, codeBlocks] of codeBlocksByType) {
+              const title = typeToTitle[type] || type.charAt(0).toUpperCase() + type.slice(1);
+
+              // ## {title} example
+              newNodes.push({
+                type: 'heading',
+                depth: 2,
+                children: [{type: 'text', value: `${title} example`}]
+              });
+
+              // Collect all unique files from all code blocks of this type
+              const allFiles = new Set();
+              codeBlocks.forEach(({meta}) => {
+                if (meta.files && Array.isArray(meta.files)) {
+                  meta.files.forEach(f => allFiles.add(f));
+                }
+              });
+
+              // Add the inline example code first
+              codeBlocks.forEach(({code}) => {
+                // Clean up the code value
+                let codeValue = code.value;
+                if (codeValue.startsWith('"use client";\n')) {
+                  codeValue = codeValue.slice(14);
+                }
+                // Remove docs rendering-specific comments
+                codeValue = codeValue
+                  .split('\n')
+                  .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
+                  .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
+                  .join('\n');
+
+                newNodes.push({
+                  type: 'code',
+                  lang: code.lang || 'tsx',
+                  meta: '',
+                  value: codeValue
+                });
+              });
+
+              // Add referenced files
+              allFiles.forEach(fp => {
+                const absPath = path.join(REPO_ROOT, fp);
+                if (!fs.existsSync(absPath)) {return;}
+                const contents = fs.readFileSync(absPath, 'utf8');
+                const ext = path.extname(fp).slice(1);
+
+                // ### {filename}
+                newNodes.push({
+                  type: 'heading',
+                  depth: 3,
+                  children: [{type: 'text', value: path.basename(fp)}]
+                });
+
+                // ```{lang}\n{contents}\n```
+                newNodes.push({
+                  type: 'code',
+                  lang: ext || undefined,
+                  meta: '',
+                  value: contents
+                });
+              });
+            }
+          }
+        }
 
         // Replace ExampleSwitcher node with generated markdown.
         parent.children.splice(index, 1, ...newNodes);
@@ -1139,6 +1348,11 @@ function remarkDocsComponentsToMarkdown() {
           } else if (typeof hrefAttr.value === 'string') {
             href = hrefAttr.value.trim();
           }
+        }
+
+        if (href && (href.startsWith('s2:') || href.startsWith('react-aria:'))) {
+          let url = new URL(href);
+          href = getBaseUrl(url.protocol.slice(0, -1)) + '/' + url.pathname;
         }
 
         // Convert .html links to .md for relative links

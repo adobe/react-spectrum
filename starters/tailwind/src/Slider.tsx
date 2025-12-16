@@ -61,12 +61,12 @@ export function Slider<T extends number | number[]>(
   { label, thumbLabels, ...props }: SliderProps<T>
 ) {
   return (
-    <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64')}>
+    <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64 orientation-horizontal:max-w-[calc(100%-10px)]')}>
       <Label>{label}</Label>
       <SliderOutput className="text-sm text-neutral-500 dark:text-neutral-400 orientation-vertical:hidden">
         {({ state }) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>
-      <SliderTrack className="group col-span-2 orientation-horizontal:h-5 orientation-vertical:w-5 orientation-vertical:h-64 flex items-center">
+      <SliderTrack className="group col-span-2 orientation-horizontal:h-5 orientation-vertical:w-5 orientation-vertical:h-38 flex items-center">
         {({ state, ...renderProps }) => <>
           <div className={trackStyles(renderProps)} />
           {state.values.length === 1

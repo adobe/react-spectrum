@@ -9,7 +9,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
-export const relatedPages = [{'title': 'useDatePicker', 'url': 'https://react-spectrum.adobe.com/react-aria/useDatePicker.html'}];
+export const relatedPages = [{'title': 'useDatePicker', 'url': 'DatePicker/useDatePicker.html'}];
 export const description = 'Combines a DateField and a Calendar popover to allow users to enter or select a date and time value.';
 
 # DatePicker
@@ -41,13 +41,13 @@ Use the `value` or `defaultValue` prop to set the date value, using objects in t
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
 import {useDateFormatter} from 'react-aria';
 import {DatePicker} from 'vanilla-starter/DatePicker';
 import {useState} from 'react';
 
 function Example() {
-  let [date, setDate] = useState(parseDate('2020-02-03'));
+  let [date, setDate] = useState<CalendarDate | null>(parseDate('2020-02-03'));
   let formatter = useDateFormatter({ dateStyle: 'full' });
 
   return (
@@ -99,7 +99,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
+import {useLocale} from 'react-aria-components';
 import {DatePicker} from 'vanilla-starter/DatePicker';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'vanilla-starter/Form';;
@@ -139,7 +139,7 @@ function Example() {
 
 <Anatomy />
 
-```tsx links={{DatePicker: '#datepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', Dialog: 'Dialog', Calendar: 'Calendar'}}
+```tsx links={{DatePicker: '#datepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', Calendar: 'Calendar'}}
 <DatePicker>
   <Label />
   <Group>
@@ -149,9 +149,7 @@ function Example() {
   <Text slot="description" />
   <FieldError />
   <Popover>
-    <Dialog>
-      <Calendar />
-    </Dialog>
+    <Calendar />
   </Popover>
 </DatePicker>
 ```

@@ -10,7 +10,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['options'];
 export const relatedPages = [
-  {title: 'useListBox', url: 'https://react-spectrum.adobe.com/react-aria/useListBox.html'},
+  {title: 'useListBox', url: 'ListBox/useListBox.html'},
   {title: 'Testing ListBox', url: './ListBox/testing'}
 ];
 export const description = 'Displays a list of options and allows a user to select one or more of them.';
@@ -152,8 +152,7 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 "use client";
 import {ListBox, ListBoxItem, ListBoxLoadMoreItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection} from 'react-aria-components';
-import {useAsyncList} from 'react-stately';
+import {Collection, useAsyncList} from 'react-aria-components';
 
 interface Character {
   name: string
@@ -219,7 +218,7 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 
 ```tsx render hideImports
 "use client";
-import {ListBox, ListBoxItem} from 'react-aria-components';
+import {ListBox} from 'react-aria-components';
 
 <ListBox
   aria-label="Search results"
@@ -340,8 +339,7 @@ ListBox supports drag and drop interactions when the `dragAndDropHooks` prop is 
 
 ```tsx render
 "use client";
-import {useListData} from 'react-stately';
-import {ListBox, ListBoxItem, useDragAndDrop} from 'react-aria-components';
+import {ListBox, ListBoxItem, useDragAndDrop, useListData} from 'react-aria-components';
 
 function Example() {
   let list = useListData({
@@ -356,7 +354,7 @@ function Example() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).name})),
+    getItems: (keys, items: typeof list.items) => items.map(item => ({'text/plain': item.name})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);

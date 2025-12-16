@@ -49,7 +49,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" defaultItems={options} selectionMode="single" placeholder="Select an animal">
+    <ComboBox label="Animals" defaultItems={options} placeholder="Select an animal">
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -156,11 +156,14 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {ComboBox, ComboBoxItem, useAsyncList} from '@react-spectrum/s2';
+
+interface Character {
+  name: string
+}
 
 function Example() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -231,7 +234,7 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<ComboBoxItem>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
+Use the `href` prop on a `<ComboBoxItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
 
 ```tsx render
 "use client";
@@ -255,7 +258,7 @@ import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [animal, setAnimal] = useState<Key>("bison");
+  let [animal, setAnimal] = useState<Key | null>("bison");
 
   return (
     <div>
@@ -340,15 +343,15 @@ function ControlledComboBox() {
   ];
   /*- end collapse -*/
 
-  let [fieldState, setFieldState] = useState({
+  let [fieldState, setFieldState] = useState<{selectedKey: Key | null, inputValue: string}>({
     selectedKey: null,
     inputValue: ''
   });
 
-  let onSelectionChange = (id: Key) => {
+  let onSelectionChange = (id: Key | null) => {
     // Update inputValue when selectedKey changes.
     setFieldState({
-      inputValue: options.find(o => o.id === id)?.name ?? '',
+      inputValue: id ? (options.find(o => o.id === id)?.name ?? '') : '',
       selectedKey: id
     });
   };
@@ -443,7 +446,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection', Icon: 'icons', Avatar: 'Avatar'}}
+```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection', Icon: 'icons', Avatar: 'Avatar', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}
 <ComboBox>
   <ComboBoxItem>
     <Icon /> or <Avatar />

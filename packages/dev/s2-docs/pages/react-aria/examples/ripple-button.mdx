@@ -22,7 +22,7 @@ import {Plane} from 'lucide-react';
 import './ripple.css';
 
 function RippleButton(props) {
-  let [coords, setCoords] = useState(null);
+  let [coords, setCoords] = useState<{x: number, y: number} | null>(null);
   return (
     <Button
       onPress={(e) => {

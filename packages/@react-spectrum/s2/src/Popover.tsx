@@ -64,7 +64,10 @@ let popover = style({
   ...colorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
-    value: 'layer-2'
+    value: {
+      default: 'layer-2',
+      forcedColors: 'Background'
+    }
   },
   backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',
@@ -153,8 +156,8 @@ let arrow = style({
   },
   translateX: {
     placement: {
-      left: -4,
-      right: 4
+      left: '-25%',
+      right: '25%'
     }
   },
   strokeWidth: 1,

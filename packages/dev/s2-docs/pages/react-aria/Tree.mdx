@@ -22,7 +22,6 @@ export const description = 'Provides users with a way to navigate nested hierarc
   ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Tree.tsx", "starters/docs/src/Tree.css"]}
   "use client";
   import {Tree, TreeItem} from 'vanilla-starter/Tree';
-  import {Button} from 'vanilla-starter/Button';
 
   <Tree
     /* PROPS */
@@ -112,8 +111,7 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 "use client";
 import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection} from 'react-aria-components';
-import {useAsyncList} from 'react-stately';
+import {Collection, useAsyncList} from 'react-aria-components';
 
 interface Character {
   name: string
@@ -289,9 +287,8 @@ Tree supports drag and drop interactions when the `dragAndDropHooks` prop is pro
 
 ```tsx render
 "use client";
-import {useTreeData} from 'react-stately';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useDragAndDrop, Collection} from 'react-aria-components';
+import {useDragAndDrop, Collection, useTreeData} from 'react-aria-components';
 
 function Example() {
   ///- begin collapse -///
@@ -313,7 +310,7 @@ function Example() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': tree.getItem(key).value.title})),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -346,9 +343,9 @@ function Example() {
       {function renderItem(item) {
         return (
           <TreeItem title={item.value.title}>
-            <Collection items={item.children}>
+            {item.children && <Collection items={item.children}>
               {renderItem}
-            </Collection>
+            </Collection>}
           </TreeItem>
         )
       }}

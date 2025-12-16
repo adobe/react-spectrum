@@ -3,7 +3,6 @@ export default Layout;
 
 import {DateRangePicker} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
-import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['calendar'];
 export const description = 'Combines two DateFields and a RangeCalendar popover.';
@@ -28,17 +27,17 @@ export const description = 'Combines two DateFields and a RangeCalendar popover.
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the <Link href={`${getBaseUrl('react-aria')}/internationalized/date/`}>@internationalized/date</Link> package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](react-aria:internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
+import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
+import {useDateFormatter, type RangeValue} from 'react-aria';
 import {DateRangePicker} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [range, setRange] = useState({
+  let [range, setRange] = useState<RangeValue<CalendarDate> | null>({
     start: parseDate('2025-02-03'),
     end: parseDate('2025-02-12')
   });
@@ -51,10 +50,10 @@ function Example() {
         value={range}
         onChange={setRange} />
         {/*- end highlight -*/}
-      <p>Selected range: {formatter.formatRange(
+      <p>Selected range: {range ? formatter.formatRange(
         range.start.toDate(getLocalTimeZone()),
         range.end.toDate(getLocalTimeZone())
-      )}</p>
+      ) : '--'}</p>
     </>
   );
 }
@@ -102,8 +101,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={docs.exports.DateRangePicker} links={docs.links} props={['allowsNonContiguousRanges', 'isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide type="s2"
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-import {DateRangePicker, Form, Button} from '@react-spectrum/s2';
+import {DateRangePicker, Form, Button, useLocale} from '@react-spectrum/s2';
 
 function Example(props) {
   let {locale} = useLocale();

@@ -66,7 +66,7 @@ let items = [
   selectionMode="multiple">
   {function renderItem(item) {
     return (
-      <TreeViewItem>
+      <TreeViewItem textValue={item.title}>
         <TreeViewItemContent>{item.title}</TreeViewItemContent>
         {/*- begin highlight -*/}
         {/* recursively render children */}
@@ -114,7 +114,7 @@ let items = [
   selectionMode="multiple">
   {function renderItem(item) {
     return (
-      <TreeViewItem>
+      <TreeViewItem textValue={item.title}>
         <TreeViewItemContent>
           {/*- begin highlight -*/}
           {item.type === 'directory' ? <Folder /> : <File />}
@@ -146,9 +146,8 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
-import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection} from '@react-spectrum/s2';
+import {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem, Collection, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string
@@ -194,11 +193,11 @@ function AsyncLoadingExample() {
     <TreeView
       aria-label="Async loading tree"
       styles={style({height: 300})}>
-      <TreeViewItem>
+      <TreeViewItem textValue="Pokemon">
         <TreeViewItemContent>Pokemon</TreeViewItemContent>
         <Collection items={pokemonList.items}>
           {(item) => (
-            <TreeViewItem id={item.name}>
+            <TreeViewItem id={item.name} textValue={item.name}>
               <TreeViewItemContent>{item.name}</TreeViewItemContent>
             </TreeViewItem>
           )}
@@ -206,14 +205,14 @@ function AsyncLoadingExample() {
         {/*- begin highlight -*/}
         <TreeViewLoadMoreItem
           onLoadMore={pokemonList.loadMore}
-          isLoading={pokemonList.loadingState === 'loadingMore'} />
+          loadingState={pokemonList.loadingState} />
         {/*- end highlight -*/}
       </TreeViewItem>
-      <TreeViewItem>
+      <TreeViewItem textValue="Star Wars">
         <TreeViewItemContent>Star Wars</TreeViewItemContent>
         <Collection items={starWarsList.items}>
           {(item) => (
-            <TreeViewItem id={item.name}>
+            <TreeViewItem id={item.name} textValue={item.name}>
               <TreeViewItemContent>{item.name}</TreeViewItemContent>
             </TreeViewItem>
           )}
@@ -221,7 +220,7 @@ function AsyncLoadingExample() {
         {/*- begin highlight -*/}
         <TreeViewLoadMoreItem
           onLoadMore={starWarsList.loadMore}
-          isLoading={starWarsList.loadingState === 'loadingMore'} />
+          loadingState={starWarsList.loadingState} />
         {/*- end highlight -*/}
       </TreeViewItem>
     </TreeView>
@@ -231,7 +230,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<TreeItem>` to create a link. See the [client side routing guide](routing) to learn how to integrate with your framework. See the [selection guide](selection?component=Tree#selection-behavior) for more details.
+Use the `href` prop on a `<TreeItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework.
 
 ```tsx render
 "use client";
@@ -246,16 +245,18 @@ import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
     href="https://pokemondb.net/pokedex/bulbasaur"
     target="_blank"
     /*- end highlight -*/
-    id="bulbasaur">
+    id="bulbasaur"
+    textValue="Bulbasaur">
     <TreeViewItemContent>Bulbasaur</TreeViewItemContent>
     <TreeViewItem
       id="ivysaur"
       href="https://pokemondb.net/pokedex/ivysaur"
-      target="_blank">
+      target="_blank"
+      textValue="Ivysaur">
       <TreeViewItemContent>Ivysaur</TreeViewItemContent>
       <TreeViewItem
         id="venusaur"
-        title="Venusaur"
+        textValue="Venusaur"
         href="https://pokemondb.net/pokedex/venusaur"
         target="_blank">
         <TreeViewItemContent>Venusaur</TreeViewItemContent>
@@ -315,29 +316,29 @@ function Example(props) {
         onAction={key => alert(`Clicked ${key}`)}
         ///- end highlight -///
       >
-        <TreeViewItem id="bulbasaur">
+        <TreeViewItem id="bulbasaur" textValue="Bulbasaur">
           <TreeViewItemContent>Bulbasaur</TreeViewItemContent>
-          <TreeViewItem id="ivysaur">
+          <TreeViewItem id="ivysaur" textValue="Ivysaur">
             <TreeViewItemContent>Ivysaur</TreeViewItemContent>
-            <TreeViewItem id="venusaur" isDisabled>
+            <TreeViewItem id="venusaur" isDisabled textValue="Venusaur">
               <TreeViewItemContent>Venusaur</TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
         </TreeViewItem>
-        <TreeViewItem id="charmander">
+        <TreeViewItem id="charmander" textValue="Charmander">
           <TreeViewItemContent>Charmander</TreeViewItemContent>
-          <TreeViewItem id="charmeleon">
+          <TreeViewItem id="charmeleon" textValue="Charmeleon">
             <TreeViewItemContent>Charmeleon</TreeViewItemContent>
-            <TreeViewItem id="charizard">
+            <TreeViewItem id="charizard" textValue="Charizard">
               <TreeViewItemContent>Charizard</TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
         </TreeViewItem>
-        <TreeViewItem id="squirtle">
+        <TreeViewItem id="squirtle" textValue="Squirtle">
           <TreeViewItemContent>Squirtle</TreeViewItemContent>
-          <TreeViewItem id="wartortle">
+          <TreeViewItem id="wartortle" textValue="Wartortle">
             <TreeViewItemContent>Wartortle</TreeViewItemContent>
-            <TreeViewItem id="blastoise">
+            <TreeViewItem id="blastoise" textValue="Blastoise">
               <TreeViewItemContent>Blastoise</TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
@@ -351,7 +352,7 @@ function Example(props) {
 
 ## API
 
-```tsx links={{TreeView: '#treeview', TreeViewItem: '#treeviewitem', TreeViewItemContent: '#treeviewitemcontent', TreeViewLoadMoreItem: '#treeloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons'}}
+```tsx links={{TreeView: '#treeview', TreeViewItem: '#treeviewitem', TreeViewItemContent: '#treeviewitemcontent', TreeViewLoadMoreItem: '#treeviewloadmoreitem', ActionMenu: 'ActionMenu', ActionButtonGroup: 'ActionButtonGroup', Icon: 'icons', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <TreeView>
   <TreeViewItem>
     <TreeViewItemContent>

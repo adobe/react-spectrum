@@ -16,8 +16,7 @@ export const description = 'A kanban board with accessible drag and drop, styled
 
 ```tsx render type="tailwind" expanded
 "use client";
-import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop} from 'react-aria-components';
-import {ListData, useListData} from 'react-stately';
+import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop, ListData, useListData} from 'react-aria-components';
 import React, {ReactNode} from 'react';
 
 ///- begin collapse -///
@@ -140,7 +139,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys, items) {
+    getItems(keys, items: typeof tickets) {
       return items.map((item) => ({
         'issue-id': item.id,
         'text/plain': item.title

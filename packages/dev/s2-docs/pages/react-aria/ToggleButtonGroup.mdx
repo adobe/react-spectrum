@@ -6,7 +6,7 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
 
 export const tags = ['toggle', 'btn'];
-export const relatedPages = [{'title': 'useToggleButtonGroup', 'url': 'https://react-spectrum.adobe.com/react-aria/useToggleButtonGroup.html'}];
+export const relatedPages = [{'title': 'useToggleButtonGroup', 'url': 'ToggleButtonGroup/useToggleButtonGroup.html'}];
 export const description = 'Allows a user to toggle multiple options, with single or multiple selection.';
 
 # ToggleButtonGroup
@@ -89,16 +89,18 @@ Render a [SelectionIndicator](selection#animated-selectionindicator) within each
 
 ```tsx render files={['starters/docs/src/SegmentedControl.css']}
 "use client";
-import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator} from 'react-aria-components';
+import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator, composeRenderProps} from 'react-aria-components';
 import 'vanilla-starter/SegmentedControl.css';
 
 function SegmentedControlItem(props: ToggleButtonProps) {
   return (
     <ToggleButton {...props} className="segmented-control-item">
       {/*- begin highlight -*/}
-      <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+      {composeRenderProps(props.children, (children) => (<>
+        <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+        <span>{children}</span>
+      </>))}
       {/*- end highlight -*/}
-      <span>{props.children}</span>
     </ToggleButton>
   );
 }
@@ -106,6 +108,7 @@ function SegmentedControlItem(props: ToggleButtonProps) {
 <ToggleButtonGroup
   className="segmented-control button-base"
   data-variant="secondary"
+  aria-label="Time period"
   defaultSelectedKeys={['day']}
   disallowEmptySelection>
   <SegmentedControlItem id="day">Day</SegmentedControlItem>

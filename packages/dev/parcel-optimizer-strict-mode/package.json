@@ -7,6 +7,6 @@
     "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.16.1"
+    "@parcel/plugin": "^2.16.3"
   }
 }

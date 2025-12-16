@@ -3,7 +3,7 @@
 import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getBaseUrl} from './pageUtils';
-import {getLibraryFromPage} from './library';
+import {getLibraryFromPage, getLibraryIcon} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Link, Modal, ModalOverlay} from 'react-aria-components';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
@@ -90,9 +90,9 @@ export function MobileHeader({toc}) {
 
   let {currentPage} = useRouter();
   let library = getLibraryFromPage(currentPage);
-  let icon = TAB_DEFS[library].icon;
+  let icon = getLibraryIcon(library);
   let subdirectory: 's2' | 'react-aria' = 's2';
-  if (library === 'internationalized' || library === 'react-aria') {
+  if (library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
@@ -122,8 +122,8 @@ export function MobileHeader({toc}) {
     }
 
     let viewTransition = document.startViewTransition(() => {
-      if (labelRef.current) {
-        labelRef.current.style.viewTransitionName = '';
+      if (labelRef.current && window.scrollY === 0) {
+        labelRef.current.style.viewTransitionName = !isOpen ? 'search-menu-label' : '';
       }
 
       // Wait until next render. Using flushSync causes flickering.
@@ -139,6 +139,7 @@ export function MobileHeader({toc}) {
 
     viewTransition.finished.then(() => {
       document.documentElement.style.viewTransitionName = '';
+      labelRef.current!.style.viewTransitionName = '';
       setTransitioning(false);
     });
   };
@@ -216,7 +217,8 @@ export function MobileHeader({toc}) {
               animationName: fadeOut,
               animationTimeline: 'scroll()',
               animationRange,
-              animationPlayState: isTransitioning ? 'paused' : undefined
+              animationPlayState: isTransitioning ? 'paused' : undefined,
+              display: isOpen ? 'none' : undefined
             } as CSSProperties : undefined}>
             {TAB_DEFS[library].label}
           </span>

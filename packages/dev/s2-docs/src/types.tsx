@@ -10,16 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/s2';
 import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
-import {BackgroundColorsDisclosure, GlobalColorsDisclosure, SemanticColorsDisclosure, TextColorsDisclosure} from './S2Colors';
 import {Code, styles as codeStyles} from './Code';
 import {ColorLink, Link as SpectrumLink} from './Link';
 import {getDoc} from 'globals-docs';
 import Markdown from 'markdown-to-jsx';
 import React, {ReactNode} from 'react';
-import {S2Typography} from './S2Typography';
-import {spacingTypeValues} from './styleProperties';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from './Table';
 import {TypePopover} from './TypePopover';
@@ -84,7 +80,7 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 let LINKS = {};
 export function setLinks(links) {
-  LINKS = links;
+  Object.assign(LINKS, links);
 }
 
 export function Type({type}: {type: TType}) {
@@ -99,57 +95,57 @@ export function Type({type}: {type: TType}) {
     case 'void':
     case 'unknown':
     case 'never':
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'this':
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'symbol':
-      return <Symbol />;
+      return Symbol();
     case 'identifier':
-      return <Identifier {...type} />;
+      return Identifier(type);
     case 'string':
       if ('value' in type && type.value != null) {
-        return <StringLiteral {...type} />;
+        return StringLiteral(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'number':
       if ('value' in type && type.value != null) {
-        return <NumberLiteral {...type} />;
+        return NumberLiteral(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'boolean':
       if ('value' in type && type.value != null) {
-        return <BooleanLiteral {...type} />;
+        return BooleanLiteral(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'union':
-      return <UnionType {...type} />;
+      return UnionType(type);
     case 'intersection':
-      return <IntersectionType {...type} />;
+      return IntersectionType(type);
     case 'application':
-      return <TypeApplication {...type} />;
+      return TypeApplication(type);
     case 'typeOperator':
-      return <TypeOperator {...type} />;
+      return TypeOperator(type);
     case 'function':
-      return <FunctionType {...type} />;
+      return FunctionType(type);
     case 'parameter':
-      return <Parameter {...type} />;
+      return Parameter(type);
     case 'link':
-      return <LinkType {...type} />;
+      return LinkType(type);
     case 'interface':
-      return <InterfaceType {...type} />;
+      return InterfaceType(type);
     case 'object':
       if (type.properties) {
-        return <ObjectType {...type} />;
+        return ObjectType(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'alias':
-      return <code className={codeStyle}><Type type={type.value} /></code>;
+      return <code className={codeStyle}>{Type({type: type.value})}</code>;
     case 'array':
-      return <ArrayType {...type} />;
+      return ArrayType(type);
     case 'tuple':
-      return <TupleType {...type} />;
+      return TupleType(type);
     case 'typeParameter':
-      return <TypeParameter {...type} />;
+      return TypeParameter(type);
     case 'component': {
       let props = type.props;
       if (props?.type === 'application') {
@@ -159,18 +155,18 @@ export function Type({type}: {type: TType}) {
         props = LINKS[props.id];
       }
       if (props) {
-        return <Type type={{...props, description: type.description} as any} />;
+        return Type({type: {...props, description: type.description} as any});
       }
       return null;
     }
     case 'conditional':
-      return <ConditionalType {...type} />;
+      return ConditionalType(type);
     case 'indexedAccess':
-      return <IndexedAccess {...type} />;
+      return IndexedAccess(type);
     case 'keyof':
-      return <Keyof {...type} />;
+      return Keyof(type);
     case 'template':
-      return <TemplateLiteral {...type} />;
+      return TemplateLiteral(type);
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -178,11 +174,11 @@ export function Type({type}: {type: TType}) {
 }
 
 function TypeOperator({operator, value}: TTypeOperator) {
-  return <span><span className={codeStyles.keyword}>{operator}</span>{' '}<Type type={value} /></span>;
+  return <span><span className={codeStyles.keyword}>{operator}</span>{' '}{Type({type: value})}</span>;
 }
 
 function IndexedAccess({objectType, indexType}: TIndexedAccess) {
-  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
+  return <span>{Type({type: objectType})}[{Type({type: indexType})}]</span>;
 }
 
 function StringLiteral({value}: TString) {
@@ -202,7 +198,7 @@ function Symbol() {
 }
 
 function Keyof({keyof}: TKeyof) {
-  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
+  return <span>{Keyword({type: 'keyof'})}{' '}{Type({type: keyof})}</span>;
 }
 
 function Keyword({type}: {type: string}) {
@@ -259,27 +255,25 @@ export function Indent({params, open, close, children, alwaysIndent}: {params: T
   let openElement, closeElement;
 
   if (params.length === 0) {
-    openElement = <Punctuation>{open}</Punctuation>;
-    closeElement = <Punctuation>{close}</Punctuation>;
+    openElement = Punctuation(open);
+    closeElement = Punctuation(close);
   } else if (params.length > 2 || alwaysIndent) {
     // Always indent.
-    openElement =  <Punctuation>{open.trimEnd() + '\n' + large + '  '}</Punctuation>;
-    closeElement =  <Punctuation>{'\n' + large + close.trimStart()}</Punctuation>;
+    openElement = Punctuation(open.trimEnd() + '\n' + large + '  ');
+    closeElement = Punctuation('\n' + large + close.trimStart());
     large += '  ';
     // small += '  ';
   } else {
     // Indent on small screens. Don't indent on large screens.
     openElement = (
       <>
-        {/* <Punctuation>{open.trimEnd() + '\n' + small + '  '}</Punctuation> */}
-        <Punctuation>{open}</Punctuation>
+        {Punctuation(open)}
       </>
     );
 
     closeElement = (
       <>
-        {/* <Punctuation>{'\n' + small + close.trimStart()}</Punctuation> */}
-        <Punctuation>{close}</Punctuation>
+        {Punctuation(close)}
       </>
     );
 
@@ -295,7 +289,7 @@ export function Indent({params, open, close, children, alwaysIndent}: {params: T
   );
 }
 
-function Punctuation({children}) {
+export function Punctuation(children) {
   if (typeof children === 'string' && /\s/.test(children)) {
     return children;
   }
@@ -340,32 +334,34 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
 
   return elements
     .filter(Boolean)
-    .reduce<ReactNode[]>((acc, v, i) => [
-      ...acc,
-      <Punctuation
-        key={`join${i}`}>
-        {contents}
-      </Punctuation>,
-      <React.Fragment
-        key={`type${i}`}>
-        <Type type={v} />
-      </React.Fragment>
-    ], []).slice(1);
+    .reduce<ReactNode>((acc, v, i) => (<>
+      {acc}
+      {i > 0 ? Punctuation(contents) : null}
+      {Type({type: v})}
+    </>), <></>);
 }
 
 function UnionType({elements}: TUnion) {
-  return <JoinList elements={elements} joiner={' |\u00a0'} newlineBefore />;
+  return JoinList({
+    elements,
+    joiner: ' |\u00a0',
+    newlineBefore: true
+  });
 }
 
 function IntersectionType({types}: TIntersection) {
-  return <JoinList elements={types} joiner={' &\u00a0'} newlineBefore />;
+  return JoinList({
+    elements: types,
+    joiner: ' &\u00a0',
+    newlineBefore: true
+  });
 }
 
 function TypeApplication({base, typeParameters}: TApplication) {
   return (
     <>
-      <Type type={base} />
-      <TypeParameters typeParameters={typeParameters} />
+      {Type({type: base})}
+      {TypeParameters({typeParameters})}
     </>
   );
 }
@@ -377,9 +373,9 @@ export function TypeParameters({typeParameters}: {typeParameters: TType[]}) {
 
   return (
     <>
-      <Punctuation>&lt;</Punctuation>
-      <JoinList elements={typeParameters} joiner=", " neverIndent />
-      <Punctuation>&gt;</Punctuation>
+      {Punctuation('<')}
+      {JoinList({elements: typeParameters, joiner: ', ', neverIndent: true})}
+      {Punctuation('>')}
     </>
   );
 }
@@ -393,13 +389,13 @@ function TypeParameter({name, constraint, default: defaultType}: TTypeParameter)
           {' '}
           <span className={codeStyles.keyword}>extends</span>
           {' '}
-          <Type type={constraint} />
+          {Type({type: constraint})}
         </>
       }
       {defaultType &&
         <>
-          <Punctuation>{' = '}</Punctuation>
-          <Type type={defaultType} />
+          {Punctuation(' = ')}
+          {Type({type: defaultType})}
         </>
       }
     </>
@@ -410,12 +406,15 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
   return (
     <>
       {name && <span className={codeStyles.function}>{name}</span>}
-      <TypeParameters typeParameters={typeParameters} />
-      <Indent params={parameters} open="(" close=")">
-        <JoinList elements={parameters} joiner=", " />
-      </Indent>
-      <Punctuation>{name ? ': ' : ' => '}</Punctuation>
-      <Type type={returnType} />
+      {TypeParameters({typeParameters})}
+      {Indent({
+        params: parameters,
+        open: '(',
+        close: ')',
+        children: JoinList({elements: parameters, joiner: ', '})
+      })}
+      {Punctuation(name ? ': ' : ' => ')}
+      {Type({type: returnType})}
     </>
   );
 }
@@ -423,18 +422,18 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
 function Parameter({name, value, default: defaultValue, optional, rest}: TParameter) {
   return (
     <>
-      {rest && <Punctuation>...</Punctuation>}
+      {rest && Punctuation('...')}
       {name}
-      {optional && <Punctuation>?</Punctuation>}
+      {optional && Punctuation('?')}
       {value &&
         <>
-          <Punctuation>: </Punctuation>
-          <Type type={value} />
+          {Punctuation(': ')}
+          {Type({type: value})}
         </>
       }
       {defaultValue &&
         <>
-          <Punctuation> = </Punctuation>
+          {Punctuation(' = ')}
           <span dangerouslySetInnerHTML={{__html: defaultValue}} />
         </>
       }
@@ -451,7 +450,7 @@ export function LinkType({id}: TLink) {
   }
 
   if (DOC_LINKS[type.name]) {
-    return <Identifier type="identifier" name={type.name} />;
+    return Identifier({type: 'identifier', name: type.name});
   }
 
   return <TypeLink type={type} />;
@@ -466,12 +465,12 @@ export function TypeLink({type}: {type: Extract<TType, {id: string, name: string
     <TypePopover name={type.name}>
       {'description' in type && type.description && <Markdown  className={style({font: 'body'})} options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}}>{type.description}</Markdown>}
       {type.type === 'interface' && type.extends?.length > 0 &&
-        <p className={style({font: 'ui'})}><strong>Extends</strong>: <code className={codeStyle}><JoinList elements={type.extends} joiner=", " /></code></p>
+        <p className={style({font: 'ui'})}><strong>Extends</strong>: <code className={codeStyle}>{JoinList({elements: type.extends, joiner: ', '})}</code></p>
       }
       {type.type === 'component' && <h3 className={style({font: 'title'})}>Props</h3>}
       {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
-        ? <Type type={type} />
-        : <code className={codeStyle}><Type type={type} /></code>
+        ? Type({type})
+        : <code className={codeStyle}>{Type({type})}</code>
       }
     </TypePopover>
   );
@@ -559,7 +558,7 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                   {!hideType &&
                     <TableCell hideBorder={!!prop.description}>
                       <code className={codeStyle}>
-                        <Type type={prop.value} />
+                        {Type({type: prop.value})}
                       </code>
                     </TableCell>
                   }
@@ -593,12 +592,15 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                   <TableCell role="rowheader" data-column="Name" hideBorder={!!prop.description}>
                     <code className={codeStyle}>
                       <span className={codeStyles.function}>{prop.name}</span>
-                      <TypeParameters typeParameters={prop.value.typeParameters} />
-                      <Indent params={prop.value.parameters} open="(" close=")">
-                        <JoinList elements={prop.value.parameters} joiner=", " />
-                      </Indent>
-                      <Punctuation>{': '}</Punctuation>
-                      <Type type={prop.value.return} />
+                      {TypeParameters({typeParameters: prop.value.typeParameters})}
+                      {Indent({
+                        params: prop.value.parameters,
+                        open: '(',
+                        close: ')',
+                        children: JoinList({elements: prop.value.parameters, joiner: ', '})
+                      })}
+                      {Punctuation(': ')}
+                      {Type({type: prop.value.return})}
                     </code>
                   </TableCell>
                 </TableRow>
@@ -615,8 +617,8 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
 }
 
 function ObjectType({properties}: TObject) {
-  const startObject = <Punctuation>{'{'}</Punctuation>;
-  const endObject = <Punctuation>{'}'}</Punctuation>;
+  const startObject = Punctuation('{');
+  const endObject = Punctuation('}');
   return (
     <>
       {startObject}
@@ -635,13 +637,13 @@ function ObjectType({properties}: TObject) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={k ?? i} style={{paddingLeft: '1.5em'}}>
-            {indexType && <Punctuation>[</Punctuation>}
+            {indexType && Punctuation('[')}
             <span className={`token ${token}`}>{k}</span>
-            {indexType && <Punctuation>{': '}</Punctuation>}
-            {indexType && <Type type={indexType} />}
-            {indexType && <Punctuation>]</Punctuation>}
-            <Punctuation>{punc}</Punctuation>
-            <Type type={value} />
+            {indexType && Punctuation(': ')}
+            {indexType && Type({type: indexType})}
+            {indexType && Punctuation(']')}
+            {Punctuation(punc)}
+            {Type({type: value})}
             {i < arr.length - 1 ? ',' : ''}
           </div>
         );
@@ -654,34 +656,34 @@ function ObjectType({properties}: TObject) {
 function ArrayType({elementType}: TArray) {
   return (
     <>
-      <Type type={elementType} />
-      <Punctuation>[]</Punctuation>
+      {Type({type: elementType})}
+      {Punctuation('[]')}
     </>
   );
 }
 
 function TupleType({elements}: TTuple) {
-  return (
-    <>
-      <Indent params={elements} alwaysIndent open="[" close="]">
-        <JoinList elements={elements} joiner=", " />
-      </Indent>
-    </>
-  );
+  return Indent({
+    params: elements,
+    alwaysIndent: true,
+    open: '[',
+    close: ']',
+    children: JoinList({elements, joiner: ', '})
+  });
 }
 
 function ConditionalType({checkType, extendsType, trueType, falseType}: TConditional) {
   return (
     <>
-      <Type type={checkType} />
+      {Type({type: checkType})}
       {' '}
       <span className={codeStyles.keyword}>extends</span>
       {' '}
-      <Type type={extendsType} />
-      <Punctuation>{' ? '}</Punctuation>
-      <Type type={trueType} />
-      <Punctuation>{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</Punctuation>
-      <Type type={falseType} />
+      {Type({type: extendsType})}
+      {Punctuation(' ? ')}
+      {Type({type: trueType})}
+      {Punctuation(' :' + (falseType.type === 'conditional' ? '\n' : ' '))}
+      {Type({type: falseType})}
     </>
   );
 }
@@ -697,284 +699,13 @@ function TemplateLiteral({elements}: TTemplate) {
 
         return (
           <React.Fragment key={i}>
-            <Punctuation>{'${'}</Punctuation>
-            <Type type={element} />
-            <Punctuation>{'}'}</Punctuation>
+            {Punctuation('${')}
+            {Type({type: element})}
+            {Punctuation('}')}
           </React.Fragment>
         );
       })}
       <span className={codeStyles.string}>{'`'}</span>
     </>
-  );
-}
-
-const styleMacroValueDesc = {
-  'baseSpacing': {
-    description: 'Base spacing values in pixels, following a 4px grid. Will be converted to rem.',
-    body: (
-      <code className={codeStyle}>
-        {spacingTypeValues['baseSpacing'].map((val, idx) => (
-          <React.Fragment key={idx}>
-            {idx > 0 && <Punctuation>{' | '}</Punctuation>}
-            <span className={codeStyles.string}>'{val}'</span>
-          </React.Fragment>
-        ))}
-      </code>
-    )
-  },
-  'negativeSpacing': {
-    description: 'Negative spacing values in pixels, following a 4px grid. Will be converted to rem.',
-    body: (
-      <code className={codeStyle}>
-        {spacingTypeValues['negativeSpacing'].map((val, idx) => (
-          <React.Fragment key={idx}>
-            {idx > 0 && <Punctuation>{' | '}</Punctuation>}
-            <span className={codeStyles.string}>'{val}'</span>
-          </React.Fragment>
-        ))}
-      </code>
-    )
-  },
-  'text-to-control': {
-    description: 'Default spacing between text and a control (e.g., label and input). Scales with font size.'
-  },
-  'text-to-visual': {
-    description: 'Default spacing between text and a visual element (e.g., icon). Scales with font size.'
-  },
-  'edge-to-text': {
-    description: 'Default spacing between the edge of a control and its text. Relative to control height.'
-  },
-  'pill': {
-    description: 'Default spacing between the edge of a pill-shaped control and its text. Relative to control height.'
-  },
-  'baseColors': {
-    description: <><code>baseColors</code> consists of the following values below:</>,
-    body: (
-      <>
-        <SemanticColorsDisclosure />
-        <GlobalColorsDisclosure />
-      </>
-    )
-  },
-  'fontSize': {
-    body: <S2Typography />
-  },
-  'ui': {
-    description: 'Use within interactive UI components.'
-  },
-  'heading': {
-    description: 'Use for headings in content pages.'
-  },
-  'title': {
-    description: 'Use for titles within UI components such as cards or panels.'
-  },
-  'body': {
-    description: 'Use for the content of pages that are primarily text.'
-  },
-  'detail': {
-    description: 'Use for less important metadata.'
-  },
-  'code': {
-    description: 'Use for source code.'
-  },
-  'LengthPercentage': {
-    description: <>A CSS length value with percentage or viewport units. e.g. <code className={codeStyle}>'50%'</code>, <code className={codeStyle}>'100vw'</code>, <code className={codeStyle}>'50vh'</code></>
-  },
-  'number': {
-    description: <>A numeric value in pixels e.g. <code className={codeStyle}>20</code>. Will be converted to rem and scaled on touch devices.</>
-  }
-};
-
-interface StyleMacroPropertyDefinition {
-  values: string[],
-  additionalTypes?: string[],
-  links?: {[value: string]: {href: string, isRelative?: boolean}},
-  description?: string,
-  mapping?: string[]
-}
-
-interface StyleMacroPropertiesProps {
-  properties: {[propertyName: string]: StyleMacroPropertyDefinition}
-}
-
-export function StyleMacroProperties({properties}: StyleMacroPropertiesProps) {
-  let propertyNames = Object.keys(properties);
-
-  return (
-    <Accordion allowsMultipleExpanded>
-      {propertyNames.map((propertyName, index) => {
-        let propDef = properties[propertyName];
-        let values = propDef.values;
-        let links = propDef.links || {};
-
-        return (
-          <Disclosure key={index} id={propertyName}>
-            <DisclosureTitle>
-              <code className={codeStyle}>
-                <span className={codeStyles.attribute}>{propertyName}</span>
-              </code>
-            </DisclosureTitle>
-            <DisclosurePanel>
-              <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-                {/* for color and backgroundColor, skip values list and render disclosures directly since the contents of the disclosures cover the mapped values */}
-                {(() => {
-                  if (propertyName === 'color') {
-                    return (
-                      <Accordion allowsMultipleExpanded>
-                        <TextColorsDisclosure />
-                        {styleMacroValueDesc['baseColors'].body}
-                      </Accordion>
-                    );
-                  }
-                  if (propertyName === 'backgroundColor') {
-                    return (
-                      <Accordion allowsMultipleExpanded>
-                        <BackgroundColorsDisclosure />
-                        {styleMacroValueDesc['baseColors'].body}
-                      </Accordion>
-                    );
-                  }
-                  return (
-                    <div>
-                      <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Values</h4>
-                      <code className={codeStyle}>
-                        {values.map((value, i) => {
-                          let content;
-                          if (links[value]) {
-                            content = (
-                              <ColorLink
-                                href={links[value].href}
-                                type="variable"
-                                rel={links[value].isRelative ? undefined : 'noreferrer'}
-                                target={links[value].isRelative ? undefined : '_blank'}>
-                                {value}
-                              </ColorLink>
-                            );
-                          } else if (value === 'baseColors') {
-                            content = <span className={codeStyles.variable}>{value}</span>;
-                          } else {
-                            content = <span className={codeStyles.string}>'{value}'</span>;
-                          }
-
-                          return (
-                            <React.Fragment key={i}>
-                              {i > 0 && <Punctuation>{' | '}</Punctuation>}
-                              {content}
-                            </React.Fragment>
-                          );
-                        })}
-                        {/* for additional types properties (e.g. properties that have negative spacing or accept number/length percentage) we add them to the end */}
-                        {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                          return (
-                            <React.Fragment key={`type-${i}`}>
-                              {(values.length > 0 || i > 0) && <Punctuation>{' | '}</Punctuation>}
-                              <span className={codeStyles.variable}>{typeName}</span>
-                            </React.Fragment>
-                          );
-                        })}
-                      </code>
-                    </div>
-                  );
-                })()}
-                {values.map((value, i) => {
-                  let valueDesc = styleMacroValueDesc[value];
-                  // special case handling for font and spacing specific value descriptions so they don't get rendered for
-                  // other properties that may include the same values (e.g. heading in Colors)
-                  // skip baseColors here as it will be rendered after
-                  let shouldShowDescription = false;
-                  if (value === 'fontSize' && (propertyName === 'fontSize' || propertyName === 'font')) {
-                    shouldShowDescription = true;
-                  } else if (['ui', 'heading', 'title', 'body', 'detail', 'code'].includes(value) && propertyName === 'lineHeight') {
-                    shouldShowDescription = true;
-                  } else if (['text-to-control', 'text-to-visual', 'edge-to-text', 'pill'].includes(value)) {
-                    shouldShowDescription = true;
-                  }
-
-                  if (shouldShowDescription && (valueDesc?.description || valueDesc?.body)) {
-                    return (
-                      <div key={`value-desc-${i}`}>
-                        <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
-                          <code className={codeStyle}>
-                            <span className={codeStyles.string}>'{value}'</span>
-                          </code>
-                        </h4>
-                        {valueDesc.description && (
-                          <p className={style({font: 'body', marginBottom: 8})}>
-                            {valueDesc.description}
-                          </p>
-                        )}
-                        {valueDesc.body}
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-                {/* show S2Typography for "fontSize" property and "font" shorthand specificatlly */}
-                {(propertyName === 'fontSize' || propertyName === 'font') && (
-                  <S2Typography />
-                )}
-                {/* for other color property names show baseColors description since the value list is displayed still */}
-                {values.includes('baseColors') && styleMacroValueDesc['baseColors'] && (propertyName !== 'color' && propertyName !== 'backgroundColor') && (
-                  <div>
-                    {styleMacroValueDesc['baseColors'].description && (
-                      <p className={style({font: 'body', marginBottom: 8})}>
-                        {styleMacroValueDesc['baseColors'].description}
-                      </p>
-                    )}
-                    {styleMacroValueDesc['baseColors'].body}
-                  </div>
-                )}
-                {/* for the types that have descriptions, we add them below with the associated descriptions and/or mappings */}
-                {propDef.additionalTypes && propDef.additionalTypes.map((typeName, i) => {
-                  let typeLink = styleMacroValueDesc[typeName];
-                  if (typeLink?.description || typeLink?.body) {
-                    // dont render the type name for properties that only have one special value (e.g. baseSpacing) that has an associated description
-                    // so that we don't double up on rendering the value name
-                    let shouldSkipTypeName = values.length === 0 && propDef.additionalTypes?.length === 1;
-
-                    return (
-                      <div key={`type-desc-${i}`}>
-                        {!shouldSkipTypeName && (
-                          <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>
-                            <code className={codeStyle}>
-                              <span className={codeStyles.variable}>{typeName}</span>
-                            </code>
-                          </h4>
-                        )}
-                        {typeLink.description && (
-                          <p className={style({font: 'body', marginBottom: 8})}>
-                            {typeLink.description}
-                          </p>
-                        )}
-                        {typeLink.body}
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-                {propDef.mapping && (
-                  <div>
-                    <h4 className={style({font: 'ui', fontWeight: 'bold', marginBottom: 8})}>Maps to</h4>
-                    <code className={codeStyle}>
-                      {propDef.mapping.map((mappedProp, i) => (
-                        <React.Fragment key={i}>
-                          {i > 0 && <Punctuation>{', '}</Punctuation>}
-                          <span className={codeStyles.attribute}>{mappedProp}</span>
-                        </React.Fragment>
-                      ))}
-                    </code>
-                  </div>
-                )}
-                {propDef.description && (
-                  <div className={style({font: 'body'})}>
-                    {propDef.description}
-                  </div>
-                )}
-              </div>
-            </DisclosurePanel>
-          </Disclosure>
-        );
-      })}
-    </Accordion>
   );
 }

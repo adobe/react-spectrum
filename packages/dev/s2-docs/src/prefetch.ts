@@ -1,7 +1,8 @@
 'use client';
 
+import {DOMRefValue} from '@react-types/shared';
 import {fetchRSC} from '@parcel/rsc/client';
-import {getRSCUrl} from './pageUtils';
+import {getRSCUrl, isClientLink} from './pageUtils';
 import {type ReactElement} from 'react';
 
 const prefetchPromises = new Map<string, Promise<ReactElement>>();
@@ -41,4 +42,38 @@ export function prefetchRoute(pathname: string, priority: RequestPriority = 'low
 
 export function getPrefetchedPromise(rscPath: string): Promise<ReactElement> | undefined {
   return prefetchPromises.get(rscPath);
+}
+
+function waitForIdle(fn) {
+  // Wait for view transition to finish before pre-fetching.
+  // Otherwise try to wait for idle time so we don't interrupt interactions/animations.
+  if ('activeViewTransition' in document && document.activeViewTransition) {
+    (document.activeViewTransition as ViewTransition).finished.then(() => fn());
+  } else if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(fn);
+  } else {
+    setTimeout(fn, 0);
+  }
+}
+
+let observer = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver(entries => {
+  for (let entry of entries) {
+    if (entry.isIntersecting && entry.target instanceof HTMLAnchorElement) {
+      let link = entry.target;
+      waitForIdle(() => prefetchRoute(link.pathname + link.search + link.hash));
+    }
+  }
+}) : null;
+
+export function registerLink(element: HTMLAnchorElement | null) {
+  if (!element || !isClientLink(element) || element.pathname === location.pathname) {
+    return;
+  }
+  
+  observer?.observe(element);
+  return () => observer?.unobserve(element);
+}
+
+export function registerSpectrumLink(value: DOMRefValue<HTMLAnchorElement> | null) {
+  return registerLink(value?.UNSAFE_getDOMNode() || null);
 }

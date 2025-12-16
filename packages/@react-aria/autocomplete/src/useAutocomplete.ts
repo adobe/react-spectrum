@@ -15,7 +15,7 @@ import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isAndroid, isCtrlKeyPressed, isIOS, mergeProps, mergeRefs, useEffectEvent, useEvent, useId, useLabels, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
-import {getInteractionModality} from '@react-aria/interactions';
+import {getInteractionModality, getPointerType} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -92,7 +92,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
   let queuedActiveDescendant = useRef<string | null>(null);
-  let lastPointerType = useRef<string | null>(null);
 
   // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
   // moving focus back to the subtriggers
@@ -106,23 +105,10 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions<T>, state: Aut
     return () => clearTimeout(timeout.current);
   }, []);
 
-  useEffect(() => {
-    let handlePointerDown = (e: PointerEvent) => {
-      lastPointerType.current = e.pointerType;
-    };
-
-    if (typeof PointerEvent !== 'undefined') {
-      document.addEventListener('pointerdown', handlePointerDown, true);
-      return () => {
-        document.removeEventListener('pointerdown', handlePointerDown, true);
-      };
-    }
-  }, []);
-
   let updateActiveDescendantEvent = useEffectEvent((e: Event) => {
     // Ensure input is focused if the user clicks on the collection directly.
     // don't trigger on touch so that mobile keyboard doesnt appear when tapping on options
-    if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current && lastPointerType.current !== 'touch') {
+    if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current && getPointerType() !== 'touch') {
       inputRef.current.focus();
     }
 

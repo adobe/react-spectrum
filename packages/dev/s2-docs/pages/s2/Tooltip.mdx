@@ -11,7 +11,7 @@ export const description = 'Displays a description of an element on hover or foc
 
 <PageDescription>{docs.exports.Tooltip.description}</PageDescription>
 
-```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="s2"
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['placement', 'crossOffset', 'shouldFlip', 'shouldCloseOnPress']} type="s2"
 "use client";
 import {Tooltip, TooltipTrigger, ActionButton} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -70,7 +70,7 @@ Tooltips must be placed on focusable elements so they are accessible to keyboard
 
 ```tsx render
 "use client";
-import {Tooltip, TooltipTrigger, Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
+import {Button, ContextualHelp, Heading, Content} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <div className={style({display: 'flex', gap: 8, alignItems: 'center'})}>

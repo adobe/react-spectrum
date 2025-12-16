@@ -3,7 +3,6 @@ export default Layout;
 
 import {DatePicker} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
-import {getBaseUrl} from '../../src/pageUtils';
 
 export const tags = ['calendar'];
 export const description = 'Combines a DateField and a Calendar popover.';
@@ -22,17 +21,17 @@ export const description = 'Combines a DateField and a Calendar popover.';
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the date value, using objects in the <Link href={`${getBaseUrl('react-aria')}/internationalized/date/`}>@internationalized/date</Link> package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the date value, using objects in the [@internationalized/date](react-aria:internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
+import {parseDate, getLocalTimeZone, CalendarDate} from '@internationalized/date';
 import {useDateFormatter} from 'react-aria';
 import {DatePicker} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [date, setDate] = useState(parseDate('2020-02-03'));
+  let [date, setDate] = useState<CalendarDate | null>(parseDate('2020-02-03'));
   let formatter = useDateFormatter({ dateStyle: 'full' });
   
   return (
@@ -83,8 +82,7 @@ Use the `name` prop to submit the selected date to the server as an [ISO 8601](h
 ```tsx render docs={docs.exports.DatePicker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
-import {DatePicker, Form, Button} from '@react-spectrum/s2';
+import {DatePicker, Form, Button, useLocale} from '@react-spectrum/s2';
 
 function Example(props) {
   let {locale} = useLocale();

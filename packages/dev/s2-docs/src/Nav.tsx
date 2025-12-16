@@ -1,9 +1,9 @@
 'use client';
 
+import {BaseLink} from './Link';
 import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
 import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getLibraryFromPage} from './library';
-import {Link} from 'react-aria-components';
 import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
 import type {Page} from '@parcel/rsc';
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
@@ -34,7 +34,7 @@ export function Nav() {
 
     let library = getLibraryFromPage(page);
 
-    if ((currentLibrary === 'internationalized' || currentLibrary === 'react-spectrum') && library !== currentLibrary) {
+    if (currentLibrary === 'react-spectrum' && library !== currentLibrary) {
       continue;
     }
 
@@ -49,7 +49,7 @@ export function Nav() {
       continue;
     }
 
-    if (group && section && currentLibrary !== 'internationalized') {
+    if (group && section) {
       let value = sections.get(group);
       let groupMap: Map<string, Page[]>;
       if (value instanceof Map) {
@@ -77,14 +77,6 @@ export function Nav() {
     }
     if (b[0] === 'Overview') {
       return 1;
-    }
-
-    if (a[0] === 'Guides') {
-      return 1;
-    }
-
-    if (b[0] === 'Guides') {
-      return -1;
     }
 
     return a[0].localeCompare(b[0]);
@@ -165,15 +157,15 @@ export function Nav() {
           );
         }
 
-        if ((name === 'Overview' && Array.isArray(pages)) || (currentLibrary === 'internationalized' && Array.isArray(pages))) {
+        if (name === 'Overview' && Array.isArray(pages)) {
           return (
             <div className={style({paddingStart: space(26)})} key={name}>
               <SideNavSection title={name}>
                 <SideNav>
                   {pages
                     .sort((a, b) => {
-                      const aIntro = isIntroduction(a);
-                      const bIntro = isIntroduction(b);
+                      const aIntro = a.url.endsWith('getting-started');
+                      const bIntro = b.url.endsWith('getting-started');
                       if (aIntro && !bIntro) {
                         return -1;
                       }
@@ -214,12 +206,7 @@ function title(page) {
 }
 
 function isIntroduction(page) {
-  let navTitle = page.exports?.navigationTitle;
-  if (typeof navTitle === 'string' && /introduction|home/i.test(navTitle)) {
-    return true;
-  }
-  let t = title(page);
-  return typeof t === 'string' && /introduction|home/i.test(t);
+  return page.url.endsWith('/');
 }
 
 function SideNavSection({title, children}) {
@@ -273,7 +260,7 @@ export function SideNavLink(props) {
   let {isExternal, ...linkProps} = props;
   
   return (
-    <Link
+    <BaseLink
       {...linkProps}
       ref={linkRef}
       target={isExternal ? '_blank' : undefined}
@@ -318,15 +305,16 @@ export function SideNavLink(props) {
             className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})} />
         )}
       </>)}
-    </Link>
+    </BaseLink>
   );
 }
 
 function useCurrentSection() {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article :is(h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -348,7 +336,7 @@ function useCurrentSection() {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return selected;
 }
@@ -367,7 +355,7 @@ export function MobileOnPageNav({children}) {
   let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article :is(h1,h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     elements.reverse();
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {

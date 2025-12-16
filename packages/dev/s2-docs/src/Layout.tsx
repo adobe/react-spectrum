@@ -5,16 +5,16 @@ import type {Page, PageProps} from '@parcel/rsc';
 import React, {ReactElement, ReactNode} from 'react';
 import '../src/client';
 // @ts-ignore
-import internationalizedFavicon from 'url:../assets/internationalized.ico';
+import reactAriaFavicon from 'url:../assets/react-aria-favicon.svg';
 // @ts-ignore
-import reactAriaFavicon from 'url:../assets/react-aria.ico';
+import rspFavicon from 'url:../assets/rsp-favicon.svg';
 import './anatomy.css';
 import './footer.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
-import {Divider, Provider, UNSTABLE_ToastContainer as ToastContainer} from '@react-spectrum/s2';
+import {Divider, Provider, ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
 import {getCurrentPage, getPages} from './getPages';
 import {getLibraryFromPage, getLibraryLabel} from './library';
@@ -75,11 +75,12 @@ const getTitle = (currentPage: Page): string => {
 
 const getOgImageUrl = (currentPage: Page): string => {
   let currentURL = new URL(currentPage.url);
+  let publicUrl = process.env.PUBLIC_URL || '';
   let path = currentURL.pathname || '/';
   if (path.endsWith('/')) {
     path += 'index';
   }
-  return new URL(`/og${path}.png`, currentURL).href;
+  return new URL(`${publicUrl}/og${path}.png`, currentURL).href;
 };
 
 const getDescription = (currentPage: Page): string => {
@@ -100,10 +101,8 @@ const getFaviconUrl = (currentPage: Page): string => {
   switch (library) {
     case 'react-aria':
       return reactAriaFavicon;
-    case 'internationalized':
-      return internationalizedFavicon;
     default:
-      return 'https://www.adobe.com/favicon.ico';
+      return rspFavicon;
   }
 };
 
@@ -160,7 +159,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
   let {children} = props;
   let pages = await getPages();
   let currentPage = getCurrentPage(props.currentPage);
-  let isToastPage = currentPage.name === 'Toast.mdx' || currentPage.url?.includes('/s2/Toast');
+  let isToastPage = currentPage.name === 's2/Toast';
   let isSubpage = currentPage.exports?.isSubpage;
   let section = currentPage.exports?.section;
   let isLongForm = isSubpage && section === 'Blog';
@@ -234,7 +233,7 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               }
             })}>
             <Header />
-            <MobileHeader toc={<OptimisticMobileToc />} />
+            <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
             <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
               <Nav />
               <Main
