@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/textfield",
-  "version": "3.14.2",
+  "version": "3.14.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,18 +40,18 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.2",
-    "@react-aria/i18n": "^3.12.13",
-    "@react-aria/interactions": "^3.25.6",
-    "@react-aria/textfield": "^3.18.2",
-    "@react-aria/utils": "^3.31.0",
-    "@react-spectrum/form": "^3.7.19",
-    "@react-spectrum/label": "^3.16.19",
-    "@react-spectrum/utils": "^3.12.9",
-    "@react-stately/utils": "^3.10.8",
+    "@react-aria/focus": "^3.21.3",
+    "@react-aria/i18n": "^3.12.14",
+    "@react-aria/interactions": "^3.26.0",
+    "@react-aria/textfield": "^3.18.3",
+    "@react-aria/utils": "^3.32.0",
+    "@react-spectrum/form": "^3.7.20",
+    "@react-spectrum/label": "^3.16.20",
+    "@react-spectrum/utils": "^3.12.10",
+    "@react-stately/utils": "^3.11.0",
     "@react-types/shared": "^3.32.1",
     "@react-types/textfield": "^3.12.6",
-    "@spectrum-icons/ui": "^3.6.20",
+    "@spectrum-icons/ui": "^3.6.21",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/interactions",
-  "version": "3.25.6",
+  "version": "3.26.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.9.10",
-    "@react-aria/utils": "^3.31.0",
+    "@react-aria/utils": "^3.32.0",
     "@react-stately/flags": "^3.1.2",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
