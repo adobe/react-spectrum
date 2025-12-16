@@ -164,6 +164,8 @@ s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
+	cd starters/docs && yarn install --no-immutable && yarn up react-aria-components
+	cd starters/tailwind && yarn install --no-immutable && yarn up react-aria-components tailwindcss-react-aria-components
 	$(MAKE) build-starters
 
 build-s2-docs:
