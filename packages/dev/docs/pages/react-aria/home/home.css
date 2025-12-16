@@ -33,6 +33,15 @@
   /* mask-type: luminance;
   mask: linear-gradient(white 0% 80%, transparent); */
 
+  @media (width < 768px) {
+    background:
+      linear-gradient(to bottom, transparent 0% 87%, var(--page-bg)),
+      radial-gradient(100% 10% at 45% 71%, light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), #BF67D0), transparent),
+      radial-gradient(100% 10% at 55% 84%, light-dark(#FACA85, #EDB35F), transparent),
+      radial-gradient(150% 30% at 50% 70%, light-dark(#EDE8FF, #6D33F7), transparent),
+      linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
+  }
+
   &::before {
     /* content: '';
     z-index: -1;
