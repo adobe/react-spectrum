@@ -21,50 +21,24 @@
 }
 
 .home .header-background {
-  @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
-  /* overflow: clip; */
+  --pink: light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), oklch(from #BF67D0 calc(l * 0.9) c h));
+  --orange: light-dark(#FACA85, oklch(from #EDB35F calc(l * 0.82) c h));
+  --purple: light-dark(#EDE8FF, #6D33F7);
 
   background:
     linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
-    radial-gradient(50% 22% at 25% 72%, light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), #BF67D0), transparent),
-    radial-gradient(50% 22% at 62% 75%, light-dark(#FACA85, #EDB35F), transparent),
-    radial-gradient(150% 30% at 50% 70%, light-dark(#EDE8FF, #6D33F7), transparent),
+    radial-gradient(50% 22% at 25% 72%, var(--pink), transparent),
+    radial-gradient(50% 22% at 62% 75%, var(--orange), transparent),
+    radial-gradient(150% 30% at 50% 70%, var(--purple), transparent),
     linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
-  /* mask-type: luminance;
-  mask: linear-gradient(white 0% 80%, transparent); */
 
   @media (width < 768px) {
     background:
       linear-gradient(to bottom, transparent 0% 87%, var(--page-bg)),
-      radial-gradient(100% 10% at 45% 71%, light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), #BF67D0), transparent),
-      radial-gradient(100% 10% at 55% 84%, light-dark(#FACA85, #EDB35F), transparent),
-      radial-gradient(150% 30% at 50% 70%, light-dark(#EDE8FF, #6D33F7), transparent),
+      radial-gradient(100% 10% at 45% 71%, var(--pink), transparent),
+      radial-gradient(100% 10% at 55% 84%, var(--orange), transparent),
+      radial-gradient(150% 30% at 50% 70%, var(--purple), transparent),
       linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
-  }
-
-  &::before {
-    /* content: '';
-    z-index: -1;
-    position: absolute;
-    top: 0;
-    left: -90%;
-    width: 200%;
-    height: 200%;
-    background-size: cover;
-    background-position: center 500px;
-    background-image: url("data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAAAwAgCdASoQAA0ABUB8JagBTAsxQGK/PhxgMAD+9CUuaXiaU4cS9Akke4UYeBZhhgRvJHs5ehqWSzpgqOxE+D7sQT4eGK1/Tt2ljz590jgIyAAA");
-    mask-type: luminance;
-    mask: linear-gradient(transparent, white 10% 30%, transparent 50%);
-    mask-position: 0px -50%;
-    opacity: 70%;
-    filter: blur(40px);
-    contain: paint; */
-    will-change: transform; /* Speeds up filter in Safari */
-
-    /* @media (prefers-color-scheme: light) {
-      filter: blur(40px) invert(1) hue-rotate(180deg);
-      opacity: 60%;
-    } */
   }
 }
 
