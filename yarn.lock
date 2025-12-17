@@ -5687,7 +5687,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.26.0, @react-aria/interactions@workspace:packages/@react-aria/interactions":
+"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.25.1, @react-aria/interactions@npm:^3.25.6, @react-aria/interactions@npm:^3.26.0, @react-aria/interactions@workspace:packages/@react-aria/interactions":
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
