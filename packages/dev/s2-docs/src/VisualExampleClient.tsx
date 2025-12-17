@@ -110,7 +110,6 @@ export function VisualExampleClient({component, name, importSource, controls, ch
     searchParams.set('exampleType', String(exampleType));
   }
 
-  console.log('props', props);
   for (let prop in props) {
     let value = props[prop];
     if (
@@ -118,7 +117,6 @@ export function VisualExampleClient({component, name, importSource, controls, ch
       controls[prop] != null &&
       (controls[prop].default == null || value !== controls[prop].default)
     ) {
-      console.log('setting search param', prop, value);
       searchParams.set(prop, JSON.stringify(value));
     }
   }
