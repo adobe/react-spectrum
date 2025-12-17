@@ -12,7 +12,7 @@
 
 'use client';
 
-export {Accordion, AccordionContext} from './Accordion';
+export {Accordion, AccordionContext, AccordionItem, AccordionItemHeader, AccordionItemTitle, AccordionItemPanel} from './Accordion';
 export {ActionBar, ActionBarContext} from './ActionBar';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionButtonGroup, ActionButtonGroupContext} from './ActionButtonGroup';
@@ -78,12 +78,12 @@ export {Skeleton, useIsSkeleton} from './Skeleton';
 export {SkeletonCollection} from './SkeletonCollection';
 export {StatusLight, StatusLightContext} from './StatusLight';
 export {Switch, SwitchContext} from './Switch';
-export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from './TableView';
+export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext, EditableCell} from './TableView';
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
 export {TimeField, TimeFieldContext} from './TimeField';
-export {ToastContainer as UNSTABLE_ToastContainer, ToastQueue as UNSTABLE_ToastQueue} from './Toast';
+export {ToastContainer, ToastQueue} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
@@ -91,12 +91,10 @@ export {TreeView, TreeViewItem, TreeViewItemContent, TreeViewLoadMoreItem} from 
 
 export {pressScale} from './pressScale';
 
-export {Autocomplete} from 'react-aria-components';
-export {Collection} from 'react-aria-components';
-export {FileTrigger} from 'react-aria-components';
-export {parseColor} from 'react-aria-components';
+export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
+export {useListData, useTreeData, useAsyncList} from 'react-stately';
 
-export type {AccordionProps} from './Accordion';
+export type {AccordionProps, AccordionItemProps, AccordionItemHeaderProps, AccordionItemTitleProps, AccordionItemPanelProps, AccordionItemState, AccordionItemRenderProps} from './Accordion';
 export type {ActionBarProps} from './ActionBar';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionButtonGroupProps} from './ActionButtonGroup';
@@ -168,4 +166,5 @@ export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
 export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps, TreeViewLoadMoreItemProps} from './TreeView';
-export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor, Color, Key, Selection} from 'react-aria-components';
+export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor, Color, Key, Selection, RouterConfig} from 'react-aria-components';
+export type {ListData, TreeData, AsyncListData} from 'react-stately';

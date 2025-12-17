@@ -15,27 +15,37 @@ import {
   ActionButton,
   Cell,
   Column,
+  ColumnProps,
   Content,
+  EditableCell,
   Heading,
   IllustratedMessage,
   Link,
   MenuItem,
   MenuSection,
+  Picker,
+  PickerItem,
   Row,
+  StatusLight,
   TableBody,
   TableHeader,
   TableView,
   TableViewProps,
-  Text
+  Text,
+  TextField
 } from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
+import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
 import {SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData} from '@react-stately/data';
+import {useEffectEvent} from '@react-aria/utils';
+import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -429,11 +439,28 @@ let alignColumns = [
 ];
 
 const TextAlign = (args: TableViewProps): ReactElement => {
+  let [items, setItems] = useState(sortItems);
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>(undefined);
+  let onSortChange = (sortDescriptor: SortDescriptor) => {
+    let {direction = 'ascending', column = 'name'} = sortDescriptor;
+
+    let sorted = items.slice().sort((a, b) => {
+      let cmp = a[column] < b[column] ? -1 : 1;
+      if (direction === 'descending') {
+        cmp *= -1;
+      }
+      return cmp;
+    });
+
+    setItems(sorted);
+    setSortDescriptor(sortDescriptor);
+  };
+
   return (
-    <TableView aria-label="Show Dividers table" {...args} styles={style({width: 320, height: 208})}>
+    <TableView aria-label="Show Dividers table" {...args} sortDescriptor={sortDescriptor} onSortChange={onSortChange} styles={style({width: 320, height: 208})}>
       <TableHeader columns={alignColumns}>
         {(column) => (
-          <Column width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
+          <Column allowsSorting width={150} minWidth={150} isRowHeader={column.isRowHeader} align={column?.align as 'start' | 'center' | 'end'}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
@@ -1383,5 +1410,307 @@ const ResizableTable = () => {
         `;
       }
     }
+  }
+};
+
+let defaultItems = [
+  {id: 1,
+    fruits: 'Apples', task: 'Collect', status: 'Pending', farmer: 'Eva',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 2,
+    fruits: 'Oranges', task: 'Collect', status: 'Pending', farmer: 'Steven',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 3,
+    fruits: 'Pears', task: 'Collect', status: 'Pending', farmer: 'Michael',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 4,
+    fruits: 'Cherries', task: 'Collect', status: 'Pending', farmer: 'Sara',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 5,
+    fruits: 'Dates', task: 'Collect', status: 'Pending', farmer: 'Karina',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 6,
+    fruits: 'Bananas', task: 'Collect', status: 'Pending', farmer: 'Otto',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 7,
+    fruits: 'Melons', task: 'Collect', status: 'Pending', farmer: 'Matt',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 8,
+    fruits: 'Figs', task: 'Collect', status: 'Pending', farmer: 'Emily',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 9,
+    fruits: 'Blueberries', task: 'Collect', status: 'Pending', farmer: 'Amelia',
+    isSaving: {},
+    intermediateValue: {}
+  },
+  {id: 10,
+    fruits: 'Blackberries', task: 'Collect', status: 'Pending', farmer: 'Isla',
+    isSaving: {},
+    intermediateValue: {}
+  }
+];
+
+let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '6fr', minWidth: 300},
+  {name: 'Task', id: 'task', width: '2fr', minWidth: 100},
+  {name: 'Status', id: 'status', width: '2fr', showDivider: true, minWidth: 100},
+  {name: 'Farmer', id: 'farmer', width: '2fr', minWidth: 150}
+];
+
+interface EditableTableProps extends TableViewProps {}
+
+export const EditableTable: StoryObj<EditableTableProps> = {
+  render: function EditableTable(props) {
+    let columns = editableColumns;
+    let data = useListData({initialItems: defaultItems});
+
+    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+      let value = values[columnId];
+      if (value === null) {
+        return;
+      }
+      data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
+    }, [data]);
+
+    return (
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+        <TableView aria-label="Dynamic table" {...props} styles={style({width: 800, maxWidth: 'calc(100vw - 2rem)', height: 208})}>
+          <TableHeader columns={columns}>
+            {(column) => (
+              <Column {...column}>{column.name}</Column>
+            )}
+          </TableHeader>
+          <TableBody items={data.items}>
+            {item => (
+              <Row id={item.id} columns={columns}>
+                {(column) => {
+                  if (column.id === 'fruits') {
+                    return (
+                      <EditableCell
+                        aria-label={`Edit ${item[column.id]} in ${column.name}`}
+                        align={column.align}
+                        showDivider={column.showDivider}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
+                        isSaving={item.isSaving[column.id!]}
+                        renderEditing={() => (
+                          <TextField
+                            name={column.id! as string}
+                            aria-label="Fruit name edit field"
+                            autoFocus
+                            validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                            defaultValue={item[column.id!]} />
+                        )}>
+                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                          {item[column.id]}
+                          <ActionButton slot="edit" aria-label="Edit fruit">
+                            <Edit />
+                          </ActionButton></div>
+                      </EditableCell>
+                    );
+                  }
+                  if (column.id === 'farmer') {
+                    return (
+                      <EditableCell
+                        align={column.align}
+                        showDivider={column.showDivider}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
+                        isSaving={item.isSaving[column.id!]}
+                        renderEditing={() => (
+                          <Picker
+                            aria-label="Edit farmer"
+                            autoFocus
+                            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                            defaultValue={item[column.id!]}
+                            name={column.id! as string}>
+                            <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
+                            <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
+                            <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
+                            <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
+                            <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
+                            <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
+                            <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
+                            <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
+                            <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
+                            <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
+                          </Picker>
+                        )}>
+                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                      </EditableCell>
+                    );
+                  }
+                  if (column.id === 'status') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <StatusLight variant="informative">{item[column.id]}</StatusLight>
+                      </Cell>
+                    );
+                  }
+                  return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+                }}
+              </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </div>
+    );
+  }
+};
+
+export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
+  render: function EditableTable(props) {
+    let delay = 5000;
+    let columns = editableColumns;
+    let data = useListData({initialItems: defaultItems});
+
+    let saveItem = useEffectEvent((id: Key, columnId: Key) => {
+      let prevItem = data.getItem(id)!;
+      data.update(id, {...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}});
+      currentRequests.current.delete(id);
+    });
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
+    let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+      let value = values[columnId];
+      if (value === null) {
+        return;
+      }
+      let alreadySaving = currentRequests.current.get(id);
+      if (alreadySaving) {
+        // remove and cancel the previous request
+        currentRequests.current.delete(id);
+        clearTimeout(alreadySaving.request);
+      }
+      let prevItem = data.getItem(id)!;
+      data.update(id, {...prevItem, [columnId]: value, isSaving: {...prevItem.isSaving, [columnId]: true}});
+    }, [data]);
+
+    useEffect(() => {
+      // if any item is saving and we don't have a request for it, start a timer to commit it
+      for (const item of data.items) {
+        for (const columnId in item.isSaving) {
+          if (item.isSaving[columnId] && !currentRequests.current.has(item.id)) {
+            let timeout = setTimeout(() => {
+              saveItem(item.id, columnId);
+            }, delay);
+            currentRequests.current.set(item.id, {request: timeout});
+          }
+        }
+      }
+    }, [data, delay]);
+
+    return (
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+        <TableView aria-label="Dynamic table" {...props} styles={style({width: 800, height: 208})}>
+          <TableHeader columns={columns}>
+            {(column) => (
+              <Column {...column}>{column.name}</Column>
+            )}
+          </TableHeader>
+          <TableBody items={data.items}>
+            {item => (
+              <Row id={item.id} columns={columns}>
+                {(column) => {
+                  if (column.id === 'fruits') {
+                    return (
+                      <EditableCell
+                        aria-label={`Edit ${item[column.id]} in ${column.name}`}
+                        align={column.align}
+                        showDivider={column.showDivider}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
+                        isSaving={item.isSaving[column.id!]}
+                        renderEditing={() => (
+                          <TextField
+                            aria-label="Edit fruit"
+                            autoFocus
+                            validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                            defaultValue={item[column.id!]}
+                            name={column.id! as string} />
+                        )}>
+                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                      </EditableCell>
+                    );
+                  }
+                  if (column.id === 'farmer') {
+                    return (
+                      <EditableCell
+                        align={column.align}
+                        showDivider={column.showDivider}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let formData = new FormData(e.target as HTMLFormElement);
+                          let values = Object.fromEntries(formData.entries());
+                          onChange(item.id, column.id!, values);
+                        }}
+                        isSaving={item.isSaving[column.id!]}
+                        renderEditing={() => (
+                          <Picker
+                            aria-label="Edit farmer"
+                            autoFocus
+                            styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                            defaultValue={item[column.id!]}
+                            name={column.id! as string}>
+                            <PickerItem textValue="Eva" id="Eva"><User /><Text>Eva</Text></PickerItem>
+                            <PickerItem textValue="Steven" id="Steven"><User /><Text>Steven</Text></PickerItem>
+                            <PickerItem textValue="Michael" id="Michael"><User /><Text>Michael</Text></PickerItem>
+                            <PickerItem textValue="Sara" id="Sara"><User /><Text>Sara</Text></PickerItem>
+                            <PickerItem textValue="Karina" id="Karina"><User /><Text>Karina</Text></PickerItem>
+                            <PickerItem textValue="Otto" id="Otto"><User /><Text>Otto</Text></PickerItem>
+                            <PickerItem textValue="Matt" id="Matt"><User /><Text>Matt</Text></PickerItem>
+                            <PickerItem textValue="Emily" id="Emily"><User /><Text>Emily</Text></PickerItem>
+                            <PickerItem textValue="Amelia" id="Amelia"><User /><Text>Amelia</Text></PickerItem>
+                            <PickerItem textValue="Isla" id="Isla"><User /><Text>Isla</Text></PickerItem>
+                          </Picker>
+                        )}>
+                        <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>{item[column.id]}<ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton></div>
+                      </EditableCell>
+                    );
+                  }
+                  if (column.id === 'status') {
+                    return (
+                      <Cell align={column.align} showDivider={column.showDivider}>
+                        <StatusLight variant="informative">{item[column.id]}</StatusLight>
+                      </Cell>
+                    );
+                  }
+                  return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+                }}
+              </Row>
+            )}
+          </TableBody>
+        </TableView>
+      </div>
+    );
   }
 };

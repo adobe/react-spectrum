@@ -5,6 +5,7 @@ import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['navigation'];
+export const description = 'Display a hierarchy of links to the current page or resource.';
 
 # Breadcrumbs
 
@@ -14,15 +15,15 @@ export const tags = ['navigation'];
 import {Breadcrumbs, Breadcrumb} from '@react-spectrum/s2';
 
 <Breadcrumbs/* PROPS */>
-  <Breadcrumb href="/">Home</Breadcrumb>
-  <Breadcrumb href="/react-spectrum">React Spectrum</Breadcrumb>
+  <Breadcrumb href="#">Home</Breadcrumb>
+  <Breadcrumb href="#">React Spectrum</Breadcrumb>
   <Breadcrumb>Breadcrumbs</Breadcrumb>
 </Breadcrumbs>
 ```
 
 ## Content
 
-`Breadcrumbs` follows the [Collection Components API](collections.html?component=Breadcrumbs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. The `onAction` event is called when a user presses a breadcrumb.
+`Breadcrumbs` follows the [Collection Components API](collections?component=Breadcrumbs), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. The `onAction` event is called when a user presses a breadcrumb.
 
 ```tsx render
 "use client";
@@ -54,7 +55,7 @@ function Example() {
 
 <InlineAlert variant="notice">
   <Heading>Accessibility</Heading>
-  <Content>When breadcrumbs are used as a main navigation element for a page, they can be placed in a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation.html). Landmarks help assistive technology users quickly find major sections of a page. Place breadcrumbs inside a `<nav>` element with an `aria-label` to create a navigation landmark.</Content>
+  <Content>When breadcrumbs are used as a main navigation element for a page, they can be placed in a [navigation landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/navigation). Landmarks help assistive technology users quickly find major sections of a page. Place breadcrumbs inside a `<nav>` element with an `aria-label` to create a navigation landmark.</Content>
 </InlineAlert>
 
 ### Overflow Behavior
@@ -69,7 +70,9 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 <div
   className={style({
     width: 400,
+    maxWidth: 'full',
     padding: 16,
+    boxSizing: 'border-box',
     borderWidth: 1,
     borderStyle: 'solid', 
     borderColor: 'gray-300',

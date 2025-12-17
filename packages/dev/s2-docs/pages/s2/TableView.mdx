@@ -2,9 +2,13 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['table', 'data', 'grid'];
+export const relatedPages = [
+  {title: 'Testing TableView', url: './TableView/testing'}
+];
+export const description = 'Displays data in rows and columns, with row selection and sorting.';
 
 # TableView
 
@@ -49,7 +53,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Content
 
-`TableView` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections.
+`TableView` follows the [Collection Components API](collections?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render type="s2"
@@ -131,9 +135,8 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string;
@@ -193,7 +196,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a Row to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a Row to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -281,16 +284,16 @@ const rows = [
 ///- end collapse -///
 
 const columns = [
-  {id: 'name', name: 'Name', isRowHeader: true, showDivider: true},
-  {id: 'type', name: 'Type', align: 'center', showDivider: true},
-  {id: 'level', name: 'Level', align: 'end'}
-];
+  {id: 'name', name: 'Name', isRowHeader: true, showDivider: true, align: undefined},
+  {id: 'type', name: 'Type', isRowHeader: false, showDivider: true, align: 'center'},
+  {id: 'level', name: 'Level', isRowHeader: false, showDivider: false, align: 'end'}
+] as const;
 
 function TableWithDividers() {
   return (
     <TableView
       aria-label="Favorite pokemon"
-      styles={style({width: 400})}>
+      styles={style({width: 400, maxWidth: 'full'})}>
       <TableHeader columns={columns}>
         {(column) => (
           <Column
@@ -333,7 +336,7 @@ function TableWithDividers() {
 
 ### Column menus
 
-Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Menu.html) docs for more details.
+Use the `menuItems` prop to add custom menu items to a Column. See the [Menu](Menu) docs for more details.
 
 ```tsx render type="s2"
 "use client";
@@ -359,7 +362,7 @@ const columns = [
 
 function CustomMenusTable() {
   return (
-    <TableView aria-label="Favorite pokemon" styles={style({width: 400})}>
+    <TableView aria-label="Favorite pokemon" styles={style({width: 400, maxWidth: 'full'})}>
       <TableHeader columns={columns}>
         {(column) => (
           <Column
@@ -395,9 +398,147 @@ function CustomMenusTable() {
 }
 ```
 
+
+### Editable cells
+
+Render an `<EditableCell>` instead of a `<Cell>` to allow users to edit the value. Editing is triggered by an `<ActionButton slot="edit">` and occurs in a popover that can contain one or more inputs.
+
+```tsx render type="s2"
+"use client";
+import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key, type ColumnProps} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import User from '@react-spectrum/s2/icons/User';
+import Edit from '@react-spectrum/s2/icons/Edit';
+import {useCallback} from 'react';
+import {useListData} from '@react-stately/data';
+
+///- begin collapse -///
+let defaultItems = [
+  {id: 1, fruits: 'Apples', task: 'Collect', farmer: 'Eva'},
+  {id: 2, fruits: 'Oranges', task: 'Collect', farmer: 'Steven'},
+  {id: 3, fruits: 'Pears', task: 'Collect', farmer: 'Michael'},
+  {id: 4, fruits: 'Cherries', task: 'Collect', farmer: 'Sara'},
+  {id: 5, fruits: 'Dates', task: 'Collect', farmer: 'Karina'},
+  {id: 6, fruits: 'Bananas', task: 'Collect', farmer: 'Otto'},
+  {id: 7, fruits: 'Melons', task: 'Collect', farmer: 'Matt'},
+  {id: 8, fruits: 'Figs', task: 'Collect', farmer: 'Emily'},
+  {id: 9, fruits: 'Blueberries', task: 'Collect', farmer: 'Amelia'},
+  {id: 10, fruits: 'Blackberries', task: 'Collect', farmer: 'Isla'}
+];
+///- end collapse -///
+
+///- begin collapse -///
+let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
+  {name: 'Fruits', id: 'fruits', isRowHeader: true, width: '2fr', minWidth: 200},
+  {name: 'Task', id: 'task', width: '1fr', minWidth: 150},
+  {name: 'Farmer', id: 'farmer', width: '1fr', minWidth: 150}
+];
+///- end collapse -///
+
+export default function EditableTable(props) {
+  let columns = editableColumns;
+  let data = useListData({initialItems: defaultItems});
+
+  let onChange = useCallback((id: Key, columnId: Key, values: any) => {
+    let value = values[columnId];
+    if (value == null) {
+      return;
+    }
+    data.update(id, (prevItem) => ({...prevItem, [columnId]: value}));
+  }, [data]);
+
+  return (
+    <TableView aria-label="Dynamic table" {...props} styles={style({height: 208, width: 'full'})}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column {...column}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={data.items}>
+        {item => (
+          <Row id={item.id} columns={columns}>
+            {(column) => {
+              if (column.id === 'fruits') {
+                ///- begin highlight -///
+                return (
+                  <EditableCell
+                    aria-label={`Edit ${item[column.id]} in ${column.name}`}
+                    align={column.align}
+                    showDivider={column.showDivider}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
+                    renderEditing={() => (
+                      <TextField
+                        aria-label="Fruit name edit field"
+                        autoFocus
+                        validate={value => value.length > 0 ? null : 'Fruit name is required'}
+                        styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                        defaultValue={item[column.id!]}
+                        name={column.id! as string} />
+                    )}>
+                    <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                      <span className={style({minWidth: 0, truncate: true})}>
+                        {item[column.id]}
+                      </span>
+                      <ActionButton slot="edit" aria-label="Edit fruit">
+                        <Edit />
+                      </ActionButton>
+                    </div>
+                  </EditableCell>
+                );
+                ///- end highlight -///
+              }
+              if (column.id === 'farmer') {
+                return (
+                  <EditableCell
+                    align={column.align}
+                    showDivider={column.showDivider}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      let formData = new FormData(e.target as HTMLFormElement);
+                      let values = Object.fromEntries(formData.entries());
+                      onChange(item.id, column.id!, values);
+                    }}
+                    renderEditing={() => (
+                      <Picker
+                        aria-label="Edit farmer"
+                        autoFocus
+                        styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
+                        defaultValue={item[column.id!]}
+                        name={column.id! as string}
+                        items={defaultItems}>
+                        {item => (
+                          <PickerItem textValue={item.farmer} id={item.farmer}>
+                            <User />
+                            <Text>{item.farmer}</Text>
+                          </PickerItem>
+                        )}
+                      </Picker>
+                    )}>
+                    <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
+                      {item[column.id]}
+                      <ActionButton slot="edit" aria-label="Edit fruit"><Edit /></ActionButton>
+                    </div>
+                  </EditableCell>
+                );
+              }
+              return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+```
+
 ## Selection and actions
 
-Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar.html) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection.html) for details.
+Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each row's `id`) to control the selected rows. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable rows with `isDisabled`. See the [selection guide](selection) for details.
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -513,9 +654,9 @@ function SortableTable() {
   return (
     <TableView
       aria-label="Favorite pokemon"
-      styles={style({width: 400})}
+      styles={style({width: 400, maxWidth: 'full'})}
       ///- begin highlight -///
-      sortDescriptor={sortDescriptor}
+      sortDescriptor={sortDescriptor ?? undefined}
       onSortChange={setSortDescriptor}
       ///- end highlight -///
     >
@@ -559,7 +700,7 @@ const rows = [
 ];
 ///- end collapse -///
 
-<TableView aria-label="Table with resizable columns" styles={style({width: 400})}>
+<TableView aria-label="Table with resizable columns" styles={style({width: 400, maxWidth: 'full'})}>
   <TableHeader>
     {/*- begin highlight -*/}
     <Column id="file" isRowHeader maxWidth={500} allowsResizing>
@@ -610,7 +751,7 @@ const columns = [
 ];
 ///- end collapse -///
 
-const initialWidths = new Map([
+const initialWidths = new Map<string, string | number>([
   ['file', '1fr'],
   ['size', 80],
   ['date', 100]
@@ -625,7 +766,7 @@ export default function ResizableTable() {
       ///- begin highlight -///
       onResize={setColumnWidths}
       ///- end highlight -///
-      styles={style({width: 400})}>
+      styles={style({width: 400, maxWidth: 'full'})}>
       <TableHeader columns={columns} dependencies={[columnWidths]}>
         {column => (
           <Column
@@ -688,7 +829,7 @@ function subscribe(fn) {
 
 ## API
 
-```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell'}}
+```tsx links={{TableView: '#tableview', TableHeader: '#tableheader', Column: '#column', TableBody: '#tablebody', Row: '#row', Cell: '#cell', 'EditableCell': '#editablecell'}}
 <TableView>
   <TableHeader>
     <Column />
@@ -696,6 +837,7 @@ function subscribe(fn) {
   <TableBody>
     <Row>
       <Cell />
+      <EditableCell />
     </Row>
   </TableBody>
 </TableView>
@@ -724,3 +866,7 @@ function subscribe(fn) {
 ### Cell
 
 <PropTable component={docs.exports.Cell} links={docs.links} showDescription />
+
+### EditableCell
+
+<PropTable component={docs.exports.EditableCell} links={docs.links} showDescription />

@@ -17,13 +17,17 @@ A **static collection** is a collection that does not change over time (e.g. har
 
 ```tsx render
 "use client";
-import {MenuButton, MenuItem} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
 
-<MenuButton label="Menu">
-  <MenuItem>Open</MenuItem>
-  <MenuItem>Edit</MenuItem>
-  <MenuItem>Delete</MenuItem>
-</MenuButton>
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Menu>
+    <MenuItem>Open</MenuItem>
+    <MenuItem>Edit</MenuItem>
+    <MenuItem>Delete</MenuItem>
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Sections
@@ -34,24 +38,28 @@ Sections or groups of items can be constructed by wrapping the items in a sectio
 
 ```tsx render
 "use client";
-import {MenuButton, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem, MenuSection} from 'vanilla-starter/Menu';
+import {Button} from 'vanilla-starter/Button';
 import {Header} from 'react-aria-components';
 
-<MenuButton label="Menu">
-  {/*- begin highlight -*/}
-  <MenuSection>
-    <Header>Styles</Header>
-    {/*- end highlight -*/}
-    <MenuItem>Bold</MenuItem>
-    <MenuItem>Underline</MenuItem>
-  </MenuSection>
-  <MenuSection>
-    <Header>Align</Header>
-    <MenuItem>Left</MenuItem>
-    <MenuItem>Middle</MenuItem>
-    <MenuItem>Right</MenuItem>
-  </MenuSection>
-</MenuButton>
+<MenuTrigger>
+  <Button>Menu</Button>
+  <Menu>
+    {/*- begin highlight -*/}
+    <MenuSection>
+      <Header>Styles</Header>
+      {/*- end highlight -*/}
+      <MenuItem>Bold</MenuItem>
+      <MenuItem>Underline</MenuItem>
+    </MenuSection>
+    <MenuSection>
+      <Header>Align</Header>
+      <MenuItem>Left</MenuItem>
+      <MenuItem>Middle</MenuItem>
+      <MenuItem>Right</MenuItem>
+    </MenuSection>
+  </Menu>
+</MenuTrigger>
 ```
 
 ```tsx render
@@ -107,7 +115,7 @@ function Example() {
   return (
     <div>
       {/*- begin highlight -*/}
-      <ListBox items={animals}>
+      <ListBox aria-label="Animals" items={animals}>
         {item => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
       {/*- end highlight -*/}
@@ -119,12 +127,12 @@ function Example() {
 
 <InlineAlert variant="informative">
   <Heading>useListData</Heading>
-  <Content>For convenience, React Aria provides a built-in [useListData](https://react-spectrum.adobe.com/react-stately/useListData.html) hook to manage state for an immutable list of items. It includes methods to add, remove, update, and re-order items, and manage corresponding selection state. See the docs for more details.</Content>
+  <Content>For convenience, React Aria provides a built-in [useListData](useListData.html) hook to manage state for an immutable list of items. It includes methods to add, remove, update, and re-order items, and manage corresponding selection state. See the docs for more details.</Content>
 </InlineAlert>
 
 ### Unique ids
 
-All items in a collection must have a unique id, which is used for [selection](selection.html) and to track item updates. By default, React Aria looks for an `id` property on each object in the `items` array. You can also specify an `id` prop when rendering each item. This example uses `item.name` as the `id`.
+All items in a collection must have a unique id, which is used for [selection](selection) and to track item updates. By default, React Aria looks for an `id` property on each object in the `items` array. You can also specify an `id` prop when rendering each item. This example uses `item.name` as the `id`.
 
 ```tsx
 let animals = [
@@ -168,15 +176,17 @@ const items = [
   {id: 4, name: 'Pikachu', type: 'Electric'}
 ];
 
+type Orientation = 'vertical' | 'horizontal';
+
 export default function Example() {
-  let [layout, setLayout] = useState('vertical');
+  let [layout, setLayout] = useState<Orientation>('vertical');
 
   return (
     <div>
       <ToggleButtonGroup
         aria-label="Layout"
         selectedKeys={[layout]}
-        onSelectionChange={keys => setLayout([...keys][0])}
+        onSelectionChange={keys => setLayout([...keys][0] as Orientation)}
         disallowEmptySelection
         style={{marginBottom: 8}}>
         <ToggleButton id="vertical">Vertical</ToggleButton>
@@ -246,7 +256,7 @@ let people = [
   {id: 6, name: 'Jane'}
 ];
 
-<ListBox>
+<ListBox aria-label="Grouped items">
   <ListBoxSection>
     <Header>Animals</Header>
     {/*- begin highlight -*/}
@@ -271,16 +281,15 @@ let people = [
 
 ## Asynchronous loading
 
-Data can be loaded asynchronously using any data fetching library. [useAsyncList](https://react-spectrum.adobe.com/react-stately/useAsyncList.html) is a built-in option.
+Data can be loaded asynchronously using any data fetching library. [useAsyncList](useAsyncList.html) is a built-in option.
 
 Several components also support infinite scrolling by rendering a `LoadMoreItem` at the end of the list. These trigger loading of additional pages of items and display a loading spinner. Multiple load more items can be rendered at once, e.g. when loading multiple levels of a tree or sections in a list.
 
 ```tsx render
 "use client";
-import {Collection, ListBoxLoadMoreItem} from 'react-aria-components';
+import {Collection, ListBoxLoadMoreItem, useAsyncList} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string

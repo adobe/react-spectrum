@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocus, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -30,7 +30,7 @@ import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPers
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
@@ -336,7 +336,7 @@ export const ListBoxSection = /*#__PURE__*/ createBranchComponent(SectionNode, L
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
-export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, FocusEvents<HTMLDivElement>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ListBoxItem'
@@ -379,6 +379,8 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
     onHoverEnd: item.props.onHoverEnd
   });
 
+  let {focusProps} = useFocus(props);
+
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
     draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasAction: states.hasAction}, dragState);
@@ -420,9 +422,13 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
   delete DOMProps.id;
   delete DOMProps.onClick;
 
+  if (ElementType === 'a' && optionProps.tabIndex == null) {
+    optionProps.tabIndex = -1;
+  }
+
   return (
     <ElementType
-      {...mergeProps(DOMProps, renderProps, optionProps, hoverProps, draggableItem?.dragProps, droppableItem?.dropProps)}
+      {...mergeProps(DOMProps, renderProps, optionProps, hoverProps, focusProps, draggableItem?.dragProps, droppableItem?.dropProps)}
       ref={ref}
       data-allows-dragging={!!dragState || undefined}
       data-selected={states.isSelected || undefined}

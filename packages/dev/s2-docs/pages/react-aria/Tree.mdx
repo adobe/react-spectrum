@@ -6,8 +6,13 @@ import {Tree as VanillaTree, TreeItem} from 'vanilla-starter/Tree';
 import vanillaDocs from 'docs:vanilla-starter/Tree';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TreeAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['data', 'tree', 'nested', 'hierarchy'];
+export const relatedPages = [
+  {title: 'Testing Tree', url: './Tree/testing'}
+];
+export const description = 'Provides users with a way to navigate nested hierarchical information.';
 
 # Tree
 
@@ -17,7 +22,6 @@ export const tags = ['data', 'tree', 'nested', 'hierarchy'];
   ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode']} initialProps={{selectionMode: 'multiple'}} type="vanilla" files={["starters/docs/src/Tree.tsx", "starters/docs/src/Tree.css"]}
   "use client";
   import {Tree, TreeItem} from 'vanilla-starter/Tree';
-  import {Button} from 'vanilla-starter/Button';
 
   <Tree
     /* PROPS */
@@ -57,7 +61,7 @@ export const tags = ['data', 'tree', 'nested', 'hierarchy'];
 
 ## Content
 
-`Tree` follows the [Collection Components API](collections.html?component=Tree), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+`Tree` follows the [Collection Components API](collections?component=Tree), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
 
 ```tsx render
 "use client";
@@ -107,8 +111,7 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 "use client";
 import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection} from 'react-aria-components';
-import {useAsyncList} from 'react-stately';
+import {Collection, useAsyncList} from 'react-aria-components';
 
 interface Character {
   name: string
@@ -184,7 +187,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<TreeItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html?component=Tree#selection-behavior) for more details.
+Use the `href` prop on a `<TreeItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection?component=Tree#selection-behavior) for more details.
 
 ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -231,7 +234,7 @@ import {Tree} from 'vanilla-starter/Tree';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tree) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tree) for more details.
 
 ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -280,13 +283,12 @@ function Example(props) {
 
 ## Drag and drop
 
-Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Tree) to learn more.
+Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=Tree) to learn more.
 
 ```tsx render
 "use client";
-import {useTreeData} from 'react-stately';
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useDragAndDrop, Collection} from 'react-aria-components';
+import {useDragAndDrop, Collection, useTreeData} from 'react-aria-components';
 
 function Example() {
   ///- begin collapse -///
@@ -308,7 +310,7 @@ function Example() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': tree.getItem(key).value.title})),
+    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -341,9 +343,9 @@ function Example() {
       {function renderItem(item) {
         return (
           <TreeItem title={item.value.title}>
-            <Collection items={item.children}>
+            {item.children && <Collection items={item.children}>
               {renderItem}
-            </Collection>
+            </Collection>}
           </TreeItem>
         )
       }}
@@ -360,7 +362,7 @@ function Example() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
 
-```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button.html', Checkbox: 'Checkbox.html', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{Tree: '#tree', TreeItem: '#treeitem', TreeItemContent: '#treeitemcontent', Button: 'Button', Checkbox: 'Checkbox', TreeLoadMoreItem: '#treeloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <Tree>
   <TreeItem>
     <TreeItemContent>

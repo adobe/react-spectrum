@@ -1,10 +1,14 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['select', 'dropdown'];
+export const relatedPages = [
+  {title: 'Testing Picker', url: './Picker/testing'}
+];
+export const description = 'Displays a collapsible list of options, and allows a user to select one of them.';
 
 # Picker
 
@@ -24,7 +28,7 @@ import {Picker, PickerItem} from '@react-spectrum/s2';
 
 ## Content
 
-`Picker` follows the [Collection Components API](collections.html?component=Picker), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`Picker` follows the [Collection Components API](collections?component=Picker), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
@@ -149,8 +153,7 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {Picker, PickerItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {Picker, PickerItem, useAsyncList} from '@react-spectrum/s2';
 
 interface Character {
   name: string
@@ -188,7 +191,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<PickerItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
+Use the `href` prop on a `<PickerItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
 
 ```tsx render
 "use client";
@@ -241,9 +244,9 @@ function Example(props) {
 
 ## Forms
 
-Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
-```tsx render docs={docs.exports.Picker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
 import {Picker, PickerItem, Form, Button} from '@react-spectrum/s2';
 
@@ -305,10 +308,10 @@ function Example(props) {
 
 ## API
 
-```tsx links={{Picker: '#picker', PickerItem: '#pickeritem', PickerSection: '#pickersection'}}
+```tsx links={{Picker: '#picker', PickerItem: '#pickeritem', PickerSection: '#pickersection', Icon: 'icons', Avatar: 'Avatar'}}
 <Picker>
   <PickerItem>
-    <Icon />
+    <Icon /> or <Avatar />
     <Text slot="label" />
     <Text slot="description" />
   </PickerItem>
