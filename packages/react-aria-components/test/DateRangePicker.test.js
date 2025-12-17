@@ -336,12 +336,18 @@ describe('DateRangePicker', () => {
   it('should support focusableRef', () => {
     let focusableRef = React.createRef();
     let secondFocusableRef = React.createRef();
+    let segmentRef = React.createRef();
     let {getAllByRole} = render(
       <DateRangePicker>
         <Label>Birth date</Label>
         <Group>
           <DateInput slot="start" focusableRef={focusableRef}>
-            {(segment) => <DateSegment segment={segment} />}
+            {(segment) => {
+              if (segment.type === 'month') {
+                return <DateSegment segment={segment} ref={segmentRef} />;
+              }
+              return <DateSegment segment={segment} />;
+            }}
           </DateInput>
           <span aria-hidden="true">–</span>
           <DateInput slot="end" focusableRef={secondFocusableRef}>
@@ -372,8 +378,10 @@ describe('DateRangePicker', () => {
       </DateRangePicker>
     );
 
+    expect(segmentRef.current).toBe(focusableRef.current);
+
     let segments = getAllByRole('spinbutton');
-    expect(focusableRef.current).toBe(segments[0]);
+    expect(segmentRef.current).toBe(segments[0]);
 
     act(() => {
       focusableRef.current.focus();
