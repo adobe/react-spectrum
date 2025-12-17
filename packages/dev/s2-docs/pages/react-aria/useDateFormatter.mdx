@@ -14,9 +14,11 @@ import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/i18n';
 
 export const section = 'Utilities';
-export const description = 'Implementing collections in React Aria';
+export const description = 'Wraps Intl.DateTimeFormat and formats dates for the current locale.';
 
 # useDateFormatter
+
+<PageDescription>{docs.exports.useDateFormatter.description}</PageDescription>
 
 ## Introduction
 
@@ -29,11 +31,11 @@ information on formatting options.
 ## Example
 
 This example displays the current date for two locales: USA, and Russia. Two instances of the `CurrentDate` component are rendered,
-using the [I18nProvider](I18nProvider.html) to specify the locale to display.
+using the [I18nProvider](I18nProvider) to specify the locale to display.
 
 ```tsx render
 'use client';
-import {I18nProvider, useDateFormatter} from '@react-aria/i18n';
+import {I18nProvider, useDateFormatter} from 'react-aria';
 
 function CurrentDate() {
   let formatter = useDateFormatter();

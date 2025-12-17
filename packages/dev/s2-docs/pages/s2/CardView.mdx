@@ -4,6 +4,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['grid', 'gallery'];
+export const description = 'Displays a group of related objects, with support for selection and bulk actions.';
 
 # CardView
 
@@ -115,11 +116,11 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## Content
 
-`CardView` follows the [Collection Components API](collections.html?component=CardView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+`CardView` follows the [Collection Components API](collections?component=CardView), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
 
 ```tsx render
 "use client";
-import {CardView, Collection, SkeletonCollection, AssetCard, CardPreview, Image, Content, Text, ActionMenu, MenuItem, Avatar} from '@react-spectrum/s2';
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ///- begin collapse -///
@@ -399,9 +400,18 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['loadingState']} initialProps={{selectionMode: 'multiple'}} type="s2" wide
 "use client";
-import {CardView, Collection, SkeletonCollection, Card, CardPreview, Image, Content, Text, Avatar} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {CardView, Collection, SkeletonCollection, Card, CardPreview, Image, Content, Text, Avatar, useAsyncList} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+type Item = {
+  id: string;
+  description?: string;
+  alt_description?: string;
+  urls: {regular: string};
+  width: number;
+  height: number;
+  user: {name: string; profile_image: {small: string}};
+};
 
 export default function Example(props) {
   let list = useAsyncList<Item, number | null>({
@@ -428,12 +438,11 @@ export default function Example(props) {
       layout="waterfall"
       ///- begin highlight -///
       loadingState={loadingState}
-      onLoadMore={list.loadMore}
-      ///- end highlight -///
       onLoadMore={props.loadingState ? undefined : list.loadMore}
+      ///- end highlight -///
       styles={style({width: 'full', height: 500})}>
       <Collection items={loadingState === 'loading' ? [] : list.items}>
-        {item => <PhotoCard item={item} />}
+        {item => <PhotoCard item={item} layout={props.layout || 'waterfall'} />}
       </Collection>
       {(loadingState === 'loading' || loadingState === 'loadingMore') && (
         /*- begin highlight -*/
@@ -442,14 +451,15 @@ export default function Example(props) {
           {() => (
             <PhotoCard
               item={{
-                id: Math.random(),
+                id: String(Math.random()),
                 user: {name: 'Placeholder name', profile_image: {small: ''}},
                 urls: {regular: ''},
                 description: 'This is a fake description. Kinda long so it wraps to a new line.',
                 alt_description: '',
                 width: 400,
                 height: 200 + Math.max(0, Math.round(Math.random() * 400))
-              }} />
+              }}
+              layout={props.layout || 'waterfall'} />
           )}
         </SkeletonCollection>
       )}
@@ -475,7 +485,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
         <Content>
           <Text slot="title">{item.description || item.alt_description}</Text>
           <div className={style({display: 'flex', alignItems: 'center', gap: 8, gridArea: 'description'})}>
-            <Avatar src={item.user.profile_image.small} size={size} />
+            <Avatar src={item.user.profile_image.small} size={size === 'S' ? 24 : size === 'M' ? 32 : size === 'L' ? 40 : 32} />
             <Text slot="description">{item.user.name}</Text>
           </div>
         </Content>
@@ -487,7 +497,7 @@ function PhotoCard({item, layout}: {item: Item, layout: string}) {
 
 ### Links
 
-Use the `href` prop on a Card to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection.html) for more details.
+Use the `href` prop on a Card to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior.  See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle']} wide type="s2"
 "use client";
@@ -843,7 +853,7 @@ import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 
 ## Selection and actions
 
-Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each card's `id`) to control the selected cards. Return an [ActionBar](ActionBar.html) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable cards with `isDisabled`. See the [selection guide](selection.html) for details.
+Use `selectionMode` to enable single or multiple selection, and `selectedKeys` (matching each card's `id`) to control the selected cards. Return an [ActionBar](ActionBar) from `renderActionBar` to handle bulk actions, and use `onAction` for row navigation. Disable cards with `isDisabled`. See the [selection guide](selection) for details.
 
 ```tsx render docs={docs.exports.CardView} links={docs.links} props={['selectionMode', 'selectionStyle', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide type="s2"
 "use client";
@@ -953,7 +963,7 @@ function Example(props) {
 
 ## API
 
-```tsx links={{CardView: '#cardview', Card: 'Card.html'}}
+```tsx links={{CardView: '#cardview', Card: 'Card'}}
 <CardView>
   <Card />
   <SkeletonCollection />

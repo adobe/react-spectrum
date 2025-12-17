@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Breadcrumb, Breadcrumbs} from '../src';
+import {Breadcrumb, Breadcrumbs, BreadcrumbsProps} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof Breadcrumbs> = {
@@ -57,24 +57,31 @@ export const Example: Story = {
   )
 };
 
-let items = [
+interface Item {
+  id: string,
+  name: string
+}
+let items: Item[] = [
   {id: 'home', name: 'Home'},
   {id: 'react-aria', name: 'React Aria'},
   {id: 'breadcrumbs', name: 'Breadcrumbs'}
 ];
-export const WithActions: Story = {
-  render: (args: any) => (
-    <Breadcrumbs onAction={action('onAction')} items={items} {...args}>
-      {item => (
-        <Breadcrumb href={item.href}>
-          {item.name}
-        </Breadcrumb>
-      )}
-    </Breadcrumbs>
-  )
+
+const BreadcrumbsExampleDynamic = (args: BreadcrumbsProps<Item>) => (
+  <Breadcrumbs onAction={action('onAction')} items={items} {...args}>
+    {item => (
+      <Breadcrumb>
+        {item.name}
+      </Breadcrumb>
+    )}
+  </Breadcrumbs>
+);
+
+export const WithActions: StoryObj<typeof BreadcrumbsExampleDynamic> = {
+  render: BreadcrumbsExampleDynamic
 };
 
-let manyItems = [
+let manyItems: Item[] = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over'},
   {id: 'Folder 2', name: 'My Documents'},
   {id: 'Folder 3', name: 'Kangaroos jump high'},
@@ -83,9 +90,9 @@ let manyItems = [
   {id: 'Folder 6', name: 'Wattle trees'},
   {id: 'Folder 7', name: 'April 7'}
 ];
-
-export const Many: Story = {
-  render: (args: any) => (
+export type IMany = typeof BreadcrumbsExampleDynamic;
+export const Many: StoryObj<typeof BreadcrumbsExampleDynamic> = {
+  render: (args: BreadcrumbsProps<Item>) => (
     <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
       <Breadcrumbs items={manyItems} {...args}>
         {item => (
@@ -98,7 +105,10 @@ export const Many: Story = {
   )
 };
 
-let manyItemsWithLinks = [
+interface ItemWithLink extends Item {
+  href: string
+}
+let manyItemsWithLinks: ItemWithLink[] = [
   {id: 'Folder 1', name: 'The quick brown fox jumps over', href: '/folder1'},
   {id: 'Folder 2', name: 'My Documents', href: '/folder2'},
   {id: 'Folder 3', name: 'Kangaroos jump high', href: '/folder3'},
@@ -108,16 +118,16 @@ let manyItemsWithLinks = [
   {id: 'Folder 7', name: 'April 7', href: '/folder7'}
 ];
 
-export const ManyWithLinks: Story = {
-  render: (args: any) => (
-    <div style={{width: '400px', resize: 'horizontal', overflow: 'hidden', padding: '4px'}}>
-      <Breadcrumbs items={manyItemsWithLinks} {...args}>
-        {item => (
-          <Breadcrumb href={item.href}>
-            {item.name}
-          </Breadcrumb>
-        )}
-      </Breadcrumbs>
-    </div>
-  )
+const BreadcrumbsExampleDynamicWithLinks = (args: BreadcrumbsProps<ItemWithLink>) => (
+  <Breadcrumbs onAction={action('onAction')} items={manyItemsWithLinks} {...args}>
+    {item => (
+      <Breadcrumb href={item.href}>
+        {item.name}
+      </Breadcrumb>
+    )}
+  </Breadcrumbs>
+);
+
+export const ManyWithLinks: StoryObj<typeof BreadcrumbsExampleDynamicWithLinks> = {
+  render: BreadcrumbsExampleDynamicWithLinks
 };

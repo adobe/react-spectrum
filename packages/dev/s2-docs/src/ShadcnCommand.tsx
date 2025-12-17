@@ -1,5 +1,6 @@
 'use client';
 import CopyButton from './CopyButton';
+import {getBaseUrl} from './pageUtils';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
@@ -19,7 +20,7 @@ export function ShadcnCommand({registryUrl, preRef}: {registryUrl: string, preRe
     setPackageManager(String(value));
   };
 
-  let cmd = `${command} shadcn@latest add ${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`;
+  let cmd = `${command} shadcn@latest add ${getBaseUrl('react-aria')}/registry/${registryUrl}`;
   
   return (
     <div 

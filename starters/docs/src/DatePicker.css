@@ -1,6 +1,8 @@
 @import "./theme.css";
 
 .react-aria-DatePicker {
+  max-width: 100%;
+
   .react-aria-Group {
     display: flex;
     width: 100%;
@@ -9,7 +11,11 @@
   }
 
   .react-aria-DateInput {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     padding-right: var(--spacing-10);
+    overflow-x: auto;
+    overflow-y: clip;
+    scrollbar-width: none;
   }
 }

@@ -14,7 +14,7 @@ export const description = 'How to use the style macro.';
 
 ## Style macro
 
-The `style` macro runs at build time and returns a class name that applies Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.). See the [reference](style-macro.html) for a full list of supported values.
+The `style` macro runs at build time and returns a class name that applies Spectrum 2 design tokens (colors, spacing, sizing, typography, etc.). See the [reference](style-macro) for a full list of supported values.
 
 ```tsx
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -112,7 +112,7 @@ Define conditional values such as media queries, UI states (e.g. hover, press), 
 In the example above, the keys of the nested object now map out the "conditions" that govern the padding of the `div`. This translates to the following:
 
 - If the viewport is larger than `2560px`, the padding is `64px`.
-- Else if the viewport matches the `lg` [breakpoint](style-macro.html#conditions) (`1024px`), the padding is `32px`.
+- Else if the viewport matches the `lg` [breakpoint](style-macro#conditions) (`1024px`), the padding is `32px`.
 - Otherwise, the padding is `8px`.
 
 Conditions are mutually exclusive and ordered. The macro uses CSS cascade layers so the last matching condition wins without specificity issues.
@@ -280,43 +280,7 @@ Follow these best practices:
 - Use a CSS minifier like `lightningcss` to deduplicate common rules (consider in dev for easier debugging).
 - Bundle all CSS for S2 components and style macros into a single CSS bundle rather than code splitting to avoid duplicate rules across chunks.
 
-### Parcel
-
-Parcel supports macros out of the box and optimizes CSS with [Lightning CSS](https://lightningcss.dev). You can bundle all S2 and macro CSS into a single file using [manual shared bundles](https://parceljs.org/features/code-splitting/#manual-shared-bundles).
-
-```js
-// package.json
-{
-  "@parcel/bundler-default": {
-    "manualSharedBundles": [
-      {
-        "name": "s2-styles",
-        "assets": [
-          "**/@react-spectrum/s2/**",
-          // Update this glob as needed to match your source files.
-          "src/**/*.{js,jsx,ts,tsx}"
-        ],
-        "types": ["css"]
-      }
-    ]
-  }
-}
-```
-
-### Webpack
-
-- Use [MiniCssExtractPlugin](https://webpack.js.org/plugins/mini-css-extract-plugin/) to extract styles. Do not use `style-loader`.
-- Use [CssMinimizerWebpackPlugin](https://webpack.js.org/plugins/css-minimizer-webpack-plugin/) with [Lightning CSS](https://lightningcss.dev) to optimize CSS (optionally in development).
-- Use [SplitChunksPlugin](https://webpack.js.org/plugins/split-chunks-plugin/) to bundle all S2 and macro CSS into a single bundle.
-
-See the [webpack example](https://github.com/adobe/react-spectrum/blob/main/examples/s2-webpack-5-example/webpack.config.js) for a full configuration.
-
-### Vite
-
-- Configure `cssMinify` to use [Lightning CSS](https://lightningcss.dev).
-- Configure Rollup to combine all S2 and macro CSS into a single bundle using [`output.manualChunks`](https://rollupjs.org/configuration-options/#output-manualchunks).
-
-See the [Vite example](https://github.com/adobe/react-spectrum/blob/main/examples/s2-vite-project/vite.config.ts) for full configuration options.
+See the [getting started guide](getting-started) to learn how to setup your framework or bundler.
 
 ## CSS Resets
 
@@ -330,7 +294,7 @@ CSS resets are strongly discouraged. Global CSS selectors can unintentionally af
 
 ## Custom components
 
-If you want to build custom components that follow Spectrum styling, you can use the `style` macro with [React Aria Components](../react-aria/index.html).
+If you want to build custom components that follow Spectrum styling, you can use the `style` macro with [React Aria Components](react-aria:).
 
 ```tsx
 import {Checkbox} from 'react-aria-components';
@@ -358,7 +322,7 @@ in a non-atomic format, making it easier to scan.
 the `style` macros for quick prototyping.
 
 - If you are using Cursor, we offer a set of [Cursor rules](https://github.com/adobe/react-spectrum/blob/main/rules/style-macro.mdc) to use when developing with style macros. Additionally,
-we have MCP servers for [React Aria](../react-aria/mcp.html) and [React Spectrum](mcp.html) respectively that interface with the docs.
+we have MCP servers for [React Aria](react-aria:mcp) and [React Spectrum](mcp) respectively that interface with the docs.
 
 ## FAQ
 

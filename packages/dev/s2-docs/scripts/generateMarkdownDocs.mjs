@@ -12,6 +12,33 @@ import remarkStringify from 'remark-stringify';
 import {unified} from 'unified';
 import {visit} from 'unist-util-visit';
 
+const BASE_URL = {
+  dev: {
+    'react-aria': 'http://localhost:1234',
+    's2': 'http://localhost:4321'
+  },
+  stage: {
+    'react-aria': 'https://d5iwopk28bdhl.cloudfront.net',
+    's2': 'https://d1pzu54gtk2aed.cloudfront.net'
+  },
+  prod: {
+    'react-aria': 'https://react-aria.adobe.com',
+    's2': 'https://react-spectrum.adobe.com'
+  }
+};
+
+function getBaseUrl(library) {
+  let env = process.env.DOCS_ENV;
+  let base = env 
+    ? BASE_URL[env][library]
+    : `http://localhost:1234/${library}`;
+  let publicUrl = process.env.PUBLIC_URL;
+  if (publicUrl) {
+    base += publicUrl.replace(/\/$/, '');
+  }
+  return base;
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
 const S2_SRC_ROOT = path.join(REPO_ROOT, 'packages/@react-spectrum/s2/src');
@@ -42,6 +69,34 @@ function cleanTypeText(t) {
   // Remove duplicate type parameters.
   cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
   return cleaned;
+}
+
+/**
+ * Transform relative URLs to use .md extension instead of .html or no extension.
+ * Preserves query params and hash fragments.
+ */
+function transformRelativeUrl(href) {
+  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('#')) {
+    return href;
+  }
+  
+  // Split href into path and query/hash parts
+  const match = href.match(/^([^?#]*)(\?[^#]*)?(#.*)?$/);
+  if (!match) {
+    return href;
+  }
+  
+  let [, pathPart, queryPart = '', hashPart = ''] = match;
+  
+  if (pathPart.endsWith('.html')) {
+    // Replace .html with .md
+    pathPart = pathPart.slice(0, -5) + '.md';
+  } else if (pathPart && !pathPart.match(/\.[a-zA-Z0-9]+$/)) {
+    // Add .md to paths without an extension
+    pathPart = pathPart + '.md';
+  }
+  
+  return pathPart + queryPart + hashPart;
 }
 
 function getIconNames() {
@@ -283,10 +338,10 @@ function extractJSXText(node, file) {
 function resolveComponentPath(componentName, file) {
   let roots = COMPONENT_SRC_ROOTS;
   if (file?.path) {
-    if (file.path.includes(path.join('pages', 'react-aria'))) {
-      roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-    } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
       roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+      roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
     }
   }
 
@@ -395,10 +450,10 @@ function generatePropTable(componentName, file) {
   if (!componentPath) {
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -473,10 +528,10 @@ function generateInterfaceTable(interfaceName, file) {
   if (!ifacePath) {
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -909,61 +964,243 @@ function remarkDocsComponentsToMarkdown() {
           exampleTitles = Array.isArray(parsed) ? parsed : [];
         }
 
-        // Fallback default titles when none were provided.
-        if (exampleTitles.length === 0) {
-          exampleTitles = ['Vanilla CSS', 'Tailwind'];
-        }
-
-        // Children may include whitespace/text nodes – filter to VisualExample elements.
         const visualChildren = (node.children || []).filter(c => c.type === 'mdxJsxFlowElement' && c.name === 'VisualExample');
+        const codeChildren = (node.children || []).filter(c => c.type === 'code');
 
         // Build replacement markdown nodes.
         const newNodes = [];
 
-        visualChildren.forEach((vChild, i) => {
-          const title = exampleTitles[i] || `Example ${i + 1}`;
+        if (visualChildren.length > 0) {
+          if (exampleTitles.length === 0) {
+            exampleTitles = ['Vanilla CSS', 'Tailwind'];
+          }
 
-          // ## {title} example
-          newNodes.push({
-            type: 'heading',
-            depth: 2,
-            children: [{type: 'text', value: `${title} example`}]
+          visualChildren.forEach((vChild, i) => {
+            const title = exampleTitles[i] || `Example ${i + 1}`;
+
+            // ## {title} example
+            newNodes.push({
+              type: 'heading',
+              depth: 2,
+              children: [{type: 'text', value: `${title} example`}]
+            });
+
+            // Extract files attribute from VisualExample
+            const filesAttr = vChild.attributes?.find(a => a.name === 'files');
+            let fileList = [];
+            if (filesAttr) {
+              if (filesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+                const parsed = parseExpression(filesAttr.value.value, file);
+                fileList = Array.isArray(parsed) ? parsed : [];
+              } else if (Array.isArray(filesAttr.value)) {
+                fileList = filesAttr.value;
+              }
+            }
+
+            fileList.forEach(fp => {
+              const absPath = path.join(REPO_ROOT, fp);
+              if (!fs.existsSync(absPath)) {return;}
+              const contents = fs.readFileSync(absPath, 'utf8');
+              const ext = path.extname(fp).slice(1);
+
+              // ### {filename}
+              newNodes.push({
+                type: 'heading',
+                depth: 3,
+                children: [{type: 'text', value: path.basename(fp)}]
+              });
+
+              // ```{lang}\n{contents}\n```
+              newNodes.push({
+                type: 'code',
+                lang: ext || undefined,
+                meta: '',
+                value: contents
+              });
+            });
           });
+        }
 
-          // Extract files attribute from VisualExample
-          const filesAttr = vChild.attributes?.find(a => a.name === 'files');
-          let fileList = [];
-          if (filesAttr) {
-            if (filesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
-              const parsed = parseExpression(filesAttr.value.value, file);
-              fileList = Array.isArray(parsed) ? parsed : [];
-            } else if (Array.isArray(filesAttr.value)) {
-              fileList = filesAttr.value;
+        // Handle code block children (type="vanilla"|"tailwind" and files=[...])
+        if (codeChildren.length > 0) {
+          // Parse metadata from code blocks to extract type and files
+          const parseCodeMeta = (meta) => {
+            if (!meta) {return {};}
+            const result = {};
+            
+            // Extract type
+            const typeMatch = meta.match(/type=["']([^"']+)["']/);
+            if (typeMatch) {
+              result.type = typeMatch[1];
+            }
+            
+            // Extract files={[...]}
+            const filesMatch = meta.match(/files=\{(\[[^\]]+\])\}/);
+            if (filesMatch) {
+              try {
+                result.files = JSON.parse(filesMatch[1]);
+              } catch {
+                const parsed = parseExpression(filesMatch[1], file);
+                if (Array.isArray(parsed)) {
+                  result.files = parsed;
+                }
+              }
+            }
+            
+            return result;
+          };
+
+          const typeToTitle = {
+            'vanilla': 'Vanilla CSS',
+            'tailwind': 'Tailwind'
+          };
+
+          // Check if this is a "component" type ExampleSwitcher (each code block gets its own example title)
+          const typeAttr = node.attributes?.find(a => a.name === 'type');
+          let switcherType = null;
+          if (typeAttr) {
+            if (typeAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+              switcherType = typeAttr.value.value.replace(/['"`]/g, '').trim();
+            } else if (typeof typeAttr.value === 'string') {
+              switcherType = typeAttr.value.trim();
             }
           }
 
-          fileList.forEach(fp => {
-            const absPath = path.join(REPO_ROOT, fp);
-            if (!fs.existsSync(absPath)) {return;}
-            const contents = fs.readFileSync(absPath, 'utf8');
-            const ext = path.extname(fp).slice(1);
+          if (switcherType === 'component' && exampleTitles.length > 0) {
+            // Each code block gets its own heading from the examples array
+            codeChildren.forEach((codeChild, i) => {
+              const title = exampleTitles[i] || `Example ${i + 1}`;
+              const meta = parseCodeMeta(codeChild.meta);
 
-            // ### {filename}
-            newNodes.push({
-              type: 'heading',
-              depth: 3,
-              children: [{type: 'text', value: path.basename(fp)}]
+              // ## {title} example
+              newNodes.push({
+                type: 'heading',
+                depth: 2,
+                children: [{type: 'text', value: `${title} example`}]
+              });
+
+              // Clean up the code value
+              let codeValue = codeChild.value;
+              if (codeValue.startsWith('"use client";\n')) {
+                codeValue = codeValue.slice(14);
+              }
+              // Remove docs rendering-specific comments
+              codeValue = codeValue
+                .split('\n')
+                .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
+                .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
+                .join('\n');
+
+              newNodes.push({
+                type: 'code',
+                lang: codeChild.lang || 'tsx',
+                meta: '',
+                value: codeValue
+              });
+
+              // Add referenced files for this specific example
+              if (meta.files && Array.isArray(meta.files)) {
+                meta.files.forEach(fp => {
+                  const absPath = path.join(REPO_ROOT, fp);
+                  if (!fs.existsSync(absPath)) {return;}
+                  const contents = fs.readFileSync(absPath, 'utf8');
+                  const ext = path.extname(fp).slice(1);
+
+                  // ### {filename}
+                  newNodes.push({
+                    type: 'heading',
+                    depth: 3,
+                    children: [{type: 'text', value: path.basename(fp)}]
+                  });
+
+                  // ```{lang}\n{contents}\n```
+                  newNodes.push({
+                    type: 'code',
+                    lang: ext || undefined,
+                    meta: '',
+                    value: contents
+                  });
+                });
+              }
+            });
+          } else {
+            // Group code blocks by type (vanilla, tailwind, etc.)
+            const codeBlocksByType = new Map();
+            codeChildren.forEach((codeChild) => {
+              const meta = parseCodeMeta(codeChild.meta);
+              const type = meta.type || 'vanilla';
+              if (!codeBlocksByType.has(type)) {
+                codeBlocksByType.set(type, []);
+              }
+              codeBlocksByType.get(type).push({code: codeChild, meta});
             });
 
-            // ```{lang}\n{contents}\n```
-            newNodes.push({
-              type: 'code',
-              lang: ext || undefined,
-              meta: '',
-              value: contents
-            });
-          });
-        });
+            // Process each type group
+            for (const [type, codeBlocks] of codeBlocksByType) {
+              const title = typeToTitle[type] || type.charAt(0).toUpperCase() + type.slice(1);
+
+              // ## {title} example
+              newNodes.push({
+                type: 'heading',
+                depth: 2,
+                children: [{type: 'text', value: `${title} example`}]
+              });
+
+              // Collect all unique files from all code blocks of this type
+              const allFiles = new Set();
+              codeBlocks.forEach(({meta}) => {
+                if (meta.files && Array.isArray(meta.files)) {
+                  meta.files.forEach(f => allFiles.add(f));
+                }
+              });
+
+              // Add the inline example code first
+              codeBlocks.forEach(({code}) => {
+                // Clean up the code value
+                let codeValue = code.value;
+                if (codeValue.startsWith('"use client";\n')) {
+                  codeValue = codeValue.slice(14);
+                }
+                // Remove docs rendering-specific comments
+                codeValue = codeValue
+                  .split('\n')
+                  .filter(l => !/^\s*\/\/\/-\s*(begin|end)/i.test(l))
+                  .map(l => l.replace(/\/\*\s*PROPS\s*\*\//gi, ''))
+                  .join('\n');
+
+                newNodes.push({
+                  type: 'code',
+                  lang: code.lang || 'tsx',
+                  meta: '',
+                  value: codeValue
+                });
+              });
+
+              // Add referenced files
+              allFiles.forEach(fp => {
+                const absPath = path.join(REPO_ROOT, fp);
+                if (!fs.existsSync(absPath)) {return;}
+                const contents = fs.readFileSync(absPath, 'utf8');
+                const ext = path.extname(fp).slice(1);
+
+                // ### {filename}
+                newNodes.push({
+                  type: 'heading',
+                  depth: 3,
+                  children: [{type: 'text', value: path.basename(fp)}]
+                });
+
+                // ```{lang}\n{contents}\n```
+                newNodes.push({
+                  type: 'code',
+                  lang: ext || undefined,
+                  meta: '',
+                  value: contents
+                });
+              });
+            }
+          }
+        }
 
         // Replace ExampleSwitcher node with generated markdown.
         parent.children.splice(index, 1, ...newNodes);
@@ -1113,6 +1350,16 @@ function remarkDocsComponentsToMarkdown() {
           }
         }
 
+        if (href && (href.startsWith('s2:') || href.startsWith('react-aria:'))) {
+          let url = new URL(href);
+          href = getBaseUrl(url.protocol.slice(0, -1)) + '/' + url.pathname;
+        }
+
+        // Convert .html links to .md for relative links
+        if (href && !href.startsWith('http') && !href.startsWith('//') && href.endsWith('.html')) {
+          href = href.replace(/\.html$/, '.md');
+        }
+
         // Check for aria-label attribute first
         const ariaLabelAttr = node.attributes?.find(a => a.name === 'aria-label');
         let ariaLabel = '';
@@ -1143,6 +1390,9 @@ function remarkDocsComponentsToMarkdown() {
 
         const childrenText = extractText(node.children);
         const linkText = ariaLabel || childrenText || href;
+
+        // Transform relative links to use .md extension
+        href = transformRelativeUrl(href);
 
         if (href) {
           const linkNode = {
@@ -1543,6 +1793,11 @@ function remarkDocsComponentsToMarkdown() {
         .join('\n');
     });
 
+    // Transform relative links to use .md extension.
+    visit(tree, 'link', (node) => {
+      node.url = transformRelativeUrl(node.url);
+    });
+
     // Append "Related Types" section if we collected any.
     if (relatedTypes.size > 0) {
       const newNodes = [
@@ -1592,10 +1847,10 @@ function generateClassAPITable(className, file) {
     // Fallback: deep search for class declaration
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -1764,10 +2019,10 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
   if (!componentPath) {
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const matches = glob.sync(roots.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
@@ -1865,10 +2120,10 @@ function generateFunctionOptionsTable(functionName, file) {
     // Fallback deep search similar to other helpers.
     let roots = COMPONENT_SRC_ROOTS;
     if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'internationalized'))) {
+      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
         roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
       }
     }
     const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
@@ -1992,80 +2247,12 @@ function generateLibraryLlmsTxt(lib, files) {
 }
 
 /**
- * Generate root llms.txt file that includes all documentation.
- */
-function generateRootLlmsTxt(docsByLibrary) {
-  let txt = '# React Spectrum Libraries\n\n';
-  txt += '> Complete documentation for React Spectrum libraries including React Spectrum (S2), React Aria, and Internationalized.\n\n';
-
-  // Add root-level documentation
-  if (docsByLibrary['root'].length > 0) {
-    txt += '## Getting Started\n';
-    const sorted = docsByLibrary['root'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  // Add S2 documentation
-  if (docsByLibrary['s2'].length > 0) {
-    txt += '## React Spectrum (S2)\n';
-    const sorted = docsByLibrary['s2'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](s2/${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](s2/${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  // Add React Aria documentation
-  if (docsByLibrary['react-aria'].length > 0) {
-    txt += '## React Aria Components\n';
-    const sorted = docsByLibrary['react-aria'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](react-aria/${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](react-aria/${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  // Add Internationalized documentation
-  if (docsByLibrary['internationalized'].length > 0) {
-    txt += '## Internationalized\n';
-    const sorted = docsByLibrary['internationalized'].sort((a, b) => a.heading.localeCompare(b.heading));
-    for (const doc of sorted) {
-      if (doc.description) {
-        txt += `- [${doc.heading}](internationalized/${doc.path}): ${doc.description}\n`;
-      } else {
-        txt += `- [${doc.heading}](internationalized/${doc.path})\n`;
-      }
-    }
-    txt += '\n';
-  }
-
-  const llmsPath = path.join(DIST_ROOT, 'llms.txt');
-  fs.writeFileSync(llmsPath, txt.trim() + '\n', 'utf8');
-  console.log('Generated', path.relative(REPO_ROOT, llmsPath));
-}
-
-/**
  * Scans the MDX pages in packages/dev/s2-docs/pages and produces a text-based markdown variant of each file.
  * React-specific JSX elements such as <PageDescription> and <PropTable> are replaced with plain markdown equivalents so
  * that the resulting *.md files can be consumed by LLMs.
  */
 async function main() {
-  const mdxFiles = await glob('**/*.mdx', {
+  const mdxFiles = await glob('*/**/*.mdx', {
     cwd: S2_DOCS_PAGES_ROOT,
     absolute: true
   });
@@ -2092,7 +2279,15 @@ async function main() {
         listItemIndent: 'one'
       });
 
-    const markdown = String(await processor.process({value: mdContent, path: filePath}));
+    let markdown = String(await processor.process({value: mdContent, path: filePath}));
+
+    // Convert markdown links ending in .html to .md (relative links only)
+    markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+\.html)\)/g, (match, text, url) => {
+      if (!url.startsWith('http') && !url.startsWith('//')) {
+        return `[${text}](${url.replace(/\.html$/, '.md')})`;
+      }
+      return match;
+    });
 
     const relativePath = path.relative(S2_DOCS_PAGES_ROOT, filePath);
     const outPath = path.join(DIST_ROOT, relativePath).replace(/\.mdx$/, '.md');
@@ -2142,10 +2337,6 @@ async function main() {
   // Generate library-specific llms.txt files
   generateLibraryLlmsTxt('s2', docsByLibrary['s2']);
   generateLibraryLlmsTxt('react-aria', docsByLibrary['react-aria']);
-  generateLibraryLlmsTxt('internationalized', docsByLibrary['internationalized']);
-
-  // Generate root llms.txt that includes all documentation
-  generateRootLlmsTxt(docsByLibrary);
 }
 
 main().catch((err) => {

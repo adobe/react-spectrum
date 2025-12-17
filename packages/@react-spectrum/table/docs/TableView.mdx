@@ -77,13 +77,13 @@ keywords: [table, grid]
 ```
 
 ## Content
-TableView is a complex [collection component](../react-stately/collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells can contain any element, allowing you to have focusable children within the TableView.
+TableView is a complex [collection component](collections.html) that is built up from many child elements including columns, rows, and cells. Columns are defined within a TableHeader element and rows are defined within a TableBody element. Rows contain Cell elements that correspond to each column. Cells can contain any element, allowing you to have focusable children within the TableView.
 
 Basic usage of TableView, seen in the example above, shows the use of a static collection where the contents of the TableView is hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source such as an API, or update over time. Providing the data in this way allows TableView to automatically cache the rendering of each item, which dramatically improves performance.
 
 Columns and rows can be statically defined as children, or generated dynamically using a function based on the data passed to the `columns` or `items` prop respectively. Cells can also be statically defined as children, or generated dynamically based on the columns defined in the TableHeader.
 
-Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
+Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](collections.html#unique-keys) to learn more about keys in dynamic collections.
 
 ```tsx example
 let columns = [
@@ -305,7 +305,7 @@ The example below applies `isRowHeader` to the "First Name" and "Last Name" colu
 TableView supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+This example uses the [useAsyncList](react-aria:useAsyncList.html) hook to handle loading the data.
 See the docs for more information.
 
 ```tsx example
@@ -553,7 +553,7 @@ TableView supports sorting its data when a column header is pressed. To designat
 the `allowsSorting` prop. The TableView accepts a `sortDescriptor` prop that defines the current column key to sort by and the sort direction (ascending/descending).
 When the user presses a sortable column header, the column's key and sort direction is passed into the `onSortChange` callback, allowing you to update the `sortDescriptor` appropriately.
 
-This example performs client side sorting by passing a `sort` function to the [useAsyncList](../react-stately/useAsyncList.html) hook.
+This example performs client side sorting by passing a `sort` function to the [useAsyncList](react-aria:useAsyncList.html) hook.
 See the docs for more information on how to perform server side sorting.
 
 ```tsx example
@@ -1964,7 +1964,7 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-spectrum/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-spectrum-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.
 
 ```ts

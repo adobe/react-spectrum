@@ -57,15 +57,17 @@ export function useSpinButton(
   } = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/spinbutton');
 
-  let prevTouchPosition = useRef<{x: number, y: number} | null>(null);
   let isSpinning = useRef(false);
-  const clearAsync = () => {
+  const clearAsync = useCallback(() => {
     clearTimeout(_async.current);
     isSpinning.current = false;
-  };
+  }, []);
+  const clearAsyncEvent = useEffectEvent(() => {
+    clearAsync();
+  });
 
   useEffect(() => {
-    return () => clearAsync();
+    return () => clearAsyncEvent();
   }, []);
 
   let onKeyDown = (e) => {
@@ -140,21 +142,13 @@ export function useSpinButton(
   }, [ariaTextValue]);
 
   // For touch users, if they move their finger like they're scrolling, we don't want to trigger a spin.
-  let onTouchMove = useCallback((e) => {
-    if (!prevTouchPosition.current) {
-      prevTouchPosition.current = {x: e.touches[0].clientX, y: e.touches[0].clientY};
-    }
-    let touchPosition = {x: e.touches[0].clientX, y: e.touches[0].clientY};
-    // Arbitrary distance that worked in testing, even with slight movements or a slow-ish start to scrolling.
-    if (Math.abs(touchPosition.x - prevTouchPosition.current.x) > 1 || Math.abs(touchPosition.y - prevTouchPosition.current.y) > 1) {
-      clearAsync();
-    }
-    prevTouchPosition.current = touchPosition;
-  }, []);
+  let onPointerCancel = useCallback(() => {
+    clearAsync();
+  }, [clearAsync]);
 
   const onIncrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
-      clearAsync();
+      clearAsyncEvent();
       isSpinning.current = true;
       onIncrement?.();
       // Start spinning after initial delay
@@ -171,7 +165,7 @@ export function useSpinButton(
 
   const onDecrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
-      clearAsync();
+      clearAsyncEvent();
       isSpinning.current = true;
       onDecrement?.();
       // Start spinning after initial delay
@@ -239,7 +233,7 @@ export function useSpinButton(
             clearAsync();
           }
 
-          addGlobalListener(window, 'touchmove', onTouchMove, {capture: true});
+          addGlobalListener(window, 'pointercancel', onPointerCancel, {capture: true});
           isUp.current = false;
           // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
           // the control isn't spinning.
@@ -253,7 +247,6 @@ export function useSpinButton(
         if (e.pointerType === 'touch') {
           isUp.current = true;
         }
-        prevTouchPosition.current = null;
         clearAsync();
         removeAllGlobalListeners();
         setIsIncrementPressed(null);
@@ -264,6 +257,7 @@ export function useSpinButton(
             onIncrement?.();
           }
         }
+        clearAsync();
         isUp.current = false;
         setIsIncrementPressed(null);
       },
@@ -279,7 +273,7 @@ export function useSpinButton(
             clearAsync();
           }
 
-          addGlobalListener(window, 'touchmove', onTouchMove, {capture: true});
+          addGlobalListener(window, 'pointercancel', onPointerCancel, {capture: true});
           isUp.current = false;
           // For touch users, don't trigger a decrement on press start, we'll wait for the press end to trigger it if
           // the control isn't spinning.
@@ -292,7 +286,6 @@ export function useSpinButton(
         if (e.pointerType === 'touch') {
           isUp.current = true;
         }
-        prevTouchPosition.current = null;
         clearAsync();
         removeAllGlobalListeners();
         setIsDecrementPressed(null);
@@ -303,6 +296,7 @@ export function useSpinButton(
             onDecrement?.();
           }
         }
+        clearAsync();
         isUp.current = false;
         setIsDecrementPressed(null);
       },

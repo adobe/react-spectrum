@@ -3,9 +3,11 @@
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Button, Disclosure, DisclosurePanel} from 'react-aria-components';
 import Chevron from '../../../@react-spectrum/s2/ui-icons/Chevron';
+import {CodeClient} from './CodeClient';
 import More from '@react-spectrum/s2/icons/More';
 import {pressScale} from '@react-spectrum/s2';
-import {ReactNode, useMemo, useRef} from 'react';
+import {Token} from './CodeToken';
+import {useMemo, useRef} from 'react';
 
 const trigger = style({
   ...focusRing(),
@@ -16,7 +18,9 @@ const trigger = style({
   borderStyle: 'none',
   whiteSpace: 'inherit',
   fontFamily: 'inherit',
-  fontSize: 'inherit'
+  fontSize: 'inherit',
+  color: 'inherit',
+  disableTapHighlight: true
 });
 
 const chevronStyles = style({
@@ -51,26 +55,26 @@ const more = style({
   }
 });
 
-export function CodeFold({children}) {
+export function CodeFold({tokens}) {
   let ref = useRef(null);
   let [firstLine, collapsed, lastLine] = useMemo(() => {
-    let firstLine: ReactNode[] = [];
-    let collapsed: ReactNode[] = [];
-    let lastLine: ReactNode[] = [];
+    let firstLine: Token[] = [];
+    let collapsed: Token[] = [];
+    let lastLine: Token[] = [];
 
     // Iterate forward to find the first newline.
-    for (let [i, child] of children.entries()) {
+    for (let [i, child] of tokens.entries()) {
       if (typeof child === 'string') {
         let index = child.indexOf('\n');
         if (index === 0) {
-          collapsed = children.slice(i);
+          collapsed = tokens.slice(i);
           break;
         } else if (index > 0) {
           firstLine.push(child.slice(0, index));
           if (index < child.length) {
             collapsed.push(child.slice(index));
           }
-          collapsed.push(...children.slice(i + 1));
+          collapsed.push(...tokens.slice(i + 1));
           break;
         }
       }
@@ -89,6 +93,7 @@ export function CodeFold({children}) {
         }
         let index = c.lastIndexOf('\n');
         if (index === 0) {
+          lastLine.unshift(c);
           break;
         } else if (index > 0) {
           lastLine.unshift(c.slice(index));
@@ -108,7 +113,7 @@ export function CodeFold({children}) {
     }
 
     return [firstLine, collapsed, lastLine];
-  }, [children]);
+  }, [tokens]);
 
   return (
     <Disclosure>
@@ -118,12 +123,15 @@ export function CodeFold({children}) {
           className={trigger}>
           {({isHovered, isPressed, isFocusVisible}) => (<>
             <Chevron size="S" aria-hidden className={chevronStyles({isExpanded, isHovered, isPressed, isFocusVisible})} />
-            {firstLine}{!isExpanded 
-              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span>{lastLine}</> 
+            <CodeClient tokens={firstLine} />
+            {!isExpanded 
+              ? <><span ref={ref} style={pressScale(ref)({isPressed})} className={more({isHovered, isPressed, isFocusVisible})}><More UNSAFE_style={{width: 14}} /></span><span data-no-copy><CodeClient tokens={lastLine} /></span></> 
               : null}
           </>)}
         </Button>
-        <DisclosurePanel>{collapsed}</DisclosurePanel>
+        <DisclosurePanel>
+          <CodeClient tokens={collapsed} />
+        </DisclosurePanel>
       </>)}
     </Disclosure>
   );

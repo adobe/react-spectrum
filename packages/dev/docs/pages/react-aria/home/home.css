@@ -14,33 +14,35 @@
   @apply outline outline-0 outline-blue-600 dark:outline-blue-500 focus-visible:outline-2;
 }
 
-body {
+.home body {
   background: var(--page-bg);
   color-scheme: dark light;
   @apply [--page-bg:var(--color-zinc-50)] dark:[--page-bg:var(--color-zinc-900)];
 }
 
-.header-background {
-  @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
-  background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
-    radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
-    conic-gradient(from 30deg at 50% 60%,
-      oklch(var(--l) var(--c) 220),
-      oklch(min(var(--l), 86%) var(--c) 260),
-      oklch(var(--l) var(--c) 300),
-      oklch(var(--l) var(--c) 340),
-      oklch(var(--l) var(--c) 0),
-      oklch(var(--l) var(--c) 40),
-      oklch(var(--l) var(--c) 60),
-      oklch(max(var(--l), 44%) var(--c) 100),
-      oklch(max(var(--l), 38%) var(--c) 140),
-      oklch(var(--l) var(--c) 180),
-      oklch(var(--l) var(--c) 220)
-    );
-  background-repeat: no-repeat;
+.home .header-background {
+  --pink: light-dark(oklch(from #DA8DE9 calc(l * 1.25) c h), oklch(from #BF67D0 calc(l * 0.9) c h));
+  --orange: light-dark(#FACA85, oklch(from #EDB35F calc(l * 0.82) c h));
+  --purple: light-dark(#EDE8FF, #6D33F7);
+
+  background:
+    linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
+    radial-gradient(50% 22% at 25% 72%, var(--pink), transparent),
+    radial-gradient(50% 22% at 62% 75%, var(--orange), transparent),
+    radial-gradient(150% 30% at 50% 70%, var(--purple), transparent),
+    linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
+
+  @media (width < 768px) {
+    background:
+      linear-gradient(to bottom, transparent 0% 87%, var(--page-bg)),
+      radial-gradient(100% 10% at 45% 71%, var(--pink), transparent),
+      radial-gradient(100% 10% at 55% 84%, var(--orange), transparent),
+      radial-gradient(150% 30% at 50% 70%, var(--purple), transparent),
+      linear-gradient(to bottom, transparent, light-dark(#EDE8FF, transparent) 60%, transparent);
+  }
 }
 
-main > section > h2 {
+.home main > section > h2 {
   @apply text-4xl md:text-5xl font-semibold m-0 mb-4 pb-2 text-transparent;
 
   + p {
@@ -49,19 +51,19 @@ main > section > h2 {
   }
 }
 
-pre {
+.home pre {
   margin: 0;
 }
 
-.no-scrollbar::-webkit-scrollbar {
+.home .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-.no-scrollbar {
+.home .no-scrollbar {
   scrollbar-width: none;
 }
 
-:root {
+.home {
   --hljs-color: theme(colors.gray.800);
   --hljs-background: transparent;
   --hljs-keyword-color: theme(colors.fuchsia.700);
@@ -79,7 +81,7 @@ pre {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  .home {
     --hljs-color: theme(colors.gray.300);
     --hljs-keyword-color: theme(colors.fuchsia.300);
     --hljs-section-color: theme(colors.red.400);
@@ -95,38 +97,41 @@ pre {
   }
 }
 
-pre .source {
-  @apply p-5 text-xs sm:text-sm min-h-[250px] h-full min-w-fit;
+.home pre {
   font-family: source-code-pro, 'Source Code Pro', Monaco, monospace;
 }
 
-pre.large {
+.home pre .source {
+  @apply p-5 text-xs sm:text-sm min-h-[250px] h-full min-w-fit;
+}
+
+.home pre.large {
   @apply hidden lg:block;
 }
 
-pre.medium {
+.home pre.medium {
   @apply hidden sm:block lg:hidden;
 }
 
-pre.small {
+.home pre.small {
   @apply sm:hidden
 }
 
-.card-shadow {
+.home .card-shadow {
   box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
   outline: 1px solid transparent; /* WHCM */
   @apply dark:border dark:border-zinc-200/10 dark:bg-clip-padding;
 }
 
-.card-shadow-hover:hover {
+.home .card-shadow-hover:hover {
   box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 8px rgb(0 0 0 / 6%), 0 4px 16px 0 rgba(0 0 0 / 10%);
 }
 
-.card-shadow-hover:focus-visible {
+.home .card-shadow-hover:focus-visible {
   @apply focus-ring;
 }
 
-.edge-mask {
+.home .edge-mask {
   mask-image: linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent);
 }
 
@@ -258,12 +263,12 @@ pre.small {
   }
 }
 
-.iphone-frame {
+.home .iphone-frame {
   background-image: url(../../assets/iphone-frame.webp);
   background-size: contain;
 }
 
-.iphone-mask {
+.home .iphone-mask {
   mask-image: url(../../assets/iphone-mask.webp), linear-gradient(#fff 0 0);
   mask-size: contain;
   mask-composite: exclude;
@@ -297,12 +302,12 @@ pre.small {
   }
 }
 
-.cross-fade {
+.home .cross-fade {
   animation: cross-fade 5s infinite;
   mix-blend-mode: plus-lighter;
 }
 
-.highlight-tags {
+.home .highlight-tags {
   .tag:nth-child(1 of .tag),
   .tag:nth-child(n+4 of .tag):nth-child(-n+8 of .tag),
   .tag:nth-last-child(1 of .tag) {
@@ -320,11 +325,11 @@ pre.small {
   }
 }
 
-.code-mask {
+.home .code-mask {
   mask: linear-gradient(to bottom, white 0% 70%, transparent);
 }
 
-.cyan-gradient-background {
+.home .cyan-gradient-background {
   --a: oklch(90% 0.05 200);
   --a-shape: ellipse 30% 23% at 30% 56%;
   --b: oklch(94% 0.09 175);
@@ -337,7 +342,7 @@ pre.small {
 }
 
 @media (width < 768px) {
-  .cyan-gradient-background {
+  .home .cyan-gradient-background {
     --a-shape: circle 250px at 26% 65%;
     --b-shape: circle 250px at 73% 64%;
     --c-shape: circle 250px at 50% 70%;
@@ -345,14 +350,14 @@ pre.small {
 }
 
 @media (prefers-color-scheme: dark) {
-  .cyan-gradient-background {
+  .home .cyan-gradient-background {
     --a: oklch(25% 0.1 200);
     --b: oklch(27% 0.1 175);
     --c: oklch(26% 0.08 218);
   }
 }
 
-.blue-gradient-background {
+.home .blue-gradient-background {
   --a: oklch(94% 0.08 250);
   --b: oklch(94% 0.12 275);
   --c: oklch(91% 0.15 290);
@@ -362,32 +367,32 @@ pre.small {
 }
 
 @media (prefers-color-scheme: dark) {
-  .blue-gradient-background {
+  .home .blue-gradient-background {
     --a: oklch(25% 0.08 250);
     --b: oklch(25% 0.07 275);
     --c: oklch(28% 0.1 280);
   }
 }
 
-.orange-gradient-background {
+.home .orange-gradient-background {
   --color: oklch(96% 0.1 75);
   --shape: ellipse 50% 35% at 50% 58%;
   background: radial-gradient(var(--shape), var(--color), transparent);
 }
 
 @media (width < 1080px) {
-  .orange-gradient-background {
+  .home .orange-gradient-background {
     --shape: ellipse 60% 40% at 50% 63%;
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  .orange-gradient-background {
+  .home .orange-gradient-background {
     --color: oklch(27% 0.09 71);
   }
 }
 
-.red-gradient-background {
+.home .red-gradient-background {
   --a: oklch(96% 0.1 350);
   --a-shape: ellipse 30% 30% at 29% 54%;
   --b: oklch(96% 0.11 6);
@@ -400,7 +405,7 @@ pre.small {
 }
 
 @media (width < 768px) {
-  .red-gradient-background {
+  .home .red-gradient-background {
     --a-shape: circle 300px at 20% 72%;
     --b-shape: circle 300px at 50% 72%;
     --c-shape: circle 300px at 80% 72%;
@@ -408,14 +413,14 @@ pre.small {
 }
 
 @media (prefers-color-scheme: dark) {
-  .red-gradient-background {
+  .home .red-gradient-background {
     --a: oklch(27% 0.11 350);
     --b: oklch(26% 0.11 6);
     --c: oklch(26% 0.1 20);
   }
 }
 
-.pink-gradient-background {
+.home .pink-gradient-background {
   --a: oklch(92% 0.11 300);
   --a-shape: ellipse 30% 30% at 29% 57%;
   --b: oklch(96% 0.11 320);
@@ -428,7 +433,7 @@ pre.small {
 }
 
 @media (width < 768px) {
-  .pink-gradient-background {
+  .home .pink-gradient-background {
     --a-shape: circle 400px at 50% 40%;
     --b-shape: circle 400px at 50% 60%;
     --c-shape: circle 400px at 50% 80%;
@@ -436,7 +441,7 @@ pre.small {
 }
 
 @media (prefers-color-scheme: dark) {
-  .pink-gradient-background {
+  .home .pink-gradient-background {
     --a: oklch(30% 0.11 300);
     --b: oklch(30% 0.11 320);
     --c: oklch(27% 0.1 340);
@@ -444,7 +449,7 @@ pre.small {
 }
 
 
-.green-gradient-background {
+.home .green-gradient-background {
   --a: oklch(96% 0.1 120);
   --a-shape: ellipse 30% 30% at 29% 54%;
   --b: oklch(91% 0.12 140);
@@ -457,7 +462,7 @@ pre.small {
 }
 
 @media (width < 768px) {
-  .green-gradient-background {
+  .home .green-gradient-background {
     --a-shape: circle 400px at 20% 63%;
     --b-shape: circle 400px at 50% 63%;
     --c-shape: circle 400px at 80% 63%;
@@ -465,7 +470,7 @@ pre.small {
 }
 
 @media (prefers-color-scheme: dark) {
-  .green-gradient-background {
+  .home .green-gradient-background {
     --a: oklch(28% 0.1 130);
     --b: oklch(28% 0.12 145);
     --c: oklch(26% 0.06 150);

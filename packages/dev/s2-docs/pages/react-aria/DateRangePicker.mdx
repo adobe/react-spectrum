@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
 
 export const tags = ['calendar', 'input'];
+export const relatedPages = [{'title': 'useDateRangePicker', 'url': 'DateRangePicker/useDateRangePicker.html'}];
+export const description = 'Combines two DateFields and a RangeCalendar popover to allow users to enter or select a date range.';
 
 # DateRangePicker
 
@@ -30,27 +32,27 @@ export const tags = ['calendar', 'input'];
     props={['label', 'granularity', 'isDisabled']}
     initialProps={{label: 'Date range'}}
     type="tailwind"
-    files={["starters/tailwind/src/DateRangePicker.tsx", "starters/tailwind/src/DateField.tsx",  "starters/tailwind/src/index.css"]} />
+    files={["starters/tailwind/src/DateRangePicker.tsx"]} />
 </ExampleSwitcher>
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
-import {parseDate, getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from 'react-aria';
+import {parseDate, getLocalTimeZone, type CalendarDate} from '@internationalized/date';
+import {useDateFormatter, type RangeValue} from 'react-aria';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {useState} from 'react';
 
 function Example() {
-  let [range, setRange] = useState({
+  let [range, setRange] = useState<RangeValue<CalendarDate> | null>({
     start: parseDate('2025-02-03'),
     end: parseDate('2025-02-12')
   });
   let formatter = useDateFormatter({ dateStyle: 'long' });
-  
+
   return (
     <>
       <DateRangePicker
@@ -58,10 +60,10 @@ function Example() {
         value={range}
         onChange={setRange} />
         {/*- end highlight -*/}
-      <p>Selected range: {formatter.formatRange(
+      <p>Selected range: {range ? formatter.formatRange(
         range.start.toDate(getLocalTimeZone()),
         range.end.toDate(getLocalTimeZone())
-      )}</p>
+      ) : '--'}</p>
     </>
   );
 }
@@ -105,12 +107,12 @@ import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 
 ## Forms
 
-Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. The `isDateUnavailable` callback prevents certain dates from being selected. Use `allowsNonContiguousRanges` to allow selecting ranges containing unavailable dates. See the Forms guide to learn more.
+Use the `name` prop to submit the selected date to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string. Set the `isRequired`, `minValue`, or `maxValue` props to validate the value, or implement custom client or server-side validation. The `isDateUnavailable` callback prevents certain dates from being selected. Use `allowsNonContiguousRanges` to allow selecting ranges containing unavailable dates. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={vanillaDocs.exports.DateRangePicker} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {isWeekend, today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
+import {useLocale} from 'react-aria-components';
 import {DateRangePicker} from 'vanilla-starter/DateRangePicker';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'vanilla-starter/Form';;
@@ -153,7 +155,7 @@ function Example(props) {
 
 <Anatomy />
 
-```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group.html', DateInput: 'DateField.html#dateinput', Button: 'Button.html', Popover: 'Popover.html', Dialog: 'Dialog.html', RangeCalendar: 'RangeCalendar.html'}}
+```tsx links={{DateRangePicker: '#daterangepicker', Group: 'Group', DateInput: 'DateField#dateinput', Button: 'Button', Popover: 'Popover', RangeCalendar: 'RangeCalendar'}}
 <DateRangePicker>
   <Label />
   <Group>
@@ -164,9 +166,7 @@ function Example(props) {
   <Text slot="description" />
   <FieldError />
   <Popover>
-    <Dialog>
-      <RangeCalendar />
-    </Dialog>
+    <RangeCalendar />
   </Popover>
 </DateRangePicker>
 ```
