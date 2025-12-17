@@ -12,12 +12,18 @@ import {getColorChannels, parseColor} from 'react-stately';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
-import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, Suspense, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, createElement, Fragment, isValidElement, lazy, ReactNode, Ref, Suspense, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
+// eslint-disable-next-line
+import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 
 export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
+
+// Create icon map for use in Output component
+const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
+const iconMap = Object.fromEntries(iconList.map(item => [item.id, item.icon]));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -104,6 +110,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
     searchParams.set('exampleType', String(exampleType));
   }
 
+  console.log('props', props);
   for (let prop in props) {
     let value = props[prop];
     if (
@@ -111,6 +118,7 @@ export function VisualExampleClient({component, name, importSource, controls, ch
       controls[prop] != null &&
       (controls[prop].default == null || value !== controls[prop].default)
     ) {
+      console.log('setting search param', prop, value);
       searchParams.set(prop, JSON.stringify(value));
     }
   }
@@ -132,10 +140,17 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
 
   if (!isValidElement(component)) {
     let children = props.children;
-    if (children?.iconJSX || children?.avatar || children?.badge) {
+    if (children?.icon || children?.avatar || children?.badge) {
+      let iconElement: ReactNode | null = null;
+      if (children.avatar) {
+        iconElement = <Avatar src="https://i.imgur.com/xIe7Wlb.png" />;
+      } else if (children.icon && iconMap[children.icon]) {
+        iconElement = createElement(iconMap[children.icon]);
+      }
+
       children = (
         <>
-          {children.avatar ? <Avatar src="https://i.imgur.com/xIe7Wlb.png" /> : children.iconJSX}
+          {iconElement}
           {children.text && <Text>{children.text}</Text>}
           {children.badge && <NotificationBadge value={12} />}
         </>

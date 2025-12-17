@@ -10,7 +10,6 @@ import {PressResponder} from '@react-aria/interactions';
 import {useGlobalListeners} from '@react-aria/utils';
 
 const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
-const iconMap = Object.fromEntries(iconList.map(item => [item.id, item.icon]));
 
 const itemStyle = style({
   ...focusRing(),
@@ -33,7 +32,7 @@ const itemStyle = style({
   justifyContent: 'center'
 });
 
-type IconValue = string | {text?: string, icon?: string | null, iconJSX?: ReactNode} | null;
+type IconValue = string | {text?: string, icon?: string | null} | null;
 interface IconPickerProps {
   value: IconValue,
   onChange: (value: IconValue) => void,
@@ -64,12 +63,12 @@ export function IconPicker({value, onChange, label, contextualHelp}: IconPickerP
   return (
     <Select
       aria-label="Icon"
-      selectedKey={valueObject?.icon ?? null}
-      onSelectionChange={icon => {
+      value={valueObject?.icon ?? null}
+      onChange={icon => {
         if (!icon || icon === valueObject?.icon) {
-          onChange({...valueObject, icon: null, iconJSX: null});
+          onChange({...valueObject, icon: null});
         } else if (icon) {
-          onChange({...valueObject, icon: icon as string, iconJSX: createElement(iconMap[icon])});
+          onChange({...valueObject, icon: icon as string});
         }
       }}
       className={style({display: 'flex', flexDirection: 'column', gap: 2, width: 'fit'})}>
