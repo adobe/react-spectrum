@@ -13,6 +13,7 @@ import docs from 'docs:@react-aria/utils';
 import {FunctionAPI} from '../../src/FunctionAPI';
 
 export const section = 'Utilities';
+export const description = 'Converts a callback ref or object ref to an object ref.';
 
 # useObjectRef
 
@@ -28,9 +29,7 @@ callback ref or object ref was passed in. This is useful for passing refs to Rea
 ```tsx render
 'use client';
 import React from 'react';
-import {useObjectRef} from '@react-aria/utils';
-import {useButton} from '@react-aria/button';
-import {AriaButtonProps} from '@react-types/button';
+import {useObjectRef, useButton, AriaButtonProps} from 'react-aria';
 
 let Button = React.forwardRef((props: AriaButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
   let objRef = useObjectRef(ref);

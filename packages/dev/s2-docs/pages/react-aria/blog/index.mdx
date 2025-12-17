@@ -8,7 +8,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
-import {BlogList} from '../../../src/BlogList';
+import {PostList} from '../../../src/PostList';
 
 export default Layout;
 
@@ -16,9 +16,11 @@ export const hideNav = true;
 export const section = 'Blog';
 export const title = 'Blog';
 export const hideFromSearch = true;
+export const description = 'Blog posts from the React Aria team.';
 export const tags = ['blog', 'articles', 'posts'];
+export const isPostList = true;
 
 # Blog
 
-<BlogList pages={props.pages.filter(page => page.name.startsWith('react-aria/blog/') && !page.name.endsWith('index.html')) ?? []} />
+<PostList currentPage={props.currentPage} pages={props.pages.filter(page => page.name.startsWith('react-aria/blog/') && !page.name.endsWith('index')) ?? []} />
 

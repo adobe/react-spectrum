@@ -11,8 +11,10 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 import docs from 'docs:@react-aria/overlays';
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const section = 'Utilities';
+export const description = 'Allows specifying the container element where overlays like modals and popovers are rendered.';
 
 # PortalProvider
 
@@ -25,26 +27,27 @@ Modals, Popovers, Toasts, and Tooltips will portal their overlay element to. Thi
 your app is already portalling other elements to a location other than the `document.body` and thus requires
 your React Aria components to send their overlays to the same container.
 
-Please note that `UNSAFE_PortalProvider` is considered `UNSAFE` because it is an escape hatch, and there are
-many places that an application could portal to. Not all of them will work, either with styling, accessibility,
+<InlineAlert variant="notice">
+  <Heading>Safety</Heading>
+  <Content>`UNSAFE_PortalProvider` is considered `UNSAFE`. Some portal locations may not work with styling, accessibility,
 or for a variety of other reasons. Typically, it is best to portal to the root of the entire application, e.g. the `body` element,
-outside of any possible overflow or stacking contexts. We envision `UNSAFE_PortalProvider` being used to group all of the portalled
-elements into a single container at the root of the app or to control the order of children of the `body` element, but you may have use cases
-that need to do otherwise.
+outside any possible overflow or stacking contexts. `UNSAFE_PortalProvider` can be used to group all of the portalled
+elements into a single container at the root of the app or to control the order of children of the `body` element.</Content>
+</InlineAlert>
 
 ## Example
 
 The example below shows how you can use `UNSAFE_PortalProvider` to portal your Toasts to an arbitrary container. Note that
-the Toast in this example is taken directly from the [React Aria Components Toast documentation](Toast.html#example), please visit that page for
+the Toast in this example is taken directly from the [React Aria Components Toast documentation](Toast), please visit that page for
 a detailed explanation of its implementation.
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/MyToastRegion.tsx"]}
 'use client';
 import React from 'react';
 import {Button} from 'vanilla-starter/Button';
-import {MyToastRegion} from './MyToastRegion.tsx'
+import {MyToastRegion} from './MyToastRegion'
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
-import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
+import {UNSTABLE_ToastQueue as ToastQueue} from 'react-aria-components';
 
 // Define the type for your toast content.
 interface MyToastContent {

@@ -10,11 +10,11 @@
     "@babel/parser": "^7.24.0",
     "@babel/traverse": "^7.24.0",
     "@babel/types": "^7.24.0",
-    "@parcel/plugin": "^2.16.1",
+    "@parcel/plugin": "^2.16.3",
     "doctrine": "^3.0.0"
   },
   "devDependencies": {
-    "@parcel/core": "^2.16.1",
-    "@parcel/fs": "^2.16.1"
+    "@parcel/core": "^2.16.3",
+    "@parcel/fs": "^2.16.3"
   }
 }

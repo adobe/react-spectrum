@@ -19,11 +19,10 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 import React from 'react';
-import {Byline} from '../../../src/BlogList';
 
 export const hideNav = true;
 export const tags = ['combobox', 'accessibility', 'mobile', 'react spectrum', 'react', 'spectrum', 'interactions', 'touch'];
-export const description = 'After many months of research, development, and testing, we\'re excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook are now available! In this post we\'ll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox.';
+export const description = 'After many months of research, development, and testing, we\'re excited to announce that the React Spectrum [ComboBox](s2:ComboBox) component and React Aria [useComboBox](../ComboBox/useComboBox.html) hook are now available! In this post we\'ll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox.';
 export const date = '2021-07-13';
 export const author = 'Daniel Lu';
 export const authorLink = 'https://github.com/LFDanLu';
@@ -31,16 +30,15 @@ export const section = 'Blog';
 export const isSubpage = true;
 
 # Creating an accessible autocomplete experience
-<Byline author={author} authorLink={authorLink} date={date} />
 
-After many months of research, development, and extensive testing across browsers, devices, and assistive technology, we're excited to announce that the React Spectrum [ComboBox](../../s2/ComboBox.html) component and React Aria [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook are now available! We've focused on the following areas to help you build quality autocomplete experiences.
+After many months of research, development, and extensive testing across browsers, devices, and assistive technology, we're excited to announce that the React Spectrum [ComboBox](s2:ComboBox) component and React Aria [useComboBox](../ComboBox/useComboBox.html) hook are now available! We've focused on the following areas to help you build quality autocomplete experiences.
 
 - **Accessibility** — Our ComboBox has been tested with screen readers across desktop and mobile devices, and with many different input methods including mouse, touch, and keyboard. We encountered many screen reader differences, and worked hard to ensure announcements are clear and consistent.
 - **Mobile** — On small screens, the React Spectrum ComboBox is automatically displayed in a tray, which improves the user experience by giving them a larger area to scroll. We also optimized our experience for touch screen interactions and on screen keyboards.
 - **Asynchronous loading** — Autocomplete suggestions can be loaded asynchronously, and large lists can be loaded on demand through infinite scrolling.
 - **Customizability** — React Aria hooks allow full control over the rendering and styling of your ComboBox component, while letting us take care of the behavioral complexities for you. Use our default filter or you can provide custom filtering for complete control.
 
-<video src={comboboxVideoUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '40px auto'}} />
+<video src={comboboxVideoUrl} loop autoPlay muted playsInline style={{maxWidth: 'min(100%, 1920px)', display: 'block', margin: '40px auto'}} />
 
 ## Building a ComboBox
 
@@ -72,7 +70,7 @@ Luckily for us, iOS 13 added support for the [VisualViewport](https://developer.
 when the onscreen keyboard was opened or dismissed by listening to the VisualViewport's `resize` event. Leveraging these two allowed us to create a tray that properly adjusts to the presence of iOS onscreen keyboard. Check out the video below
 to see how the ComboBox tray worked before and after we switched to the VisualViewport API. If you'd like to track the visual viewport size in your own app, you can use the [useViewportSize](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/utils/src/useViewportSize.ts) hook available in the `@react-aria/utils` package.
 
-<video src={comboboxVisualViewportUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
+<video src={comboboxVisualViewportUrl} loop autoPlay muted playsInline style={{maxWidth: 'min(80%, 350px)', display: 'block', margin: '20px auto'}} />
 
 ### Page Scrolling
 
@@ -81,7 +79,7 @@ now that our ComboBox tray sizes itself to fit in the visual viewport, users cou
 or root element of the document. This preserves the user's ability to scroll through the options in the tray but blocks any attempt to scroll the page itself until the tray is closed. The video below
 illustrates the difference in scrolling behavior before and after our fix. If you are building your own overlays and would like to prevent this kind of document scrolling behavior, check out the [usePreventScroll](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/overlays/src/usePreventScroll.ts) hook in the `react-aria/overlays` package.
 
-<video src={comboboxScrollingUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
+<video src={comboboxScrollingUrl} loop autoPlay muted playsInline style={{maxWidth: 'min(80%, 350px)', display: 'block', margin: '20px auto'}} />
 
 ## Accessibility
 
@@ -140,11 +138,11 @@ Special care was taken such that the messages themselves only contained relevant
 When the user then moves to a different option in the same section, only the newly focused item name is announced. Similarly, the total option count is only announced when number of options available in the listbox changes. Since many of these messages were added to fill in gaps in VoiceOver's announcement,
 we only trigger the `LiveAnnouncer` on Apple devices to avoid announcement overlap on other screen readers.
 
-If you are interested in using this `LiveAnnouncer` yourself, check out [LiveAnnouncer](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/live-announcer/src/LiveAnnouncer.tsx) in `@react-aria/live-announcer`. Otherwise, the [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
+If you are interested in using this `LiveAnnouncer` yourself, check out [LiveAnnouncer](https://github.com/adobe/react-spectrum/blob/main/packages/@react-aria/live-announcer/src/LiveAnnouncer.tsx) in `@react-aria/live-announcer`. Otherwise, the [useComboBox](../ComboBox/useComboBox.html) hook provides you with all of the custom messaging out of the box. See the video below for a sneak peek!
 
-<video src={comboboxAccessibilityUrl} loop autoPlay muted style={{width: '100%', display: 'block', margin: '20px auto'}} />
+<video src={comboboxAccessibilityUrl} controls playsInline aria-label="Demo of VoiceOver announcement in ComboBox" style={{maxWidth: 'min(100%, 700px)', display: 'block', margin: '20px auto'}} />
 
 ## Conclusion
 
-When we first set off to build ComboBox, we had no idea of the complexity that awaited us. If you're building your own combo box component for your design system, I'd recommend checking out the [useComboBox](https://react-spectrum.adobe.com/react-aria/useComboBox.html) hook which handles all of this complexity and has been tested across a wide variety of devices, browsers, and assistive technology combinations.
+When we first set off to build ComboBox, we had no idea of the complexity that awaited us. If you're building your own combo box component for your design system, I'd recommend checking out the [useComboBox](../ComboBox/useComboBox.html) hook which handles all of this complexity and has been tested across a wide variety of devices, browsers, and assistive technology combinations.
 It really just goes to show how important cross browser and device testing is when building a component.

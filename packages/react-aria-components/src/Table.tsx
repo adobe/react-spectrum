@@ -1314,6 +1314,11 @@ export interface CellRenderProps {
    */
   isHovered: boolean,
   /**
+   * Whether the parent row is currently selected.
+   * @selector [data-selected]
+   */
+  isSelected: boolean,
+  /**
    * The unique id of the cell.
    **/
   id?: Key
@@ -1363,6 +1368,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
+  let isSelected = cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
 
   let renderProps = useRenderProps({
     ...props,
@@ -1373,6 +1379,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       isFocusVisible,
       isPressed,
       isHovered,
+      isSelected,
       id: cell.key
     }
   });
@@ -1386,7 +1393,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       ref={ref as any}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={isPressed || undefined}>
+      data-pressed={isPressed || undefined}
+      data-selected={isSelected || undefined}>
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
         {renderProps.children}
       </CollectionRendererContext.Provider>

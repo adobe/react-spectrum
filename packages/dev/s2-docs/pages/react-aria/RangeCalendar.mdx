@@ -9,7 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
 
 export const tags = ['calendar'];
-export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'https://react-spectrum.adobe.com/react-aria/useRangeCalendar.html'}];
+export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'RangeCalendar/useRangeCalendar.html'}];
+export const description = 'Displays one or more date grids and allows users to select a contiguous range of dates.';
 
 # RangeCalendar
 
@@ -34,7 +35,7 @@ export const relatedPages = [{'title': 'useRangeCalendar', 'url': 'https://react
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/index.html) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -88,7 +89,7 @@ import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 
 ### Custom calendar systems
 
-`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](internationalized/date/Calendar#custom-calendars) for an example implementation.
 
 ```tsx render
 "use client";
@@ -160,12 +161,10 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={vanillaDocs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
 import {RangeCalendar} from 'vanilla-starter/RangeCalendar';
 import {useState} from 'react';
 
 function Example(props) {
-  let {locale} = useLocale();
   let now = today(getLocalTimeZone());
   let [range, setRange] = useState({
     start: now.add({days: 6}),
@@ -325,7 +324,7 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
   role="img"
   aria-label="Anatomy diagram of a range calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
 
-```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button.html', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
+```tsx links={{RangeCalendar: '#rangecalendar', Button: 'Button', CalendarGrid: '#calendargrid', CalendarGridHeader: '#calendargridheader', CalendarHeaderCell: '#calendarheadercell', CalendarGridBody: '#calendargridbody', CalendarCell: '#calendarcell'}}
 <RangeCalendar>
   <Button slot="previous" />
   <Heading />

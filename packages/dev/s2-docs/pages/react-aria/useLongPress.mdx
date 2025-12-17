@@ -13,44 +13,27 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {InterfaceType} from '../../src/types';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
 export const section = 'Interactions';
+export const description = 'Handles long press interactions across mouse and touch devices.';
 
 # useLongPress
 
 <PageDescription>{docs.exports.useLongPress.description}</PageDescription>
 
-## Features
-
-A long press is triggered when a user presses and holds their pointer over a target for a minimum period of time. If the user moves their pointer off of the target before the time threshold, the interaction is canceled. Once a long press event is triggered, other pointer interactions that may be active such as `usePress` and `useMove` will be canceled so that only the long press is activated.
-
-* Handles mouse and touch events
-* Uses pointer events where available, with fallbacks to mouse and touch events
-* Ignores emulated mouse events in mobile browsers
-* Prevents text selection on touch devices while long pressing
-* Prevents browser and OS context menus from appearing while long pressing
-* Customizable time threshold for long press
-* Supports an accessibility description to indicate to assistive technology users that a long press action is available
-
-## Example
-
-This example shows a button that has both a normal press action using [usePress](usePress.html), as well as a long
-press action using `useLongPress`. Pressing the button will set the mode to "Normal speed", and long pressing it will
-set the mode to "Hyper speed". All of the emitted events are also logged below. Note that when long pressing the button,
-only a long press is emitted, and no normal press is emitted on pointer up.
-
-**Note**: this example does not have a keyboard accessible way to trigger the long press action. Because the method of triggering
-this action will differ depending on the component, it is outside the scope of `useLongPress`. Make sure to implement a keyboard
-friendly alternative to all long press interactions if you are using this hook directly.
-
 ```tsx render
 "use client";
 import React from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from 'react-aria';
 import {useLongPress, usePress} from '@react-aria/interactions';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let [mode, setMode] = React.useState('Activate');
+
+  /*- begin focus -*/
+  // Long press to activate "Hyper speed"
   let {longPressProps} = useLongPress({
     accessibilityDescription: 'Long press to activate hyper speed',
     onLongPressStart: e => setEvents(
@@ -66,7 +49,9 @@ function Example() {
       );
     }
   });
+  /*- end focus -*/
 
+  // Short press to activate "Normal speed"
   let {pressProps} = usePress({
     onPress: e => {
       setMode('Normal speed');
@@ -90,6 +75,23 @@ function Example() {
   );
 }
 ```
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>This example does not have a keyboard accessible way to trigger the long press action. Because the method of triggering
+this action will differ depending on the component, it is outside the scope of `useLongPress`. Make sure to implement a keyboard
+friendly alternative to all long press interactions if you are using this hook directly.</Content>
+</InlineAlert>
+
+## Features
+
+A long press is triggered when a user presses and holds their pointer over a target for a minimum period of time. If the user moves their pointer off of the target before the time threshold, the interaction is canceled. Once a long press event is triggered, other pointer interactions that may be active such as `usePress` and `useMove` will be canceled so that only the long press is activated.
+
+* Handles mouse and touch events
+* Prevents text selection on touch devices while long pressing
+* Prevents browser and OS context menus from appearing while long pressing
+* Customizable time threshold for long press
+* Supports an accessibility description to indicate to assistive technology users that a long press action is available
 
 ## API
 
