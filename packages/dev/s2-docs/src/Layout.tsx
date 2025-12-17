@@ -75,7 +75,7 @@ const getTitle = (currentPage: Page): string => {
 
 const getOgImageUrl = (currentPage: Page): string => {
   let currentURL = new URL(currentPage.url);
-  let publicUrl = process.env.PUBLIC_URL || '';
+  let publicUrl = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
   let path = currentURL.pathname || '/';
   if (path.endsWith('/')) {
     path += 'index';
