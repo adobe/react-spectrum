@@ -7,6 +7,8 @@ import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/s2';
 export const section = 'Components';
 import docs from 'docs:@react-spectrum/s2';
 
+export const description = 'The container for all React Spectrum components.';
+
 # Provider
 
 <PageDescription>{docs.exports.Provider.description}</PageDescription>
@@ -82,7 +84,7 @@ By default, React Spectrum chooses the locale matching the user’s browser/oper
 
 ## Client side routing
 
-The Provider component accepts an optional `router` prop. This enables React Spectrum components that render links to perform client side navigation using your application or framework's client side router. See the client side routing guide for details on how to set this up.
+The Provider component accepts an optional `router` prop. This enables React Spectrum components that render links to perform client side navigation using your application or framework's client side router. See the [getting started guide](getting-started) for details on how to set this up.
 
 ```tsx
 let navigate = useNavigateFromYourRouter();

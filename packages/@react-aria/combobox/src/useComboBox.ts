@@ -53,9 +53,9 @@ export interface ComboBoxAria<T> extends ValidationResult {
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the list box, to be passed to [useListBox](useListBox.html). */
+  /** Props for the list box, to be passed to `useListBox`. */
   listBoxProps: AriaListBoxOptions<T>,
-  /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
+  /** Props for the optional trigger button, to be passed to `useButton`. */
   buttonProps: AriaButtonProps,
   /** Props for the combo box description element, if any. */
   descriptionProps: DOMAttributes,

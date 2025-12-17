@@ -5,12 +5,13 @@ import {InlineAlert} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['alert', 'notification', 'banner', 'message'];
+export const description = 'Displays a non-modal message associated with objects in a view.';
 
 # InlineAlert
 
 <PageDescription>{docs.exports.InlineAlert.description}</PageDescription>
 
-```tsx render docs={docs.exports.InlineAlert} links={docs.links} props={['variant', 'fillStyle']} initialProps={{variant: 'neutral'}} type="s2"
+```tsx render docs={docs.exports.InlineAlert} links={docs.links} props={['variant', 'fillStyle']} initialProps={{variant: 'neutral'}} type="s2" wide
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 <InlineAlert/* PROPS */>
@@ -50,11 +51,13 @@ function Example() {
 
 ## API
 
-```tsx links={{InlineAlert: '#inlinealert'}}
+```tsx links={{InlineAlert: '#inlinealert', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div'}}
 <InlineAlert>
   <Heading />
   <Content />
 </InlineAlert>
 ```
+
+### InlineAlert
 
 <PropTable component={docs.exports.InlineAlert} links={docs.links} />

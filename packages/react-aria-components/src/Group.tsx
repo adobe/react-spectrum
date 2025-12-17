@@ -80,14 +80,13 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
 export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
   let {isDisabled, isInvalid, isReadOnly, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
+  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
 
   let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true
   });
-
-  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
-  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
 
   let renderProps = useRenderProps({
     ...props,

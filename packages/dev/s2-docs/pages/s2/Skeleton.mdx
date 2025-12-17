@@ -4,20 +4,21 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['loading', 'placeholder', 'shimmer', 'ghost'];
+export const description = 'Wraps around content to render it as a placeholder.';
 
 # Skeleton
 
 <PageDescription>{docs.exports.Skeleton.description}</PageDescription>
 
-```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2"
+```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2" wide
 "use client";
-import {Skeleton, Image, Heading, Text} from '@react-spectrum/s2'
+import {Skeleton, Image, Text} from '@react-spectrum/s2'
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import preview from 'url:./assets/preview.png';
 import Select from '@react-spectrum/s2/icons/Select';
 
 <Skeleton/* PROPS */>
-  <div className={style({display: 'flex', gap: 16})}>
+  <div className={style({display: 'flex', gap: 16, flexDirection: {default: 'column', sm: 'row'}})}>
     <Image
       src={preview}
       width={1600}
@@ -41,13 +42,13 @@ Skeleton replaces text, images, and icons inside it with a placeholder shimmer e
 
 The following components are currently affected by Skeleton:
 
-* [Image](Image.html)
+* [Image](Image)
 * `Text`
-* [Link](Link.html)
+* [Link](Link)
 * `Icon`
-* [StatusLight](StatusLight.html)
-* [Badge](Badge.html)
-* [Meter](Meter.html)
+* [StatusLight](StatusLight)
+* [Badge](Badge)
+* [Meter](Meter)
 
 Form components within a skeleton are also disabled.
 

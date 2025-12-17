@@ -83,7 +83,7 @@ export default function Example() {
 function PokemonItem(props: {name: string}) {
   return (
     <GridListItem id={props.name} textValue={props.name}>
-      <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${props.name.toLowerCase()}.avif`} />
+      <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${props.name.toLowerCase()}.avif`} alt="" />
       <Text>{props.name}</Text>
     </GridListItem>
   );
@@ -221,8 +221,9 @@ and `defaultSelectedKeys` can also be set to `"all"` to programmatically select 
 
 ```tsx render
 "use client";
-import {Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
+import {Table, TableHeader, Column, TableBody, Row, Cell, type Selection} from 'react-aria-components';
 import {Checkbox} from 'vanilla-starter/Checkbox';
+import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
 
 ///- begin collapse -///
@@ -235,14 +236,14 @@ const rows = [
 ///- end collapse -///
 
 function Example() {
-  let [selectedKeys, setSelectedKeys] = useState(new Set());
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
 
   ///- begin highlight -///
   function performBulkAction() {
     if (selectedKeys === 'all') {
-      // perform action on all items
+      alert('Performing action on all items');
     } else {
-      // perform action on selected items in selectedKeys
+      alert(`Performing action on selected items: ${[...selectedKeys].join(', ')}`);
     }
   }
   ///- end highlight -///
@@ -272,6 +273,11 @@ function Example() {
           )}
         </TableBody>
       </Table>
+      {(selectedKeys === 'all' || selectedKeys.size > 0) && (
+        <div style={{marginTop: '16px', padding: '8px'}}>
+          <Button onPress={performBulkAction}>Delete Selected</Button>
+        </div>
+      )}
       <p>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
     </div>
   );
@@ -338,17 +344,17 @@ function Example(props) {
       onSelectionChange={setSelectedKeys}
       data-size="small">
       <GridListItem textValue="Desert Sunset">
-        <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+        <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} alt="" />
         <Text>Desert Sunset</Text>
         <Text slot="description">PNG • 2/3/2024</Text>
       </GridListItem>
       <GridListItem textValue="Hiking Trail">
-        <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+        <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} alt="" />
         <Text>Hiking Trail</Text>
         <Text slot="description">JPEG • 1/10/2022</Text>
       </GridListItem>
       <GridListItem textValue="Lion">
-        <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+        <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} alt="" />
         <Text>Lion</Text>
         <Text slot="description">JPEG • 8/28/2021</Text>
       </GridListItem>
@@ -475,7 +481,7 @@ function Example(props) {
 
 ## Single selection
 
-In some components like [ComboBox](ComboBox.html), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
+In some components like [ComboBox](ComboBox), only single selection is supported. In this case, the singular `selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a single id instead of a `Set` as their value.
 
 ```tsx render
 "use client";
@@ -532,9 +538,9 @@ function SelectableItem({id, children}) {
 <ListBox
   aria-label="Animated ListBox"
   selectionMode="single">
-  <SelectableItem>Home</SelectableItem>
-  <SelectableItem>Getting Started</SelectableItem>
-  <SelectableItem>Components</SelectableItem>
+  <SelectableItem id="home">Home</SelectableItem>
+  <SelectableItem id="getting-started">Getting Started</SelectableItem>
+  <SelectableItem id="components">Components</SelectableItem>
 </ListBox>
 ```
 
@@ -559,21 +565,21 @@ import {Text} from 'react-aria-components';
     onAction={() => alert('Opening "Mountain Sunrise"')}
     /*- end highlight -*/
     textValue="Mountain Sunrise">
-    <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} alt="" />
     <Text>Mountain Sunrise</Text>
     <Text slot="description">PNG • 3/15/2015</Text>
   </GridListItem>
   <GridListItem
     onAction={() => alert('Opening "Architecture"')}
     textValue="Architecture">
-    <img src="https://images.unsplash.com/photo-1721661657253-6621d52db753?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDYxfE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} />
+    <img src="https://images.unsplash.com/photo-1721661657253-6621d52db753?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDYxfE04alZiTGJUUndzfHxlbnwwfHx8fHw%3D" width={600} height={900} alt="" />
     <Text>Architecture</Text>
     <Text slot="description">PNG • 12/24/2016</Text>
   </GridListItem>
   <GridListItem
     onAction={() => alert('Opening "Golden Hour"')}
     textValue="Golden Hour">
-    <img src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={402} />
+    <img src="https://images.unsplash.com/photo-1718378037953-ab21bf2cf771?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={402} alt="" />
     <Text>Golden Hour</Text>
     <Text slot="description">WEBP • 7/24/2024</Text>
   </GridListItem>
@@ -608,13 +614,11 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {useState} from 'react';
 
 <Table
   aria-label="Table"
   selectionMode="multiple"
-  /* PROPS */
-  selectionMode="multiple">
+  /* PROPS */>
   <TableHeader>
     <Column isRowHeader>Name</Column>
     <Column>Type</Column>
@@ -690,7 +694,7 @@ let images = [
   {/*- end highlight -*/}
   {image => (
     <GridListItem id={image.title} textValue={image.title}>
-      <img src={image.image} width={image.width} height={image.height} />
+      <img src={image.image} width={image.width} height={image.height} alt="" />
       <Text>{image.title}</Text>
       <Text slot="description">By {image.user}</Text>
     </GridListItem>
@@ -730,7 +734,6 @@ const files = [
 ```tsx render wide docs={docs.exports.Table} links={docs.links} props={['selectionBehavior']}
 "use client";
 import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
-import {useState} from 'react';
 
 ///- begin collapse -///
 const files = [
@@ -793,24 +796,24 @@ import {Text} from 'react-aria-components';
 
 <GridList/* PROPS */>
   <GridListItem textValue="Desert Sunset">
-    <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+    <img src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} alt="" />
     <Text>Desert Sunset</Text>
     <Text slot="description">PNG • 2/3/2024</Text>
   </GridListItem>
   {/*- begin highlight -*/}
   <GridListItem isDisabled textValue="Hiking Trail">
   {/*- end highlight -*/}
-    <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    <img src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} alt="" />
     <Text>Hiking Trail</Text>
     <Text slot="description">JPEG • 1/10/2022</Text>
   </GridListItem>
   <GridListItem textValue="Lion">
-    <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+    <img src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} alt="" />
     <Text>Lion</Text>
     <Text slot="description">JPEG • 8/28/2021</Text>
   </GridListItem>
   <GridListItem textValue="Mountain Sunrise">
-    <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    <img src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} alt="" />
     <Text>Mountain Sunrise</Text>
     <Text slot="description">PNG • 3/15/2015</Text>
   </GridListItem>
@@ -959,7 +962,7 @@ const items = [
   items={items}>
   {item => (
     <GridListItem textValue={item.name}>
-      <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`} />
+      <img src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`} alt="" />
       <Text>{item.name}</Text>
     </GridListItem>
   )}
@@ -971,8 +974,16 @@ const items = [
 import {Tree, TreeItem} from 'vanilla-starter/Tree';
 import {Collection} from 'react-aria-components';
 
+type Pokemon = {
+  id: number;
+  name: string;
+  type: string;
+  level: number;
+  children?: Pokemon[];
+};
+
 ///- begin collapse -///
-let items = [
+let items: Pokemon[] = [
   {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
     {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
       {id: 3, name: 'Venusaur', type: 'Grass', level: 83}

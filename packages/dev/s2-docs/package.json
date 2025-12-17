@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs",
-    "build": "DOCS_ENV=staging parcel build --config .parcelrc-s2-docs",
+    "start": "DOCS_ENV=dev parcel 'pages/**/*.mdx' --config .parcelrc-s2-docs",
+    "start:s2": "DOCS_ENV=dev LIBRARY=s2 parcel 'pages/s2/**/*.mdx' -p 4321 --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
+    "start:react-aria": "DOCS_ENV=dev LIBRARY=react-aria parcel 'pages/react-aria/**/*.mdx' -p 1234 --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
+    "build": "yarn build:s2 --public-url $PUBLIC_URL && yarn build:react-aria --public-url $PUBLIC_URL",
+    "build:s2": "LIBRARY=s2 parcel build 'pages/s2/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/s2 --cache-dir ../../../.parcel-cache/s2",
+    "build:react-aria": "LIBRARY=react-aria parcel build 'pages/react-aria/**/*.mdx' --config .parcelrc-s2-docs --dist-dir dist/react-aria --cache-dir ../../../.parcel-cache/react-aria",
     "generate:og": "node scripts/generateOGImages.mjs",
     "generate:md": "node scripts/generateMarkdownDocs.mjs"
   },
   "targets": {
     "react-static": {
-      "source": "pages/**/*.mdx",
       "context": "react-server",
       "engines": {
         "browsers": [
@@ -22,19 +25,20 @@
       "includeNodeModules": {
         "tree-sitter-highlight": false,
         "json5": false,
-        "globals-docs": false
+        "globals-docs": false,
+        "@parcel/rust": false
       }
     }
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",
-    "@parcel/plugin": "^2.16.1",
-    "@parcel/rsc": "^2.16.1",
+    "@parcel/plugin": "^2.16.3",
+    "@parcel/rsc": "^2.16.3",
     "@react-aria/focus": "^3.20.4",
     "@react-aria/i18n": "^3.12.10",
     "@react-aria/interactions": "^3.25.1",
     "@react-aria/utils": "^3.29.0",
-    "@react-spectrum/s2": "^0.12.0",
+    "@react-spectrum/s2": "^1.0.0",
     "@react-spectrum/utils": "^3.12.6",
     "@react-types/shared": "^3.30.0",
     "@react-types/textfield": "^3.12.3",
@@ -63,5 +67,9 @@
   "alias": {
     "tailwind-starter": "../../../starters/tailwind/src",
     "vanilla-starter": "../../../starters/docs/src"
+  },
+  "devDependencies": {
+    "axe-playwright": "^2.2.2",
+    "playwright": "^1.57.0"
   }
 }

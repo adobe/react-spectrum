@@ -476,7 +476,7 @@ export function TabPanel(props: TabPanelProps): ReactNode | null {
 
 function CollapsedTabPanel(props: TabPanelProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {UNSAFE_style, UNSAFE_className = '', id, ...otherProps} = props;
+  let {UNSAFE_style, UNSAFE_className = '', id, shouldForceMount, ...otherProps} = props;
   let {menuId, valueId} = useContext(CollapseContext);
   let ref = useRef(null);
   let tabIndex = useHasTabbableChild(ref) ? undefined : 0;
@@ -681,6 +681,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     contents = (
       <RACTabs
         {...props}
+        className=""
         style={{display: 'contents'}}>
         {props.children}
       </RACTabs>

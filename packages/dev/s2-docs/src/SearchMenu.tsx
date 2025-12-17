@@ -5,33 +5,21 @@ import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'r
 import Close from '@react-spectrum/s2/icons/Close';
 import {ComponentCardView} from './ComponentCardView';
 import {
-  type ComponentItem,
-  createSearchOptions,
-  filterAndSortSearchItems,
-  getOrderedLibraries,
-  getPageTitle,
   getResourceTags,
+  LazyIconSearchView,
   SearchEmptyState,
-  sortItemsForDisplay,
-  sortSearchItems,
-  useFilteredIcons,
-  useSearchTagSelection,
-  useSectionTagsForDisplay
+  useSearchMenuState
 } from './searchUtils';
-import {getLibraryFromPage, getLibraryFromUrl} from './library';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library, TAB_DEFS} from './constants';
-// @ts-ignore
-import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import React, {CSSProperties, Suspense, useCallback, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
-
-export function stripMarkdown(description: string | undefined) {
-  return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
-}
+import {useRouter} from './Router';
+import './SearchMenu.css';
+import {preloadComponentImages} from './ComponentCard';
 
 export const divider = style({
   marginY: 8,
@@ -49,14 +37,12 @@ export const divider = style({
   width: '[3px]'
 });
 
-const IconSearchView = lazy(() => import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView})));
 
 interface SearchMenuProps {
-  pages: Page[],
-  currentPage: Page,
   onClose: () => void,
   overlayId?: string,
   initialSearchValue: string,
+  initialTag?: string,
   isSearchOpen: boolean
 }
 
@@ -73,121 +59,47 @@ function CloseButton({onClose}: {onClose: () => void}) {
 }
 
 export function SearchMenu(props: SearchMenuProps) {
-  let {pages, currentPage, onClose, overlayId, isSearchOpen} = props;
-
-  const currentLibrary = getLibraryFromPage(currentPage);
-  let [selectedLibrary, setSelectedLibrary] = useState<Library>(currentLibrary);
-  let [searchValue, setSearchValue] = useState(props.initialSearchValue);
-
-  const orderedTabs = useMemo(() => getOrderedLibraries(currentPage), [currentPage]);
+  let {pages, currentPage} = useRouter();
+  let {onClose, overlayId, isSearchOpen} = props;
 
   const searchRef = useRef<TextFieldRef<HTMLInputElement> | null>(null);
-
-  // Auto-focus search field when menu opens
-  // We don't put autoFocus on the SearchField because it will cause a flicker when switching tabs
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      searchRef.current?.focus();
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Transform pages data into component data structure
-  const transformedComponents = useMemo(() => {
-    if (!pages || !Array.isArray(pages)) {
-      return [];
-    }
-
-    const components = pages
-      .filter(page => page.url && page.url.endsWith('.html') && getLibraryFromUrl(page.url) === selectedLibrary && !page.exports?.hideFromSearch)
-      .map(page => {
-        const name = page.url.replace(/^\//, '').replace(/\.html$/, '');
-        const title = getPageTitle(page);
-        const section: string = (page.exports?.section as string) || 'Components';
-        const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
-        const description: string = stripMarkdown(page.exports?.description);
-        const date: string | undefined = page.exports?.date;
-        return {
-          id: name,
-          name: title,
-          href: page.url,
-          section,
-          tags,
-          description,
-          date
-        };
-      });
-
-    return components;
-  }, [pages, selectedLibrary]);
-
-  // Build sections for the selected library
-  const sections = useMemo(() => {
-    const sectionNames = Array.from(new Set(transformedComponents.map(c => c.section || 'Components')));
-    return sectionNames.map(sectionName => ({
-      id: sectionName.toLowerCase(),
-      name: sectionName,
-      children: transformedComponents.filter(c => (c.section || 'Components') === sectionName)
-    })).sort((a, b) => {
-      if (a.id === 'components') {
-        return -1;
-      }
-      if (b.id === 'components') {
-        return 1;
-      }
-      return 0;
-    });
-  }, [transformedComponents]);
-
-  const sectionTags = useMemo(() => sections.map(s => ({id: s.id, name: s.name})), [sections]);
-  const resourceTags = useMemo(() => getResourceTags(selectedLibrary), [selectedLibrary]);
-
-  const [selectedTagId, setSelectedTagId] = useSearchTagSelection(
-    searchValue,
-    sectionTags,
-    resourceTags,
-    currentPage.exports?.section?.toLowerCase() || 'components'
-  );
-
-  const filteredIcons = useFilteredIcons(searchValue);
   const iconFilter = useIconFilter();
 
-  let filteredComponents = useMemo(() => {
-    if (!searchValue) {
-      return sections;
-    }
-
-    const allItems = sections.flatMap(section => section.children);
-
-    const sortedItems = filterAndSortSearchItems(allItems, searchValue, createSearchOptions<ComponentItem>());
-
-    const resultsBySection = new Map<string, typeof transformedComponents>();
-
-    sortedItems.forEach(item => {
-      const section = item.section || 'Components';
-      if (!resultsBySection.has(section)) {
-        resultsBySection.set(section, []);
-      }
-      resultsBySection.get(section)!.push(item);
-    });
-
-    return sections
-      .map(section => ({
-        ...section,
-        children: resultsBySection.get(section.name) || []
-      }))
-      .filter(section => section.children.length > 0);
-  }, [sections, searchValue]);
-
-  const sectionTagsForDisplay = useSectionTagsForDisplay(
-    sections,
+  const {
+    selectedLibrary,
+    setSelectedLibrary,
+    orderedLibraries: orderedTabs,
     searchValue,
+    setSearchValue,
+    sectionTagsForDisplay,
     selectedTagId,
-    resourceTags.map(t => t.id)
-  );
+    handleTagSelectionChange,
+    filteredIcons,
+    isIconsSelected,
+    selectedItems,
+    selectedSectionName,
+    getPlaceholderText,
+    sections
+  } = useSearchMenuState({
+    pages,
+    currentPage,
+    initialSearchValue: props.initialSearchValue,
+    initialTag: props.initialTag,
+    isOpen: isSearchOpen
+  });
 
-  const handleTabSelectionChange = React.useCallback((key: Key) => {
-    setSelectedLibrary(key as typeof selectedLibrary);
+  // Auto-focus search field when menu opens
+  useEffect(() => {
+    if (isSearchOpen) {
+      const timer = setTimeout(() => {
+        searchRef.current?.focus();
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isSearchOpen]);
+
+  const handleTabSelectionChange = useCallback((key: Key) => {
+    setSelectedLibrary(key as Library);
     // Focus main search field of the newly selected tab
     setTimeout(() => {
       const lib = key as Library;
@@ -196,55 +108,22 @@ export function SearchMenu(props: SearchMenuProps) {
         searchRef.current.focus();
       }
     }, 10);
-  }, []);
-
-  const handleSectionSelectionChange = React.useCallback((keys: Iterable<Key>) => {
-    const firstKey = Array.from(keys)[0] as string;
-    if (firstKey) {
-      setSelectedTagId(firstKey);
-    }
-  }, [setSelectedTagId]);
-
-  const handleIconSelectionChange = React.useCallback((keys: Iterable<Key>) => {
-    const firstKey = Array.from(keys)[0] as string;
-    if (firstKey) {
-      setSelectedTagId(firstKey);
-    }
-  }, [setSelectedTagId]);
-
-  const selectedItems = useMemo(() => {
-    let items: typeof transformedComponents = [];
-    if (searchValue.trim().length > 0 && selectedTagId === 'all') {
-      items = filteredComponents.flatMap(s => s.children) || [];
-      items = sortSearchItems(items, searchValue, createSearchOptions<ComponentItem>());
-    } else {
-      items = (filteredComponents.find(s => s.id === selectedTagId)?.children) || [];
-      items = sortItemsForDisplay(items, searchValue);
-    }
-
-    return items;
-  }, [filteredComponents, selectedTagId, searchValue]);
-
-  const selectedSectionName = useMemo(() => {
-    if (searchValue.trim().length > 0 && selectedTagId === 'all') {
-      return 'All';
-    }
-    return (filteredComponents.find(s => s.id === selectedTagId)?.name)
-      || (sections.find(s => s.id === selectedTagId)?.name)
-      || 'Items';
-  }, [filteredComponents, sections, selectedTagId, searchValue]);
-
+  }, [setSelectedLibrary]);
+  
+  // Delay closing until the page updates (or the skeleton shows).
+  let lastPage = useRef(currentPage);
   useEffect(() => {
-    const handleNavigationStart = () => {
-      setSearchValue('');
+    if (currentPage !== lastPage.current && isSearchOpen) {
       onClose();
-    };
+    }
+    lastPage.current = currentPage;
+  }, [currentPage, onClose, isSearchOpen]);
 
-    window.addEventListener('rsc-navigation-start', handleNavigationStart);
-    return () => {
-      window.removeEventListener('rsc-navigation-start', handleNavigationStart);
-    };
-  }, [onClose]);
+  // Wait to update selection until after close animation.
+  let [currentUrl, setCurrentUrl] = useState(currentPage.url);
+  if (currentPage.url !== currentUrl && !isSearchOpen) {
+    setCurrentUrl(currentPage.url);
+  }
 
   return (
     <Dialog id={overlayId} className={style({height: 'full'})} aria-label="Search menu">
@@ -258,14 +137,14 @@ export function SearchMenu(props: SearchMenuProps) {
           {orderedTabs.map((tab, i) => (
             <Tab key={tab.id} id={tab.id}>
               <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                <div style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
+                <div className={style({width: 26, flexShrink: 0, display: 'flex', justifyContent: 'center'})} style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-icon' : undefined} as CSSProperties}>
                   {tab.icon}
                 </div>
                 <div>
-                  <span style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-2xl'})}>
+                  <span style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-label' : undefined} as CSSProperties} className={style({font: 'heading-sm', fontWeight: 'bold'})}>
                     {tab.label}
                   </span>
-                  <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
+                  <div className={style({fontSize: 'ui', marginTop: 2})}>{tab.description}</div>
                 </div>
               </div>
             </Tab>
@@ -273,13 +152,10 @@ export function SearchMenu(props: SearchMenuProps) {
         </TabList>
         {orderedTabs.map((tab, i) => {
           const tabResourceTags = getResourceTags(tab.id);
-          const selectedResourceTag = tabResourceTags.find(tag => tag.id === selectedTagId);
-          const placeholderText = selectedResourceTag 
-            ? `Search ${selectedResourceTag.name}` 
-            : `Search ${tab.label}`;
+          const placeholderText = getPlaceholderText(tab.label);
           return (
             <TabPanel key={tab.id} id={tab.id}>
-              <Autocomplete filter={selectedTagId === 'icons' ? iconFilter : undefined}>
+              <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
                 <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
                   <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
                     <SearchField
@@ -289,7 +165,7 @@ export function SearchMenu(props: SearchMenuProps) {
                       size="L"
                       aria-label={`Search ${tab.label}`}
                       placeholder={placeholderText}
-                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-search-field' : 'none'} as CSSProperties}
+                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-search-field' : undefined} as CSSProperties}
                       styles={style({width: 500})} />
                   </div>
 
@@ -299,23 +175,32 @@ export function SearchMenu(props: SearchMenuProps) {
                     sectionTags={sectionTagsForDisplay}
                     resourceTags={tabResourceTags}
                     selectedTagId={selectedTagId}
-                    onSectionSelectionChange={handleSectionSelectionChange}
-                    onResourceSelectionChange={handleIconSelectionChange} />
-                  {selectedTagId === 'icons' ? (
+                    onSectionSelectionChange={handleTagSelectionChange}
+                    onResourceSelectionChange={handleTagSelectionChange}
+                    onHover={tag => {
+                      preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
+                    }} />
+                  {isIconsSelected ? (
                     <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<IconSearchSkeleton />}>
-                        <IconSearchView 
+                        <LazyIconSearchView 
                           filteredItems={filteredIcons} 
                           listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
                       </Suspense>
                     </div>
                   ) : (
                     <ComponentCardView
-                      onAction={onClose}
+                      key={selectedLibrary + selectedTagId}
+                      currentUrl={currentUrl}
+                      onAction={(key) => {
+                        if (key === currentPage.url) {
+                          onClose();
+                        }
+                      }}
                       items={selectedItems.map(item => ({
-                        id: item.id,
+                        id: item.href,
                         name: item.name,
-                        href: item.href ?? `/${tab.id}/${item.name}.html`,
+                        href: item.href ?? `/${tab.id}/${item.name}`,
                         description: item.description
                       }))}
                       ariaLabel={selectedSectionName}
