@@ -20,7 +20,7 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}')) {
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
   let item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
-    name,
+    name: `tailwind-${name.toLowerCase()}`,
     type,
     title: name,
     dependencies: [...dependencies, 'tailwindcss-react-aria-components', 'tailwindcss-animate'],
@@ -53,7 +53,7 @@ for (let file of globSync('starters/docs/src/*.{ts,tsx}')) {
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
   let item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
-    name,
+    name: `css-${name.toLowerCase()}`,
     type,
     title: name,
     dependencies: [...dependencies],
