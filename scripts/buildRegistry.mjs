@@ -10,7 +10,7 @@ const publicUrl = getBaseUrl('react-aria') + '/registry';
 const distDir = `dist/s2-docs/react-aria/${process.env.PUBLIC_URL || ''}/registry`;
 
 fs.rmSync(distDir, {recursive: true, force: true});
-fs.mkdirSync(distDir);
+fs.mkdirSync(distDir, {recursive: true});
 
 let items = [];
 
