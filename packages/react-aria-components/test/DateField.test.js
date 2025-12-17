@@ -499,4 +499,21 @@ describe('DateField', () => {
 
     expect(document.activeElement).toBe(segments[0]);
   });
+
+  it('should support focusableRef and ref on DateSegment concurrently', () => {
+    let focusableRef = React.createRef();
+    let segmentRef = React.createRef();
+    let {getAllByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput focusableRef={focusableRef}>
+          {segment => <DateSegment segment={segment} ref={segment.type === 'month' ? segmentRef : null} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    expect(focusableRef.current).toBe(segments[0]);
+    expect(segmentRef.current).toBe(segments[0]);
+  });
 });

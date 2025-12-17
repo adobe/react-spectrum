@@ -27,7 +27,7 @@ import {
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {Group, GroupContext} from './Group';
@@ -392,7 +392,7 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let isFirstEditableSegment = segment.isEditable &&
     segment.type === state.segments.find(s => s.isEditable)?.type;
 
-  let domRef = useObjectRef((isFirstEditableSegment && focusableRef) ? focusableRef : ref);
+  let domRef = useObjectRef(mergeRefs((isFirstEditableSegment && focusableRef) ? focusableRef : null, ref));
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: state.isDisabled || segment.type === 'literal'});
