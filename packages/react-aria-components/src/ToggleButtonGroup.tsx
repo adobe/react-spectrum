@@ -10,14 +10,26 @@
  * governing permissions and limitations under the License.
  */
 import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {SharedElementTransition} from './SharedElementTransition';
 import {ToggleGroupState, useToggleGroupState} from 'react-stately';
 
 export interface ToggleButtonGroupRenderProps {
+  /**
+   * The orientation of the toggle button group.
+   * @selector [data-orientation="horizontal | vertical"]
+   */
+  orientation: Orientation,
   /**
    * Whether the toggle button group is disabled.
    * @selector [data-disabled]
@@ -29,7 +41,13 @@ export interface ToggleButtonGroupRenderProps {
   state: ToggleGroupState
 }
 
-export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ToggleButtonGroup'
+   */
+  className?: ClassNameOrFunction<ToggleButtonGroupRenderProps>
+}
 
 export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>({});
 export const ToggleGroupStateContext = createContext<ToggleGroupState | null>(null);
@@ -45,6 +63,7 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(fu
   let renderProps = useRenderProps({
     ...props,
     values: {
+      orientation: props.orientation || 'horizontal',
       isDisabled: state.isDisabled,
       state
     },

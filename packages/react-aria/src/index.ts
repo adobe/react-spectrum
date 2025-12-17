@@ -89,4 +89,4 @@ export type {AriaToastRegionProps, AriaToastProps, ToastAria, ToastRegionAria} f
 export type {AriaTooltipProps, TooltipAria, TooltipTriggerAria, TooltipTriggerProps} from '@react-aria/tooltip';
 export type {AriaTreeProps, AriaTreeItemOptions, TreeProps, TreeAria, TreeItemAria} from '@react-aria/tree';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';
-export type {Key, Orientation} from '@react-types/shared';
+export type {Key, Orientation, RangeValue} from '@react-types/shared';

@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import React, {useEffect, useRef, useState} from 'react';
@@ -44,7 +44,7 @@ export function CopyButton({text, getText, ariaLabel = 'Copy', tooltip = 'Copy',
       setIsCopied(true);
       timeout.current = setTimeout(() => setIsCopied(false), 2000);
     }).catch(() => {
-      // noop
+      ToastQueue.negative('Failed to copy.');
     });
   };
 

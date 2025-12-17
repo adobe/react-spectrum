@@ -15,7 +15,7 @@ import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, Lis
 import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
-import React, {JSX} from 'react';
+import React, {JSX, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import './styles.css';
@@ -514,14 +514,14 @@ export const VirtualizedListBoxGrid: StoryObj<typeof VirtualizedListBoxGridExamp
 };
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
-
+let defaultItems: {id: number, name: string}[] = [];
+for (let i = 0; i < 1000; i++) {
+  let words = Math.max(2, Math.floor(Math.random() * 25));
+  let name = lorem.slice(0, words).join(' ');
+  defaultItems.push({id: i, name});
+}
 function VirtualizedListBoxWaterfallExample({minSize = 40, maxSize = 65, maxColumns = undefined, minSpace = undefined, maxSpace = undefined}: {minSize: number, maxSize: number, maxColumns?: number, minSpace?: number, maxSpace?: number}): JSX.Element {
-  let items: {id: number, name: string}[] = [];
-  for (let i = 0; i < 1000; i++) {
-    let words = Math.max(2, Math.floor(Math.random() * 25));
-    let name = lorem.slice(0, words).join(' ');
-    items.push({id: i, name});
-  }
+  let [items] = useState(defaultItems);
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
@@ -743,48 +743,68 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
   );
 };
 
-export const ListBoxScrollMargin: ListBoxStory = (args) => {
-  let items: {id: number, name: string, description: string}[] = [];
-  for (let i = 0; i < 100; i++) {
-    items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
-  }
-  return (
-    <ListBox 
-      className={styles.menu} 
-      {...args}
-      aria-label="test listbox" 
-      style={{height: 200, width: 100, overflow: 'scroll'}} 
-      items={items}>
-      {item => (
-        <MyListBoxItem style={{scrollMargin: 10, width: 150, display: 'flex', padding: '2px 20px', justifyContent: 'space-between'}}>
-          <span>{item.name}</span>
-          <span>{item.description}</span>
-        </MyListBoxItem>
-      )}
-    </ListBox>
-  );
-};
-
-export const ListBoxSmoothScroll: ListBoxStory = (args) => {
-  let items: {id: number, name: string}[] = [];
-  for (let i = 0; i < 100; i++) {
-    items.push({id: i, name: `Item ${i}`});
-  }
-  return (
-    <ListBox 
-      className={styles.menu} 
-      {...args} 
-      aria-label="test listbox" 
-      style={{height: 200, width: 200, overflow: 'scroll', display: 'grid', gridTemplateColumns: 'repeat(4, 80px)', scrollBehavior: 'smooth'}} 
-      items={items} 
-      layout="grid">
-      {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
-    </ListBox>
-  );
-};
-
 AsyncListBoxVirtualized.story = {
   args: {
     delay: 50
   }
 };
+
+export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => {
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
+    },
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    renderDropIndicator(target) {
+      return <DropIndicator target={target} style={({isDropTarget}) => ({width: '100%', height: 2, background: isDropTarget ? 'blue' : 'gray', margin: '2px 0'})} />;
+    }
+  });
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center'}}>
+      <div style={{padding: 20, background: '#f0f0f0', borderRadius: 8, maxWidth: 600}}>
+        <h3 style={{margin: '0 0 10px 0'}}>Instructions:</h3>
+        <ul style={{margin: 0, paddingLeft: 20}}>
+          <li><strong>Enter:</strong> Triggers onAction</li>
+          <li><strong>Alt+Enter:</strong> Starts drag mode</li>
+          <li><strong>Space:</strong> Toggles selection</li>
+        </ul>
+      </div>
+      <div style={{height: 400, width: 300, resize: 'both', padding: 20, overflow: 'hidden', border: '2px solid #ccc', borderRadius: 8}}>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            rowHeight: 25,
+            gap: 4
+          }}>
+          <ListBox
+            className={styles.menu}
+            selectionMode="multiple"
+            style={{width: '100%', height: '100%'}}
+            aria-label="Virtualized listbox with drag and drop and onAction"
+            items={list.items}
+            dragAndDropHooks={dragAndDropHooks}
+            onAction={action('onAction')}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </div>
+    </div>
+  );
+};
+

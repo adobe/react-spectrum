@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {Button, Collection, Tab, TabList, TabPanel, Tabs, Tooltip, TooltipTrigger} from '../';
+import {Button, Tab, TabList, TabPanel, TabPanels, Tabs, Tooltip, TooltipTrigger} from '../';
 import React, {useState} from 'react';
 import {TabsExample} from '../stories/Tabs.stories';
 import {User} from '@react-aria/test-utils';
@@ -565,7 +565,7 @@ describe('Tabs', () => {
               <Button onPress={removeTab}>Remove tab</Button>
             </div>
           </div>
-          <Collection items={tabs}>
+          <TabPanels items={tabs}>
             {(item) => (
               <TabPanel
                 style={{
@@ -574,7 +574,7 @@ describe('Tabs', () => {
                 {item.content}
               </TabPanel>
             )}
-          </Collection>
+          </TabPanels>
         </Tabs>
       );
     }

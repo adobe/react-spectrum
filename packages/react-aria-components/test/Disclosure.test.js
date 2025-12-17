@@ -77,6 +77,23 @@ describe('Disclosure', () => {
     expect(disclosure).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support aria label', () => {
+    const {container, getByRole} = render(
+      <Disclosure>
+        <Heading level={3} aria-label="Test disclosure heading">
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel aria-label="Test disclosure panel">
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const heading = getByRole('heading');
+    expect(heading).toHaveAttribute('aria-label', 'Test disclosure heading');
+    const panel = container.querySelector('.react-aria-DisclosurePanel');
+    expect(panel).toHaveAttribute('aria-label', 'Test disclosure panel');
+  });
+
   it('should support disabled state', () => {
     const {getByTestId, getByRole, queryByText} = render(
       <Disclosure data-testid="disclosure" isDisabled>
@@ -98,7 +115,7 @@ describe('Disclosure', () => {
     expect(panel).not.toBeVisible();
   });
 
-  it('should not expand a disabled disclosure via isExpanded', () => {
+  it('should expand a disabled disclosure via isExpanded', () => {
     const {getByTestId,  queryByText} = render(
       <Disclosure data-testid="disclosure" isDisabled isExpanded>
         <Heading level={3}>
@@ -112,7 +129,7 @@ describe('Disclosure', () => {
     const disclosure = getByTestId('disclosure');
     expect(disclosure).toHaveAttribute('data-disabled', 'true');
     const panel = queryByText('Content');
-    expect(panel).not.toBeVisible();
+    expect(panel).toBeVisible();
   });
 
   it('should support controlled isExpanded prop', async () => {

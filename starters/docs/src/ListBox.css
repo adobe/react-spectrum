@@ -1,36 +1,20 @@
 @import "./theme.css";
 
 .react-aria-ListBox {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   max-height: inherit;
   overflow: auto;
-  padding: 4px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border: 0.5px solid var(--border-color);
+  border-radius: calc(var(--radius) + var(--spacing-1));
   background: var(--overlay-background);
   forced-color-adjust: none;
   outline: none;
-  width: 250px;
-  max-height: 300px;
-  min-height: 100px;
   box-sizing: border-box;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
-  }
-
-  .react-aria-ListBoxSection:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.000125rem;
-    font-weight: bold;
-    font-variation-settings: initial;
-    padding: 0 0.6247499999999999rem;
   }
 
   &[data-empty] {
@@ -38,41 +22,112 @@
     justify-content: center;
     font-style: italic;
   }
+
+  &[data-drop-target] {
+    outline: 2px solid var(--highlight-background);
+    outline-offset: -1px;
+    background: var(--highlight-overlay)
+  }
+
+  .react-aria-DropIndicator[data-drop-target] {
+    z-index: 3;
+    outline: 1px solid var(--highlight-background);
+  }
+}
+
+.react-aria-ListBoxSection {
+  .react-aria-Header {
+    position: sticky;
+    top: -0.5px;
+    z-index: 2;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    font-variation-settings: initial;
+    padding: var(--spacing-1) var(--spacing-4);
+    background: var(--gray-100);
+    border-block: 0.5px solid var(--gray-400);
+    cursor: default;
+    user-select: none;
+    box-shadow: inset 0px 1px 0px white, inset 0px -4px 8px var(--gray-200);
+
+    @media (prefers-color-scheme: dark) {
+      box-shadow: inset 0px 4px 8px var(--gray-200);
+    }
+  }
+
+  &:first-child .react-aria-Header {
+    margin-top: -0.5px;
+  }
 }
 
 .react-aria-ListBoxItem {
-  padding: 0 0.499625rem;
-  border-radius: 6px;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius);
   outline: none;
   cursor: default;
   color: var(--text-color);
-  font-size: 0.9380000000000001rem;
+  font: var(--font-size) system-ui;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 32px;
+  min-height: var(--spacing-8);
+  box-sizing: border-box;
+  position: relative;
+  transition-property: background, color, border-radius;
+  transition-duration: 200ms;
+  -webkit-tap-highlight-color: transparent;
+
+  --border-color: var(--gray-300);
+  &:not(:last-child)::after {
+    content: '';
+    display: block;
+    position: absolute;
+  }
+
+  &[data-pressed] {
+    background: var(--highlight-hover);
+    border-radius: var(--radius);
+  }
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -2px;
+    z-index: 2;
   }
 
   &[data-selected] {
     background: var(--highlight-background);
     color: var(--highlight-foreground);
+    --border-color: transparent;
 
     &[data-focus-visible] {
       outline-color: var(--highlight-foreground);
       outline-offset: -4px;
     }
+
+    &[data-pressed] {
+      background: var(--highlight-background-pressed);
+    }
+
+    &:has(+ [data-selected]),
+    &:has(+ .react-aria-DropIndicator + [data-selected]) {
+      --border-color: rgb(255 255 255 / 0.3);
+    }
   }
+
   [slot=label] {
-    font-weight: bold;
+    font-weight: 500;
   }
 
   [slot=description] {
-    font-size: small;
+    font-size: var(--font-size-sm);
+  }
+
+  &[href] {
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-touch-callout: none;
   }
 
   &[data-disabled] {
@@ -82,130 +137,117 @@
   &[data-dragging] {
     opacity: 0.6;
   }
+
+  &[data-drop-target] {
+    outline: 2px solid var(--highlight-background);
+    background: var(--highlight-overlay)
+  }
 }
 
-.react-aria-ListBoxItem[href] {
-  text-decoration: none;
-  cursor: pointer;
-  -webkit-touch-callout: none;
-}
+.react-aria-ListBox {
+  &[data-layout=stack] {
+    display: flex;
 
+    &[data-orientation=vertical] {
+      flex-direction: column;
+      width: 250px;
+      max-height: 300px;
+      min-height: 100px;
 
-.react-aria-ListBox[data-orientation=horizontal],
-.react-aria-ListBox[data-layout=grid] {
-  flex-direction: row;
-  width: fit-content;
-  max-width: 100%;
-  padding: 4px;
+      .react-aria-ListBoxItem {
+        margin-inline: var(--spacing-1);
 
-  .react-aria-ListBoxItem {
-    position: relative;
-    margin: 0;
-    padding: 4px;
+        &:where(:nth-child(1 of .react-aria-ListBoxItem)) {
+          margin-top: var(--spacing);
+        }
 
-    & img {
-      object-fit: cover;
-      aspect-ratio: 1/1;
-      max-width: 150px;
-      margin-bottom: 4px;
-      border-radius: 4px;
-    }
+        &:where(:nth-last-child(1 of .react-aria-ListBoxItem)) {
+          margin-bottom: var(--spacing);
+        }
 
-    &[data-selected] {
-      background: none;
-      color: inherit;
+        [role=presentation] > & {
+          margin: 0; /* virtualizer */
+        }
 
-      &:after {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: var(--highlight-background);
-        border: 2px solid var(--highlight-foreground);
-        color: var(--highlight-foreground);
-        width: 22px;
-        height: 22px;
-        border-radius: 22px;
-        box-sizing: border-box;
-        font-size: 14px;
-        line-height: 1em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+        &:not(:last-child)::after {
+          bottom: 0;
+          width: calc(100% - var(--spacing-6));
+          border-bottom: 0.5px solid var(--border-color);
+        }
+
+        &[data-selected] {
+          &:has(+ [data-selected]),
+          &:has(+ .react-aria-DropIndicator + [data-selected]) {
+            border-end-start-radius: 0;
+            border-end-end-radius: 0;
+          }
+
+          + [data-selected],
+          + .react-aria-DropIndicator + [data-selected] {
+            border-start-start-radius: 0;
+            border-start-end-radius: 0;
+          }
+        }
       }
     }
 
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -2px;
+    &[data-orientation=horizontal] {
+      flex-direction: row;
+      width: 100%;
+
+      .react-aria-ListBoxItem {
+        min-width: max-content;
+        margin-block: var(--spacing-1);
+
+        &:nth-child(1 of .react-aria-ListBoxItem) {
+          margin-inline-start: var(--spacing);
+        }
+
+        &:nth-last-child(1 of .react-aria-ListBoxItem) {
+          margin-inline-end: var(--spacing);
+        }
+
+        &:not(:last-child)::after {
+          inset-inline-end: 0;
+          height: calc(100% - var(--spacing-2));
+          border-inline-end: 0.5px solid var(--border-color);
+        }
+
+        &[data-selected] {
+          &:has(+ [data-selected]),
+          &:has(+ .react-aria-DropIndicator + [data-selected]) {
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
+          }
+
+          + [data-selected],
+          + .react-aria-DropIndicator + [data-selected] {
+            border-start-start-radius: 0;
+            border-end-start-radius: 0;
+          }
+        }
+      }
     }
   }
-}
 
-.react-aria-ListBox[data-layout=grid] {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  scrollbar-gutter: stable;
-}
-
-.react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
-  width: 100%;
-  max-width: none;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: 58px 58px;
-  grid-template-columns: none;
-  grid-auto-columns: 250px;
-  max-height: 200px;
-  gap: 8px;
-
-  .react-aria-ListBoxItem {
+  &[data-layout=grid] {
     display: grid;
-    grid-template-areas: "image ."
-                         "image title"
-                         "image description"
-                         "image .";
-    grid-template-columns: auto 1fr;
-    grid-template-rows: 1fr auto auto 1fr;
-    column-gap: 8px;
+    gap: var(--spacing-1);
+    width: fit-content;
+    max-width: 100%;
+    padding: var(--spacing-1);
 
-    & img {
-      width: 50px;
-      height: 50px;
-      grid-area: image;
-      margin-bottom: 0;
+    &[data-orientation=vertical] {
+      grid-template-columns: 1fr 1fr;
     }
 
-    [slot=label] {
-      grid-area: title;
-    }
-
-    [slot=description] {
-      grid-area: description;
+    &[data-orientation=horizontal] {
+      grid-auto-flow: column;
+      grid-template-rows: auto auto;
+      grid-template-columns: none;
+      grid-auto-columns: 160px;
     }
   }
-}
-
-.react-aria-DropIndicator[data-drop-target] {
-  outline: 1px solid var(--highlight-background);
-}
-
-.react-aria-ListBox[data-drop-target] {
-  outline: 2px solid var(--highlight-background);
-  outline-offset: -1px;
-  background: var(--highlight-overlay)
-}
-
-.react-aria-ListBoxItem[data-drop-target] {
-  outline: 2px solid var(--highlight-background);
-  background: var(--highlight-overlay)
-}
-
-.react-aria-DropIndicator[data-drop-target] {
-  outline: 1px solid var(--highlight-background);
 }
 
 .react-aria-ListBoxLoadingIndicator {
@@ -214,4 +256,92 @@
   justify-content: center;
   height: 24px;
   width: 100%;
+}
+
+.dropdown-listbox {
+  display: block;
+  max-height: inherit;
+  overflow: auto;
+  border-radius: inherit;
+  forced-color-adjust: none;
+  outline: none;
+  box-sizing: border-box;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+
+  &[data-empty] {
+    min-height: var(--spacing-8);
+    padding: var(--spacing-2);
+  }
+
+  .react-aria-Header {
+    padding-left: var(--spacing-7);
+  }
+}
+
+.dropdown-item {
+  padding: calc((var(--spacing-8) - 1lh) / 2) var(--spacing-3) calc((var(--spacing-8) - 1lh) / 2) var(--spacing-6);
+  box-sizing: border-box;
+  border-radius: var(--radius);
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font: var(--font-size) system-ui;
+  font-weight: 500;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--spacing-8);
+  margin-inline: var(--spacing-1);
+  -webkit-tap-highlight-color: transparent;
+
+  &:first-of-type {
+    margin-top: var(--spacing);
+  }
+
+  &:last-of-type {
+    margin-bottom: var(--spacing);
+  }
+
+  &[data-selected] {
+    font-weight: 500;
+    color: var(--text-color);
+
+    .lucide-check {
+      position: absolute;
+      top: 50%;
+      left: var(--spacing-1);
+      translate: 0 -50%;
+      stroke-width: 3px;
+      width: var(--spacing-4);
+      height: var(--spacing-4);
+    }
+  }
+
+  &[data-pressed] {
+    background: var(--highlight-hover);
+  }
+
+  &[data-focused] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+  }
+
+  [slot=label] {
+    font-weight: 500;
+  }
+
+  [slot=description] {
+    font-size: var(--font-size-sm);
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+
+  &[href] {
+    text-decoration: none;
+    cursor: pointer;
+  }
 }

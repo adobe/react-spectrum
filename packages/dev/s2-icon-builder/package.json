@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2-icon-builder",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,27 +10,27 @@
     "transform-icons": "index.js"
   },
   "dependencies": {
-    "@parcel/bundler-library": "^2.16.0",
-    "@parcel/compressor-raw": "^2.16.0",
-    "@parcel/config-default": "^2.16.0",
-    "@parcel/core": "^2.16.0",
-    "@parcel/namer-default": "^2.16.0",
-    "@parcel/packager-raw": "^2.16.0",
-    "@parcel/plugin": "^2.16.0",
-    "@parcel/reporter-cli": "^2.16.0",
-    "@parcel/resolver-default": "^2.16.0",
-    "@parcel/transformer-js": "^2.16.0",
-    "@parcel/transformer-raw": "^2.16.0",
-    "@parcel/transformer-react-refresh-wrap": "^2.16.0",
-    "@react-spectrum/parcel-namer-s2": "^0.3.2",
-    "@react-spectrum/parcel-transformer-s2-icon": "^0.3.2",
+    "@parcel/bundler-library": "^2.16.3",
+    "@parcel/compressor-raw": "^2.16.3",
+    "@parcel/config-default": "^2.16.3",
+    "@parcel/core": "^2.16.3",
+    "@parcel/namer-default": "^2.16.3",
+    "@parcel/packager-raw": "^2.16.3",
+    "@parcel/plugin": "^2.16.3",
+    "@parcel/reporter-cli": "^2.16.3",
+    "@parcel/resolver-default": "^2.16.3",
+    "@parcel/transformer-js": "^2.16.3",
+    "@parcel/transformer-raw": "^2.16.3",
+    "@parcel/transformer-react-refresh-wrap": "^2.16.3",
+    "@react-spectrum/parcel-namer-s2": "^1.0.0",
+    "@react-spectrum/parcel-transformer-s2-icon": "^1.0.0",
     "@swc/helpers": "^0.5.0",
-    "glob": "^8.0.3"
+    "glob": "^11.0.3"
   },
   "peerDependencies": {
     "@react-spectrum/s2": ">=0.8.0",
-    "react": "^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
   },
   "files": [
     "index.js",

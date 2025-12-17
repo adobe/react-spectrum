@@ -47,7 +47,7 @@ export type TKeyof = {type: 'keyof', keyof: TType};
 export type TLink = {type: 'link', id: string};
 export type TReference =  {type: 'reference', local: string, imported: string, specifier: string};
 export type TMapped = {type: 'mapped', readonly: boolean | '+' | '-', typeParameter: TTypeParameter, typeAnnotation: TType};
-export type TType = 
+export type TType =
   | TKeyword
   | TIdentifier
   | TString
@@ -80,7 +80,7 @@ const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
 
 let LINKS = {};
 export function setLinks(links) {
-  LINKS = links;
+  Object.assign(LINKS, links);
 }
 
 export function Type({type}: {type: TType}) {
@@ -95,57 +95,57 @@ export function Type({type}: {type: TType}) {
     case 'void':
     case 'unknown':
     case 'never':
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'this':
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'symbol':
-      return <Symbol />;
+      return Symbol();
     case 'identifier':
-      return <Identifier {...type} />;
+      return Identifier(type);
     case 'string':
       if ('value' in type && type.value != null) {
-        return <StringLiteral {...type} />;
+        return StringLiteral(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'number':
       if ('value' in type && type.value != null) {
-        return <NumberLiteral {...type} />;
+        return NumberLiteral(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'boolean':
       if ('value' in type && type.value != null) {
-        return <BooleanLiteral {...type} />;
+        return BooleanLiteral(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'union':
-      return <UnionType {...type} />;
+      return UnionType(type);
     case 'intersection':
-      return <IntersectionType {...type} />;
+      return IntersectionType(type);
     case 'application':
-      return <TypeApplication {...type} />;
+      return TypeApplication(type);
     case 'typeOperator':
-      return <TypeOperator {...type} />;
+      return TypeOperator(type);
     case 'function':
-      return <FunctionType {...type} />;
+      return FunctionType(type);
     case 'parameter':
-      return <Parameter {...type} />;
+      return Parameter(type);
     case 'link':
-      return <LinkType {...type} />;
+      return LinkType(type);
     case 'interface':
-      return <InterfaceType {...type} />;
+      return InterfaceType(type);
     case 'object':
       if (type.properties) {
-        return <ObjectType {...type} />;
+        return ObjectType(type);
       }
-      return <Keyword {...type} />;
+      return Keyword(type);
     case 'alias':
-      return <code className={codeStyle}><Type type={type.value} /></code>;
+      return <code className={codeStyle}>{Type({type: type.value})}</code>;
     case 'array':
-      return <ArrayType {...type} />;
+      return ArrayType(type);
     case 'tuple':
-      return <TupleType {...type} />;
+      return TupleType(type);
     case 'typeParameter':
-      return <TypeParameter {...type} />;
+      return TypeParameter(type);
     case 'component': {
       let props = type.props;
       if (props?.type === 'application') {
@@ -155,18 +155,18 @@ export function Type({type}: {type: TType}) {
         props = LINKS[props.id];
       }
       if (props) {
-        return <Type type={{...props, description: type.description} as any} />;
+        return Type({type: {...props, description: type.description} as any});
       }
       return null;
     }
     case 'conditional':
-      return <ConditionalType {...type} />;
+      return ConditionalType(type);
     case 'indexedAccess':
-      return <IndexedAccess {...type} />;
+      return IndexedAccess(type);
     case 'keyof':
-      return <Keyof {...type} />;
+      return Keyof(type);
     case 'template':
-      return <TemplateLiteral {...type} />;
+      return TemplateLiteral(type);
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -174,11 +174,11 @@ export function Type({type}: {type: TType}) {
 }
 
 function TypeOperator({operator, value}: TTypeOperator) {
-  return <span><span className={codeStyles.keyword}>{operator}</span>{' '}<Type type={value} /></span>;
+  return <span><span className={codeStyles.keyword}>{operator}</span>{' '}{Type({type: value})}</span>;
 }
 
 function IndexedAccess({objectType, indexType}: TIndexedAccess) {
-  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
+  return <span>{Type({type: objectType})}[{Type({type: indexType})}]</span>;
 }
 
 function StringLiteral({value}: TString) {
@@ -198,7 +198,7 @@ function Symbol() {
 }
 
 function Keyof({keyof}: TKeyof) {
-  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
+  return <span>{Keyword({type: 'keyof'})}{' '}{Type({type: keyof})}</span>;
 }
 
 function Keyword({type}: {type: string}) {
@@ -255,27 +255,25 @@ export function Indent({params, open, close, children, alwaysIndent}: {params: T
   let openElement, closeElement;
 
   if (params.length === 0) {
-    openElement = <Punctuation>{open}</Punctuation>;
-    closeElement = <Punctuation>{close}</Punctuation>;
+    openElement = Punctuation(open);
+    closeElement = Punctuation(close);
   } else if (params.length > 2 || alwaysIndent) {
     // Always indent.
-    openElement =  <Punctuation>{open.trimEnd() + '\n' + large + '  '}</Punctuation>;
-    closeElement =  <Punctuation>{'\n' + large + close.trimStart()}</Punctuation>;
+    openElement = Punctuation(open.trimEnd() + '\n' + large + '  ');
+    closeElement = Punctuation('\n' + large + close.trimStart());
     large += '  ';
     // small += '  ';
   } else {
     // Indent on small screens. Don't indent on large screens.
     openElement = (
       <>
-        {/* <Punctuation>{open.trimEnd() + '\n' + small + '  '}</Punctuation> */}
-        <Punctuation>{open}</Punctuation>
+        {Punctuation(open)}
       </>
     );
 
     closeElement = (
       <>
-        {/* <Punctuation>{'\n' + small + close.trimStart()}</Punctuation> */}
-        <Punctuation>{close}</Punctuation>
+        {Punctuation(close)}
       </>
     );
 
@@ -291,7 +289,7 @@ export function Indent({params, open, close, children, alwaysIndent}: {params: T
   );
 }
 
-function Punctuation({children}) {
+export function Punctuation(children) {
   if (typeof children === 'string' && /\s/.test(children)) {
     return children;
   }
@@ -336,32 +334,34 @@ export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverI
 
   return elements
     .filter(Boolean)
-    .reduce<ReactNode[]>((acc, v, i) => [
-      ...acc,
-      <Punctuation
-        key={`join${i}`}>
-        {contents}
-      </Punctuation>,
-      <React.Fragment
-        key={`type${i}`}>
-        <Type type={v} />
-      </React.Fragment>
-    ], []).slice(1);
+    .reduce<ReactNode>((acc, v, i) => (<>
+      {acc}
+      {i > 0 ? Punctuation(contents) : null}
+      {Type({type: v})}
+    </>), <></>);
 }
 
 function UnionType({elements}: TUnion) {
-  return <JoinList elements={elements} joiner={' |\u00a0'} newlineBefore />;
+  return JoinList({
+    elements,
+    joiner: ' |\u00a0',
+    newlineBefore: true
+  });
 }
 
 function IntersectionType({types}: TIntersection) {
-  return <JoinList elements={types} joiner={' &\u00a0'} newlineBefore />;
+  return JoinList({
+    elements: types,
+    joiner: ' &\u00a0',
+    newlineBefore: true
+  });
 }
 
 function TypeApplication({base, typeParameters}: TApplication) {
   return (
     <>
-      <Type type={base} />
-      <TypeParameters typeParameters={typeParameters} />
+      {Type({type: base})}
+      {TypeParameters({typeParameters})}
     </>
   );
 }
@@ -373,9 +373,9 @@ export function TypeParameters({typeParameters}: {typeParameters: TType[]}) {
 
   return (
     <>
-      <Punctuation>&lt;</Punctuation>
-      <JoinList elements={typeParameters} joiner=", " neverIndent />
-      <Punctuation>&gt;</Punctuation>
+      {Punctuation('<')}
+      {JoinList({elements: typeParameters, joiner: ', ', neverIndent: true})}
+      {Punctuation('>')}
     </>
   );
 }
@@ -389,13 +389,13 @@ function TypeParameter({name, constraint, default: defaultType}: TTypeParameter)
           {' '}
           <span className={codeStyles.keyword}>extends</span>
           {' '}
-          <Type type={constraint} />
+          {Type({type: constraint})}
         </>
       }
       {defaultType &&
         <>
-          <Punctuation>{' = '}</Punctuation>
-          <Type type={defaultType} />
+          {Punctuation(' = ')}
+          {Type({type: defaultType})}
         </>
       }
     </>
@@ -406,12 +406,15 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
   return (
     <>
       {name && <span className={codeStyles.function}>{name}</span>}
-      <TypeParameters typeParameters={typeParameters} />
-      <Indent params={parameters} open="(" close=")">
-        <JoinList elements={parameters} joiner=", " />
-      </Indent>
-      <Punctuation>{name ? ': ' : ' => '}</Punctuation>
-      <Type type={returnType} />
+      {TypeParameters({typeParameters})}
+      {Indent({
+        params: parameters,
+        open: '(',
+        close: ')',
+        children: JoinList({elements: parameters, joiner: ', '})
+      })}
+      {Punctuation(name ? ': ' : ' => ')}
+      {Type({type: returnType})}
     </>
   );
 }
@@ -419,18 +422,18 @@ function FunctionType({name, parameters, return: returnType, typeParameters}: TF
 function Parameter({name, value, default: defaultValue, optional, rest}: TParameter) {
   return (
     <>
-      {rest && <Punctuation>...</Punctuation>}
+      {rest && Punctuation('...')}
       {name}
-      {optional && <Punctuation>?</Punctuation>}
+      {optional && Punctuation('?')}
       {value &&
         <>
-          <Punctuation>: </Punctuation>
-          <Type type={value} />
+          {Punctuation(': ')}
+          {Type({type: value})}
         </>
       }
       {defaultValue &&
         <>
-          <Punctuation> = </Punctuation>
+          {Punctuation(' = ')}
           <span dangerouslySetInnerHTML={{__html: defaultValue}} />
         </>
       }
@@ -447,7 +450,7 @@ export function LinkType({id}: TLink) {
   }
 
   if (DOC_LINKS[type.name]) {
-    return <Identifier type="identifier" name={type.name} />;
+    return Identifier({type: 'identifier', name: type.name});
   }
 
   return <TypeLink type={type} />;
@@ -462,12 +465,12 @@ export function TypeLink({type}: {type: Extract<TType, {id: string, name: string
     <TypePopover name={type.name}>
       {'description' in type && type.description && <Markdown  className={style({font: 'body'})} options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}}>{type.description}</Markdown>}
       {type.type === 'interface' && type.extends?.length > 0 &&
-        <p className={style({font: 'ui'})}><strong>Extends</strong>: <code className={codeStyle}><JoinList elements={type.extends} joiner=", " /></code></p>
+        <p className={style({font: 'ui'})}><strong>Extends</strong>: <code className={codeStyle}>{JoinList({elements: type.extends, joiner: ', '})}</code></p>
       }
       {type.type === 'component' && <h3 className={style({font: 'title'})}>Props</h3>}
       {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
-        ? <Type type={type} />
-        : <code className={codeStyle}><Type type={type} /></code>
+        ? Type({type})
+        : <code className={codeStyle}>{Type({type})}</code>
       }
     </TypePopover>
   );
@@ -539,14 +542,23 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                       <span className={isComponent ? codeStyles.attribute : codeStyles.variable}>{prop.name}</span>
                     </code>
                     {!prop.optional && showRequired
-                      ? <Asterisk size="M" className={style({marginStart: 8})} aria-label="Required" />
+                      ? <Asterisk
+                          size="M"
+                          className={style({
+                            marginStart: 4,
+                            '--iconPrimary': {
+                              type: 'fill',
+                              value: 'currentColor'
+                            }
+                          })}
+                          aria-label="Required" />
                       : null
                     }
                   </TableCell>
                   {!hideType &&
                     <TableCell hideBorder={!!prop.description}>
                       <code className={codeStyle}>
-                        <Type type={prop.value} />
+                        {Type({type: prop.value})}
                       </code>
                     </TableCell>
                   }
@@ -580,12 +592,15 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
                   <TableCell role="rowheader" data-column="Name" hideBorder={!!prop.description}>
                     <code className={codeStyle}>
                       <span className={codeStyles.function}>{prop.name}</span>
-                      <TypeParameters typeParameters={prop.value.typeParameters} />
-                      <Indent params={prop.value.parameters} open="(" close=")">
-                        <JoinList elements={prop.value.parameters} joiner=", " />
-                      </Indent>
-                      <Punctuation>{': '}</Punctuation>
-                      <Type type={prop.value.return} />
+                      {TypeParameters({typeParameters: prop.value.typeParameters})}
+                      {Indent({
+                        params: prop.value.parameters,
+                        open: '(',
+                        close: ')',
+                        children: JoinList({elements: prop.value.parameters, joiner: ', '})
+                      })}
+                      {Punctuation(': ')}
+                      {Type({type: prop.value.return})}
                     </code>
                   </TableCell>
                 </TableRow>
@@ -602,8 +617,8 @@ export function InterfaceType({properties: props, showRequired, showDefault, isC
 }
 
 function ObjectType({properties}: TObject) {
-  const startObject = <Punctuation>{'{'}</Punctuation>;
-  const endObject = <Punctuation>{'}'}</Punctuation>;
+  const startObject = Punctuation('{');
+  const endObject = Punctuation('}');
   return (
     <>
       {startObject}
@@ -622,13 +637,13 @@ function ObjectType({properties}: TObject) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={k ?? i} style={{paddingLeft: '1.5em'}}>
-            {indexType && <Punctuation>[</Punctuation>}
+            {indexType && Punctuation('[')}
             <span className={`token ${token}`}>{k}</span>
-            {indexType && <Punctuation>{': '}</Punctuation>}
-            {indexType && <Type type={indexType} />}
-            {indexType && <Punctuation>]</Punctuation>}
-            <Punctuation>{punc}</Punctuation>
-            <Type type={value} />
+            {indexType && Punctuation(': ')}
+            {indexType && Type({type: indexType})}
+            {indexType && Punctuation(']')}
+            {Punctuation(punc)}
+            {Type({type: value})}
             {i < arr.length - 1 ? ',' : ''}
           </div>
         );
@@ -641,34 +656,34 @@ function ObjectType({properties}: TObject) {
 function ArrayType({elementType}: TArray) {
   return (
     <>
-      <Type type={elementType} />
-      <Punctuation>[]</Punctuation>
+      {Type({type: elementType})}
+      {Punctuation('[]')}
     </>
   );
 }
 
 function TupleType({elements}: TTuple) {
-  return (
-    <>
-      <Indent params={elements} alwaysIndent open="[" close="]">
-        <JoinList elements={elements} joiner=", " />
-      </Indent>
-    </>
-  );
+  return Indent({
+    params: elements,
+    alwaysIndent: true,
+    open: '[',
+    close: ']',
+    children: JoinList({elements, joiner: ', '})
+  });
 }
 
 function ConditionalType({checkType, extendsType, trueType, falseType}: TConditional) {
   return (
     <>
-      <Type type={checkType} />
+      {Type({type: checkType})}
       {' '}
       <span className={codeStyles.keyword}>extends</span>
       {' '}
-      <Type type={extendsType} />
-      <Punctuation>{' ? '}</Punctuation>
-      <Type type={trueType} />
-      <Punctuation>{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</Punctuation>
-      <Type type={falseType} />
+      {Type({type: extendsType})}
+      {Punctuation(' ? ')}
+      {Type({type: trueType})}
+      {Punctuation(' :' + (falseType.type === 'conditional' ? '\n' : ' '))}
+      {Type({type: falseType})}
     </>
   );
 }
@@ -684,9 +699,9 @@ function TemplateLiteral({elements}: TTemplate) {
 
         return (
           <React.Fragment key={i}>
-            <Punctuation>{'${'}</Punctuation>
-            <Type type={element} />
-            <Punctuation>{'}'}</Punctuation>
+            {Punctuation('${')}
+            {Type({type: element})}
+            {Punctuation('}')}
           </React.Fragment>
         );
       })}

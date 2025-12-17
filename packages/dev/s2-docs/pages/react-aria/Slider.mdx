@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
 
 export const tags = ['range input', 'track', 'scrubber'];
+export const relatedPages = [{'title': 'useSlider', 'url': 'Slider/useSlider.html'}];
+export const description = 'Allows a user to select one or more values within a range.';
 
 # Slider
 
@@ -94,6 +96,10 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
     step: 5
   }} />
 
+## Examples
+
+<ExampleList tag="slider" pages={props.pages} />
+
 ## API
 
 <Anatomy />
@@ -115,22 +121,14 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
 
 <PropTable component={docs.exports.Slider} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-Slider" properties={docs.exports.SliderRenderProps.properties} />
-
 ### SliderOutput
 
 <PropTable component={docs.exports.SliderOutput} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-SliderOutput" properties={docs.exports.SliderRenderProps.properties} />
 
 ### SliderTrack
 
 <PropTable component={docs.exports.SliderTrack} links={docs.links} showDescription />
 
-<StateTable defaultClassName="react-aria-SliderTrack" properties={docs.exports.SliderTrackRenderProps.properties} />
-
 ### SliderThumb
 
 <PropTable component={docs.exports.SliderThumb} links={docs.links} showDescription />
-
-<StateTable defaultClassName="react-aria-SliderThumb" properties={docs.exports.SliderThumbRenderProps.properties} />

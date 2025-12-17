@@ -9,6 +9,8 @@ import docs from 'docs:react-aria-components';
 import Anatomy from '@react-aria/color/docs/ColorFieldAnatomy.svg';
 
 export const tags = ['input'];
+export const relatedPages = [{'title': 'useColorField', 'url': 'ColorField/useColorField.html'}];
+export const description = 'Allows users to edit a hex color or individual color channel value.';
 
 # ColorField
 
@@ -20,7 +22,7 @@ export const tags = ['input'];
     docs={vanillaDocs.exports.ColorField}
     links={vanillaDocs.links}
     props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
-    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
     type="vanilla"
     files={["starters/docs/src/ColorField.tsx", "starters/docs/src/ColorField.css"]} />
   <VisualExample
@@ -28,9 +30,9 @@ export const tags = ['input'];
     docs={vanillaDocs.exports.ColorField}
     links={vanillaDocs.links}
     props={['label', 'colorSpace', 'channel', 'description', 'isDisabled']}
-    initialProps={{label: 'Color', defaultValue: '#ff0000'}}
+    initialProps={{label: 'Color', defaultValue: '#ff0000', placeholder: 'Enter a color'}}
     type="tailwind"
-    files={["starters/tailwind/src/ColorField.tsx", "starters/tailwind/src/index.css"]} />
+    files={["starters/tailwind/src/ColorField.tsx"]} />
 </ExampleSwitcher>
 
 ## Value
@@ -40,19 +42,20 @@ Use the `value` or `defaultValue` prop to set the color value, and `onChange` to
 ```tsx render
 "use client";
 import {ColorField} from 'vanilla-starter/ColorField';
-import {parseColor} from 'react-aria-components';
+import {parseColor, type Color} from 'react-aria-components';
 import {useState} from 'react';
 
 function Example() {
-  let [value, setValue] = useState(parseColor('#e73623'));
+  let [value, setValue] = useState<Color | null>(parseColor('#e73623'));
 
   return (
     <div>
       <ColorField
         label="Primary color"
+        placeholder="Enter a color"
         value={value}
         onChange={setValue} />
-      <pre style={{fontSize: 12}}>Current value: {value.toString('hex')}</pre>
+      <pre style={{fontSize: 12}}>Current value: {value?.toString('hex')}</pre>
     </div>
   );
 }
@@ -65,16 +68,17 @@ By default, ColorField displays a hex value. Set the `colorSpace` and `channel` 
 ```tsx render
 "use client";
 import {ColorField} from 'vanilla-starter/ColorField';
-import {parseColor} from 'react-aria-components';
+import {parseColor, type Color} from 'react-aria-components';
 import {useState} from 'react';
 
 function Example() {
-  let [color, setColor] = useState(parseColor('#7f007f'));
+  let [color, setColor] = useState<Color | null>(parseColor('#7f007f'));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <ColorField
         label="Hue"
+
         value={color}
         onChange={setColor}
         /*- begin highlight -*/
@@ -101,11 +105,11 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired` prop to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
-import {ColorField, Button, Form} from 'vanilla-starter/ColorField';
+import {ColorField} from 'vanilla-starter/ColorField';
 import {Button} from 'vanilla-starter/Button';
 import {Form} from 'vanilla-starter/Form';
 
@@ -115,6 +119,7 @@ function Example(props) {
       <ColorField
         {...props}
         label="Brand color"
+        placeholder="Enter a color"
         ///- begin highlight -///
         name="brandColor"
         isRequired />

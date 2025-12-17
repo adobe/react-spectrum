@@ -1,16 +1,17 @@
 import fs from 'fs';
-import glob from 'glob';
-import * as recast from 'recast';
+import {getBaseUrl} from '../packages/dev/s2-docs/src/pageUtils.ts';
+import {globSync} from 'glob';
 import {parse} from '@babel/parser';
 import path from 'path';
 import postcss from 'postcss';
+import * as recast from 'recast';
 
-const publicUrl = process.env.REGISTRY_URL || 'http://localhost:8081';
+const publicUrl = getBaseUrl('react-aria') + '/registry';
 
 fs.rmSync('starters/tailwind/registry', {recursive: true, force: true});
 fs.mkdirSync('starters/tailwind/registry');
 
-for (let file of glob.sync('starters/tailwind/src/*.{ts,tsx}')) {
+for (let file of globSync('starters/tailwind/src/*.{ts,tsx}')) {
   let name = path.basename(file, path.extname(file));
   let {dependencies, registryDependencies, content} = analyzeDeps(file, 'tailwind');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
@@ -40,7 +41,7 @@ for (let file of glob.sync('starters/tailwind/src/*.{ts,tsx}')) {
 fs.rmSync('starters/docs/registry', {recursive: true, force: true});
 fs.mkdirSync('starters/docs/registry');
 
-for (let file of glob.sync('starters/docs/src/*.{ts,tsx}')) {
+for (let file of globSync('starters/docs/src/*.{ts,tsx}')) {
   let name = path.basename(file, path.extname(file));
   let {dependencies, registryDependencies, content} = analyzeDeps(file, 'vanilla');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';

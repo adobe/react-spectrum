@@ -38,10 +38,11 @@ echo 'test icon builder'
 cd examples/s2-webpack-5-example
 mkdir icon-test
 
+npm cache clean --force
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
-npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
+npm_config_registry=$registry npx @react-spectrum/s2-icon-builder@latest -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.svg icon-test/S2_lin_3D_48.svg
-npx @react-spectrum/s2-icon-builder --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
+npm_config_registry=$registry npx @react-spectrum/s2-icon-builder@latest --type illustration -i ./icon-test/S2_lin_3D_48.svg -o ./icon-dist
 echo 'concluded icon builder'
 
 echo 'testing icon builder library'
@@ -66,8 +67,8 @@ cat > icon-library-test/package.json << EOF
   },
   "peerDependencies": {
     "@react-spectrum/s2": ">=0.8.0",
-    "react": "^18.0.0 || ^19.0.0-rc.1",
-    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1"
   },
   "devDependencies": {
     "@react-spectrum/s2-icon-builder": "latest",
@@ -90,6 +91,7 @@ cp ../../packages/@react-spectrum/s2/spectrum-illustrations/linear/S2_lin_3D_48.
 cd icon-library-test
 echo "Installing and building icon library"
 yarn install --no-immutable
+# no lockfile, no need to forcibly update anything
 yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
 yarn transform-icons --type illustration -i './src/illustrations/*.svg' -o ./ --isLibrary
 
@@ -112,6 +114,7 @@ yarn npm publish --tag latest
 echo "Building icon builder fixture"
 cd ../../../scripts/icon-builder-fixture
 yarn install --no-immutable
+yarn up @react-spectrum/s2
 yarn tsc
 yarn build --public-url ./
 

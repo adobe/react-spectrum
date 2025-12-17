@@ -5,6 +5,7 @@ import docs from 'docs:react-aria-components';
 import {GroupedPropTable} from '../../src/PropTable';
 
 export const tags = ['windowing', 'list', 'grid', 'infinite'];
+export const description = 'Renders a scrollable collection of data using customizable layouts.';
 
 # Virtualizer
 
@@ -15,7 +16,7 @@ export const tags = ['windowing', 'list', 'grid', 'infinite'];
 import {Virtualizer, ListLayout} from 'react-aria-components';
 import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
-let items = [];
+let items: {id: number, name: string}[] = [];
 for (let i = 0; i < 5000; i++) {
   items.push({id: i, name: `Item ${i}`});
 }
@@ -47,10 +48,10 @@ Virtualizer uses <TypeLink links={docs.links} type={docs.exports.Layout} /> obje
 ```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['gap', 'padding']} initialProps={{estimatedRowHeight: 75, gap: 4, padding: 4}} propsObject="layoutOptions" wide
 "use client";
 import {Virtualizer, ListLayout} from 'react-aria-components';
-import {GridList, GridListItem} from 'vanilla-starter/GridList';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
 
 let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.'.split(' ');
-let items = [];
+let items: {id: number, name: string}[] = [];
 for (let i = 0; i < 5000; i++) {
   let words = Math.max(2, Math.floor(Math.random() * 25));
   let name = lorem.slice(0, words).join(' ');
@@ -63,13 +64,13 @@ for (let i = 0; i < 5000; i++) {
   /* PROPS */
 >
   {/*- end highlight -*/}
-  <GridList
-    aria-label="Virtualized GridList"
+  <ListBox
+    aria-label="Virtualized ListBox"
     selectionMode="multiple"
     items={items}
     style={{display: 'block', padding: 0}}>
-    {(item) => <GridListItem>{item.name}</GridListItem>}
-  </GridList>
+    {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+  </ListBox>
 </Virtualizer>
 ```
 
@@ -79,8 +80,8 @@ for (let i = 0; i < 5000; i++) {
 
 ```tsx render docs={docs.exports.GridLayoutOptions} links={docs.links} props={['minItemSize', 'maxItemSize', 'minSpace', 'maxColumns', 'preserveAspectRatio']} initialProps={{minItemSize: {width: 100, height: 140}, minSpace: {width: 8, height: 8}}} propsObject="layoutOptions" wide
 "use client";
-import {Virtualizer, GridLayout, Size, Text} from 'react-aria-components';
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {Virtualizer, GridLayout, Text} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 let albumOptions = [
@@ -112,7 +113,8 @@ let albumOptions = [
 ];
 ///- end collapse -///
 
-let albums = [];
+type Album = {id: number, image: string, title: string, artist: string};
+let albums: Album[] = [];
 for (let i = 0; i < 1000; i++) {
   albums.push({
     id: i,
@@ -129,22 +131,23 @@ function Example(props) {
         /* PROPS */
         {...props}>
         {/*- end highlight -*/}
-        <ListBox
+        <GridList
           /*- begin highlight -*/
           layout="grid"
           /*- end highlight -*/
           aria-label="Virtualized grid layout"
           selectionMode="multiple"
           items={albums}
+          data-size="small"
           style={{display: 'block', padding: 0, height: 300, width: '100%'}}>
           {item => (
-            <ListBoxItem textValue={item.title}>
+            <GridListItem textValue={item.title} style={{height: '100%'}}>
               <img src={item.image} alt="" />
-              <Text slot="label" style={{fontSize: 12}}>{item.title}</Text>
+              <Text>{item.title}</Text>
               <Text slot="description">{item.artist}</Text>
-            </ListBoxItem>
+            </GridListItem>
           )}
-        </ListBox>
+        </GridList>
       </Virtualizer>
     </div>
   );
@@ -167,8 +170,8 @@ function Example(props) {
 
 ```tsx render docs={docs.exports.WaterfallLayoutOptions} links={docs.links} props={['minItemSize', 'maxItemSize', 'minSpace', 'maxColumns']} initialProps={{minItemSize: {width: 150, height: 150}, minSpace: {width: 8, height: 8}}} propsObject="layoutOptions" wide
 "use client";
-import {Virtualizer, WaterfallLayout, Size, Text} from 'react-aria-components';
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import {Virtualizer, WaterfallLayout, Text} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
 
 ///- begin collapse -///
 let images = [
@@ -395,33 +398,35 @@ for (let i = 0; images.length < 500; i++) {
   /* PROPS */
   /*- end highlight -*/
 >
-  <ListBox
+  <GridList
     layout="grid"
     aria-label="Virtualized waterfall layout"
     selectionMode="multiple"
     items={images}
+    data-size="small"
     style={{display: 'block', padding: 0, height: 400, width: '100%'}}>
     {item => (
-      <ListBoxItem textValue={item.title}>
+      <GridListItem textValue={item.title}>
         <img src={item.image} alt="" style={{aspectRatio: item.aspectRatio, maxWidth: 'none'}} />
-        <Text slot="label" style={{fontSize: 12}}>{item.title}</Text>
+        <Text>{item.title}</Text>
         <Text slot="description">{item.user}</Text>
-      </ListBoxItem>
+      </GridListItem>
     )}
-  </ListBox>
+  </GridList>
 </Virtualizer>
 ```
 
 ### Table
 
-`TableLayout` provides layout of items in rows and columns, supporting virtualization of both horizontal and vertical scrolling. It should be used with the [Table](Table.html) component. Rows can be fixed or variable height. When using variable heights, set the `estimatedRowHeight` to a reasonable guess for how tall the rows will be on average. This allows the size of the scrollbar to be calculated.
+`TableLayout` provides layout of items in rows and columns, supporting virtualization of both horizontal and vertical scrolling. It should be used with the [Table](Table) component. Rows can be fixed or variable height. When using variable heights, set the `estimatedRowHeight` to a reasonable guess for how tall the rows will be on average. This allows the size of the scrollbar to be calculated.
 
 ```tsx render docs={docs.exports.ListLayoutOptions} links={docs.links} props={['rowHeight', 'headingHeight', 'padding', 'gap']} initialProps={{rowHeight: 32, headingHeight: 32, padding: 4, gap: 4}} propsObject="layoutOptions" wide
 "use client";
 import {Virtualizer, TableLayout} from 'react-aria-components';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from 'vanilla-starter/Table';
 
-let rows = [];
+type Row = { id: number; foo: string; bar: string; baz: string };
+let rows: Row[] = [];
 for (let i = 0; i < 1000; i++) {
   rows.push({ id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}` });
 }
@@ -465,6 +470,10 @@ for (let i = 0; i < 1000; i++) {
   </Table>
 </Virtualizer>
 ```
+
+## Examples
+
+<ExampleList tag="virtualizer" pages={props.pages} />
 
 ## API
 

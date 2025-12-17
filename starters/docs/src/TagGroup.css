@@ -1,68 +1,95 @@
 @import "./theme.css";
+@import "./utilities.css";
 
 .react-aria-TagGroup {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: small;
+  font: var(--font-size) system-ui;
   color: var(--text-color);
+
+  [slot=errorMessage] {
+    margin-top: var(--spacing);
+    font-size: var(--font-size-sm);
+    color: var(--invalid-color);
+  }
 }
 
 .react-aria-TagList {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: var(--spacing-2);
 }
 
 .react-aria-Tag {
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
+  --button-color: var(--gray);
+  --button-gradient-size: 4px;
+  text-shadow: none;
   forced-color-adjust: none;
-  border-radius: 4px;
-  padding: 2px 8px;
-  font-size: 0.812875rem;
-  outline: none;
+  border-radius: 9999px;
+  height: var(--spacing-5);
+  padding: 0 var(--spacing-3);
+  font: var(--font-size-sm) system-ui;
   cursor: default;
   display: flex;
   align-items: center;
-  transition: border-color 200ms;
+  gap: var(--spacing-1);
+  transition-property: scale, background, border-color, box-shadow, text-shadow;
+  transition-duration: 200ms;;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  -webkit-tap-highlight-color: transparent;
 
-  &[data-hovered] {
-    border-color: var(--border-color-hover);
+  &:has(.remove-button) {
+    padding: 0 var(--spacing-1) 0 var(--spacing-2);
   }
 
-  &[data-focus-visible] {
-    outline: 2px solid var(--focus-ring-color);
-    outline-offset: 2px;
+  &[data-pressed] {
+    scale: 0.96;
   }
 
   &[data-selected] {
-    border-color: var(--highlight-background);
-    background: var(--highlight-background);
-    color: var(--highlight-foreground);
+    --button-color: var(--tint);
   }
 
-  [slot=remove] {
+  &[data-href] {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .remove-button {
     background: none;
-    border: 1px solid var(--border-color);
+    border: none;
     padding: 0;
-    margin-left: 4px;
-    color: var(--text-color-base);
+    color: var(--gray-1000);
     transition: color 200ms;
     outline: none;
-    font-size: 0.95em;
     border-radius: 100%;
     aspect-ratio: 1/1;
     height: calc(100% - 4px);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition-property: background, color, scale;
+    transition-duration: 200ms;
 
-    &[data-hovered] {
-      color: var(--text-color-hover);
+    svg {
+      width: calc(100% - 2px);
+      height: calc(100% - 2px);
+    }
+
+    &:where([data-hovered], [data-pressed]) {
+      background: var(--gray-300);
+      color: var(--gray-1200);
+    }
+
+    @media (forced-colors: active) {
+      background: ButtonFace;
+      color: ButtonText;
+    }
+
+    &[data-pressed] {
+      scale: 0.9;
     }
 
     &[data-focus-visible] {
@@ -72,33 +99,11 @@
   }
 
   &[data-selected] {
-    [slot=remove] {
+    .remove-button {
       color: inherit;
+      &[data-hovered] {
+        background: rgb(255 255 255 / 0.2);
+      }
     }
-  }
-}
-
-.react-aria-Tag[data-href] {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.react-aria-TagList {
-  .react-aria-Tag {
-    &[data-disabled] {
-      border-color: var(--border-color-disabled);
-      color: var(--text-color-disabled);
-    }
-  }
-}
-
-.react-aria-TagGroup {
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--invalid-color);
   }
 }
