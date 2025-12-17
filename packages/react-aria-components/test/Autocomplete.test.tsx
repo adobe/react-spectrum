@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import './installPointerEvent';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
@@ -624,6 +625,38 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('aria-activedescendant');
     expect(foo).not.toHaveAttribute('data-focus-visible');
+  });
+
+  it('should not move focus to the input field if tapping on a menu item via touch', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+
+    await user.pointer({target: foo, keys: '[TouchA]'});
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it('should move focus to the input field if clicking on a menu item via mouse', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+
+    await user.pointer({target: foo, keys: '[MouseLeft]'});
+    expect(document.activeElement).toBe(input);
   });
 
   it('should work inside a Select', async function () {

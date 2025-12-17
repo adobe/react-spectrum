@@ -24,8 +24,8 @@ export const Example: Story = (args) => (
       <Dialog>
         <form>
           <Heading slot="title">Sign up</Heading>
-          <TextField autoFocus label='First Name:' />
-          <TextField label='Last Name:' />
+          <TextField autoFocus label='First Name' placeholder="Enter your first name" />
+          <TextField label='Last Name' placeholder="Enter your last name" />
           <Button slot="close">
             Submit
           </Button>

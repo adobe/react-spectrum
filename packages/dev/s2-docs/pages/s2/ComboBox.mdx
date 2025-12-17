@@ -1,10 +1,14 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['autocomplete', 'search', 'typeahead'];
+export const relatedPages = [
+  {title: 'Testing ComboBox', url: './ComboBox/testing'}
+];
+export const description = 'Combines a text input with a listbox, and allows a user to filter a list of options.';
 
 # ComboBox
 
@@ -24,7 +28,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 ## Content
 
-`ComboBox` follows the [Collection Components API](collections.html?component=ComboBox), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`ComboBox` follows the [Collection Components API](collections?component=ComboBox), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
@@ -45,7 +49,7 @@ function Example() {
 
   return (
     /*- begin highlight -*/
-    <ComboBox label="Animals" defaultItems={options} selectionMode="single" placeholder="Select an animal">
+    <ComboBox label="Animals" defaultItems={options} placeholder="Select an animal">
       {(item) => <ComboBoxItem>{item.name}</ComboBoxItem>}
     </ComboBox>
     /*- end highlight -*/
@@ -109,7 +113,7 @@ const users = Array.from({length: 5}, (_, i) => ({
 
 <InlineAlert variant="notice">
   <Heading>Accessibility</Heading>
-  <Content>Interactive elements (e.g. buttons) within picker items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons) as children.</Content>
+  <Content>Interactive elements (e.g. buttons) within ComboBox items are not allowed. This will break keyboard and screen reader navigation. Only add textual or decorative graphics (e.g. icons) as children.</Content>
 </InlineAlert>
 
 ### Sections
@@ -152,11 +156,14 @@ Use the `loadingState` and `onLoadMore` props to enable async loading and infini
 
 ```tsx render
 "use client";
-import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
-import {useAsyncList} from 'react-stately';
+import {ComboBox, ComboBoxItem, useAsyncList} from '@react-spectrum/s2';
+
+interface Character {
+  name: string
+}
 
 function Example() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -227,7 +234,7 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<ComboBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
+Use the `href` prop on a `<ComboBoxItem>` to create a link. See the [getting started guide](getting-started) to learn how to integrate with your framework. Link items in a `ComboBox` are not selectable.
 
 ```tsx render
 "use client";
@@ -243,7 +250,7 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 ## Selection
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ComboBox#single-selection) for more details.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected item. The selected key corresponds to the `id` prop of an item. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ComboBox#single-selection) for more details.
 
 ```tsx render
 "use client";
@@ -251,7 +258,7 @@ import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [animal, setAnimal] = useState<Key>("bison");
+  let [animal, setAnimal] = useState<Key | null>("bison");
 
   return (
     <div>
@@ -336,15 +343,15 @@ function ControlledComboBox() {
   ];
   /*- end collapse -*/
 
-  let [fieldState, setFieldState] = useState({
+  let [fieldState, setFieldState] = useState<{selectedKey: Key | null, inputValue: string}>({
     selectedKey: null,
     inputValue: ''
   });
 
-  let onSelectionChange = (id: Key) => {
+  let onSelectionChange = (id: Key | null) => {
     // Update inputValue when selectedKey changes.
     setFieldState({
-      inputValue: options.find(o => o.id === id)?.name ?? '',
+      inputValue: id ? (options.find(o => o.id === id)?.name ?? '') : '',
       selectedKey: id
     });
   };
@@ -382,9 +389,9 @@ function ControlledComboBox() {
 
 ## Forms
 
-Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects a value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects a value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
-```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2"
+```tsx render docs={docs.exports.ComboBox} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} type="s2" wide
 "use client";
 import {ComboBox, ComboBoxItem, Form, Button} from '@react-spectrum/s2';
 
@@ -439,10 +446,10 @@ import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
 
 ## API
 
-```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection'}}
+```tsx links={{ComboBox: '#combobox', ComboBoxItem: '#comboboxitem', ComboBoxSection: '#comboboxsection', Icon: 'icons', Avatar: 'Avatar', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Header: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements'}}
 <ComboBox>
   <ComboBoxItem>
-    <Icon />
+    <Icon /> or <Avatar />
     <Text slot="label" />
     <Text slot="description" />
   </ComboBoxItem>

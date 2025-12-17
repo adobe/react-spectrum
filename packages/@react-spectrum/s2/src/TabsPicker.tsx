@@ -23,7 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -37,6 +37,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
@@ -185,6 +186,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     <div>
       <AriaSelect
         {...pickerProps}
+        className=""
         aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>

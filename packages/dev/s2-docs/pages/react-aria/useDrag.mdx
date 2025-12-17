@@ -16,6 +16,7 @@ import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 
 export const section = 'Interactions';
+export const description = 'Handles drag interactions for an element, providing accessibility and cross-browser support.';
 
 # useDrag
 
@@ -25,7 +26,7 @@ export const section = 'Interactions';
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop.
 
-See the [drag and drop introduction](dnd.html) to learn more.
+See the [drag and drop guide](dnd) to learn more.
 
 ## Example
 
@@ -33,8 +34,8 @@ This example shows how to make a simple draggable element that provides data as 
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/DropTarget.tsx", "packages/dev/s2-docs/pages/react-aria/useDragExample.css"]}
 "use client";
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 import './useDragExample.css';
 import 'vanilla-starter/theme.css';
 
@@ -67,8 +68,8 @@ This example drags two items, each of which contains representations as plain te
 
 ```tsx render
 "use client";
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -113,9 +114,9 @@ This example renders a custom drag preview which shows the text of the first dra
 ```tsx render
 "use client";
 import React from 'react';
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
-import {DragPreview} from '@react-aria/dnd';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
+import {DragPreview} from 'react-aria';
 
 function Draggable() {
   let preview = React.useRef(null);
@@ -160,8 +161,8 @@ This example removes the draggable element from the UI when a move operation is 
 ```tsx render
 "use client"
 import React from 'react';
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let [moved, setMoved] = React.useState(false);
@@ -203,8 +204,8 @@ The drag source can also control which drop operations are allowed for the data.
 
 ```tsx render
 "use client";
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -244,9 +245,9 @@ When the `hasDragButton` option is enabled, the keyboard interactions are moved 
 ```tsx render
 "use client";
 import React from 'react';
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from 'react-aria';
 import {useButton} from '@react-aria/button';
-import {DropTarget} from './DropTarget.tsx';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
@@ -284,7 +285,7 @@ If you need to temporarily disable dragging, you can pass the `isDisabled` optio
 
 ```tsx render
 "use client";
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from 'react-aria';
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {

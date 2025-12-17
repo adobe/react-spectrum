@@ -1,6 +1,8 @@
+import type {DownloadFiles} from './CodeBlock';
+
 export function createStackBlitz(
-  files: {[name: string]: string},
-  deps: {[name: string]: string},
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
@@ -43,8 +45,8 @@ export function createStackBlitz(
 }
 
 function getFiles(
-  files: {[name: string]: string},
-  deps: {[name: string]: string},
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
   type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
   entry: string = 'Example'
 ) {
@@ -63,6 +65,7 @@ function getFiles(
       dependencies: {
         react: '^19',
         'react-dom': '^19',
+        ...(type === 's2' ? {'@react-spectrum/s2': 'latest'} : {}),
         ...deps
       },
       devDependencies: {
@@ -75,17 +78,21 @@ function getFiles(
           '@tailwindcss/vite': '^4',
           'tailwindcss-react-aria-components': '^2',
           'tailwindcss-animate': '^1'
+        } : {}),
+        ...(type === 's2' ? {
+          'unplugin-parcel-macros': '^0.1.2-alpha.1'
         } : {})
       }
     }, null, 2) + '\n',
     'vite.config.ts': `import {defineConfig} from 'vite';
-import react from '@vitejs/plugin-react';${type === 'tailwind' ? "\nimport tailwindcss from '@tailwindcss/vite';" : ''}
+import react from '@vitejs/plugin-react';${type === 'tailwind' ? "\nimport tailwindcss from '@tailwindcss/vite';" : ''}${type === 's2' ? "\nimport macros from 'unplugin-parcel-macros';" : ''}
 
 export default defineConfig({
-  plugins: [react()${type === 'tailwind' ? ', tailwindcss()' : ''}],
+  plugins: [${type === 's2' ? 'macros.vite(), ' : ''}react()${type === 'tailwind' ? ', tailwindcss()' : ''}],
 });
 `,
-    'index.html': `<html lang="en">
+    'index.html': `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Test</title>
@@ -97,10 +104,10 @@ export default defineConfig({
 </body>
 </html>
 `,
-    'src/index.tsx': `import {createRoot} from 'react-dom/client';
+    'src/index.tsx': `import {createRoot} from 'react-dom/client';${type === 's2' ? "\nimport '@react-spectrum/s2/page.css';\nimport {Provider} from '@react-spectrum/s2';" : ''}
 import ${entryName} from './${entryName}';
 
-createRoot(document.getElementById('root')!).render(<${entryName} />);
+createRoot(document.getElementById('root')!).render(${type === 's2' ? `\n  <Provider>\n    <${entryName} />\n  </Provider>\n` : `<${entryName} />`});
 `,
     'tsconfig.json': JSON.stringify({
       compilerOptions: {
@@ -127,6 +134,6 @@ createRoot(document.getElementById('root')!).render(<${entryName} />);
       },
       'include': ['src']
     }, null, 2) + '\n',
-    ...Object.fromEntries(Object.entries(files).map(([name, contents]) => ['src/' + name, contents]))
+    ...Object.fromEntries(Object.entries(files).map(([name, file]) => ['src/' + name, file.contents]))
   };
 }

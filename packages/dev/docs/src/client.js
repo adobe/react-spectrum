@@ -11,7 +11,6 @@
  */
 
 import {ActionButton, Flex, Link} from '@adobe/react-spectrum';
-import DocSearch from './DocSearch';
 import docsStyle from './docs.css';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
@@ -192,7 +191,6 @@ let pageHeader = document.querySelector('.' + docsStyle.pageHeader);
 if (pageHeader) {
   ReactDOM.createRoot(pageHeader).render(<>
     <Hamburger />
-    <DocSearch />
     <ThemeSwitcher />
   </>);
 } else {
