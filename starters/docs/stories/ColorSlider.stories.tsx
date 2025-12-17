@@ -13,7 +13,7 @@ const meta: Meta<typeof ColorSlider> = {
 export default meta;
 type Story = StoryFn<typeof ColorSlider>;
 
-export const Example: Story = (args) => <ColorSlider {...args} />;
+export const Example: Story = (args) => <ColorSlider {...args} style={{width: 200}} />;
 
 Example.args = {
   label: 'Red Opacity',

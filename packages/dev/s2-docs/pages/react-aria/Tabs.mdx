@@ -6,8 +6,14 @@ import {Tabs as VanillaTabs, TabsItem} from 'vanilla-starter/Tabs';
 import vanillaDocs from 'docs:vanilla-starter/Tabs';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['navigation'];
+export const relatedPages = [
+  {title: 'useTabs', url: 'Tabs/useTabList.html'},
+  {title: 'Testing Tabs', url: './Tabs/testing'}
+];
+export const description = 'Organizes content into multiple sections and allows users to navigate between them.';
 
 # Tabs
 
@@ -108,13 +114,14 @@ export const tags = ['navigation'];
 
 ## Content
 
-`TabList` follows the [Collection Components API](collections.html?component=TabList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
+`TabList` follows the [Collection Components API](collections?component=TabList), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children.
 
 ```tsx render
 "use client";
 import {Tabs, TabList, Tab, TabPanels, TabPanel} from 'vanilla-starter/Tabs';
 import {Button} from 'vanilla-starter/Button';
 import {useState} from 'react';
+import {Plus, Minus} from 'lucide-react';
 
 function Example() {
   let [tabs, setTabs] = useState([
@@ -143,7 +150,7 @@ function Example() {
   return (
     <Tabs style={{width: '100%'}}>
       <div style={{display: 'flex'}}>
-        <TabList 
+        <TabList
           aria-label="Dynamic tabs"
           ///- begin highlight -///
           items={tabs}
@@ -152,8 +159,12 @@ function Example() {
           {item => <Tab>{item.title}</Tab>}
         </TabList>
         <div className="button-group">
-          <Button onPress={addTab}>Add tab</Button>
-          <Button onPress={removeTab}>Remove tab</Button>
+          <Button onPress={addTab} aria-label="Add tab">
+            <Plus />
+          </Button>
+          <Button onPress={removeTab} aria-label="Remove tab">
+            <Minus />
+          </Button>
         </div>
       </div>
       <TabPanels items={tabs}>
@@ -175,7 +186,7 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<Tab>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. This example uses a simple hash-based router to sync the selected tab to the URL.
+Use the `href` prop on a `<Tab>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. This example uses a simple hash-based router to sync the selected tab to the URL.
 
 ```tsx render
 "use client";
@@ -219,7 +230,7 @@ function subscribe(fn) {
 
 ## Selection
 
-Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The selected key corresponds to the `id` prop of a `<Tab>`. Tabs can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=Tabs#single-selection) for more details.
+Use the `defaultSelectedKey` or `selectedKey` prop to set the selected tab. The selected key corresponds to the `id` prop of a `<Tab>`. Tabs can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=Tabs#single-selection) for more details.
 
 ```tsx render
 "use client";
@@ -277,7 +288,7 @@ function Example() {
 
 <Anatomy />
 
-```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanels: '#tabpanels', TabPanel: '#tabpanel', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{Tabs: '#tabs', TabList: '#tablist', Tab: '#tab', TabPanels: '#tabpanels', TabPanel: '#tabpanel', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <Tabs>
   <TabList>
     <Tab>

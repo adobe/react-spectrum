@@ -8,6 +8,8 @@ import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['dialog', 'popup', 'overlay'];
+export const relatedPages = [{'title': 'useModalOverlay', 'url': 'Modal/useModalOverlay.html'}];
+export const description = 'An overlay element which blocks interaction with elements outside it.';
 
 # Modal
 
@@ -46,7 +48,7 @@ export const tags = ['dialog', 'popup', 'overlay'];
   }
   ```
 
-  ```tsx render docs={vanillaDocs.exports.Modal} links={vanillaDocs.links} props={['isDismissable', 'isKeyboardDismissDisabled']} type="tailwind" files={["starters/docs/src/Modal.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.Modal} links={vanillaDocs.links} props={['isDismissable', 'isKeyboardDismissDisabled']} type="tailwind" files={["starters/tailwind/src/Modal.tsx"]}
   "use client";
   import {DialogTrigger, Heading} from 'react-aria-components';
   import {Modal} from 'tailwind-starter/Modal';
@@ -61,11 +63,15 @@ export const tags = ['dialog', 'popup', 'overlay'];
         <Button>Sign up…</Button>
         <Modal {...props}/* PROPS */>
           <Dialog>
+            <Heading slot="title" className="text-xl mt-0">Subscribe to our newsletter</Heading>
+            <p className="text-sm">Enter your information to subscribe to our newsletter and receive updates about new features and announcements.</p>
             <Form>
-              <Heading slot="title">Sign up</Heading>
-              <TextField autoFocus label="First Name" />
-              <TextField label="Last Name" />
-              <Button slot="close" className="self-end">Submit</Button>
+              <TextField autoFocus label="Name" placeholder="Enter your full name" />
+              <TextField label="Email" placeholder="Enter your email" />
+              <div className="flex gap-2 self-end">
+                <Button slot="close" variant="secondary">Cancel</Button>
+                <Button slot="close">Subscribe</Button>
+              </div>
             </Form>
           </Dialog>
         </Modal>
@@ -103,7 +109,7 @@ Use the `isOpen` prop to show a modal programmatically or mount in a different p
 "use client";
 import {useState} from 'react';
 import {Heading} from 'react-aria-components';
-import {MenuButton, MenuItem} from 'vanilla-starter/Menu';
+import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
 import {Modal} from 'vanilla-starter/Modal';
 import {Dialog} from 'vanilla-starter/Dialog';
 import {Button} from 'vanilla-starter/Button';
@@ -113,9 +119,12 @@ function Example() {
 
   return (
     <>
-      <MenuButton label="Menu">
-        <MenuItem onAction={() => setOpen(true)}>Open dialog…</MenuItem>
-      </MenuButton>
+      <MenuTrigger>
+        <Button>Menu</Button>
+        <Menu>
+          <MenuItem onAction={() => setOpen(true)}>Open dialog…</MenuItem>
+        </Menu>
+      </MenuTrigger>
       <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
         <Dialog>
           <Heading slot="title">Notice</Heading>
@@ -129,7 +138,7 @@ function Example() {
 
 ## Custom trigger
 
-`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](usePress) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -173,7 +182,7 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 
 <Anatomy />
 
-```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', ModalOverlay: '#modaloverlay', Modal: '#modal', Dialog: '#dialog'}}
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button', ModalOverlay: '#modaloverlay', Modal: '#modal', Dialog: '#dialog'}}
 <DialogTrigger>
   <Button />
   <ModalOverlay>

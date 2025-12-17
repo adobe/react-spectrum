@@ -26,6 +26,13 @@
     --grid-item-size: 150px;
   }
 
+  @media (width < 500px) {
+    &[data-layout=grid] {
+      --grid-item-size: 150px;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
   &[data-layout=stack] {
     grid-template-columns: auto;
     align-items: center;
@@ -73,6 +80,7 @@
   padding-bottom: var(--spacing-4);
   background: var(--overlay-background);
   box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  min-width: 0;
   max-width: 250px;
   overflow: clip;
   position: relative;
@@ -158,6 +166,7 @@
     object-fit: cover;
     padding-bottom: var(--spacing-2);
     -webkit-user-drag: none;
+    -webkit-touch-callout: none;
     flex-shrink: 0;
   }
 

@@ -28,14 +28,14 @@ The following arguments are also available:
 
 For cases that the upgrade assistant doesn't handle automatically or where you'd rather upgrade some components manually, use the guide below.
 
-Note that <PendingBadge /> indicates that future changes will occur before the final release, and the current solution should be considered temporary.
+Note that <PendingBadge /> indicates that future changes are expected, and the current solution should be considered temporary.
 
 ## Components
 
 ### All components
 
 - Update imports to use the `@react-spectrum/s2` package instead of `@adobe/react-spectrum` or individual packages like `@react-spectrum/button`
-- Update [style props](https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props) to use the style macro instead. See the 'Style props' section below
+- Update [style props](v3/styling#style-props) to use the style macro instead. See the 'Style props' section below
 
 ### Accordion
 
@@ -277,7 +277,7 @@ No updates needed.
 - Remove `validationState="valid"` (it is no longer supported in Spectrum 2)
 - Update `Item` to be a `PickerItem`
 - Change `isLoading` to `loadingState` and provide the appropriate loading state.
-- Update `defaultSelectedKey` and `selectedKey` to be `defaultValue` and `value` respectively. See the [Picker](Picker.html#value) documentation for more details.
+- Update `defaultSelectedKey` and `selectedKey` to be `defaultValue` and `value` respectively. See the [Picker](Picker#value) documentation for more details.
 
 ### ProgressBar
 
@@ -434,7 +434,7 @@ Update `Well` to be a `div` and apply styles using the style macro:
 
 ## Style props
 
-React Spectrum v3 supported a limited set of [style props](https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props) for layout and positioning using Spectrum-defined values. Usage of these should be updated to instead use the style macro.
+React Spectrum v3 supported a limited set of style props for layout and positioning using Spectrum-defined values. Usage of these should be updated to instead use the style macro.
 
 ### Border width
 

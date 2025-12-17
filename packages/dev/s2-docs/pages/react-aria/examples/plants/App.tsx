@@ -124,7 +124,8 @@ export default function App(): React.ReactNode {
     <div className="flex flex-col gap-4 p-4 max-w-[600px] mx-auto">
       <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1.1fr_auto_auto_1fr_auto] gap-2 items-end">
         <SearchField
-          aria-label="Search"
+          aria-label="Search plants"
+          placeholder="Search plants"
           value={search}
           onChange={setSearch}
           className="col-span-3 sm:col-span-1" />
@@ -132,8 +133,8 @@ export default function App(): React.ReactNode {
         {/* Filters */}
         <DialogTrigger>
           <TooltipTrigger>
-            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 shrink-0 p-0 px-2 relative">
-              <FilterIcon aria-hidden className="block w-5 h-5" />
+            <Button aria-label="Filters" variant="secondary" className="!w-9 !h-9 shrink-0 relative">
+              <FilterIcon aria-hidden className="block w-5 h-5 shrink-0" />
               {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
             <Tooltip>Filters</Tooltip>
@@ -141,7 +142,7 @@ export default function App(): React.ReactNode {
           <Popover showArrow>
             <Dialog className="outline outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
               <Heading slot="title" className="text-lg font-semibold m-0 mb-2">Filters</Heading>
-              {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
+              {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 h-auto py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
                 <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles} escapeKeyBehavior="none">
@@ -166,7 +167,7 @@ export default function App(): React.ReactNode {
         {/* Columns */}
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 shrink-0 p-0 hidden sm:block">
+            <Button aria-label="Columns" variant="secondary" className="!w-9 !h-9 shrink-0 hidden sm:flex">
               <SlidersIcon aria-hidden className="block w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
@@ -180,7 +181,7 @@ export default function App(): React.ReactNode {
         </MenuTrigger>
 
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 shrink-0 p-0 col-start-5">
+          <Button aria-label="Add plant" variant="secondary" className="!w-9 !h-9 shrink-0 col-start-5">
             <PlusIcon aria-hidden className="block w-5 h-5" />
           </Button>
           <Modal>

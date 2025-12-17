@@ -6,7 +6,7 @@
   grid-template-areas: "label output"
                        "track track";
   grid-template-columns: 1fr auto;
-  max-width: min(100%, 300px);
+  max-width: min(calc(100% - 12px), 300px);
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
@@ -93,6 +93,7 @@
   &[data-orientation=vertical] {
     height: 150px;
     display: block;
+    margin: var(--spacing-3) 0;
 
     .react-aria-Label,
     .react-aria-SliderOutput {
