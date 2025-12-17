@@ -7,9 +7,12 @@ import postcss from 'postcss';
 import * as recast from 'recast';
 
 const publicUrl = getBaseUrl('react-aria') + '/registry';
+const distDir = `dist/s2-docs/react-aria/${process.env.PUBLIC_URL || ''}/registry`;
 
-fs.rmSync('starters/tailwind/registry', {recursive: true, force: true});
-fs.mkdirSync('starters/tailwind/registry');
+fs.rmSync(distDir, {recursive: true, force: true});
+fs.mkdirSync(distDir);
+
+let items = [];
 
 for (let file of globSync('starters/tailwind/src/*.{ts,tsx}')) {
   let name = path.basename(file, path.extname(file));
@@ -35,15 +38,18 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}')) {
     }
   };
 
-  fs.writeFileSync('starters/tailwind/registry/' + name + '.json', JSON.stringify(item, null, 2) + '\n');
-}
+  fs.writeFileSync(path.join(distDir, `tailwind-${name.toLowerCase()}.json`), JSON.stringify(item, null, 2) + '\n');
 
-fs.rmSync('starters/docs/registry', {recursive: true, force: true});
-fs.mkdirSync('starters/docs/registry');
+  for (let file of item.files) {
+    delete file.content;
+  }
+
+  items.push(item);
+}
 
 for (let file of globSync('starters/docs/src/*.{ts,tsx}')) {
   let name = path.basename(file, path.extname(file));
-  let {dependencies, registryDependencies, content} = analyzeDeps(file, 'vanilla');
+  let {dependencies, registryDependencies, content} = analyzeDeps(file, 'css');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
   let item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -66,8 +72,21 @@ for (let file of globSync('starters/docs/src/*.{ts,tsx}')) {
     item.files.push(...analyzeCss(cssFile));
   }
 
-  fs.writeFileSync('starters/docs/registry/' + name + '.json', JSON.stringify(item, null, 2) + '\n');
+  fs.writeFileSync(path.join(distDir, `css-${name.toLowerCase()}.json`), JSON.stringify(item, null, 2) + '\n');
+
+  for (let file of item.files) {
+    delete file.content;
+  }
+
+  items.push(item);
 }
+
+fs.writeFileSync(path.join(distDir, 'registry.json'), JSON.stringify({
+  '$schema': 'https://ui.shadcn.com/schema/registry.json',
+  name: 'react-aria',
+  homepage: 'https://react-aria.adobe.com',
+  items
+}, null, 2) + '\n');
 
 function analyzeDeps(file, type) {
   let content = fs.readFileSync(file, 'utf8');
@@ -92,7 +111,7 @@ function analyzeDeps(file, type) {
       let source = node.source.value;
       if (source.startsWith('./')) {
         if (!source.endsWith('.css')) {
-          registryDependencies.add(publicUrl + '/' + type + '/' + source.slice(2) + '.json');
+          registryDependencies.add(publicUrl + '/' + type + '-' + source.slice(2).toLowerCase() + '.json');
           node.source.value = source === './utils' ? '@/registry/react-aria/lib/react-aria-utils' : '@/registry/react-aria/ui/' + source.slice(2);
         }
       } else {

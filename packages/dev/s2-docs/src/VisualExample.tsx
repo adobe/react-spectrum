@@ -177,7 +177,6 @@ export function VisualExample({component, docs, links, importSource, props, init
     }
   }
 
-  let registryUrl = type === 's2' || docs.type !== 'component' ? null : `${type}/${docs.name}.json`;
   let output = (
     <CodeOutput
       code={code}
@@ -189,7 +188,7 @@ export function VisualExample({component, docs, links, importSource, props, init
   return (
     <VisualExampleClient component={component} name={docs.name} importSource={importSource} controls={controls} initialProps={initialProps} propsObject={propsObject}>
       <FileProvider value={downloadFiles}>
-        <ShadcnProvider value={registryUrl}>
+        <ShadcnProvider value={!type || type === 's2' || docs.type !== 'component' ? null : {type, component: docs.name}}>
           <div role="group" aria-label="Example" className={exampleStyle({layout: files || wide ? 'wide' : 'narrow'})}>
             <Output align={align} acceptOrientation={acceptOrientation} />
             {props.length > 0 && <div role="group" aria-label="Controls" className={controlsStyle}>
