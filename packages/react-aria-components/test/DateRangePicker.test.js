@@ -333,6 +333,61 @@ describe('DateRangePicker', () => {
     }
   });
 
+  it('should support focusableRef', () => {
+    let focusableRef = React.createRef();
+    let secondFocusableRef = React.createRef();
+    let {getAllByRole} = render(
+      <DateRangePicker>
+        <Label>Birth date</Label>
+        <Group>
+          <DateInput slot="start" focusableRef={focusableRef}>
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <span aria-hidden="true">–</span>
+          <DateInput slot="end" focusableRef={secondFocusableRef}>
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <Button>▼</Button>
+        </Group>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+        <Popover data-testid="popover">
+          <Dialog>
+            <Label>Hi</Label>
+            <Group>Yo</Group>
+            <Button>Hi</Button>
+            <Text>test</Text>
+            <RangeCalendar>
+              <header>
+                <Button slot="previous">◀</Button>
+                <Heading />
+                <Button slot="next">▶</Button>
+              </header>
+              <CalendarGrid>
+                {(date) => <CalendarCell date={date} />}
+              </CalendarGrid>
+            </RangeCalendar>
+          </Dialog>
+        </Popover>
+      </DateRangePicker>
+    );
+
+    let segments = getAllByRole('spinbutton');
+    expect(focusableRef.current).toBe(segments[0]);
+
+    act(() => {
+      focusableRef.current.focus();
+    });
+
+    expect(document.activeElement).toBe(segments[0]);
+
+    act(() => {
+      secondFocusableRef.current.focus();
+    });
+
+    expect(document.activeElement).toBe(segments[3]);
+  });
+
   it('should clear contexts inside popover', async () => {
     let {getByRole, getByTestId} = render(
       <DateRangePicker data-foo="bar">
