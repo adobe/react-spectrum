@@ -11,6 +11,7 @@
  */
 'use client';
 
+// @ts-ignore
 import {animate} from '../../../../docs/pages/react-aria/home/utils';
 import React, {JSX, useEffect, useRef, useState} from 'react';
 import {useResizeObserver} from '@react-aria/utils';
@@ -120,7 +121,6 @@ export function SubmenuAnimation(): JSX.Element {
       className={style({
         backgroundColor: 'layer-1',
         borderRadius: 'xl',
-        marginY: 32,
         padding: {
           default: 12,
           lg: 24

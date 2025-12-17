@@ -13,33 +13,20 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 import {InterfaceType} from '../../src/types';
 export const section = 'Interactions';
+export const description = 'Handles focus events for the target element only, not descendants.';
 
 # useFocus
 
 <PageDescription>{docs.exports.useFocus.description}</PageDescription>
 
-## Features
-
-`useFocus` handles focus interactions for an element. Unlike React's built-in focus events,
-`useFocus` does not fire focus events for child elements of the target. This matches DOM
-behavior where focus events do not bubble. This is similar to
-the [:focus](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus) pseudo class
-in CSS.
-
-To handle focus events on descendants of an element, see [useFocusWithin](useFocusWithin.html).
-
-## Example
-
-This example shows a simple input element that handles focus events with `useFocus` and logs them to a list below.
-
 ```tsx render
 "use client";
 
 import React from 'react';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus} from 'react-aria';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let {focusProps} = useFocus({
     onFocus: e => setEvents(
       events => [...events, 'focus']
@@ -69,6 +56,16 @@ function Example() {
   );
 }
 ```
+
+## Features
+
+`useFocus` handles focus interactions for an element. Unlike React's built-in focus events,
+`useFocus` does not fire focus events for child elements of the target. This matches DOM
+behavior where focus events do not bubble. This is similar to
+the [:focus](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus) pseudo class
+in CSS.
+
+To handle focus events on descendants of an element, see [useFocusWithin](useFocusWithin).
 
 ## API
 

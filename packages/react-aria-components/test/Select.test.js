@@ -162,6 +162,30 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Select an animal');
   });
 
+  it('should support empty state', async () => {
+    let {getByTestId, getByRole} = render(
+      <Select data-testid="select" allowsEmptyCollection>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
+            {[]}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    await selectTester.open();
+
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-empty', 'true');
+
+    let option = getByRole('option');
+    expect(option).toHaveTextContent('No results');
+  });
+
   it('should support render props', async () => {
     let {getByTestId} = render(
       <Select data-testid="select">
@@ -644,7 +668,7 @@ describe('Select', () => {
 
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
-    
+
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Dog and Kangaroo');
 

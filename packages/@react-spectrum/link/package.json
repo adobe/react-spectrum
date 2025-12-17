@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/link",
-  "version": "3.6.22",
+  "version": "3.6.23",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,11 +40,11 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.2",
-    "@react-aria/interactions": "^3.25.6",
-    "@react-aria/link": "^3.8.6",
-    "@react-aria/utils": "^3.31.0",
-    "@react-spectrum/utils": "^3.12.9",
+    "@react-aria/focus": "^3.21.3",
+    "@react-aria/interactions": "^3.26.0",
+    "@react-aria/link": "^3.8.7",
+    "@react-aria/utils": "^3.32.0",
+    "@react-spectrum/utils": "^3.12.10",
     "@react-types/link": "^3.6.5",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"

@@ -11,7 +11,6 @@ import {Layout} from '../../../src/Layout';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
-import {Time} from '../../../src/ReleasesList';
 
 export const hideNav = true;
 export const section = 'Releases';
@@ -22,23 +21,22 @@ export const description = 'Version 0.9.0 adds virtualization and async loading 
 export const isSubpage = true;
 
 # v0.9.0
-<Time date={date} />
 
 Version 0.9.0 adds virtualization and async loading support to ComboBox and Picker, updates Dialog sizes, and introduces important TypeScript changes for UNSAFE_className. This release also includes significant style macro updates.
 
 ## Updates
-* [Combobox](../ComboBox.html): Support for virtualization and async loading
-* [Dialog](../Dialog.html): Update sizes
-* [Picker](../Picker.html): Support for virtualization and async loading
-* [Popover](../Popover.html): Add `triggerRef` prop
-* [TableView](../TableView.html): Support custom menus in columns
+* [Combobox](../ComboBox): Support for virtualization and async loading
+* [Dialog](../Dialog): Update sizes
+* [Picker](../Picker): Support for virtualization and async loading
+* [Popover](../Popover): Add `triggerRef` prop
+* [TableView](../TableView): Support custom menus in columns
 * Apply `position: relative` to Radio and Checkbox to prevent layout jumps
 
 ## UNSAFE_className Typescript Error
 
 Style macros passed to `UNSAFE_className` will now result in a TypeScript error. This is not allowed because `UNSAFE_className` is appended to the component's own styles, not merged. For example, if you pass a style macro class that sets a property but the component also has a class setting the same property, both will be applied and result in undefined behavior depending on the order the CSS was loaded on the page.
 
-We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](https://react-spectrum.adobe.com/react-aria/index.html) with the [S2 style macro](../styling.html#style-macro) to create custom components. [Safe style properties](../styling.html#values) can be passed to the `styles` prop of an S2 component.
+We strongly discourage using `UNSAFE_className` because it results in inconsistent UIs and hard to maintain code. Instead, use [React Aria Components](react-aria:) with the [S2 style macro](../styling#supported-css-properties) to create custom components. [Safe style properties](../styling#supported-css-properties) can be passed to the `styles` prop of an S2 component.
 
 
 ## Style macro updates

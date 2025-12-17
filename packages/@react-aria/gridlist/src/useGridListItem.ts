@@ -283,10 +283,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
-    'aria-label': node.textValue || undefined,
+    'aria-label': node['aria-label'] || node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
-    'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
+    'aria-labelledby': descriptionId && (node['aria-label'] || node.textValue) ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
     id: getRowId(state, node.key)
   });
 

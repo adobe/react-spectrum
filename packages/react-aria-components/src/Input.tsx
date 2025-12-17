@@ -76,7 +76,10 @@ let filterHoverProps = (props: InputProps) => {
 export const Input = /*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
 
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled: props.disabled
+  });
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     isTextInput: true,
     autoFocus: props.autoFocus

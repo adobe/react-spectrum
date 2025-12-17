@@ -8,7 +8,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. */}
 
 import {Layout} from '../../../src/Layout';
-import {ReleasesList} from '../../../src/ReleasesList';
+import {PostList} from '../../../src/PostList';
 export default Layout;
 
 export const hideNav = true;
@@ -16,7 +16,11 @@ export const section = 'Releases';
 export const tags = ['changelog', 'versions', 'updates'];
 export const title = 'Releases';
 export const hideFromSearch = true;
+export const isPostList = true;
+export const description = 'Release notes for React Aria.';
 
 # Releases
 
-<ReleasesList pages={props.pages.filter(page => page.name.includes('react-aria') && page.name.includes('releases') && !page.name.includes('index.html')) ?? []} />
+<PostList currentPage={props.currentPage} pages={props.pages.filter(page => page.name.includes('react-aria') && page.name.includes('releases') && !page.name.includes('index')) ?? []} />
+
+For all previous releases, see the [Archived releases](s2:v3/releases/index.html) page.
