@@ -73,7 +73,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
   // let [showCodeSandbox, setShowCodeSandbox] = useState(false);
-  let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
+  let getText = () => getTextContent(codeRef.current!.querySelector('pre')!);
   let {library} = useContext(CodePlatterContext);
   if (!type) {
     if (library === 'react-aria') {
@@ -240,13 +240,33 @@ function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: Downl
   return files;
 }
 
+function getTextContent(element: Element) {
+  // Manually walk over text nodes inside the element and concatenate them.
+  // This is like element.textContent except we skip anything inside an element with data-no-copy.
+  let result = '';
+  let walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, node => {
+    if (node.nodeType === Node.ELEMENT_NODE && (node as Element).hasAttribute('data-no-copy')) {
+      result += '\n';
+      return NodeFilter.FILTER_REJECT;
+    }
+    return node.nodeType === Node.TEXT_NODE ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+  });
+
+  let node = walker.nextNode();
+  while (node) {
+    result += node.nodeValue || '';
+    node = walker.nextNode();
+  }
+  return result;
+}
+
 function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name: string]: string}) {
-  let code = codeRef.current!.querySelector('pre')!.textContent!;
+  let code = getTextContent(codeRef.current!.querySelector('pre')!);
   let fileTabs = codeRef.current!.closest('[data-files]');
   if (fileTabs) {
     let example = fileTabs.querySelector('[data-example] pre');
     if (example) {
-      code = example.textContent!;
+      code = getTextContent(example);
     }
   }
 

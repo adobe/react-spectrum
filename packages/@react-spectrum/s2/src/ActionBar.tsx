@@ -108,7 +108,7 @@ export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, re
 
 const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps & {isExiting: boolean}, ref: ForwardedRef<HTMLDivElement | null>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting, slot, ...otherProps} = props;
+  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting, slot, scrollRef, ...otherProps} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // Store the last count greater than zero so that we can retain it while rendering the fade-out animation.
@@ -118,7 +118,6 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
   }
 
   // Measure the width of the collection's scrollbar and offset the action bar by that amount.
-  let scrollRef = props.scrollRef;
   let [scrollbarWidth, setScrollbarWidth] = useState(0);
   let updateScrollbarWidth = useCallback(() => {
     let el = scrollRef?.current;

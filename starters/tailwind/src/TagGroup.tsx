@@ -93,7 +93,7 @@ export function TagGroup<T extends object>(
 
 const removeButtonStyles = tv({
   extend: focusRing,
-  base: 'cursor-default rounded-full transition-[background-color] p-0.5 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 pressed:bg-black/20 dark:pressed:bg-white/20'
+  base: 'cursor-default rounded-full transition-[background-color] p-0.5 flex items-center justify-center bg-transparent text-[inherit] border-0 hover:bg-black/10 dark:hover:bg-white/10 pressed:bg-black/20 dark:pressed:bg-white/20'
 });
 
 export function Tag({ children, color, ...props }: TagProps) {

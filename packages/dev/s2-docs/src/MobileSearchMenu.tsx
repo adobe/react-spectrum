@@ -12,7 +12,7 @@ import {
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
-import React, {CSSProperties, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
+import React, {cloneElement, CSSProperties, ReactElement, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
 import {useRouter} from './Router';
@@ -90,7 +90,7 @@ const mobileTab = style<TabRenderProps>({
     }
   },
   borderRadius: 'sm',
-  paddingX: 12,
+  paddingX: 8,
   paddingY: 8,
   alignItems: 'center',
   position: 'relative',
@@ -100,10 +100,7 @@ const mobileTab = style<TabRenderProps>({
   disableTapHighlight: true,
   whiteSpace: 'nowrap',
   fontSize: 'body',
-  fontWeight: {
-    default: 'normal',
-    isSelected: 'medium'
-  }
+  fontWeight: 'bold'
 });
 
 const mobileSelectionIndicator = style({
@@ -293,7 +290,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                   <div
                     className={style({display: 'flex', alignItems: 'center', gap: 8})}
                     style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
-                    {library.icon}
+                    {cloneElement(library.icon as ReactElement<any>, {styles: style({size: 20})})}
                   </div>
                   <span style={{viewTransitionName: (i === 0 && isOpen && window.scrollY === 0) ? 'search-menu-label' : 'none'} as CSSProperties}>
                     {library.label}

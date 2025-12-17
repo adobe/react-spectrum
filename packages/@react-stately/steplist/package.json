@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/steplist",
-  "version": "3.0.0-alpha.18",
+  "version": "3.0.0-alpha.19",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,8 +26,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/list": "^3.13.1",
-    "@react-stately/utils": "^3.10.8",
+    "@react-stately/list": "^3.13.2",
+    "@react-stately/utils": "^3.11.0",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
   },

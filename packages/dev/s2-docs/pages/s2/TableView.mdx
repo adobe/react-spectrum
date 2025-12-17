@@ -481,7 +481,9 @@ export default function EditableTable(props) {
                         name={column.id! as string} />
                     )}>
                     <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
-                      {item[column.id]}
+                      <span className={style({minWidth: 0, truncate: true})}>
+                        {item[column.id]}
+                      </span>
                       <ActionButton slot="edit" aria-label="Edit fruit">
                         <Edit />
                       </ActionButton>

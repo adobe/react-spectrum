@@ -20,7 +20,8 @@ interface SearchTagGroupsProps {
   onResourceSelectionChange?: (keys: Iterable<Key>) => void,
   isMobile?: boolean,
   wrapperClassName?: string,
-  contentClassName?: string
+  contentClassName?: string,
+  onHover?: (id: Key) => void
 }
 
 export function SearchTagGroups({
@@ -31,7 +32,8 @@ export function SearchTagGroups({
   onResourceSelectionChange,
   isMobile = false,
   wrapperClassName,
-  contentClassName
+  contentClassName,
+  onHover
 }: SearchTagGroupsProps) {
   if (sectionTags.length === 0 && resourceTags.length === 0) {
     return null;
@@ -58,7 +60,7 @@ export function SearchTagGroups({
                 items={sectionTags}
                 UNSAFE_style={isMobile ? {whiteSpace: 'nowrap'} : undefined}>
                 {(tag) => (
-                  <Tag key={tag.id} id={tag.id}>
+                  <Tag key={tag.id} id={tag.id} onHoverStart={() => onHover?.(tag.id)} onPressStart={() => onHover?.(tag.id)}>
                     {tag.name}
                   </Tag>
                 )}

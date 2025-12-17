@@ -164,14 +164,16 @@ s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
+	cd starters/docs && yarn install --no-immutable && yarn up react-aria-components
+	cd starters/tailwind && yarn install --no-immutable && yarn up react-aria-components tailwindcss-react-aria-components
 	$(MAKE) build-starters
 
 build-s2-docs:
 	yarn workspace @react-spectrum/s2-docs generate:md
 	yarn workspace @react-spectrum/s2-docs generate:og
-	node scripts/buildRegistry.mjs
+	LIBRARY=react-aria node scripts/buildRegistry.mjs
 	yarn build:s2-docs
-	node scripts/createFeedS2.mjs
+	LIBRARY=react-aria node scripts/createFeedS2.mjs
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mkdir -p dist/s2-docs/s2/$(PUBLIC_URL)
 	mv packages/dev/s2-docs/dist/react-aria/* dist/s2-docs/react-aria/$(PUBLIC_URL)
