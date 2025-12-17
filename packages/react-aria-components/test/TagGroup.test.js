@@ -521,6 +521,48 @@ describe('TagGroup', () => {
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['dog']));
   });
 
+  it('should support onAction', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'none'});
+    let items = getAllByRole('row');
+
+    await user.click({target: items[0]});
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction with selectionMode = single', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'single'});
+    let items = getAllByRole('row');
+
+    await user.dblClick({target: items[0]});
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.click({target: items[1]});
+    expect(onAction).not.toHaveBeenCalled();
+
+    await user.dblClick({target: items[0]});
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction with selectionMode = multiple', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'multiple'});
+    let items = getAllByRole('row');
+
+    await user.dblClick({target: items[0]});
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.click({target: items[1]});
+    expect(onAction).not.toHaveBeenCalled();
+    onAction.mockReset();
+
+    await user.dblClick({target: items[0]});
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
   describe('shouldSelectOnPressUp', () => {
     it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
       let onSelectionChange = jest.fn();
