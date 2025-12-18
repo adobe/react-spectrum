@@ -10,6 +10,8 @@ import {PressResponder} from '@react-aria/interactions';
 import {useGlobalListeners} from '@react-aria/utils';
 
 const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
+const iconMap = Object.fromEntries(iconList.map(item => [item.id, item.icon]));
+export const Icon = ({icon}) => createElement(iconMap[icon]);
 
 const itemStyle = style({
   ...focusRing(),

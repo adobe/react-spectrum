@@ -16,14 +16,9 @@ import React, {createContext, createElement, Fragment, isValidElement, lazy, Rea
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
-// eslint-disable-next-line
-import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
 
 export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
-
-// Create icon map for use in Output component
-const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1'), icon: icons[name].default}));
-const iconMap = Object.fromEntries(iconList.map(item => [item.id, item.icon]));
+let LazyIcon = lazy(() => import('./IconPicker').then(({Icon}) => ({default: Icon})));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -142,8 +137,10 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
       let iconElement: ReactNode | null = null;
       if (children.avatar) {
         iconElement = <Avatar src="https://i.imgur.com/xIe7Wlb.png" />;
-      } else if (children.icon && iconMap[children.icon]) {
-        iconElement = createElement(iconMap[children.icon]);
+      } else if (children.icon) {
+        iconElement = (<Suspense fallback={''}>
+          <LazyIcon icon={children.icon} />
+        </Suspense>);
       }
 
       children = (
