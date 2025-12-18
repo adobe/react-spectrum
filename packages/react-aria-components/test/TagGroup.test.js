@@ -528,6 +528,10 @@ describe('TagGroup', () => {
 
     await user.click({target: items[0]});
     expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support onAction with selectionMode = single', async () => {
@@ -545,6 +549,12 @@ describe('TagGroup', () => {
 
     await user.dblClick({target: items[0]});
     expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).not.toHaveBeenCalled();
+    expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    expect(items[1]).not.toHaveAttribute('aria-selected');
   });
 
   it('should support onAction with selectionMode = multiple', async () => {
@@ -563,6 +573,12 @@ describe('TagGroup', () => {
 
     await user.dblClick({target: items[0]});
     expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).not.toHaveBeenCalled();
+    expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
   });
 
   describe('shouldSelectOnPressUp', () => {
