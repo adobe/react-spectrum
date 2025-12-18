@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/textfield/docs/anatomy.svg';
 
 export const tags = ['input'];
+export const relatedPages = [{'title': 'useTextField', 'url': 'TextField/useTextField.html'}];
+export const description = 'Allows a user to enter a plain text value with a keyboard.';
 
 # TextField
 
@@ -30,7 +32,7 @@ export const tags = ['input'];
     props={['label', 'description', 'isReadOnly', 'isDisabled']}
     initialProps={{label: 'Name', placeholder: 'Enter your full name'}}
     type="tailwind"
-    files={["starters/tailwind/src/TextField.tsx", "starters/tailwind/src/index.css"]} />
+    files={["starters/tailwind/src/TextField.tsx"]} />
 </ExampleSwitcher>
 
 ## Value
@@ -44,7 +46,7 @@ import {useState} from 'react';
 
 function Example() {
   let [name, setName] = useState('');
-  
+
   return (
     <>
       <TextField
@@ -62,7 +64,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.TextField} links={docs.links} props={['isRequired', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true, type: 'email'}}
 "use client";

@@ -197,7 +197,10 @@ function TextAreaInput() {
         backgroundColor: 'transparent',
         color: {
           default: 'inherit',
-          '::placeholder': 'gray-600'
+          '::placeholder': {
+            default: 'gray-600',
+            forcedColors: 'GrayText'
+          }
         },
         fontFamily: 'inherit',
         fontSize: 'inherit',

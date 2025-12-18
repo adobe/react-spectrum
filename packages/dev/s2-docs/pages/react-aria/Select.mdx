@@ -5,8 +5,14 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/Select';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/SelectAnatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['picker', 'dropdown', 'menu', 'input'];
+export const relatedPages = [
+  {title: 'useSelect', url: 'Select/useSelect.html'},
+  {title: 'Testing Select', url: './Select/testing'}
+];
+export const description = 'Displays a collapsible list of options and allows a user to select one of them.';
 
 # Select
 
@@ -45,7 +51,7 @@ export const tags = ['picker', 'dropdown', 'menu', 'input'];
 
 ## Content
 
-`Select` reuses the `ListBox` component, following the [Collection Components API](collections.html?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox.html) for more details.
+`Select` reuses the `ListBox` component, following the [Collection Components API](collections?component=Select). It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the [ListBox docs](ListBox) for more details.
 
 The following example shows a dynamic collection of items, grouped into sections.
 
@@ -97,7 +103,7 @@ function Example() {
 
 ### Autocomplete
 
-`Select` can include additional components as siblings of the `ListBox`. This example uses an [Autocomplete](Autocomplete.html) with a [SearchField](SearchField.html) to let the user filter the items.
+`Select` can include additional components as siblings of the `ListBox`. This example uses an [Autocomplete](Autocomplete) with a [SearchField](SearchField) to let the user filter the items.
 
 ```tsx render
 "use client";
@@ -118,7 +124,7 @@ function Example() {
         <SelectValue />
         <ChevronDown size={18} />
       </Button>
-      <Popover hideArrow className="select-popover">
+      <Popover hideArrow className="select-popover" style={{display: 'flex', flexDirection: 'column'}}>
         {/*- begin highlight -*/}
         <Autocomplete filter={contains}>
           <SearchField aria-label="Search tags" placeholder="Search tags" autoFocus style={{margin: 4}} />
@@ -143,7 +149,7 @@ function Example() {
 
 ### TagGroup
 
-Use the `SelectValue` render prop function to display the selected items as a [TagGroup](TagGroup.html).
+Use the `SelectValue` render prop function to display the selected items as a [TagGroup](TagGroup).
 
 ```tsx render files={['packages/dev/s2-docs/pages/react-aria/MultiSelect.css']}
 "use client";
@@ -242,7 +248,7 @@ function SelectWithTagGroup() {
         {/*- end highlight -*/}
         <Button variant="primary"><Plus /></Button>
       </Group>
-      <Popover 
+      <Popover
         // Position popover relative to the wrapping div instead of the Button
         triggerRef={triggerRef}
         hideArrow
@@ -273,7 +279,7 @@ function Example(props) {
   let [animal, setAnimal] = useState("bison");
 
   return (
-    <div>
+    <>
       <Select
         {...props}
         label="Pick an animal"
@@ -291,14 +297,14 @@ function Example(props) {
         <SelectItem id="skunk">Skunk</SelectItem>
       </Select>
       <pre style={{fontSize: 12}}>Current selection: {JSON.stringify(animal)}</pre>
-    </div>
+    </>
   );
 }
 ```
 
 ## Forms
 
-Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
@@ -329,7 +335,7 @@ import {Form} from 'vanilla-starter/Form';
 
 <Anatomy />
 
-```tsx links={{Select: '#select', Button: 'Button.html', SelectValue: '#selectvalue', Popover: 'Popover.html', ListBox: 'ListBox.html'}}
+```tsx links={{Select: '#select', Button: 'Button', SelectValue: '#selectvalue', Popover: 'Popover', ListBox: 'ListBox'}}
 <Select>
   <Label />
   <Button>

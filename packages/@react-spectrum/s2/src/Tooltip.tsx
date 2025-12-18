@@ -23,11 +23,11 @@ import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {typ
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
-import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
+import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
+export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
   /** The content of the tooltip. */
   children: ReactNode,
   /**
@@ -38,7 +38,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles {
   /** The content of the tooltip. */
   children: ReactNode
 }
@@ -68,7 +68,6 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   borderRadius: 'default',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
-  margin: 8,
   transition: 'default',
   transitionDuration: 200,
   transitionTimingFunction: {
@@ -139,7 +138,6 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
   let {
     containerPadding,
     crossOffset,
-    offset,
     placement = 'top',
     shouldFlip
   } = useContext(InternalTooltipTriggerContext);
@@ -166,7 +164,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       arrowBoundaryOffset={borderRadius}
       containerPadding={containerPadding}
       crossOffset={crossOffset}
-      offset={offset}
+      offset={4 + 5} // 4px offset + 5px arrow height
       placement={placement}
       shouldFlip={shouldFlip}
       ref={tooltipRef}
@@ -174,7 +172,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme})}>
       {renderProps => (
         <>
-          <OverlayArrow>
+          <OverlayArrow className="">
             <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 5">
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
@@ -195,7 +193,6 @@ export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
   let {
     containerPadding,
     crossOffset,
-    offset,
     placement,
     shouldFlip,
     ...triggerProps
@@ -207,7 +204,6 @@ export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
         value={{
           containerPadding: containerPadding,
           crossOffset: crossOffset,
-          offset: offset,
           placement: placement,
           shouldFlip: shouldFlip
         }}>

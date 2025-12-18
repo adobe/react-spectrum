@@ -1,0 +1,94 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../src/Layout';
+export default Layout;
+import {InterfaceType} from '../../src/types';
+import {FunctionAPI} from '../../src/FunctionAPI';
+import docs from 'docs:@react-aria/interactions';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
+
+export const section = 'Interactions';
+export const description = 'Handles hover interactions with proper support for touch devices.';
+
+# useHover
+
+<PageDescription>{docs.exports.useHover.description}</PageDescription>
+
+```tsx render
+"use client";
+import React from 'react';
+import {useHover} from 'react-aria';
+
+function Example() {
+  let [events, setEvents] = React.useState<string[]>([]);
+  let {hoverProps, isHovered} = useHover({
+    onHoverStart: e => setEvents(
+      events => [...events, `hover start with ${e.pointerType}`]
+    ),
+    onHoverEnd: e => setEvents(
+      events => [...events, `hover end with ${e.pointerType}`]
+    )
+  });
+
+  return (
+    <>
+      <div
+        {...hoverProps}
+        style={{
+          background: isHovered ? 'darkgreen' : 'green',
+          color: 'white',
+          display: 'inline-block',
+          padding: '8px 12px',
+          borderRadius: 8,
+          cursor: 'pointer'
+        }}
+        role="button"
+        tabIndex={0}>
+        Hover me!
+      </div>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```
+
+## Features
+
+`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) CSS pseudo class, but only applies on mouse interactions. `:hover` is sticky on touch devices, applying continuously until the user interacts with another element, and on devices with both mouse and touch support there is no CSS-only way to apply hover states only when interacting with a pointer. Read our [blog post](blog/building-a-button-part-2) to learn more.
+
+<InlineAlert variant="notice">
+  <Heading>Accessibility</Heading>
+  <Content>Hover interactions should never be the only way to interact with an element because they are not
+supported across all devices. Alternative interactions should be provided on touch devices, for
+example a long press or an explicit button to tap.</Content>
+</InlineAlert>
+
+## API
+
+<FunctionAPI function={docs.exports.useHover} links={docs.links} />
+
+### HoverProps
+
+<InterfaceType {...docs.exports.HoverProps} />
+
+### HoverResult
+
+<InterfaceType {...docs.exports.HoverResult} />
+
+### HoverEvent
+
+<InterfaceType {...typesDocs.exports.HoverEvent} />

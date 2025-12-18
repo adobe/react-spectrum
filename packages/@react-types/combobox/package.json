@@ -1,6 +1,6 @@
 {
   "name": "@react-types/combobox",
-  "version": "3.13.9",
+  "version": "3.13.10",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",

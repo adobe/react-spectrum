@@ -33,7 +33,30 @@ export const VerticalOrientation: Story = {
     <div style={{width: 600}}>
       <SelectBoxGroup
         aria-label="Vertical"
-        orientation="vertical" 
+        orientation="vertical"
+        onSelectionChange={action('onSelectionChange')}>
+        <SelectBox id="text-only" textValue="V: Text Only">
+          <Text slot="label">V: Text Only</Text>
+        </SelectBox>
+        <SelectBox id="illustration-text" textValue="V: Illustration + Text">
+          <Server />
+          <Text slot="label">V: Illustration + Text</Text>
+        </SelectBox>
+        <SelectBox id="illustration-desc" textValue="Send">
+          <PaperAirplane />
+        </SelectBox>
+      </SelectBoxGroup>
+    </div>
+  )
+};
+
+export const VerticalOrientationMultiSelect: Story = {
+  render: () => (
+    <div style={{width: 600}}>
+      <SelectBoxGroup
+        selectionMode="multiple"
+        aria-label="Vertical"
+        orientation="vertical"
         onSelectionChange={action('onSelectionChange')}>
         <SelectBox id="text-only" textValue="V: Text Only">
           <Text slot="label">V: Text Only</Text>
@@ -55,7 +78,36 @@ export const HorizontalOrientation: Story = {
     <div style={{width: 800}}>
       <SelectBoxGroup
         aria-label="Horizontal"
-        orientation="horizontal" 
+        orientation="horizontal"
+        onSelectionChange={action('onSelectionChange')}>
+        <SelectBox id="text-only" textValue="Title Only">
+          <Text slot="label">Title Only</Text>
+        </SelectBox>
+        <SelectBox id="illustration-text" textValue="Illustration + Title">
+          <Server />
+          <Text slot="label">Illustration + Title</Text>
+        </SelectBox>
+        <SelectBox id="text-desc" textValue="Title + Description">
+          <Text slot="label">Title + Description</Text>
+          <Text slot="description">Additional description</Text>
+        </SelectBox>
+        <SelectBox id="h-all" textValue="Illustration + Title + Description">
+          <Server />
+          <Text slot="label">Illustration + Title + Description</Text>
+          <Text slot="description">Full horizontal layout with all elements</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+    </div>
+  )
+};
+
+export const HorizontalOrientationMultSelect: Story = {
+  render: () => (
+    <div style={{width: 800}}>
+      <SelectBoxGroup
+        selectionMode="multiple"
+        aria-label="Horizontal"
+        orientation="horizontal"
         onSelectionChange={action('onSelectionChange')}>
         <SelectBox id="text-only" textValue="Title Only">
           <Text slot="label">Title Only</Text>

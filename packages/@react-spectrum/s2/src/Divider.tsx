@@ -29,7 +29,7 @@ interface DividerSpectrumProps {
    */
   size?: 'S' | 'M' | 'L',
   /**
-   * How thick the Divider should be.
+   * The orientation of the Divider.
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical',

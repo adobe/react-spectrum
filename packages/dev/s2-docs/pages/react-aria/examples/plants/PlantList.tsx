@@ -1,6 +1,6 @@
 "use client";
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
-import {Plant} from '@react-spectrum/docs/pages/react-aria/home/plants';
+import {Plant} from './plants';
 import {PlantActionMenu} from './PlantActionMenu';
 
 interface PlantListProps {
@@ -23,7 +23,7 @@ export function PlantList(props: PlantListProps) {
       {item => (
         <GridListItem textValue={item.common_name}>
           <div className="grid grid-cols-[40px_1fr_auto] gap-x-2 w-full">
-            <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-3 object-contain h-[40px]" />
+            <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-2 object-contain h-[40px]" />
             <span className="truncate capitalize">{item.common_name}</span>
             <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
             <PlantActionMenu
