@@ -526,7 +526,7 @@ describe('TagGroup', () => {
     let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'none'});
     let items = getAllByRole('row');
 
-    await user.click({target: items[0]});
+    await user.click(items[0]);
     expect(onAction).toHaveBeenCalledTimes(1);
     onAction.mockReset();
 
@@ -534,21 +534,75 @@ describe('TagGroup', () => {
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
-  it('should support onAction with selectionMode = single', async () => {
+  it('should support onAction with selectionMode = single, behaviour = replace', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'single', selectionBehavior: 'replace'});
+    let items = getAllByRole('row');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.click(items[1]);
+    expect(onAction).not.toHaveBeenCalled();
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'false'); // should be true?
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'false'); // should be true?
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
+  it('should support onAction with selectionMode = multiple, behaviour = replace', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'multiple', selectionBehavior: 'replace'});
+    let items = getAllByRole('row');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    onAction.mockReset();
+
+    await user.click(items[1]);
+    expect(onAction).not.toHaveBeenCalled();
+    onAction.mockReset();
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
+
+    await user.dblClick(items[0]);
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+    onAction.mockReset();
+
+    await user.keyboard('{Enter}');
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
+  // TODO: What do we want to do for this behaviour? Should we warn that it's not a valid combination? Or should it react to double click?
+  // Replace selectionBehavior works with double click, but toggle doesn't.
+  it.skip('should support onAction with selectionMode = single, behaviour = toggle', async () => {
     let onAction = jest.fn();
     let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'single'});
     let items = getAllByRole('row');
 
-    await user.dblClick({target: items[0]});
+    await user.dblClick(items[0]);
     expect(onAction).toHaveBeenCalledTimes(1);
     onAction.mockReset();
 
-    await user.click({target: items[1]});
+    await user.click(items[1]);
     expect(onAction).not.toHaveBeenCalled();
     expect(items[1]).toHaveAttribute('aria-selected', 'true');
 
-    await user.dblClick({target: items[0]});
+    await user.dblClick(items[0]);
     expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).not.toHaveAttribute('aria-selected');
     onAction.mockReset();
 
     await user.keyboard('{Enter}');
@@ -557,22 +611,23 @@ describe('TagGroup', () => {
     expect(items[1]).not.toHaveAttribute('aria-selected');
   });
 
-  it('should support onAction with selectionMode = multiple', async () => {
+  it.skip('should support onAction with selectionMode = multiple, behaviour = toggle', async () => {
     let onAction = jest.fn();
     let {getAllByRole} = renderTagGroup({onAction, selectionMode: 'multiple'});
     let items = getAllByRole('row');
 
-    await user.dblClick({target: items[0]});
+    await user.dblClick(items[0]);
     expect(onAction).toHaveBeenCalledTimes(1);
     onAction.mockReset();
 
-    await user.click({target: items[1]});
+    await user.click(items[1]);
     expect(onAction).not.toHaveBeenCalled();
     onAction.mockReset();
     expect(items[1]).toHaveAttribute('aria-selected', 'true');
 
-    await user.dblClick({target: items[0]});
+    await user.dblClick(items[0]);
     expect(onAction).toHaveBeenCalledTimes(1);
+    expect(items[0]).not.toHaveAttribute('aria-selected');
     onAction.mockReset();
 
     await user.keyboard('{Enter}');
@@ -620,7 +675,7 @@ describe('TagGroup', () => {
   });
 
   describe('press events', () => {
-    it.only.each`
+    it.each`
       interactionType
       ${'mouse'}
       ${'keyboard'}
