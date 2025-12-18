@@ -11,7 +11,8 @@ import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 import {Link} from '@react-spectrum/s2';
 
-export const section = 'Getting started';
+export const section = 'Overview';
+export const searchSection = 'Guides';
 export const tags = ['introduction', 'installation'];
 export const description = 'Install and build your first component';
 
@@ -27,7 +28,7 @@ Install React Aria with your preferred package manager.
 
 ## Quick start
 
-The documentation for each component includes vanilla CSS and [Tailwind](https://tailwindcss.com) examples. Copy and paste these into your project and make them your own. You can also download each example as a ZIP or open in CodeSandbox or StackBlitz.
+The documentation for each component includes vanilla CSS and [Tailwind](https://tailwindcss.com) examples. Copy and paste these into your project and make them your own. You can also download each example as a ZIP or open in StackBlitz.
 
 <ExampleSwitcher>
   ```tsx render docs={docs.exports.Select} links={docs.links} props={[]} type="vanilla" files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css"]} showCoachMark
@@ -64,7 +65,7 @@ The documentation for each component includes vanilla CSS and [Tailwind](https:/
 
 Each example can also be installed with the [shadcn](https://ui.shadcn.com/docs/cli) CLI. This will add the component source code, styles, and all dependencies to your project automatically.
 
-<ShadcnCommand registryUrl="vanilla/Select.json" />
+<ShadcnCommand type="vanilla" component="Select" />
 
 ### Storybook starter kits
 
@@ -74,11 +75,11 @@ If you're building a full component library, download a pre-built [Storybook](ht
 
 ### Working with AI
 
-Use the menu at the top of each page in the docs to open or copy it into your favorite AI assistant. We also have an [MCP server](mcp.html) which can be used directly in your IDE, and <Link href="llms.txt" target="_blank">lms.txt</Link> which can help AI agents navigate the docs.
+Use the menu on each page in the docs to open or copy it into your favorite AI assistant. We also have an [MCP server](mcp) which can be used directly in your IDE, and <Link href="llms.txt" target="_blank">llms.txt</Link> which can help AI agents navigate the docs.
 
 ## Build a component from scratch
 
-In this tutorial, we'll build a custom [Select](Select.html) component.
+In this tutorial, we'll build a custom [Select](Select) component.
 
 <StepList>
   <Step>
@@ -122,7 +123,7 @@ In this tutorial, we'll build a custom [Select](Select.html) component.
     }
     ```
 
-    You can also override these defaults with a custom `className` prop, and access states via render props. Check out our [styling guide](styling.html) to learn more.
+    You can also override these defaults with a custom `className` prop, and access states via render props. Check out our [styling guide](styling) to learn more.
 
   </Step>
   <Step>
@@ -184,4 +185,4 @@ In this tutorial, we'll build a custom [Select](Select.html) component.
 
 ## Framework setup
 
-React Aria works out of the box in any React framework. When you're ready, follow our [framework setup](frameworks.html) guide to optimize the bundle size, configure internationalization, and integrate with client side routers.
+React Aria works out of the box in any React framework. When you're ready, follow our [framework setup](frameworks) guide to optimize the bundle size, configure internationalization, and integrate with client side routers.

@@ -40,18 +40,34 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = (args: ButtonProps): ReactNode => {
-  let {children, ...otherArgs} = args;
+let premiumStates = [
+  {isDisabled: true},
+  {size: ['S', 'M', 'L', 'XL']}
+];
+
+let premiumCombinations = generatePowerset(premiumStates);
+
+let genaiStates = [
+  {isDisabled: true},
+  {size: ['S', 'M', 'L', 'XL']}
+];
+
+let genaiCombinations = generatePowerset(genaiStates);
+
+const Template = (args: ButtonProps & {combos?: any[]}): ReactNode => {
+  let {children, combos = combinations, variant, ...otherArgs} = args;
   return (
     <div className={style({display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
-      {combinations.map(c => {
+      {combos.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
 
-        let button = <Button data-testid={fullComboName} key={key} {...otherArgs} {...c}>{children ? children : key}</Button>;
+        let finalVariant = c.variant ?? variant;
+        let buttonProps = {...otherArgs, ...c, ...(finalVariant && {variant: finalVariant})};
+        let button = <Button data-testid={fullComboName} key={key} {...buttonProps}>{children ? children : key}</Button>;
         if (c.staticColor != null) {
           return (
             <StaticColorProvider staticColor={c.staticColor}>
@@ -81,6 +97,54 @@ export const IconOnly: StoryObj<typeof Button> = {
   render: (args) => <Template {...args} />,
   args: {
     children: <NewIcon />
+  }
+};
+
+export const Premium: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={premiumCombinations} />,
+  args: {
+    children: 'Press me',
+    variant: 'premium'
+  }
+};
+
+export const PremiumWithIcon: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={premiumCombinations} />,
+  args: {
+    children: <><NewIcon /><Text>Press me</Text></>,
+    variant: 'premium'
+  }
+};
+
+export const PremiumIconOnly: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={premiumCombinations} />,
+  args: {
+    children: <NewIcon />,
+    variant: 'premium'
+  }
+};
+
+export const GenAI: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={genaiCombinations} />,
+  args: {
+    children: 'Press me',
+    variant: 'genai'
+  }
+};
+
+export const GenAIWithIcon: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={genaiCombinations} />,
+  args: {
+    children: <><NewIcon /><Text>Press me</Text></>,
+    variant: 'genai'
+  }
+};
+
+export const GenAIIconOnly: StoryObj<typeof Button> = {
+  render: (args) => <Template {...args} combos={genaiCombinations} />,
+  args: {
+    children: <NewIcon />,
+    variant: 'genai'
   }
 };
 

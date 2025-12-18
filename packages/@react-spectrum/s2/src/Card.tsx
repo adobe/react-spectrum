@@ -91,7 +91,7 @@ let card = style({
     isHovered: 'elevated',
     isFocusVisible: 'elevated',
     isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px ButtonBorder]',
+    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
     variant: {
       tertiary: {
         // Render border with box-shadow to avoid affecting layout.
@@ -99,7 +99,7 @@ let card = style({
         isHovered: `[0 0 0 2px ${color('gray-200')}]`,
         isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
         isSelected: 'none',
-        forcedColors: '[0 0 0 2px ButtonBorder]'
+        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
       },
       quiet: 'none'
     }
@@ -654,6 +654,7 @@ const avatarSize = {
 
 export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and avatar.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
@@ -706,6 +707,7 @@ const buttonSize = {
 
 export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and thumbnail.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 

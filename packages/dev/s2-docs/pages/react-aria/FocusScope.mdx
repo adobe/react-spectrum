@@ -14,6 +14,7 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/focus';
 
 export const section = 'Interactions';
+export const description = 'Manages focus within a group of elements, supporting features like focus containment and restoration.';
 
 # FocusScope
 
@@ -41,8 +42,7 @@ button mounts a FocusScope, which auto focuses the first input inside it. Once o
 press the <Keyboard>Tab</Keyboard> key to move within the scope, but focus is contained inside. Clicking the "Close"
 button unmounts the focus scope, which restores focus back to the button.
 
-{/* Not implemented yet */}
-{/* For a full example of building a modal dialog, see [useDialog](useDialog.html). */}
+For a full example of building a modal dialog, see [useDialog](Modal/useDialog.html).
 
 ```tsx render
 'use client';
@@ -95,10 +95,10 @@ function ToolbarButton(props) {
   let onKeyDown = (e) => {
     switch (e.key) {
       case 'ArrowRight':
-        focusManager.focusNext({wrap: true});
+        focusManager?.focusNext({wrap: true});
         break;
       case 'ArrowLeft':
-        focusManager.focusPrevious({wrap: true});
+        focusManager?.focusPrevious({wrap: true});
         break;
     }
   };

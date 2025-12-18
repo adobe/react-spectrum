@@ -48,11 +48,11 @@ const image = style({
 const heading = style({
   flexGrow: 1,
   marginY: 0,
-  font: 'heading'
+  font: 'title-2xl'
 });
 
 const header = style({
-  font: 'body-lg'
+  font: 'body'
 });
 
 const content =  style({
@@ -181,7 +181,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible && 
+              {props.isDismissible &&
                 <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>

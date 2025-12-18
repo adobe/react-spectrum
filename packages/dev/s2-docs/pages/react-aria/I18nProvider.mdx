@@ -13,19 +13,12 @@ import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/i18n';
 
 export const section = 'Utilities';
-export const description = 'Implementing collections in React Aria';
+export const description = 'Override the default browser locale with an application-defined locale for all child components.';
 
 
 # I18nProvider
 
-## Introduction
-
-`I18nProvider` allows you to override the default locale as determined by the browser/system setting
-with a locale defined by your application (e.g. application setting). This should be done by wrapping
-your entire application in the provider, which will be cause all child elements to receive the new locale
-information via [useLocale](useLocale.html).
-
-## Example
+<PageDescription>{docs.exports.I18nProvider.description}</PageDescription>
 
 ```tsx
 import {I18nProvider} from '@react-aria/i18n';
@@ -34,6 +27,13 @@ import {I18nProvider} from '@react-aria/i18n';
   <YourApp />
 </I18nProvider>
 ```
+
+## Introduction
+
+`I18nProvider` allows you to override the default locale as determined by the browser/system setting
+with a locale defined by your application (e.g. application setting). This should be done by wrapping
+your entire application in the provider, which will be cause all child elements to receive the new locale
+information via [useLocale](useLocale).
 
 ## API
 

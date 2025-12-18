@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Filmstrip_L from 'illustration:./S2_lin_filmstrip_160.svg';
 import Filmstrip_M from 'illustration:./S2_lin_filmstrip_96.svg';
 import Filmstrip_S from 'illustration:./S2_lin_filmstrip_48.svg';

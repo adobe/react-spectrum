@@ -28,8 +28,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 /**
  * Merges multiple props objects together. Event handlers are chained,
- * classNames are combined, and ids are deduplicated - different ids
- * will trigger a side-effect and re-render components hooked up with `useId`.
+ * classNames are combined, and ids are deduplicated.
  * For all other props, the last prop object overrides all previous ones.
  * @param args - Multiple sets of props to merge together.
  */

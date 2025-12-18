@@ -12,14 +12,14 @@ import { composeTailwindRenderProps } from './utils';
 import { ColorThumb } from './ColorThumb';
 
 const trackStyles = tv({
-  base: 'group col-span-2 orientation-horizontal:h-6 rounded-lg',
+  base: 'group col-span-2 rounded-md',
   variants: {
     orientation: {
       horizontal: 'w-full h-6',
-      vertical: 'w-6 h-56 ml-[50%] -translate-x-[50%]'
+      vertical: 'w-6 h-50'
     },
     isDisabled: {
-      true: 'bg-gray-300 dark:bg-zinc-800 forced-colors:bg-[GrayText]'
+      true: 'bg-neutral-300 dark:bg-neutral-800 forced-colors:bg-[GrayText]'
     }
   }
 });
@@ -32,7 +32,7 @@ export function ColorSlider({ label, ...props }: ColorSliderProps) {
   return (
     <AriaColorSlider {...props} className={composeTailwindRenderProps(props.className, 'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-56')}>
       <Label>{label}</Label>
-      <SliderOutput className="text-sm text-gray-500 dark:text-zinc-400 font-medium orientation-vertical:hidden" />
+      <SliderOutput className="text-sm text-neutral-500 dark:text-neutral-400 font-medium orientation-vertical:hidden" />
       <SliderTrack
         className={trackStyles}
         style={({ defaultStyle, isDisabled }) => ({
