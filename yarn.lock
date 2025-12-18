@@ -178,9 +178,9 @@ __metadata:
   linkType: soft
 
 "@adobe/spectrum-tokens@npm:^13.15.1":
-  version: 13.15.1
-  resolution: "@adobe/spectrum-tokens@npm:13.15.1"
-  checksum: 10c0/745543f734fc9a4a69f3eb93b05370e6591dd034f0ac79b85b9a9089ae0cbd7a166633bb562f25eab4cc377e6136648de7e052e600ed8a03f6e306c6dc1e19ed
+  version: 13.16.0
+  resolution: "@adobe/spectrum-tokens@npm:13.16.0"
+  checksum: 10c0/625bb37073847f97320a74c261945c792f5685b1733408e8a225adc4aeda81281b42529780a66249af5ff4c1dce8b7bc76275d389b5cc9dfe9fd10b0306c49e2
   languageName: node
   linkType: hard
 
