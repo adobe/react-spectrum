@@ -495,19 +495,24 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (condition in theme.conditions || /^[@:]/.test(condition)) {
       // Conditions starting with : are CSS pseudo classes. Nest them inside the parent rule.
       let prelude = theme.conditions[condition] || condition;
-      if (prelude.startsWith(':')) {
-        for (let rule of rules) {
-          rule.addPseudo(prelude);
+      let preludes = Array.isArray(prelude) ? prelude : [prelude];
+      return preludes.map(prelude => {
+        if (prelude.startsWith(':')) {
+          let rulesWithPseudo = rules.map(rule => {
+            rule = rule.copy();
+            rule.addPseudo(prelude);
+            return rule;
+          });
+
+          return new GroupRule(rulesWithPseudo, generateName(priority, true));
         }
 
-        return [new GroupRule(rules, generateName(priority, true))];
-      }
-
-      // Otherwise, wrap the rule in the condition (e.g. @media).
-      // Top level layer is based on the priority of the rule, not the condition.
-      // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
-      let layer = `${generateName(priority, true)}.${propertyInfo.conditions[theme.conditions[condition] || condition] || generateArbitraryValueSelector(condition, true)}`;
-      return [new AtRule(rules, prelude, layer, condition)];
+        // Otherwise, wrap the rule in the condition (e.g. @media).
+        // Top level layer is based on the priority of the rule, not the condition.
+        // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
+        let layer = `${generateName(priority, true)}.${propertyInfo.conditions[prelude] || generateArbitraryValueSelector(condition, true)}`;
+        return new AtRule(rules, prelude, layer);
+      });
     }
 
     hasConditions = true;
@@ -557,7 +562,11 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
           let className = classNamePrefix(key, cssProperty);
           if (conditions.size > 0) {
             for (let condition of conditions) {
-              className += propertyInfo.conditions[theme.conditions[condition] || condition] || generateArbitraryValueSelector(condition);
+              let prelude = theme.conditions[condition] || condition;
+              let preludes = Array.isArray(prelude) ? prelude : [prelude];
+              for (let prelude of preludes) {
+                className += propertyInfo.conditions[prelude] || generateArbitraryValueSelector(condition);
+              }
             }
           }
 
@@ -652,7 +661,8 @@ interface Rule {
   addPseudo(prelude: string): void,
   getStaticClassName(): string,
   toCSS(rulesByLayer: Map<string, string[]>, preludes?: string[], layer?: string): void,
-  toJS(allowedOverridesSet: Set<string>, indent?: string): string
+  toJS(allowedOverridesSet: Set<string>, indent?: string): string,
+  copy(): Rule
 }
 
 let conditionStack: string[] = [];
@@ -675,6 +685,12 @@ class StyleRule implements Rule {
       this.themeProperty = themeProperty;
       this.themeValue = themeValue;
     }
+  }
+
+  copy(): Rule {
+    let rule = new StyleRule(this.className, this.property, this.value);
+    rule.pseudos = this.pseudos;
+    return rule;
   }
 
   addPseudo(prelude: string) {
@@ -739,9 +755,13 @@ class GroupRule implements Rule {
   rules: Rule[];
   layer: string | null;
 
-  constructor(rules: Rule[], layer?: string) {
+  constructor(rules: Rule[], layer?: string | null) {
     this.rules = rules;
     this.layer = layer ?? null;
+  }
+
+  copy(): Rule {
+    return new GroupRule(this.rules.map(rule => rule.copy()), this.layer);
   }
 
   addPseudo(prelude: string) {
@@ -784,10 +804,14 @@ class AtRule extends GroupRule {
   prelude: string;
   themeCondition: string | null;
 
-  constructor(rules: Rule[], prelude: string, layer: string, themeCondition: string | null) {
+  constructor(rules: Rule[], prelude: string, layer: string | null, themeCondition: string | null) {
     super(rules, layer);
     this.prelude = prelude;
     this.themeCondition = themeCondition;
+  }
+
+  copy(): Rule {
+    return new AtRule(this.rules.map(rule => rule.copy()), this.prelude, this.layer);
   }
 
   toCSS(rulesByLayer: Map<string, string[]>, preludes: string[] = [], layer?: string): void {
@@ -811,6 +835,10 @@ class ConditionalRule extends GroupRule {
   constructor(rules: Rule[], condition: string) {
     super(rules);
     this.condition = condition;
+  }
+
+  copy(): Rule {
+    return new ConditionalRule(this.rules.map(rule => rule.copy()), this.condition);
   }
 
   getStaticClassName(): string {

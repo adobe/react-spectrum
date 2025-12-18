@@ -1,4 +1,11 @@
-export function createStackBlitz(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' | 's2' = 'vanilla') {
+import type {DownloadFiles} from './CodeBlock';
+
+export function createStackBlitz(
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
+  type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
+  entry: string = 'Example'
+) {
   let form = document.createElement('form');
   form.hidden = true;
   form.method = 'POST';
@@ -23,7 +30,7 @@ export function createStackBlitz(files: {[name: string]: string}, type: 'vanilla
   input.value = 'description';
   form.appendChild(input);
 
-  let generatedFiles = getFiles(files, type);
+  let generatedFiles = getFiles(files, deps, type, entry);
   for (let name in generatedFiles) {
     input = document.createElement('input');
     input.type = 'hidden';
@@ -37,7 +44,13 @@ export function createStackBlitz(files: {[name: string]: string}, type: 'vanilla
   form.remove();
 }
 
-function getFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' | 's2' = 'vanilla') {
+function getFiles(
+  files: DownloadFiles['files'],
+  deps: DownloadFiles['deps'],
+  type: 'vanilla' | 'tailwind' | 's2' = 'vanilla',
+  entry: string = 'Example'
+) {
+  let entryName = entry.split('/').pop()!.split('.')[0];
   return {
     'package.json': JSON.stringify({
       name: 'react-aria-starter',
@@ -50,13 +63,10 @@ function getFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' 
         preview: 'vite preview'
       },
       dependencies: {
-        'react-aria-components': '^1.10.0',
         react: '^19',
         'react-dom': '^19',
-        'lucide-react': '^0.514.0',
-        ...(type === 'tailwind' ? {
-          'tailwind-variants': '^0.3.1'
-        } : {})
+        ...(type === 's2' ? {'@react-spectrum/s2': 'latest'} : {}),
+        ...deps
       },
       devDependencies: {
         '@types/react': '^19',
@@ -68,17 +78,21 @@ function getFiles(files: {[name: string]: string}, type: 'vanilla' | 'tailwind' 
           '@tailwindcss/vite': '^4',
           'tailwindcss-react-aria-components': '^2',
           'tailwindcss-animate': '^1'
+        } : {}),
+        ...(type === 's2' ? {
+          'unplugin-parcel-macros': '^0.1.2-alpha.1'
         } : {})
       }
     }, null, 2) + '\n',
     'vite.config.ts': `import {defineConfig} from 'vite';
-import react from '@vitejs/plugin-react';${type === 'tailwind' ? "\nimport tailwindcss from '@tailwindcss/vite';" : ''}
+import react from '@vitejs/plugin-react';${type === 'tailwind' ? "\nimport tailwindcss from '@tailwindcss/vite';" : ''}${type === 's2' ? "\nimport macros from 'unplugin-parcel-macros';" : ''}
 
 export default defineConfig({
-  plugins: [react()${type === 'tailwind' ? ', tailwindcss()' : ''}],
+  plugins: [${type === 's2' ? 'macros.vite(), ' : ''}react()${type === 'tailwind' ? ', tailwindcss()' : ''}],
 });
 `,
-    'index.html': `<html lang="en">
+    'index.html': `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Test</title>
@@ -90,11 +104,10 @@ export default defineConfig({
 </body>
 </html>
 `,
-    'src/index.tsx': `import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import {Example} from './Example';
+    'src/index.tsx': `import {createRoot} from 'react-dom/client';${type === 's2' ? "\nimport '@react-spectrum/s2/page.css';\nimport {Provider} from '@react-spectrum/s2';" : ''}
+import ${entryName} from './${entryName}';
 
-createRoot(document.getElementById('root')!).render(<Example />);
+createRoot(document.getElementById('root')!).render(${type === 's2' ? `\n  <Provider>\n    <${entryName} />\n  </Provider>\n` : `<${entryName} />`});
 `,
     'tsconfig.json': JSON.stringify({
       compilerOptions: {
@@ -121,6 +134,6 @@ createRoot(document.getElementById('root')!).render(<Example />);
       },
       'include': ['src']
     }, null, 2) + '\n',
-    ...Object.fromEntries(Object.entries(files).map(([name, contents]) => ['src/' + name, contents]))
+    ...Object.fromEntries(Object.entries(files).map(([name, file]) => ['src/' + name, file.contents]))
   };
 }

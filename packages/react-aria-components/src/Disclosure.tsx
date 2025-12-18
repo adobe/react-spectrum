@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDisclosureProps, useDisclosure, useFocusRing} from 'react-aria';
+import {AriaDisclosureProps, LabelAriaProps, useDisclosure, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -206,7 +206,7 @@ export interface DisclosurePanelRenderProps {
   isFocusVisibleWithin: boolean
 }
 
-export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, LabelAriaProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DisclosurePanel'
@@ -240,7 +240,7 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isFocusVisibleWithin
     }
   });
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {global: true, labelable: true});
   return (
     <div
       {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}

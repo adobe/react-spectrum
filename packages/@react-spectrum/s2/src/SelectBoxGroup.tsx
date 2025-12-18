@@ -21,6 +21,7 @@ import {
   Provider
 } from 'react-aria-components';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, Key, Orientation} from '@react-types/shared';
+import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from '../src/Icon';
 import {pressScale} from './pressScale';
@@ -33,7 +34,7 @@ export interface SelectBoxGroupProps<T> extends StyleProps, Omit<ListBoxProps<T>
   /**
    * The SelectBox elements contained within the SelectBoxGroup.
    */
-  children: ReactNode,
+  children: ReactNode | ((item: T) => ReactNode),
   /**
    * The layout direction of the content in each SelectBox.
    * @default 'vertical'
@@ -105,12 +106,16 @@ const selectBoxStyles = style({
       horizontal: 188
     }
   },
-  maxWidth: {
-    default: 170,
-    orientation: {
-      horizontal: 480
+  '--select-box-max-width': {
+    type: 'width',
+    value: {
+      default: 170,
+      orientation: {
+        horizontal: 480
+      }
     }
   },
+  maxWidth: 'min(100%, var(--select-box-max-width))',
   minHeight: {
     default: 144,
     orientation: {
@@ -272,7 +277,7 @@ const gridStyles = style<{orientation?: Orientation}>({
   gridAutoRows: '1fr',
   gap: 24,
   justifyContent: 'center',
-  '--size': {
+  '--select-box-group-width': {
     type: 'width',
     value: {
       orientation: {
@@ -281,10 +286,19 @@ const gridStyles = style<{orientation?: Orientation}>({
       }
     }
   },
+  '--select-box-group-min-width': {
+    type: 'width',
+    value: {
+      orientation: {
+        horizontal: 188,
+        vertical: 144
+      }
+    }
+  },
   gridTemplateColumns: {
     orientation: {
-      horizontal: 'repeat(auto-fit, var(--size))',
-      vertical: 'repeat(auto-fit, var(--size))'
+      horizontal: 'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))',
+      vertical: 'repeat(auto-fit, minmax(var(--select-box-group-min-width), min(var(--select-box-group-width), 100%)))'
     }
   }
 }, getAllowedOverrides());
@@ -315,7 +329,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
       }, styles)}
       style={pressScale(ref, UNSAFE_style)}
       {...otherProps}>
-      {({isSelected, isDisabled, isHovered}) => {
+      {({isSelected, isDisabled, isHovered, selectionMode}) => {
         return (
           <>
             <div
@@ -326,7 +340,7 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
                 pointerEvents: 'none'
               })}
               aria-hidden="true">
-              {!isDisabled && (
+              {!isDisabled && selectionMode === 'multiple' && (
                 <div
                   className={box({
                     isSelected,
@@ -368,10 +382,10 @@ export function SelectBox(props: SelectBoxProps): ReactNode {
   );
 }
 
-/*
+/**
  * SelectBoxGroup allows users to select one or more options from a list.
  */
-export const SelectBoxGroup = /*#__PURE__*/ forwardRef(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const SelectBoxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectBoxGroup<T extends object>(props: SelectBoxGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SelectBoxGroupContext);
 
   let {

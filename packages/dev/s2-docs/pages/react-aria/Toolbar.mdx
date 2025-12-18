@@ -6,6 +6,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/toolbar/docs/toolbar-anatomy.svg';
 
 export const tags = ['group'];
+export const relatedPages = [{'title': 'useToolbar', 'url': 'Toolbar/useToolbar.html'}];
+export const description = 'A container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes.';
 
 # Toolbar
 
@@ -19,7 +21,8 @@ export const tags = ['group'];
   import {ToggleButton} from 'vanilla-starter/ToggleButton';
   import {Button} from 'vanilla-starter/Button';
   import {Select, SelectItem} from 'vanilla-starter/Select';
-  import {Group, Separator} from 'react-aria-components';
+  import {Separator} from 'vanilla-starter/Separator';
+  import {Group} from 'react-aria-components';
   import {Bold, Italic, Underline, ClipboardCopy, Scissors, ClipboardPaste} from 'lucide-react';
 
   <Toolbar/* PROPS */>
@@ -34,7 +37,7 @@ export const tags = ['group'];
         <Underline size={16} />
       </ToggleButton>
     </ToggleButtonGroup>
-    <Separator orientation="vertical" />
+    <Separator />
     <Group aria-label="Clipboard">
       <Button aria-label="Copy">
         <ClipboardCopy size={16} />
@@ -46,7 +49,7 @@ export const tags = ['group'];
         <ClipboardPaste size={16} />
       </Button>
     </Group>
-    <Separator orientation="vertical" />
+    <Separator />
     <Select aria-label="Font" defaultSelectedKey="helvetica">
       <SelectItem id="helvetica">Helvetica</SelectItem>
       <SelectItem id="times">Times</SelectItem>
@@ -55,7 +58,7 @@ export const tags = ['group'];
   </Toolbar>
   ```
 
-  ```tsx render docs={docs.exports.Toolbar} links={docs.links} props={['orientation']} initialProps={{'aria-label': 'Text formatting'}} type="tailwind" files={["starters/docs/src/Toolbar.tsx"]}
+  ```tsx render docs={docs.exports.Toolbar} links={docs.links} props={['orientation']} initialProps={{'aria-label': 'Text formatting'}} type="tailwind" files={["starters/tailwind/src/Toolbar.tsx"]}
   "use client";
   import {Toolbar} from 'tailwind-starter/Toolbar';
   import {ToggleButtonGroup} from 'tailwind-starter/ToggleButtonGroup';
@@ -77,7 +80,7 @@ export const tags = ['group'];
         <Underline size={16} />
       </ToggleButton>
     </ToggleButtonGroup>
-    <Group aria-label="Clipboard" className="flex gap-1">
+    <Group aria-label="Clipboard" className="flex gap-1" style={{flexDirection: 'inherit'}}>
       <Button aria-label="Copy" variant="secondary">
         <ClipboardCopy size={16} />
       </Button>
@@ -101,7 +104,7 @@ export const tags = ['group'];
 
 <Anatomy />
 
-```tsx links={{Toolbar: '#toolbar', Button: 'Button.html', ToggleButtonGroup: 'ToggleButtonGroup.html', ToggleButton: 'ToggleButton.html', Group: 'Group.html', Select: 'Select.html'}}
+```tsx links={{Toolbar: '#toolbar', Button: 'Button', ToggleButtonGroup: 'ToggleButtonGroup', ToggleButton: 'ToggleButton', Group: 'Group', Select: 'Select'}}
 <Toolbar>
   <Button />
   <ToggleButtonGroup>

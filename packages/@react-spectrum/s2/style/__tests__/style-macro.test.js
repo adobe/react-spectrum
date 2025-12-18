@@ -40,26 +40,22 @@ describe('style-macro', () => {
 "@layer _.a, _.b, _.c;
 
 @layer _.b {
-  .Jbs12:first-child {
+  .Jbs1:first-child {
     margin-top: 0.25rem;
   }
 }
 
 @layer _.c.p {
   @media (min-width: 64rem) {
-    .Jbpv12:first-child {
+    .Jbpv1:first-child {
       margin-top: 0.5rem;
     }
   }
 }
 
-.-macro-static-EVNQL {
-        --macro-data: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
-      }
-
 "
 `);
-    expect(js).toMatchInlineSnapshot('" Jbs12 Jbpv12 -macro-static-EVNQL"');
+    expect(js).toMatchInlineSnapshot('" Jbs1 Jbpv1"');
   });
 
   it('should support self references', () => {
@@ -73,59 +69,55 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  ._kc12 {
+  ._kc1 {
     border-top-width: 2px;
   }
 
 
-  .hc12 {
+  .hc1 {
     border-bottom-width: 2px;
   }
 
 
-  .mCPFGYc12 {
+  .mCPFGYc1 {
     border-inline-start-width: var(--m);
   }
 
 
-  .lc12 {
+  .lc1 {
     border-inline-end-width: 2px;
   }
 
 
-  .SMBFGYc12 {
+  .SMBFGYc1 {
     padding-inline-start: var(--S);
   }
 
 
-  .Rv12 {
+  .Rv1 {
     padding-inline-end: calc(var(--F, var(--M)) * 3 / 8);
   }
 
 
-  .ZjUQgKd12 {
+  .ZjUQgKd1 {
     width: calc(200px - var(--m) - var(--S));
   }
 
 
-  .-m_-mc12 {
+  .-m_-mc1 {
     --m: 2px;
   }
 
 
-  .-S_-Sv12 {
+  .-S_-Sv1 {
     --S: calc(var(--F, var(--M)) * 3 / 8);
   }
 }
 
-.-macro-static-qHi23 {
-        --macro-data: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
-      }
-
 "
 `);
 
-    expect(js).toMatchInlineSnapshot('" _kc12 hc12 mCPFGYc12 lc12 SMBFGYc12 Rv12 ZjUQgKd12 -m_-mc12 -S_-Sv12 -macro-static-qHi23"');
+    expect(js).toMatchInlineSnapshot('" _kc1 hc1 mCPFGYc1 lc1 SMBFGYc1 Rv1 ZjUQgKd1 -m_-mc1 -S_-Sv1"');
   });
 
   it('should support allowed overrides', () => {
@@ -142,9 +134,9 @@ describe('style-macro', () => {
       color: 'green-400'
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gw12 pg12 -macro-dynamic-1xxglvk"');
-    expect(overrides).toMatchInlineSnapshot('" g8tmWqb12 pHJ3AUd12 -macro-static-Su6dhb"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb12 pg12 -macro-dynamic-jk90zw"');
+    expect(js()).toMatchInlineSnapshot('"  gw1 pg1"');
+    expect(overrides).toMatchInlineSnapshot('" g8tmWqb1 pHJ3AUd1"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  g8tmWqb1 pg1"');
   });
 
   it('should support allowed overrides for properties that expand into multiple', () => {
@@ -159,9 +151,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B12 __Ya12 -macro-dynamic-1nf427l"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D12 __Ya12 -macro-static-ZCkud"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D12 __Ya12 -macro-dynamic-1pnuhyr"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-B1 __Ya1"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-D1 __Ya1"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-D1 __Ya1"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -176,9 +168,26 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  Tk12 Qk12 Sk12 Rk12 -macro-dynamic-1w5dwn"');
-    expect(overrides).toMatchInlineSnapshot('" Tm12 Qm12 Sm12 Rm12 -macro-static-FQziuc"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm12 Qm12 Sm12 Rm12 -macro-dynamic-p1i90v"');
+    expect(js()).toMatchInlineSnapshot('"  Tk1 Qk1 Sk1 Rk1"');
+    expect(overrides).toMatchInlineSnapshot('" Tm1 Qm1 Sm1 Rm1"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Tm1 Qm1 Sm1 Rm1"');
+  });
+
+  it('should support allowed overrides for fontSize', () => {
+    let {js} = testStyle(
+      {
+        fontSize: 'heading-3xl'
+      },
+      ['fontSize']
+    );
+
+    let {js: overrides} = testStyle({
+      fontSize: 'ui-xs'
+    });
+
+    expect(js()).toMatchInlineSnapshot('"  -_6BNtrc-woabcc1 vx1"');
+    expect(overrides).toMatchInlineSnapshot('" -_6BNtrc-a1 vx1"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_6BNtrc-a1 vx1"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -193,9 +202,9 @@ describe('style-macro', () => {
       minWidth: 32
     });
 
-    expect(js()).toMatchInlineSnapshot('"  gE12 -macro-dynamic-nl2mms"');
-    expect(overrides).toMatchInlineSnapshot('" Nk12 -macro-static-pDx0l"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk12 gE12 -macro-dynamic-11y5vdc"');
+    expect(js()).toMatchInlineSnapshot('"  gE1"');
+    expect(overrides).toMatchInlineSnapshot('" Nk1"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Nk1 gE1"');
   });
 
   it('should support runtime conditions', () => {
@@ -216,32 +225,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH12 {
+  .gH1 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF12 {
+  .gF1 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .gE12 {
+  .gE1 {
     background-color: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 
 
-  .pt12 {
+  .pt1 {
     color: light-dark(rgb(41, 41, 41), rgb(219, 219, 219));
   }
 
 
-  .po12 {
+  .po1 {
     color: light-dark(rgb(19, 19, 19), rgb(242, 242, 242));
   }
 
 
-  .pm12 {
+  .pm1 {
     color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
   }
 }
@@ -249,9 +258,9 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  gH12 pt12 -macro-dynamic-179ovcu"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 po12 -macro-dynamic-1i83kjb"');
-    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE12 pm12 -macro-dynamic-1npaxjo"');
+    expect(js({})).toMatchInlineSnapshot('"  gH1 pt1"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF1 po1"');
+    expect(js({isPressed: true})).toMatchInlineSnapshot('"  gE1 pm1"');
   });
 
   it('should support nested runtime conditions', () => {
@@ -270,32 +279,32 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gH12 {
+  .gH1 {
     background-color: light-dark(rgb(233, 233, 233), rgb(44, 44, 44));
   }
 
 
-  .gF12 {
+  .gF1 {
     background-color: light-dark(rgb(225, 225, 225), rgb(50, 50, 50));
   }
 
 
-  .g_h12 {
+  .g_h1 {
     background-color: light-dark(rgb(75, 117, 255), rgb(64, 105, 253));
   }
 
 
-  .g312 {
+  .g31 {
     background-color: light-dark(rgb(59, 99, 251), rgb(86, 129, 255));
   }
 }
 
 "
 `);
-    expect(js({})).toMatchInlineSnapshot('"  gH12 -macro-dynamic-nl2p5j"');
-    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF12 -macro-dynamic-nl2nh1"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h12 -macro-dynamic-1w0viba"');
-    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g312 -macro-dynamic-nl27ia"');
+    expect(js({})).toMatchInlineSnapshot('"  gH1"');
+    expect(js({isHovered: true})).toMatchInlineSnapshot('"  gF1"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  g_h1"');
+    expect(js({isSelected: true, isHovered: true})).toMatchInlineSnapshot('"  g31"');
   });
 
   it('should support variant runtime conditions', () => {
@@ -309,9 +318,9 @@ describe('style-macro', () => {
       }
     });
 
-    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY12 -macro-dynamic-nl33fs"');
-    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe12 -macro-dynamic-enz676"');
-    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw12 -macro-dynamic-nl3sna"');
+    expect(js({variant: 'accent'})).toMatchInlineSnapshot('"  gY1"');
+    expect(js({variant: 'primary'})).toMatchInlineSnapshot('"  gjQquMe1"');
+    expect(js({variant: 'secondary'})).toMatchInlineSnapshot('"  gw1"');
   });
 
   it('supports runtime conditions nested inside css conditions', () => {
@@ -329,14 +338,14 @@ describe('style-macro', () => {
 
 @layer _.b.l {
   @media (forced-colors: active) {
-    .plb12 {
+    .plb1 {
       color: ButtonText;
     }
   }
 
 
   @media (forced-colors: active) {
-    .ple12 {
+    .ple1 {
       color: HighlightText;
     }
   }
@@ -345,8 +354,8 @@ describe('style-macro', () => {
 "
 `);
 
-    expect(js({})).toMatchInlineSnapshot('"  plb12 -macro-dynamic-1w7i5ba"');
-    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple12 -macro-dynamic-1w7i7u1"');
+    expect(js({})).toMatchInlineSnapshot('"  plb1"');
+    expect(js({isSelected: true})).toMatchInlineSnapshot('"  ple1"');
   });
 
   it('should expand shorthand properties to longhands', () => {
@@ -354,34 +363,30 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" Th12 Qh12 Sh12 Rh12 -macro-static-V268ld"');
+    expect(js).toMatchInlineSnapshot('" Th1 Qh1 Sh1 Rh1"');
     expect(css).toMatchInlineSnapshot(`
 "@layer _.a;
 
 @layer _.a {
-  .Th12 {
+  .Th1 {
     padding-top: 24px;
   }
 
 
-  .Qh12 {
+  .Qh1 {
     padding-bottom: 24px;
   }
 
 
-  .Sh12 {
+  .Sh1 {
     padding-inline-start: 24px;
   }
 
 
-  .Rh12 {
+  .Rh1 {
     padding-inline-end: 24px;
   }
 }
-
-.-macro-static-V268ld {
-        --macro-data: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
-      }
 
 "
 `);
@@ -396,14 +401,10 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .gpQzfVb12 {
+  .gpQzfVb1 {
     background-color: rgb(from light-dark(rgb(39, 77, 234), rgb(105, 149, 254)) r g b / 50%);
   }
 }
-
-.-macro-static-MvZuec {
-        --macro-data: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
-      }
 
 "
 `);
@@ -421,14 +422,10 @@ describe('style-macro', () => {
 "@layer _.a;
 
 @layer _.a {
-  .-FUeYm-gE12 {
+  .-FUeYm-gE1 {
     --foo: light-dark(rgb(218, 218, 218), rgb(57, 57, 57));
   }
 }
-
-.-macro-static-2pvxid {
-        --macro-data: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
-      }
 
 "
 `);
