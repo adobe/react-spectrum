@@ -61,7 +61,9 @@ export interface SelectProps<T, M extends SelectionMode = 'single'> extends Coll
   /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void,
+  /** Whether the select should be allowed to be open when the collection is empty. */
+  allowsEmptyCollection?: boolean
 }
 
 export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
@@ -81,7 +83,7 @@ export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends 
   form?: string
 }
 
-export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | 'allowsEmptyCollection'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.

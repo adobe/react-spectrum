@@ -15,9 +15,9 @@ import {Collection, Key, Node, Selection} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SelectionManager} from '@react-stately/selection';
-import {useEffectEvent, useUpdateEffect} from '@react-aria/utils';
+import {useCallback, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useRef} from 'react';
+import {useUpdateEffect} from '@react-aria/utils';
 
 export interface GridSelectionAnnouncementProps {
   /**
@@ -46,7 +46,7 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
   // We do this using an ARIA live region.
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
-  let announceSelectionChange = useEffectEvent(() => {
+  let announceSelectionChange = useCallback(() => {
     if (!state.selectionManager.isFocused || selection === lastSelection.current) {
       lastSelection.current = selection;
 
@@ -101,8 +101,18 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
     }
 
     lastSelection.current = selection;
-  });
+  }, [
+    selection,
+    state.selectionManager.selectedKeys,
+    state.selectionManager.isFocused,
+    state.selectionManager.selectionBehavior,
+    state.selectionManager.selectionMode,
+    state.collection,
+    getRowText,
+    stringFormatter
+  ]);
 
+  // useUpdateEffect will handle using useEffectEvent, no need to stabilize anything on this end
   useUpdateEffect(() => {
     if (state.selectionManager.isFocused) {
       announceSelectionChange();

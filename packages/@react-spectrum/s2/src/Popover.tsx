@@ -22,7 +22,7 @@ import {
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, heightProperties, UnsafeStyles, widthProperties} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useCallback, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {mergeRefs} from '@react-aria/utils';
@@ -31,7 +31,20 @@ import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | keyof GlobalDOMAttributes> {
+export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
+  'arrowSize' |
+  'isNonModal' |
+  'arrowBoundaryOffset' |
+  'isKeyboardDismissDisabled' |
+  'shouldCloseOnInteractOutside' |
+  'shouldUpdatePosition' |
+  'style' |
+  'className' |
+  keyof GlobalDOMAttributes
+> {
+  /**
+   * The styles of the popover.
+   */
   styles?: StyleString,
   /**
    * Whether a popover's arrow should be hidden.
@@ -51,7 +64,10 @@ let popover = style({
   ...colorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
-    value: 'layer-2'
+    value: {
+      default: 'layer-2',
+      forcedColors: 'Background'
+    }
   },
   backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',
@@ -140,8 +156,8 @@ let arrow = style({
   },
   translateX: {
     placement: {
-      left: -4,
-      right: 4
+      left: '-25%',
+      right: '25%'
     }
   },
   strokeWidth: 1,
@@ -212,7 +228,7 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (
-            <OverlayArrow>
+            <OverlayArrow className="">
               <svg viewBox="0 0 18 10" className={arrow(renderProps)}>
                 <path transform="translate(0 -1)" d="M1 1L7.93799 8.52588C8.07224 8.67448 8.23607 8.79362 8.41895 8.87524C8.60182 8.95687 8.79973 8.9993 9 9C9.19984 8.99882 9.39724 8.95606 9.57959 8.87427C9.76193 8.79248 9.9253 8.67336 10.0591 8.5249L17 1" />
               </svg>
@@ -228,7 +244,22 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
 });
 
 type PopoverStylesProp = StyleString<((typeof widthProperties)[number] | (typeof heightProperties)[number])>;
-export interface PopoverDialogProps extends Pick<PopoverProps, 'children' | 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset' | 'triggerRef' | 'isOpen' | 'onOpenChange'>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface PopoverDialogProps extends Pick<PopoverProps,
+'size' |
+'hideArrow'|
+'placement' |
+'shouldFlip' |
+'containerPadding' |
+'offset' |
+'crossOffset' |
+'triggerRef' |
+'isOpen' |
+'onOpenChange'
+>, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+  /**
+   * The children of the popover.
+   */
+  children?: ReactNode,
   /**
    * The amount of padding around the contents of the dialog.
    * @default 'default'

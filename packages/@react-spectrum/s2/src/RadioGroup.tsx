@@ -74,10 +74,10 @@ export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: Ra
     UNSAFE_style,
     ...groupProps
   } = props;
-
   return (
     <AriaRadioGroup
       {...groupProps}
+      orientation={orientation}
       ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + style({

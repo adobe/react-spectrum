@@ -504,6 +504,7 @@ export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(f
       objRef.current.style.minWidth = childMinWidth;
       objRef.current.style.minHeight = childMinHeight;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
 
   return (

@@ -2,27 +2,26 @@
 
 .react-aria-Link {
   color: var(--link-color);
-  font-size: 18px;
-  transition: all 200ms;
+  font-size: var(--font-size);
+  transition-property: color, text-decoration-thickness;
+  transition-duration: 200ms;
   text-decoration: underline;
   cursor: pointer;
   outline: none;
   position: relative;
+  border-radius: var(--radius-sm);
+  -webkit-tap-highlight-color: transparent;
 
   &[data-hovered] {
-    text-decoration-style: wavy;
+    text-decoration-thickness: 1.5px;
   }
 
   &[data-pressed] {
     color: var(--link-color-pressed);
   }
 
-  &[data-focus-visible]:after {
-    content: '';
-    position: absolute;
-    inset: -3px -6px;
-    border-radius: 6px;
-    border: 2px solid var(--focus-ring-color);
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
   }
 
   &[data-disabled] {
