@@ -12,7 +12,7 @@ import {getColorChannels, parseColor} from 'react-stately';
 import {ListBox, ListBoxItem, Size} from 'react-aria-components';
 import {mergeStyles} from '../../../@react-spectrum/s2/style/runtime';
 import type {PropControl} from './VisualExample';
-import React, {createContext, createElement, Fragment, isValidElement, lazy, ReactNode, Ref, Suspense, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, Fragment, isValidElement, lazy, ReactNode, Ref, Suspense, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RemoveCircle from '@react-spectrum/s2/icons/RemoveCircle';
 import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
@@ -138,9 +138,7 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
       if (children.avatar) {
         iconElement = <Avatar src="https://i.imgur.com/xIe7Wlb.png" />;
       } else if (children.icon) {
-        iconElement = (<Suspense fallback={''}>
-          <LazyIcon icon={children.icon} />
-        </Suspense>);
+        iconElement = (<LazyIcon icon={children.icon} />);
       }
 
       children = (
