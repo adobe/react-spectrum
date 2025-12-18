@@ -511,7 +511,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // Top level layer is based on the priority of the rule, not the condition.
         // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
         let layer = `${generateName(priority, true)}.${propertyInfo.conditions[prelude] || generateArbitraryValueSelector(condition, true)}`;
-        return new AtRule(rules, prelude, layer);
+        return new AtRule(rules, prelude, layer, condition);
       });
     }
 
@@ -676,7 +676,7 @@ class StyleRule implements Rule {
   themeProperty: string | undefined;
   themeValue: Value | undefined;
 
-  constructor(className: string, property: string, value: string, themeProperty: string, themeValue) {
+  constructor(className: string, property: string, value: string, themeProperty: string | undefined, themeValue: Value | undefined) {
     this.className = className;
     this.pseudos = '';
     this.property = property;
@@ -688,7 +688,7 @@ class StyleRule implements Rule {
   }
 
   copy(): Rule {
-    let rule = new StyleRule(this.className, this.property, this.value);
+    let rule = new StyleRule(this.className, this.property, this.value, this.themeProperty, this.themeValue);
     rule.pseudos = this.pseudos;
     return rule;
   }
@@ -811,7 +811,7 @@ class AtRule extends GroupRule {
   }
 
   copy(): Rule {
-    return new AtRule(this.rules.map(rule => rule.copy()), this.prelude, this.layer);
+    return new AtRule(this.rules.map(rule => rule.copy()), this.prelude, this.layer, this.themeCondition);
   }
 
   toCSS(rulesByLayer: Map<string, string[]>, preludes: string[] = [], layer?: string): void {
