@@ -383,7 +383,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // @ts-expect-error
     let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
     if (isStatic && process.env.NODE_ENV !== 'production') {
-      let id = toBase62(hash(className));
+      let id = toBase62(hash(className + loc));
       css += `.-macro-static-${id} {
         --macro-data: ${JSON.stringify({style, loc})};
       }\n\n`;
@@ -402,7 +402,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      js += 'let hash = 5381;for (let i = 0; i < rules.length; i++) { hash = ((hash << 5) + hash) + rules.charCodeAt(i) >>> 0; }\n';
+      js += `let targetRules = rules + ${JSON.stringify(loc)};\n`;
+      js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
       js += 'rules += " -macro-dynamic-" + hash.toString(36);\n';
       js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
     }
