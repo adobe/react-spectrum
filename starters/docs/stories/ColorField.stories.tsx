@@ -7,7 +7,10 @@ const meta: Meta<typeof ColorField> = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  args: {
+    placeholder: 'Enter a color'
+  }
 };
 
 export default meta;

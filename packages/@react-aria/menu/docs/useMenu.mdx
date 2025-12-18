@@ -259,9 +259,9 @@ Now we can render a simple menu with actionable items:
 ### Popover
 
 The `Popover` component is used to contain the menu.
-It can be shared between many other components, including [ComboBox](useComboBox.html),
-[Select](useSelect.html), and others.
-See [usePopover](usePopover.html) for more examples of popovers.
+It can be shared between many other components, including [ComboBox](../ComboBox/useComboBox.html),
+[Select](../Select/useSelect.html), and others.
+See [usePopover](../Popover/usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -307,7 +307,7 @@ function Popover({children, state, ...props}: PopoverProps) {
 
 ### Button
 
-The `Button` component is used in the above example to toggle the menu. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to toggle the menu. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -334,7 +334,7 @@ function Button(props) {
 
 ## Dynamic collections
 
-`Menu` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+`Menu` follows the [Collection Components API](v3:collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -366,7 +366,7 @@ function Example() {
 
 Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
+See the `react-stately` [Selection docs](v3:selection.html#selected-key-data-type) for more details.
 
 ```tsx example
 import type {Selection} from 'react-stately';
@@ -628,7 +628,7 @@ function MenuItem({item, state}) {
 
 `useMenu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See [Collections](v3:collections.html) for more details.
 
 Disabled items are not focusable or keyboard navigable, and do not trigger `onAction` or `onSelectionChange`.
 The `isDisabled` property returned by `useMenuItem` can be used to style the item appropriately.
@@ -720,7 +720,7 @@ function MenuItem({item, state}) {
 
 ### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [framework setup guide](../frameworks) to learn how to set this up.
 
 ## Controlled open state
 

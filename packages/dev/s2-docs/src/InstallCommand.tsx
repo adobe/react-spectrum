@@ -1,10 +1,12 @@
 'use client';
 
 import {CopyButton} from './CopyButton';
+import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key} from 'react-aria-components';
-import React, {useEffect, useMemo, useState} from 'react';
+import Prompt from '@react-spectrum/s2/icons/Prompt';
+import React, {useMemo} from 'react';
 import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useLocalStorage} from './useLocalStorage';
 
 const container = style({
   backgroundColor: 'layer-1',
@@ -55,22 +57,11 @@ export interface InstallCommandProps {
 }
 
 export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandProps) {
-  let [manager, setManager] = useState<PkgManager>('yarn');
-
-  useEffect(() => {
-    if (isCommand) {
-      return;
-    }
-    let stored = localStorage.getItem('packageManager');
-    if (stored === 'npm' || stored === 'pnpm' || stored === 'yarn') {
-      setManager(stored);
-    }
-  }, [isCommand]);
+  let [manager, setManager] = useLocalStorage('packageManager', 'npm');
 
   let onSelectionChange = (key: Key) => {
     let value = String(key) as PkgManager;
     setManager(value);
-    localStorage.setItem('packageManager', value);
   };
 
   let command = useMemo(() => {
@@ -101,14 +92,15 @@ export function InstallCommand({pkg, flags, label, isCommand}: InstallCommandPro
     <div className={container} data-example-switcher>
       {!isCommand && (
         <SegmentedControl selectedKey={manager} onSelectionChange={onSelectionChange} styles={switcher}>
-          <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
           <SegmentedControlItem id="npm">npm</SegmentedControlItem>
+          <SegmentedControlItem id="yarn">yarn</SegmentedControlItem>
           <SegmentedControlItem id="pnpm">pnpm</SegmentedControlItem>
         </SegmentedControl>
       )}
       <div className={codeWrap}>
         {label && <div className={style({font: 'body-sm', marginBottom: 8, color: 'body'})}>{label}</div>}
         <div className={style({display: 'flex', alignItems: 'center', gap: 12, padding: 8})}>
+          <Prompt styles={iconStyle({size: 'L'})} />
           <pre className={preStyle}>{command}</pre>
           <CopyButton ariaLabel="Copy command" tooltip="Copy command" text={command} />
         </div>

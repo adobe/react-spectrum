@@ -45,12 +45,13 @@ export function TreeItemContent(
 }
 
 export interface TreeItemProps extends Partial<AriaTreeItemProps> {
-  title: string;
+  title: React.ReactNode;
 }
 
 export function TreeItem(props: TreeItemProps) {
+  let textValue = typeof props.title === 'string' ? props.title : '';
   return (
-    <AriaTreeItem textValue={props.title} {...props}>
+    <AriaTreeItem textValue={textValue} {...props}>
       <TreeItemContent>
         {props.title}
       </TreeItemContent>

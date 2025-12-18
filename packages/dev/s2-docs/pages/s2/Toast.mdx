@@ -1,21 +1,21 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {Button, ButtonGroup, UNSTABLE_ToastContainer as ToastContainer, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {Button, ButtonGroup, ToastContainer, ToastQueue} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 import {InterfaceType} from '../../src/types';
 import {VersionBadge} from '../../src/VersionBadge';
 
 export const tags = ['snackbar', 'notification', 'alert'];
-export const version = 'alpha';
+export const description = 'Displays a temporary notification of an action, error, or other event.';
 
 # Toast
 
-<PageDescription>{docs.exports.UNSTABLE_ToastContainer.description}</PageDescription>
+<PageDescription>{docs.exports.ToastContainer.description}</PageDescription>
 
-```tsx render docs={docs.exports.UNSTABLE_ToastContainer} links={docs.links} props={['placement']} initialProps={{placement: 'bottom'}} type="s2" wide
+```tsx render docs={docs.exports.ToastContainer} links={docs.links} props={['placement']} initialProps={{placement: 'bottom'}} type="s2" wide
 "use client";
-import {UNSTABLE_ToastContainer as ToastContainer, ButtonGroup, Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {ToastContainer, ButtonGroup, Button, ToastQueue} from '@react-spectrum/s2';
 
 function App(props) {
   return (
@@ -54,7 +54,7 @@ Use the `actionLabel` and `onAction` options to add an action button to the toas
 
 ```tsx render
 "use client";
-import {Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {Button, ToastQueue} from '@react-spectrum/s2';
 
 <Button
   onPress={() => ToastQueue.info('An update is available', {
@@ -74,7 +74,7 @@ Use the `timeout` option to automatically hide a toast after a delay. For access
 
 ```tsx render
 "use client";
-import {Button, UNSTABLE_ToastQueue as ToastQueue} from '@react-spectrum/s2';
+import {Button, ToastQueue} from '@react-spectrum/s2';
 
 <Button
   onPress={() => ToastQueue.positive('Toast is done!', {
@@ -92,11 +92,11 @@ Use the close function returned by `ToastQueue` to programmatically dismiss a to
 
 ```tsx render
 "use client";
-import {Button, UNSTABLE_ToastQueue as ToastQueue, Text} from '@react-spectrum/s2';
+import {Button, ToastQueue, Text} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [close, setClose] = useState(null);
+  let [close, setClose] = useState<(() => void) | null>(null);
 
   return (
     <Button
@@ -122,11 +122,11 @@ function Example() {
 
 ### ToastContainer
 
-<PropTable component={docs.exports.UNSTABLE_ToastContainer} links={docs.links} />
+<PropTable component={docs.exports.ToastContainer} links={docs.links} />
 
 ### ToastQueue
 
-<InterfaceType {...docs.exports.UNSTABLE_ToastQueue} />
+<InterfaceType {...docs.exports.ToastQueue} />
 
 #### Toast Options
 

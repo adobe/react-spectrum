@@ -8,6 +8,8 @@ import Anatomy from '@react-aria/overlays/docs/popover-anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['popup', 'overlay'];
+export const relatedPages = [{'title': 'usePopover', 'url': 'Popover/usePopover.html'}];
+export const description = 'An overlay element positioned relative to a trigger.';
 
 # Popover
 
@@ -42,7 +44,7 @@ export const tags = ['popup', 'overlay'];
   }
   ```
 
-  ```tsx render docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="tailwind" files={["starters/docs/src/Popover.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.Popover} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="tailwind" files={["starters/tailwind/src/Popover.tsx"]}
   "use client";
   import {DialogTrigger} from 'react-aria-components';
   import {Popover} from 'tailwind-starter/Popover';
@@ -75,7 +77,7 @@ export const tags = ['popup', 'overlay'];
 
 ## Custom trigger
 
-`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Pressable>` component or [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html) hook to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any pressable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Pressable>` component or [usePress](usePress) hook to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -113,7 +115,6 @@ To position a popover relative to a different element than its trigger, use the 
 "use client";
 import {useState, useRef} from 'react';
 import {Popover} from 'vanilla-starter/Popover';
-import {Heading} from 'react-aria-components';
 import {Button} from 'vanilla-starter/Button';
 
 function Example() {
@@ -146,7 +147,7 @@ function Example() {
 
 <Anatomy />
 
-```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', Popover: '#popover', OverlayArrow: '#overlayarrow'}}
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button', Popover: '#popover', OverlayArrow: '#overlayarrow'}}
 <DialogTrigger>
   <Button />
   <Popover>

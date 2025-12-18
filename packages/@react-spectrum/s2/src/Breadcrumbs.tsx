@@ -30,6 +30,7 @@ import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, GlobalDOMAttributes, LinkDOMProps, Node} from '@react-types/shared';
 import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+// @ts-ignore
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
 import {inertValue, useLayoutEffect} from '@react-aria/utils';
@@ -62,9 +63,9 @@ interface BreadcrumbsStyleProps {
   // TODO: showRoot?: boolean,
 }
 
-export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
-  children: ReactNode
+  children: ReactNode | ((item: T) => ReactNode)
 }
 
 export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
@@ -281,7 +282,11 @@ const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolea
 
 const currentStyles = style<{size: string}>({
   font: controlFont(),
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  color: {
+    default: 'neutral',
+    forcedColors: 'ButtonText'
+  }
 });
 
 // TODO: support user heading size customization, for now just set it to large

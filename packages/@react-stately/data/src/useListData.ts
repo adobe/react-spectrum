@@ -123,9 +123,9 @@ export interface ListData<T> {
   /**
    * Updates an item in the list.
    * @param key - The key of the item to update.
-   * @param newValue - The new value for the item.
+   * @param newValue - The new value for the item, or a function that returns the new value based on the previous value.
    */
-  update(key: Key, newValue: T): void
+  update(key: Key, newValue: T | ((prev: T) => T)): void
 }
 
 export interface ListState<T> {
@@ -344,18 +344,25 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         return move(state, indices, toIndex + 1);
       });
     },
-    update(key: Key, newValue: T) {
+    update(key: Key, newValue: T | ((prev: T) => T)) {
       dispatch(state => {
         let index = state.items.findIndex(item => getKey!(item) === key);
         if (index === -1) {
           return state;
         }
 
+        let updatedValue: T;
+        if (typeof newValue === 'function') {
+          updatedValue = (newValue as (prev: T) => T)(state.items[index]);
+        } else {
+          updatedValue = newValue;
+        }
+
         return {
           ...state,
           items: [
             ...state.items.slice(0, index),
-            newValue,
+            updatedValue,
             ...state.items.slice(index + 1)
           ]
         };

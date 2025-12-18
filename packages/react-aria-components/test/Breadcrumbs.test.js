@@ -49,12 +49,14 @@ describe('Breadcrumbs', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar', 'aria-label': 'test group'}, {'data-bar': 'foo', 'aria-label': 'test item'});
     let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('data-foo', 'bar');
+    expect(breadcrumbs).toHaveAttribute('aria-label', 'test group');
 
     for (let item of getAllByRole('listitem')) {
       expect(item).toHaveAttribute('data-bar', 'foo');
+      expect(item).toHaveAttribute('aria-label', 'test item');
     }
   });
 
