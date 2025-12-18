@@ -541,6 +541,7 @@ describe('TagGroup', () => {
 
     await user.click({target: items[1]});
     expect(onAction).not.toHaveBeenCalled();
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
 
     await user.dblClick({target: items[0]});
     expect(onAction).toHaveBeenCalledTimes(1);
@@ -558,6 +559,7 @@ describe('TagGroup', () => {
     await user.click({target: items[1]});
     expect(onAction).not.toHaveBeenCalled();
     onAction.mockReset();
+    expect(items[1]).toHaveAttribute('aria-selected', 'true');
 
     await user.dblClick({target: items[0]});
     expect(onAction).toHaveBeenCalledTimes(1);
