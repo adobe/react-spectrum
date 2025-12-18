@@ -1465,7 +1465,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       className={renderProps => row({
         ...renderProps,
         ...tableVisualOptions
-      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
+      }) + (renderProps.isFocusVisible ? ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)') : '')}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
         // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
