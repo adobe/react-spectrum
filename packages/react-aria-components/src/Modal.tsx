@@ -185,17 +185,20 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
 
   let viewport = useViewportSize();
   let pageHeight: number | undefined = undefined;
+  let pageScrollLeft: number | undefined = undefined;
   if (typeof document !== 'undefined') {
     let scrollingElement = isScrollable(document.body) ? document.body : document.scrollingElement || document.documentElement;
     // Prevent Firefox from adding scrollbars when the page has a fractional height.
     let fractionalHeightDifference = scrollingElement.getBoundingClientRect().height % 1;
     pageHeight = scrollingElement.scrollHeight - fractionalHeightDifference;
+    pageScrollLeft = scrollingElement.scrollLeft;
   }
 
   let style = {
     ...renderProps.style,
     '--visual-viewport-height': viewport.height + 'px',
-    '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined
+    '--page-height': pageHeight !== undefined ? pageHeight + 'px' : undefined,
+    '--page-scroll-left': pageScrollLeft !== undefined ? pageScrollLeft + 'px' : undefined
   };
 
   return (
