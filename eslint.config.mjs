@@ -14,7 +14,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
-import stylistic from "@stylistic/eslint-plugin";
+import stylistic from "@stylistic/eslint-plugin-ts";
 
 import rulesDirPlugin from "eslint-plugin-rulesdir";
 rulesDirPlugin.RULES_DIR = './bin';
