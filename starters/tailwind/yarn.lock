@@ -3240,7 +3240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^19.1.0":
+"@types/react-dom@npm:^19.2.3":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
   peerDependencies:
@@ -3249,7 +3249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.1.0":
+"@types/react@npm:^19.2.3":
   version: 19.2.7
   resolution: "@types/react@npm:19.2.7"
   dependencies:
@@ -5067,15 +5067,15 @@ __metadata:
     "@storybook/react-vite": "npm:^8.6.14"
     "@storybook/test": "npm:^8.6.14"
     "@tailwindcss/postcss": "npm:^4.0.0"
-    "@types/react": "npm:^19.1.0"
-    "@types/react-dom": "npm:^19.1.0"
+    "@types/react": "npm:^19.2.3"
+    "@types/react-dom": "npm:^19.2.3"
     autoprefixer: "npm:^10.4.16"
     lucide-react: "npm:^0.517.0"
     postcss: "npm:^8.4.31"
-    react: "npm:^19.1.0"
+    react: "npm:^19.2.3"
     react-aria-components: "npm:^1.14.0"
     react-docgen-typescript: "npm:^2.2.2"
-    react-dom: "npm:^19.1.0"
+    react-dom: "npm:^19.2.3"
     storybook: "npm:^8.6.14"
     tailwind-variants: "npm:^0.3.1"
     tailwindcss: "npm:^4.0.0"
@@ -5166,14 +5166,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.1.0":
-  version: 19.2.1
-  resolution: "react-dom@npm:19.2.1"
+"react-dom@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react-dom@npm:19.2.3"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.1
-  checksum: 10c0/e56b6b3d72314df580ca800b70a69a21c6372703c8f45d9b5451ca6519faefb2496d76ffa9c5adb94136d2bbf2fd303d0dfc208a2cd77ede3132877471af9470
+    react: ^19.2.3
+  checksum: 10c0/dc43f7ede06f46f3acc16ee83107c925530de9b91d1d0b3824583814746ff4c498ea64fd65cd83aba363205268adff52e2827c582634ae7b15069deaeabc4892
   languageName: node
   linkType: hard
 
@@ -5220,10 +5220,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.1.0":
-  version: 19.2.1
-  resolution: "react@npm:19.2.1"
-  checksum: 10c0/2b5eaf407abb3db84090434c20d6c5a8e447ab7abcd8fe9eaf1ddc299babcf31284ee9db7ea5671d21c85ac5298bd632fa1a7da1ed78d5b368a537f5e1cd5d62
+"react@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 

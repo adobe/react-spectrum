@@ -22,21 +22,21 @@
     "@storybook/react": "^8.6.14",
     "@storybook/react-webpack5": "^8.6.14",
     "@storybook/test": "^8.6.14",
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.0",
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
     "clsx": "^2.1.1",
     "lightningcss-loader": "^2.1.0",
     "lucide-react": "^0.517.0",
-    "react": "^19.1.0",
+    "react": "^19.2.3",
     "react-aria-components": "^1.14.0",
-    "react-dom": "^19.1.0",
+    "react-dom": "^19.2.3",
     "storybook": "^8.6.14",
     "storybook-dark-mode": "^4.0.2",
     "typescript": "^5.8.2"
   },
   "resolutions": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "@types/mime": "3.0.4",
     "jackspeak": "2.1.1"
   }
