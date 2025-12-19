@@ -17,9 +17,14 @@ import React, {Context, createContext, forwardRef, JSX, ReactElement, ReactNode,
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
 // on the server, when in reality, the browser will have placed this inside the `content` document fragment.
 // This monkey patches the firstChild property for our special hidden template elements to work around this error.
+// does the same for appendChild/removeChild/insertBefore as per the issue below
 // See https://github.com/facebook/react/issues/19932
 if (typeof HTMLTemplateElement !== 'undefined') {
   const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
+  const originalAppendChild = Object.getOwnPropertyDescriptor(Node.prototype, 'appendChild')!.value!;
+  const originalRemoveChild = Object.getOwnPropertyDescriptor(Node.prototype, 'removeChild')!.value!;
+  const originalInsertBefore = Object.getOwnPropertyDescriptor(Node.prototype, 'insertBefore')!.value!;
+
   Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
     configurable: true,
     enumerable: true,
@@ -28,6 +33,42 @@ if (typeof HTMLTemplateElement !== 'undefined') {
         return this.content.firstChild;
       } else {
         return getFirstChild.call(this);
+      }
+    }
+  });
+
+  Object.defineProperty(HTMLTemplateElement.prototype, 'appendChild', {
+    configurable: true,
+    enumerable: true,
+    value: function (node) {
+      if (this.dataset.reactAriaHidden) {
+        return this.content.appendChild(node);
+      } else {
+        return originalAppendChild.call(this, node);
+      }
+    }
+  });
+
+  Object.defineProperty(HTMLTemplateElement.prototype, 'removeChild', {
+    configurable: true,
+    enumerable: true,
+    value: function (node) {
+      if (this.dataset.reactAriaHidden) {
+        return this.content.removeChild(node);
+      } else {
+        return originalRemoveChild.call(this, node);
+      }
+    }
+  });
+
+  Object.defineProperty(HTMLTemplateElement.prototype, 'insertBefore', {
+    configurable: true,
+    enumerable: true,
+    value: function (node, child) {
+      if (this.dataset.reactAriaHidden) {
+        return this.content.insertBefore(node, child);
+      } else {
+        return originalInsertBefore.call(this, node, child);
       }
     }
   });
