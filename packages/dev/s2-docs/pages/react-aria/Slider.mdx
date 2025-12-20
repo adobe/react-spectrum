@@ -9,6 +9,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/slider/docs/anatomy.svg';
 
 export const tags = ['range input', 'track', 'scrubber'];
+export const relatedPages = [{'title': 'useSlider', 'url': 'Slider/useSlider.html'}];
+export const description = 'Allows a user to select one or more values within a range.';
 
 # Slider
 
@@ -93,6 +95,10 @@ By default, slider values are percentages between 0 and 100. Use the `minValue`,
     defaultValue: 50,
     step: 5
   }} />
+
+## Examples
+
+<ExampleList tag="slider" pages={props.pages} />
 
 ## API
 

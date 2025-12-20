@@ -1,17 +1,3 @@
-const excludedProps = new Set([
-  'id',
-  'slot',
-  'onCopy',
-  'onCut',
-  'onPaste',
-  'onCompositionStart',
-  'onCompositionEnd',
-  'onCompositionUpdate',
-  'onSelect',
-  'onBeforeInput',
-  'onInput'
-]);
-
 /** @type { import('@storybook/react-vite').StorybookConfig } */
 const config = {
   stories: [
@@ -38,7 +24,7 @@ const config = {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
       },
-      propFilter: (prop) => !prop.name.startsWith('aria-') && !excludedProps.has(prop.name),
+      propFilter: (prop) => !/^aria-|on[A-Z]/.test(prop.name)
     },
   }
 };

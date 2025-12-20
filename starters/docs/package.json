@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "packageManager": "yarn@4.2.2",
+  "browserslist": [
+    "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions"
+  ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -19,17 +22,17 @@
     "@storybook/react": "^8.6.14",
     "@storybook/react-webpack5": "^8.6.14",
     "@storybook/test": "^8.6.14",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
     "clsx": "^2.1.1",
     "lightningcss-loader": "^2.1.0",
     "lucide-react": "^0.517.0",
     "react": "^19.1.0",
-    "react-aria-components": "latest",
+    "react-aria-components": "^1.14.0",
     "react-dom": "^19.1.0",
     "storybook": "^8.6.14",
     "storybook-dark-mode": "^4.0.2",
-    "typescript": "5.3.3"
+    "typescript": "^5.8.2"
   },
   "resolutions": {
     "react": "19.1.0",

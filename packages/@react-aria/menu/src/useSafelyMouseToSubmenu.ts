@@ -1,7 +1,7 @@
 
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
-import {useEffectEvent, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
 
 interface SafelyMouseToSubmenuOptions {
@@ -67,7 +67,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): v
     }
   }, [menuRef, preventPointerEvents]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let submenu = submenuRef.current;
     let menu = menuRef.current;
 

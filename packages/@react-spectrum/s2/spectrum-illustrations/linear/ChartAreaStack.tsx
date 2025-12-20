@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import ChartAreaStack_L from 'illustration:./S2_lin_chartAreaStack_160.svg';
 import ChartAreaStack_M from 'illustration:./S2_lin_chartAreaStack_96.svg';
 import ChartAreaStack_S from 'illustration:./S2_lin_chartAreaStack_48.svg';

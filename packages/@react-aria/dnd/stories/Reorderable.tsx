@@ -65,6 +65,7 @@ export function ReorderableGridExample(props: any): JSX.Element {
   );
 }
 
+let randomDragTypeReorderExample = `keys-${Math.random().toString(36).slice(2)}`;
 function ReorderableGrid(props) {
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState(props);
@@ -91,7 +92,7 @@ function ReorderableGrid(props) {
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeReorderExample, []);
   let preview = useRef(null);
   let dragState = useDraggableCollectionState({
     collection: gridState.collection,

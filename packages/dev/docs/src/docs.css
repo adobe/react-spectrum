@@ -343,6 +343,9 @@ html, body {
 }
 
 .homeBtn {
+  align-items: center;
+  text-decoration: none;
+  display: inline-flex;
   margin: -4px;
   padding: 2px;
   border: 2px solid transparent;

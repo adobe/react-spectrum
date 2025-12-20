@@ -29,7 +29,7 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
-import {FormContext} from './Form';
+import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
@@ -141,6 +141,7 @@ const stepperContainerStyles = style({
  */
 export const NumberField = forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
+  props = useFormProps(props);
   let {
     label,
     contextualHelp,
