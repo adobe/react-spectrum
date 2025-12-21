@@ -76,10 +76,7 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
    */
   closeOnSelect?: boolean,
 
-  /**
-   *
-   * Whether the menu should close when the menu item is selected.
-   */
+  /** Whether the menu should close when the menu item is selected. */
   shouldCloseOnSelect?: boolean,
 
   /** Whether the menu item is contained in a virtual scrolling menu. */
