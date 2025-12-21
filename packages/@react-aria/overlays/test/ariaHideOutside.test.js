@@ -284,7 +284,7 @@ describe('ariaHideOutside', function () {
         let child = document.createElement('li');
         ref.current.append(parent);
         parent.appendChild(child);
-        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li in `addedNodes`
+        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li (through the new ul parent) in `addedNodes`
         let newParent = document.createElement('ul');
         newParent.appendChild(child);
         ref.current.append(newParent);
@@ -299,14 +299,49 @@ describe('ariaHideOutside', function () {
       );
     };
 
-    let {queryByRole, getByRole, getByTestId} = render(<Test />);
+    let {queryByRole, getAllByRole, getByTestId} = render(<Test />);
 
     ariaHideOutside([getByTestId('test')]);
 
     queryByRole('button').click();
     await Promise.resolve(); // Wait for mutation observer tick
 
-    expect(() => getByRole('listitem')).not.toThrow();
+    expect(getAllByRole('listitem')).toHaveLength(1);
+  });
+
+  it('should handle when a new element is added and then reparented to a hidden container', async function () {
+
+    let Test = () => {
+      const ref = useRef(null);
+      const mutate = () => {
+        let parent = document.createElement('ul');
+        let child = document.createElement('li');
+        ref.current.append(parent);
+        parent.appendChild(child);
+        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li (through the new ul parent) in `addedNodes`
+        let newParent = document.createElement('ul');
+        newParent.appendChild(child);
+        ref.current.append(newParent);
+      };
+
+      return (
+        <>
+          <div data-testid="test">
+            <button onClick={mutate}>Mutate</button>
+          </div>
+          <div data-testid="sibling" ref={ref} />
+        </>
+      );
+    };
+
+    let {queryByRole, queryAllByRole, getByTestId} = render(<Test />);
+
+    ariaHideOutside([getByTestId('test')]);
+
+    queryByRole('button').click();
+    await Promise.resolve(); // Wait for mutation observer tick
+
+    expect(queryAllByRole('listitem')).toHaveLength(0);
   });
 
 
