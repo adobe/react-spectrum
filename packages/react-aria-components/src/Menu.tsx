@@ -195,9 +195,7 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
   className?: ClassNameOrFunction<MenuRenderProps>,
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: () => ReactNode,
-  /** Whether the menu should close when the menu item is selected. 
-   * @default true
-   */
+  /** Whether the menu should close when the menu item is selected. */
   shouldCloseOnSelect?: boolean
 }
 
@@ -299,9 +297,7 @@ export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection 
    * @default 'react-aria-MenuSection'
    */
   className?: string,
-  /** Whether the menu should close when the menu item is selected. 
-   * @default true
-   */
+  /** Whether the menu should close when the menu item is selected. */
   shouldCloseOnSelect?: boolean
 }
 
@@ -414,10 +410,7 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   isDisabled?: boolean,
   /** Handler that is called when the item is selected. */
   onAction?: () => void,
-  /**
-   * Whether the menu should close when the menu item is selected.
-   * @default true
-   */
+  /** Whether the menu should close when the menu item is selected. */
   shouldCloseOnSelect?: boolean
 }
 
