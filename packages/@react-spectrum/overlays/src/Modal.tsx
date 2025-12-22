@@ -9,8 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {AriaModalOverlayProps, useModalOverlay} from '@react-aria/overlays';
+import {applyContainerBounds, AriaModalOverlayProps, useModalOverlay, useUNSAFE_PortalContext} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
@@ -86,20 +85,47 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: Forwarded
   );
 
   let viewport = useViewportSize();
-  let style: any = {
+  let {getContainerBounds} = useUNSAFE_PortalContext();
+  let containerBounds = getContainerBounds?.();
+  
+  let wrapperStyle: React.CSSProperties & {
+    '--spectrum-visual-viewport-height'?: string
+  } = {
     '--spectrum-visual-viewport-height': viewport.height + 'px'
   };
+  
+  let modalStyle: React.CSSProperties | undefined = undefined;
+  
+  // If container bounds are provided, position the wrapper relative to the container
+  // This ensures modals are centered within the web component's bounds, not the full viewport
+  applyContainerBounds(wrapperStyle, containerBounds, {center: true});
+  
+  // For fullscreen modals, override the fixed positioning to be relative to the wrapper
+  // The CSS has position: fixed with top/bottom/left/right: 40px, which positions relative to viewport
+  // We need to make it relative to the container instead
+  if (containerBounds && (typeVariant === 'fullscreen' || typeVariant === 'fullscreenTakeover')) {
+    modalStyle = {
+      position: 'absolute',
+      top: typeVariant === 'fullscreen' ? '40px' : '0',
+      left: typeVariant === 'fullscreen' ? '40px' : '0',
+      right: typeVariant === 'fullscreen' ? '40px' : '0',
+      bottom: typeVariant === 'fullscreen' ? '40px' : '0',
+      width: typeVariant === 'fullscreen' ? 'calc(100% - 80px)' : '100%',
+      height: typeVariant === 'fullscreen' ? 'calc(100% - 80px)' : '100%'
+    };
+  }
 
   // Attach Transition's nodeRef to outer most wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
     <div ref={wrapperRef}>
       <Underlay {...underlayProps} isOpen={isOpen} />
-      <div className={wrapperClassName} style={style}>
+      <div className={wrapperClassName} style={wrapperStyle}>
         <div
           {...styleProps}
           {...modalProps}
           ref={objRef}
           className={modalClassName}
+          style={modalStyle ? {...styleProps.style, ...modalStyle} : styleProps.style}
           data-testid="modal">
           {children}
         </div>

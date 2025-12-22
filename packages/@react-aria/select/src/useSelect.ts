@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps, SelectionMode} from '@react-types/select';
-import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps, nodeContains, useId} from '@react-aria/utils';
 import {DOMAttributes, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {FocusEvent, useMemo} from 'react';
 import {HiddenSelectProps} from './HiddenSelect';
@@ -223,7 +223,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
       disallowEmptySelection: true,
       linkBehavior: 'selection',
       onBlur: (e) => {
-        if (e.currentTarget.contains(e.relatedTarget as Node)) {
+        if (nodeContains(e.currentTarget as Element, e.relatedTarget as Element)) {
           return;
         }
 

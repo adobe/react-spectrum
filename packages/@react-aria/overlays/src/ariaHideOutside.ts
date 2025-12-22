@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from '@react-aria/utils';
+import {createShadowTreeWalker, getOwnerDocument, getOwnerWindow, nodeContains} from '@react-aria/utils';
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
@@ -71,6 +71,27 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
 
     let acceptNode = (node: Element) => {
+      // Special handling for shadow hosts: If a shadow host contains a visible target,
+      // ensure it's not hidden (even if previously marked inert by parent overlays).
+      // Must check this BEFORE hiddenNodes check to handle nested overlay scenarios.
+      if ('shadowRoot' in node && (node as any).shadowRoot) {
+        let shadowRoot = (node as any).shadowRoot;
+        for (let target of visibleNodes) {
+          if (!shadowRoot.contains(target)) {
+            continue;
+          }
+          visibleNodes.add(node);
+          if (getHidden(node)) {
+            setHidden(node, false);
+            let count = refCountMap.get(node);
+            if (count && count > 0) {
+              refCountMap.set(node, count - 1);
+            }
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
+      }
+      
       // Skip this node and its children if it is one of the target nodes, or a live announcer.
       // Also skip children of already hidden nodes, as aria-hidden is recursive. An exception is
       // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
@@ -85,7 +106,7 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
       // Skip this node but continue to children if one of the targets is inside the node.
       for (let target of visibleNodes) {
-        if (node.contains(target)) {
+        if (nodeContains(node, target)) {
           return NodeFilter.FILTER_SKIP;
         }
       }
@@ -93,8 +114,11 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       return NodeFilter.FILTER_ACCEPT;
     };
 
-    let walker = document.createTreeWalker(
-      root,
+    let rootElement = root?.nodeType === Node.ELEMENT_NODE ? (root as Element) : null;
+    let doc = getOwnerDocument(rootElement);
+    let walker = createShadowTreeWalker(
+      doc,
+      root || doc,
       NodeFilter.SHOW_ELEMENT,
       {acceptNode}
     );

@@ -17,7 +17,7 @@ import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, nodeContains, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {privateValidationStateProp} from '@react-stately/form';
@@ -84,7 +84,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     onBlurWithin: e => {
       // Ignore when focus moves into the popover.
       let dialog = document.getElementById(dialogId);
-      if (!dialog?.contains(e.relatedTarget)) {
+      if (!dialog || !nodeContains(dialog, e.relatedTarget as Element)) {
         isFocused.current = false;
         props.onBlur?.(e);
         props.onFocusChange?.(false);

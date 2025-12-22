@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
-import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, nodeContains, useLayoutEffect} from '@react-aria/utils';
 import {HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
@@ -101,7 +101,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   // Record the last focused child when focus moves out of the toolbar.
   const lastFocused = useRef<HTMLElement | null>(null);
   const onBlur = (e) => {
-    if (!e.currentTarget.contains(e.relatedTarget) && !lastFocused.current) {
+    if (!nodeContains(e.currentTarget as Element, e.relatedTarget as Element) && !lastFocused.current) {
       lastFocused.current = e.target;
     }
   };
@@ -110,7 +110,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
   const onFocus = (e) => {
-    if (lastFocused.current && !e.currentTarget.contains(e.relatedTarget) && ref.current?.contains(e.target)) {
+    if (lastFocused.current && !nodeContains(e.currentTarget as Element, e.relatedTarget as Element) && ref.current?.contains(e.target)) {
       lastFocused.current?.focus();
       lastFocused.current = null;
     }
