@@ -7,7 +7,7 @@ import postcss from 'postcss';
 import * as recast from 'recast';
 
 const publicUrl = getBaseUrl('react-aria') + '/registry';
-const distDir = `packages/dev/s2-docs/dist/react-aria/${process.env.PUBLIC_URL || ''}/registry`;
+const distDir = `dist/s2-docs/react-aria/${process.env.PUBLIC_URL || ''}/registry`;
 
 fs.rmSync(distDir, {recursive: true, force: true});
 fs.mkdirSync(distDir, {recursive: true});
