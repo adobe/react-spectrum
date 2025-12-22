@@ -56,7 +56,6 @@ type Links = {[name: string]: string};
 export interface ICodeProps {
   children: string,
   lang?: string,
-  className?: string,
   isFencedBlock?: boolean,
   hideImports?: boolean,
   links?: Links,
@@ -69,15 +68,7 @@ function isSupportedLanguage(lang: string): boolean {
   return supported.includes(lang.toLowerCase());
 }
 
-export function Code({children, lang, className, isFencedBlock, hideImports = true, links, styles}: ICodeProps) {
-  // Extract language from className if lang not provided (MDX passes className="language-xxx")
-  if (!lang && className) {
-    const match = className.match(/language-(\w+)/);
-    if (match) {
-      lang = match[1];
-    }
-  }
-
+export function Code({children, lang, isFencedBlock, hideImports = true, links, styles}: ICodeProps) {
   // If language is provided and is a supported syntax highlighting language
   if (lang && isSupportedLanguage(lang)) {
     return (
