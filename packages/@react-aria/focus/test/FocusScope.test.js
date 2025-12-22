@@ -1996,16 +1996,15 @@ describe('FocusScope with Shadow DOM', function () {
 
   it('should contain focus within the shadow DOM scope', async function () {
     const {shadowRoot} = createShadowRoot();
-    const FocusableComponent = () => ReactDOM.createPortal(
+    const FocusableComponent = () => (
       <FocusScope contain>
         <input data-testid="input1" />
         <input data-testid="input2" />
         <input data-testid="input3" />
-      </FocusScope>,
-      shadowRoot
+      </FocusScope>
     );
 
-    const {unmount} = render(<FocusableComponent />);
+    const {unmount} = render(<FocusableComponent />, {container: shadowRoot});
 
     const input1 = shadowRoot.querySelector('[data-testid="input1"]');
     const input2 = shadowRoot.querySelector('[data-testid="input2"]');

@@ -15,11 +15,25 @@ import {Provider, ProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {StrictModeWrapper} from './StrictModeWrapper';
 import {theme} from '@react-spectrum/theme-default';
+import {createShadowRoot, ShadowRootReturnValue} from './shadowDOM';
 
 export {act, fireEvent, within, screen, waitFor, getAllByRole, createEvent, waitForElementToBeRemoved} from '@testing-library/react';
 
 function customRender(ui: Parameters<typeof render>[0], options?: Parameters<typeof render>[1] | undefined): ReturnType<typeof render> {
   return render(ui, {wrapper: StrictModeWrapper, ...options});
+}
+
+interface ShadowRenderResult extends ReturnType<typeof render>, ShadowRootReturnValue {}
+
+export function shadowRender(ui: Parameters<typeof render>[0], options?: Parameters<typeof render>[1] | undefined): ShadowRenderResult {
+  let {shadowHost, shadowRoot, cleanup} = createShadowRoot();
+  let result = render(ui, {wrapper: StrictModeWrapper, container: shadowRoot as unknown as HTMLElement, ...options});
+  return {
+    ...result,
+    shadowHost,
+    shadowRoot,
+    cleanup
+  };
 }
 
 let reactTestingLibrary = require('@testing-library/react');

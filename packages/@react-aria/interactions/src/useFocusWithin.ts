@@ -54,14 +54,28 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onBlur = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget as Element, e.target as Element)) {
       return;
     }
 
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
-    if (state.current.isFocusWithin && !(e.currentTarget as Element).contains(e.relatedTarget as Element)) {
+    let relatedTargetInside = nodeContains(e.currentTarget as Element, e.relatedTarget as Element);
+
+    // Special handling for Shadow DOM: When focus moves into a shadow root, the relatedTarget
+    // is the shadow host, not the actual element inside. Check if the shadow host's shadow root
+    // contains the currentTarget (the overlay that's inside the shadow root).
+    if (!relatedTargetInside && e.relatedTarget && 'shadowRoot' in e.relatedTarget) {
+      let shadowHost = e.relatedTarget as Element;
+      let shadowRoot = (shadowHost as any).shadowRoot;
+      if (shadowRoot && nodeContains(shadowRoot, e.currentTarget as Element)) {
+        // Focus is moving within the same shadow root that contains the overlay
+        relatedTargetInside = true;
+      }
+    }
+
+    if (state.current.isFocusWithin && !relatedTargetInside) {
       state.current.isFocusWithin = false;
       removeAllGlobalListeners();
 
@@ -78,7 +92,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget as Element, e.target as Element)) {
       return;
     }
 

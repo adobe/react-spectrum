@@ -24814,6 +24814,7 @@ __metadata:
     regenerator-runtime: "npm:0.13.3"
     rehype-stringify: "npm:^9.0.4"
     rimraf: "npm:^6.0.1"
+    shadow-dom-testing-library: "npm:^1.13.1"
     sharp: "npm:^0.33.5"
     storybook: "npm:^8.6.14"
     storybook-dark-mode: "npm:^4.0.2"
@@ -26075,6 +26076,15 @@ __metadata:
   version: 1.2.0
   resolution: "setprototypeof@npm:1.2.0"
   checksum: 10c0/68733173026766fa0d9ecaeb07f0483f4c2dc70ca376b3b7c40b7cda909f94b0918f6c5ad5ce27a9160bdfb475efaa9d5e705a11d8eaae18f9835d20976028bc
+  languageName: node
+  linkType: hard
+
+"shadow-dom-testing-library@npm:^1.13.1":
+  version: 1.13.1
+  resolution: "shadow-dom-testing-library@npm:1.13.1"
+  peerDependencies:
+    "@testing-library/dom": ">= 8"
+  checksum: 10c0/cd0a5e7799f868af665235d0812bdbcfbfe4461681ef35ce0fba4d460d395f3fa0e95df5c8fec4686ba30286a62c4e7ba48013e67646977726aa13363479d70f
   languageName: node
   linkType: hard
 

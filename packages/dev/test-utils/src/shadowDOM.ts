@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-interface ShadowRootReturnValue {
+export interface ShadowRootReturnValue {
   shadowHost: HTMLElement,
   shadowRoot: ShadowRoot,
   cleanup: () => void
