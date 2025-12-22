@@ -268,7 +268,7 @@ export const description = 'How to integrate with your framework.';
         export default defineConfig({
           plugins: [
             {
-              ...optimizeLocales.vite({
+              ...localesPlugin.vite({
                 locales: ['en-US', 'fr-FR']
               }),
               enforce: 'pre'

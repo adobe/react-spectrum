@@ -116,7 +116,7 @@ Install React Spectrum with your preferred package manager.
               // Use content hash in filename for long term cacheability.
               filename: '[name].[contenthash].css',
               // Ignore warnings about CSS order. Style macros generate atomic CSS,
-              // which is resiliant to ordering differences.
+              // which is resilient to ordering differences.
               ignoreOrder: true
             })
           ],
@@ -205,7 +205,7 @@ Install React Spectrum with your preferred package manager.
           ],
           build: {
             target: ['es2022'],
-            // Lightning CSS produces much a smaller CSS bundle than the default minifier.
+            // Lightning CSS produces a much smaller CSS bundle than the default minifier.
             cssMinify: 'lightningcss',
             rollupOptions: {
               output: {
@@ -239,7 +239,7 @@ Install React Spectrum with your preferred package manager.
           plugins: [
             // ...
             {
-              ...optimizeLocales.vite({
+              ...localesPlugin.vite({
                 locales: ['en-US', 'fr-FR']
               }),
               enforce: 'pre'
@@ -373,7 +373,7 @@ Install React Spectrum with your preferred package manager.
           ],
           build: {
             target: ['es2022'],
-            // Lightning CSS produces much a smaller CSS bundle than the default minifier.
+            // Lightning CSS produces a much smaller CSS bundle than the default minifier.
             cssMinify: 'lightningcss',
             rollupOptions: {
               output: {
@@ -456,7 +456,7 @@ Install React Spectrum with your preferred package manager.
         export default defineConfig({
           plugins: [
             {
-              ...optimizeLocales.vite({
+              ...localesPlugin.vite({
                 locales: ['en-US', 'fr-FR']
               }),
               enforce: 'pre'
