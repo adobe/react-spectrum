@@ -239,7 +239,7 @@ Install React Spectrum with your preferred package manager.
           plugins: [
             // ...
             {
-              ...localesPlugin.vite({
+              ...optimizeLocales.vite({
                 locales: ['en-US', 'fr-FR']
               }),
               enforce: 'pre'
@@ -456,7 +456,7 @@ Install React Spectrum with your preferred package manager.
         export default defineConfig({
           plugins: [
             {
-              ...localesPlugin.vite({
+              ...optimizeLocales.vite({
                 locales: ['en-US', 'fr-FR']
               }),
               enforce: 'pre'
