@@ -13,6 +13,7 @@
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
+import { isIOS } from './platform';
 
 interface ViewportSize {
   width: number,
@@ -66,7 +67,9 @@ export function useViewportSize(): ViewportSize {
       }
     };
 
-    window.addEventListener('blur', onBlur, true);
+    if (isIOS()) {
+      window.addEventListener('blur', onBlur, true);
+    }
 
     if (!visualViewport) {
       window.addEventListener('resize', onResize);
@@ -76,7 +79,9 @@ export function useViewportSize(): ViewportSize {
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('blur', onBlur, true);
+      if (isIOS()) {
+        window.removeEventListener('blur', onBlur, true);
+      }
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
