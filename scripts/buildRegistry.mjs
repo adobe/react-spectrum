@@ -7,14 +7,21 @@ import postcss from 'postcss';
 import * as recast from 'recast';
 
 const publicUrl = getBaseUrl('react-aria') + '/registry';
-const distDir = `dist/s2-docs/react-aria/${process.env.PUBLIC_URL || ''}/registry`;
+const distDir = `packages/dev/s2-docs/dist/react-aria/${process.env.PUBLIC_URL || ''}/registry`;
 
 fs.rmSync(distDir, {recursive: true, force: true});
 fs.mkdirSync(distDir, {recursive: true});
 
 let items = [];
+let tailwind = {
+  $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+  name: 'tailwind',
+  type: 'registry:style',
+  registryDependencies: []
+};
+items.push(tailwind);
 
-for (let file of globSync('starters/tailwind/src/*.{ts,tsx}')) {
+for (let file of globSync('starters/tailwind/src/*.{ts,tsx}').sort()) {
   let name = path.basename(file, path.extname(file));
   let {dependencies, registryDependencies, content} = analyzeDeps(file, 'tailwind');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
@@ -45,9 +52,20 @@ for (let file of globSync('starters/tailwind/src/*.{ts,tsx}')) {
   }
 
   items.push(item);
+  tailwind.registryDependencies.push(`${publicUrl}/tailwind-${name.toLowerCase()}.json`);
 }
 
-for (let file of globSync('starters/docs/src/*.{ts,tsx}')) {
+fs.writeFileSync(path.join(distDir, 'tailwind.json'), JSON.stringify(tailwind, null, 2) + '\n');
+
+let css = {
+  $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+  name: 'css',
+  type: 'registry:style',
+  registryDependencies: []
+};
+items.push(css);
+
+for (let file of globSync('starters/docs/src/*.{ts,tsx}').sort()) {
   let name = path.basename(file, path.extname(file));
   let {dependencies, registryDependencies, content} = analyzeDeps(file, 'css');
   let type = name === 'utils' ? 'registry:lib' : 'registry:ui';
@@ -79,8 +97,10 @@ for (let file of globSync('starters/docs/src/*.{ts,tsx}')) {
   }
 
   items.push(item);
+  css.registryDependencies.push(`${publicUrl}/css-${name.toLowerCase()}.json`);
 }
 
+fs.writeFileSync(path.join(distDir, 'css.json'), JSON.stringify(css, null, 2) + '\n');
 fs.writeFileSync(path.join(distDir, 'registry.json'), JSON.stringify({
   '$schema': 'https://ui.shadcn.com/schema/registry.json',
   name: 'react-aria',
