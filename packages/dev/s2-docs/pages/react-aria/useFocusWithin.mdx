@@ -13,38 +13,19 @@ import {InterfaceType} from '../../src/types';
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/interactions';
 export const section = 'Interactions';
+export const description = 'Handles focus interactions for an element and its descendants.';
 
 # useFocusWithin
 
 <PageDescription>{docs.exports.useFocusWithin.description}</PageDescription>
 
-## Features
-
-`useFocusWithin` handles focus interactions for an element and its descendants. Focus is "within"
-an element when either the element itself or a descendant element has focus. This is similar to
-the [:focus-within](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-within) pseudo class
-in CSS.
-
-To handle focus events on only the target element, and not descendants, see [useFocus](useFocus.html).
-
-## Example
-
-This example stores focus within state in local component state, which is updated by an `onFocusWithinChange` handler. This is used
-to update the background color and text color of the group while one of the text fields has focus.
-
-Focus within and blur within events are also logged to the list below. Notice that the events are only
-fired when the wrapper gains and loses focus, not when focus moves within the group.
-
-{/* We don't have component hook docs yet */}
-{/* **NOTE: for more advanced text field functionality, see [useTextField](useTextField.html).** */}
-
 ```tsx render
 "use client";
 import React from 'react';
-import {useFocusWithin} from '@react-aria/interactions';
+import {useFocusWithin} from 'react-aria';
 
 function Example() {
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let [isFocusWithin, setFocusWithin] = React.useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: e => setEvents(
@@ -85,6 +66,15 @@ function Example() {
   );
 }
 ```
+
+## Features
+
+`useFocusWithin` handles focus interactions for an element and its descendants. Focus is "within"
+an element when either the element itself or a descendant element has focus. This is similar to
+the [:focus-within](https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-within) pseudo class
+in CSS.
+
+To handle focus events on only the target element, and not descendants, see [useFocus](useFocus).
 
 ## API
 

@@ -1,12 +1,13 @@
 'use client';
 import CopyButton from './CopyButton';
+import {getBaseUrl} from './pageUtils';
 import {iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Key, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import {RefObject} from 'react';
 import {useLocalStorage} from './useLocalStorage';
 
-export function ShadcnCommand({registryUrl, preRef}: {registryUrl: string, preRef?: RefObject<HTMLPreElement | null>}) {
+export function ShadcnCommand({type, component, preRef}: {type: 'vanilla' | 'tailwind', component: string, preRef?: RefObject<HTMLPreElement | null>}) {
   let [packageManager, setPackageManager] = useLocalStorage('packageManager', 'npm');
   let command = packageManager;
   if (packageManager === 'npm') {
@@ -19,7 +20,12 @@ export function ShadcnCommand({registryUrl, preRef}: {registryUrl: string, preRe
     setPackageManager(String(value));
   };
 
-  let cmd = `${command} shadcn@latest add ${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`;
+  let shadcnType = type === 'vanilla' ? 'css' : type;
+  let specifier = process.env.DOCS_ENV === 'prod'
+    ? `@react-aria/${shadcnType}-${component.toLowerCase()}`
+    : `${getBaseUrl('react-aria')}/registry/${shadcnType}-${component.toLowerCase()}.json`;
+
+  let cmd = `${command} shadcn@latest add ${specifier}`;
   
   return (
     <div 

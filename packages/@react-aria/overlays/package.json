@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/overlays",
-  "version": "3.30.0",
+  "version": "3.31.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,13 +26,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.2",
-    "@react-aria/i18n": "^3.12.13",
-    "@react-aria/interactions": "^3.25.6",
+    "@react-aria/focus": "^3.21.3",
+    "@react-aria/i18n": "^3.12.14",
+    "@react-aria/interactions": "^3.26.0",
     "@react-aria/ssr": "^3.9.10",
-    "@react-aria/utils": "^3.31.0",
-    "@react-aria/visually-hidden": "^3.8.28",
-    "@react-stately/overlays": "^3.6.20",
+    "@react-aria/utils": "^3.32.0",
+    "@react-aria/visually-hidden": "^3.8.29",
+    "@react-stately/overlays": "^3.6.21",
     "@react-types/button": "^3.14.1",
     "@react-types/overlays": "^3.9.2",
     "@react-types/shared": "^3.32.1",

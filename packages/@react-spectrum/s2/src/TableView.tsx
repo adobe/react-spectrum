@@ -58,7 +58,7 @@ import Chevron from '../ui-icons/Chevron';
 import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
-import {DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LoadingState, Node} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
 import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
@@ -120,7 +120,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -562,7 +562,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
                 {children}
               </ColumnWithMenu>
             ) : (
-              <ColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection}>
+              <ColumnContents align={align} allowsSorting={allowsSorting} sortDirection={sortDirection}>
                 {children}
               </ColumnContents>
             )
@@ -577,7 +577,14 @@ const columnContentWrapper = style({
   minWidth: 0,
   display: 'flex',
   alignItems: 'center',
-  width: 'full'
+  width: 'full',
+  justifyContent: {
+    align: {
+      default: 'start',
+      center: 'center',
+      end: 'end'
+    }
+  }
 });
 
 const sortIcon = style({
@@ -594,13 +601,13 @@ const sortIcon = style({
   }
 });
 
-interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
+interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'align' | 'children'> {}
 
 function ColumnContents(props: ColumnContentProps) {
-  let {allowsSorting, sortDirection, children} = props;
+  let {align, allowsSorting, sortDirection, children} = props;
 
   return (
-    <div className={columnContentWrapper}>
+    <div className={columnContentWrapper({align})}>
       {allowsSorting && (
         <Provider
           values={[
@@ -613,7 +620,7 @@ function ColumnContents(props: ColumnContentProps) {
           )}
         </Provider>
       )}
-      <span className={style({truncate: true, width: 'full'})}>
+      <span className={columnHeaderText}>
         {children}
       </span>
     </div>
@@ -908,7 +915,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
                 </>
               }
               {selectionMode === 'multiple' &&
-                <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
+                <Checkbox styles={selectAllCheckbox} slot="selection" />
               }
             </>
           )}
@@ -946,7 +953,10 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: baseColor('neutral'),
+  color: {
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral')
+  },
   paddingY: centerPadding(),
   minHeight: {
     default: 40,
@@ -1362,8 +1372,8 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
 };
 
 // Use color-mix instead of transparency so sticky cells work correctly.
-const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
-const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
+const selectedBackground = colorMix('gray-25', 'gray-900', 7);
+const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
@@ -1436,7 +1446,7 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'isDisabled' | 'onAction' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>, LinkDOMProps {}
 
 /**
  * A row within a `<Table>`.
@@ -1462,7 +1472,7 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
         // The `spread` otherProps must be after className in Cell.
         // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox isEmphasized slot="selection" />
+          <Checkbox slot="selection" />
         </Cell>
       )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>

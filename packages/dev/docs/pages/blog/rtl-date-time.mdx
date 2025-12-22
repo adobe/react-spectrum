@@ -77,7 +77,7 @@ Below is a simplified code example of how we utilize Unicode characters to enfor
 
 ## DateFields
 
-Date fields, on the other hand, were much more complicated to solve in comparsion. Since we were relying on `display: flex` to format the date segments, the resulting format appeared to mirror the order in which the segments were stored, as returned by [DateFormatter](https://react-spectrum.adobe.com/internationalized/date/DateFormatter.html#dateformatter). This suggested that we could apply a similar approach to what we used for time fields — forcing a left-to-right direction on the date segments. 
+Date fields, on the other hand, were much more complicated to solve in comparison. Since we were relying on `display: flex` to format the date segments, the resulting format appeared to mirror the order in which the segments were stored, as returned by [DateFormatter](https://react-spectrum.adobe.com/internationalized/date/DateFormatter.html#dateformatter). This suggested that we could apply a similar approach to what we used for time fields — forcing a left-to-right direction on the date segments. 
 
 However, this assumption proved too broad. In some locales, such as Arabic (`ar-AE`), the date segments were already correctly formatted. In particular, we found that in Arabic, the separators between date segments contained [right-to-left marks](https://en.wikipedia.org/wiki/Implicit_directional_marks) which were returned by the `Intl.DateTimeFormat` API. This causes the separators to be positioned to the left of the preceding text. When we tried enforcing a left-to-right direction like we did in time field using the same solution, the date field was formatted as `2 2022/ 12/` instead of `2022/12/2` due to the presence of the right-to-left marks interfering with the LRI Unicode. In contrast, Hebrew did not have such markers. Therefore, we had to adopt a different approach that accounted for these variations. 
 
@@ -111,7 +111,7 @@ However, this assumption proved too broad. In some locales, such as Arabic (`ar-
 </div>
 ```
 
-Through much trial and error, we discovered that appplying the [left-to-right embedding (LRE) Unicode](https://unicode.org/reports/tr9/#Explicit_Directional_Embeddings) on each date segment displayed date fields in Hebrew as left-to-right but also preserved the right-to-left marks on the separaters in Arabic, ensuring that dates in both languages were formatted correctly. While we could have added Unicode to the segments like we did with the time fields, we opted for the [equivalent CSS](https://unicode.org/reports/tr9/#Markup_And_Formatting) approach instead to avoid modifying the DOM. This CSS is applied on date segments with placeholder or actual values to avoid the behavior discussed earlier with shifting segments. Through additional testing, we found that we should only apply left-to-right embedding on numeric values. If the value was displayed as text (e.g. "November" instead of "11"), we did not apply this CSS.
+Through much trial and error, we discovered that applying the [left-to-right embedding (LRE) Unicode](https://unicode.org/reports/tr9/#Explicit_Directional_Embeddings) on each date segment displayed date fields in Hebrew as left-to-right but also preserved the right-to-left marks on the separaters in Arabic, ensuring that dates in both languages were formatted correctly. While we could have added Unicode to the segments like we did with the time fields, we opted for the [equivalent CSS](https://unicode.org/reports/tr9/#Markup_And_Formatting) approach instead to avoid modifying the DOM. This CSS is applied on date segments with placeholder or actual values to avoid the behavior discussed earlier with shifting segments. Through additional testing, we found that we should only apply left-to-right embedding on numeric values. If the value was displayed as text (e.g. "November" instead of "11"), we did not apply this CSS.
 
 ## Keyboard Navigation
 
@@ -136,7 +136,7 @@ Below is an example of a date field in Hebrew with the correct date format but i
 
 <Video alt="Demo of keyboard navigation prior to fixes" src={keyboardVideoURL} muted controls />
 
-As a result, we updated the keyboard navigation in right-to-left langauges to calculate the distance between the currently focused segment and other segments to identify the closest node based on whether the left or right arrow key was pressed, rather than reying on the DOM order.
+As a result, we updated the keyboard navigation in right-to-left languages to calculate the distance between the currently focused segment and other segments to identify the closest node based on whether the left or right arrow key was pressed, rather than reying on the DOM order.
 
 ## Conclusion
 

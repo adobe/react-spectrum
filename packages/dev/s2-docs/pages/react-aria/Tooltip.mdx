@@ -8,6 +8,8 @@ import Anatomy from '@react-aria/tooltip/docs/anatomy.svg';
 import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['hint', 'popup', 'info'];
+export const relatedPages = [{'title': 'useTooltipTrigger', 'url': 'Tooltip/useTooltipTrigger.html'}];
+export const description = 'Displays a description of an element on hover or focus.';
 
 # Tooltip
 
@@ -37,7 +39,7 @@ export const tags = ['hint', 'popup', 'info'];
   }
   ```
 
-  ```tsx render docs={vanillaDocs.exports.Tooltip} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="tailwind" files={["starters/docs/src/Tooltip.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.Tooltip} links={vanillaDocs.links} props={['placement', 'offset', 'crossOffset', 'shouldFlip']} type="tailwind" files={["starters/tailwind/src/Tooltip.tsx"]}
   "use client";
   import {TooltipTrigger} from 'react-aria-components';
   import {Tooltip} from 'tailwind-starter/Tooltip';
@@ -65,7 +67,7 @@ export const tags = ['hint', 'popup', 'info'];
 
 Tooltips appear after a "warmup" delay when hovering, or instantly on focus. Once a tooltip is displayed, other tooltips display immediately. If the user waits for the "cooldown period" before hovering another element, the warmup timer restarts.
 
-```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'closeDelay', 'isDisabled']} type="vanilla"
+```tsx render docs={docs.exports.TooltipTrigger} links={docs.links} props={['trigger', 'delay', 'closeDelay', 'isDisabled', 'shouldCloseOnPress']} type="vanilla"
 "use client";
 import {TooltipTrigger} from 'react-aria-components';
 import {Tooltip} from 'vanilla-starter/Tooltip';
@@ -101,12 +103,12 @@ function Example(props) {
 
 <InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
   <Heading>Accessibility</Heading>
-  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover.html) to show information in an adjacent element.</Content>
+  <Content>Tooltips are not shown on touch screen interactions. Ensure that your UI is usable without tooltips, or use an alternative component such as a [Popover](Popover) to show information in an adjacent element.</Content>
 </InlineAlert>
 
 ## Custom trigger
 
-`DialogTrigger` works with any focusable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
+`DialogTrigger` works with any focusable React Aria component (e.g. [Button](Button), [Link](Link), etc.). Use the `<Focusable>` component to wrap a custom trigger element such as a third party component or DOM element.
 
 ```tsx render
 "use client"
@@ -134,13 +136,13 @@ const CustomTrigger = React.forwardRef((props, ref) => (
 ));
 ```
 
-[DialogTrigger](Modal.html#custom-trigger) or [MenuTrigger](Menu.html#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
+[DialogTrigger](Modal#custom-trigger) or [MenuTrigger](Menu#custom-trigger) with a `<Pressable>` trigger also works with `TooltipTrigger`. All `<Pressable>` elements are already focusable, so there's no need to wrap them in `<Focusable>`.
 
 ## API
 
 <Anatomy />
 
-```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', OverlayArrow: '#overlayarrow', Button: 'Button.html'}}
+```tsx links={{TooltipTrigger: '#tooltiptrigger', Tooltip: '#tooltip', OverlayArrow: '#overlayarrow', Button: 'Button'}}
 <TooltipTrigger>
   <Button />
   <Tooltip>

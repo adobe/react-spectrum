@@ -38,7 +38,7 @@ export const description = 'How to integrate with your framework.';
         import {isRTL} from 'react-aria-components';
         import {ClientProviders} from './provider';
 
-        export default function RootLayout({children}) {
+        export default async function RootLayout({children}) {
           // Get the user's preferred language from the Accept-Language header.
           // You could also get this from a database, URL param, etc.
           const acceptLanguage = (await headers()).get('accept-language');
@@ -263,7 +263,7 @@ export const description = 'How to integrate with your framework.';
         ```ts
         // vite.config.ts
         import {defineConfig} from 'vite';
-        import localesPlugin from '@react-aria/optimize-locales-plugin';
+        import optimizeLocales from '@react-aria/optimize-locales-plugin';
 
         export default defineConfig({
           plugins: [

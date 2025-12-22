@@ -1,3 +1,4 @@
+import Asterisk from '../../../@react-spectrum/s2/ui-icons/Asterisk';
 import {Code, styles as codeStyles} from './Code';
 import {CSSVariables, StateTable} from './StateTable';
 import {DisclosureRow} from './DisclosureRow';
@@ -29,7 +30,7 @@ const GROUPS = {
     /^on[A-Z]/
   ],
   Links: [
-    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'routerOptions'
+    'href', 'hrefLang', 'target', 'rel', 'download', 'ping', 'referrerPolicy', 'itemProp', 'routerOptions'
   ],
   Styling: [
     'style', 'className'
@@ -51,7 +52,7 @@ const DEFAULT_EXPANDED = new Set([
   'Value'
 ]);
 
-const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}});
+const codeStyle = style({font: {default: 'code-xs', lg: 'code-sm'}, wordBreak: 'break-word'});
 
 interface PropTableProps {
   component: TComponent,
@@ -126,8 +127,9 @@ export function GroupedPropTable({properties, links, propGroups = GROUPS, defaul
 
   // properties.sort((a, b) => a.name.localeCompare(b.name));
 
+  let allProps = [...Object.values(props), ...Object.values(groups).flatMap(g => Object.values(g))];
   // Default to showing required indicators if some properties are optional but not all.
-  // let showRequired = !properties.every(p => p.optional) && !properties.every(p => !p.optional);
+  let showRequired = !allProps.every(p => p.optional) && !allProps.every(p => !p.optional);
 
   // Show default values by default if any of the properties have one defined.
   let showDefault = Object.values(props).some(p => !!p.default);
@@ -143,31 +145,40 @@ export function GroupedPropTable({properties, links, propGroups = GROUPS, defaul
         </tr>
       </TableHeader>
       <TableBody>
-        <Rows props={props} showDefault={showDefault} />
+        <Rows props={props} showDefault={showDefault} showRequired={showRequired} />
       </TableBody>
       {Object.keys(groups).map((group) => (
         <DisclosureRow key={group} title={group} defaultExpanded={defaultExpanded?.has(group)}>
-          <Rows props={groups[group]} showDefault={showDefault} />
+          <Rows props={groups[group]} showDefault={showDefault} showRequired={showRequired} />
         </DisclosureRow>
       ))}
     </Table>
   );
 }
 
-function Rows({props, showDefault}: {props: TInterface['properties'], showDefault?: boolean}) {
+function Rows({props, showDefault, showRequired}: {props: TInterface['properties'], showDefault?: boolean, showRequired?: boolean}) {
   let properties = Object.values(props);
 
   return properties.map((prop, index) => (
     <React.Fragment key={index}>
       <TableRow>
-        <TableCell role="rowheader" hideBorder={!!prop.description}>
+        <TableCell role="rowheader" hideBorder={!!prop.description} styles={style({whiteSpace: 'nowrap'})}>
           <code className={codeStyle}>
             <span className={codeStyles.attribute}>{prop.name}</span>
           </code>
-          {/* {!prop.optional && showRequired
-            ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} aria-label="Required" />
+          {!prop.optional && showRequired
+            ? <Asterisk
+                size="M"
+                className={style({
+                  marginStart: 4,
+                  '--iconPrimary': {
+                    type: 'fill',
+                    value: 'currentColor'
+                  }
+                })}
+                aria-label="Required" />
             : null
-          } */}
+          }
         </TableCell>
         <TableCell hideBorder={!!prop.description}>
           <code className={codeStyle}>
@@ -175,7 +186,7 @@ function Rows({props, showDefault}: {props: TInterface['properties'], showDefaul
           </code>
         </TableCell>
         {showDefault &&
-          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}})}>
+          <TableCell hideBorder={!!prop.description} styles={prop.default ? undefined : style({display: {default: 'none', sm: '[table-cell]'}, whiteSpace: 'nowrap'})}>
             <strong className={style({font: 'ui', fontWeight: 'bold', display: {sm: 'none'}})}>Default: </strong>
             {prop.default
               ? <span className={codeStyle}><Code lang="tsx">{prop.default}</Code></span>

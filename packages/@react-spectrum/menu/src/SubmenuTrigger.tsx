@@ -14,7 +14,7 @@ import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
 import {mergeProps} from '@react-aria/utils';
-import {Popover} from '@react-spectrum/overlays';
+import {Popover} from './Popover';
 import React, {type JSX, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';

@@ -29,6 +29,11 @@ export interface ActionMenuProps<T> extends
   Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
   Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
   StyleProps, DOMProps, AriaLabelingProps {
+  /**
+   * The size of the Menu.
+   *
+   * @default 'M'
+   */
   menuSize?: 'S' | 'M' | 'L' | 'XL'
 }
 

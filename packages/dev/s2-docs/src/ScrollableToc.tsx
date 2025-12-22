@@ -13,7 +13,7 @@ export function ScrollableToc({children}) {
     let scrollHeight = element.scrollHeight;
     let clientHeight = element.clientHeight;
     let distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    
+
     setTopMaskSize(Math.min(scrollTop, 32));
     setBottomMaskSize(Math.min(distanceFromBottom, 32));
   };
@@ -51,8 +51,9 @@ export function ScrollableToc({children}) {
       }}
       className={style({
         overflowY: 'auto',
-        flex: 1,
-        minHeight: 0
+        flexShrink: 1,
+        minHeight: 0,
+        maxHeight: '100%'
       })}>
       {children}
     </div>

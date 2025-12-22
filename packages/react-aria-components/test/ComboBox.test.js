@@ -482,4 +482,70 @@ describe('ComboBox', () => {
     expect(onAction).toHaveBeenCalledTimes(2);
     expect(comboboxTester.combobox).toHaveValue('Cat');
   });
+
+  it('should not close the combobox when clicking on a section header', async () => {
+    let tree = render(
+      <ComboBox>
+        <Label>Preferred fruit or vegetable</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <ListBoxSection>
+              <Header>Fruit</Header>
+              <ListBoxItem id="Apple">Apple</ListBoxItem>
+              <ListBoxItem id="Banana">Banana</ListBoxItem>
+            </ListBoxSection>
+            <ListBoxSection>
+              <Header>Vegetable</Header>
+              <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+              <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
+            </ListBoxSection>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    let button = tree.getByRole('button');
+    
+    // Open the combobox
+    await user.click(button);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // Verify the listbox is open
+    let listbox = tree.getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    expect(listbox).toBeVisible();
+
+    // Find and click on a section header
+    let fruitHeader = tree.getByText('Fruit');
+    expect(fruitHeader).toBeInTheDocument();
+    
+    await user.click(fruitHeader);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // Verify the listbox is still open
+    listbox = tree.getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    expect(listbox).toBeVisible();
+
+    // Verify we can still interact with options
+    let options = comboboxTester.options();
+    expect(options.length).toBeGreaterThan(0);
+    
+    // Click an option
+    await user.click(options[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+    
+    // Verify the combobox is closed and the value is updated
+    expect(tree.queryByRole('listbox')).toBeNull();
+    expect(comboboxTester.combobox).toHaveValue('Apple');
+  });
 });

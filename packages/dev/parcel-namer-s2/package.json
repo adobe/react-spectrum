@@ -1,12 +1,12 @@
 {
   "name": "@react-spectrum/parcel-namer-s2",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "main": "S2Namer.js",
   "engines": {
     "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.16.1"
+    "@parcel/plugin": "^2.16.3"
   },
   "rsp": {
     "type": "cli"
