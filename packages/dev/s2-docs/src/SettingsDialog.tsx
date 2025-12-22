@@ -2,6 +2,9 @@
 
 import {ActionButton, Content, Dialog, DialogTrigger, Divider, Heading, Picker, PickerItem, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {type ColorSchemePreference, type PackageManager, type StyleSolution, useSettings, type VanillaCSSTheme} from './SettingsContext';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
+import DeviceDesktop from '@react-spectrum/s2/icons/DeviceDesktop';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
 import React from 'react';
 import SettingsIcon from '@react-spectrum/s2/icons/Settings';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -72,13 +75,16 @@ export function SettingsDialog() {
                     setColorScheme(selected);
                   }}>
                   <ToggleButton id="system">
-                    System
+                    <DeviceDesktop />
+                    <Text>System</Text>
                   </ToggleButton>
                   <ToggleButton id="light">
-                    Light
+                    <Lighten />
+                    <Text>Light</Text>
                   </ToggleButton>
                   <ToggleButton id="dark">
-                    Dark
+                    <Contrast />
+                    <Text>Dark</Text>
                   </ToggleButton>
                 </ToggleButtonGroup>
               </div>
