@@ -47,6 +47,9 @@ This will give us a baseline to develop against and it will also hold us account
 
 I expect many tests will fail in the beginning. We make use of a lot of DOM API's and have not generally thought of the ShadowDOM while developing.
 
+A first go at it can be found here: https://github.com/adobe/react-spectrum/compare/get-tests-running-in-shadowdom?expand=1
+It unfortunately appears that we cannot just keep our existing tests, there's just too many differences.
+
 2. Avoid DOM Traversal/Manipulation
 
 This is most prominent in Focus Scope where we traverse the DOM in order to assign focus, such as in Collections, and contain focus such as in Dialogs.
@@ -109,10 +112,13 @@ Unknown, haven't done research here yet.
 ## Open Questions
 
 * How to actually define the limitations of our support? See Introduction, it's missing a final sentence with this information.
+* User Event and JSDOM do not have good shadow DOM support, and user event has not been accepting PRs, can we count of them when testing? https://github.com/testing-library/user-event/issues/1026
 
 ## Help Needed
 
 The biggest help we can receive is tests, either in the form of unit tests or in the form of examples of real life applications/setups that we can turn into unit tests. The more tests we have, the less likely we will break anything moving forward after the initial effort is complete.
+
+"shadow-dom-testing-library" can be used in place of functions from test-library.
 
 ## Frequently Asked Questions
 
