@@ -256,6 +256,41 @@ describe('ComboBox', () => {
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
 
+  it('should support form reset', async () => {
+    const tree = render(
+      <form>
+        <ComboBox defaultSelectedKey="2" name="combobox">
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+              <ListBoxItem id="3">Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+        <input type="reset" />
+      </form>
+    );
+  
+    const comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    const combobox = comboboxTester.combobox;
+  
+    expect(combobox).toHaveValue('Dog');
+    await comboboxTester.open();
+  
+    const options = comboboxTester.options();
+    await user.click(options[0]);
+    expect(combobox).toHaveValue('Cat');
+  
+    await user.click(document.querySelector('input[type="reset"]'));
+    expect(combobox).toHaveValue('Dog');
+    expect(document.querySelector('input[name=combobox]')).toHaveValue('2');
+  });
+
   it('should render data- attributes on outer element', () => {
     let {getAllByTestId} = render(
       <TestComboBox data-testid="combo-box" />
