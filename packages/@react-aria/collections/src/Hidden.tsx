@@ -66,6 +66,10 @@ if (typeof HTMLTemplateElement !== 'undefined') {
     enumerable: true,
     value: function (node, child) {
       if (this.dataset.reactAriaHidden) {
+        // child might not exist in this.content for some reason (stale?), add to end instead
+        if (child && !this.content.contains(child)) {
+          return this.content.appendChild(node);
+        }
         return this.content.insertBefore(node, child);
       } else {
         return originalInsertBefore.call(this, node, child);
