@@ -24,6 +24,8 @@ import {Link} from './Link';
 import {Main, NavigationSuspense, Router} from './Router';
 import {MobileHeader} from './MobileHeader';
 import {PropTable} from './PropTable';
+import {SettingsDialog} from './SettingsDialog';
+import {SettingsProvider} from './SettingsProvider';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
@@ -152,13 +154,15 @@ function Footer() {
           margin: 0,
           marginTop: 16,
           font: 'body-2xs',
-          listStyleType: 'none'
+          listStyleType: 'none',
+          alignItems: 'center'
         })}>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
         <li><Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">Privacy</Link></li>
         <li><Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">Terms of Use</Link></li>
         <li><Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">Cookies</Link></li>
         <li><Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">Do not sell my personal information</Link></li>
+        <li><SettingsDialog /></li>
       </ul>
     </footer>
   );
@@ -215,94 +219,96 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               lg: 'none'
             }
           })}>
-          <div
-            className={style({
-              isolation: 'isolate',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              maxWidth: {
-                default: 'full',
-                lg: 1440
-              },
-              marginX: 'auto',
-              marginY: 0,
-              padding: {
-                default: 0,
-                lg: 12
-              },
-              paddingBottom: 0,
-              gap: {
-                default: 0,
-                lg: 12
-              },
-              minHeight: {
-                default: 'screen',
-                lg: 'auto'
-              }
-            })}>
-            <Header />
-            <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
-            <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
-              <Nav />
-              <Main
-                style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
-                className={style({
-                  isolation: 'isolate',
-                  backgroundColor: 'base',
-                  padding: {
-                    default: 12,
-                    lg: 40
-                  },
-                  borderRadius: {
-                    default: 'none',
-                    lg: 'xl'
-                  },
-                  boxShadow: {
-                    lg: 'emphasized'
-                  },
-                  width: 'full',
-                  boxSizing: 'border-box',
-                  flexGrow: 1,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  columnGap: {
-                    default: 12,
-                    lg: 40
-                  },
-                  position: 'relative',
-                  height: {
-                    lg: '[calc(100vh - 72px)]'
-                  },
-                  overflow: {
-                    lg: 'auto'
-                  }
-                })}>
-                <div
+          <SettingsProvider>
+            <div
+              className={style({
+                isolation: 'isolate',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                maxWidth: {
+                  default: 'full',
+                  lg: 1440
+                },
+                marginX: 'auto',
+                marginY: 0,
+                padding: {
+                  default: 0,
+                  lg: 12
+                },
+                paddingBottom: 0,
+                gap: {
+                  default: 0,
+                  lg: 12
+                },
+                minHeight: {
+                  default: 'screen',
+                  lg: 'auto'
+                }
+              })}>
+              <Header />
+              <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
+              <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
+                <Nav />
+                <Main
+                  style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
                   className={style({
-                    display: 'flex',
-                    flexDirection: 'column',
+                    isolation: 'isolate',
+                    backgroundColor: 'base',
+                    padding: {
+                      default: 12,
+                      lg: 40
+                    },
+                    borderRadius: {
+                      default: 'none',
+                      lg: 'xl'
+                    },
+                    boxShadow: {
+                      lg: 'emphasized'
+                    },
+                    width: 'full',
+                    boxSizing: 'border-box',
                     flexGrow: 1,
-                    minWidth: 0,
-                    width: 'full'
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    columnGap: {
+                      default: 12,
+                      lg: 40
+                    },
+                    position: 'relative',
+                    height: {
+                      lg: '[calc(100vh - 72px)]'
+                    },
+                    overflow: {
+                      lg: 'auto'
+                    }
                   })}>
-                  <CodePlatterProvider library={getLibraryFromPage(currentPage)}>
-                    <NavigationSuspense>
-                      <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
-                        {React.cloneElement(children, {
-                          components: components(isLongForm),
-                          pages
-                        })}
-                      </Content>
-                    </NavigationSuspense>
-                  </CodePlatterProvider>
-                  <Footer />
-                </div>
-                <OptimisticToc />
-              </Main>
+                  <div
+                    className={style({
+                      display: 'flex',
+                      flexDirection: 'column',
+                      flexGrow: 1,
+                      minWidth: 0,
+                      width: 'full'
+                    })}>
+                    <CodePlatterProvider library={getLibraryFromPage(currentPage)}>
+                      <NavigationSuspense>
+                        <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
+                          {React.cloneElement(children, {
+                            components: components(isLongForm),
+                            pages
+                          })}
+                        </Content>
+                      </NavigationSuspense>
+                    </CodePlatterProvider>
+                    <Footer />
+                  </div>
+                  <OptimisticToc />
+                </Main>
+              </div>
             </div>
-          </div>
-          {!isToastPage && <ToastContainer placement="bottom" />}
+            {!isToastPage && <ToastContainer placement="bottom" />}
+          </SettingsProvider>
         </body>
       </Provider>
     </Router>
