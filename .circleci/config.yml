@@ -1063,13 +1063,13 @@ workflows:
       - s2-docs-production:
           filters:
             branches:
-              only: main
+              only: docs-cherry
           requires:
             - install
       - deploy-s3-production:
           filters:
             branches:
-              only: main
+              only: docs-cherry
           requires:
             - s2-docs-production
 
