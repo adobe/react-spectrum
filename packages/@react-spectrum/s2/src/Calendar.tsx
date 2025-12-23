@@ -256,17 +256,26 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
       default: 'transparent',
       isToday: 'ButtonFace',
       isHovered: 'Highlight',
+      isUnavailable: 'transparent',
       isSelected: {
         selectionMode: {
           single: 'Highlight',
           range: {
             isHovered: 'Highlight'
           }
+        },
+        isUnavailable: {
+          selectionMode: {
+            single: {
+              default: 'Highlight',
+              isDisabled: 'transparent'
+            },
+            range: 'transparent'
+          }
         }
       },
       isSelectionStart: 'Highlight',
       isSelectionEnd: 'Highlight',
-      isUnavailable: 'transparent'
     }
   },
   color: {
@@ -315,17 +324,14 @@ const selectionSpanStyles = style<{isInvalid?: boolean}>({
     default: 'blue-800', // focus-indicator-color
     isInvalid: 'negative-900',
     forcedColors: {
-      default: 'ButtonText'
+      default: 'transparent'
     }
   },
   borderStartRadius: 'full',
   borderEndRadius: 'full',
   backgroundColor: {
     default: 'blue-subtle',
-    isInvalid: 'negative-100',
-    forcedColors: {
-      default: 'Highlight'
-    }
+    isInvalid: 'negative-100'
   },
   forcedColorAdjust: 'none'
 });
