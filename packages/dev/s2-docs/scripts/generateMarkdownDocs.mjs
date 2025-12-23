@@ -77,8 +77,8 @@ function getTsFileIndex() {
   
   // Index files from component roots and packages directory
   const patterns = [
-    ...COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, '**/*.{ts,tsx}')),
-    path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx}')
+    ...COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}')),
+    path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}')
   ];
   
   const files = glob.sync(patterns, {
@@ -407,9 +407,22 @@ function getRootsForFile(file) {
   return COMPONENT_SRC_ROOTS;
 }
 
+function getCacheKey(name, file) {
+  if (file?.path) {
+    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
+      return `intl:${name}`;
+    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+      return `rac:${name}`;
+    } else if (file.path.includes(path.join('pages', 's2'))) {
+      return `s2:${name}`;
+    }
+  }
+  return `default:${name}`;
+}
+
 function resolveComponentPath(componentName, file) {
   // Check unified cache first
-  const cacheKey = componentName;
+  const cacheKey = getCacheKey(componentName, file);
   if (interfacePathCache.has(cacheKey)) {
     return interfacePathCache.get(cacheKey);
   }
@@ -440,6 +453,21 @@ function resolveComponentPath(componentName, file) {
         return match;
       }
     }
+    
+    // Prefer .d.ts files over implementation files
+    const dtsMatch = candidates.find(p => p.endsWith('.d.ts'));
+    if (dtsMatch) {
+      interfacePathCache.set(cacheKey, dtsMatch);
+      return dtsMatch;
+    }
+    
+    // Prefer @react-types package for type lookups
+    const typesMatch = candidates.find(p => p.includes('@react-types'));
+    if (typesMatch) {
+      interfacePathCache.set(cacheKey, typesMatch);
+      return typesMatch;
+    }
+    
     // Fall back to first match
     interfacePathCache.set(cacheKey, candidates[0]);
     return candidates[0];
@@ -454,20 +482,21 @@ function resolveComponentPath(componentName, file) {
  */
 function getComponentDescription(componentName, file) {
   // Check cache first
-  if (descriptionCache.has(componentName)) {
-    return descriptionCache.get(componentName);
+  const cacheKey = getCacheKey(componentName, file);
+  if (descriptionCache.has(cacheKey)) {
+    return descriptionCache.get(cacheKey);
   }
 
   const componentPath = resolveComponentPath(componentName, file);
   if (!componentPath) {
-    descriptionCache.set(componentName, null);
+    descriptionCache.set(cacheKey, null);
     return null;
   }
 
   // Lazily add the source file to the ts-morph project.
   const source = project.addSourceFileAtPathIfExists(componentPath);
   if (!source) {
-    descriptionCache.set(componentName, null);
+    descriptionCache.set(cacheKey, null);
     return null;
   }
 
@@ -496,14 +525,14 @@ function getComponentDescription(componentName, file) {
       
       // If this is the direct node (not a parent), return its description immediately
       if (isDirectNode) {
-        descriptionCache.set(componentName, desc);
+        descriptionCache.set(cacheKey, desc);
         return desc;
       }
       
       // Otherwise, check if the description mentions the component name
       const regex = new RegExp(`\\b${componentName}\\b`, 'i');
       if (regex.test(desc)) {
-        descriptionCache.set(componentName, desc);
+        descriptionCache.set(cacheKey, desc);
         return desc;
       }
       
@@ -514,7 +543,7 @@ function getComponentDescription(componentName, file) {
   }
 
   if (typeof firstNodeDesc === 'string') {
-    descriptionCache.set(componentName, firstNodeDesc);
+    descriptionCache.set(cacheKey, firstNodeDesc);
     return firstNodeDesc;
   }
 
@@ -522,18 +551,12 @@ function getComponentDescription(componentName, file) {
   for (let doc of allJsDocs.reverse()) {
     const desc = doc.getDescription().trim();
     if (desc && desc.toLowerCase().includes(componentName.toLowerCase())) {
-      descriptionCache.set(componentName, desc);
+      descriptionCache.set(cacheKey, desc);
       return desc;
     }
   }
 
-  if (allJsDocs.length) {
-    const desc = allJsDocs[0].getDescription().trim();
-    descriptionCache.set(componentName, desc);
-    return desc;
-  }
-
-  descriptionCache.set(componentName, null);
+  descriptionCache.set(cacheKey, null);
   return null;
 }
 
@@ -542,8 +565,9 @@ function getComponentDescription(componentName, file) {
  */
 function generatePropTable(componentName, file) {
   // Check cache first
-  if (propTableCache.has(componentName)) {
-    return propTableCache.get(componentName);
+  const cacheKey = getCacheKey(componentName, file);
+  if (propTableCache.has(cacheKey)) {
+    return propTableCache.get(cacheKey);
   }
 
   const interfaceName = `${componentName}Props`;
@@ -555,19 +579,19 @@ function generatePropTable(componentName, file) {
   }
 
   if (!componentPath) {
-    propTableCache.set(componentName, null);
+    propTableCache.set(cacheKey, null);
     return null;
   }
 
   const source = project.addSourceFileAtPathIfExists(componentPath);
   if (!source) {
-    propTableCache.set(componentName, null);
+    propTableCache.set(cacheKey, null);
     return null;
   }
 
   const iface = source.getInterface(interfaceName);
   if (!iface) {
-    propTableCache.set(componentName, null);
+    propTableCache.set(cacheKey, null);
     return null;
   }
 
@@ -595,7 +619,7 @@ function generatePropTable(componentName, file) {
   });
 
   if (!rows.length) {
-    propTableCache.set(componentName, null);
+    propTableCache.set(cacheKey, null);
     return null;
   }
 
@@ -609,39 +633,40 @@ function generatePropTable(componentName, file) {
     .join('\n');
 
   const result = `${header}\n${body}`;
-  propTableCache.set(componentName, result);
+  propTableCache.set(cacheKey, result);
   return result;
 }
 
 function generateInterfaceTable(interfaceName, file) {
   // Check cache first
-  if (interfaceTableCache.has(interfaceName)) {
-    return interfaceTableCache.get(interfaceName);
+  const cacheKey = getCacheKey(interfaceName, file);
+  if (interfaceTableCache.has(cacheKey)) {
+    return interfaceTableCache.get(cacheKey);
   }
 
   // Use the unified path resolver which uses the pre-built index
   let ifacePath = resolveComponentPath(interfaceName, file);
 
   if (!ifacePath) {
-    interfaceTableCache.set(interfaceName, null);
+    interfaceTableCache.set(cacheKey, null);
     return null;
   }
 
   const source = project.addSourceFileAtPathIfExists(ifacePath);
   if (!source) {
-    interfaceTableCache.set(interfaceName, null);
+    interfaceTableCache.set(cacheKey, null);
     return null;
   }
 
   const ifaceDecl = source.getInterface(interfaceName);
   if (!ifaceDecl) {
-    interfaceTableCache.set(interfaceName, null);
+    interfaceTableCache.set(cacheKey, null);
     return null;
   }
 
   const propSymbols = ifaceDecl.getType().getProperties();
   if (!propSymbols.length) {
-    interfaceTableCache.set(interfaceName, null);
+    interfaceTableCache.set(cacheKey, null);
     return null;
   }
 
@@ -767,7 +792,7 @@ function generateInterfaceTable(interfaceName, file) {
   }
 
   const result = sections.join('\n');
-  interfaceTableCache.set(interfaceName, result);
+  interfaceTableCache.set(cacheKey, result);
   return result;
 }
 
@@ -1925,27 +1950,28 @@ function remarkDocsComponentsToMarkdown() {
  */
 function generateClassAPITable(className, file) {
   // Check cache first
-  if (classTableCache.has(className)) {
-    return classTableCache.get(className);
+  const cacheKey = getCacheKey(className, file);
+  if (classTableCache.has(cacheKey)) {
+    return classTableCache.get(cacheKey);
   }
 
   // Use unified path resolver which uses the pre-built index
   let classPath = resolveComponentPath(className, file);
   
   if (!classPath) {
-    classTableCache.set(className, null);
+    classTableCache.set(cacheKey, null);
     return null;
   }
 
   const source = project.addSourceFileAtPathIfExists(classPath);
   if (!source) {
-    classTableCache.set(className, null);
+    classTableCache.set(cacheKey, null);
     return null;
   }
 
   const classDecl = source.getClass(className);
   if (!classDecl) {
-    classTableCache.set(className, null);
+    classTableCache.set(cacheKey, null);
     return null;
   }
 
@@ -2069,7 +2095,7 @@ function generateClassAPITable(className, file) {
   }
 
   const result = sections.length > 0 ? sections.join('\n') : null;
-  classTableCache.set(className, result);
+  classTableCache.set(cacheKey, result);
   return result;
 }
 
