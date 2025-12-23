@@ -24796,6 +24796,7 @@ __metadata:
     lerna: "npm:^3.13.2"
     lucide-react: "npm:^0.517.0"
     md5: "npm:^2.2.1"
+    mdast-util-to-string: "npm:^4.0.0"
     motion: "npm:^12.23.6"
     npm-cli-login: "npm:^1.0.0"
     parcel: "npm:^2.16.3"
