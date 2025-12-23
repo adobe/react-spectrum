@@ -56,8 +56,6 @@ async function writeTestingCSV() {
       if (testInstructions.length > 350) {
         row.push('See PR for testing instructions');
       } else {
-        console.log(testInstructions);
-        console.log();
         row.push(testInstructions);
       }
 
