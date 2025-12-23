@@ -11,6 +11,9 @@
 @import "../../docs/pages/react-aria/home/home.css";
 @source "../src/SearchMenuWrapper.tsx";
 
+/* Support data-color-scheme attribute for dark mode in addition to system preference */
+@custom-variant dark (&:where([data-color-scheme="dark"], [data-color-scheme="dark"] *));
+
 @media (min-resolution: 200dpi) {
   :root {
     --spacing: calc(0.25rem * 1.25);
