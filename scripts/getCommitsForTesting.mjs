@@ -1,16 +1,20 @@
-const Octokit = require('@octokit/rest');
-const fs = require('fs');
-let {parseArgs} = require('util');
+import Octokit from "@octokit/rest";
+import fs from 'fs';
+import {parseArgs} from 'node:util';
+import remarkParse from 'remark-parse';
+import {toString} from 'mdast-util-to-string';
+import {unified} from 'unified';
 
 /**
  * Instructions:
  * 
- * 1. Update Octokit to use your token
- * 2. Run the following script: node scripts/getCommitsForTesting.js 2025-10-07 2025-10-18
- * 3. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar -> split text to columns -> separator: comma
+ * 1. Run the following script: node scripts/getCommitsForTesting.js 2025-10-07 2025-10-18
+ * 2. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar -> split text to columns -> separator: comma
  */
 
-const octokit = new Octokit();
+const octokit = new Octokit({
+  auth: `token ${process.env.GITHUB_TOKEN}`
+});
 
 let options = {
   startDate: {
@@ -46,27 +50,22 @@ async function writeTestingCSV() {
       let info = await getPR(num);
 
       // Get testing instructions if it exists
-      // let content = info.data.body;
-      // let match = undefined;
-      // if (content) {
-      //   match = content.match(/## 📝 Test Instructions:\s*([\s\S]*?)(?=##|$)/);
-      // }
-      // let testInstructions = '';
-      // if (match) {
-      //   testInstructions = match[1];
-      //   testInstructions = testInstructions.replace(/<!--[\s\S]*?-->/g, '');
-      //   testInstructions = testInstructions.trim();
-      //   testInstructions = escapeCSV(testInstructions);
-      // }
+      let content = info.data.body;
+      let testInstructions = escapeCSV(extractTestInstructions(content));
 
-      // if (testInstructions.length > 350) {
-      //   row.push('See PR for testing instructions');
-      // } else {
-      //   row.push(testInstructions);
-      // }
-      row.push(',');
+      if (testInstructions.length > 350) {
+        row.push('See PR for testing instructions');
+      } else {
+        console.log(testInstructions);
+        console.log();
+        row.push(testInstructions);
+      }
+
+      // Add PR url to the row
       row.push(info.data.html_url);
 
+      // Categorize commit into V3, RAC, S2, or other
+      // I feel like maybe we should use labels rather than looking at the PR title for this but we would need to get into the habit of doing that
       if ((/\bs2\b/gi).test(title)) {
         s2PRs.push(row);
       } else if ((/\brac\b/gi).test(title)) {
@@ -79,6 +78,7 @@ async function writeTestingCSV() {
     }
   }
 
+  // Prepare to write into CSV
   let csvRows = '';
   csvRows += 'V3 \n';
   for (let v3 of v3PRs) {
@@ -143,6 +143,50 @@ async function getPR(num) {
   });
   return res;
 }
+
+function getHeadingText(node) {
+  return node.children
+    .map(child => child.value || '')
+    .join('')
+    .trim()
+}
+
+function extractTestInstructions(contents) {
+  if (!contents) {
+    return '';
+  }
+
+  let tree = unified().use(remarkParse).parse(contents);
+
+  let collecting = false;
+  let headingDepth = null;
+  let collected = [];
+
+  for (let node of tree.children) {
+    if (node.type === 'heading') {
+      let text = getHeadingText(node).toLowerCase();
+
+      if (text.includes('test instructions')) {
+        collecting = true;
+        headingDepth = node.depth;
+        continue;
+      }
+
+      // Stop when we reach another heading of same or higher level
+      if (collecting && node.depth <= headingDepth) {
+        break;
+      }
+    }
+
+    if (collecting) {
+      collected.push(node);
+    }
+
+  }
+
+  return collected.map(node => toString(node)).join('\n').trim();
+}
+
 
 function escapeCSV(value) {
   if (!value) {
