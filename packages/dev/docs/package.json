@@ -29,8 +29,8 @@
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.3.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-lowlight": "^2.0.0"
   },
   "peerDependencies": {
