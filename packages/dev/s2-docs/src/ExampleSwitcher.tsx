@@ -1,8 +1,8 @@
 'use client';
 
 import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
-import {createContext, useState} from 'react';
 import {Key} from 'react-aria-components';
+import React, {createContext, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocalStorage} from './useLocalStorage';
@@ -125,7 +125,7 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
           <PickerItem id="purple">Purple</PickerItem>
         </Picker>
       }
-      <div style={{gridArea: 'example', colorScheme: resolvedColorScheme}}>
+      <div style={{gridArea: 'example', colorScheme: resolvedColorScheme} as React.CSSProperties}>
         <ExampleSwitcherContext.Provider value={selected}>
           {children[examples.indexOf(selected)]}
         </ExampleSwitcherContext.Provider>
