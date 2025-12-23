@@ -11,6 +11,7 @@ export type VanillaCSSTheme = 'indigo' | 'blue' | 'cyan' | 'turquoise' | 'green'
 interface SettingsContextValue {
   colorScheme: ColorSchemePreference,
   setColorScheme: (scheme: ColorSchemePreference) => void,
+  resolvedColorScheme: ColorScheme,
   packageManager: PackageManager,
   setPackageManager: (manager: PackageManager) => void,
   styleSolution: StyleSolution,
@@ -22,6 +23,7 @@ interface SettingsContextValue {
 export const SettingsContext = createContext<SettingsContextValue>({
   colorScheme: 'system',
   setColorScheme: () => {},
+  resolvedColorScheme: 'light',
   packageManager: 'npm',
   setPackageManager: () => {},
   styleSolution: 'Vanilla CSS',

@@ -3,6 +3,7 @@
 import {cloneElement, Component, createElement, isValidElement, ReactNode} from 'react';
 import {Content, Heading, InlineAlert} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useSettings} from './SettingsContext';
 
 interface ExampleOutputProps {
   component?: any,
@@ -12,6 +13,8 @@ interface ExampleOutputProps {
 }
 
 export function ExampleOutput({component, props = {}, align = 'center', orientation = 'horizontal'}: ExampleOutputProps) {
+  let {resolvedColorScheme} = useSettings();
+
   return (
     <div
       role="group"
@@ -48,7 +51,10 @@ export function ExampleOutput({component, props = {}, align = 'center', orientat
         },
         boxSizing: 'border-box'
       })({align, orientation})}
-      style={{background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))}}>
+      style={{
+        background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined)),
+        colorScheme: resolvedColorScheme
+      }}>
       <ErrorBoundary>
         {isValidElement(component) ? cloneElement(component, props) : createElement(component, props)}
       </ErrorBoundary>

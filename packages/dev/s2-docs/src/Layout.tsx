@@ -10,6 +10,7 @@ import reactAriaFavicon from 'url:../assets/react-aria-favicon.svg';
 import rspFavicon from 'url:../assets/rsp-favicon.svg';
 import './anatomy.css';
 import './footer.css';
+import './theme-overrides.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock, standaloneCode} from './CodeBlock';
