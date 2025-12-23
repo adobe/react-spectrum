@@ -275,7 +275,7 @@ const cellInnerStyles = style<CalendarCellRenderProps & {selectionMode: 'single'
         }
       },
       isSelectionStart: 'Highlight',
-      isSelectionEnd: 'Highlight',
+      isSelectionEnd: 'Highlight'
     }
   },
   color: {
