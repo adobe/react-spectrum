@@ -224,7 +224,7 @@ export function AppFrame({children, inert, hidden, page, onPageChange}: any) {
           {/* <ActionButton isQuiet aria-label="Menu">
             <MenuHamburger />
           </ActionButton> */}
-          <AdobeLogo size={24} className={style({flexShrink: 0})} />
+          <AdobeLogo size={24} />
           <span
             className={style({
               font: 'title',
@@ -293,6 +293,7 @@ export function AppFrame({children, inert, hidden, page, onPageChange}: any) {
         <Sidebar page={page} onPageChange={onPageChange} />
         <div
           data-content
+          inert={!children}
           className={style({
             gridArea: 'content',
             backgroundColor: 'base',

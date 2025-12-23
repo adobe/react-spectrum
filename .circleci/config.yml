@@ -67,18 +67,28 @@ commands:
               echo "AWS credentials not found"
               circleci-agent step halt
             fi
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=31536000,immutable --include * --exclude *.html --exclude *.rsc --exclude *.txt --exclude *.json --exclude *.md --exclude *.xml
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --exclude * --include *.html --include *.txt --include *.json --include *.md --include *.xml
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
-      - aws-s3/sync:
-          arguments: --cache-control public,max-age=300,stale-while-revalidate=300 --content-type text/x-component;charset=utf-8 --exclude * --include *.rsc
-          from: /tmp/dist/s2-docs/<< parameters.dir >>
-          to: << parameters.bucket >>
+      - run:
+          name: Configure AWS CLI for concurrent requests
+          command: aws configure set default.s3.max_concurrent_requests 100
+      - run:
+          name: Copy immutable assets to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=31536000,immutable" \
+              --exclude "*.html" --exclude "*.rsc" --exclude "*.txt" --exclude "*.json" --exclude "*.md" --exclude "*.xml"
+      - run:
+          name: Copy HTML and text files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --exclude "*" --include "*.html" --include "*.txt" --include "*.json" --include "*.md" --include "*.xml"
+      - run:
+          name: Copy RSC files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/x-component;charset=utf-8" \
+              --exclude "*" --include "*.rsc"
 
 jobs:
   install:
@@ -484,21 +494,6 @@ jobs:
           paths:
             - '*/storybook-s2/'
 
-  docs-production:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make website-production
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
   s2-docs:
     executor: rsp-xlarge
     steps:
@@ -828,26 +823,6 @@ jobs:
               done
             fi
 
-  deploy-production:
-    docker:
-      - image: mcr.microsoft.com/azure-cli:2.63.0
-    steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - run:
-          name: Install AzCopy
-          command: |
-            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
-            tar -xf azcopy.tar.gz
-            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
-      - run:
-          name: deploy
-          command: |
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt;*.html;*.rsc"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8" --cache-control "max-age=300"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8" --cache-control "max-age=300"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.html;*.rsc" --cache-control "max-age=300"
-
   deploy-s3-stage:
     executor: rsp
     steps:
@@ -857,6 +832,16 @@ jobs:
       - deploy-s3:
           dir: s2
           bucket: s3://react-spectrum-stage
+
+  deploy-s3-production:
+    executor: rsp
+    steps:
+      - deploy-s3:
+          dir: react-aria
+          bucket: s3://react-aria-prod
+      - deploy-s3:
+          dir: s2
+          bucket: s3://react-spectrum-prod
 
   comment:
     executor: rsp
@@ -1075,18 +1060,18 @@ workflows:
           - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
-      - docs-production:
+      - s2-docs-production:
           filters:
             branches:
               only: main
           requires:
             - install
-      - deploy-production:
+      - deploy-s3-production:
           filters:
             branches:
               only: main
           requires:
-            - docs-production
+            - s2-docs-production
 
   nightly:
     triggers:

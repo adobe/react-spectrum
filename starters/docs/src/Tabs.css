@@ -35,7 +35,7 @@
 
     .react-aria-SelectionIndicator {
       left: 0;
-      bottom: -1.5px;
+      bottom: 0px;
       width: 100%;
       height: 3px;
       transition-property: translate, width;
@@ -48,7 +48,7 @@
 
     .react-aria-SelectionIndicator {
       top: 0;
-      right: -1.5px;
+      right: 0px;
       height: 100%;
       width: 3px;
       transition-property: translate, height;

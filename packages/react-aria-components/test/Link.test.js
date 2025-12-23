@@ -40,6 +40,12 @@ describe('Link', () => {
     expect(link).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support id prop', () => {
+    let {getByRole} = render(<Link id="my-link-id">Test</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('id', 'my-link-id');
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
     let link = getByRole('link');

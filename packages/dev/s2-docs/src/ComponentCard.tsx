@@ -78,7 +78,7 @@ import DragAndDropDark from 'url:../assets/component-illustrations/dark/DragAndD
 import DragAndDropLight from 'url:../assets/component-illustrations/light/DragAndDrop.avif';
 import DropZoneDark from 'url:../assets/component-illustrations/dark/DropZone.avif';
 import DropZoneLight from 'url:../assets/component-illustrations/light/DropZone.avif';
-import {ExampleImage} from './ExampleList';
+import {ExampleImage, images as exampleImages} from './ExampleList';
 import FileTriggerDark from 'url:../assets/component-illustrations/dark/FileTrigger.avif';
 import FileTriggerLight from 'url:../assets/component-illustrations/light/FileTrigger.avif';
 import FocusRingDark from 'url:../assets/component-illustrations/dark/FocusRing.avif';
@@ -128,6 +128,7 @@ import PickerDark from 'url:../assets/component-illustrations/dark/Picker.avif';
 import PickerLight from 'url:../assets/component-illustrations/light/Picker.avif';
 import PopoverDark from 'url:../assets/component-illustrations/dark/Popover.avif';
 import PopoverLight from 'url:../assets/component-illustrations/light/Popover.avif';
+import {preload} from 'react-dom';
 import PressDark from 'url:../assets/component-illustrations/dark/Press.avif';
 import PressLight from 'url:../assets/component-illustrations/light/Press.avif';
 import ProgressBarDark from 'url:../assets/component-illustrations/dark/ProgressBar.avif';
@@ -212,6 +213,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Breadcrumbs': [BreadcrumbsLight, BreadcrumbsDark],
   'Button': [ButtonLight, ButtonDark],
   'ButtonGroup': [ButtonGroupLight, ButtonGroupDark],
+  'Calendar': [CalendarLight, CalendarDark],
   'Card': [CardLight, CardDark],
   'CardView': [CardViewLight, CardViewDark],
   'Checkbox': [CheckboxLight, CheckboxDark],
@@ -246,7 +248,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'InlineAlert': [InlineAlertLight, InlineAlertDark],
   'Link': [LinkLight, LinkDark],
   'LinkButton': [LinkButtonLight, LinkButtonDark],
-  'ListBox': [CardViewLight, CardViewDark],
+  'ListBox': [SelectionLight, SelectionDark],
   'Menu': [MenuLight, MenuDark],
   'Meter': [MeterLight, MeterDark],
   'Migrating to Spectrum 2': [MigratingLight, MigratingDark],
@@ -283,7 +285,7 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Tooltip': [TooltipLight, TooltipDark],
   'Tree': [TreeLight, TreeDark],
   'TreeView': [TreeLight, TreeDark],
-  'Virtualizer': [CardViewLight, CardViewDark],
+  'Virtualizer': [CollectionLight, CollectionDark],
   'VisuallyHidden': [AccessibilityLight, AccessibilityDark],
   // Guides
   'Collections': [CollectionLight, CollectionDark],
@@ -335,13 +337,13 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'Taming the dragon: Accessible drag and drop': [DragAndDropLight, DragAndDropDark],
   'Date and Time Pickers for All': [DatePickerLight, DatePickerDark],
   'How we internationalized our number field': [NumberFieldLight, NumberFieldDark],
-  'Improving Internationalization Support in Our Date and Time Components': [DatePickerLight, DatePickerDark],
+  'Improving Internationalization Support in Our Date and Time Components': [DateFieldLight, DateFieldDark],
   'Accessible Color Descriptions for Improved Color Pickers': [ColorPickerLight, ColorPickerDark],
   'Creating a pointer-friendly submenu experience': [MenuLight, MenuDark],
   'Introducing React Spectrum': [AdobeLight, AdobeDark],
   // Internationalized
   'Internationalized Date': [DateRangePickerLight, DateRangePickerDark],
-  'Calendar': [CalendarLight, CalendarDark],
+  'Calendar Interface': [CalendarLight, CalendarDark],
   'CalendarDate': [CalendarLight, CalendarDark],
   'CalendarDateTime': [DateFieldLight, DateFieldDark],
   'Time': [TimeFieldLight, TimeFieldDark],
@@ -349,8 +351,41 @@ const componentIllustrations: Record<string, [string, string] | undefined> = {
   'DateFormatter': [DatePickerLight, DatePickerDark],
   'Internationalized Number': [NumberFieldLight, NumberFieldDark],
   'NumberFormatter': [NumberFieldLight, NumberFieldDark],
-  'NumberParser': [NumberFieldLight, NumberFieldDark]
+  'NumberParser': [NumberFieldLight, NumberFieldDark],
+  // Examples
+  'Emoji Picker': exampleImages['emoji-picker'],
+  'Filterable CRUD Table': exampleImages['crud'],
+  'Gesture Driven Sheet': exampleImages['sheet'],
+  'iOS List View': exampleImages['ios-list'],
+  'Kanban Board': exampleImages['kanban'],
+  'Photo Library': exampleImages['photos'],
+  'Ripple Button': exampleImages['ripple-button'],
+  'Swipeable Tabs': exampleImages['swipeable-tabs']
 };
+
+function preloadImage(light: string, dark: string) {
+  preload(light, {
+    as: 'image',
+    media: '(prefers-color-scheme: light)'
+  });
+
+  preload(dark, {
+    as: 'image',
+    media: '(prefers-color-scheme: dark)'
+  });
+}
+
+export function preloadComponentImages(names: string[]) {
+  for (let key of names) {
+    let v = componentIllustrations[key];
+    if (v) {
+      let [light, dark] = v;
+      preloadImage(light, dark);
+    } else if (/^v\d/.test(key)) {
+      preloadImage(BackgroundLight, BackgroundDark);
+    }
+  }
+}
 
 const illustrationContainer = style({
   width: 'full',
@@ -408,15 +443,15 @@ function ComponentIllustration({name, href}: IllustrationProps) {
 
   return (
     <Image
-      src={light}
+      src={[
+        {srcSet: light, colorScheme: 'light'},
+        {srcSet: dark, colorScheme: 'dark'}
+      ]}
       alt=""
       aria-hidden="true"
       width={960}
       height={600}
-      styles={illustrationStyles}>
-      <source srcSet={light} media="(prefers-color-scheme: light)" />
-      <source srcSet={dark} media="(prefers-color-scheme: dark)" />
-    </Image>
+      styles={illustrationStyles} />
   );
 }
 
@@ -443,16 +478,13 @@ export function ComponentCard({id, name, href, description, size, ...otherProps}
     preview = (
       <div className={illustrationContainer}>
         {/* Background gradient */}
-        <picture>
-          <source srcSet={BackgroundLight} media="(prefers-color-scheme: light)" />
-          <source srcSet={BackgroundDark} media="(prefers-color-scheme: dark)" />
-          <img
-            src={BackgroundLight}
-            alt=""
-            aria-hidden="true"
-            className={backgroundStyles}
-            loading="lazy" />
-        </picture>
+        <Image
+          alt=""
+          styles={backgroundStyles}
+          src={[
+            {srcSet: BackgroundLight, colorScheme: 'light'},
+            {srcSet: BackgroundDark, colorScheme: 'dark'}
+          ]} />
         <span className={releaseText}>{releaseVersion}</span>
       </div>
     );

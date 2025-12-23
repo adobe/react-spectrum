@@ -2233,9 +2233,9 @@ function generateLibraryLlmsTxt(lib, files) {
   const sorted = files.sort((a, b) => a.heading.localeCompare(b.heading));
   for (const doc of sorted) {
     if (doc.description) {
-      txt += `- [${doc.heading}](${lib}/${doc.path}): ${doc.description}\n`;
+      txt += `- [${doc.heading}](${doc.path}): ${doc.description}\n`;
     } else {
-      txt += `- [${doc.heading}](${lib}/${doc.path})\n`;
+      txt += `- [${doc.heading}](${doc.path})\n`;
     }
   }
 

@@ -18,6 +18,7 @@ import {TabLink} from './FileTabs';
 import {useLocale} from 'react-aria';
 
 export const IconPicker = lazy(() => import('./IconPicker').then(({IconPicker}) => ({default: IconPicker})));
+let LazyIcon = lazy(() => import('./IconPicker').then(({Icon}) => ({default: Icon})));
 
 type Props = {[name: string]: any};
 type Controls = {[name: string]: PropControl};
@@ -132,10 +133,17 @@ export function Output({align = 'center', acceptOrientation}: {align?: 'center' 
 
   if (!isValidElement(component)) {
     let children = props.children;
-    if (children?.iconJSX || children?.avatar || children?.badge) {
+    if (children?.icon || children?.avatar || children?.badge) {
+      let iconElement: ReactNode | null = null;
+      if (children.avatar) {
+        iconElement = <Avatar src="https://i.imgur.com/xIe7Wlb.png" />;
+      } else if (children.icon) {
+        iconElement = (<LazyIcon icon={children.icon} />);
+      }
+
       children = (
         <>
-          {children.avatar ? <Avatar src="https://i.imgur.com/xIe7Wlb.png" /> : children.iconJSX}
+          {iconElement}
           {children.text && <Text>{children.text}</Text>}
           {children.badge && <NotificationBadge value={12} />}
         </>
@@ -443,6 +451,9 @@ export function Control({name}: {name: string}) {
       }
       if (name === 'placement' && control.value.elements.length === 22) {
         return <PlacementControl control={control} value={value} onChange={onChange} />;
+      }
+      if (name === 'src') {
+        return <StringControl control={control} value={value} onChange={onChange} />;
       }
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':

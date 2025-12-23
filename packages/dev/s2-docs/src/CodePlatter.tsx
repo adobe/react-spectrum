@@ -59,8 +59,8 @@ export function FileProvider(props: ProviderProps<FileProviderContextValue | nul
   return <FileProviderContext {...props} />;
 }
 
-const ShadcnContext = createContext<string | null>(null);
-export function ShadcnProvider(props: ProviderProps<string | null>) {
+const ShadcnContext = createContext<{type: 'vanilla' | 'tailwind', component: string} | null>(null);
+export function ShadcnProvider(props: ProviderProps<{type: 'vanilla' | 'tailwind', component: string} | null>) {
   return <ShadcnContext {...props} />;
 }
 
@@ -73,7 +73,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
   // let [showCodeSandbox, setShowCodeSandbox] = useState(false);
-  let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
+  let getText = () => getTextContent(codeRef.current!.querySelector('pre')!);
   let {library} = useContext(CodePlatterContext);
   if (!type) {
     if (library === 'react-aria') {
@@ -84,7 +84,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   }
 
   let {files, deps = {}, urls = {}, entry} = useContext(FileProviderContext) ?? {};
-  let registryUrl = useContext(ShadcnContext);
+  let shadcn = useContext(ShadcnContext);
   let shareUrl = useContext(ShareContext);
 
   return (
@@ -96,7 +96,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
           density="regular"
           size="S">
           <CopyButton ariaLabel="Copy code" tooltip="Copy code" getText={getText} />
-          {(shareUrl || files || registryUrl) && <MenuTrigger align="end">
+          {(shareUrl || files || shadcn) && <MenuTrigger align="end">
             <TooltipTrigger placement="end">
               <ActionButton aria-label="Open in…">
                 <OpenIn />
@@ -152,7 +152,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Download ZIP</Text>
                 </MenuItem>
               }
-              {registryUrl &&
+              {shadcn &&
                 <MenuItem onAction={() => setShowShadcn(true)}>
                   <Prompt />
                   <Text>Install with shadcn</Text>
@@ -199,7 +199,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
       </DialogContainer> */}
       <DialogContainer onDismiss={() => setShowShadcn(false)}>
         {showShadcn &&
-          <ShadcnDialog registryUrl={registryUrl} />
+          <ShadcnDialog />
         }
       </DialogContainer>
     </div>
@@ -240,13 +240,33 @@ function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: Downl
   return files;
 }
 
+function getTextContent(element: Element) {
+  // Manually walk over text nodes inside the element and concatenate them.
+  // This is like element.textContent except we skip anything inside an element with data-no-copy.
+  let result = '';
+  let walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, node => {
+    if (node.nodeType === Node.ELEMENT_NODE && (node as Element).hasAttribute('data-no-copy')) {
+      result += '\n';
+      return NodeFilter.FILTER_REJECT;
+    }
+    return node.nodeType === Node.TEXT_NODE ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+  });
+
+  let node = walker.nextNode();
+  while (node) {
+    result += node.nodeValue || '';
+    node = walker.nextNode();
+  }
+  return result;
+}
+
 function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name: string]: string}) {
-  let code = codeRef.current!.querySelector('pre')!.textContent!;
+  let code = getTextContent(codeRef.current!.querySelector('pre')!);
   let fileTabs = codeRef.current!.closest('[data-files]');
   if (fileTabs) {
     let example = fileTabs.querySelector('[data-example] pre');
     if (example) {
-      code = example.textContent!;
+      code = getTextContent(example);
     }
   }
 
@@ -292,8 +312,8 @@ const Flash = createIcon(props => (
   </svg>
 ));
 
-function ShadcnDialog({registryUrl}) {
-  let componentName = registryUrl.match(/([^/]+)\.json$/)[1];
+function ShadcnDialog() {
+  let {type, component} = useContext(ShadcnContext)!;
   let preRef = useRef<HTMLPreElement | null>(null);
 
   return (
@@ -301,8 +321,8 @@ function ShadcnDialog({registryUrl}) {
       {({close}) => (<>
         <Heading slot="title">Install with shadcn</Heading>
         <Content>
-          <p>Use the <Link href="https://ui.shadcn.com/docs/cli" target="_blank" rel="noopener noreferrer">shadcn CLI</Link> to install {componentName} and its dependencies into your project.</p>
-          <ShadcnCommand registryUrl={registryUrl} preRef={preRef} />
+          <p>Use the <Link href="https://ui.shadcn.com/docs/cli" target="_blank" rel="noopener noreferrer">shadcn CLI</Link> to install {component} and its dependencies into your project.</p>
+          <ShadcnCommand type={type} component={component} preRef={preRef} />
         </Content>
         <ButtonGroup>
           <Button variant="secondary" slot="close">Cancel</Button>

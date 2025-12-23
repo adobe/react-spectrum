@@ -19,6 +19,7 @@ import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
 import {useRouter} from './Router';
 import './SearchMenu.css';
+import {preloadComponentImages} from './ComponentCard';
 
 export const divider = style({
   marginY: 8,
@@ -77,7 +78,8 @@ export function SearchMenu(props: SearchMenuProps) {
     isIconsSelected,
     selectedItems,
     selectedSectionName,
-    getPlaceholderText
+    getPlaceholderText,
+    sections
   } = useSearchMenuState({
     pages,
     currentPage,
@@ -135,14 +137,14 @@ export function SearchMenu(props: SearchMenuProps) {
           {orderedTabs.map((tab, i) => (
             <Tab key={tab.id} id={tab.id}>
               <div className={style({display: 'flex', gap: 12, marginTop: 4})}>
-                <div style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
+                <div className={style({width: 26, flexShrink: 0, display: 'flex', justifyContent: 'center'})} style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-icon' : undefined} as CSSProperties}>
                   {tab.icon}
                 </div>
                 <div>
-                  <span style={{viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-label' : 'none'} as CSSProperties} className={style({font: 'ui-2xl'})}>
+                  <span style={{viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-label' : undefined} as CSSProperties} className={style({font: 'heading-sm', fontWeight: 'bold'})}>
                     {tab.label}
                   </span>
-                  <div className={style({fontSize: 'ui-sm'})}>{tab.description}</div>
+                  <div className={style({fontSize: 'ui', marginTop: 2})}>{tab.description}</div>
                 </div>
               </div>
             </Tab>
@@ -163,7 +165,7 @@ export function SearchMenu(props: SearchMenuProps) {
                       size="L"
                       aria-label={`Search ${tab.label}`}
                       placeholder={placeholderText}
-                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: (i === 0 && isSearchOpen) ? 'search-menu-search-field' : 'none'} as CSSProperties}
+                      UNSAFE_style={{marginInlineEnd: 296, viewTransitionName: (i === 0 && isSearchOpen && window.scrollY === 0) ? 'search-menu-search-field' : undefined} as CSSProperties}
                       styles={style({width: 500})} />
                   </div>
 
@@ -174,7 +176,10 @@ export function SearchMenu(props: SearchMenuProps) {
                     resourceTags={tabResourceTags}
                     selectedTagId={selectedTagId}
                     onSectionSelectionChange={handleTagSelectionChange}
-                    onResourceSelectionChange={handleTagSelectionChange} />
+                    onResourceSelectionChange={handleTagSelectionChange}
+                    onHover={tag => {
+                      preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
+                    }} />
                   {isIconsSelected ? (
                     <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<IconSearchSkeleton />}>

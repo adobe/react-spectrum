@@ -31,22 +31,22 @@ export const description = 'Displays data in rows and columns and enables a user
       <Column>Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="row-1">
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
       </Row>
-      <Row>
+      <Row id="row-2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
       </Row>
-      <Row>
+      <Row id="row-3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
       </Row>
-      <Row>
+      <Row id="row-4">
         <Cell>log.txt</Cell>
         <Cell>Text Document</Cell>
         <Cell>1/18/2016</Cell>
@@ -66,22 +66,22 @@ export const description = 'Displays data in rows and columns and enables a user
       <Column>Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="row-1">
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
       </Row>
-      <Row>
+      <Row id="row-2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
       </Row>
-      <Row>
+      <Row id="row-3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
       </Row>
-      <Row>
+      <Row id="row-4">
         <Cell>log.txt</Cell>
         <Cell>Text Document</Cell>
         <Cell>1/18/2016</Cell>
@@ -275,18 +275,18 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
   </TableHeader>
   <TableBody>
     {/*- begin highlight -*/}
-    <Row href="https://adobe.com/" target="_blank">
+    <Row id="row-1" href="https://adobe.com/" target="_blank">
       {/*- end highlight -*/}
       <Cell>Adobe</Cell>
       <Cell>https://adobe.com/</Cell>
       <Cell>January 28, 2023</Cell>
     </Row>
-    <Row href="https://google.com/" target="_blank">
+    <Row id="row-2" href="https://google.com/" target="_blank">
       <Cell>Google</Cell>
       <Cell>https://google.com/</Cell>
       <Cell>April 5, 2023</Cell>
     </Row>
-    <Row href="https://nytimes.com/" target="_blank">
+    <Row id="row-3" href="https://nytimes.com/" target="_blank">
       <Cell>New York Times</Cell>
       <Cell>https://nytimes.com/</Cell>
       <Cell>July 12, 2023</Cell>
@@ -317,7 +317,7 @@ import {Table, TableHeader, Column, TableBody} from 'vanilla-starter/Table';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onRowAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -337,7 +337,7 @@ function Example(props) {
         /* PROPS */
         selectedKeys={selected}
         onSelectionChange={setSelected}
-        onAction={key => alert(`Clicked ${key}`)}
+        onRowAction={key => alert(`Clicked ${key}`)}
         ///- end highlight -///
       >
         <TableHeader>
@@ -662,7 +662,7 @@ function ReorderableTable() {
       <Column />
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="row-1">
         <Cell><Button slot="drag" /></Cell>
         <Cell>
           <Checkbox slot="selection" /> or <SelectionIndicator />
