@@ -176,7 +176,7 @@ export function parseArbitraryValue(value: Value): string | undefined {
     return value.slice(1, -1);
   } else if (
     typeof value === 'string' && (
-      /^(var|calc|min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|pow|sqrt|hypot|log|exp|abs|sign)\(.+\)$/.test(value) || 
+      /^(var|calc|min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|pow|sqrt|hypot|log|exp|abs|sign)\(.+\)$/.test(value) ||
       /^(inherit|initial|unset)$/.test(value)
     )
   ) {
@@ -204,6 +204,8 @@ function classNamePrefix(property: string, cssProperty: string) {
 interface MacroContext {
   addAsset(asset: {type: string, content: string}): void
 }
+
+let isCompilingDependencies: boolean | null | string = false;
 
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
   let properties = new Map<string, Property<any>>(Object.entries(theme.properties).map(([k, v]) => {
@@ -280,8 +282,11 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         let prop = properties.get(dep)!;
         let name = `--${shortCSSPropertyName(prop.cssProperties[0])}`;
         // Could potentially use @property to prevent the var from inheriting in children.
+        isCompilingDependencies = dep;
         setRules(name, compileValue(name, dep, value));
+        isCompilingDependencies = null;
         setRules(dep, compileValue(dep, dep, name));
+        isCompilingDependencies = false;
       }
     }
     dependencies.clear();
@@ -305,7 +310,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // Also generate a variable for each overridable property that overlaps with the style definition. If those are defined,
     // the defaults from the style definition are omitted.
     let allowedOverridesSet = new Set<string>();
-    let js = 'let rules = " ";\n';
+    let js = 'let rules = " ", currentRules = {};\n';
     if (allowedOverrides?.length) {
       for (let property of allowedOverrides) {
         let shorthand = theme.shorthands[property];
@@ -315,7 +320,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
             allowedOverridesSet.add(property);
             continue;
           }
-          
+
           let prop = properties.get(property);
           if (!prop) {
             throw new Error(`Invalid property ${property} in allowedOverrides`);
@@ -346,15 +351,15 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
       }
 
-      let regex = `/(?:^|\\s)(${[...allowedOverridesSet].map(p => classNamePrefix(p, p)).join('|')})[^\\s]+/g`;
+      let regex = `/(?:^|\\s)(${[...allowedOverridesSet].map(p => classNamePrefix(p, p)).join('|')}|-macro\\$)[^\\s]+/g`;
       if (loop) {
-        js += `let matches = (overrides || '').matchAll(${regex});\n`;
+        js += `let matches = String(overrides || '').matchAll(${regex});\n`;
         js += 'for (let p of matches) {\n';
         js += loop;
         js += '  rules += p[0];\n';
         js += '}\n';
       } else {
-        js += `rules += ((overrides || '').match(${regex}) || []).join('')\n`;
+        js += `rules += (String(overrides || '').match(${regex}) || []).join('')\n`;
       }
     }
 
@@ -375,6 +380,15 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       css += rules.join('\n\n');
       css += '}\n\n';
     }
+    // @ts-expect-error
+    let loc = this?.loc?.filePath + ':' + this?.loc?.line + ':' + this?.loc?.col;
+    if (isStatic && process.env.NODE_ENV !== 'production') {
+      let id = toBase62(hash(className + loc));
+      css += `.-macro-static-${id} {
+        --macro-data: ${JSON.stringify({style, loc})};
+      }\n\n`;
+      className += ` -macro-static-${id}`;
+    }
 
     if (this && typeof this.addAsset === 'function') {
       this.addAsset({
@@ -387,6 +401,12 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       return className;
     }
 
+    if (process.env.NODE_ENV !== 'production') {
+      js += `let targetRules = rules + ${JSON.stringify(loc)};\n`;
+      js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
+      js += 'rules += " -macro-dynamic-" + hash.toString(36);\n';
+      js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
+    }
     js += 'return rules;';
     if (allowedOverrides) {
       return new Function('props', 'overrides', js) as any;
@@ -492,7 +512,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // Top level layer is based on the priority of the rule, not the condition.
         // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
         let layer = `${generateName(priority, true)}.${propertyInfo.conditions[prelude] || generateArbitraryValueSelector(condition, true)}`;
-        return new AtRule(rules, prelude, layer);
+        return new AtRule(rules, prelude, layer, condition);
       });
     }
 
@@ -504,6 +524,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     let propertyFunction = properties.get(themeProperty);
     if (propertyFunction) {
       // Expand value to conditional CSS values, and then to rules.
+      let propertyValue = value;
       let arbitrary = parseArbitraryValue(value);
       let cssValue = arbitrary ? arbitrary : propertyFunction.toCSSValue(value);
       let cssProperties = propertyFunction.toCSSProperties(property.startsWith('--') ? property : null, cssValue);
@@ -556,7 +577,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
           className += propertyInfo.values[cssProperty]?.[String(value)] ?? generateArbitraryValueSelector(String(value));
           className += POSTFIX;
-          rules.push(new StyleRule(className, key, String(value)));
+          rules.push(new StyleRule(className, key, String(value), isCompilingDependencies ? themeProperty : property, propertyValue));
         }
 
         return [0, rules];
@@ -645,22 +666,30 @@ interface Rule {
   copy(): Rule
 }
 
+let conditionStack: string[] = [];
+
 /** A CSS style rule. */
 class StyleRule implements Rule {
   className: string;
   pseudos: string;
   property: string;
   value: string;
+  themeProperty: string | undefined;
+  themeValue: Value | undefined;
 
-  constructor(className: string, property: string, value: string) {
+  constructor(className: string, property: string, value: string, themeProperty: string | undefined, themeValue: Value | undefined) {
     this.className = className;
     this.pseudos = '';
     this.property = property;
     this.value = value;
+    if (isCompilingDependencies !== null) {
+      this.themeProperty = themeProperty;
+      this.themeValue = themeValue;
+    }
   }
 
   copy(): Rule {
-    let rule = new StyleRule(this.className, this.property, this.value);
+    let rule = new StyleRule(this.className, this.property, this.value, this.themeProperty, this.themeValue);
     rule.pseudos = this.pseudos;
     return rule;
   }
@@ -703,6 +732,21 @@ class StyleRule implements Rule {
       res += `${indent}if (!${this.property.replace('--', '__')}) `;
     }
     res +=  `${indent}rules += ' ${this.className}';`;
+    if (this.themeProperty) {
+      let name = this.themeProperty;
+      if (this.pseudos) {
+        conditionStack.push(this.pseudos);
+      }
+      if (conditionStack.length) {
+        // name += ` (${conditionStack.join(', ')})`;
+        res += ` currentRules[${JSON.stringify(name)}] = typeof currentRules[${JSON.stringify(name)}] === 'object' ? currentRules[${JSON.stringify(name)}] : {"default": currentRules[${JSON.stringify(name)}]}; currentRules[${JSON.stringify(name)}][${JSON.stringify(conditionStack.join(' && '))}] =  ${JSON.stringify(this.themeValue)};`;
+      } else {
+        res += ` currentRules[${JSON.stringify(name)}] = ${JSON.stringify(this.themeValue)};`;
+      }
+      if (this.pseudos) {
+        conditionStack.pop();
+      }
+    }
     return res;
   }
 }
@@ -759,20 +803,29 @@ class GroupRule implements Rule {
 /** A rule that applies conditionally in CSS (e.g. @media). */
 class AtRule extends GroupRule {
   prelude: string;
+  themeCondition: string | null;
 
-  constructor(rules: Rule[], prelude: string, layer: string | null) {
+  constructor(rules: Rule[], prelude: string, layer: string | null, themeCondition: string | null) {
     super(rules, layer);
     this.prelude = prelude;
+    this.themeCondition = themeCondition;
   }
 
   copy(): Rule {
-    return new AtRule(this.rules.map(rule => rule.copy()), this.prelude, this.layer);
+    return new AtRule(this.rules.map(rule => rule.copy()), this.prelude, this.layer, this.themeCondition);
   }
 
   toCSS(rulesByLayer: Map<string, string[]>, preludes: string[] = [], layer?: string): void {
     preludes.push(this.prelude);
     super.toCSS(rulesByLayer, preludes, layer);
     preludes?.pop();
+  }
+
+  toJS(allowedOverridesSet: Set<string>, indent?: string): string {
+    conditionStack.push(this.themeCondition || this.prelude);
+    let res = super.toJS(allowedOverridesSet, indent);
+    conditionStack.pop();
+    return res;
   }
 }
 
@@ -794,7 +847,10 @@ class ConditionalRule extends GroupRule {
   }
 
   toJS(allowedOverridesSet: Set<string>, indent = ''): string {
-    return `${indent}if (props.${this.condition}) {\n${super.toJS(allowedOverridesSet, indent + '  ')}\n${indent}}`;
+    conditionStack.push(this.condition);
+    let res = `${indent}if (props.${this.condition}) {\n${super.toJS(allowedOverridesSet, indent + '  ')}\n${indent}}`;
+    conditionStack.pop();
+    return res;
   }
 }
 
