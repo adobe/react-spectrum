@@ -10,16 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, DateFormatter, getLocalTimeZone, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, DateFormatter, getLocalTimeZone, now, Time} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 // @ts-ignore
+import {fromCalendarToIncompleteDate, toCalendar, toIncompleteDate, toIncompleteDateTime, toIncompleteZonedDateTime} from './conversion';
 import i18nMessages from '../intl/*.json';
+import {IncompleteDate, IncompleteDateTime, IncompleteZonedDateTime} from './IncompleteDate';
 import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
 import {mergeValidation, VALID_VALIDITY_STATE} from '@react-stately/form';
 import {RangeValue, ValidationResult} from '@react-types/shared';
 import {useState} from 'react';
 
 const dictionary = new LocalizedStringDictionary(i18nMessages);
+type IncompleteValue = IncompleteDate |  IncompleteDateTime | IncompleteZonedDateTime
 
 function getLocale() {
   // Match browser language setting here, NOT react-aria's I18nProvider, so that we match other browser-provided
@@ -223,9 +226,10 @@ export function convertValue(value: DateValue | null | undefined, calendar: Cale
 }
 
 
-export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): DateValue {
+export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): IncompleteValue {
   if (placeholderValue) {
-    return convertValue(placeholderValue, calendar)!;
+    const v =  convertValue(placeholderValue, calendar) as DateValue;
+    return fromCalendarToIncompleteDate(v);
   }
 
   let date = toCalendar(now(timeZone ?? getLocalTimeZone()).set({
@@ -236,14 +240,14 @@ export function createPlaceholderDate(placeholderValue: DateValue | null | undef
   }), calendar);
 
   if (granularity === 'year' || granularity === 'month' || granularity === 'day') {
-    return toCalendarDate(date);
+    return toIncompleteDate(date);
   }
 
   if (!timeZone) {
-    return toCalendarDateTime(date);
+    return toIncompleteDateTime(date);
   }
 
-  return date;
+  return toIncompleteZonedDateTime(date);
 }
 
 export function useDefaultProps(v: DateValue | null, granularity: Granularity | undefined): [Granularity, string | undefined] {
