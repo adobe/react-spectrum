@@ -1861,4 +1861,40 @@ describe('ListBox', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  if (React.version.startsWith('19')) {
+    it('supports Activity', async () => {
+      function ActivityListBox() {
+        let [mode, setMode] = React.useState('hidden');
+
+        return (
+          <>
+            <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
+              Set {mode === 'hidden' ? 'visible' : 'hidden'}
+            </Button>
+
+            <React.Activity mode={mode}>
+              <p>List should be visible</p>
+
+              <ListBox aria-label="Activity Listbox">
+                <ListBoxItem>Item 1</ListBoxItem>
+                <ListBoxItem>Item 2</ListBoxItem>
+                <ListBoxItem>Item 3</ListBoxItem>
+                <ListBoxItem>Item 4</ListBoxItem>
+                <ListBoxItem>Item 5</ListBoxItem>
+              </ListBox>
+            </React.Activity>
+          </>
+        );
+      }
+
+      let {getAllByRole, getByRole, queryAllByRole} = render(<ActivityListBox />);
+      let button = getByRole('button');
+      expect(queryAllByRole('option')).toHaveLength(0);
+      await user.click(button);
+      expect(getAllByRole('option')).toHaveLength(5);
+      await user.click(button);
+      expect(queryAllByRole('option')).toHaveLength(0);
+    });
+  }
 });

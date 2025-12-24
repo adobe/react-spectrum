@@ -641,4 +641,42 @@ describe('Tabs', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  if (React.version.startsWith('19')) {
+    it('supports Activity', async () => {
+      function ActivityTabs() {
+        let [mode, setMode] = React.useState('hidden');
+
+        return (
+          <>
+            <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
+              Set {mode === 'hidden' ? 'visible' : 'hidden'}
+            </Button>
+            <React.Activity mode={mode}>
+              <Tabs>
+                <TabList aria-label="Test">
+                  <Tab id="a">A</Tab>
+                  <Tab id="b">B</Tab>
+                  <TooltipTrigger>
+                    <Tab id="c">C</Tab>
+                    <Tooltip>Test</Tooltip>
+                  </TooltipTrigger>
+                </TabList>
+                <TabPanel id="a">A</TabPanel>
+                <TabPanel id="b">B</TabPanel>
+                <TabPanel id="c">C</TabPanel>
+              </Tabs>
+            </React.Activity>
+          </>
+        );
+      }
+
+      let {getByRole, getAllByRole, queryAllByRole} = render(<ActivityTabs />);
+
+      let button = getByRole('button');
+      expect(queryAllByRole('tab')).toHaveLength(0);
+      await user.click(button);
+      expect(getAllByRole('tab')).toHaveLength(3);
+    });
+  }
 });
