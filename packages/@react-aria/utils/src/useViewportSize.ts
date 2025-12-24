@@ -66,6 +66,8 @@ export function useViewportSize(): ViewportSize {
       }
     };
 
+    onResize();
+
     window.addEventListener('blur', onBlur, true);
 
     if (!visualViewport) {
