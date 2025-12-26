@@ -1116,6 +1116,79 @@ describe('GridList', () => {
     });
   });
 
+  describe('selectOnFocus', () => {
+    it('should select on focus by default when selectionBehavior="replace"', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(
+        <GridList aria-label="Test" selectionMode="single" selectionBehavior="replace" onSelectionChange={onSelectionChange}>
+          <GridListItem id="cat">Cat</GridListItem>
+          <GridListItem id="dog">Dog</GridListItem>
+          <GridListItem id="kangaroo">Kangaroo</GridListItem>
+        </GridList>
+      );
+      let items = getAllByRole('row');
+
+      await user.tab();
+      expect(document.activeElement).toBe(items[0]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['cat']));
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(items[1]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog']));
+    });
+
+    it('should not select on focus when selectOnFocus={false}', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(
+        <GridList aria-label="Test" selectionMode="single" selectionBehavior="replace" selectOnFocus={false} onSelectionChange={onSelectionChange}>
+          <GridListItem id="cat">Cat</GridListItem>
+          <GridListItem id="dog">Dog</GridListItem>
+          <GridListItem id="kangaroo">Kangaroo</GridListItem>
+        </GridList>
+      );
+      let items = getAllByRole('row');
+
+      await user.tab();
+      expect(document.activeElement).toBe(items[0]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(items[1]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      // Selection should still work on explicit press
+      await user.keyboard(' ');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['dog']));
+    });
+
+    it('should not select on focus when selectOnFocus={false} with multiple selection', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(
+        <GridList aria-label="Test" selectionMode="multiple" selectionBehavior="replace" selectOnFocus={false} onSelectionChange={onSelectionChange}>
+          <GridListItem id="cat">Cat</GridListItem>
+          <GridListItem id="dog">Dog</GridListItem>
+          <GridListItem id="kangaroo">Kangaroo</GridListItem>
+        </GridList>
+      );
+      let items = getAllByRole('row');
+
+      await user.tab();
+      expect(document.activeElement).toBe(items[0]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(items[1]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(items[2]);
+      expect(onSelectionChange).not.toHaveBeenCalled();
+    });
+  });
+
   describe('shouldSelectOnPressUp', () => {
     it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
       let onSelectionChange = jest.fn();
