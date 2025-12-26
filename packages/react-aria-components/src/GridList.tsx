@@ -93,7 +93,12 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid'
+  layout?: 'stack' | 'grid',
+  /**
+   * Whether selection should occur automatically on focus.
+   * @default true (when selectionBehavior is 'replace')
+   */
+  selectOnFocus?: boolean
 }
 
 
