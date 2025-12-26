@@ -31,3 +31,17 @@ export function isShadowRoot(node: Node | null): node is ShadowRoot {
     node.nodeType === Node.DOCUMENT_FRAGMENT_NODE &&
     'host' in node;
 }
+
+/**
+ * Indicates whether the current environment provides a DOM.
+ * Used to guard access to document and window in non-DOM environments.
+ */
+
+export function hasDOM(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined' &&
+    !!document &&
+    !!document.body
+  );
+}
