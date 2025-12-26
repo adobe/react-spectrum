@@ -16,7 +16,7 @@ import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
 import {MouseEvent, useRef} from 'react';
-import {SelectionManager} from '@react-stately/selection';
+import {MultipleSelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -98,7 +98,7 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
   'aria-controls'?: string,
 
   /** Override of the selection manager. By default, `state.selectionManager` is used. */
-  selectionManager?: SelectionManager
+  selectionManager?: MultipleSelectionManager
 }
 
 /**

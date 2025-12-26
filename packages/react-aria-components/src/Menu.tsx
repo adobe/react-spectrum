@@ -32,7 +32,7 @@ import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
-import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionManager, MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
@@ -58,7 +58,7 @@ import {TextContext} from './Text';
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
-const SelectionManagerContext = createContext<SelectionManager | null>(null);
+const SelectionManagerContext = createContext<MultipleSelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children: ReactNode
@@ -304,9 +304,9 @@ export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection 
 // A subclass of SelectionManager that forwards focus-related properties to the parent,
 // but has its own local selection state.
 class GroupSelectionManager extends SelectionManager {
-  private parent: SelectionManager;
+  private parent: MultipleSelectionManager;
 
-  constructor(parent: SelectionManager, state: MultipleSelectionState) {
+  constructor(parent: MultipleSelectionManager, state: MultipleSelectionState) {
     super(parent.collection, state);
     this.parent = parent;
   }
