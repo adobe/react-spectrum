@@ -446,4 +446,76 @@ describe('calculatePosition', function () {
       document.body.removeChild(target);
     });
   });
+
+  describe('visualViewport larger than clientWidth (scrollbar gutter issue)', () => {
+    let clientWidthSpy;
+
+    afterEach(() => {
+      if (clientWidthSpy) {
+        clientWidthSpy.mockRestore();
+      }
+    });
+
+    it('caps width at clientWidth', () => {
+      // Mock clientWidth to be smaller than visualViewport
+      clientWidthSpy = jest.spyOn(document.documentElement, 'clientWidth', 'get').mockImplementation(() => 985);
+
+      // Mock visualViewport
+      window.visualViewport = {
+        width: 1000,
+        height: 600,
+        offsetLeft: 0,
+        offsetTop: 0,
+        pageLeft: 0,
+        pageTop: 0,
+        scale: 1,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+        onresize: null,
+        onscroll: null
+      } as VisualViewport;
+
+      const target = document.createElement('div');
+      const overlayNode = document.createElement('div');
+      // Use body as boundary to trigger the specific code path
+      const container = document.body;
+
+      // Setup target position near the right edge
+      // Target at left=900, width=50. Center is 925.
+      jest.spyOn(target, 'getBoundingClientRect').mockImplementation(() => ({
+        top: 0, left: 900, width: 50, height: 50, right: 950, bottom: 50, x: 900, y: 0, toJSON: () => { }
+      }));
+
+      // Setup overlay size
+      // Width=200.
+      jest.spyOn(overlayNode, 'getBoundingClientRect').mockImplementation(() => ({
+        top: 0, left: 0, width: 200, height: 200, right: 200, bottom: 200, x: 0, y: 0, toJSON: () => { }
+      }));
+      jest.spyOn(overlayNode, 'offsetWidth', 'get').mockImplementation(() => 200);
+      jest.spyOn(overlayNode, 'offsetHeight', 'get').mockImplementation(() => 200);
+
+      let result = calculatePosition({
+        placement: 'bottom',
+        overlayNode,
+        targetNode: target,
+        scrollNode: overlayNode,
+        padding: 0,
+        shouldFlip: false,
+        boundaryElement: container,
+        offset: 0,
+        crossOffset: 0,
+        arrowSize: 0
+      });
+
+      // Expected calculation:
+      // Boundary width should be capped at 985 (clientWidth) instead of 1000 (visualViewport).
+      // Overlay width is 200.
+      // Max allowed left position = 985 - 200 = 785.
+      // Target center is 925. Centered overlay would be 925 - 100 = 825.
+      // 825 > 785, so it should be clamped to 785.
+
+      expect(result.position.left).toBe(785);
+    });
+  });
 });
