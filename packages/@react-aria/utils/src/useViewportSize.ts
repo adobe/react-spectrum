@@ -55,7 +55,7 @@ export function useViewportSize(): ViewportSize {
         frame = requestAnimationFrame(() => {
           if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
             setSize(size => {
-              let newSize = {width: window.innerWidth, height: window.innerHeight};
+              let newSize = {width: document.documentElement.clientWidth, height: document.documentElement.clientHeight};
               if (newSize.width === size.width && newSize.height === size.height) {
                 return size;
               }
@@ -91,7 +91,7 @@ export function useViewportSize(): ViewportSize {
 function getViewportSize(): ViewportSize {
   return {
     // Multiply by the visualViewport scale to get the "natural" size, unaffected by pinch zooming.
-    width: visualViewport ? visualViewport.width * visualViewport.scale : window.innerWidth,
-    height: visualViewport ? visualViewport.height * visualViewport.scale : window.innerHeight
+    width: visualViewport ? visualViewport.width * visualViewport.scale : document.documentElement.clientWidth,
+    height: visualViewport ? visualViewport.height * visualViewport.scale : document.documentElement.clientHeight
   };
 }
