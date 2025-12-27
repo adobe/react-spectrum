@@ -146,39 +146,33 @@ export function useSpinButton(
     clearAsync();
   }, [clearAsync]);
 
-  const onIncrementPressStart = useEffectEvent(
-    (initialStepDelay: number) => {
-      clearAsyncEvent();
-      isSpinning.current = true;
+  const stepUp = useEffectEvent(() => {
+    if (maxValue === undefined || isNaN(maxValue) || value === undefined || isNaN(value) || value < maxValue) {
       onIncrement?.();
-      // Start spinning after initial delay
-      _async.current = window.setTimeout(
-        () => {
-          if ((maxValue === undefined || isNaN(maxValue)) || (value === undefined || isNaN(value)) || value < maxValue) {
-            onIncrementPressStart(60);
-          }
-        },
-        initialStepDelay
-      );
+      onIncrementPressStart(60);
     }
-  );
+  });
 
-  const onDecrementPressStart = useEffectEvent(
-    (initialStepDelay: number) => {
-      clearAsyncEvent();
-      isSpinning.current = true;
+  const onIncrementPressStart = useEffectEvent((initialStepDelay: number) => {
+    clearAsyncEvent();
+    isSpinning.current = true;
+    // Start spinning after initial delay
+    _async.current = window.setTimeout(stepUp, initialStepDelay);
+  });
+
+  const stepDown = useEffectEvent(() => {
+    if (minValue === undefined || isNaN(minValue) || value === undefined || isNaN(value) || value > minValue) {
       onDecrement?.();
-      // Start spinning after initial delay
-      _async.current = window.setTimeout(
-        () => {
-          if ((minValue === undefined || isNaN(minValue)) || (value === undefined || isNaN(value)) || value > minValue) {
-            onDecrementPressStart(60);
-          }
-        },
-        initialStepDelay
-      );
+      onDecrementPressStart(60);
     }
-  );
+  });
+
+  const onDecrementPressStart = useEffectEvent((initialStepDelay: number) => {
+    clearAsyncEvent();
+    isSpinning.current = true;
+    // Start spinning after initial delay
+    _async.current = window.setTimeout(stepDown, initialStepDelay);
+  });
 
   let cancelContextMenu = (e) => {
     e.preventDefault();
@@ -195,19 +189,23 @@ export function useSpinButton(
   let [isIncrementPressed, setIsIncrementPressed] = useState<'touch' | 'mouse' | null>(null);
   useEffect(() => {
     if (isIncrementPressed === 'touch') {
+      onIncrement?.();
       onIncrementPressStart(60);
     } else if (isIncrementPressed) {
       onIncrementPressStart(400);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isIncrementPressed]);
 
   let [isDecrementPressed, setIsDecrementPressed] = useState<'touch' | 'mouse' | null>(null);
   useEffect(() => {
     if (isDecrementPressed === 'touch') {
+      onDecrement?.();
       onDecrementPressStart(60);
     } else if (isDecrementPressed) {
       onDecrementPressStart(400);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDecrementPressed]);
 
   return {
@@ -227,6 +225,7 @@ export function useSpinButton(
     incrementButtonProps: {
       onPressStart: (e) => {
         if (e.pointerType !== 'touch') {
+          onIncrement?.();
           setIsIncrementPressed('mouse');
         } else {
           if (_async.current) {
@@ -267,6 +266,7 @@ export function useSpinButton(
     decrementButtonProps: {
       onPressStart: (e) => {
         if (e.pointerType !== 'touch') {
+          onDecrement?.();
           setIsDecrementPressed('mouse');
         } else {
           if (_async.current) {
