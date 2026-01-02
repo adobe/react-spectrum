@@ -276,6 +276,28 @@ describe('RadioGroup', () => {
     expect(label).toHaveClass('readonly');
   });
 
+  it('should not trigger onPress when read only', async () => {
+    let onPress = jest.fn();
+    let className = ({isReadOnly}) => isReadOnly ? 'readonly' : '';
+    let {getByRole, getAllByRole} = renderGroup({isReadOnly: true, className}, {className, onPress});
+
+    let group = getByRole('radiogroup');
+    let label = getAllByRole('radio')[0].closest('label');
+
+    expect(group).toHaveAttribute('aria-readonly');
+    expect(group).toHaveClass('readonly');
+
+    expect(label).toHaveAttribute('data-readonly');
+    expect(label).toHaveClass('readonly');
+
+    let radios = getAllByRole('radio');
+    let radioA = radios[0];
+    let labelA = radioA.closest('label');
+
+    await user.click(labelA);
+    expect(onPress).not.toHaveBeenCalled();
+  });
+
   it('should support invalid state', () => {
     let className = ({isInvalid}) => isInvalid ? 'invalid' : null;
     let {getByRole, getAllByRole} = renderGroup({isInvalid: true, className}, {className});

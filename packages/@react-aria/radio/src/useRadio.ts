@@ -86,7 +86,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     onPressChange,
     onPressUp,
     onClick,
-    isDisabled,
+    isDisabled: isDisabled || state.isReadOnly,
     onPress(e) {
       onPress?.(e);
       state.setSelectedValue(value);
