@@ -46,7 +46,7 @@ const ExampleRender = (args: DropZoneProps): ReactElement => {
             Drag and drop your file
           </Heading>
           <Content>
-            Or, select a file from your computer
+            Or, paste or select a file from your computer
           </Content>
         </IllustratedMessage>
       </DropZone>
@@ -75,7 +75,7 @@ const ExampleWithFileTriggerRender = (args: DropZoneProps): ReactElement => {
             Drag and drop your file
           </Heading>
           <Content>
-            Or, select a file from your computer
+            Or, paste or select a file from your computer
           </Content>
           <ButtonGroup>
             <FileTrigger
@@ -111,7 +111,7 @@ const LongBannerRender = (args: DropZoneProps): ReactElement => {
             Drag and drop your file
           </Heading>
           <Content>
-            Or, select a file from your computer
+            Or, paste or select a file from your computer
           </Content>
         </IllustratedMessage>
       </DropZone>
@@ -175,7 +175,7 @@ const GradientExample = (args: DropZoneProps): ReactElement => {
             Drag and drop your file
           </Heading>
           <Content>
-            Or, select a file from your computer
+            Or, paste or select a file from your computer
           </Content>
         </IllustratedMessage>
       </DropZone>
