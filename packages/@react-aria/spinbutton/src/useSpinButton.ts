@@ -20,6 +20,8 @@ import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
+const noop = () => {};
+
 export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
   onIncrement?: () => void,
@@ -146,32 +148,35 @@ export function useSpinButton(
     clearAsync();
   }, [clearAsync]);
 
-  const stepUp = useEffectEvent(() => {
+  const onIncrementEvent = useEffectEvent(onIncrement ?? noop);
+  const onDecrementEvent = useEffectEvent(onDecrement ?? noop);
+
+  const stepUpEvent = useEffectEvent(() => {
     if (maxValue === undefined || isNaN(maxValue) || value === undefined || isNaN(value) || value < maxValue) {
-      onIncrement?.();
-      onIncrementPressStart(60);
+      onIncrementEvent();
+      onIncrementPressStartEvent(60);
     }
   });
 
-  const onIncrementPressStart = useEffectEvent((initialStepDelay: number) => {
+  const onIncrementPressStartEvent = useEffectEvent((initialStepDelay: number) => {
     clearAsyncEvent();
     isSpinning.current = true;
     // Start spinning after initial delay
-    _async.current = window.setTimeout(stepUp, initialStepDelay);
+    _async.current = window.setTimeout(stepUpEvent, initialStepDelay);
   });
 
-  const stepDown = useEffectEvent(() => {
+  const stepDownEvent = useEffectEvent(() => {
     if (minValue === undefined || isNaN(minValue) || value === undefined || isNaN(value) || value > minValue) {
-      onDecrement?.();
-      onDecrementPressStart(60);
+      onDecrementEvent();
+      onDecrementPressStartEvent(60);
     }
   });
 
-  const onDecrementPressStart = useEffectEvent((initialStepDelay: number) => {
+  const onDecrementPressStartEvent = useEffectEvent((initialStepDelay: number) => {
     clearAsyncEvent();
     isSpinning.current = true;
     // Start spinning after initial delay
-    _async.current = window.setTimeout(stepDown, initialStepDelay);
+    _async.current = window.setTimeout(stepDownEvent, initialStepDelay);
   });
 
   let cancelContextMenu = (e) => {
@@ -189,23 +194,19 @@ export function useSpinButton(
   let [isIncrementPressed, setIsIncrementPressed] = useState<'touch' | 'mouse' | null>(null);
   useEffect(() => {
     if (isIncrementPressed === 'touch') {
-      onIncrement?.();
-      onIncrementPressStart(60);
+      onIncrementPressStartEvent(60);
     } else if (isIncrementPressed) {
-      onIncrementPressStart(400);
+      onIncrementPressStartEvent(400);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isIncrementPressed]);
 
   let [isDecrementPressed, setIsDecrementPressed] = useState<'touch' | 'mouse' | null>(null);
   useEffect(() => {
     if (isDecrementPressed === 'touch') {
-      onDecrement?.();
-      onDecrementPressStart(60);
+      onDecrementPressStartEvent(60);
     } else if (isDecrementPressed) {
-      onDecrementPressStart(400);
+      onDecrementPressStartEvent(400);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDecrementPressed]);
 
   return {
