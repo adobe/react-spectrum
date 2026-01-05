@@ -19,7 +19,6 @@ import {forwardRefType, Key, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);
@@ -114,14 +113,6 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
     return document.getCollection();
   }, [document]);
   let collection = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  useLayoutEffect(() => {
-    document.isMounted = true;
-    return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by
-      // React calling removeChild on every item in the collection.
-      document.isMounted = false;
-    };
-  }, [document]);
   return {collection, document};
 }
 
@@ -174,8 +165,9 @@ function useSSRCollectionNode<T extends Element>(CollectionNodeClass: Collection
   return <CollectionNodeClass.type ref={itemRef}>{children}</CollectionNodeClass.type>;
 }
 
-export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<T>) => ReactElement | null;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>) => ReactElement | null): (props: P & React.RefAttributes<E>) => ReactElement | null;
+export function createLeafComponent<T extends object, P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement | null): (props: P & React.RefAttributes<E>) => ReactElement | null;
 export function createLeafComponent<P extends object, E extends Element>(CollectionNodeClass: CollectionNodeClass<any> | string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement | null): (props: P & React.RefAttributes<any>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
@@ -230,7 +222,7 @@ const CollectionContext = createContext<CachedChildrenOptions<unknown> | null>(n
 export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   let dependencies = (ctx?.dependencies || []).concat(props.dependencies);
-  let idScope = props.idScope || ctx?.idScope;
+  let idScope = props.idScope ?? ctx?.idScope;
   let children = useCollectionChildren({
     ...props,
     idScope,

@@ -4,6 +4,9 @@ export default Layout;
 import {RangeCalendar} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['calendar'];
+export const description = 'Allows a user to select a contiguous range of dates.';
+
 # RangeCalendar
 
 <PageDescription>{docs.exports.RangeCalendar.description}</PageDescription>
@@ -21,11 +24,12 @@ import docs from 'docs:@react-spectrum/s2';
     }
   }}
   importSource="@react-spectrum/s2"
-  type="s2" />
+  type="s2"
+  wide />
 
 ## Value
 
-Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](../internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
+Use the `value` or `defaultValue` prop to set the selected date range, using objects in the [@internationalized/date](react-aria:internationalized/date/) package. This library supports parsing date strings in multiple formats, manipulation across international calendar systems, time zones, etc.
 
 ```tsx render
 "use client";
@@ -78,7 +82,7 @@ import {parseDate} from '@internationalized/date';
 
 ### Custom calendar systems
 
-`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+`RangeCalendar` also supports custom calendar systems that implement custom business rules, for example a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. See the [@internationalized/date docs](react-aria:internationalized/date/Calendar#custom-calendars) for an example implementation.
 
 ```tsx render
 "use client";
@@ -86,13 +90,15 @@ import type {AnyCalendarDate} from '@internationalized/date';
 import {CalendarDate, startOfWeek, toCalendar, GregorianCalendar} from '@internationalized/date';
 import {RangeCalendar} from '@react-spectrum/s2';
 
-export default (
-  <RangeCalendar
-    firstDayOfWeek="sun"
-    ///- begin highlight -///
-    createCalendar={() => new Custom454()} />
-    ///- end highlight -///
-);
+export default function Example() {
+  return (
+    <RangeCalendar
+      firstDayOfWeek="sun"
+      ///- begin highlight -///
+      createCalendar={() => new Custom454()} />
+      ///- end highlight -///
+  );
+}
 
 // See @internationalized/date docs linked above.
 ///- begin collapse -///
@@ -148,12 +154,10 @@ Use the `minValue` and `maxValue` props to set the valid date range. The `isDate
 ```tsx render docs={docs.exports.RangeCalendar} links={docs.links} props={['allowsNonContiguousRanges']} wide type="s2"
 "use client";
 import {today, getLocalTimeZone} from '@internationalized/date';
-import {useLocale} from 'react-aria';
 import {RangeCalendar} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example(props) {
-  let {locale} = useLocale();
   let now = today(getLocalTimeZone());
   let [range, setRange] = useState({
     start: now.add({days: 6}),
@@ -195,6 +199,7 @@ Use the `focusedValue` or `defaultFocusedValue` prop to control which date is fo
 "use client";
 import {RangeCalendar, ActionButton} from '@react-spectrum/s2';
 import {CalendarDate, today, getLocalTimeZone} from '@internationalized/date';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useState} from 'react';
 
 function Example() {
@@ -202,7 +207,7 @@ function Example() {
   let [focusedDate, setFocusedDate] = useState(defaultDate);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8}}>
+    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8})}>
       <ActionButton onPress={() => setFocusedDate(today(getLocalTimeZone()))}>
         Today
       </ActionButton>

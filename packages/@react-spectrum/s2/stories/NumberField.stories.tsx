@@ -33,7 +33,11 @@ const meta: Meta<typeof NumberField> = {
     label: {control: {type: 'text'}},
     description: {control: {type: 'text'}},
     errorMessage: {control: {type: 'text'}},
-    contextualHelp: {table: {disable: true}}
+    contextualHelp: {table: {disable: true}},
+    placeholder: {control: {type: 'text'}}
+  },
+  args: {
+    placeholder: 'How many items?'
   },
   tags: ['autodocs'],
   title: 'NumberField'
@@ -102,4 +106,3 @@ export const ContextualHelpExample: Story = {
     label: 'Quantity'
   }
 };
-

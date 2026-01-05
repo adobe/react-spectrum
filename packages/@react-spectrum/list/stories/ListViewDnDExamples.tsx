@@ -83,6 +83,7 @@ let itemList2 = [
   {id: '12', type: 'item', textValue: 'Item Twelve'}
 ];
 
+let randomDragTypeReorderExample = `keys-${Math.random().toString(36).slice(2)}`;
 export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOptions & {getAllowedDropOperationsAction?: () => void}): JSX.Element {
   let {items, onDrop, onDragStart, onDragEnd, disabledKeys = ['2'], ...otherprops} = props;
   let list = useListData({
@@ -90,7 +91,7 @@ export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOp
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeReorderExample, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
     if (target.dropPosition === 'before') {
@@ -166,6 +167,7 @@ export function ReorderExample(props: SpectrumListViewProps<any> & DragAndDropOp
   );
 }
 
+let randomDragTypeDragIntoItemExample = `keys-${Math.random().toString(36).slice(2)}`;
 export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps<any>, dragHookOptions?: DragAndDropOptions, dropHookOptions?: DragAndDropOptions, getAllowedDropOperationsAction?: () => void}): JSX.Element {
   let {
     listViewProps = {},
@@ -193,7 +195,7 @@ export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps
   let disabledKeys: Key[] = ['2', '7'];
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeDragIntoItemExample, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
     let folderItem = list.getItem(target.key)!;
@@ -274,6 +276,8 @@ export function DragIntoItemExample(props: {listViewProps: SpectrumListViewProps
   );
 }
 
+let randomDragTypeDragBetweenListsExample = `keys-${Math.random().toString(36).slice(2)}`;
+
 export function DragBetweenListsExample(props: SpectrumListViewProps<any> & DragAndDropOptions & {getAllowedDropOperationsAction?: () => void, items1?: any[], items2?: any[]}): JSX.Element {
   let {onDragStart, onDragEnd, onDrop} = props;
   let onDropAction = chain(action('onDrop'), onDrop);
@@ -311,7 +315,7 @@ export function DragBetweenListsExample(props: SpectrumListViewProps<any> & Drag
   };
 
   // Use a random drag type so the items can only be reordered within the two lists and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeDragBetweenListsExample, []);
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems(keys) {

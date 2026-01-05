@@ -1,31 +1,86 @@
 'use client';
 
-import {ComponentCardItem, ComponentCardView} from './ComponentCardView';
-import {Content, Heading, IllustratedMessage, Picker, pressScale, SearchField, Tab, TabList, TabPanel, Tabs, Tag, TagGroup} from '@react-spectrum/s2';
-import {focusRing, size, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {type Library, TAB_DEFS} from './SearchMenu';
-import {Link} from 'react-aria-components';
-// eslint-disable-next-line monorepo/no-internal-import
-import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-import type {PageProps} from '@parcel/rsc';
-import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {BaseLink} from './Link';
+import {Disclosure, DisclosurePanel, DisclosureTitle, Picker, pressScale} from '@react-spectrum/s2';
+import {focusRing, size, space, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getLibraryFromPage} from './library';
+import LinkOutIcon from '../../../@react-spectrum/s2/ui-icons/LinkOut';
+import type {Page} from '@parcel/rsc';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import {usePendingPage, useRouter} from './Router';
 
-export function Nav({pages, currentPage}: PageProps) {
-  let currentLibrary = currentPage.url.match(/\/(react-aria|s2)\//)?.[1];
-  let sections = new Map();
+type SectionValue = Page[] | Map<string, Page[]>;
+
+function isSectionMap(value: SectionValue): value is Map<string, Page[]> {
+  return value instanceof Map;
+}
+
+export function Nav() {
+  let {pages, currentPage} = useRouter();
+  let [maskSize, setMaskSize] = useState(0);
+  let displayPage = usePendingPage();
+
+  if (currentPage.exports?.hideNav) {
+    return null;
+  }
+
+  let currentLibrary = getLibraryFromPage(displayPage);
+  let sections = new Map<string, SectionValue>();
+  let sectionLibrary = new Map();
   for (let page of pages) {
-    let library = page.url.match(/\/(react-aria|s2)\//)?.[1];
-    if (library !== currentLibrary) {
+    if (page.exports?.hideNav || page.exports?.omitFromNav) {
+      continue;
+    }
+
+    let library = getLibraryFromPage(page);
+
+    if (currentLibrary === 'react-spectrum' && library !== currentLibrary) {
+      continue;
+    }
+
+    // If the current library is React Aria, we only want to skip pages in React Spectrum so that include Internationalized pages in the side nav
+    if (currentLibrary === 'react-aria' && library === 'react-spectrum') {
       continue;
     }
 
     let section = page.exports?.section ?? 'Components';
-    let sectionPages = sections.get(section) ?? [];
-    sectionPages.push(page);
-    sections.set(section, sectionPages);
+    let group = page.exports?.group ?? undefined;
+    if (section === '' || page.exports?.isSubpage) {
+      continue;
+    }
+
+    if (group && section) {
+      let value = sections.get(group);
+      let groupMap: Map<string, Page[]>;
+      if (value instanceof Map) {
+        groupMap = value;
+      } else {
+        groupMap = new Map<string, Page[]>();
+      }
+      let groupPages = groupMap.get(section) ?? [];
+      groupPages.push(page);
+      groupMap.set(section, groupPages);
+      sections.set(group, groupMap);
+    } else if (section) {
+      let value = sections.get(section);
+      let sectionPages = Array.isArray(value) ? value : [];
+      sectionPages.push(page);
+      sections.set(section, sectionPages);
+    }
+
+    sectionLibrary.set(section, library);
   }
 
-  let [maskSize, setMaskSize] = useState(0);
+  let sortedSections = [...sections].sort((a, b) => {
+    if (a[0] === 'Overview') {
+      return -1;
+    }
+    if (b[0] === 'Overview') {
+      return 1;
+    }
+
+    return a[0].localeCompare(b[0]);
+  });
 
   return (
     <nav
@@ -40,318 +95,109 @@ export function Nav({pages, currentPage}: PageProps) {
         maxHeight: 'calc(100vh - 72px)',
         overflow: 'auto',
         paddingX: 12,
-        minWidth: 180,
+        minWidth: 200,
         display: {
           default: 'none',
           lg: 'block'
         }
       })}>
-      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
-        <SideNavSection title={name} key={name}>
-          <SideNav>
-            {pages.sort((a, b) => title(a).localeCompare(title(b))).map(page => (
-              <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{title(page)}</SideNavLink></SideNavItem>
-            ))}
-          </SideNav>
-        </SideNavSection>
-      ))}
+      {sortedSections.map(([name, pages]) => {
+        let nav = <></>;
+        if (isSectionMap(pages)) {
+          nav = (
+            <>
+              {Array.from(pages.entries()).map(([section, items]) => (
+                <SideNavSection title={section} key={section}>
+                  <SideNav>
+                    {items
+                      .sort((a, b) => {
+                        const aIntro = isIntroduction(a);
+                        const bIntro = isIntroduction(b);
+                        if (aIntro && !bIntro) {
+                          return -1;
+                        }
+                        if (!aIntro && bIntro) {
+                          return 1;
+                        }
+                        return title(a).localeCompare(title(b));
+                      })
+                      .filter(page => !page.exports?.isSubpage)
+                      .map(page => (
+                        <SideNavItem key={page.url}>
+                          <SideNavLink href={page.url} page={page} isSelected={page.url === displayPage.url}>
+                            {title(page)}
+                          </SideNavLink>
+                        </SideNavItem>
+                      ))}
+                  </SideNav>
+                </SideNavSection>
+              ))}
+            </>
+          );
+        } else {
+          nav = (
+            <SideNav>
+              {pages
+                .sort((a, b) => {
+                  let aIntro = isIntroduction(a);
+                  let bIntro = isIntroduction(b);
+                  if (aIntro && !bIntro) {
+                    return -1;
+                  }
+                  if (!aIntro && bIntro) {
+                    return 1;
+                  }
+                  return title(a).localeCompare(title(b));
+                })
+                .filter(page => !page.exports?.isSubpage)
+                .map(page => (
+                  <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === displayPage.url}>{title(page)}</SideNavLink></SideNavItem>
+              ))}
+            </SideNav>
+          );
+        }
+
+        if (name === 'Overview' && Array.isArray(pages)) {
+          return (
+            <div className={style({paddingStart: space(26)})} key={name}>
+              <SideNavSection title={name}>
+                <SideNav>
+                  {pages
+                    .sort((a, b) => {
+                      const aIntro = a.url.endsWith('getting-started');
+                      const bIntro = b.url.endsWith('getting-started');
+                      if (aIntro && !bIntro) {
+                        return -1;
+                      }
+                      if (!aIntro && bIntro) {
+                        return 1;
+                      }
+                      return title(a).localeCompare(title(b));
+                    })
+                    .filter(page => !page.exports?.isSubpage)
+                    .map(page => (
+                      <SideNavItem key={page.url}>
+                        <SideNavLink href={page.url} isSelected={page.url === displayPage.url}>
+                          {title(page)}
+                        </SideNavLink>
+                      </SideNavItem>
+                    ))}
+                </SideNav>
+              </SideNavSection>
+            </div>
+          );
+        }
+        return (
+          <Disclosure id={name} key={name} isQuiet density="spacious" defaultExpanded={name === 'Components' || name === currentPage.exports?.section} styles={style({minWidth: 185})}>
+            <DisclosureTitle>{name}</DisclosureTitle>
+            <DisclosurePanel>
+              <div className={style({paddingStart: space(18)})}>{nav}</div>
+            </DisclosurePanel>
+          </Disclosure>
+        );
+      }
+      )}
     </nav>
-  );
-}
-
-export function MobileNav({pages, currentPage}: PageProps) {
-  let [searchFocused, setSearchFocused] = useState(false);
-  let [searchValue, setSearchValue] = useState('');
-  let [selectedSection, setSelectedSection] = useState<string | undefined>(undefined);
-  let prevSearchWasEmptyRef = useRef<boolean>(true);
-  let headerRef = useRef<HTMLDivElement>(null);
-  let scrollContainerRef = useRef<HTMLDivElement>(null);
-  let tabListRef = useRef<HTMLDivElement>(null);
-  let [tabListHeight, setTabListHeight] = useState(0);
-
-  let getCurrentLibrary = (page: any): Library => {
-    if (page.url.includes('react-aria')) {
-      return 'react-aria';
-    } else if (page.url.includes('react-internationalized')) {
-      return 'internationalized';
-    }
-    return 'react-spectrum';
-  };
-
-  let [selectedLibrary, setSelectedLibrary] = useState<Library>(getCurrentLibrary(currentPage));
-
-  let getSectionsForLibrary = useCallback((libraryId: string) => {
-    let sectionsMap = new Map();
-    
-    let filteredPages = pages.filter(page => {
-      let pageLibrary: 'react-spectrum' | 'react-aria' | 'internationalized' = 'react-spectrum';
-      if (page.url.includes('react-aria')) {
-        pageLibrary = 'react-aria';
-      } else if (page.url.includes('react-internationalized')) {
-        pageLibrary = 'internationalized';
-      }
-      
-      return pageLibrary === libraryId;
-    });
-
-    for (let page of filteredPages) {
-      let section = page.exports?.section ?? 'Components';
-      let sectionPages = sectionsMap.get(section) ?? [];
-      sectionPages.push(page);
-      sectionsMap.set(section, sectionPages);
-    }
-    return sectionsMap;
-  }, [pages]);
-
-  let currentLibrarySectionArray = useMemo(() => {
-    let librarySections = getSectionsForLibrary(selectedLibrary);
-    let sectionArray = [...librarySections.keys()];
-    // Ensure order matches TagGroup: 'Components' first, then alphabetical
-    sectionArray.sort((a, b) => {
-      if (a === 'Components') {
-        return -1;
-      }
-      if (b === 'Components') {
-        return 1;
-      }
-      return a.localeCompare(b);
-    });
-    return sectionArray;
-  }, [getSectionsForLibrary, selectedLibrary]);
-  
-
-  useEffect(() => {
-      // Auto-select first section initially or when library changes
-    if (currentLibrarySectionArray.length > 0 && !selectedSection) {
-      setSelectedSection(currentLibrarySectionArray[0]);
-    }
-  }, [currentLibrarySectionArray, selectedSection]);
-
-  // Auto-select first section when switching libraries (if not focused on search field)
-  useEffect(() => {
-    if (currentLibrarySectionArray.length > 0 && !searchFocused) {
-      setSelectedSection(currentLibrarySectionArray[0]);
-    }
-  }, [selectedLibrary, currentLibrarySectionArray, searchFocused]);
-
-  useEffect(() => {
-    let measure = () => {
-      if (tabListRef.current) {
-        setTabListHeight(tabListRef.current.getBoundingClientRect().height);
-      }
-    };
-
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [selectedLibrary]);
-
-  let getOrderedLibraries = () => {
-    let allLibraries = (Object.keys(TAB_DEFS) as Library[]).map(id => ({id, label: TAB_DEFS[id].label}));
-
-    let currentLibId = getCurrentLibrary(currentPage);
-
-    // Move current library to first position
-    let currentLibraryIndex = allLibraries.findIndex(lib => lib.id === currentLibId);
-    if (currentLibraryIndex > 0) {
-      let currentLib = allLibraries.splice(currentLibraryIndex, 1)[0];
-      allLibraries.unshift(currentLib);
-    }
-
-    return allLibraries;
-  };
-
-  let libraries = getOrderedLibraries();
-
-  let handleSearchFocus = () => {
-    setSearchFocused(true);
-  };
-
-  let handleSearchBlur = () => {
-    if (searchValue === '') {
-      setSearchFocused(false);
-    }
-  };
-
-  let handleSearchChange = (value: string) => {
-    setSearchValue(value);
-    if (value === '' && !searchFocused) {
-      setSearchFocused(false);
-    }
-  };
-
-  let filterPages = (pages: any[], searchValue: string) => {
-    if (!searchValue.trim()) {
-      return pages;
-    }
-    
-    let searchLower = searchValue.toLowerCase();
-    return pages.filter(page => {
-      let pageTitle = title(page).toLowerCase();
-      return pageTitle.includes(searchLower);
-    });
-  };
-
-  let getSectionContent = (sectionName: string, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
-    let librarySections = getSectionsForLibrary(libraryId);
-    let pages = librarySections.get(sectionName) ?? [];
-    
-    let filteredPages = filterPages(pages, searchValue);
-    
-    return filteredPages
-      .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
-  };
-
-  let getAllContent = (libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
-    let librarySections = getSectionsForLibrary(libraryId);
-    let allPages = Array.from(librarySections.values()).flat();
-    let filteredPages = filterPages(allPages, searchValue);
-    return filteredPages
-      .sort((a, b) => title(a).localeCompare(title(b)))
-      .map(page => ({id: page.url.replace(/^\//, ''), name: title(page), href: page.url}));
-  };
-
-  let getItemsForSelection = (section: string | undefined, libraryId: string, searchValue: string = ''): ComponentCardItem[] => {
-    if (!section) {
-      return [];
-    }
-    if (section === 'all') {
-      return getAllContent(libraryId, searchValue);
-    }
-    return getSectionContent(section, libraryId, searchValue);
-  };
-
-  let getSectionNamesForLibrary = (libraryId: string) => {
-    let librarySections = getSectionsForLibrary(libraryId);
-    let sectionArray = [...librarySections.keys()];
-    
-    // Show 'Components' first
-    sectionArray.sort((a, b) => {
-      if (a === 'Components') {
-        return -1;
-      }
-      if (b === 'Components') {
-        return 1;
-      }
-      return a.localeCompare(b);
-    });
-    
-    return sectionArray;
-  };
-
-  let currentLibrarySections = getSectionNamesForLibrary(selectedLibrary);
-
-  let tags = useMemo(() => {
-    let base = currentLibrarySections.map(name => ({id: name, name}));
-    if (searchValue.trim().length > 0) {
-      return [{id: 'all', name: 'All'}, ...base];
-    }
-    return base;
-  }, [currentLibrarySections, searchValue]);
-
-  useEffect(() => {
-    let baseIds = currentLibrarySections;
-    let ids = searchValue.trim().length > 0 ? ['all', ...baseIds] : baseIds;
-    if (!selectedSection || !ids.includes(selectedSection)) {
-      setSelectedSection(ids[0]);
-    }
-  }, [currentLibrarySections, searchValue, selectedSection]);
-
-  // Auto-select All when search starts
-  useEffect(() => {
-    let isEmpty = searchValue.trim().length === 0;
-    if (prevSearchWasEmptyRef.current && !isEmpty) {
-      setSelectedSection('all');
-    }
-    prevSearchWasEmptyRef.current = isEmpty;
-  }, [searchValue]);
-
-
-  let handleTagSelection = (keys: any) => {
-    let key = [...keys][0] as string;
-    setSelectedSection(key);
-  };
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      // Ensure newly selected section starts at the top of the vertical scroll area
-      scrollContainerRef.current.scrollTo({top: 0, behavior: 'auto'});
-    }
-  }, [selectedSection, selectedLibrary]);
-
-  return (
-    <div className={style({minHeight: '100dvh', paddingBottom: 24, boxSizing: 'border-box'})}>
-      <Tabs 
-        aria-label="Libraries"
-        density="compact"
-        selectedKey={selectedLibrary}
-        onSelectionChange={(key) => {
-          let newLib = key as Library;
-          setSelectedLibrary(newLib);
-          if (!searchFocused) {
-            let nextSections = getSectionNamesForLibrary(newLib);
-            if (nextSections.length > 0) {
-              setSelectedSection(nextSections[0]);
-            }
-          }
-        }}
-        styles={style({marginX: 12, marginTop: 12})}>
-        <div ref={tabListRef} className={style({position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white'})}>
-          <TabList>
-            {libraries.map(library => (
-              <Tab key={library.id} id={library.id}>{library.label}</Tab>
-            ))}
-          </TabList>
-        </div>
-        {libraries.map(library => (
-          <TabPanel key={library.id} id={library.id}>
-            <div
-              ref={headerRef}
-              className={style({position: 'sticky', zIndex: 1, backgroundColor: 'white'})}
-              style={{top: tabListHeight}}>
-              <SearchField 
-                aria-label="Search" 
-                value={searchValue}
-                onChange={handleSearchChange}
-                onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
-                styles={style({marginY: 12})} />
-              <TagGroup
-                aria-label="Navigation sections" 
-                selectionMode="single" 
-                selectedKeys={selectedSection ? [selectedSection] : []}
-                onSelectionChange={handleTagSelection}
-                styles={style({margin: 12})}
-                items={tags}>
-                {tag => <Tag key={tag.id} id={tag.id}>{tag.name}</Tag>}
-              </TagGroup>
-            </div>
-            <div ref={scrollContainerRef}>
-              <ComponentCardView
-                items={getItemsForSelection(selectedSection, library.id, searchValue)}
-                ariaLabel="Pages"
-                size="S"
-                renderEmptyState={() => (
-                  <IllustratedMessage styles={style({margin: 32})}>
-                    <NoSearchResults />
-                    <Heading>No results</Heading>
-                    {searchValue.trim().length > 0 ? (
-                      <Content>
-                        No results found for <strong className={style({fontWeight: 'bold'})}>{searchValue}</strong> in {selectedLibrary}.
-                      </Content>
-                    ) : (
-                      <Content>
-                        No results found in {selectedLibrary}.
-                      </Content>
-                    )}
-                  </IllustratedMessage>
-                )} />
-            </div>
-          </TabPanel>
-        ))}
-      </Tabs>
-    </div>
   );
 }
 
@@ -359,9 +205,13 @@ function title(page) {
   return page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name;
 }
 
+function isIntroduction(page) {
+  return page.url.endsWith('/');
+}
+
 function SideNavSection({title, children}) {
   return (
-    <section className={style({marginBottom: 24})}>
+    <section className={style({marginBottom: 16})}>
       <div className={style({font: 'ui-sm', color: 'gray-600', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>{title}</div>
       {children}
     </section>
@@ -370,7 +220,7 @@ function SideNavSection({title, children}) {
 
 const SideNavContext = createContext('');
 
-export function SideNav({children}) {
+export function SideNav({children, isNested = false}) {
   return (
     <ul
       className={style({
@@ -380,13 +230,17 @@ export function SideNav({children}) {
           default: 0,
           ':is(li > ul)': 16
         },
+        paddingTop: {
+          default: 0,
+          isNested: 8
+        },
         margin: 0,
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
         width: 'full',
         boxSizing: 'border-box'
-      })}>
+      })({isNested})}>
       {children}
     </ul>
   );
@@ -403,10 +257,14 @@ export function SideNavItem(props) {
 export function SideNavLink(props) {
   let linkRef = useRef(null);
   let selected = useContext(SideNavContext);
+  let {isExternal, ...linkProps} = props;
+  
   return (
-    <Link
-      {...props}
+    <BaseLink
+      {...linkProps}
       ref={linkRef}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
       style={pressScale(linkRef)}
       className={style({
@@ -441,16 +299,22 @@ export function SideNavLink(props) {
             }
           })(renderProps)} />
         {props.children}
+        {isExternal && (
+          <LinkOutIcon
+            aria-label="(opens in a new tab)"
+            className={style({color: 'neutral', marginStart: 'auto', flexShrink: 0, paddingX: 8})} />
+        )}
       </>)}
-    </Link>
+    </BaseLink>
   );
 }
 
 function useCurrentSection() {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
 
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article > :is(h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -472,7 +336,7 @@ function useCurrentSection() {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return selected;
 }
@@ -488,12 +352,11 @@ export function OnPageNav({children}) {
 }
 
 export function MobileOnPageNav({children}) {
+  let {currentPage} = useRouter();
   let [selected, setSelected] = useState('');
-
   useEffect(() => {
-    let elements = Array.from(document.querySelectorAll('article > :is(h1,h2,h3,h4,h5)'));
+    let elements = Array.from(document.querySelectorAll('article [data-anchor-link]'));
     elements.reverse();
-
     let visible = new Set();
     let observer = new IntersectionObserver(entries => {
       for (let entry of entries) {
@@ -503,7 +366,7 @@ export function MobileOnPageNav({children}) {
           visible.delete(entry.target);
         }
       }
-      
+
       let lastVisible = elements.find(e => visible.has(e));
       if (lastVisible) {
         setSelected('#' + lastVisible.id!);
@@ -522,10 +385,10 @@ export function MobileOnPageNav({children}) {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return (
-    <Picker aria-label="Table of contents" selectedKey={selected} isQuiet size="L">
+    <Picker aria-label="Table of contents" value={selected} isQuiet size="L">
       {children}
     </Picker>
   );

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/button",
-  "version": "3.14.1",
+  "version": "3.14.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,12 +26,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.25.5",
-    "@react-aria/toolbar": "3.0.0-beta.20",
-    "@react-aria/utils": "^3.30.1",
-    "@react-stately/toggle": "^3.9.1",
-    "@react-types/button": "^3.14.0",
-    "@react-types/shared": "^3.32.0",
+    "@react-aria/interactions": "^3.26.0",
+    "@react-aria/toolbar": "3.0.0-beta.22",
+    "@react-aria/utils": "^3.32.0",
+    "@react-stately/toggle": "^3.9.3",
+    "@react-types/button": "^3.14.1",
+    "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

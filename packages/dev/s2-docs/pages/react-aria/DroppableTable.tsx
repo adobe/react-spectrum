@@ -1,7 +1,7 @@
 'use client';
 import {isTextDropItem, useDragAndDrop} from 'react-aria-components';
 import {useState} from 'react';
-import {PokemonTable, Pokemon} from './PokemonTable';
+import {PokemonTable, type Pokemon} from './PokemonTable';
 
 export function DroppableTable() {
   let [items, setItems] = useState<Pokemon[]>([]);

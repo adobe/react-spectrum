@@ -10,15 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDisclosureProps, useDisclosure, useFocusRing} from 'react-aria';
+import {AriaDisclosureProps, LabelAriaProps, useDisclosure, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  DEFAULT_SLOT,
+  Provider,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {DisclosureGroupState, DisclosureState, DisclosureGroupProps as StatelyDisclosureGroupProps, useDisclosureGroupState, useDisclosureState} from 'react-stately';
 import {DOMProps, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import {filterDOMProps, mergeProps, mergeRefs, useId} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 
-export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {}
+export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DisclosureGroup'
+   */
+  className?: ClassNameOrFunction<DisclosureGroupRenderProps>
+}
 
 export interface DisclosureGroupRenderProps {
   /**
@@ -66,6 +81,11 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
 });
 
 export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Disclosure'
+   */
+  className?: ClassNameOrFunction<DisclosureRenderProps>,
   /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
   id?: Key
 }
@@ -186,7 +206,12 @@ export interface DisclosurePanelRenderProps {
   isFocusVisibleWithin: boolean
 }
 
-export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, LabelAriaProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DisclosurePanel'
+   */
+  className?: ClassNameOrFunction<DisclosurePanelRenderProps>,
   /**
    * The accessibility role for the disclosure's panel.
    * @default 'group'
@@ -215,7 +240,7 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isFocusVisibleWithin
     }
   });
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {global: true, labelable: true});
   return (
     <div
       {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}

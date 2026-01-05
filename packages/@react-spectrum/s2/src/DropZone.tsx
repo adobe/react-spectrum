@@ -65,7 +65,8 @@ const dropzone = style<DropZoneRenderProps>({
     isFocusVisible: 'blue-800'
   },
   borderRadius: 'lg',
-  padding: 24
+  padding: 24,
+  boxSizing: 'border-box'
 }, getAllowedOverrides({height: true}));
 
 const banner = style({

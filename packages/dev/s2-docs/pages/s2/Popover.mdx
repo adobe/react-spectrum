@@ -3,40 +3,36 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['popup', 'overlay'];
+export const description = 'Displays interactive content in context with a trigger element.';
+
 # Popover
 
 <PageDescription>{docs.exports.Popover.description}</PageDescription>
 
 ```tsx render docs={docs.exports.Popover} links={docs.links} props={['placement', 'size', 'offset', 'crossOffset', 'shouldFlip', 'hideArrow']} type="s2" initialProps={{size: 'S'}}
 "use client";
-import {Popover, DialogTrigger, ActionButton, CheckboxGroup, Checkbox, Form} from '@react-spectrum/s2';
-import Filter from '@react-spectrum/s2/icons/Filter';
+import {Popover, DialogTrigger, ActionButton, Form, TextField, Switch, Button} from '@react-spectrum/s2';
+import Feedback from '@react-spectrum/s2/icons/Feedback';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function Example(props) {
   return (
     <DialogTrigger>
-      <ActionButton aria-label="Filters">
-        <Filter />
+      <ActionButton aria-label="Feedback">
+        <Feedback />
       </ActionButton>
       {/*- begin focus -*/}
       <Popover {...props}/* PROPS */>
-        <Form>
-          <CheckboxGroup label="Stops">
-            <Checkbox value={0}>Non-stop</Checkbox>
-            <Checkbox value={1}>1 stop</Checkbox>
-            <Checkbox value={2}>2+ stops</Checkbox>
-          </CheckboxGroup>
-          <CheckboxGroup label="Bags">
-            <Checkbox value={0}>Carry on</Checkbox>
-            <Checkbox value={1}>Checked bag</Checkbox>
-          </CheckboxGroup>
-          <CheckboxGroup label="Times">
-            <Checkbox value={0}>Morning</Checkbox>
-            <Checkbox value={1}>Afternoon</Checkbox>
-            <Checkbox value={2}>Evening</Checkbox>
-          </CheckboxGroup>
-        </Form>
+        <div className={style({padding: 12})}>
+          <p className={style({font: 'body', marginTop: 0})}>How are we doing? Share your feedback here.</p>
+          <Form>
+            <TextField label="Subject" placeholder="Enter a summary" />
+            <TextField label="Description" isRequired placeholder="Enter your feedback" />
+            <Switch>Adobe can contact me for further questions concerning this feedback</Switch>
+            <Button styles={style({marginStart: 'auto'})}>Submit</Button>
+          </Form>
+        </div>
       </Popover>
       {/*- end focus -*/}
     </DialogTrigger>
@@ -59,21 +55,21 @@ function Example() {
   let triggerRef = useRef(null);
 
   return (
-    <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 64, alignItems: 'center'})}>
       <Button onPress={() => setOpen(!isOpen)}>
         Open popover
       </Button>
-      <div 
+      <div
         ref={triggerRef}
         className={style({
-          padding: 8, 
-          backgroundColor: 'gray-100', 
+          padding: 8,
+          backgroundColor: 'gray-100',
           borderRadius: 'default',
           font: 'ui'
         })}>
         Popover appears here
       </div>
-      <Popover 
+      <Popover
         /*- begin highlight -*/
         triggerRef={triggerRef}
         isOpen={isOpen}
@@ -92,7 +88,7 @@ function Example() {
 
 ## API
 
-```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button.html', Popover: '#popover'}}
+```tsx links={{DialogTrigger: '#dialogtrigger', Button: 'Button', Popover: '#popover'}}
 <DialogTrigger>
   <Button />
   <Popover>

@@ -46,7 +46,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'> extends List
   readonly defaultValue: ValueType<M>,
 
   /** Sets the select value. */
-  setValue(value: Key | Key[] | null): void,
+  setValue(value: Key | readonly Key[] | null): void,
 
   /**
    * The value of the first selected item.
@@ -83,17 +83,19 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let defaultValue = useMemo(() => {
-    return props.defaultValue ?? (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
+    return props.defaultValue !== undefined ? props.defaultValue : (selectionMode === 'single' ? props.defaultSelectedKey ?? null : []) as ValueType<M>;
   }, [props.defaultValue, props.defaultSelectedKey, selectionMode]);
   let value = useMemo(() => {
-    return props.value ?? (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
+    return props.value !== undefined ? props.value : (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
   }, [props.value, props.selectedKey, selectionMode]);
-  let [controlledValue, setControlledValue] = useControlledState<ValueType<M>>(value as any, defaultValue as any, props.onChange);
+  let [controlledValue, setControlledValue] = useControlledState<Key | readonly Key[] | null>(value, defaultValue, props.onChange as any);
+  // Only display the first selected item if in single selection mode but the value is an array.
+  let displayValue = selectionMode === 'single' && Array.isArray(controlledValue) ? controlledValue[0] : controlledValue;
   let setValue = (value: Key | Key[] | null) => {
     if (selectionMode === 'single') {
       let key = Array.isArray(value) ? value[0] ?? null : value;
-      setControlledValue(key as ValueType<M>);
-      if (key !== controlledValue) {
+      setControlledValue(key);
+      if (key !== displayValue) {
         props.onSelectionChange?.(key);
       }
     } else {
@@ -104,7 +106,7 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
         keys = [value];
       }
 
-      setControlledValue(keys as ValueType<M>);
+      setControlledValue(keys);
     }
   };
 
@@ -113,7 +115,7 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
     selectionMode,
     disallowEmptySelection: selectionMode === 'single',
     allowDuplicateSelectionEvents: true,
-    selectedKeys: useMemo(() => convertValue(controlledValue), [controlledValue]),
+    selectedKeys: useMemo(() => convertValue(displayValue), [displayValue]),
     onSelectionChange: (keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
@@ -139,18 +141,18 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
 
   let validationState = useFormValidationState({
     ...props,
-    value: Array.isArray(controlledValue) && controlledValue.length === 0 ? null : controlledValue as any
+    value: Array.isArray(displayValue) && displayValue.length === 0 ? null : displayValue as any
   });
 
   let [isFocused, setFocused] = useState(false);
-  let [initialValue] = useState(controlledValue);
+  let [initialValue] = useState(displayValue);
 
   return {
     ...validationState,
     ...listState,
     ...triggerState,
-    value: controlledValue,
-    defaultValue: defaultValue ?? initialValue,
+    value: displayValue as ValueType<M>,
+    defaultValue: defaultValue ?? initialValue as ValueType<M>,
     setValue,
     selectedKey,
     setSelectedKey: setValue,
@@ -160,13 +162,13 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
-      if (listState.collection.size !== 0) {
+      if (listState.collection.size !== 0 || props.allowsEmptyCollection) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
     toggle(focusStrategy: FocusStrategy | null = null) {
-      if (listState.collection.size !== 0) {
+      if (listState.collection.size !== 0 || props.allowsEmptyCollection) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();
       }

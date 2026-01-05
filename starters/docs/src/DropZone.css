@@ -5,7 +5,7 @@
   background: var(--overlay-background);
   border: 1px solid var(--border-color);
   forced-color-adjust: none;
-  border-radius: 4px;
+  border-radius: var(--radius);
   appearance: none;
   vertical-align: middle;
   font-size: 1rem;

@@ -5,6 +5,10 @@ import docs from 'docs:react-aria-components';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
 
+export const tags = ['toggle', 'btn'];
+export const relatedPages = [{'title': 'useToggleButtonGroup', 'url': 'ToggleButtonGroup/useToggleButtonGroup.html'}];
+export const description = 'Allows a user to toggle multiple options, with single or multiple selection.';
+
 # ToggleButtonGroup
 
 <PageDescription>{docs.exports.ToggleButtonGroup.description}</PageDescription>
@@ -22,7 +26,7 @@ import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
   </ToggleButtonGroup>
   ```
 
-  ```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'orientation', 'isDisabled']} initialProps={{'aria-label': 'Text style'}} type="tailwind" files={["starters/tailwind/src/ToggleButtonGroup.tsx", "starters/tailwind/src/index.css"]}
+  ```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'orientation', 'isDisabled']} initialProps={{'aria-label': 'Text style'}} type="tailwind" files={["starters/tailwind/src/ToggleButtonGroup.tsx"]}
   "use client";
   import {ToggleButtonGroup} from 'tailwind-starter/ToggleButtonGroup';
   import {ToggleButton} from 'tailwind-starter/ToggleButton';
@@ -37,7 +41,7 @@ import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=ToggleButtonGroup) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` of each `<ToggleButton>`. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=ToggleButtonGroup) for more details.
 
 ```tsx render docs={docs.exports.ToggleButtonGroup} links={docs.links} props={['selectionMode', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -79,18 +83,53 @@ function Example(props) {
 }
 ```
 
+### Animation
+
+Render a [SelectionIndicator](selection#animated-selectionindicator) within each `ToggleButton` to animate selection changes.
+
+```tsx render files={['starters/docs/src/SegmentedControl.css']}
+"use client";
+import {ToggleButtonGroup, ToggleButton, ToggleButtonProps, SelectionIndicator, composeRenderProps} from 'react-aria-components';
+import 'vanilla-starter/SegmentedControl.css';
+
+function SegmentedControlItem(props: ToggleButtonProps) {
+  return (
+    <ToggleButton {...props} className="segmented-control-item">
+      {/*- begin highlight -*/}
+      {composeRenderProps(props.children, (children) => (<>
+        <SelectionIndicator className="react-aria-SelectionIndicator button-base" data-selected />
+        <span>{children}</span>
+      </>))}
+      {/*- end highlight -*/}
+    </ToggleButton>
+  );
+}
+
+<ToggleButtonGroup
+  className="segmented-control button-base"
+  data-variant="secondary"
+  aria-label="Time period"
+  defaultSelectedKeys={['day']}
+  disallowEmptySelection>
+  <SegmentedControlItem id="day">Day</SegmentedControlItem>
+  <SegmentedControlItem id="week">Week</SegmentedControlItem>
+  <SegmentedControlItem id="month">Month</SegmentedControlItem>
+  <SegmentedControlItem id="year">Year</SegmentedControlItem>
+</ToggleButtonGroup>
+```
+
 ## API
 
 <Anatomy />
 
-```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton.html'}}
+```tsx links={{ToggleButtonGroup: '#togglebuttongroup', ToggleButton: 'ToggleButton', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <ToggleButtonGroup>
-  <ToggleButton />
+  <ToggleButton>
+    <SelectionIndicator />
+  </ToggleButton>
 </ToggleButtonGroup>
 ```
 
 ### ToggleButtonGroup
 
 <PropTable component={docs.exports.ToggleButtonGroup} links={docs.links} />
-
-<StateTable defaultClassName="react-aria-ToggleButtonGroup" properties={docs.exports.ToggleButtonGroupRenderProps.properties} />

@@ -1,7 +1,6 @@
 .DS_Store
 .cache
 .idea
-.nyc_output
 .package-lock.json
 .parcel-cache
 build-storybook.log
@@ -19,3 +18,5 @@ packages/dev/storybook-builder-parcel/iframe.html
 packages/dev/storybook-builder-parcel/preview.js
 starters/docs/registry
 starters/tailwind/registry
+starters/docs/yarn.lock
+starters/tailwind/yarn.lock

@@ -4,6 +4,9 @@ export default Layout;
 import {TextArea} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['multiline', 'input'];
+export const description = 'Allows a user to enter a multi-line text value with a keyboard.';
+
 # TextArea
 
 <PageDescription>{docs.exports.TextArea.description}</PageDescription>
@@ -12,9 +15,10 @@ import docs from 'docs:@react-spectrum/s2';
   component={TextArea}
   docs={docs.exports.TextArea}
   links={docs.links}
-  props={['label', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
+  props={['label', 'placeholder', 'size', 'labelPosition', 'description', 'contextualHelp', 'isDisabled']}
   initialProps={{
-    label: 'Description'
+    label: 'Description',
+    placeholder: 'Describe the product above'
   }}
   importSource="@react-spectrum/s2"
   type="s2" />
@@ -30,11 +34,12 @@ import {useState} from 'react';
 
 function Example() {
   let [name, setName] = useState('');
-  
+
   return (
     <>
       <TextArea
         label="Comment"
+        placeholder="Share your thoughts!"
         ///- begin highlight -///
         value={name}
         onChange={setName} />
@@ -47,7 +52,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, or `maxLength` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, or `maxLength` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.TextArea} links={docs.links} props={['isRequired', 'necessityIndicator', 'minLength', 'maxLength']} initialProps={{isRequired: true, minLength: 10}}
 "use client";
@@ -59,6 +64,7 @@ function Example(props) {
       <TextArea
         {...props}
         label="Comment"
+        placeholder="Share your thoughts!"
         ///- begin highlight -///
         name="email"
         description="Please provide at least 10 characters."

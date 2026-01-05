@@ -4,6 +4,9 @@ export default Layout;
 import {ColorSwatch} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = [];
+export const description = 'Displays a preview of a selected color.';
+
 # ColorSwatch
 
 <PageDescription>{docs.exports.ColorSwatch.description}</PageDescription>
@@ -23,8 +26,9 @@ A ColorSwatch displays a color value passed via the `color` prop. The value can 
 ```tsx render
 "use client";
 import {ColorSwatch} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-<div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
+<div className={style({display: 'flex', gap: 12, alignItems: 'center'})}>
   <ColorSwatch color="#ff6600" />
   <ColorSwatch color="rgb(255, 0, 255)" />
   <ColorSwatch color="hsl(120, 100%, 42%)" />

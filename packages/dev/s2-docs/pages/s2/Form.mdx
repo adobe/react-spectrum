@@ -4,6 +4,9 @@ export default Layout;
 import {Form, TextField, Checkbox, Button, RadioGroup, Radio, InlineAlert, Heading, Content, ButtonGroup} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
+export const tags = ['input', 'field'];
+export const description = 'Provides layout and alignment for a grouping of fields.';
+
 # Form
 
 <PageDescription>{docs.exports.Form.description}</PageDescription>
@@ -11,12 +14,13 @@ import docs from 'docs:@react-spectrum/s2';
 
 ```tsx render docs={docs.exports.Form} links={docs.links} props={['size', 'labelPosition', 'labelAlign', 'necessityIndicator', 'isRequired', 'isDisabled', 'isEmphasized']} type="s2"
 import {Form, TextField, Checkbox, ButtonGroup, Button} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <Form/* PROPS */>
-  <TextField label="Name" />
-  <TextField label="Email" type="email" />
+  <TextField label="Name" placeholder="Enter your full name" />
+  <TextField label="Email" type="email" placeholder="Enter your email" />
   <Checkbox>I agree to the terms</Checkbox>
-  <ButtonGroup>
+  <ButtonGroup styles={style({gridColumnStart: 'field'})}>
     <Button type="submit" variant="primary">Submit</Button>
     <Button type="reset" variant="secondary">Reset</Button>
   </ButtonGroup>
@@ -25,7 +29,7 @@ import {Form, TextField, Checkbox, ButtonGroup, Button} from '@react-spectrum/s2
 
 ## Submitting data
 
-When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms.html) guide details about integrating with frameworks.
+When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead. See the [Forms](forms) guide details about integrating with frameworks.
 
 <ExampleSwitcher type={null} examples={['React 19', 'React 18']}>
 
@@ -40,7 +44,7 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
     alert(`Hello, ${name}!`);
   }}>
   {/*- end highlight -*/}
-  <TextField name="name" label="Name" />
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
   <Button type="submit">Submit</Button>
 </Form>
 ```
@@ -56,15 +60,16 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let target = event.target as HTMLFormElement;
+    let formData = new FormData(target);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    target.reset();
   }}>
   {/*- end highlight -*/}
-  <TextField name="name" label="Name" />
+  <TextField name="name" label="Name" placeholder="Enter your full name" />
   <Button type="submit">Submit</Button>
 </Form>
 ```
@@ -73,15 +78,16 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
 
 ## Validation
 
-Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms.html) guide for more details.
+Use validation props on each form field to prevent submission of invalid values. When `validationBehavior="aria"`, form submission will not be prevented and validation will occur as the value is edited instead of on form submission. See the [Forms](forms) guide for more details.
 
-```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="s2"
+```tsx render docs={docs.exports.Form} links={docs.links} props={['validationBehavior']} type="s2" wide
 "use client";
 import {Form, TextField, Button} from '@react-spectrum/s2';
 
 <Form/* PROPS */>
   <TextField
     label="Username"
+    placeholder="Choose a username"
     isRequired
     validate={value => value === 'admin' ? 'Nice try.' : null}
     name="username"
@@ -107,6 +113,7 @@ import {Form, TextField} from '@react-spectrum/s2';
   <TextField
     name="username"
     label="Username"
+    placeholder="Choose a username"
     defaultValue="admin" />
 </Form>
 ```
@@ -126,7 +133,7 @@ function Example() {
 
   return (
     <Form
-      styles={style({width: 300})}
+      styles={style({width: 300, maxWidth: 'full'})}
       /*- begin highlight -*/
       onInvalid={e => {
         e.preventDefault();
@@ -147,12 +154,14 @@ function Example() {
       <TextField
         name="firstName"
         isRequired
-        label="First Name" />
+        label="First name"
+        placeholder="Enter your first name" />
       <TextField
         name="lastName"
         isRequired
-        label="Last Name" />
-      <div style={{display: 'flex', gap: 8}}>
+        label="Last name"
+        placeholder="Enter your last name" />
+      <div className={style({display: 'flex', gap: 8})}>
         <Button type="submit" variant="accent">Submit</Button>
         <Button type="reset" variant="secondary">Reset</Button>
       </div>

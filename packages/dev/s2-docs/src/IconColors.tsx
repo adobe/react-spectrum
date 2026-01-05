@@ -1,4 +1,6 @@
 'use client';
+
+import React from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function ColorSwatch({name}) {
@@ -47,35 +49,12 @@ function ColorSwatch({name}) {
   );
 }
 
-export function IconColors() {
+export function IconColors({colors}: {colors: string[]}) {
   return (
     <div style={{columnWidth: 100}}>
-      <ColorSwatch name="white" />
-      <ColorSwatch name="black" />
-      <ColorSwatch name="accent" />
-      <ColorSwatch name="neutral" />
-      <ColorSwatch name="negative" />
-      <ColorSwatch name="informative" />
-      <ColorSwatch name="positive" />
-      <ColorSwatch name="notice" />
-      <ColorSwatch name="gray" />
-      <ColorSwatch name="red" />
-      <ColorSwatch name="orange" />
-      <ColorSwatch name="yellow" />
-      <ColorSwatch name="chartreuse" />
-      <ColorSwatch name="celery" />
-      <ColorSwatch name="seafoam" />
-      <ColorSwatch name="cyan" />
-      <ColorSwatch name="blue" />
-      <ColorSwatch name="indigo" />
-      <ColorSwatch name="purple" />
-      <ColorSwatch name="fuchsia" />
-      <ColorSwatch name="magenta" />
-      <ColorSwatch name="pink" />
-      <ColorSwatch name="turquoise" />
-      <ColorSwatch name="cinnamon" />
-      <ColorSwatch name="brown" />
-      <ColorSwatch name="silver" />
+      {colors.map((color) => (
+        <ColorSwatch key={color} name={color} />
+      ))}
     </div>
   );
 }

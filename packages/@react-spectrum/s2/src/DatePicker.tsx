@@ -20,6 +20,7 @@ import {
   Dialog,
   FormContext,
   OverlayTriggerStateContext,
+  PopoverProps,
   Provider,
   TimeValue
 } from 'react-aria-components';
@@ -27,13 +28,13 @@ import {baseColor, focusRing, fontRelative, space, style} from '../style' with {
 import {Calendar, CalendarProps, IconContext, TimeField} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PopoverBase} from './Popover';
+import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -42,6 +43,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface DatePickerProps<T extends DateValue> extends
   Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
+  Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -119,6 +121,9 @@ export const timeField = style({
   width: 'unset'
 });
 
+/**
+ * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
 export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(
   props: DatePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
@@ -200,7 +205,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
               <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
-            <CalendarPopover>
+            <CalendarPopover shouldFlip={props.shouldFlip}>
               <Calendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar} />
@@ -235,27 +240,33 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   );
 });
 
-export function CalendarPopover(props: PropsWithChildren): ReactElement {
+export function CalendarPopover(props: Omit<PopoverProps, 'children'> & {children: ReactNode}): ReactElement {
   return (
-    <PopoverBase
+    <Popover
+      {...props}
       hideArrow
-      styles={style({
-        paddingX: 16,
-        paddingY: 32,
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16
-      })}>
-      <Dialog>
-        <Provider
-          values={[
-            [OverlayTriggerStateContext, null]
-          ]}>
-          {props.children}
-        </Provider>
-      </Dialog>
-    </PopoverBase>
+      padding="none">
+      <div
+        className={style({
+          paddingX: 16,
+          paddingY: 32,
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          boxSizing: 'border-box',
+          size: 'full'
+        })}>
+        <Dialog>
+          <Provider
+            values={[
+              [OverlayTriggerStateContext, null]
+            ]}>
+            {props.children}
+          </Provider>
+        </Dialog>
+      </div>
+    </Popover>
   );
 }
 
