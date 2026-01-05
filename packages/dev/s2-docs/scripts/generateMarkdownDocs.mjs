@@ -133,6 +133,29 @@ function cleanTypeText(t) {
 }
 
 /**
+ * Get type text from a declaration, preferring the type node (AST) over the resolved type.
+ */
+function getTypeText(decl, fallbackContext) {
+  // Try to get the type node first (preserves declaration order)
+  const typeNode = decl?.getTypeNode?.();
+  if (typeNode) {
+    return cleanTypeText(typeNode.getText());
+  }
+  
+  // Fall back to resolved type with context
+  const type = decl?.getType?.();
+  if (type && fallbackContext) {
+    return cleanTypeText(type.getText(fallbackContext));
+  }
+  
+  if (type) {
+    return cleanTypeText(type.getText());
+  }
+  
+  return 'unknown';
+}
+
+/**
  * Transform relative URLs to use .md extension instead of .html or no extension.
  * Preserves query params and hash fragments.
  */
@@ -599,9 +622,9 @@ function generatePropTable(componentName, file) {
 
   const rows = propSymbols.map((sym) => {
     const name = sym.getName();
-    const type = cleanTypeText(sym.getTypeAtLocation(iface).getText(iface));
-
     const decl = sym.getDeclarations()?.[0];
+    const type = getTypeText(decl, iface);
+
     let description = '';
     let defVal = '';
     if (decl && typeof decl.getJsDocs === 'function') {
@@ -719,9 +742,7 @@ function generateInterfaceTable(interfaceName, file) {
       const paramStrs = params.map(p => {
         const pDecl = p.getDeclarations()?.[0];
         const pName = p.getName();
-        const pType = pDecl 
-          ? cleanTypeText(pDecl.getType().getText(pDecl))
-          : cleanTypeText(p.getDeclaredType().getText(ifaceDecl));
+        const pType = getTypeText(pDecl, ifaceDecl);
         const pOptional = pDecl?.hasQuestionToken?.() ? '?' : '';
         return `${pName}${pOptional}: ${pType}`;
       });
@@ -729,7 +750,7 @@ function generateInterfaceTable(interfaceName, file) {
       const signature = `${name}(${paramStrs.join(', ')}): ${returnType}`;
       methods.push({name, signature, description});
     } else {
-      const typeText = cleanTypeText(type.getText(ifaceDecl));
+      const typeText = getTypeText(decl, ifaceDecl);
       properties.push({name, type: typeText, description, defVal, optional});
     }
   }
@@ -1989,7 +2010,7 @@ function generateClassAPITable(className, file) {
       sections.push('### Constructor\n');
       const rows = params.map(param => {
         const name = param.getName();
-        const type = cleanTypeText(param.getType().getText(param));
+        const type = getTypeText(param, param);
         let description = '';
         
         const ctorDocs = ctor.getJsDocs();
@@ -2029,7 +2050,7 @@ function generateClassAPITable(className, file) {
       // Build method signature
       const paramStrs = params.map(p => {
         const pName = p.getName();
-        const pType = cleanTypeText(p.getType().getText(p));
+        const pType = getTypeText(p, p);
         const optional = p.hasQuestionToken() ? '?' : '';
         return `${pName}${optional}: ${pType}`;
       });
@@ -2084,7 +2105,7 @@ function generateClassAPITable(className, file) {
     
     properties.forEach(prop => {
       const propName = prop.getName();
-      const propType = cleanTypeText(prop.getType().getText(prop));
+      const propType = getTypeText(prop, prop);
       let description = '';
       
       const propDocs = prop.getJsDocs();
