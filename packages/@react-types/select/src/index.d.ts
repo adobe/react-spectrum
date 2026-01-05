@@ -32,10 +32,11 @@ import {
 } from '@react-types/shared';
 
 export type SelectionMode = 'single' | 'multiple';
-export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
+export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
 type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
 
-export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
+export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>, ChangeValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
   /**
    * Whether single or multiple selection is enabled.
    * @default 'single'
@@ -83,7 +84,7 @@ export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends 
   form?: string
 }
 
-export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
+export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | 'allowsEmptyCollection'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.

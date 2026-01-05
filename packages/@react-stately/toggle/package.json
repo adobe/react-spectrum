@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/toggle",
-  "version": "3.9.2",
+  "version": "3.9.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,7 +26,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/utils": "^3.10.8",
+    "@react-stately/utils": "^3.11.0",
     "@react-types/checkbox": "^3.10.2",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"

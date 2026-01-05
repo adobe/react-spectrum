@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/contextualhelp",
-  "version": "3.6.28",
+  "version": "3.6.29",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,14 +40,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.13",
-    "@react-aria/utils": "^3.31.0",
-    "@react-spectrum/button": "^3.17.4",
-    "@react-spectrum/dialog": "^3.9.4",
-    "@react-spectrum/utils": "^3.12.9",
+    "@react-aria/i18n": "^3.12.14",
+    "@react-aria/utils": "^3.32.0",
+    "@react-spectrum/button": "^3.17.5",
+    "@react-spectrum/dialog": "^3.9.5",
+    "@react-spectrum/utils": "^3.12.10",
     "@react-types/contextualhelp": "^3.2.22",
     "@react-types/shared": "^3.32.1",
-    "@spectrum-icons/workflow": "^4.2.25",
+    "@spectrum-icons/workflow": "^4.2.26",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

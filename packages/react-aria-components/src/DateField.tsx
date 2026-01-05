@@ -214,7 +214,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         ref={ref}
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined}
-        data-disabled={state.isDisabled || undefined} 
+        data-disabled={state.isDisabled || undefined}
         data-readonly={state.isReadOnly || undefined} />
     </Provider>
   );
@@ -313,7 +313,7 @@ const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTML
         isDisabled={state.isDisabled}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </Group>
-      <Input />
+      <Input className="" />
     </>
   );
 });

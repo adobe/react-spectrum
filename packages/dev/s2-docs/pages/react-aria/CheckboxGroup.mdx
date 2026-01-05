@@ -5,8 +5,14 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/CheckboxGroup';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/checkbox/docs/checkboxgroup-anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['input'];
+export const relatedPages = [
+  {title: 'useCheckboxGroup', url: 'CheckboxGroup/useCheckboxGroup.html'},
+  {title: 'Testing CheckboxGroup', url: './CheckboxGroup/testing'}
+];
+export const description = 'Allows a user to select multiple items from a list of options.';
 
 # CheckboxGroup
 
@@ -25,9 +31,10 @@ export const tags = ['input'];
   </CheckboxGroup>
   ```
 
-  ```tsx render docs={vanillaDocs.exports.CheckboxGroup} links={vanillaDocs.links} props={['label', 'description', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="tailwind" files={["starters/tailwind/src/Checkbox.tsx"]}
+  ```tsx render docs={vanillaDocs.exports.CheckboxGroup} links={vanillaDocs.links} props={['label', 'description', 'isDisabled']} initialProps={{label: 'Favorite sports'}} type="tailwind" files={["starters/tailwind/src/CheckboxGroup.tsx"]}
   "use client";
-  import {CheckboxGroup, Checkbox} from 'tailwind-starter/Checkbox';
+  import {CheckboxGroup} from 'tailwind-starter/CheckboxGroup';
+  import {Checkbox} from 'tailwind-starter/Checkbox';
 
   <CheckboxGroup/* PROPS */>
     <Checkbox value="soccer">Soccer</Checkbox>
@@ -70,7 +77,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the selected checkboxes to the server. Set the `isRequired` prop on the `<CheckboxGroup>` to validate the user selects at least one checkbox, or on individual checkboxes. See the Forms guide to learn more.
+Use the `name` prop to submit the selected checkboxes to the server. Set the `isRequired` prop on the `<CheckboxGroup>` to validate the user selects at least one checkbox, or on individual checkboxes. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
@@ -108,7 +115,7 @@ import {Form} from 'vanilla-starter/Form';;
 
 <Anatomy />
 
-```tsx links={{CheckboxGroup: '#checkboxgroup', Checkbox: 'Checkbox.html'}}
+```tsx links={{CheckboxGroup: '#checkboxgroup', Checkbox: 'Checkbox'}}
 <CheckboxGroup>
   <Label />
   <Checkbox />

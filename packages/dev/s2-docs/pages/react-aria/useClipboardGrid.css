@@ -1,0 +1,33 @@
+.grid {
+  display: block;
+  width: auto;
+  height: auto;
+  min-height: 80px;
+}
+
+.grid ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 100px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 20px;
+}
+
+.grid li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grid li svg {
+  flex: 0 0 auto;
+}
+
+.grid li span {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

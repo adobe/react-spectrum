@@ -28,7 +28,7 @@ import {
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -37,6 +37,7 @@ import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
@@ -156,11 +157,18 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
       default: 'transparent',
-      isFocused: baseColor('gray-100').isFocusVisible
+      isFocused: {
+        default: baseColor('gray-100').isFocusVisible,
+        forcedColors: 'Highlight'
+      }
     }
   },
   color: {
     default: baseColor('neutral'),
+    forcedColors: {
+      default: 'ButtonText',
+      isFocused: 'HighlightText'
+    },
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -190,10 +198,11 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'default',
+  forcedColorAdjust: 'none'
 }, getAllowedOverrides());
 
-export let checkmark = style({
+export let checkmark = style<{isSelected: boolean, isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   visibility: {
     default: 'hidden',
     isSelected: 'visible'
@@ -204,7 +213,10 @@ export let checkmark = style({
     type: 'fill',
     value: {
       default: 'currentColor',
-      forcedColors: 'Highlight'
+      forcedColors: {
+        default: 'Highlight',
+        isFocused: 'HighlightText'
+      }
     }
   },
   marginEnd: 'text-to-control',
@@ -409,7 +421,12 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {
+  /**
+   * The children of the menu section.
+   */
+  children?: ReactNode
+}
 export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);

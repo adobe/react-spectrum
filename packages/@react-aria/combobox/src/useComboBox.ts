@@ -16,7 +16,7 @@ import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useEvent, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useEvent, useFormReset, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -53,9 +53,9 @@ export interface ComboBoxAria<T> extends ValidationResult {
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the list box, to be passed to [useListBox](useListBox.html). */
+  /** Props for the list box, to be passed to `useListBox`. */
   listBoxProps: AriaListBoxOptions<T>,
-  /** Props for the optional trigger button, to be passed to [useButton](useButton.html). */
+  /** Props for the optional trigger button, to be passed to `useButton`. */
   buttonProps: AriaButtonProps,
   /** Props for the combo box description element, if any. */
   descriptionProps: DOMAttributes,
@@ -220,6 +220,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     [privateValidationStateProp]: state
   }, inputRef);
 
+  useFormReset(inputRef, state.defaultSelectedKey, state.setSelectedKey);
+  
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
