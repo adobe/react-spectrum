@@ -18,13 +18,13 @@ date: 2024-05-01
 ---
 # May 1, 2024 Release
 
-We have a huge release today! Its a GA bonanza 🎊 – [Submenu](/react-spectrum/Menu.html#submenus), [unavailable menu items](/react-spectrum/Menu.html#unavailable-items), [DropZone](/react-spectrum/DropZone.html) and [FileTrigger](/react-spectrum/FileTrigger.html) components are now in GA. Check our [blog post](/blog/creating-a-pointer-friendly-submenu-experience.html) on the intricacies of the submenu interactions and how we handled them.
+We have a huge release today! Its a GA bonanza 🎊 – [Submenu](../Menu.html#submenus), [unavailable menu items](../Menu.html#unavailable-items), [DropZone](../DropZone.html) and [FileTrigger](../FileTrigger.html) components are now in GA. Check our [blog post](react-aria:blog/creating-a-pointer-friendly-submenu-experience) on the intricacies of the submenu interactions and how we handled them.
 
-In addition, we have added a suite of new color components including [ColorPicker](https://react-spectrum.adobe.com/react-aria/ColorPicker.html), [ColorArea](https://react-spectrum.adobe.com/react-aria/ColorArea.html), [ColorField](https://react-spectrum.adobe.com/react-aria/ColorField.html), [ColorSlider](https://react-spectrum.adobe.com/react-aria/ColorSlider.html), [ColorSwatch](https://react-spectrum.adobe.com/react-aria/ColorSwatch.html), [ColorSwatchPicker](https://react-spectrum.adobe.com/react-aria/ColorSwatchPicker.html), [ColorWheel](https://react-spectrum.adobe.com/react-aria/ColorWheel.html), currently in beta. These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
+In addition, we have added a suite of new color components including [ColorPicker](react-aria:ColorPicker), [ColorArea](react-aria:ColorArea), [ColorField](react-aria:ColorField), [ColorSlider](react-aria:ColorSlider), [ColorSwatch](react-aria:ColorSwatch), [ColorSwatchPicker](react-aria:ColorSwatchPicker), [ColorWheel](react-aria:ColorWheel), currently in beta. These enable you to build fully customizable color pickers, including accessible color descriptions for screen reader support.
 
 The first alpha of TreeView has also been released. This was a highly requested component and includes support for expanding, collapsing, multi-selection, keyboard navigation, and interactive children. Documentation will follow soon, check out our React Spectrum [storybook](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/tree/stories/TreeView.stories.tsx) and React Aria Components [storybook](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/stories/Tree.stories.tsx) source code for examples.
 
-We have also improved our integration with [client side routers](/react-aria/routing.html#routerprovider), accepting options to control router-specific behaviors such as scrolling, replacing instead of pushing to the history, base path, etc. For convenience, all collection items in React Aria Components (e.g. `MenuItem`) now also support [`isDisabled`](/react-aria/Menu.html#disabled-items) and [`onAction`](/react-aria/Menu.html#example) props directly, rather than needing to be defined on the root collection.
+We have also improved our integration with [client side routers](../routing.html), accepting options to control router-specific behaviors such as scrolling, replacing instead of pushing to the history, base path, etc. For convenience, all collection items in React Aria Components (e.g. `MenuItem`) now also support `isDisabled` and `onAction` props directly, rather than needing to be defined on the root collection.
 
 Last but not least, we want to acknowledge all the wonderful contributors who have dedicated their time to improve our libraries. A special thanks to [@ryo-manba](https://github.com/ryo-manba) and [@sookmax](https://github.com/sookmax), who are responsible for multiple bug fixes to Switch, IME support, ListBox, ComboBox, as well as adding new features such as additional state attributes, hover events, and language support. Thank you!! 😍
 
@@ -34,7 +34,7 @@ Last but not least, we want to acknowledge all the wonderful contributors who ha
 
 **React Aria Color API updates**
 
-- `gradientProps` was merged into `colorAreaProps` in [`useColorArea`](https://react-spectrum.adobe.com/react-aria/useColorArea.html).
+- `gradientProps` was merged into `colorAreaProps` in [`useColorArea`](react-aria:ColorArea/useColorArea.html).
 
 ## Enhancements
 

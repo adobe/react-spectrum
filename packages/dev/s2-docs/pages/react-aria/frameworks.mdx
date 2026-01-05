@@ -17,11 +17,11 @@ import Routers from '../../src/routers.mdx';
 
 export const section = 'Guides';
 export const tags = ['framework', 'setup', 'routing', 'ssr'];
-export const description = 'Integrate React Aria with your framework';
+export const description = 'How to integrate with your framework.';
 
 # Framework setup
 
-<PageDescription>How to integrate React Aria with your framework.</PageDescription>
+<PageDescription>Learn how to integrate React Aria with your framework.</PageDescription>
 
 <Tabs aria-label="Frameworks" density="compact">
   <TabList><Tab id="next"><Nextjs /><Text>Next.js</Text></Tab><Tab id="react-router"><ReactRouter /><Text>React Router</Text></Tab><Tab id="parcel"><Parcel /><Text>Parcel</Text></Tab><Tab id="vite"><Vite /><Text>Vite</Text></Tab><Tab id="webpack"><Webpack /><Text>webpack</Text></Tab><Tab id="rollup"><Rollup /><Text>Rollup</Text></Tab><Tab id="esbuild"><ESBuild /><Text>ESBuild</Text></Tab></TabList>
@@ -38,7 +38,7 @@ export const description = 'Integrate React Aria with your framework';
         import {isRTL} from 'react-aria-components';
         import {ClientProviders} from './provider';
 
-        export default function RootLayout({children}) {
+        export default async function RootLayout({children}) {
           // Get the user's preferred language from the Accept-Language header.
           // You could also get this from a database, URL param, etc.
           const acceptLanguage = (await headers()).get('accept-language');
@@ -263,7 +263,7 @@ export const description = 'Integrate React Aria with your framework';
         ```ts
         // vite.config.ts
         import {defineConfig} from 'vite';
-        import localesPlugin from '@react-aria/optimize-locales-plugin';
+        import optimizeLocales from '@react-aria/optimize-locales-plugin';
 
         export default defineConfig({
           plugins: [

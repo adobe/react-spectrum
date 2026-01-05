@@ -8,6 +8,8 @@ import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/tag/docs/anatomy.svg';
 
 export const tags = ['chips', 'pills'];
+export const relatedPages = [{'title': 'useTagGroup', 'url': 'TagGroup/useTagGroup.html'}];
+export const description = 'A focusable list of labels, categories, keywords, filters, or other items.';
 
 # TagGroup
 
@@ -42,12 +44,12 @@ export const tags = ['chips', 'pills'];
 
 ## Content
 
-`TagGroup` follows the [Collection Components API](collections.html?component=TagGroup), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
+`TagGroup` follows the [Collection Components API](collections?component=TagGroup), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a function to render the children. Items can be removed via the `onRemove` event.
 
 ```tsx render
 "use client";
 import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
-import {useListData} from 'react-stately';
+import {useListData} from 'react-aria-components';
 
 function Example() {
   let list = useListData({
@@ -75,7 +77,7 @@ function Example() {
 
 ### Links
 
-Use the `href` prop on a `<Tag>` to create a link. See the **client side routing guide** to learn how to integrate with your framework.
+Use the `href` prop on a `<Tag>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework.
 
 ```tsx render
 "use client";
@@ -95,7 +97,7 @@ import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
 
 ## Selection
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.html?component=TagGroup) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection?component=TagGroup) for more details.
 
 ```tsx render docs={docs.exports.TagGroup} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -137,7 +139,7 @@ function Example(props) {
 
 <Anatomy />
 
-```tsx links={{TagGroup: '#taggroup', TagList: '#taglist', Tag: '#tag', Button: 'Button.html', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{TagGroup: '#taggroup', TagList: '#taglist', Tag: '#tag', Button: 'Button', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <TagGroup>
   <Label />
   <TagList>

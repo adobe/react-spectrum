@@ -72,9 +72,12 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
 
   /**
    * Whether the menu should close when the menu item is selected.
-   * @default true
+   * @deprecated - use shouldCloseOnSelect instead.
    */
   closeOnSelect?: boolean,
+
+  /** Whether the menu should close when the menu item is selected. */
+  shouldCloseOnSelect?: boolean,
 
   /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
@@ -109,6 +112,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     id,
     key,
     closeOnSelect,
+    shouldCloseOnSelect,
     isVirtualized,
     'aria-haspopup': hasPopup,
     onPressStart,
@@ -221,8 +225,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ? interaction.current?.key === 'Enter' || selectionManager.selectionMode === 'none' || selectionManager.isLink(key)
       // Close except if multi-select is enabled.
       : selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key);
-    
-    shouldClose = closeOnSelect ?? shouldClose;
+
+
+    shouldClose = shouldCloseOnSelect ?? closeOnSelect ?? shouldClose;
+
     if (onClose && !isTrigger && shouldClose) {
       onClose();
     }
@@ -312,8 +318,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ...mergeProps(
         domProps,
         linkProps,
-        isTrigger 
-          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']} 
+        isTrigger
+          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']}
           : itemProps,
         pressProps,
         hoverProps,

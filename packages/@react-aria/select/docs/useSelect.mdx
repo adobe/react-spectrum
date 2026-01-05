@@ -53,7 +53,7 @@ and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/o
 not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible
 select components that can be styled as needed without compromising on high quality interactions.
 
-* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](useListBox.html))
+* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](../ListBox/useListBox.html))
 * Support for selecting a single option
 * Support for disabled options
 * Support for sections
@@ -74,7 +74,7 @@ select components that can be styled as needed without compromising on high qual
 A select consists of a label, a button which displays a selected value, and a listbox, displayed in a
 popup. Users can click, touch, or use the keyboard on the button to open the listbox popup. `useSelect`
 handles exposing the correct ARIA attributes for accessibility and handles the interactions for the
-select in its collapsed state. It should be combined with [useListBox](useListBox.html), which handles
+select in its collapsed state. It should be combined with [useListBox](../ListBox/useListBox.html), which handles
 the implementation of the popup listbox.
 
 `useSelect` also supports optional description and error message elements, which can be used
@@ -101,15 +101,14 @@ interface, which is a generic interface to access sequential unique keyed data. 
 implement this interface yourself, e.g. by using a prop to pass a list of item objects,
 but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} /> from
 `@react-stately/select` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information,
-and [Collection Interface](/react-stately/Collection.html) for internal details.
+See [Collection Components](v3:collections.html) for more information.
 
 In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />
 manages the state necessary for multiple selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
 It also holds state to track if the popup is open.
-For more information about selection, see [Selection](/react-stately/selection.html).
+For more information about selection, see [Selection](v3:selection.html).
 
 ## Example
 
@@ -118,13 +117,13 @@ and another for the dropdown arrow icon (hidden from screen readers with `aria-h
 A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native
 `<select>`, which enables browser form autofill support.
 
-The same `Popover`, `ListBox`, and `Button` components created with [usePopover](usePopover.html), [useListBox](useListBox.html),
-and [useButton](useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
-components such as a `ComboBox` created with [useComboBox](useComboBox.html) or a `Dialog` popover created with [useDialog](useDialog.html).
+The same `Popover`, `ListBox`, and `Button` components created with [usePopover](../Popover/usePopover.html), [useListBox](../ListBox/useListBox.html),
+and [useButton](../Button/useButton.html) that you may already have in your component library or application should be reused. These can be shared with other
+components such as a `ComboBox` created with [useComboBox](../ComboBox/useComboBox.html) or a `Dialog` popover created with [useDialog](../Modal/useDialog.html).
 The code for these components is also included below in the collapsed sections.
 
-In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
-options. For an example of the description and error message elements, see [useTextField](useTextField.html).
+In addition, see [useListBox](../ListBox/useListBox.html) for examples of sections (option groups), and more complex
+options. For an example of the description and error message elements, see [useTextField](../TextField/useTextField.html).
 
 ```tsx example export=true
 import {HiddenSelect, useSelect} from '@react-aria/select';
@@ -196,9 +195,9 @@ function Select(props) {
 ### Popover
 
 The `Popover` component is used to contain the popup listbox for the Select.
-It can be shared between many other components, including [ComboBox](useComboBox.html),
-[Menu](useMenu.html), and others.
-See [usePopover](usePopover.html) for more examples of popovers.
+It can be shared between many other components, including [ComboBox](../ComboBox/useComboBox.html),
+[Menu](../Menu/useMenu.html), and others.
+See [usePopover](../Popover/usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -245,8 +244,8 @@ function Popover({children, state, ...props}: PopoverProps) {
 ### ListBox
 
 The `ListBox` and `Option` components are used to show the list of options.
-They can also be shared with other components like a [ComboBox](useComboBox.html). See
-[useListBox](useListBox.html) for more examples, including sections and more complex items.
+They can also be shared with other components like a [ComboBox](../ComboBox/useComboBox.html). See
+[useListBox](../ListBox/useListBox.html) for more examples, including sections and more complex items.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -311,7 +310,7 @@ function Option({item, state}) {
 
 ### Button
 
-The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to toggle the listbox popup. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -354,7 +353,7 @@ The following examples show how to use the Select component created in the above
 
 ### Dynamic collections
 
-`Select` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+`Select` follows the [Collection Components API](v3:collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -390,7 +389,7 @@ function Example() {
 
 Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item.
 When `Select` is used with a dynamic collection as described above, the key of each item is derived from the data.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the `react-stately` [Selection docs](v3:selection.html) for more details.
 
 ```tsx example
 function Example() {
@@ -418,7 +417,7 @@ function Example() {
 
 ### Asynchronous loading
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+This example uses the [useAsyncList](../useAsyncList.html) hook to handle asynchronous loading
 of data from a server. You may additionally want to display a spinner to indicate the loading
 state to the user, or support features like infinite scroll to load more data.
 
@@ -464,7 +463,7 @@ A Select can be fully disabled using the `isDisabled` prop.
 
 `useSelect` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See [Collections](v3:collections.html) for more details.
 
 Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
 `useOption` can be used to style the item appropriately.
@@ -503,7 +502,7 @@ function Example() {
 
 ### Links
 
-By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Select` are not selectable. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
+By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Select` are not selectable. See the [links](../ListBox/useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
 ## Internationalization
 
@@ -518,17 +517,3 @@ content that is passed into the select.
 In right-to-left languages, the select should be mirrored. The arrow should be on the left,
 and the selected value should be on the right. In addition, the content of list options should
 flip. Ensure that your CSS accounts for this.
-
-## Accessibility
-
-### False positives
-
-The HiddenSelect may trigger a [known accessibility false positive](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#picker)
-from automated accessibility testing tools. This is because the HiddenSelect is included to specifically aid with browser form autocomplete
-and is hidden from screen readers via `aria-hidden` since users don't need to interact with it. We manage focus internally
-so that focusing this hidden select element will always shift focus to the Select's trigger button instead. Automated accessibility testing tools have no way of
-knowing that we manage the focus in this way and thus throw this false positive.
-
-To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
-problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
-from your automated accessibility tests as shown [here](./accessibility.html#false-positives).

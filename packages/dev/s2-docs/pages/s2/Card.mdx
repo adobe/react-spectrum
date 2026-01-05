@@ -4,6 +4,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['box'];
+export const description = 'Summarizes an object that a user can select or navigate to.';
 
 # Card
 
@@ -88,7 +89,7 @@ import FolderGradient from '@react-spectrum/s2/illustrations/gradient/generic2/F
 
 ### User
 
-A `UserCard` represents a user profile. It includes an [Avatar](Avatar.html) and a `Content` section with `title` and `description` slots, along with an optional header image and `Footer`.
+A `UserCard` represents a user profile. It includes an [Avatar](Avatar) and a `Content` section with `title` and `description` slots, along with an optional header image and `Footer`.
 
 ```tsx render docs={docs.exports.UserCard} links={docs.links} props={['variant', 'size']} type="s2" wide
 "use client";
@@ -232,7 +233,7 @@ import Select from '@react-spectrum/s2/icons/Select';
 
 ## Skeleton
 
-Wrap a card in a `Skeleton` to display a loading state. Placeholder text content and images are displayed in a skeleton style.
+Wrap a card in a [Skeleton](Skeleton) to display a loading state. Placeholder text content and images are displayed in a skeleton style.
 
 ```tsx render docs={docs.exports.Skeleton} links={docs.links} props={['isLoading']} initialProps={{isLoading: true}} type="s2" wide
 import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
@@ -254,7 +255,7 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 
 ### Card
 
-```tsx
+```tsx links={{Image: 'Image', Illustration: 'illustrations', ActionMenu: 'ActionMenu', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Footer: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer'}}
 <Card>
   <CardPreview>
     <Image /> or <Illustration />
@@ -268,11 +269,11 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 </Card>
 ```
 
-<PropTable component={docs.exports.Card} links={docs.links} />
+<PropTable component={docs.exports.Card} links={docs.links} hideRenderProps />
 
 ### AssetCard
 
-```tsx
+```tsx links={{Image: 'Image', Illustration: 'illustrations', ActionMenu: 'ActionMenu', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span'}}
 <AssetCard>
   <CardPreview>
     <Image /> or <Illustration />
@@ -285,11 +286,11 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 </AssetCard>
 ```
 
-<PropTable component={docs.exports.AssetCard} links={docs.links} />
+<PropTable component={docs.exports.AssetCard} links={docs.links} hideRenderProps />
 
 ### UserCard
 
-```tsx
+```tsx links={{Image: 'Image', ActionMenu: 'ActionMenu', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Footer: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer'}}
 <UserCard>
   <CardPreview>
     <Image />
@@ -304,11 +305,11 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 </UserCard>
 ```
 
-<PropTable component={docs.exports.UserCard} links={docs.links} />
+<PropTable component={docs.exports.UserCard} links={docs.links} hideRenderProps />
 
 ### ProductCard
 
-```tsx
+```tsx links={{Image: 'Image', ActionMenu: 'ActionMenu', Button: 'Button', LinkButton: 'LinkButton', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div', Text: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span', Footer: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer'}}
 <ProductCard>
   <CardPreview>
     <Image slot="preview" />
@@ -325,4 +326,4 @@ import {Skeleton, Card, CardPreview, Image, Content, Text} from '@react-spectrum
 </ProductCard>
 ```
 
-<PropTable component={docs.exports.ProductCard} links={docs.links} />
+<PropTable component={docs.exports.ProductCard} links={docs.links} hideRenderProps />

@@ -1,3 +1,4 @@
+import {InstallCommand} from '../../src/InstallCommand';
 import {Layout} from '../../src/Layout';
 export default Layout;
 
@@ -5,9 +6,14 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/Table';
 import '../../tailwind/tailwind.css';
 import Anatomy from 'react-aria-components/docs/TableAnatomy.svg';
-import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const tags = ['data', 'grid'];
+export const relatedPages = [
+  {title: 'useTable', url: 'Table/useTable.html'},
+  {title: 'Testing Table', url: './Table/testing'}
+];
+export const description = 'Displays data in rows and columns and enables a user to navigate its contents via directional navigation keys.';
 
 # Table
 
@@ -25,22 +31,22 @@ export const tags = ['data', 'grid'];
       <Column>Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="row-1">
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
       </Row>
-      <Row>
+      <Row id="row-2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
       </Row>
-      <Row>
+      <Row id="row-3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
       </Row>
-      <Row>
+      <Row id="row-4">
         <Cell>log.txt</Cell>
         <Cell>Text Document</Cell>
         <Cell>1/18/2016</Cell>
@@ -51,8 +57,7 @@ export const tags = ['data', 'grid'];
 
   ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="tailwind" files={["starters/tailwind/src/Table.tsx"]}
   "use client";
-  import {Table, TableHeader, Column, Row, Cell} from 'tailwind-starter/Table';
-  import {TableBody} from 'react-aria-components';
+  import {Table, TableHeader, TableBody, Column, Row, Cell} from 'tailwind-starter/Table';
 
   <Table/* PROPS */>
     <TableHeader>
@@ -61,22 +66,22 @@ export const tags = ['data', 'grid'];
       <Column>Date Modified</Column>
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="row-1">
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
       </Row>
-      <Row>
+      <Row id="row-2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
       </Row>
-      <Row>
+      <Row id="row-3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
       </Row>
-      <Row>
+      <Row id="row-4">
         <Cell>log.txt</Cell>
         <Cell>Text Document</Cell>
         <Cell>1/18/2016</Cell>
@@ -89,7 +94,7 @@ export const tags = ['data', 'grid'];
 
 ## Content
 
-`Table` follows the [Collection Components API](collections.html?component=Table), accepting both static and dynamic collections. 
+`Table` follows the [Collection Components API](collections?component=Table), accepting both static and dynamic collections.
 In this example, both the columns and the rows are provided to the table via a render function, enabling the user to hide and show columns and add additional rows.
 
 ```tsx render
@@ -172,10 +177,9 @@ Use [renderEmptyState](#empty-state) to display a spinner during initial load. T
 
 ```tsx render
 "use client";
+import {Collection, useAsyncList} from 'react-aria-components';
 import {Table, TableHeader, Column, Row, TableBody, Cell, TableLoadMoreItem} from 'vanilla-starter/Table';
-import {Collection} from 'react-aria-components';
 import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {useAsyncList} from 'react-stately';
 
 interface Character {
   name: string;
@@ -229,7 +233,9 @@ function AsyncSortTable() {
         </TableHeader>
         <TableBody
           renderEmptyState={() => (
-            <ProgressCircle isIndeterminate aria-label="Loading..." />
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <ProgressCircle isIndeterminate aria-label="Loading..." />
+            </div>
           )}>
           <Collection items={list.items}>
             {(item) => (
@@ -255,7 +261,7 @@ function AsyncSortTable() {
 
 ### Links
 
-Use the `href` prop on a `<Row>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection.html) for more details.
+Use the `href` prop on a `<Row>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.ListBox} links={docs.links} props={['selectionBehavior']} initialProps={{'aria-label': 'Bookmarks', selectionMode: 'multiple'}} wide
 "use client";
@@ -269,18 +275,18 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
   </TableHeader>
   <TableBody>
     {/*- begin highlight -*/}
-    <Row href="https://adobe.com/" target="_blank">
+    <Row id="row-1" href="https://adobe.com/" target="_blank">
       {/*- end highlight -*/}
       <Cell>Adobe</Cell>
       <Cell>https://adobe.com/</Cell>
       <Cell>January 28, 2023</Cell>
     </Row>
-    <Row href="https://google.com/" target="_blank">
+    <Row id="row-2" href="https://google.com/" target="_blank">
       <Cell>Google</Cell>
       <Cell>https://google.com/</Cell>
       <Cell>April 5, 2023</Cell>
     </Row>
-    <Row href="https://nytimes.com/" target="_blank">
+    <Row id="row-3" href="https://nytimes.com/" target="_blank">
       <Cell>New York Times</Cell>
       <Cell>https://nytimes.com/</Cell>
       <Cell>July 12, 2023</Cell>
@@ -293,7 +299,7 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
 
 ```tsx render hideImports
 "use client";
-import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/Table';
+import {Table, TableHeader, Column, TableBody} from 'vanilla-starter/Table';
 
 <Table aria-label="Search results">
   <TableHeader>
@@ -311,7 +317,7 @@ import {Table, TableHeader, Column, Row, TableBody, Cell} from 'vanilla-starter/
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection.html) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onRowAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -331,7 +337,7 @@ function Example(props) {
         /* PROPS */
         selectedKeys={selected}
         onSelectionChange={setSelected}
-        onAction={key => alert(`Clicked ${key}`)}
+        onRowAction={key => alert(`Clicked ${key}`)}
         ///- end highlight -///
       >
         <TableHeader>
@@ -500,7 +506,7 @@ const columns = [
 ];
 ///- end collapse -///
 
-const initialWidths = new Map([
+const initialWidths = new Map<string, number | string>([
   ['file', '1fr'],
   ['size', 80],
   ['date', 100]
@@ -579,14 +585,12 @@ function subscribe(fn) {
 
 ## Drag and drop
 
-Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.html?component=Table) to learn more.
+Table supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the <TypeLink links={docs.links} type={docs.exports.useDragAndDrop} /> hook. Users can drop data on the table as a whole, on individual rows, insert new rows between existing ones, or reorder rows. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd?component=Table) to learn more.
 
 ```tsx render
 "use client";
-import {useListData} from 'react-stately';
-import {Table, TableHeader, Column, Row} from 'vanilla-starter/Table';
-import {TableBody, Cell} from 'react-aria-components';
-import {useDragAndDrop} from 'react-aria-components';
+import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
+import {useDragAndDrop, useListData} from 'react-aria-components';
 
 function ReorderableTable() {
   let list = useListData({
@@ -600,8 +604,8 @@ function ReorderableTable() {
 
   ///- begin highlight -///
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({
-      'text/plain': list.getItem(key).name
+    getItems: (keys, items: typeof list.items) => items.map(item => ({
+      'text/plain': item.name
     })),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -648,7 +652,7 @@ function ReorderableTable() {
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox.html', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button.html', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{ResizableTableContainer: '#resizabletablecontainer', Table: '#table', TableHeader: '#tableheader', Column: '#column', Checkbox: 'Checkbox', ColumnResizer: '#columnresizer', TableBody: '#tablebody', Row: '#row', Cell: '#cell', Button: 'Button', TableLoadMoreItem: '#tableloadmoreitem', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <ResizableTableContainer>
   <Table>
     <TableHeader>
@@ -658,7 +662,7 @@ function ReorderableTable() {
       <Column />
     </TableHeader>
     <TableBody>
-      <Row>
+      <Row id="row-1">
         <Cell><Button slot="drag" /></Cell>
         <Cell>
           <Checkbox slot="selection" /> or <SelectionIndicator />
