@@ -1939,6 +1939,13 @@ function remarkDocsComponentsToMarkdown() {
         // ### {typeName}
         newNodes.push({type: 'heading', depth: 3, children: [{type: 'text', value: typeName}]});
 
+        // Try to generate function signature
+        const funcSig = generateFunctionSignature(typeName, file);
+        if (funcSig) {
+          const sigTree = unified().use(remarkParse).parse(funcSig);
+          newNodes.push(...sigTree.children);
+        }
+
         const desc = getComponentDescription(typeName, file);
         if (desc) {
           newNodes.push({type: 'paragraph', children: [{type: 'text', value: desc}]});
@@ -2273,6 +2280,54 @@ function generateFunctionOptionsTable(functionName, file) {
   }
 
   return null;
+}
+
+/**
+ * Generate a function signature markdown.
+ * Returns the signature like: `functionName(param1: Type1, param2: Type2): ReturnType`
+ */
+function generateFunctionSignature(functionName, file) {
+  let funcPath = resolveComponentPath(functionName, file);
+
+  if (!funcPath) {
+    return null;
+  }
+
+  const source = project.addSourceFileAtPathIfExists(funcPath);
+  if (!source) {
+    return null;
+  }
+
+  // Attempt to get an exported declaration for the function.
+  const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
+  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+
+  let funcDecl = possibleDecls.find(Boolean);
+  if (!funcDecl) {
+    return null;
+  }
+
+  // Retrieve call signature via type to support arrow functions.
+  const type = funcDecl.getType?.();
+  const callSig = type?.getCallSignatures?.()[0];
+  if (!callSig) {
+    return null;
+  }
+
+  const params = callSig.getParameters();
+  const returnType = cleanTypeText(callSig.getReturnType().getText(funcDecl));
+
+  // Build parameter list
+  const paramStrs = params.map(paramSym => {
+    const paramDecl = paramSym.getDeclarations()?.[0];
+    const pName = paramSym.getName();
+    const pType = getTypeText(paramDecl, funcDecl);
+    const pOptional = paramDecl?.hasQuestionToken?.() ? '?' : '';
+    return `${pName}${pOptional}: ${pType}`;
+  });
+
+  const signature = `${functionName}(${paramStrs.join(', ')}): ${returnType}`;
+  return `\`${signature}\``;
 }
 
 /**
