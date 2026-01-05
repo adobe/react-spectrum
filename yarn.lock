@@ -5821,29 +5821,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/numberfield@npm:^3.12.3":
-  version: 3.12.3
-  resolution: "@react-aria/numberfield@npm:3.12.3"
-  dependencies:
-    "@react-aria/i18n": "npm:^3.12.14"
-    "@react-aria/interactions": "npm:^3.26.0"
-    "@react-aria/spinbutton": "npm:^3.7.0"
-    "@react-aria/textfield": "npm:^3.18.3"
-    "@react-aria/utils": "npm:^3.32.0"
-    "@react-stately/form": "npm:^3.2.2"
-    "@react-stately/numberfield": "npm:^3.10.3"
-    "@react-types/button": "npm:^3.14.1"
-    "@react-types/numberfield": "npm:^3.8.16"
-    "@react-types/shared": "npm:^3.32.1"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  checksum: 10c0/4f53d5696eb77eb739d9083c2eba6bbd4d780879170c29b92877b4ee1e0780160b900a1914f6affe3623b53ec90f2f661be5055ad4ea00bfc4d3f5a330d4f80b
-  languageName: node
-  linkType: hard
-
-"@react-aria/numberfield@workspace:packages/@react-aria/numberfield":
+"@react-aria/numberfield@npm:^3.12.3, @react-aria/numberfield@workspace:packages/@react-aria/numberfield":
   version: 0.0.0-use.local
   resolution: "@react-aria/numberfield@workspace:packages/@react-aria/numberfield"
   dependencies:
