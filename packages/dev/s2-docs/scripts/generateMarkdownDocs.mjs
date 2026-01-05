@@ -714,12 +714,14 @@ function generateInterfaceTable(interfaceName, file) {
     if (callSignatures.length > 0) {
       const sig = callSignatures[0];
       const params = sig.getParameters();
-      const returnType = cleanTypeText(sig.getReturnType().getText());
+      const returnType = cleanTypeText(sig.getReturnType().getText(ifaceDecl));
       
       const paramStrs = params.map(p => {
         const pDecl = p.getDeclarations()?.[0];
         const pName = p.getName();
-        const pType = cleanTypeText(p.getDeclaredType().getText());
+        const pType = pDecl 
+          ? cleanTypeText(pDecl.getType().getText(pDecl))
+          : cleanTypeText(p.getDeclaredType().getText(ifaceDecl));
         const pOptional = pDecl?.hasQuestionToken?.() ? '?' : '';
         return `${pName}${pOptional}: ${pType}`;
       });
