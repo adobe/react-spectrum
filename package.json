@@ -12,6 +12,8 @@
     "tsgo": "tsgo",
     "check-types": "tsgo --noEmit",
     "check-types:tsc": "tsc",
+    "clean": "make clean",
+    "clean:all": "make clean_all",
     "install-16": "node scripts/react-16-install-prep.mjs && yarn add react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-17": "node scripts/react-17-install-prep.mjs && yarn add react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-18": "node scripts/react-18-install-prep.mjs && yarn add react@^18 react-dom@^18 react-test-renderer@^18.3.1 && node scripts/oldReactSupport.mjs",
