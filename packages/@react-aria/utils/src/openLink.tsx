@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling, isMac, isWebKit} from './index';
+import {focusWithoutScrolling} from './focusWithoutScrolling';
 import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
-import {isFirefox, isIPad} from './platform';
+import {isFirefox, isIPad, isMac, isWebKit} from './platform';
 import React, {createContext, DOMAttributes, JSX, MouseEvent as ReactMouseEvent, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {

@@ -11,7 +11,7 @@
  */
 
 import {Dispatch, RefObject, useCallback, useRef, useState} from 'react';
-import {useLayoutEffect} from './';
+import {useLayoutEffect} from './useLayoutEffect';
 
 type SetValueAction<S> = (prev: S) => Generator<any, void, unknown>;
 

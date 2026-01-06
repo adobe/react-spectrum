@@ -9,6 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
+export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid, isFirefox} from './platform';
+export {openLink, getSyntheticLinkProps, useSyntheticLinkProps, RouterProvider, shouldClientNavigate, useRouter, useLinkProps, handleLinkClick} from './openLink';
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
 export {createShadowTreeWalker, ShadowTreeWalker} from './shadowdom/ShadowTreeWalker';
@@ -19,7 +22,6 @@ export {mergeRefs} from './mergeRefs';
 export {filterDOMProps} from './filterDOMProps';
 export {focusWithoutScrolling} from './focusWithoutScrolling';
 export {getOffset} from './getOffset';
-export {openLink, getSyntheticLinkProps, useSyntheticLinkProps, RouterProvider, shouldClientNavigate, useRouter, useLinkProps, handleLinkClick} from './openLink';
 export {runAfterTransition} from './runAfterTransition';
 export {useDrag1D} from './useDrag1D';
 export {useGlobalListeners} from './useGlobalListeners';
@@ -35,7 +37,6 @@ export {getScrollParents} from './getScrollParents';
 export {isScrollable} from './isScrollable';
 export {useViewportSize} from './useViewportSize';
 export {useDescription} from './useDescription';
-export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid, isFirefox} from './platform';
 export {useEvent} from './useEvent';
 export {useValueEffect} from './useValueEffect';
 export {scrollIntoView, scrollIntoViewport} from './scrollIntoView';
@@ -47,7 +48,6 @@ export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';
 export {useLoadMoreSentinel, useLoadMoreSentinel as UNSTABLE_useLoadMoreSentinel} from './useLoadMoreSentinel';
 export {inertValue} from './inertValue';
-export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
 export {isCtrlKeyPressed, willOpenKeyboard} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
 export {isFocusable, isTabbable} from './isFocusable';

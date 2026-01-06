@@ -12,7 +12,7 @@
 
 import {MutableRefObject} from 'react';
 import {RefObject} from '@react-types/shared';
-import {useLayoutEffect} from './';
+import {useLayoutEffect} from './useLayoutEffect';
 
 interface ContextValue<T> {
   ref?: MutableRefObject<T | null>

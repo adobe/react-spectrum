@@ -15,7 +15,7 @@ import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, Dialo
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import {resizingTests} from '@react-aria/table/test/tableResizingTests.tsx';
 import {setInteractionModality} from '@react-aria/interactions';
 import * as stories from '../stories/Table.stories';
 import {User} from '@react-aria/test-utils';

@@ -13,7 +13,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
-import {useValueEffect} from './';
+import {useValueEffect} from './useValueEffect';
 
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
 let canUseDOM = Boolean(
