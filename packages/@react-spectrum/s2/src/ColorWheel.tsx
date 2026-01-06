@@ -51,7 +51,7 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
       outerRadius={outerRadius}
       innerRadius={innerRadius}
       ref={containerRef}
-      style={UNSAFE_style}
+      style={{...UNSAFE_style, width: outerRadius * 2, height: outerRadius * 2}}
       className={UNSAFE_className + styles}>
       {({isDisabled, state}) => (<>
         <ColorWheelTrack
