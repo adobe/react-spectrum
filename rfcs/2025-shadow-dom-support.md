@@ -113,6 +113,7 @@ Unknown, haven't done research here yet.
 
 * How to actually define the limitations of our support? See Introduction, it's missing a final sentence with this information.
 * User Event and JSDOM do not have good shadow DOM support, and user event has not been accepting PRs, can we count of them when testing? https://github.com/testing-library/user-event/issues/1026
+* Will we apply any changes to V3? or only RAC and S2 moving forward?
 
 ## Help Needed
 
