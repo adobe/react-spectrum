@@ -2,6 +2,23 @@
 
 This is a chrome plugin to assist in debugging the styles applied by our Style Macro.
 
+## Expected Usage
+
+Until the plugin is published to the Chrome web extension store, the easiest thing to do is to build using the command
+```
+yarn workspace style-macro-chrome-plugin build
+```
+
+This will create a dist directory in the directory `packages/dev/style-macro-chrome-plugin`, you should copy this directory to somewhere permanent on your machine.
+
+Next, open Chrome and go to [chrome://extensions/](chrome://extensions/).
+
+Load an unpacked extension, it's a button in the top left, and navigate to the dist directory.
+
+The extension is now registered in Chrome and you can go to storybook or docs, wherever you are working.
+
+Inspect an element on the page to open dev tools and go to the Style Macro panel.
+
 ## Local development
 
 From the root of our monopackage, run
@@ -15,13 +32,7 @@ yarn workspace style-macro-chrome-plugin build
 
 This will create a dist directory in the directory `packages/dev/style-macro-chrome-plugin` which will update anytime the code changes and results in a rebuild.
 
-Next, open Chrome and go to [chrome://extensions/](chrome://extensions/).
-
-Load an unpacked extension, it's a button in the top left, and navigate to the dist directory.
-
-The extension is now registered in Chrome and you can go to storybook or docs, wherever you are working.
-
-Inspect an element on the page to open dev tools and go to the Style Macro panel.
+Now follow the instructions in the above section starting from "Next, open chrome".
 
 ## Troubleshooting
 
