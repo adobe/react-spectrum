@@ -623,7 +623,7 @@ function generatePropTable(componentName, file) {
   const rows = propSymbols.map((sym) => {
     const name = sym.getName();
     const decl = sym.getDeclarations()?.[0];
-    const type = getTypeText(decl, iface);
+    const type = cleanTypeText(sym.getTypeAtLocation(iface).getText(iface));
 
     let description = '';
     let defVal = '';
@@ -750,7 +750,7 @@ function generateInterfaceTable(interfaceName, file) {
       const signature = `${name}(${paramStrs.join(', ')}): ${returnType}`;
       methods.push({name, signature, description});
     } else {
-      const typeText = getTypeText(decl, ifaceDecl);
+      const typeText = cleanTypeText(type.getText(ifaceDecl));
       properties.push({name, type: typeText, description, defVal, optional});
     }
   }
