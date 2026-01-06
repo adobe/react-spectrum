@@ -16,7 +16,7 @@ import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Form} from '@react-spectrum/form';
-import messages from '../../../@react-aria/numberfield/intl/*.json';
+import messages from '@react-aria/numberfield/intl/*.json';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
