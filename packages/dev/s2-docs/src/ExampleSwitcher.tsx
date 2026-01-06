@@ -1,8 +1,8 @@
 'use client';
 
 import {Content, ContextualHelp, Heading, Picker, PickerItem, SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+import {createContext, useState} from 'react';
 import {Key} from 'react-aria-components';
-import React, {createContext, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocalStorage} from './useLocalStorage';

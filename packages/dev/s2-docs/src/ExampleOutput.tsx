@@ -1,7 +1,7 @@
 'use client';
 
+import {cloneElement, Component, createElement, isValidElement, ReactNode} from 'react';
 import {Content, Heading, InlineAlert} from '@react-spectrum/s2';
-import React, {cloneElement, Component, createElement, isValidElement, ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 interface ExampleOutputProps {
@@ -48,9 +48,7 @@ export function ExampleOutput({component, props = {}, align = 'center', orientat
         },
         boxSizing: 'border-box'
       })({align, orientation})}
-      style={{
-        background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))
-      } as React.CSSProperties}>
+      style={{background: getBackgroundColor(props.staticColor || (props.isOverBackground ? 'white' : undefined))}}>
       <ErrorBoundary>
         {isValidElement(component) ? cloneElement(component, props) : createElement(component, props)}
       </ErrorBoundary>
