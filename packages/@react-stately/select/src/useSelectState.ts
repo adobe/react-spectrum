@@ -46,7 +46,7 @@ export interface SelectState<T, M extends SelectionMode = 'single'> extends List
   readonly defaultValue: ValueType<M>,
 
   /** Sets the select value. */
-  setValue(value: Key | Key[] | null): void,
+  setValue(value: Key | readonly Key[] | null): void,
 
   /**
    * The value of the first selected item.
@@ -88,7 +88,7 @@ export function useSelectState<T extends object, M extends SelectionMode = 'sing
   let value = useMemo(() => {
     return props.value !== undefined ? props.value : (selectionMode === 'single' ? props.selectedKey : undefined) as ValueType<M>;
   }, [props.value, props.selectedKey, selectionMode]);
-  let [controlledValue, setControlledValue] = useControlledState<Key | Key[] | null>(value, defaultValue, props.onChange as any);
+  let [controlledValue, setControlledValue] = useControlledState<Key | readonly Key[] | null>(value, defaultValue, props.onChange as any);
   // Only display the first selected item if in single selection mode but the value is an array.
   let displayValue = selectionMode === 'single' && Array.isArray(controlledValue) ? controlledValue[0] : controlledValue;
   let setValue = (value: Key | Key[] | null) => {

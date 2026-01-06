@@ -19,11 +19,11 @@ import {
  useContextProps,
  useRenderProps
 } from './utils';
+import {DOMProps, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLAnchorElement>, 'onClick'> {
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps, DOMProps, Omit<GlobalDOMAttributes<HTMLAnchorElement>, 'onClick'> {
  /**
   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
   * @default 'react-aria-Link'
