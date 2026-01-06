@@ -6,7 +6,6 @@ import React, {createContext, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocalStorage} from './useLocalStorage';
-import {useSettings} from './SettingsContext';
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -67,7 +66,6 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
   let [selected, setSelected] = useLocalStorage(type, examples[0]);
   let [theme, setTheme] = useLocalStorage('theme', 'indigo');
   let [value, setValue] = useState(examples[0]);
-  let {resolvedColorScheme} = useSettings();
 
   if (!examples.includes(selected)) {
     selected = examples[0];
@@ -125,7 +123,7 @@ export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, ch
           <PickerItem id="purple">Purple</PickerItem>
         </Picker>
       }
-      <div style={{gridArea: 'example', colorScheme: resolvedColorScheme} as React.CSSProperties}>
+      <div style={{gridArea: 'example'}}>
         <ExampleSwitcherContext.Provider value={selected}>
           {children[examples.indexOf(selected)]}
         </ExampleSwitcherContext.Provider>

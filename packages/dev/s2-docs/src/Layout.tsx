@@ -10,7 +10,6 @@ import reactAriaFavicon from 'url:../assets/react-aria-favicon.svg';
 import rspFavicon from 'url:../assets/rsp-favicon.svg';
 import './anatomy.css';
 import './footer.css';
-import './theme-overrides.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
 import {CodeBlock, standaloneCode} from './CodeBlock';
@@ -25,7 +24,6 @@ import {Link} from './Link';
 import {Main, NavigationSuspense, Router} from './Router';
 import {MobileHeader} from './MobileHeader';
 import {PropTable} from './PropTable';
-import {SettingsDialog} from './SettingsDialog';
 import {SettingsProvider} from './SettingsProvider';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
@@ -155,15 +153,13 @@ function Footer() {
           margin: 0,
           marginTop: 16,
           font: 'body-2xs',
-          listStyleType: 'none',
-          alignItems: 'center'
+          listStyleType: 'none'
         })}>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
         <li><Link isQuiet href="//www.adobe.com/privacy.html" variant="secondary">Privacy</Link></li>
         <li><Link isQuiet href="//www.adobe.com/legal/terms.html" variant="secondary">Terms of Use</Link></li>
         <li><Link isQuiet href="//www.adobe.com/privacy/cookies.html" variant="secondary">Cookies</Link></li>
         <li><Link isQuiet href="//www.adobe.com/privacy/ca-rights.html" variant="secondary">Do not sell my personal information</Link></li>
-        <li><SettingsDialog /></li>
       </ul>
     </footer>
   );

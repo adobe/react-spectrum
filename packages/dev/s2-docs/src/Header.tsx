@@ -1,18 +1,20 @@
 'use client';
 
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {Button, Link} from 'react-aria-components';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
 import {HeaderLink} from './Link';
-// @ts-ignore
-import {Link} from 'react-aria-components';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
 import {NpmLogo} from './icons/NpmLogo';
 import {pressScale} from '@react-spectrum/s2';
 import React, {useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useRouter} from './Router';
+import {useSettings} from './SettingsContext';
 
 function getButtonText(currentPage) {
   return getLibraryLabel(getLibraryFromPage(currentPage));
@@ -43,6 +45,46 @@ const libraryStyles = style({
   },
   marginStart: space(26)
 });
+
+const colorSchemeToggleStyles = style({
+  ...focusRing(),
+  font: 'ui',
+  color: 'neutral',
+  textDecoration: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  },
+  size: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 'lg',
+  borderWidth: 0
+});
+
+function ColorSchemeToggle() {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
+  let isOverriding = colorScheme !== systemColorScheme;
+  let label = isOverriding
+    ? `Using ${colorScheme} mode (press to use system)`
+    : `Using system ${systemColorScheme} mode (press to switch)`;
+  let ref = useRef(null);
+
+  return (
+    <Button
+      ref={ref}
+      aria-label={label}
+      onPress={toggleColorScheme}
+      className={renderProps => colorSchemeToggleStyles(renderProps)}
+      style={pressScale(ref)}>
+      {colorScheme === 'dark' ? <Lighten /> : <Contrast />}
+    </Button>
+  );
+}
 
 export default function Header() {
   const {currentPage} = useRouter();
@@ -164,6 +206,7 @@ export default function Header() {
             <HeaderLink href={docs}>Docs</HeaderLink>
             <HeaderLink href={release}>Releases</HeaderLink>
             <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
+            {library !== 'react-aria' && <ColorSchemeToggle />}
             <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
             <HeaderLink aria-label="npm" href={`https://npmjs.com/${npm}`} target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
           </div>
