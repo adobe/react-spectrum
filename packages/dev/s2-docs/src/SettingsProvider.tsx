@@ -2,7 +2,7 @@
 
 import {type ColorScheme, SettingsContext} from './SettingsContext';
 import {Provider} from '@react-spectrum/s2';
-import React, {ReactNode, useCallback, useEffect, useSyncExternalStore} from 'react';
+import React, {ReactNode, useCallback, useSyncExternalStore} from 'react';
 import {useLocalStorage} from './useLocalStorage';
 
 interface SettingsProviderProps {
