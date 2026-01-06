@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
+import {ActionButton, DialogTrigger, pressScale, Provider} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon} from './library';
@@ -11,6 +11,7 @@ import React, {CSSProperties, lazy, useEffect, useRef, useState} from 'react';
 import {TAB_DEFS} from './constants';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useRouter} from './Router';
+import {useSettings} from './SettingsContext';
 import './SearchMenu.css';
 
 const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
@@ -68,6 +69,7 @@ export function MobileHeader({toc}) {
   let ref = useRef<HTMLDivElement | null>(null);
   let linkRef = useRef<HTMLAnchorElement | null>(null);
   let labelRef = useRef<HTMLSpanElement | null>(null);
+  let {colorScheme} = useSettings();
 
   useEffect(() => {
     // Tiny polyfill for scroll driven animations.
@@ -276,7 +278,9 @@ export function MobileHeader({toc}) {
               width: 'full',
               height: '--visual-viewport-height'
             })}>
-            <MobileSearchMenu />
+            <Provider colorScheme={colorScheme} background="layer-2">
+              <MobileSearchMenu />
+            </Provider>
           </Modal>
         </ModalOverlay>
       </DialogTrigger>
