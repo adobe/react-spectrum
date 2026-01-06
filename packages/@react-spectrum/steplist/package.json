@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/steplist",
-  "version": "3.0.0-alpha.20",
+  "version": "3.0.0-alpha.21",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -40,17 +40,17 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.21.2",
-    "@react-aria/i18n": "^3.12.13",
-    "@react-aria/interactions": "^3.25.6",
-    "@react-aria/steplist": "3.0.0-alpha.22",
-    "@react-aria/utils": "^3.31.0",
-    "@react-aria/visually-hidden": "^3.8.28",
-    "@react-spectrum/utils": "^3.12.9",
+    "@react-aria/focus": "^3.21.3",
+    "@react-aria/i18n": "^3.12.14",
+    "@react-aria/interactions": "^3.26.0",
+    "@react-aria/steplist": "3.0.0-alpha.23",
+    "@react-aria/utils": "^3.32.0",
+    "@react-aria/visually-hidden": "^3.8.29",
+    "@react-spectrum/utils": "^3.12.10",
     "@react-stately/collections": "^3.12.8",
-    "@react-stately/steplist": "3.0.0-alpha.18",
+    "@react-stately/steplist": "3.0.0-alpha.19",
     "@react-types/shared": "^3.32.1",
-    "@spectrum-icons/ui": "^3.6.20",
+    "@spectrum-icons/ui": "^3.6.21",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

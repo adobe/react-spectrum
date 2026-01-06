@@ -65,12 +65,13 @@ import {Form, TextField, Button} from '@react-spectrum/s2';
     event.preventDefault();
 
     // Get data from form.
-    let formData = new FormData(event.target);
+    let target = event.target as HTMLFormElement;
+    let formData = new FormData(target);
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
 
     // Reset form after submission.
-    event.target.reset();
+    target.reset();
   }}>
   {/*- end highlight -*/}
   <TextField name="name" label="Name" placeholder="Enter your full name" />
@@ -153,7 +154,7 @@ Supported constraints include:
 
 * `isRequired` indicates that a field must have a value before the form can be submitted.
 * `minValue` and `maxValue` specify the minimum and maximum value in a date picker or number field.
-* `minLength` and `maxLength` specify the minimum and length of text input.
+* `minLength` and `maxLength` specify the minimum and maximum length of text input.
 * `pattern` provides a custom [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) that a text input must conform to.
 * `type="email"` and `type="url"` provide builtin validation for email addresses and URLs.
 
@@ -189,7 +190,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 <InlineAlert variant="informative">
   <Heading>Localization</Heading>
-  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Spectrums's [Provider](Provider.html) has no effect on validation errors.</Content>
+  <Content>The default error messages are localized by the browser using the browser/operating system language setting. React Spectrum's [Provider](Provider) has no effect on validation errors.</Content>
 </InlineAlert>
 
 ### Custom validation
@@ -220,7 +221,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 By default, validation errors are displayed after the value is committed (e.g. on blur), or when the form is submitted. This avoids confusing the user with irrelevant errors while they are still entering a value.
 
-In some cases, validating in realtime can be desireable, such as when meeting password requirements. This can be accomplished by making the field value [controlled](#controlled-forms), and setting the `isInvalid` and `errorMessage` props accordingly.
+In some cases, validating in realtime can be desirable, such as when meeting password requirements. This can be accomplished by making the field value [controlled](#controlled-forms), and setting the `isInvalid` and `errorMessage` props accordingly.
 
 ```tsx render
 'use client';
@@ -259,7 +260,7 @@ By default, invalid fields block forms from being submitted. To avoid this, use 
 
 Client side validation is useful to give the user immediate feedback, but data should always be validated on the backend for security and reliability. Your business logic may also include rules which cannot be validated on the frontend.
 
-To display server validation errors, set the the `validationErrors` prop on the [Form](Form.html) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
+To display server validation errors, set the `validationErrors` prop on the [Form](Form) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
 
 ```tsx render
 'use client';
@@ -269,7 +270,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 function action(prevState, formData: FormData) {
   return {
-    values: Object.fromEntries(formData),
+    values: Object.fromEntries(formData) as Record<string, string>,
     errors: {
       username: 'Sorry, this username is taken.'
     }
@@ -277,7 +278,7 @@ function action(prevState, formData: FormData) {
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState(action, {});
+  let [{values, errors}, formAction] = useActionState<{values?: Record<string, string>, errors?: Record<string, string>}, FormData>(action, {});
 
   return (
     <Form
@@ -477,7 +478,7 @@ function App() {
             onBlur={onBlur}
             ref={ref}
             isRequired
-            validationState={invalid ? 'invalid' : undefined}
+            isInvalid={invalid}
             errorMessage={error?.message}
           />
         )}

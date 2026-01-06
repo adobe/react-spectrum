@@ -12,17 +12,17 @@
     "@storybook/react-vite": "^8.6.14",
     "@storybook/test": "^8.6.14",
     "@tailwindcss/postcss": "^4.0.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
     "autoprefixer": "^10.4.16",
-    "react": "^18.2.0",
+    "react": "^19.1.0",
     "react-docgen-typescript": "^2.2.2",
-    "react-dom": "^18.2.0",
+    "react-dom": "^19.1.0",
     "storybook": "^8.6.14",
     "tailwindcss": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-react-aria-components": "latest",
-    "typescript": "5.3.3",
+    "tailwindcss-react-aria-components": "^2.0.1",
+    "typescript": "^5.8.2",
     "vite": "^5.0.10"
   },
   "scripts": {
@@ -32,7 +32,7 @@
   "dependencies": {
     "lucide-react": "^0.517.0",
     "postcss": "^8.4.31",
-    "react-aria-components": "latest",
+    "react-aria-components": "^1.14.0",
     "tailwind-variants": "^0.3.1"
   },
   "resolutions": {

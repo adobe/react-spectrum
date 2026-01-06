@@ -1,31 +1,12 @@
 'use client';
 import { Check, Minus } from 'lucide-react';
-import React, { ReactNode } from 'react';
-import { Checkbox as AriaCheckbox, CheckboxGroup as AriaCheckboxGroup, CheckboxGroupProps as AriaCheckboxGroupProps, CheckboxProps, ValidationResult, composeRenderProps } from 'react-aria-components';
+import React from 'react';
+import { Checkbox as AriaCheckbox, CheckboxProps, composeRenderProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
-import { Description, FieldError, Label } from './Field';
-import { composeTailwindRenderProps, focusRing } from './utils';
-
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'> {
-  label?: string,
-  children?: ReactNode,
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
-}
-
-export function CheckboxGroup(props: CheckboxGroupProps) {
-  return (
-    <AriaCheckboxGroup {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2 font-sans')}>
-      <Label>{props.label}</Label>
-      {props.children}
-      {props.description && <Description>{props.description}</Description>}
-      <FieldError>{props.errorMessage}</FieldError>
-    </AriaCheckboxGroup>
-  );
-}
+import { focusRing } from './utils';
 
 const checkboxStyles = tv({
-  base: 'flex gap-2 items-center group font-sans text-sm transition relative',
+  base: 'flex gap-2 items-center group font-sans text-sm transition relative [-webkit-tap-highlight-color:transparent]',
   variants: {
     isDisabled: {
       false: 'text-neutral-800 dark:text-neutral-200',

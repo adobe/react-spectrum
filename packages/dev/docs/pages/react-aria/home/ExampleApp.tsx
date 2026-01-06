@@ -209,7 +209,7 @@ export function ExampleApp(): React.ReactNode {
         </DialogTrigger>
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="!h-9 shrink-0 p-0 hidden sm:inline-flex">
+            <Button aria-label="Columns" variant="secondary" className="!w-9 !h-9 shrink-0 p-0 hidden sm:inline-flex">
               <SlidersIcon aria-hidden className="block w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
@@ -222,7 +222,7 @@ export function ExampleApp(): React.ReactNode {
           </Menu>
         </MenuTrigger>
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="!h-9 shrink-0 p-0 col-start-5">
+          <Button aria-label="Add plant" variant="secondary" className="!w-9 !h-9 shrink-0 p-0 col-start-5">
             <PlusIcon aria-hidden className="block w-5 h-5" />
           </Button>
           <PlantModal>
@@ -506,7 +506,7 @@ function PlantModal(props: ModalOverlayProps) {
       // Use position: absolute instead of fixed to avoid
       // being clipped to the "inner" viewport in iOS 26
       className={({isEntering, isExiting}) => `
-      absolute top-0 left-0 w-full h-(--page-height) isolate z-20 bg-black/[15%] backdrop-blur-lg
+      absolute top-0 left-0 w-full h-(--page-height) max-h-[5000px] isolate z-20 bg-black/[15%] backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>

@@ -19,9 +19,9 @@ date: 2024-11-20
 
 # November 20, 2024 Release
 
-We’re excited to announce that our Accordion and Disclosure components are now generally available! This includes [Disclosure](/react-aria/Disclosure.html) and [DisclosureGroup](/react-aria/DisclosureGroup.html) in React Aria, as well as [Disclosure](/react-spectrum/Disclosure.html) and [Accordion](/react-spectrum/Accordion.html) in React Spectrum. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
+We’re excited to announce that our Accordion and Disclosure components are now generally available! This includes [Disclosure](react-aria:Disclosure) and [DisclosureGroup](react-aria:DisclosureGroup) in React Aria, as well as [Disclosure](../Disclosure.html) and [Accordion](../Accordion.html) in React Spectrum. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
 
-We are also introducing [ToggleButtonGroup](/react-aria/ToggleButtonGroup.html) in React Aria Components, which supports arrow key navigation with single and multiple selection modes. In addition, Menu now supports the ability to create [Section-level selection groups](/react-aria/Menu.html#section-level-selection), allowing you to mix actions, single, and multiple selection within the same menu. Menus can also be nested inside Dialog popovers to enable more complex use cases.
+We are also introducing [ToggleButtonGroup](react-aria:ToggleButtonGroup) in React Aria Components, which supports arrow key navigation with single and multiple selection modes. In addition, Menu now supports the ability to create [Section-level selection groups](react-aria:Menu#section-level-selection), allowing you to mix actions, single, and multiple selection within the same menu. Menus can also be nested inside Dialog popovers to enable more complex use cases.
 
 Last but not least, React Spectrum and React Aria are now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant! This has been an extremely large, multi-year effort and we thank you for your patience. This helps us reduce bugs, particularly related to `null` checks, resulting in more correct type definitions for our APIs.
 
@@ -38,7 +38,7 @@ With the GA release of Accordion and Disclosure, take note of the following chan
 - `useAccordion` and `useAccordionItem` from `@react-aria/accordion` have been deprecated in favor of `useDisclosure` from `@react-aria/disclosure`
 - `DisclosureHeader` from `@react-spectrum/accordion` has been updated to be `DisclosureTitle`
 
-If you're using an older pre-release version of Accordion, see the [previous release notes](/releases/2024-09-30.html#accordion-updates) for instructions on how to migrate to the released API.
+If you're using an older pre-release version of Accordion, see the [previous release notes](2024-09-30.html#accordion-updates) for instructions on how to migrate to the released API.
 
 **Section changes**
 

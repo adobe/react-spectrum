@@ -1,16 +1,16 @@
 'use client';
 
-import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, UNSTABLE_ToastQueue as ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
+import {ActionButton, ActionButtonGroup, Button, ButtonGroup, Content, createIcon, Dialog, DialogContainer, Heading, Link, Menu, MenuItem, MenuTrigger, Text, ToastQueue, Tooltip, TooltipTrigger} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
-import {createCodeSandbox, getCodeSandboxFiles} from './CodeSandbox';
 import {createStackBlitz} from './StackBlitz';
 import Download from '@react-spectrum/s2/icons/Download';
 import type {DownloadFiles} from './CodeBlock';
+import {getCodeSandboxFiles} from './CodeSandbox';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
 import {Library} from './library';
 import LinkIcon from '@react-spectrum/s2/icons/Link';
 import OpenIn from '@react-spectrum/s2/icons/OpenIn';
-import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
+// import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
 import Prompt from '@react-spectrum/s2/icons/Prompt';
 import React, {createContext, ProviderProps, ReactNode, RefObject, useContext, useRef, useState} from 'react';
 import {ShadcnCommand} from './ShadcnCommand';
@@ -59,8 +59,8 @@ export function FileProvider(props: ProviderProps<FileProviderContextValue | nul
   return <FileProviderContext {...props} />;
 }
 
-const ShadcnContext = createContext<string | null>(null);
-export function ShadcnProvider(props: ProviderProps<string | null>) {
+const ShadcnContext = createContext<{type: 'vanilla' | 'tailwind', component: string} | null>(null);
+export function ShadcnProvider(props: ProviderProps<{type: 'vanilla' | 'tailwind', component: string} | null>) {
   return <ShadcnContext {...props} />;
 }
 
@@ -72,7 +72,8 @@ export function ShareUrlProvider(props: ProviderProps<string | null>) {
 export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   let codeRef = useRef<HTMLDivElement | null>(null);
   let [showShadcn, setShowShadcn] = useState(false);
-  let getText = () => codeRef.current!.querySelector('pre')!.textContent!;
+  // let [showCodeSandbox, setShowCodeSandbox] = useState(false);
+  let getText = () => getTextContent(codeRef.current!.querySelector('pre')!);
   let {library} = useContext(CodePlatterContext);
   if (!type) {
     if (library === 'react-aria') {
@@ -83,7 +84,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
   }
 
   let {files, deps = {}, urls = {}, entry} = useContext(FileProviderContext) ?? {};
-  let registryUrl = useContext(ShadcnContext);
+  let shadcn = useContext(ShadcnContext);
   let shareUrl = useContext(ShareContext);
 
   return (
@@ -95,7 +96,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
           density="regular"
           size="S">
           <CopyButton ariaLabel="Copy code" tooltip="Copy code" getText={getText} />
-          {(shareUrl || files || registryUrl) && <MenuTrigger align="end">
+          {(shareUrl || files || shadcn) && <MenuTrigger align="end">
             <TooltipTrigger placement="end">
               <ActionButton aria-label="Open in…">
                 <OpenIn />
@@ -126,7 +127,7 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Copy link</Text>
                 </MenuItem>
               }
-              {files && 
+              {files &&
                 <MenuItem
                   onAction={() => {
                     let filesToDownload = getCodeSandboxFiles(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
@@ -151,22 +152,22 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Download ZIP</Text>
                 </MenuItem>
               }
-              {registryUrl &&
+              {shadcn &&
                 <MenuItem onAction={() => setShowShadcn(true)}>
                   <Prompt />
                   <Text>Install with shadcn</Text>
                 </MenuItem>
               }
-              {files && 
+              {/* {files &&
                 <MenuItem
                   onAction={() => {
-                    createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+                    setShowCodeSandbox(true);
                   }}>
                   <Polygon4 />
                   <Text slot="label">Open in CodeSandbox</Text>
                 </MenuItem>
-              }
-              {files && type !== 's2' && 
+              } */}
+              {files &&
                 <MenuItem
                   onAction={() => {
                     createStackBlitz(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
@@ -175,15 +176,15 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                   <Text slot="label">Open in StackBlitz</Text>
                 </MenuItem>
               }
-              {registryUrl &&
+              {/* registryUrl &&
                 <MenuItem
-                  href={`https://v0.dev/chat/api/open?url=${process.env.REGISTRY_URL || 'http://localhost:8081'}/${registryUrl}`}
+                  href={`https://v0.dev/chat/api/open?url=${getBaseUrl('react-aria')}/registry/${registryUrl}`}
                   target="_blank"
                   rel="noopener noreferrer">
                   <V0 />
                   <Text>Open in v0</Text>
                 </MenuItem>
-              }
+              */}
             </Menu>
           </MenuTrigger>}
         </ActionButtonGroup>
@@ -191,9 +192,14 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
       <div ref={codeRef}>
         {children}
       </div>
+      {/* <DialogContainer onDismiss={() => setShowCodeSandbox(false)}>
+        {showCodeSandbox &&
+          <CodeSandboxDialog getExampleFiles={getExampleFiles} codeRef={codeRef} files={files} urls={urls} entry={entry} deps={deps} type={type} />
+        }
+      </DialogContainer> */}
       <DialogContainer onDismiss={() => setShowShadcn(false)}>
         {showShadcn &&
-          <ShadcnDialog registryUrl={registryUrl} />
+          <ShadcnDialog />
         }
       </DialogContainer>
     </div>
@@ -234,19 +240,42 @@ function getExampleFiles(codeRef: RefObject<HTMLDivElement | null>, files: Downl
   return files;
 }
 
+function getTextContent(element: Element) {
+  // Manually walk over text nodes inside the element and concatenate them.
+  // This is like element.textContent except we skip anything inside an element with data-no-copy.
+  let result = '';
+  let walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, node => {
+    if (node.nodeType === Node.ELEMENT_NODE && (node as Element).hasAttribute('data-no-copy')) {
+      result += '\n';
+      return NodeFilter.FILTER_REJECT;
+    }
+    return node.nodeType === Node.TEXT_NODE ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+  });
+
+  let node = walker.nextNode();
+  while (node) {
+    result += node.nodeValue || '';
+    node = walker.nextNode();
+  }
+  return result;
+}
+
 function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name: string]: string}) {
-  let code = codeRef.current!.querySelector('pre')!.textContent!;
+  let code = getTextContent(codeRef.current!.querySelector('pre')!);
   let fileTabs = codeRef.current!.closest('[data-files]');
   if (fileTabs) {
     let example = fileTabs.querySelector('[data-example] pre');
     if (example) {
-      code = example.textContent!;
+      code = getTextContent(example);
     }
   }
 
-  return code
+  if (!code.includes('export default function')) {
     // Export the last function
-    .replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport default function Example$2')
+    code = code.replace(/\nfunction ([^(]+)((.|\n)+\n\}\n?)$/, '\nexport default function Example$2');
+  }
+
+  return code
     // Add function wrapper around raw JSX in examples.
     .replace(/\n<((?:.|\n)+)/, (_, code) => {
       let res = '\nexport default function Example() {\n  return (\n    <';
@@ -266,16 +295,16 @@ function getExampleCode(codeRef: RefObject<HTMLDivElement | null>, urls: {[name:
     });
 }
 
-const V0 = createIcon(props => (
-  <svg viewBox="0 0 40 20" {...props}>
-    <path
-      d="M23.3919 0H32.9188C36.7819 0 39.9136 3.13165 39.9136 6.99475V16.0805H36.0006V6.99475C36.0006 6.90167 35.9969 6.80925 35.9898 6.71766L26.4628 16.079C26.4949 16.08 26.5272 16.0805 26.5595 16.0805H36.0006V19.7762H26.5595C22.6964 19.7762 19.4788 16.6139 19.4788 12.7508V3.68923H23.3919V12.7508C23.3919 12.9253 23.4054 13.0977 23.4316 13.2668L33.1682 3.6995C33.0861 3.6927 33.003 3.68923 32.9188 3.68923H23.3919V0Z"
-      fill="var(--iconPrimary)" />
-    <path
-      d="M13.7688 19.0956L0 3.68759H5.53933L13.6231 12.7337V3.68759H17.7535V17.5746C17.7535 19.6705 15.1654 20.6584 13.7688 19.0956Z"
-      fill="var(--iconPrimary)" />
-  </svg>
-));
+// const V0 = createIcon(props => (
+//   <svg viewBox="0 0 40 20" {...props}>
+//     <path
+//       d="M23.3919 0H32.9188C36.7819 0 39.9136 3.13165 39.9136 6.99475V16.0805H36.0006V6.99475C36.0006 6.90167 35.9969 6.80925 35.9898 6.71766L26.4628 16.079C26.4949 16.08 26.5272 16.0805 26.5595 16.0805H36.0006V19.7762H26.5595C22.6964 19.7762 19.4788 16.6139 19.4788 12.7508V3.68923H23.3919V12.7508C23.3919 12.9253 23.4054 13.0977 23.4316 13.2668L33.1682 3.6995C33.0861 3.6927 33.003 3.68923 32.9188 3.68923H23.3919V0Z"
+//       fill="var(--iconPrimary)" />
+//     <path
+//       d="M13.7688 19.0956L0 3.68759H5.53933L13.6231 12.7337V3.68759H17.7535V17.5746C17.7535 19.6705 15.1654 20.6584 13.7688 19.0956Z"
+//       fill="var(--iconPrimary)" />
+//   </svg>
+// ));
 
 const Flash = createIcon(props => (
   <svg viewBox="0 0 20 20" {...props}>
@@ -283,8 +312,8 @@ const Flash = createIcon(props => (
   </svg>
 ));
 
-function ShadcnDialog({registryUrl}) {
-  let componentName = registryUrl.match(/([^/]+)\.json$/)[1];
+function ShadcnDialog() {
+  let {type, component} = useContext(ShadcnContext)!;
   let preRef = useRef<HTMLPreElement | null>(null);
 
   return (
@@ -292,8 +321,8 @@ function ShadcnDialog({registryUrl}) {
       {({close}) => (<>
         <Heading slot="title">Install with shadcn</Heading>
         <Content>
-          <p>Use the <Link href="https://ui.shadcn.com/docs/cli" target="_blank" rel="noopener noreferrer">shadcn CLI</Link> to install {componentName} and its dependencies into your project.</p>
-          <ShadcnCommand registryUrl={registryUrl} preRef={preRef} />
+          <p>Use the <Link href="https://ui.shadcn.com/docs/cli" target="_blank" rel="noopener noreferrer">shadcn CLI</Link> to install {component} and its dependencies into your project.</p>
+          <ShadcnCommand type={type} component={component} preRef={preRef} />
         </Content>
         <ButtonGroup>
           <Button variant="secondary" slot="close">Cancel</Button>
@@ -312,6 +341,32 @@ function ShadcnDialog({registryUrl}) {
     </Dialog>
   );
 }
+
+// function CodeSandboxDialog({getExampleFiles, codeRef, files, urls, entry, deps, type}) {
+//   return (
+//     <Dialog size="L">
+//       {({close}) => (<>
+//         <Heading slot="title">Create a CodeSandbox</Heading>
+//         <Content>
+//           <p>This will create an editable sandbox with this example in a new tab.</p>
+//           <p><strong>Troubleshooting:</strong> If the sandbox fails to open or isn't created, try logging in to CodeSandbox first. If you're already logged in, try signing out and back in.</p>
+//         </Content>
+
+//         <ButtonGroup>
+//           <Button variant="secondary" slot="close">Cancel</Button>
+//           <Button
+//             variant="accent"
+//             onPress={() => {
+//               createCodeSandbox(getExampleFiles(codeRef, files, urls, entry), deps, type, entry);
+//               close();
+//             }}>
+//             Open in CodeSandbox
+//           </Button>
+//         </ButtonGroup>
+//       </>)}
+//     </Dialog>
+//   );
+// }
 
 const pulseAnimation = keyframes(`
   0% {

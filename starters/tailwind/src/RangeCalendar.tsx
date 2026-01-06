@@ -41,12 +41,12 @@ export function RangeCalendar<T extends DateValue>(
   { errorMessage, ...props }: RangeCalendarProps<T>
 ) {
   return (
-    <AriaRangeCalendar {...props} className={composeTailwindRenderProps(props.className, 'font-sans')}>
+    <AriaRangeCalendar {...props} className={composeTailwindRenderProps(props.className, 'font-sans w-[calc(9*var(--spacing)*7)] max-w-full @container')}>
       <CalendarHeader />
       <CalendarGrid className="[&_td]:px-0 [&_td]:py-px border-spacing-0">
         <CalendarGridHeader />
         <CalendarGridBody>
-          {(date) => <CalendarCell date={date} className="group w-9 h-9 text-sm outline outline-0 cursor-default outside-month:text-neutral-300 selected:bg-blue-100 dark:selected:bg-blue-700/30 forced-colors:selected:bg-[Highlight] invalid:selected:bg-red-100 dark:invalid:selected:bg-red-700/30 forced-colors:invalid:selected:bg-[Mark] [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full">
+          {(date) => <CalendarCell date={date} className="group w-[calc(100cqw/7)] aspect-square text-sm outline outline-0 cursor-default outside-month:text-neutral-300 selected:bg-blue-100 dark:selected:bg-blue-700/30 forced-colors:selected:bg-[Highlight] invalid:selected:bg-red-100 dark:invalid:selected:bg-red-700/30 forced-colors:invalid:selected:bg-[Mark] [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full [-webkit-tap-highlight-color:transparent]">
             {({formattedDate, isSelected, isSelectionStart, isSelectionEnd, isFocusVisible, isDisabled}) =>
               <span
                 className={cell({
