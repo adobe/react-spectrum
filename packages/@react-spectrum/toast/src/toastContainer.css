@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-@import "../../../@adobe/spectrum-css-temp/components/commons/focus-ring.css";
+@import "@adobe/spectrum-css-temp/components/commons/focus-ring.css";
 
 .react-spectrum-ToastContainer {
   composes: spectrum-FocusRing;

@@ -12,7 +12,7 @@
 
 import {Calendar} from '../src';
 import {CalendarDate} from '@internationalized/date';
-import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {screen, userEvent, within} from '@storybook/test';

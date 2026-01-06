@@ -13,7 +13,7 @@
 import {ActionButton, Calendar, CalendarProps} from '../src';
 import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
 import {CalendarSwitcher, categorizeArgTypes, getActionArgs} from './utils';
-import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from 'react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactElement, useState} from 'react';

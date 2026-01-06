@@ -16,7 +16,7 @@ import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAb
 import {chain} from '@react-aria/utils';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
-import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
+import {Custom454Calendar} from '/packages/@internationalized/date/tests/customCalendarImpl';
 import {DatePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';

@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from './ListViewDnDExamples';
-import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';
+import {Droppable} from '/packages/@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import {ListView} from '../';
 import {Meta, StoryObj} from '@storybook/react';

@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import defaultConfig, {TableStory} from './Table.stories';
 import {Divider} from '@react-spectrum/divider';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, items, ReorderExample} from './TableDnDExamples';
-import {Droppable} from '../../../@react-aria/dnd/stories/dnd.stories';
+import {Droppable} from '/packages/@react-aria/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import {Meta} from '@storybook/react';
 import React from 'react';

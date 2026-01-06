@@ -43,7 +43,8 @@
     ],
     "paths": {
       "vanilla-starter/*": ["./starters/docs/src/*"],
-      "tailwind-starter/*": ["./starters/tailwind/src/*"]
+      "tailwind-starter/*": ["./starters/tailwind/src/*"],
+      "/*": ["./*"]
     }
   },
   "include": [
