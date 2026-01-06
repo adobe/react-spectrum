@@ -1,11 +1,13 @@
 'use client';
 
 import {ActionButton, DialogTrigger, pressScale, Provider} from '@react-spectrum/s2';
-import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Button, Link, Modal, ModalOverlay} from 'react-aria-components';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
-import {Link, Modal, ModalOverlay} from 'react-aria-components';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
 import React, {CSSProperties, lazy, useEffect, useRef, useState} from 'react';
 import {TAB_DEFS} from './constants';
@@ -64,6 +66,46 @@ const animation = {
 } as const;
 
 const animationRange = '24px 64px';
+
+const colorSchemeToggleStyles = style({
+  ...focusRing(),
+  font: 'ui',
+  color: 'neutral',
+  textDecoration: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: {
+      ...baseColor('gray-100'),
+      default: 'transparent'
+    }
+  },
+  size: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 'lg',
+  borderWidth: 0
+});
+
+function ColorSchemeToggle() {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
+  let isOverriding = colorScheme !== systemColorScheme;
+  let label = isOverriding
+    ? `Using ${colorScheme} mode (press to use system)`
+    : `Using system ${systemColorScheme} mode (press to switch)`;
+  let ref = useRef(null);
+
+  return (
+    <Button
+      ref={ref}
+      aria-label={label}
+      onPress={toggleColorScheme}
+      className={renderProps => colorSchemeToggleStyles(renderProps)}
+      style={pressScale(ref)}>
+      {colorScheme === 'dark' ? <Lighten /> : <Contrast />}
+    </Button>
+  );
+}
 
 export function MobileHeader({toc}) {
   let ref = useRef<HTMLDivElement | null>(null);
@@ -243,6 +285,7 @@ export function MobileHeader({toc}) {
           {toc}
         </div>
       )}
+      {library !== 'react-aria' && <ColorSchemeToggle />}
       <DialogTrigger
         isOpen={isOpen}
         onOpenChange={onOpenChange}>
