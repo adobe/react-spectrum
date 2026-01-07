@@ -128,7 +128,3 @@ Sections.args = {
   selectionMode: 'multiple',
   layout: 'grid'
 };
-
-
-
-

@@ -56,4 +56,3 @@ Sections.args = {
   onAction: null,
   selectionMode: 'multiple'
 };
-

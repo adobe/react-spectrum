@@ -15,7 +15,6 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 import {HTMLAttributes} from 'react';
 import { twMerge } from 'tailwind-merge';
 
-
 export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>
 ) {
