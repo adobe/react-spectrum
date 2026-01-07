@@ -3,13 +3,13 @@
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Button, Link} from 'react-aria-components';
 import Contrast from '@react-spectrum/s2/icons/Contrast';
+import {Divider, pressScale} from '@react-spectrum/s2';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
 import {HeaderLink} from './Link';
 import Lighten from '@react-spectrum/s2/icons/Lighten';
 import {NpmLogo} from './icons/NpmLogo';
-import {pressScale} from '@react-spectrum/s2';
 import React, {useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -206,9 +206,14 @@ export default function Header() {
             <HeaderLink href={docs}>Docs</HeaderLink>
             <HeaderLink href={release}>Releases</HeaderLink>
             <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
-            {library !== 'react-aria' && <ColorSchemeToggle />}
             <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
             <HeaderLink aria-label="npm" href={`https://npmjs.com/${npm}`} target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+            {library !== 'react-aria' && (
+              <>
+                <Divider orientation="vertical" UNSAFE_style={{marginBlock: 4}} />
+                <ColorSchemeToggle />
+              </>
+            )}
           </div>
         </div>
       </header>

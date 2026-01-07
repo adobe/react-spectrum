@@ -4,7 +4,7 @@ import {CSSProperties, useId, useRef, useState} from 'react';
 import {Button} from 'react-aria-components';
 import Contrast from '@react-spectrum/s2/icons/Contrast';
 import Lighten from '@react-spectrum/s2/icons/Lighten';
-import {pressScale} from '@react-spectrum/s2';
+import {Divider, pressScale} from '@react-spectrum/s2';
 import SearchMenuTrigger, {preloadSearchMenu} from '@react-spectrum/s2-docs/src/SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSettings} from '@react-spectrum/s2-docs/src/SettingsContext';
@@ -197,9 +197,10 @@ export default function HomeHeader() {
         <HeaderLink staticColor="white" href="getting-started" styles={style({display: {default: 'none', sm: 'flex'}})}>Docs</HeaderLink>
         <HeaderLink staticColor="white" href="releases/" styles={style({display: {default: 'none', sm: 'flex'}})}>Releases</HeaderLink>
         <HeaderLink staticColor="white" href={getBaseUrl('react-aria') + '/blog/'} rel="noopener noreferrer" styles={style({display: {default: 'none', sm: 'flex'}})}>Blog</HeaderLink>
-        <ColorSchemeToggle />
         <HeaderLink staticColor="white" aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer"><GithubLogo /></HeaderLink>
         <HeaderLink staticColor="white" aria-label="npm" href="https://npmjs.com/@react-spectrum/s2" target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+        <Divider orientation="vertical" staticColor="white" UNSAFE_style={{marginBlock: 4}} />
+        <ColorSchemeToggle />
       </div>
     </nav>
   );
