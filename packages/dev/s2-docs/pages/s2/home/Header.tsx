@@ -33,8 +33,7 @@ const colorSchemeToggleStyles = style({
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: 'lg',
-  borderWidth: 0,
-  cursor: 'pointer'
+  borderWidth: 0
 });
 
 const whiteIconStyle = iconStyle({color: 'white'});
