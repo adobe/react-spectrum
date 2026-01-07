@@ -125,36 +125,55 @@ The following code is an example of how you might implement a custom 4-5-4 calen
 import type {AnyCalendarDate, Calendar} from '@internationalized/date';
 import {CalendarDate, GregorianCalendar, startOfWeek} from '@internationalized/date';
 
-const weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
-
+// This calendar gives each month a 4-5-4 week pattern, with February as the first month of the year.
+// This means that in this calendar, 2024-01-01 translates to 2024-02-04 in the Gregorian calendar.
+// Months begin on day 1, and go through 7*weeksInMonth days, ending on either the 28th or 35th day of the month.
 class Custom454 extends GregorianCalendar {
-  // Months always have either 4 or 5 full weeks.
-  getDaysInMonth(date) {
+  // The anchor date, in Gregorian calendar.
+  // The anchor date is a date that occurs in the first week of the first month of every fiscal year.
+  anchorDate = new CalendarDate(2001, 2, 4);
+
+  private getYear(year: number): [CalendarDate, number[]] {
+    let anchor = this.anchorDate.set({year});
+    let startOfYear = startOfWeek(anchor, 'en', 'sun');
+    let isBigYear = !startOfYear.add({weeks: 53}).compare(anchor.add({years: 1}));
+    let weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, isBigYear ? 5 : 4];
+    return [startOfYear, weekPattern];
+  }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    // Months always have either 4 or 5 full weeks.
+    let [, weekPattern] = this.getYear(date.year);
     return weekPattern[date.month - 1] * 7;
   }
 
-  // Enable conversion between calendar systems.
   fromJulianDay(jd: number): CalendarDate {
     let gregorian = super.fromJulianDay(jd);
+    let year = gregorian.year;
+
+    let [monthStart, weekPattern] = this.getYear(year);
+    if (gregorian.compare(monthStart) < 0) {
+      year--;
+      [monthStart, weekPattern] = this.getYear(year);
+    }
 
     // Start from the beginning of the first week of the gregorian year
     // and add weeks until we find the month.
-    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
-    for (let months = 0; months < weekPattern.length; months++) {
-      let weeksInMonth = weekPattern[months];
-      let monthEnd = monthStart.add({weeks: weeksInMonth});
-      if (monthEnd.compare(gregorian) > 0) {
+    for (let month = 1; month <= 12; month++) {
+      let weeks = weekPattern[month - 1];
+      let nextMonth = monthStart.add({weeks});
+      if (nextMonth.compare(gregorian) > 0) {
         let days = gregorian.compare(monthStart);
-        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+        return new CalendarDate(this, year, month, days + 1);
       }
-      monthStart = monthEnd;
+      monthStart = nextMonth;
     }
 
-    throw Error('Date is not in any month somehow!');
+    throw new Error('date not found');
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    let [monthStart, weekPattern] = this.getYear(date.year);
     for (let month = 1; month < date.month; month++) {
       monthStart = monthStart.add({weeks: weekPattern[month - 1]});
     }
@@ -163,8 +182,16 @@ class Custom454 extends GregorianCalendar {
     return super.toJulianDay(gregorian);
   }
 
-  isEqual(other: Calendar) {
-    return other instanceof Custom454;
+  getFormattableMonth(date: AnyCalendarDate): CalendarDate {
+    let anchorMonth = this.anchorDate.month - 1;
+    let dateMonth = date.month - 1;
+    let month = ((anchorMonth + dateMonth) % 12) + 1;
+    let year = anchorMonth + dateMonth >= 12 ? date.year + 1 : date.year;
+    return new CalendarDate(year, month, 1);
+  }
+
+  isEqual(other: Calendar): boolean {
+    return other instanceof Custom454 && other.anchorDate.compare(this.anchorDate) === 0;
   }
 }
 ```
