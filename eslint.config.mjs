@@ -333,16 +333,6 @@ export default [{
         "jsx-a11y/scope": ERROR,
         "jsx-a11y/tabindex-no-positive": ERROR,
 
-        "monorepo/no-internal-import": [ERROR, {
-            ignore: [
-                "@adobe/spectrum-css-temp",
-                "@spectrum-icons/ui",
-                "@spectrum-icons/workflow",
-                "@spectrum-icons/illustrations",
-                "@react-spectrum/s2/icons"
-            ],
-        }],
-
         "monorepo/no-relative-import": ERROR,
     },
 }, {
