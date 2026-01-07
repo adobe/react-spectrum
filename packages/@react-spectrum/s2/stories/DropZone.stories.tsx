@@ -11,7 +11,7 @@
  */
 
 import {Button, ButtonGroup, Content, DropZone, DropZoneProps, FileTrigger, Heading, IllustratedMessage} from '../src';
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
@@ -20,6 +20,8 @@ import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useState} from 'react';
 import {style} from '../style' with { type: 'macro' };
 
+const events = ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'];
+
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
   parameters: {
@@ -27,9 +29,10 @@ const meta: Meta<typeof DropZone> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove']),
+    ...categorizeArgTypes('Events', events),
     children: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'DropZone'
 };
 
@@ -49,7 +52,7 @@ const ExampleRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <DropToUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -78,7 +81,7 @@ const ExampleWithFileTriggerRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <Cloud />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -114,7 +117,7 @@ const LongBannerRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <DropToUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -143,7 +146,7 @@ const GradientRender = (args: DropZoneProps): ReactElement => {
         <IllustratedMessage>
           <CloudUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer

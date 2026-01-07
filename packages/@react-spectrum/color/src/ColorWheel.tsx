@@ -14,14 +14,14 @@ import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react
 import {ColorThumb} from './ColorThumb';
 import {ColorWheelContext, useContextProps} from 'react-aria-components';
 import {FocusableRef} from '@react-types/shared';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
 import {useColorWheel} from '@react-aria/color';
 import {useColorWheelState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useResizeObserver} from '@react-aria/utils';
 
 const WHEEL_THICKNESS = 24;
 
@@ -53,7 +53,7 @@ export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumCo
     }
   }, [containerRef, setWheelRadius, setWheelThickness]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // the size observer's fallback to the window resize event doesn't fire on mount
     if (wheelRadius === 0) {
       resizeHandler();

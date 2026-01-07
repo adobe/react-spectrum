@@ -11,7 +11,14 @@
  */
 
 import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
@@ -25,6 +32,11 @@ export interface ToolbarRenderProps {
 }
 
 export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Toolbar'
+   */
+  className?: ClassNameOrFunction<ToolbarRenderProps>
 }
 
 export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});

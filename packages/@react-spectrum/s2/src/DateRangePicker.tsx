@@ -15,7 +15,8 @@ import {
   DateRangePickerProps as AriaDateRangePickerProps,
   ContextValue,
   DateValue,
-  FormContext
+  FormContext,
+  PopoverProps
 } from 'react-aria-components';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
@@ -34,6 +35,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface DateRangePickerProps<T extends DateValue> extends
   Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
   Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
+  Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -52,6 +54,10 @@ export interface DateRangePickerProps<T extends DateValue> extends
 
 export const DateRangePickerContext = createContext<ContextValue<Partial<DateRangePickerProps<any>>, HTMLDivElement>>(null);
 
+/**
+ * DateRangePickers combine two DateFields and a RangeCalendar popover to allow users
+ * to enter or select a date and time range.
+ */
 export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(
   props: DateRangePickerProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
@@ -139,7 +145,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
               </div>
             </FieldGroup>
-            <CalendarPopover>
+            <CalendarPopover shouldFlip={props.shouldFlip}>
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar} />

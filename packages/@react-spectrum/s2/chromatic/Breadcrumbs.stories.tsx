@@ -12,7 +12,7 @@
 
 import {Breadcrumb, Breadcrumbs} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import {Many} from '../stories/Breadcrumbs.stories';
+import {type IMany, Many} from '../stories/Breadcrumbs.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {ReactNode} from 'react';
 import {shortName} from './utils';
@@ -27,7 +27,7 @@ const meta: Meta<typeof Breadcrumbs> = {
 
 export default meta;
 
-export const Dynamic: StoryObj<typeof Breadcrumbs> = {
+export const Dynamic: StoryObj<IMany> = {
   ...Many,
   parameters: {
     // TODO: move these options back to meta above once we get strings for ar-AE. This is just to prevent the RTL story's config from actually applying

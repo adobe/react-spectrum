@@ -86,15 +86,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   let [isScrolling, setScrolling] = useState(false);
 
-  let onScrollTimeout = useCallback(() => {
-    state.isScrolling = false;
-    setScrolling(false);
-    state.scrollTimeout = null;
-
-    window.dispatchEvent(new Event('tk.connect-observer'));
-    onScrollEnd?.();
-  }, [state, onScrollEnd]);
-
   let onScroll = useCallback((e) => {
     if (e.target !== e.currentTarget) {
       return;
@@ -128,21 +119,29 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // keep track of the current timeout time and only reschedule
       // the timer when it is getting close.
       let now = Date.now();
-      if (!('onscrollend' in window) && state.scrollEndTime <= now + 50) {
+      if (state.scrollEndTime <= now + 50) {
         state.scrollEndTime = now + 300;
 
         if (state.scrollTimeout != null) {
           clearTimeout(state.scrollTimeout);
         }
 
-        state.scrollTimeout = setTimeout(onScrollTimeout, 300);
+        state.scrollTimeout = setTimeout(() => {
+          state.isScrolling = false;
+          setScrolling(false);
+          state.scrollTimeout = null;
+
+          window.dispatchEvent(new Event('tk.connect-observer'));
+          if (onScrollEnd) {
+            onScrollEnd();
+          }
+        }, 300);
       }
     });
-  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollTimeout]);
+  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
-  useEvent(ref, 'scrollend', onScrollTimeout);
 
   useEffect(() => {
     return () => {
@@ -158,7 +157,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   }, []);
 
   let isUpdatingSize = useRef(false);
-  let updateSize = useEffectEvent((flush: typeof flushSync) => {
+  let updateSize = useCallback((flush: typeof flushSync) => {
     let dom = ref.current;
     if (!dom || isUpdatingSize.current) {
       return;
@@ -198,11 +197,14 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     }
 
     isUpdatingSize.current = false;
-  });
+  }, [ref, state, onVisibleRectChange]);
+  let updateSizeEvent = useEffectEvent(updateSize);
 
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
   let [update, setUpdate] = useState({});
+  // We only contain a call to setState in here for testing environments.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
       // React doesn't allow flushSync inside effects, so queue a microtask.
@@ -219,7 +221,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         lastContentSize.current = contentSize;
         return;
       } else {
-        queueMicrotask(() => updateSize(flushSync));
+        queueMicrotask(() => updateSizeEvent(flushSync));
       }
     }
 
@@ -228,7 +230,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
   useLayoutEffect(() => {
-    updateSize(fn => fn());
+    updateSizeEvent(fn => fn());
   }, [update]);
 
   let onResize = useCallback(() => {

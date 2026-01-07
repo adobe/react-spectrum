@@ -1,13 +1,19 @@
 'use client';
 
-import {ActionButton, CloseButton, DialogTrigger} from '@react-spectrum/s2';
-import {AdobeLogo} from './AdobeLogo';
-import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {ActionButton, DialogTrigger, pressScale} from '@react-spectrum/s2';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {getBaseUrl} from './pageUtils';
+import {getLibraryFromPage, getLibraryIcon} from './library';
 import {keyframes} from '../../../@react-spectrum/s2/style/style-macro' with {type: 'macro'};
+import {Link, Modal, ModalOverlay} from 'react-aria-components';
 import MenuHamburger from '@react-spectrum/s2/icons/MenuHamburger';
-import {Modal} from '../../../@react-spectrum/s2/src/Modal';
-import React, {CSSProperties, forwardRef, useEffect, useRef} from 'react';
-import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import React, {CSSProperties, lazy, useEffect, useRef, useState} from 'react';
+import {TAB_DEFS} from './constants';
+import {useLayoutEffect} from '@react-aria/utils';
+import {useRouter} from './Router';
+import './SearchMenu.css';
+
+const MobileSearchMenu = lazy(() => import('./SearchMenu').then(({MobileSearchMenu}) => ({default: MobileSearchMenu})));
 
 let fadeOut = keyframes(`
   0% {
@@ -18,6 +24,7 @@ let fadeOut = keyframes(`
   100% {
     opacity: 0;
     transform: translateY(calc(-100% - 12px));
+    width: 0px;
   }
 `);
 
@@ -57,58 +64,10 @@ const animation = {
 
 const animationRange = '24px 64px';
 
-interface MobileDialogProps extends Omit<RACDialogProps, 'className' | 'style'> {
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissible?: boolean,
-  isKeyboardDismissDisabled?: boolean,
-  padding?: 'default' | 'none'
-}
-
-const dialogStyle = style({
-  padding: {
-    padding: {
-      default: {
-        default: 24,
-        sm: 32
-      },
-      none: 0
-    }
-  },
-  boxSizing: 'border-box',
-  outlineStyle: 'none',
-  borderRadius: 'inherit',
-  overflow: 'auto',
-  position: 'relative',
-  size: 'full',
-  maxSize: 'inherit'
-});
-
-const MobileCustomDialog = forwardRef<HTMLDivElement, MobileDialogProps>(function MobileCustomDialog(props, ref) {
-  let {
-    size,
-    isDismissible,
-    isKeyboardDismissDisabled,
-    padding = 'default'
-  } = props;
-
-  return (
-    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled} style={{zIndex: 100}}>
-      <RACDialog
-        {...props}
-        ref={ref}
-        className={dialogStyle({padding})}>
-        {composeRenderProps(props.children, (children) => (
-          <OverlayTriggerStateContext.Provider value={null}>
-            {children}
-          </OverlayTriggerStateContext.Provider>
-        ))}
-      </RACDialog>
-    </Modal>
-  );
-});
-
-export function MobileHeader({toc, nav}) {
+export function MobileHeader({toc}) {
   let ref = useRef<HTMLDivElement | null>(null);
+  let linkRef = useRef<HTMLAnchorElement | null>(null);
+  let labelRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
     // Tiny polyfill for scroll driven animations.
@@ -128,6 +87,67 @@ export function MobileHeader({toc, nav}) {
       return () => window.removeEventListener('scroll', onScroll);
     }
   }, []);
+
+  let {currentPage} = useRouter();
+  let library = getLibraryFromPage(currentPage);
+  let icon = getLibraryIcon(library);
+  let subdirectory: 's2' | 'react-aria' = 's2';
+  if (library === 'react-aria') {
+    // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
+    subdirectory = 'react-aria';
+  }
+
+  let baseUrl = getBaseUrl(subdirectory);
+  let homepage = `${baseUrl}/`;
+
+  let [isOpen, setOpen] = useState(false);
+  let [wasOpen, setWasOpen] = useState(isOpen);
+  let [isTransitioning, setTransitioning] = useState(false);
+  let renderCallback = useRef<(() => void) | null>(null);
+  let onOpenChange = (isOpen: boolean) => {
+    if (!document.startViewTransition) {
+      setOpen(false);
+      if (isOpen) {
+        setWasOpen(true);
+      }
+      return;
+    }
+
+    // Don't transition the entire page.
+    document.documentElement.style.viewTransitionName = 'none';
+
+    // Only transition label if it is visible (scrolled to the top of the page).
+    if (window.scrollY === 0 && labelRef.current && isOpen) {
+      labelRef.current.style.viewTransitionName = 'search-menu-label';
+    }
+
+    let viewTransition = document.startViewTransition(() => {
+      if (labelRef.current && window.scrollY === 0) {
+        labelRef.current.style.viewTransitionName = !isOpen ? 'search-menu-label' : '';
+      }
+
+      // Wait until next render. Using flushSync causes flickering.
+      return new Promise<void>(resolve => {
+        renderCallback.current = resolve;
+        setOpen(isOpen);
+        setTransitioning(true);
+        if (isOpen) {
+          setWasOpen(true);
+        }
+      });
+    });
+
+    viewTransition.finished.then(() => {
+      document.documentElement.style.viewTransitionName = '';
+      labelRef.current!.style.viewTransitionName = '';
+      setTransitioning(false);
+    });
+  };
+
+  useLayoutEffect(() => {
+    renderCallback.current?.();
+    renderCallback.current = null;
+  });
 
   return (
     <div
@@ -163,52 +183,102 @@ export function MobileHeader({toc, nav}) {
       style={{
         animationName: shadow,
         animationTimeline: 'scroll()',
-        animationRange
+        animationRange,
+        // Pause scroll animation during view transition to avoid flicker in Safari.
+        animationPlayState: isTransitioning ? 'paused' : undefined
       } as CSSProperties}>
-      <div
-        className={style({
-          display: 'flex',
-          gap: 12,
-          alignItems: 'center',
-          flexGrow: 1
-        })}>
-        <AdobeLogo />
-        <h2 
+      <div className={style({flexGrow: 1})}>
+        <Link
+          href={homepage}
+          ref={linkRef}
+          style={pressScale(linkRef)}
           className={style({
-            font: 'heading-sm',
-            marginY: 0,
-            ...animation
+            ...focusRing(),
+            display: 'flex',
+            alignItems: 'center',
+            width: 'fit',
+            gap: 12,
+            borderRadius: 'default',
+            textDecoration: 'none',
+            transition: 'default',
+            disableTapHighlight: true
+          })}>
+          <span style={{viewTransitionName: 'search-menu-icon', display: isOpen ? 'none' : undefined} as CSSProperties}>
+            {icon}
+          </span>
+          <span
+            ref={labelRef}
+            className={style({
+              font: 'heading-sm',
+              whiteSpace: 'nowrap',
+              ...animation
+            })}
+            style={toc ? {
+              animationName: fadeOut,
+              animationTimeline: 'scroll()',
+              animationRange,
+              animationPlayState: isTransitioning ? 'paused' : undefined,
+              display: isOpen ? 'none' : undefined
+            } as CSSProperties : undefined}>
+            {TAB_DEFS[library].label}
+          </span>
+        </Link>
+      </div>
+      {toc && (
+        <div
+          className={style({
+            ...animation,
+            position: 'absolute',
+            left: '50%',
+            translateX: '-50%'
           })}
           style={{
-            animationName: fadeOut,
+            animationName: fadeIn,
             animationTimeline: 'scroll()',
-            animationRange
+            animationRange,
+            animationPlayState: isTransitioning ? 'paused' : undefined
           } as CSSProperties}>
-          React Aria
-        </h2>
-      </div>
-      <div
-        className={style({
-          ...animation,
-          position: 'absolute',
-          left: '50%',
-          translateX: '-50%'
-        })}
-        style={{
-          animationName: fadeIn,
-          animationTimeline: 'scroll()',
-          animationRange
-        } as CSSProperties}>
-        {toc}
-      </div>
-      <DialogTrigger>
+          {toc}
+        </div>
+      )}
+      <DialogTrigger
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}>
         <ActionButton aria-label="Navigation" isQuiet>
           <MenuHamburger />
         </ActionButton>
-        <MobileCustomDialog size="fullscreenTakeover" padding="none">
-          <CloseButton styles={style({position: 'fixed', top: 12, insetEnd: 12, zIndex: 101})} />
-          {nav}
-        </MobileCustomDialog>
+        <ModalOverlay
+          // Keep in the DOM after it has opened once to preserve scroll position.
+          isExiting={!isOpen && wasOpen}
+          style={{
+            display: !isOpen ? 'none' : undefined,
+            // @ts-ignore
+            viewTransitionName: 'search-menu-underlay'
+          }}
+          className={style({
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 'full',
+            height: '--page-height',
+            isolation: 'isolate',
+            '--s2-container-bg': {
+              type: 'backgroundColor',
+              value: 'layer-2'
+            },
+            backgroundColor: '--s2-container-bg'
+          })}>
+          <Modal
+            className={style({
+              position: 'sticky',
+              top: 0,
+              left: 0,
+              width: 'full',
+              height: '--visual-viewport-height'
+            })}>
+            <MobileSearchMenu />
+          </Modal>
+        </ModalOverlay>
       </DialogTrigger>
     </div>
   );

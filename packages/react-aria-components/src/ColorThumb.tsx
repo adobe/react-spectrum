@@ -1,9 +1,9 @@
+import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
 import {Color} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
 import {mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
-import {RenderProps, useRenderProps} from './utils';
 
 interface ColorState {
   getDisplayColor(): Color,
@@ -54,7 +54,13 @@ export interface ColorThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {}
+export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColorThumb'
+   */
+  className?: ClassNameOrFunction<ColorThumbRenderProps>
+}
 
 /**
  * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to adjust the color value.

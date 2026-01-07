@@ -21,6 +21,7 @@ import {
   useId
 } from 'react-aria';
 import {
+  ClassNameOrFunction,
   ContextValue,
   RenderProps,
   SlotProps,
@@ -68,6 +69,11 @@ export interface ButtonRenderProps {
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Button'
+   */
+  className?: ClassNameOrFunction<ButtonRenderProps>,
+  /**
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.
    */
@@ -85,10 +91,10 @@ export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTML
  */
 export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
-  props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;
   let {buttonProps, isPressed} = useButton(props, ref);
+  buttonProps = useDisableInteractions(buttonProps, isPending);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover({
     ...props,
@@ -161,18 +167,16 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   );
 });
 
-function disablePendingProps(props) {
+function useDisableInteractions(props, isPending) {
   // Don't allow interaction while isPending is true
-  if (props.isPending) {
-    props.onPress = undefined;
-    props.onPressStart = undefined;
-    props.onPressEnd = undefined;
-    props.onPressChange = undefined;
-    props.onPressUp = undefined;
-    props.onKeyDown = undefined;
-    props.onKeyUp = undefined;
-    props.onClick = undefined;
+  if (isPending) {
+    for (const key in props) {
+      if (key.startsWith('on') && !(key.includes('Focus') || key.includes('Blur'))) {
+        props[key] = undefined;
+      }
+    }
     props.href = undefined;
+    props.target = undefined;
   }
   return props;
 }

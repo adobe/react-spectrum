@@ -15,11 +15,12 @@ import {announce} from '@react-aria/live-announcer';
 import {CloseButton} from './CloseButton';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope, useKeyboard} from 'react-aria';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {style} from '../style' with {type: 'macro'};
+import {lightDark, style} from '../style' with {type: 'macro'};
+import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
@@ -40,9 +41,8 @@ const actionBarStyles = style({
   boxSizing: 'border-box',
   outlineStyle: 'solid',
   outlineWidth: 1,
-  outlineOffset: -1,
   outlineColor: {
-    default: 'gray-200',
+    default: lightDark('transparent-white-25', 'gray-200'),
     isEmphasized: 'transparent',
     forcedColors: 'ButtonBorder'
   },
@@ -75,7 +75,7 @@ const actionBarStyles = style({
   }
 });
 
-export interface ActionBarProps extends SlotProps {
+export interface ActionBarProps extends SlotProps, StyleProps, DOMProps {
   /** A list of ActionButtons to display. */
   children: ReactNode,
   /** Whether the ActionBar should be displayed with a emphasized style. */
@@ -90,6 +90,9 @@ export interface ActionBarProps extends SlotProps {
 
 export const ActionBarContext = createContext<ContextValue<Partial<ActionBarProps>, DOMRefValue<HTMLDivElement>>>(null);
 
+/**
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
+ */
 export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionBarContext);
   let domRef = useDOMRef(ref);
@@ -104,7 +107,8 @@ export const ActionBar = forwardRef(function ActionBar(props: ActionBarProps, re
 });
 
 const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps & {isExiting: boolean}, ref: ForwardedRef<HTMLDivElement | null>) {
-  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting} = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {isEmphasized, selectedItemCount = 0, children, onClearSelection, isExiting, slot, scrollRef, ...otherProps} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // Store the last count greater than zero so that we can retain it while rendering the fade-out animation.
@@ -114,7 +118,6 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
   }
 
   // Measure the width of the collection's scrollbar and offset the action bar by that amount.
-  let scrollRef = props.scrollRef;
   let [scrollbarWidth, setScrollbarWidth] = useState(0);
   let updateScrollbarWidth = useCallback(() => {
     let el = scrollRef?.current;
@@ -156,6 +159,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
     <FocusScope restoreFocus>
       <div
         ref={objectRef}
+        {...otherProps}
         {...keyboardProps}
         className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
         style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`}}>

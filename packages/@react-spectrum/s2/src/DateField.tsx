@@ -49,7 +49,9 @@ const segmentContainer = style({
   flexShrink: 1,
   minWidth: 0,
   height: 'full',
-  overflow: 'hidden',
+  overflowX: 'auto',
+  overflowY: 'hidden',
+  scrollbarWidth: 'none',
   display: 'flex',
   alignItems: 'center',
   textWrap: 'nowrap'
@@ -87,6 +89,10 @@ const iconStyles = style({
   justifyContent: 'end'
 });
 
+/**
+ * DateFields allow users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
 export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(
   props: DateFieldProps<T>, ref: Ref<HTMLDivElement>
 ): ReactElement {
@@ -140,6 +146,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
               size={size}
               styles={style({
                 ...fieldInput(),
+                textWrap: 'nowrap',
                 paddingX: 'edge-to-text'
               })({size})}>
               <DateInputContainer>
@@ -167,7 +174,7 @@ export function DateInputContainer(props: PropsWithChildren): ReactElement {
 
 export function DateInput(props: Omit<DateInputProps, 'children'>): ReactElement {
   return (
-    <AriaDateInput {...props}>
+    <AriaDateInput className="" {...props}>
       {(segment) => (
         <AriaDateSegment
           segment={segment}

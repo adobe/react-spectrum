@@ -11,7 +11,8 @@ const meta: Meta<typeof SearchField> = {
   },
   tags: ['autodocs'],
   args: {
-    label: 'Search'
+    label: 'Search',
+    placeholder: 'Search documents'
   }
 };
 

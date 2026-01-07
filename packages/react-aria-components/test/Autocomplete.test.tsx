@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import './installPointerEvent';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
-import React, {ReactNode} from 'react';
+import {Autocomplete, Breadcrumb, Breadcrumbs, Button, Cell, Collection, Column, Dialog, DialogTrigger, GridList, GridListItem, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, Row, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Tag, TagGroup, TagList, Text, TextField, Tree, TreeItem, TreeItemContent} from '..';
+import React, {ReactNode, useState} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
@@ -626,6 +627,38 @@ describe('Autocomplete', () => {
     expect(foo).not.toHaveAttribute('data-focus-visible');
   });
 
+  it('should not move focus to the input field if tapping on a menu item via touch', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+
+    await user.pointer({target: foo, keys: '[TouchA]'});
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it('should move focus to the input field if clicking on a menu item via mouse', async function () {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    let foo = options[0];
+
+    await user.pointer({target: foo, keys: '[MouseLeft]'});
+    expect(document.activeElement).toBe(input);
+  });
+
   it('should work inside a Select', async function () {
     let {getByRole} = render(
       <Select>
@@ -956,6 +989,72 @@ describe('Autocomplete', () => {
     expect(within(sections[0]).getByText('Bar')).toBeTruthy();
     expect(within(sections[0]).getByText('Baz')).toBeTruthy();
     expect(within(sections[1]).getByText('Copy')).toBeTruthy();
+  });
+
+
+  it('shouldnt prevent default on keyboard interactions if somehow the active descendant doesnt exist in the DOM', async () => {
+    let defaultOptions = [
+      {value: 'one'},
+      {value: 'two'},
+      {value: 'three'},
+      {value: 'four'},
+      {value: 'five'}
+    ];
+    function ControlledItemsFilter() {
+      const [options, setOptions] = useState(defaultOptions);
+      const [inputValue, onInputChange] = useState('');
+
+      let [prevInputValue, setPrevInputValue] = useState(inputValue);
+      if (prevInputValue !== inputValue) {
+        setOptions(
+          defaultOptions.filter(({value}) => value.includes(inputValue))
+        );
+        setPrevInputValue(inputValue);
+      }
+
+      return (
+        <Autocomplete inputValue={inputValue} onInputChange={onInputChange}>
+          <SearchField aria-label="Search">
+            <Input aria-label="Search" placeholder="Search..." />
+            <Button>X</Button>
+          </SearchField>
+          <ListBox selectionMode="multiple">
+            <Collection items={options} dependencies={[inputValue]}>
+              {(option) => (
+                <ListBoxItem id={option.value}>{option.value}</ListBoxItem>
+              )}
+            </Collection>
+            <ListBoxLoadMoreItem onLoadMore={() => {}} isLoading={false}>
+              <div>Loading...</div>
+            </ListBoxLoadMoreItem>
+          </ListBox>
+        </Autocomplete>
+      );
+    }
+    let {getByRole} = render(
+      <ControlledItemsFilter />
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('o');
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+
+    await user.keyboard('o');
+    act(() => jest.runAllTimers());
+    options = within(listbox).queryAllByRole('option');
+    expect(options).toHaveLength(0);
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
   });
 });
 

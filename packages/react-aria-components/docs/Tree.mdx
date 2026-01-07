@@ -282,13 +282,13 @@ A Tree consists of a container element, with items containing data inside. The i
 If the tree supports item selection, each item can optionally include a selection checkbox.
 
 ```tsx render=false
-import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-components';
+import {Tree, TreeItem, TreeItemContent, Button, Checkbox, SelectionIndicator} from 'react-aria-components';
 
 <Tree>
   <TreeItem>
     <TreeItemContent>
       <Button slot="chevron" />
-      <Checkbox slot="selection" />
+      <Checkbox slot="selection" /> or <SelectionIndicator />
       <Button slot="drag" />
     </TreeItemContent>
     <TreeItem>
@@ -2163,7 +2163,7 @@ If you need to customize things even further, such as accessing internal state o
 
 ### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
 
 ```ts

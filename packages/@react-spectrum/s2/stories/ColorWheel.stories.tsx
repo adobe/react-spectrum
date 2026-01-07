@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes} from './utils';
+import {categorizeArgTypes, getActionArgs} from './utils';
 
 import {ColorWheel} from '../src/ColorWheel';
 import type {Meta, StoryObj} from '@storybook/react';
+
+const events = ['onChange', 'onChangeEnd'];
 
 const meta: Meta<typeof ColorWheel> = {
   component: ColorWheel,
@@ -22,8 +24,9 @@ const meta: Meta<typeof ColorWheel> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onChangeEnd'])
+    ...categorizeArgTypes('Events', events)
   },
+  args: {...getActionArgs(events)},
   title: 'ColorWheel'
 };
 
@@ -32,6 +35,17 @@ type Story = StoryObj<typeof ColorWheel>;
 
 export const Example: Story = {
   render: (args) => <ColorWheel {...args} onChange={undefined} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)'
+  }
+};
+
+export const InContainer: Story = {
+  render: (args) => (
+    <div style={{width: 600, border: '1px solid gray', padding: 16}}>
+      <ColorWheel {...args} onChange={undefined} />
+    </div>
+  ),
   args: {
     defaultValue: 'hsl(30, 100%, 50%)'
   }

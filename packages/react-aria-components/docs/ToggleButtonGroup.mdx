@@ -116,10 +116,12 @@ There is no built in element for toggle button groups in HTML. `ToggleButtonGrou
 A toggle button group consists of a set of toggle buttons, and coordinates the selection state between them. Users can navigate between buttons with the arrow keys in either horizontal or vertical orientations.
 
 ```tsx
-import {ToggleButtonGroup, ToggleButton} from 'react-aria-components';
+import {ToggleButtonGroup, ToggleButton, SelectionIndicator} from 'react-aria-components';
 
 <ToggleButtonGroup>
-  <ToggleButton />
+  <ToggleButton>
+    <SelectionIndicator />
+  </ToggleButton>
 </ToggleButtonGroup>
 ```
 
@@ -187,6 +189,98 @@ function Example() {
 }
 ```
 
+### Animation
+
+Use the `SelectionIndicator` component to animate selection changes.
+
+```tsx example
+import {ToggleButtonGroup, ToggleButton, SelectionIndicator} from 'react-aria-components';
+
+<ToggleButtonGroup
+  className="segmented-control"
+  defaultSelectedKeys={['day']}
+  disallowEmptySelection>
+  <ToggleButton id="day">
+    <SelectionIndicator />
+    <span>Day</span>
+  </ToggleButton>
+  <ToggleButton id="week">
+    <SelectionIndicator />
+    <span>Week</span>
+  </ToggleButton>
+  <ToggleButton id="month">
+    <SelectionIndicator />
+    <span>Month</span>
+  </ToggleButton>
+  <ToggleButton id="year">
+    <SelectionIndicator />
+    <span>Year</span>
+  </ToggleButton>
+</ToggleButtonGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.segmented-control {
+  display: flex;
+  background: var(--gray-100);
+  width: fit-content;
+  padding: 2px;
+  border-radius: 8px;
+
+  .react-aria-SelectionIndicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    transition-property: translate, width;
+    transition-duration: 200ms;
+    border-radius: 8px;
+    background: var(--gray-50);
+    outline: 2px solid var(--gray-600);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .react-aria-ToggleButton {
+    all: unset;
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+    padding: 4px 16px;
+    position: relative;
+    z-index: 1;
+    border-radius: 8px;
+
+    span {
+      display: inline-block;
+      transition: scale 200ms;
+    }
+
+     &[data-pressed] span {
+      scale: 0.95;
+    }
+
+    &[data-selected] {
+      z-index: 0;
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 4px;
+    }
+  }
+}
+```
+
+</details>
+
 ## Disabled
 
 All buttons within a `ToggleButtonGroup` can be disabled using the `isDisabled` prop.
@@ -246,7 +340,7 @@ By default, toggle button groups are horizontally oriented. The orientation prop
 
 </details>
 
-## Accessiblity
+## Accessibility
 
 A `ToggleButtonGroup` can be labeled using the `aria-label` or `aria-labelledby` props.
 

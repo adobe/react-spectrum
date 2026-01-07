@@ -12,5 +12,5 @@ const meta: Meta<typeof ColorArea> = {
 
 export default meta;
 
-export const Example = (args: any) => <ColorArea {...args} />;
+export const Example = (args: any) => <ColorArea {...args} className="w-50" />;
 

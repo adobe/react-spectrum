@@ -11,6 +11,17 @@
  */
 
 import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
+import {
+  ClassNameOrFunction,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
 import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, useColorFieldState} from 'react-stately';
 import {ColorFieldContext} from './RSPContexts';
 import {FieldErrorContext} from './FieldError';
@@ -19,7 +30,6 @@ import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -35,6 +45,16 @@ export interface ColorFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the color field is read only.
+   * @selector [data-readonly]
+   */
+   isReadOnly: boolean,
+   /**
+    * Whether the color field is required.
+    * @selector [data-required]
+    */
+   isRequired: boolean,
+  /**
    * The color channel that this field edits, or "hex" if no `channel` prop is set.
    * @selector [data-channel="hex | hue | saturation | ..."]
    */
@@ -46,6 +66,11 @@ export interface ColorFieldRenderProps {
 }
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColorField'
+   */
+  className?: ClassNameOrFunction<ColorFieldRenderProps>,
   /**
    * The color channel that this field edits. If not provided, 
    * the color is edited as a hex value.
@@ -177,7 +202,9 @@ function useChildren(
       state,
       channel: props.channel || 'hex',
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false
+      isInvalid: validation.isInvalid || false,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-ColorField'
   });
@@ -207,7 +234,9 @@ function useChildren(
         slot={props.slot || undefined}
         data-channel={props.channel || 'hex'}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={validation.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined}
+        data-readonly={props.isReadOnly || undefined}
+        data-required={props.isRequired || undefined} />
     </Provider>
   );
 }

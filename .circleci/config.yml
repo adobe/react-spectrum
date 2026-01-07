@@ -13,17 +13,21 @@ parameters:
     type: string
     default: ""
 
+orbs:
+  aws-cli: circleci/aws-cli@5.4.1
+  aws-s3: circleci/aws-s3@4.1
+
 executors:
   rsp:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -31,7 +35,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -39,18 +43,72 @@ executors:
 
   rsp-2xlarge:
     docker:
-      - image: cimg/node:22.13.1
+      - image: cimg/node:22.21.1
     resource_class: 2xlarge
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
+
+commands:
+  deploy-s3:
+    parameters:
+      dir:
+        type: string
+      bucket:
+        type: string
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - aws-cli/install
+      - run:
+          name: Check AWS credentials
+          command: |
+            if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+              echo "AWS credentials not found"
+              circleci-agent step halt
+            fi
+      - run:
+          name: Configure AWS CLI for concurrent requests
+          command: aws configure set default.s3.max_concurrent_requests 100
+      - run:
+          name: Copy immutable assets to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=31536000,immutable" \
+              --exclude "*.html" --exclude "*.rsc" --exclude "*.txt" --exclude "*.json" --exclude "*.md" --exclude "*.xml"
+      - run:
+          name: Copy HTML and data files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --exclude "*" --include "*.html" --include "*.json" --include "*.xml"
+      - run:
+          name: Copy Markdown files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/markdown;charset=utf-8" \
+              --exclude "*" --include "*.md"
+      - run:
+          name: Copy text files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/plain;charset=utf-8" \
+              --exclude "*" --include "*.txt"
+      - run:
+          name: Copy RSC files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/x-component;charset=utf-8" \
+              --exclude "*" --include "*.rsc"
 
 jobs:
   install:
     executor: rsp-large
     steps:
       - checkout
-
       - run:
           name: Write npmrc
           command: |
@@ -380,6 +438,8 @@ jobs:
       - run:
           name: build fork-point apis
           command: |
+            mkdir -p ~/.ssh
+            curl -L https://api.github.com/meta | jq -r '.ssh_keys | .[]' | sed -e 's/^/github.com /' >> ~/.ssh/known_hosts
             yarn build:api-branch --githash="origin/main" --output="base-api" && yarn build:api-branch && yarn compare:apis
 
       - persist_to_workspace:
@@ -448,36 +508,6 @@ jobs:
           paths:
             - '*/storybook-s2/'
 
-  docs:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make website
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
-  docs-production:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make website-production
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
   s2-docs:
     executor: rsp-xlarge
     steps:
@@ -491,7 +521,37 @@ jobs:
       - persist_to_workspace:
           root: dist
           paths:
-            - '*/s2-docs/'
+            - 's2-docs/'
+
+  s2-docs-stage:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs-stage
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
+  s2-docs-production:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 docs
+          command: make s2-docs-production
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
 
   verdaccio:
     executor: rsp-xlarge
@@ -514,37 +574,6 @@ jobs:
           root: /tmp/verdaccio-workspace
           paths:
             - storage
-
-  v-docs:
-    executor: rsp-2xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - attach_workspace:
-          at: /tmp/verdaccio-workspace
-
-      - run:
-          name: build docs off verdaccio
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-
-      - run:
-          name: build docs off verdaccio retry
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-          when: on_fail
-
-      - persist_to_workspace:
-          root: verdaccio_dist
-          paths:
-            - '*/verdaccio/docs'
 
   v-rsp-cra-18:
     executor: rsp-xlarge
@@ -741,6 +770,28 @@ jobs:
           paths:
             - '*/verdaccio/publish-stats'
 
+  v-starters:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-next off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-starters.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - 's2-docs/'
+
   deploy:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
@@ -786,24 +837,25 @@ jobs:
               done
             fi
 
-  deploy-production:
-    docker:
-      - image: mcr.microsoft.com/azure-cli:2.63.0
+  deploy-s3-stage:
+    executor: rsp
     steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - run:
-          name: Install AzCopy
-          command: |
-            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
-            tar -xf azcopy.tar.gz
-            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
-      - run:
-          name: deploy
-          command: |
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --exclude-pattern "*.md;*.txt"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.md" --content-type "text/markdown; charset=utf-8"
-            azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive --include-pattern "*.txt" --content-type "text/plain; charset=utf-8"
+      - deploy-s3:
+          dir: react-aria
+          bucket: s3://react-aria-stage
+      - deploy-s3:
+          dir: s2
+          bucket: s3://react-spectrum-stage
+
+  deploy-s3-production:
+    executor: rsp
+    steps:
+      - deploy-s3:
+          dir: react-aria
+          bucket: s3://react-aria-prod
+      - deploy-s3:
+          dir: s2
+          bucket: s3://react-spectrum-prod
 
   comment:
     executor: rsp
@@ -910,21 +962,21 @@ workflows:
       - storybook-s2:
           requires:
             - install
-      - docs:
-          requires:
-            - install
       - s2-docs:
           requires:
             - install
+      - s2-docs-stage:
+          requires:
+            - install
+          filters:
+            branches:
+              only: main
       - verdaccio:
           filters:
             branches:
               only: main
           requires:
             - install
-      - v-docs:
-          requires:
-            - verdaccio
       - v-rsp-cra-18:
           requires:
             - verdaccio
@@ -955,6 +1007,9 @@ workflows:
             - v-webpack-4
             - v-nextjs
             - v-rsp-cra-18
+      - v-starters:
+          requires:
+            - verdaccio
       - deploy:
           requires:
             - lint
@@ -969,11 +1024,24 @@ workflows:
             - test-esm
             - storybook
             - storybook-s2
-            - docs
+      - deploy-s3-stage:
+          name: deploy-s3-commit
+          requires:
             - s2-docs
+          filters:
+            branches:
+              ignore: main
+      - deploy-s3-stage:
+          name: deploy-s3-main
+          requires:
+            - s2-docs
+            - s2-docs-stage
+            - v-starters
+          filters:
+            branches:
+              only: main
       - deploy-verdaccio:
           requires:
-            - v-docs
             - v-rsp-cra-18
             - v-webpack-4
             - v-nextjs
@@ -991,6 +1059,7 @@ workflows:
           requires:
             - ts-diff
             - deploy
+            - deploy-s3-commit
       - comment:
           name: comment-verdaccio
           requires:
@@ -1005,18 +1074,18 @@ workflows:
           - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
-      - docs-production:
+      - s2-docs-production:
           filters:
             branches:
               only: main
           requires:
             - install
-      - deploy-production:
+      - deploy-s3-production:
           filters:
             branches:
               only: main
           requires:
-            - docs-production
+            - s2-docs-production
 
   nightly:
     triggers:

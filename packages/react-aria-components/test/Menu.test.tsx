@@ -510,6 +510,119 @@ describe('Menu', () => {
     expect(menuitem).toHaveTextContent('No results');
   });
 
+  it('should not close the menu when shouldCloseOnSelect is false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu shouldCloseOnSelect={false}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+  });
+
+  it('should not close individual menu item when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open" shouldCloseOnSelect={false}>Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[1];
+    expect(item).toHaveTextContent('Rename');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  it('should not close menu items within a section when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuSection shouldCloseOnSelect={false}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+            </MenuSection>
+            <MenuSection>
+              <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[3];
+    expect(item).toHaveTextContent('Share');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       it.each(['none', 'single', 'multiple'] as unknown as SelectionMode[])('with selectionMode = %s', async function (selectionMode) {
@@ -1449,11 +1562,12 @@ describe('Menu', () => {
     let onPressEnd = jest.fn();
     let onPress = jest.fn();
     let onClick = jest.fn();
+    let onClickCapture = jest.fn();
     let tree = render(
       <MenuTrigger>
         <Button>Menu Button</Button>
         <Popover>
-          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}} />
         </Popover>
       </MenuTrigger>
     );
@@ -1467,6 +1581,7 @@ describe('Menu', () => {
     expect(onPressEnd).toHaveBeenCalledTimes(1);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
   });
 
   it('should support press events on menu items with closeOnSelect: false', async function () {

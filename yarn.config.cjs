@@ -23,7 +23,9 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
         }
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
-        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/codemods' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
+        } else if (dependency.workspace.ident === '@react-spectrum/s2' || dependency.workspace.ident === '@react-spectrum/s2-icon-builder') {
+          dependency.update('^19.0.0-rc.1');
+        } else if (dependency.workspace.ident === '@react-spectrum/codemods') {
           dependency.update('^18.0.0 || ^19.0.0-rc.1');
         } else {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1');
@@ -55,7 +57,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
 
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
       workspace.set('dependencies.@adobe/spectrum-css-temp');
-      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils')) {
+      if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils') && !workspace.ident.endsWith('/mcp')) {
         workspace.set('devDependencies.@adobe/spectrum-css-temp', '3.0.0-alpha.1');
       }
       // these should not be in dependencies, but should be in dev or peer
