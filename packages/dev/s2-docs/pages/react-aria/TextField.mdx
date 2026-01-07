@@ -154,7 +154,7 @@ TextField can be customized to create an OTP (one-time password) input by hiding
 
   function OTPBoxes({length, focused}) {
     let context = useContext(InputContext);
-    let value = context?.value ?? '';
+    let value = String(context?.value ?? '');
 
     return (
       <div style={{display: 'flex', gap: '6px', pointerEvents: 'none'}}>
@@ -218,7 +218,7 @@ TextField can be customized to create an OTP (one-time password) input by hiding
 
   function OTPBoxes({length, focused}) {
     let context = useContext(InputContext);
-    let value = context?.value ?? '';
+    let value = String(context?.value ?? '');
 
     return (
       <div className="flex gap-1.5 pointer-events-none">
