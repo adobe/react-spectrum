@@ -135,8 +135,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
-    defaultFilter: props.defaultFilter || contains,
     ...props,
+    defaultFilter: props.defaultFilter || contains,
     // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
     items: props.items,
     children: undefined,

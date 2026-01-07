@@ -317,7 +317,7 @@ import {Table, TableHeader, Column, TableBody} from 'vanilla-starter/Table';
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The selected rows can be controlled via the `selectedKeys` prop, matching the `id` prop of the rows. The `onRowAction` event handles item actions. Rows can be disabled with the `isDisabled` prop. See the [selection guide](selection) for more details.
 
 ```tsx render docs={docs.exports.Table} links={docs.links} props={['selectionMode', 'selectionBehavior', 'disabledBehavior', 'disallowEmptySelection']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -337,7 +337,7 @@ function Example(props) {
         /* PROPS */
         selectedKeys={selected}
         onSelectionChange={setSelected}
-        onAction={key => alert(`Clicked ${key}`)}
+        onRowAction={key => alert(`Clicked ${key}`)}
         ///- end highlight -///
       >
         <TableHeader>

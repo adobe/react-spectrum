@@ -46,11 +46,15 @@ export function useListBoxSection(props: AriaListBoxSectionProps): ListBoxSectio
       role: 'presentation'
     },
     headingProps: heading ? {
-      // Techincally, listbox cannot contain headings according to ARIA.
+      // Technically, listbox cannot contain headings according to ARIA.
       // We hide the heading from assistive technology, using role="presentation",
       // and only use it as a visual label for the nested group.
       id: headingId,
-      role: 'presentation'
+      role: 'presentation',
+      onMouseDown: (e) => {
+        // Prevent DOM focus from moving on mouse down when using virtual focus
+        e.preventDefault();
+      }
     } : {},
     groupProps: {
       role: 'group',
