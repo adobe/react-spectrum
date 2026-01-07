@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import StampClone_L from 'illustration:./S2_lin_stampClone_160.svg';
 import StampClone_M from 'illustration:./S2_lin_stampClone_96.svg';
 import StampClone_S from 'illustration:./S2_lin_stampClone_48.svg';
 import {useContextProps} from 'react-aria-components';
 
-export default function StampClone(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function StampClone(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

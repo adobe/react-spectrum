@@ -37,11 +37,17 @@ export class SelectTester {
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     // Handle case where the wrapper element is provided rather than the Select's button (aka RAC)
-    let triggerButton = within(root).queryByRole('button');
-    if (triggerButton == null) {
+    let buttons = within(root).queryAllByRole('button');
+    let triggerButton;
+    if (buttons.length === 0) {
       triggerButton = root;
+    } else if (buttons.length === 1) {
+      triggerButton = buttons[0];
+    } else {
+      triggerButton = buttons.find(button => button.hasAttribute('aria-haspopup'));
     }
-    this._trigger = triggerButton;
+
+    this._trigger = triggerButton ?? root;
   }
   /**
    * Set the interaction type used by the select tester.
@@ -178,12 +184,14 @@ export class SelectTester {
         throw new Error('Target option not found in the listbox.');
       }
 
+      let isMultiSelect = listbox.getAttribute('aria-multiselectable') === 'true';
+
       if (interactionType === 'keyboard') {
         if (option?.getAttribute('aria-disabled') === 'true') {
           return;
         }
 
-        if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});
@@ -197,7 +205,7 @@ export class SelectTester {
         }
       }
 
-      if (option?.getAttribute('href') == null) {
+      if (!isMultiSelect && option?.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.activeElement !== this._trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the select component trigger but got ${document.activeElement}`);

@@ -106,13 +106,15 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="cta"</Code> to <Code>variant="accent"</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>variant="overBackground"</Code> to <Code>variant="primary" staticColor="white"</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>style</Code> to <Code>fillStyle</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isPending</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>If <Code>href</Code> is present, the <Code>Button</Code> should be converted to a <Code>LinkButton</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>elementType</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>ButtonGroup</H3>
+        <P>No updates needed.</P>
+
+        <H3>Calendar</H3>
         <P>No updates needed.</P>
 
         <H3>Checkbox</H3>
@@ -131,7 +133,6 @@ export function Migrating() {
         <H3>ColorField</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it has been removed due to accessibility issues)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
@@ -153,12 +154,30 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Change <Code>menuWidth</Code> value from a <Code>DimensionValue</Code> to a pixel value</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>loadingState</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>ComboBoxItem</Code></li>
+        </ul>
+
+        <H3>DateField</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+        </ul>
+
+        <H3>DatePicker</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+        </ul>
+
+        <H3>DateRangePicker</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
 
         <H3>Dialog</H3>
@@ -279,9 +298,9 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>isLoading</Code> (it has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>onLoadMore</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>PickerItem</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>isLoading</Code> to <Code>loadingState</Code> and provide the appropriate loading state.</li>
+          <li className={style({font: 'body', marginY: 8})}><Code>defaultSelectedKey</Code> and <Code>selectedKey</Code> have been deprecated in favor of <Code>defaultValue</Code> and <Code>value</Code> respectively. See the <Link href="?path=/docs/picker--docs">props table</Link> for the new accepted types.</li>
         </ul>
 
         <H3>ProgressBar</H3>
@@ -306,6 +325,9 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>showErrorIcon</Code> (it has been removed due to accessibility issues)</li>
         </ul>
 
+        <H3>RangeCalendar</H3>
+        <P>No updates needed.</P>
+
         <H3>RangeSlider</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>showValueLabel</Code> (it has been removed due to accessibility issues)</li>
@@ -315,7 +337,6 @@ export function Migrating() {
 
         <H3>SearchField</H3>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code> (it has been removed due to accessibility issues)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out icon (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
@@ -354,6 +375,7 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>For <Code>Column</Code> and <Code>Row</Code>: Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
           <li className={style({font: 'body', marginY: 8})}>For dynamic tables, pass a <Code>columns</Code> prop into <Code>Row</Code></li>
           <li className={style({font: 'body', marginY: 8})}>For <Code>Row</Code>: Update dynamic render function to pass in <Code>column</Code> instead of <Code>columnKey</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Move <Code>loadingState</Code> and <Code>onLoadMore</Code> from <Code>TableBody</Code> to <Code>TableView</Code></li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_allowsExpandableRows</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_onExpandedChange</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_expandedKeys</Code> (it has not been implemented yet)</li>
@@ -381,7 +403,6 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>icon</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code>  (it has been removed due to accessibility issues)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>
@@ -390,7 +411,13 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>icon</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placeholder</Code>  (it has been removed due to accessibility issues)</li>
+          <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
+        </ul>
+
+        <H3>TimeField</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isQuiet</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Change <Code>validationState="invalid"</Code> to <Code>isInvalid</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>validationState="valid"</Code> (it is no longer supported in Spectrum 2)</li>
         </ul>

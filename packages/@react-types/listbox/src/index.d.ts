@@ -40,6 +40,8 @@ export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   selectionBehavior?: SelectionBehavior,
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
+  /** Whether options should be focused when the user hovers over them. */
+  shouldFocusOnHover?: boolean,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.

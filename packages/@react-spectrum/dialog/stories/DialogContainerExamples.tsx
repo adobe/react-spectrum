@@ -1,20 +1,20 @@
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content, Header} from '@react-spectrum/view';
-import {Dialog, DialogContainer, useDialogContainer} from '../';
+import {Dialog, DialogContainer, SpectrumDialogContainerProps, SpectrumDialogProps, useDialogContainer} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Key} from '@react-types/shared';
-import React from 'react';
+import React, {JSX} from 'react';
 
-export function DialogContainerExample(props) {
+export function DialogContainerExample(props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> & Omit<SpectrumDialogProps, 'children'>): JSX.Element {
   let [isOpen, setOpen] = React.useState(false);
 
   return (
     <>
       <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
-      <DialogContainer onDismiss={() => setOpen(false)} {...props}>
+      <DialogContainer {...props} onDismiss={() => setOpen(false)}>
         {isOpen &&
           <ExampleDialog {...props} />
         }
@@ -23,7 +23,7 @@ export function DialogContainerExample(props) {
   );
 }
 
-export function MenuExample(props) {
+export function MenuExample(props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> & Omit<SpectrumDialogProps, 'children'>): JSX.Element {
   let [isOpen, setOpen] = React.useState(false);
 
   return (
@@ -43,7 +43,7 @@ export function MenuExample(props) {
   );
 }
 
-function ExampleDialog(props) {
+function ExampleDialog(props: Omit<SpectrumDialogContainerProps, 'children' | 'onDismiss'> & Omit<SpectrumDialogProps, 'children'>): JSX.Element {
   let container = useDialogContainer();
 
   return (
@@ -62,7 +62,7 @@ function ExampleDialog(props) {
   );
 }
 
-export function NestedDialogContainerExample() {
+export function NestedDialogContainerExample(): JSX.Element {
   let [dialog, setDialog] = React.useState<Key | null>(null);
   let dismiss = () => setDialog(null);
 

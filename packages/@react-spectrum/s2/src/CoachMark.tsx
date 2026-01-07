@@ -40,6 +40,7 @@ import {
 } from 'react';
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
+import {GlobalDOMAttributes} from '@react-types/shared';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
@@ -49,9 +50,9 @@ import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useMenuTriggerState} from '@react-stately/menu';
+import {useMenuTriggerState} from 'react-stately';
 
-export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
+export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal' | keyof GlobalDOMAttributes>, StyleProps {
   /** The children of the coach mark. */
   children: ReactNode,
 
@@ -242,7 +243,6 @@ let description = style({
 let keyboard = style({
   gridArea: 'keyboard',
   font: 'ui',
-  fontWeight: 'light',
   color: 'gray-600',
   background: 'gray-25',
   unicodeBidi: 'plaintext'
@@ -504,6 +504,7 @@ export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(f
       objRef.current.style.minWidth = childMinWidth;
       objRef.current.style.minHeight = childMinHeight;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
 
   return (

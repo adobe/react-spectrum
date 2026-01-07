@@ -257,5 +257,44 @@ describe('TextField', () => {
       expect(input).toHaveAttribute('id', 'name');
       expect(label).toHaveAttribute('for', 'name');
     });
+
+    it('should support form prop', () => {
+      let {getByRole} = render(
+        <TestTextField form="test" input={component} />
+      );
+
+      let input = getByRole('textbox');
+      expect(input).toHaveAttribute('form', 'test');
+    });
+
+    if (parseInt(React.version, 10) >= 19) {
+      it('resets to defaultValue when submitting form action', async () => {
+        const Component = component;
+        function Test() {
+          const [value, formAction] = React.useActionState((_, formData) => formData.get('value'), 'initial');
+
+          return (
+            <form action={formAction}>
+              <TextField defaultValue={value} name="value">
+                <Label>Value</Label>
+                <Component data-testid="input" />
+              </TextField>
+              <input data-testid="submit" type="submit" />
+            </form>
+          );
+        }
+
+        const {getByTestId} = render(<Test />);
+        const input = getByTestId('input');
+        expect(input).toHaveValue('initial');
+
+        await user.tab();
+        await user.keyboard('Devon');
+
+        const button = getByTestId('submit');
+        await user.click(button);
+        expect(input).toHaveValue('Devon');
+      });
+    }
   });
 });

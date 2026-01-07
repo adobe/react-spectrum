@@ -9,12 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+'use client';
 import {Button} from 'tailwind-starter/Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
-import React, {useEffect, useState} from 'react';
+import React, {ReactNode, RefObject, useEffect, useState} from 'react';
 
-export function Pagination({carousel, className}: {carousel: HTMLElement, className?: string}) {
+export function Pagination({carouselRef, className}: {carouselRef: RefObject<HTMLDivElement | null>, className?: string}): ReactNode {
   let scroll = (dir: number) => {
+    let carousel = carouselRef.current!;
     let style = window.getComputedStyle(carousel);
     carousel.scrollBy({
       left: dir * (carousel.clientWidth - parseInt(style.paddingLeft, 10) - parseInt(style.paddingRight, 10) + parseInt(style.columnGap, 10)),
@@ -26,6 +28,7 @@ export function Pagination({carousel, className}: {carousel: HTMLElement, classN
   let [isNextDisabled, setNextDisabled] = useState(false);
 
   useEffect(() => {
+    let carousel = carouselRef.current!;
     let update = () => {
       setPrevDisabled(carousel.scrollLeft <= 0);
       setNextDisabled(carousel.scrollLeft >= carousel.scrollWidth - carousel.clientWidth);
@@ -40,7 +43,7 @@ export function Pagination({carousel, className}: {carousel: HTMLElement, classN
       carousel.addEventListener('scroll', update);
       return () => carousel.removeEventListener('scroll', update);
     }
-  }, [carousel]);
+  }, [carouselRef]);
 
   return (
     <div className={`flex gap-2 justify-end md:justify-center mt-4 ${className}`}>

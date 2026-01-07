@@ -11,20 +11,21 @@
  */
 
 import {act, render, setupIntersectionObserverMock} from '@react-spectrum/test-utils-internal';
-import {Picker, PickerItem} from '../src';
+import {Content, ContextualHelp, Heading, Picker, PickerItem, Text} from '../src';
+import {pointerMap, User} from '@react-aria/test-utils';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Picker', () => {
   let testUtilUser = new User();
   function DynamicPicker(props) {
-    let {items, isLoading, onLoadMore, ...otherProps} = props;
+    let {items, loadingState, onLoadMore, ...otherProps} = props;
     return (
       <Picker
         {...otherProps}
         label="Test picker"
         items={items}
-        isLoading={isLoading}
+        loadingState={loadingState}
         onLoadMore={onLoadMore}>
         {(item: any) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
       </Picker>
@@ -55,7 +56,7 @@ describe('Picker', () => {
     });
 
     let tree = render(
-      <Picker label="test" isLoading onLoadMore={onLoadMore}>
+      <Picker label="test" loadingState="loadingMore" onLoadMore={onLoadMore}>
         <PickerItem>Chocolate</PickerItem>
         <PickerItem>Mint</PickerItem>
         <PickerItem>Strawberry</PickerItem>
@@ -102,12 +103,20 @@ describe('Picker', () => {
     let options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
     }
 
-    tree.rerender(<DynamicPicker items={items} isLoading />);
+    tree.rerender(<DynamicPicker items={items} loadingState="loadingMore" />);
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
-      expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      if (index === options.length - 1) {
+        // The last row is the loader here which shouldn't have posinset
+        expect(option).not.toHaveAttribute('aria-posinset');
+        expect(option).not.toHaveAttribute('aria-setsize');
+      } else {
+        expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+        expect(option).toHaveAttribute('aria-setsize', `${items.length}`);
+      }
     }
 
     let newItems = [...items, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}];
@@ -116,6 +125,53 @@ describe('Picker', () => {
     options = selectTester.options();
     for (let [index, option] of options.entries()) {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+      expect(option).toHaveAttribute('aria-setsize', `${newItems.length}`);
     }
+  });
+
+  it('should support contextual help', async () => {
+    // Issue with how we don't render the contextual help button in the fake DOM since PressResponder isn't using createHideableComponent
+    let warn = jest.spyOn(global.console, 'warn').mockImplementation();
+    let user = userEvent.setup({delay: null, pointerMap});
+    let tree = render(
+      <Picker
+        data-testid="testpicker"
+        contextualHelp={
+          <ContextualHelp>
+            <Heading>Title here</Heading>
+            <Content>
+              <Text>
+                Contents
+              </Text>
+            </Content>
+          </ContextualHelp>
+        }
+        label="test">
+        <PickerItem>Chocolate</PickerItem>
+        <PickerItem>Mint</PickerItem>
+        <PickerItem>Strawberry</PickerItem>
+        <PickerItem>Vanilla</PickerItem>
+        <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+      </Picker>
+    );
+
+    let selectTester = testUtilUser.createTester('Select', {root: tree.getByTestId('testpicker')});
+    let buttons = tree.getAllByRole('button');
+    expect(buttons).toHaveLength(2);
+    expect(buttons[1]).toBe(selectTester.trigger);
+
+    await user.click(buttons[0]);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = tree.getByRole('dialog');
+    expect(dialog).toBeVisible();
+
+    // Because of the fake DOM we'll see this twice
+    expect(tree.getAllByText('Title here')[1]).toBeVisible();
+    expect(tree.getAllByText('Contents')[1]).toBeVisible();
+    warn.mockRestore();
   });
 });

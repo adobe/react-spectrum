@@ -11,7 +11,7 @@
  */
 
 import {ActionButtonContext} from './ActionButton';
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {baseColor, focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
@@ -22,7 +22,7 @@ import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the disclosure.
    * @default 'M'
@@ -66,7 +66,7 @@ const disclosure = style({
 }, getAllowedOverrides());
 
 /**
- * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
  */
 export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
@@ -99,7 +99,7 @@ export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps,
 
 export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
-   * 
+   *
    * @default 3
    */
   level?: number,
@@ -125,7 +125,11 @@ const buttonStyles = style({
   font: 'heading',
   color: {
     default: baseColor('neutral'),
-    isDisabled: 'disabled'
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   fontWeight: 'bold',
   fontSize: {
@@ -297,20 +301,23 @@ export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'cla
 
 const panelStyles = style({
   font: 'body',
-  paddingTop: {
-    isExpanded: 8
-  },
-  paddingBottom: {
-    isExpanded: 16
-  },
+  height: '--disclosure-panel-height',
+  overflow: 'clip',
+  transition: {
+    default: '[height]',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  }
+});
+
+const panelInner = style({
+  paddingTop: 8,
+  paddingBottom: 16,
   paddingX: {
-    isExpanded: {
-      size: {
-        S: 8,
-        M: space(9),
-        L: 12,
-        XL: space(15)
-      }
+    size: {
+      S: 8,
+      M: space(9),
+      L: 12,
+      XL: space(15)
     }
   }
 });
@@ -326,16 +333,16 @@ export const DisclosurePanel = forwardRef(function DisclosurePanel(props: Disclo
   } = props;
   const domProps = filterDOMProps(otherProps);
   let {size} = useSlottedContext(DisclosureContext)!;
-  let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
       style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + panelStyles({size, isExpanded})}>
-      {props.children}
+      className={(UNSAFE_className ?? '') + panelStyles}>
+      <div className={panelInner({size})}>
+        {props.children}
+      </div>
     </RACDisclosurePanel>
   );
 });
-

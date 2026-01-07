@@ -15,7 +15,10 @@ import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 
 export interface ToggleGroupProps {
-  /** Whether single or multiple selection is enabled. */
+  /**
+   * Whether single or multiple selection is enabled.
+   * @default 'single'
+   */
   selectionMode?: 'single' | 'multiple',
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,

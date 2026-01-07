@@ -39,6 +39,8 @@ export interface BaseTesterOpts extends UserOpts {
   root: HTMLElement
 }
 
+export interface CheckboxGroupTesterOpts extends BaseTesterOpts {}
+
 export interface ComboBoxTesterOpts extends BaseTesterOpts {
   /**
    * The base element for the combobox. If provided the wrapping element around the target combobox (as is the the case with a ref provided to RSP ComboBox),
@@ -50,6 +52,17 @@ export interface ComboBoxTesterOpts extends BaseTesterOpts {
    * within the `root` provided or that the `root` serves as the trigger.
    */
   trigger?: HTMLElement
+}
+
+export interface DialogTesterOpts extends BaseTesterOpts {
+  /**
+   * The trigger element for the dialog.
+   */
+  root: HTMLElement,
+  /**
+   * The overlay type of the dialog. Used to inform the tester how to find the dialog.
+   */
+  overlayType?: 'modal' | 'popover'
 }
 
 export interface GridListTesterOpts extends BaseTesterOpts {}
@@ -74,6 +87,14 @@ export interface MenuTesterOpts extends BaseTesterOpts {
    * The root menu of the menu tree. Only available if the menu is a submenu.
    */
   rootMenu?: HTMLElement
+}
+
+export interface RadioGroupTesterOpts extends BaseTesterOpts {
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   * @default 'ltr'
+   */
+  direction?: Direction
 }
 
 export interface SelectTesterOpts extends BaseTesterOpts {
@@ -126,7 +147,17 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
    * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
    * @default 'true'
    */
-  checkboxSelection?: boolean
+  checkboxSelection?: boolean,
+  // TODO: this api feels a bit confusing tbh...
+  /**
+   * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
+   * required to toggle row selection by adding modifier keys during user actions, useful when performing multi-row selection in a "selectionBehavior: 'replace'" grid.
+   * If you would like to still simulate user actions (aka press) without these modifiers keys for a "selectionBehavior: replace" grid, simply omit this option.
+   * See the "Selection Behavior" section of the appropriate React Aria Component docs for more information (e.g. https://react-spectrum.adobe.com/react-aria/Tree.html#selection-behavior).
+   *
+   * @default 'toggle'
+   */
+  selectionBehavior?: 'toggle' | 'replace'
 }
 
 export interface GridRowActionOpts extends BaseGridRowInteractionOpts {

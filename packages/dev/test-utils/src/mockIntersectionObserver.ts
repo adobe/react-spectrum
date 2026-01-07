@@ -10,13 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+interface IMockIntersectionObserver extends IntersectionObserver {
+  triggerCallback: (entries: any[]) => void
+}
+
 export function setupIntersectionObserverMock({
   disconnect = () => null,
   observe = () => null,
   takeRecords = () => [],
   unobserve = () => null
-} = {}) {
-  class MockIntersectionObserver {
+}: {
+  disconnect?: (() => null) | undefined,
+  observe?: (() => null) | undefined,
+  takeRecords?: (() => never[]) | undefined,
+  unobserve?: (() => null) | undefined
+} = {}): typeof IntersectionObserver & {instance: IMockIntersectionObserver} {
+  class MockIntersectionObserver implements IntersectionObserver {
     root;
     rootMargin;
     thresholds;
@@ -25,7 +34,7 @@ export function setupIntersectionObserverMock({
     takeRecords;
     unobserve;
     callback;
-    static instance;
+    static instance: MockIntersectionObserver;
 
     constructor(cb: IntersectionObserverCallback, opts: IntersectionObserverInit = {}) {
       // TODO: since we are using static to access this in the test,
@@ -43,7 +52,7 @@ export function setupIntersectionObserverMock({
       this.callback = cb;
     }
 
-    triggerCallback(entries) {
+    triggerCallback(entries: any[]): void {
       this.callback(entries);
     }
   }

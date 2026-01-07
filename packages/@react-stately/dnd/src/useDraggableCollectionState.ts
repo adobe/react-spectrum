@@ -14,7 +14,7 @@ import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragI
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useRef, useState} from 'react';
 
-export interface DraggableCollectionStateOptions extends DraggableCollectionProps {
+export interface DraggableCollectionStateOptions<T = object> extends DraggableCollectionProps<T> {
   /** A collection of items. */
   collection: Collection<Node<unknown>>,
   /** An interface for reading and updating multiple selection state. */
@@ -55,7 +55,7 @@ export interface DraggableCollectionState {
 /**
  * Manages state for a draggable collection.
  */
-export function useDraggableCollectionState(props: DraggableCollectionStateOptions): DraggableCollectionState {
+export function useDraggableCollectionState<T = object>(props: DraggableCollectionStateOptions<T>): DraggableCollectionState {
   let {
     getItems,
     isDisabled,
@@ -72,15 +72,35 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
   let draggedKey = useRef<Key | null>(null);
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
-    // other selected items are also dragged. If it is not selected, the only the clicked
+    // other selected items are also dragged. If it is not selected, then only the clicked
     // item is dragged. This matches native macOS behavior.
-    let keys = new Set(
-      selectionManager.isSelected(key)
-        ? new Set([...selectionManager.selectedKeys].filter(key => !!collection.getItem(key)))
-        : []
-    );
+    // Additionally, we filter out any keys that are children of any of the other selected keys
+    let keys = new Set<Key>();
+    if (selectionManager.isSelected(key)) {
+      for (let currentKey of selectionManager.selectedKeys) {
+        let node = collection.getItem(currentKey);
+        if (node) {
+          let isChild = false;
+          let parentKey = node.parentKey;
+          while (parentKey != null) {
+            // eslint-disable-next-line max-depth
+            if (selectionManager.selectedKeys.has(parentKey)) {
+              isChild = true;
+              break;
+            }
+            let parentNode = collection.getItem(parentKey);
+            parentKey = parentNode ? parentNode.parentKey : null;
+          }
 
-    keys.add(key);
+          if (!isChild) {
+            keys.add(currentKey);
+          }
+        }
+      }
+    } else {
+      keys.add(key);
+    }
+
     return keys;
   };
 
@@ -98,7 +118,16 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     },
     getKeysForDrag: getKeys,
     getItems(key) {
-      return getItems(getKeys(key));
+      let keys = getKeys(key);
+      let items: any[] = [];
+      for (let key of keys) {
+        let value = collection.getItem(key)?.value;
+        if (value != null) {
+          items.push(value);
+        }
+      }
+
+      return getItems(getKeys(key), items);
     },
     isDisabled,
     preview,

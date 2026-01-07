@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, User, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
-import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -28,6 +27,7 @@ import userEvent from '@testing-library/user-event';
 describe('DialogTrigger', function () {
   let warnMock;
   let user;
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -72,13 +72,9 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    await user.click(button);
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    let dialog = getByRole('dialog');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
     expect(dialog).toBeVisible();
 
     let modal = getByTestId('modal');
@@ -124,13 +120,9 @@ describe('DialogTrigger', function () {
     expect(queryByRole('dialog')).toBeNull();
 
     let button = getByRole('button');
-    await user.click(button);
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    let dialog = getByRole('dialog');
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
     expect(dialog).toBeVisible();
 
     let popover = getByTestId('popover');
@@ -278,38 +270,15 @@ describe('DialogTrigger', function () {
     );
 
     let button = getByRole('button');
-    act(() => {button.focus();});
-    fireEvent.focusIn(button);
-    await user.click(button);
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    let dialog = getByRole('dialog');
-
-    await waitFor(() => {
-      expect(dialog).toBeVisible();
-    }); // wait for animation
-
+    let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'modal'});
+    await dialogTester.open();
+    let dialog = dialogTester.dialog;
     expect(document.activeElement).toBe(dialog);
-
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(dialog).not.toBeInTheDocument();
-    }); // wait for animation
-
+    await dialogTester.close();
     // now that it's been unmounted, run the raf callback
     act(() => {
       jest.runAllTimers();
     });
-
     expect(document.activeElement).toBe(button);
   });
 
@@ -975,55 +944,6 @@ describe('DialogTrigger', function () {
     await user.click(innerInput);
 
     expect(document.activeElement).toBe(innerInput);
-  });
-
-  it('will not lose focus to body', async () => {
-    let {getByRole, getByTestId} = render(
-      <Provider theme={theme}>
-        <DialogTrigger type="popover">
-          <ActionButton>Trigger</ActionButton>
-          <Dialog>
-            <Heading>The Heading</Heading>
-            <Content>
-              <MenuTrigger>
-                <ActionButton data-testid="innerButton">Test</ActionButton>
-                <Menu autoFocus="first">
-                  <Item>Item 1</Item>
-                  <Item>Item 2</Item>
-                  <Item>Item 3</Item>
-                </Menu>
-              </MenuTrigger>
-            </Content>
-          </Dialog>
-        </DialogTrigger>
-      </Provider>
-    );
-    let button = getByRole('button');
-    await user.click(button);
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    let outerDialog = getByRole('dialog');
-
-    await waitFor(() => {
-      expect(outerDialog).toBeVisible();
-    }); // wait for animation
-    let innerButton = getByTestId('innerButton');
-    await user.tab();
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
-
-    act(() => {
-      jest.runAllTimers();
-    });
-    await user.tab();
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    expect(document.activeElement).toBe(innerButton);
   });
 
   describe('portalContainer', () => {

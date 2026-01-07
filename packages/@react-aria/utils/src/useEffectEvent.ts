@@ -10,12 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 
-export function useEffectEvent<T extends Function>(fn?: T): T {
+// Use the earliest effect type possible. useInsertionEffect runs during the mutation phase,
+// before all layout effects, but is available only in React 18 and later.
+const useEarlyEffect = React['useInsertionEffect'] ?? useLayoutEffect;
+
+// Starting with React 19.2, this hook has been internalized.
+const useModernEffectEvent = React['useEffectEvent'] ?? useLegacyEffectEvent;
+
+function useLegacyEffectEvent<T extends Function>(fn?: T): T {
   const ref = useRef<T | null | undefined>(null);
-  useLayoutEffect(() => {
+  useEarlyEffect(() => {
     ref.current = fn;
   }, [fn]);
   // @ts-ignore
@@ -23,4 +30,8 @@ export function useEffectEvent<T extends Function>(fn?: T): T {
     const f = ref.current!;
     return f?.(...args);
   }, []);
+}
+
+export function useEffectEvent<T extends Function>(fn: T): T {
+  return useModernEffectEvent(fn);
 }

@@ -12,7 +12,7 @@
 
 import {ColorSwatch} from '../src/ColorSwatch';
 import {ColorSwatchPicker} from '../src/ColorSwatchPicker';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ColorSwatchPicker> = {
@@ -28,21 +28,26 @@ const meta: Meta<typeof ColorSwatchPicker> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ColorSwatchPicker>;
 
-export const Example = (args: any) => (
-  <ColorSwatchPicker defaultValue="#f00" {...args}>
-    <ColorSwatch color="#f00" />
-    <ColorSwatch color="#0f0" />
-    <ColorSwatch color="#0ff" />
-    <ColorSwatch color="#00f" />
-  </ColorSwatchPicker>
-);
+export const Example: Story = {
+  render: (args) => (
+    <ColorSwatchPicker defaultValue="#f00" {...args}>
+      <ColorSwatch color="#f00" />
+      <ColorSwatch color="#0f0" />
+      <ColorSwatch color="#0ff" />
+      <ColorSwatch color="#00f" />
+    </ColorSwatchPicker>
+  )
+};
 
-export const ManySwatches = (args: any) => (
-  <ColorSwatchPicker {...args} styles={style({maxWidth: 192})}>
-    {Array.from(Array(24)).map(() => {
-      let color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
-      return <ColorSwatch key={color} color={color} />;
-    })}
-  </ColorSwatchPicker>
-);
+export const ManySwatches: Story = {
+  render: (args) => (
+    <ColorSwatchPicker {...args} styles={style({maxWidth: 192})}>
+      {Array.from(Array(24)).map(() => {
+        let color = `#${Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')}`;
+        return <ColorSwatch key={color} color={color} />;
+      })}
+    </ColorSwatchPicker>
+  )
+};

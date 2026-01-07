@@ -13,7 +13,7 @@
 import {Example, LongLabel} from '../stories/Tooltip.stories';
 import type {Meta, StoryObj} from '@storybook/react';
 import {Tooltip} from '../src';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
@@ -26,7 +26,7 @@ const meta: Meta<typeof Tooltip> = {
 
 export default meta;
 
-export const Default = {
+export const Default: StoryObj<typeof Tooltip> = {
   ...Example,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -35,7 +35,7 @@ export const Default = {
   }
 } as StoryObj;
 
-export const WithLongLabel = {
+export const WithLongLabel: StoryObj<typeof Tooltip> = {
   ...LongLabel,
-  play: async (context) => await Default.play!(context)
+  play: Default.play
 } as StoryObj;

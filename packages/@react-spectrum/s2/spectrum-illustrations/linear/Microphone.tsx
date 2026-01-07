@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {IconProps, IllustrationContext} from '../../src/Icon';
+'use client';
 import Microphone_L from 'illustration:./S2_lin_microphone_160.svg';
 import Microphone_M from 'illustration:./S2_lin_microphone_96.svg';
 import Microphone_S from 'illustration:./S2_lin_microphone_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function Microphone(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function Microphone(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

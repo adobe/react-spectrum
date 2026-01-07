@@ -11,8 +11,8 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {pressElement, triggerLongPress} from './events';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleSortOpts {
@@ -24,6 +24,12 @@ interface TableToggleSortOpts {
    * What interaction type to use when sorting the column. Defaults to the interaction type set on the tester.
    */
   interactionType?: UserOpts['interactionType']
+}
+interface TableColumnHeaderActionOpts extends TableToggleSortOpts {
+  /**
+   * The index of the column header action to trigger.
+   */
+  action: number
 }
 interface TableRowActionOpts extends GridRowActionOpts {}
 
@@ -48,6 +54,55 @@ export class TableTester {
     this._interactionType = type;
   }
 
+  // TODO: RTL
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, selectionOnNav?: 'default' | 'none'}) {
+    let {row, selectionOnNav = 'default'} = opts;
+    let altKey = getAltKey();
+    let rows = this.rows;
+    let targetIndex = rows.indexOf(row);
+    if (targetIndex === -1) {
+      throw new Error('Row provided is not in the table');
+    }
+
+    // Move focus into the table
+    if (document.activeElement !== this._table && !this._table.contains(document.activeElement)) {
+      act(() => this._table.focus());
+    }
+
+    if (document.activeElement === this._table) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+
+    // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
+    if (this.rowGroups[0].contains(document.activeElement)) {
+      do {
+        await this.user.keyboard('[ArrowDown]');
+      } while (!this.rowGroups[1].contains(document.activeElement));
+    }
+
+    // Move focus onto the row itself
+    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+      do {
+        await this.user.keyboard('[ArrowLeft]');
+      } while (document.activeElement!.getAttribute('role') !== 'row');
+    }
+    let currIndex = rows.indexOf(document.activeElement as HTMLElement);
+    if (currIndex === -1) {
+      throw new Error('Current active element is not on any of the table rows');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    if (selectionOnNav === 'none') {
+      await this.user.keyboard(`[${altKey}>]`);
+    }
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+    if (selectionOnNav === 'none') {
+      await this.user.keyboard(`[/${altKey}]`);
+    }
+  };
+
   /**
    * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
    */
@@ -56,8 +111,12 @@ export class TableTester {
       row,
       needsLongPress,
       checkboxSelection = true,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      selectionBehavior = 'toggle'
     } = opts;
+
+    let altKey = getMetaKey();
+    let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -69,12 +128,15 @@ export class TableTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    if (interactionType === 'keyboard' && !checkboxSelection) {
-      // TODO: for now focus the row directly until I add keyboard navigation
-      await act(async () => {
-        row.focus();
-      });
-      await this.user.keyboard('{Space}');
+    if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
+      await this.keyboardNavigateToRow({row, selectionOnNav: selectionBehavior === 'replace' ? 'none' : 'default'});
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[${altKey}>]`);
+      }
+      await this.user.keyboard('[Space]');
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[/${altKey}]`);
+      }
       return;
     }
     if (rowCheckbox && checkboxSelection) {
@@ -89,7 +151,13 @@ export class TableTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[${metaKey}>]`);
+        }
         await pressElement(this.user, cell, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[/${metaKey}]`);
+        }
       }
     }
   };
@@ -185,6 +253,92 @@ export class TableTester {
   }
 
   /**
+   * Triggers an action for the specified table column menu. Defaults to using the interaction type set on the table tester.
+   */
+  async triggerColumnHeaderAction(opts: TableColumnHeaderActionOpts): Promise<void> {
+    let {
+      column,
+      interactionType = this._interactionType,
+      action
+    } = opts;
+
+    let columnheader;
+    if (typeof column === 'number') {
+      columnheader = this.columns[column];
+    } else if (typeof column === 'string') {
+      columnheader = within(this.rowGroups[0]).getByText(column);
+      while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
+        columnheader = columnheader.parentElement;
+      }
+    } else {
+      columnheader = column;
+    }
+
+    let menuButton = within(columnheader).queryByRole('button');
+    if (menuButton) {
+      // TODO: Focus management is all kinda of messed up if I just use .focus and Space to open the sort menu. Seems like
+      // the focused key doesn't get properly set to the desired column header. Have to do this strange flow where I focus the
+      // column header except if the active element is already the menu button within the column header
+      if (interactionType === 'keyboard' && document.activeElement !== menuButton) {
+        await pressElement(this.user, columnheader, interactionType);
+      } else {
+        await pressElement(this.user, menuButton, interactionType);
+      }
+
+      await waitFor(() => {
+        if (menuButton.getAttribute('aria-controls') == null) {
+          throw new Error('No aria-controls found on table column dropdown menu trigger element.');
+        } else {
+          return true;
+        }
+      });
+
+      let menuId = menuButton.getAttribute('aria-controls');
+      await waitFor(() => {
+        if (!menuId || document.getElementById(menuId) == null) {
+          throw new Error(`Table column header menu with id of ${menuId} not found in document.`);
+        } else {
+          return true;
+        }
+      });
+
+      if (menuId) {
+        let menu = document.getElementById(menuId);
+        if (menu) {
+          await pressElement(this.user, within(menu).getAllByRole('menuitem')[action], interactionType);
+
+          await waitFor(() => {
+            if (document.contains(menu)) {
+              throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
+            } else {
+              return true;
+            }
+          });
+        }
+      }
+
+      // Handle cases where the table may transition in response to the row selection/deselection
+      if (!this._advanceTimer) {
+        throw new Error('No advanceTimers provided for table transition.');
+      }
+
+      await act(async () => {
+        await this._advanceTimer?.(200);
+      });
+
+      await waitFor(() => {
+        if (document.activeElement !== menuButton) {
+          throw new Error(`Expected the document.activeElement to be the table column menu button but got ${document.activeElement}`);
+        } else {
+          return true;
+        }
+      });
+    } else {
+      throw new Error('No menu button found on table column header.');
+    }
+  }
+
+  /**
    * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
    */
   async triggerRowAction(opts: TableRowActionOpts): Promise<void> {
@@ -205,8 +359,7 @@ export class TableTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      // TODO: add keyboard navigation instead of focusing the row directly. Will need to consider if the focus in in the columns
-      act(() => row.focus());
+      await this.keyboardNavigateToRow({row, selectionOnNav: 'none'});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);

@@ -11,6 +11,20 @@ html {
   width: 300px;
   height: 300px;
   overflow: auto;
+
+  :global(.react-aria-DropIndicator) {
+    margin-inline-start: calc(var(--tree-item-level) * 15px);
+  }
+
+  :global(.react-aria-DropIndicator[data-drop-target]) {
+    outline: 1px solid slateblue;
+  }
+
+  &[data-drop-target] {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+    background: rgb(from purple r g b / 20%);
+  }
 }
 
 .tree-item {
@@ -36,6 +50,11 @@ html {
   [slot=chevron] {
     width: 20px;
     height: 20px;
+    outline: none;
+
+    &[data-focus-visible] {
+      outline: 2px solid purple;
+    }
   }
 
   &.focus-visible {
@@ -51,6 +70,12 @@ html {
   &.selected {
     background: lightseagreen;
     color: white;
+  }
+
+  &.drop-target {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+    background: rgb(from purple r g b / 20%);
   }
 }
 

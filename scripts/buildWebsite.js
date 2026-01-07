@@ -11,7 +11,7 @@
  */
 
 const tempy = require('tempy');
-const fs = require('fs-extra');
+const fs = require('fs');
 const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
@@ -53,7 +53,7 @@ async function build() {
           name.startsWith('postcss') ||
           name === 'sharp' ||
           name === 'recast' ||
-          name === 'framer-motion' ||
+          name === 'motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
           name === '@tailwindcss/postcss' ||
@@ -82,9 +82,12 @@ async function build() {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
       build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process GIT_HASH=${gitHash} parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package',
-      createRssFeed: "node scripts/createFeed.mjs"
+      createRssFeed: 'node scripts/createFeed.mjs'
     },
-    '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
+    '@parcel/transformer-css': packageJSON['@parcel/transformer-css'],
+    '@parcel/resolver-default': {
+      packageExports: true
+    }
   };
 
 
@@ -107,11 +110,11 @@ async function build() {
             let contents = fs.readFileSync(docFile, 'utf8');
             let m = contents.match(/after_version:\s*(.*)/);
             if (!m || semver.gt(json.version, m[1])) {
-              fs.copySync(docFile, destFile);
+              fs.cpSync(docFile, destFile, {recursive: true});
               hasDocs = true;
             }
           } else {
-            fs.copySync(docFile, destFile);
+            fs.cpSync(docFile, destFile, {recursive: true});
           }
         }
       }
@@ -127,21 +130,21 @@ async function build() {
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, false, 2));
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
-  fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
-  fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
-  fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
-  fs.copySync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'));
-  fs.copySync(path.join(__dirname, '..', '.yarn', 'patches'), path.join(dir, '.yarn', 'patches'));
-  fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
-  fs.copySync(path.join(__dirname, '..', 'scripts', 'createFeed.mjs'), path.join(dir, 'scripts', 'createFeed.mjs'));
+  fs.cpSync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'packages', '@internationalized', 'string-compiler'), path.join(dir, 'packages', '@internationalized', 'string-compiler'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-builder-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-builder-temp'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  fs.cpSync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
+  fs.cpSync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.cpSync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
+  fs.cpSync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarn', 'patches'), path.join(dir, '.yarn', 'patches'), {recursive: true});
+  fs.cpSync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
+  fs.cpSync(path.join(__dirname, '..', 'scripts', 'createFeed.mjs'), path.join(dir, 'scripts', 'createFeed.mjs'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
@@ -149,31 +152,18 @@ async function build() {
     let contents = fs.readFileSync(path.join(dir, file), 'utf8');
     let m = contents.match(/after_version:\s*(.*)/);
     if (m && !semver.gt(devPkg.version, m[1])) {
-      fs.removeSync(path.join(dir, file));
+      fs.rmSync(path.join(dir, file), {recursive: true, force: true});
     }
   }
 
   // Only copy babel and parcel patches over
   let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('postcss'));
   for (let patch of patches) {
-    fs.copySync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch));
+    fs.cpSync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch), {recursive: true});
   }
 
   // Install dependencies from npm
   await run('yarn', ['--no-immutable'], {cwd: dir, stdio: 'inherit'});
-
-  // Copy package.json for each package into docs dir so we can find the correct version numbers
-  for (let p of packages) {
-    if (fs.existsSync(path.join(dir, 'node_modules', p))) {
-      fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
-    }
-  }
-
-  // Patch react-aria-components package.json for example CSS.
-  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
-  let json = JSON.parse(fs.readFileSync(p));
-  json.sideEffects = ['*.css'];
-  fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
@@ -183,10 +173,10 @@ async function build() {
   await run('yarn', ['createRssFeed', 'blog'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
-  fs.copySync(path.join(dir, 'scripts', 'releases-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'))
-  fs.copySync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'))
-  fs.removeSync(dir);
+  fs.cpSync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'), {recursive: true});
+  fs.cpSync(path.join(dir, 'scripts', 'releases-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'));
+  fs.cpSync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'));
+  fs.rmSync(dir, {recursive: true, force: true});
 }
 
 function run(cmd, args, opts) {

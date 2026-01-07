@@ -12,7 +12,7 @@
 
 import {ContextValue, Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -29,7 +29,7 @@ interface DividerSpectrumProps {
    */
   size?: 'S' | 'M' | 'L',
   /**
-   * How thick the Divider should be.
+   * The orientation of the Divider.
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical',
@@ -38,7 +38,7 @@ interface DividerSpectrumProps {
 }
 
 // TODO: allow overriding height (only when orientation is vertical)??
-export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
+export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType' | keyof GlobalDOMAttributes>, StyleProps {}
 
 export const DividerContext = createContext<ContextValue<Partial<DividerProps>, DOMRefValue>>(null);
 

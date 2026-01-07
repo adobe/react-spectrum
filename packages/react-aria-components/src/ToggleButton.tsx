@@ -12,9 +12,18 @@
 
 import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton, useToggleButtonGroupItem} from 'react-aria';
 import {ButtonRenderProps} from './Button';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {forwardRefType, Key} from '@react-types/shared';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes, Key} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import {SelectionIndicatorContext} from './SelectionIndicator';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
@@ -30,7 +39,12 @@ export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPend
   state: ToggleState
 }
 
-export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType' | 'id'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps> {
+export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType' | 'id'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ToggleButton'
+   */
+  className?: ClassNameOrFunction<ToggleButtonRenderProps>,
   /** When used in a ToggleButtonGroup, an identifier for the item in `selectedKeys`. When used standalone, a DOM id. */
   id?: Key
 }
@@ -65,10 +79,13 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     defaultClassName: 'react-aria-ToggleButton'
   });
 
+  let DOMProps = filterDOMProps(props as any, {global: true});
+  delete DOMProps.id;
+  delete DOMProps.onClick;
+
   return (
     <button
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-focused={isFocused || undefined}
@@ -76,6 +93,10 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
       data-pressed={isPressed || undefined}
       data-selected={isSelected || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={isFocusVisible || undefined} />
+      data-focus-visible={isFocusVisible || undefined}>
+      <SelectionIndicatorContext.Provider value={{isSelected}}>
+        {renderProps.children}
+      </SelectionIndicatorContext.Provider>
+    </button>
   );
 });

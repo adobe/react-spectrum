@@ -24,10 +24,16 @@ interface ContentProps extends UnsafeStyles, SlotProps {
   children: ReactNode,
   styles?: StyleString,
   isHidden?: boolean,
-  id?: string
+  id?: string,
+  itemProp?: string,
+  itemScope?: boolean,
+  itemType?: string,
+  itemID?: string,
+  itemRef?: string
 }
 
-interface HeadingProps extends ContentProps {
+interface HeadingProps extends Omit<ContentProps, 'children'> {
+  children: ReactNode,
   level?: number
 }
 

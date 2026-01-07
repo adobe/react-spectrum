@@ -21,13 +21,13 @@ import {
 import {ColorHandle} from './ColorHandle';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, useRef} from 'react';
-import {DOMRef, DOMRefValue, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style'>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
   label?: string
 }
 
@@ -41,7 +41,7 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
   let trackRef = useRef(null);
-  let {locale} = useLocale();
+  let {direction, locale} = useLocale();
 
   return (
     <AriaColorSlider
@@ -133,7 +133,8 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
           <ColorHandle
             containerRef={trackRef}
             getPosition={() => {
-              let x = state.orientation === 'horizontal' ? state.getThumbPercent(0) : 0.5;
+              let thumbLeft = direction === 'ltr' ? state.getThumbPercent(0) : 1 - state.getThumbPercent(0);
+              let x = state.orientation === 'horizontal' ? thumbLeft : 0.5;
               let y = state.orientation === 'horizontal' ? 0.5 : 1 - state.getThumbPercent(0);
               return {x, y};
             }} />

@@ -126,7 +126,7 @@ function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearch
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, state.inputValue, state.setInputValue);
+  useFormReset(inputRef, state.defaultInputValue, state.setInputValue);
 
   return (
     <>

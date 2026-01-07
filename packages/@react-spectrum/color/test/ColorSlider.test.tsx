@@ -291,6 +291,29 @@ describe('ColorSlider', () => {
     expect(input).toHaveValue('127');
   });
 
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {        
+        const [value, formAction] = React.useActionState(() => '#f00', '#000');
+        
+        return (
+          <form action={formAction}>
+            <ColorSlider channel="red" defaultValue={value} />
+            <input type="submit" data-testid="submit" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole} = render(<Test />);
+      let input = getByRole('slider');
+      expect(input).toHaveValue('0');
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(input).toHaveValue('255');
+    });
+  }
+
   describe('keyboard events', () => {
     it('works', async () => {
       let defaultColor = parseColor('#000000');

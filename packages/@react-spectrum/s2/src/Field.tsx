@@ -112,7 +112,8 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
                     value: 'currentColor'
                   }
                 })}
-                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined} />
+                aria-label={includeNecessityIndicatorInAccessibilityName ? stringFormatter.format('label.(required)') : undefined}
+                aria-hidden={!includeNecessityIndicatorInAccessibilityName} />
             }
             {necessityIndicator === 'label' &&
               /* The necessity label is hidden to screen readers if the field is required because
@@ -152,7 +153,8 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
 interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
   children: ReactNode,
-  styles?: StyleString
+  styles?: StyleString,
+  shouldTurnOffFocusRing?: boolean
 }
 
 const fieldGroupStyles = style({
@@ -164,7 +166,11 @@ const fieldGroupStyles = style({
   transition: 'default',
   borderColor: {
     default: baseColor('gray-300'),
-    isInvalid: baseColor('negative'),
+    forcedColors: 'ButtonBorder',
+    isInvalid: {
+      default: baseColor('negative'),
+      forcedColors: 'Mark'
+    },
     isFocusWithin: {
       default: 'gray-900',
       isInvalid: 'negative-1000',
@@ -175,10 +181,17 @@ const fieldGroupStyles = style({
       forcedColors: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25',
+  backgroundColor: {
+    default: 'gray-25',
+    forcedColors: 'Field'
+  },
   color: {
     default: baseColor('neutral'),
-    isDisabled: 'disabled'
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   cursor: {
     default: 'text',
@@ -187,26 +200,33 @@ const fieldGroupStyles = style({
 });
 
 export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {shouldTurnOffFocusRing, ...otherProps} = props;
   return (
     <Group
       ref={ref}
-      {...props}
+      {...otherProps}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
-        if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+        if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
-          e.currentTarget.querySelector('input')?.focus();
+          (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
-      onPointerUp={e => {
-        if (e.pointerType !== 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
+      onTouchEnd={e => {
+        let target = e.target as HTMLElement;
+        if (!target.isContentEditable && !target.closest('button,input,textarea,[role="button"]')) {
           e.preventDefault();
-          e.currentTarget.querySelector('input')?.focus();
+          (e.currentTarget.querySelector('input, textarea') as HTMLElement)?.focus();
         }
       }}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
-        fieldGroupStyles({...renderProps, size: props.size || 'M'}),
+        fieldGroupStyles({
+          ...renderProps,
+          isFocusWithin: shouldTurnOffFocusRing ? false : renderProps.isFocusWithin,
+          isFocusVisible: shouldTurnOffFocusRing ? false : renderProps.isFocusVisible,
+          size: props.size || 'M'
+        }),
         props.styles
       )} />
   );
@@ -224,7 +244,13 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Forwarded
       className={UNSAFE_className + mergeStyles(style({
         padding: 0,
         backgroundColor: 'transparent',
-        color: 'inherit',
+        color: {
+          default: 'inherit',
+          '::placeholder': {
+            default: 'gray-600',
+            forcedColors: 'GrayText'
+          }
+        },
         fontFamily: 'inherit',
         fontSize: 'inherit',
         fontWeight: 'inherit',
@@ -255,8 +281,14 @@ export const helpTextStyles = style({
   font: controlFont(),
   color: {
     default: 'neutral-subdued',
-    isInvalid: 'negative',
-    isDisabled: 'disabled'
+    isInvalid: {
+      default: 'negative',
+      forcedColors: 'Mark'
+    },
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   '--iconPrimary': {
     type: 'fill',
@@ -316,7 +348,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
                 type: 'fill',
                 value: {
                   default: 'negative',
-                  forcedColors: 'ButtonText'
+                  forcedColors: 'Mark'
                 }
               }
             })}),

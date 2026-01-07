@@ -11,7 +11,8 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
-import {PopoverBase, PopoverDialogProps} from './Popover';
+import {Placement} from '@react-types/overlays';
+import {Popover, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -29,6 +30,11 @@ export interface ContextualHelpProps extends
   Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
   Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
+  /**
+   * The placement of the popover with respect to the action button.
+   * @default 'bottom start'
+   */
+  placement?: Placement,
   /** Contents of the Contextual Help popover. */
   children: ReactNode,
   /**
@@ -39,11 +45,12 @@ export interface ContextualHelpProps extends
   size?: 'XS' | 'S'
 }
 
-const popover = style({
-  fontFamily: 'sans',
-  minWidth: 218,
-  width: 218,
-  padding: 24
+const wrappingDiv = style({
+  minWidth: 268,
+  width: 268,
+  padding: 24,
+  boxSizing: 'border-box',
+  height: 'full'
 });
 
 export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
@@ -57,11 +64,10 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
   let {
     children,
     defaultOpen,
-    // containerPadding = 24, // See popover() above. Issue noted in Popover.tsx.
+    containerPadding = 8,
     size = 'XS',
     crossOffset,
     isOpen,
-    offset = 8,
     onOpenChange,
     placement = 'bottom start',
     shouldFlip,
@@ -96,39 +102,42 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
-      <PopoverBase
+      <Popover
+        padding="none"
         placement={placement}
         shouldFlip={shouldFlip}
-        // not working => containerPadding={containerPadding}
-        offset={offset}
+        containerPadding={containerPadding}
+        offset={8}
         crossOffset={crossOffset}
-        hideArrow
-        styles={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
-          <Provider
-            values={[
-              [TextContext, {
-                slots: {
-                  [DEFAULT_SLOT]: {}
-                }
-              }],
-              [HeadingContext, {styles: style({
-                font: 'heading-xs',
-                margin: 0,
-                marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
-              })}],
-              [ContentContext, {styles: style({
-                font: 'body-sm'
-              })}],
-              [FooterContext, {styles: style({
-                font: 'body-sm',
-                marginTop: 16
-              })}]
-            ]}>
-            {children}
-          </Provider>
-        </RACDialog>
-      </PopoverBase>
+        hideArrow>
+        <div
+          className={wrappingDiv}>
+          <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: 'calc(self(paddingTop) * -1)', padding: 24}))}>
+            <Provider
+              values={[
+                [TextContext, {
+                  slots: {
+                    [DEFAULT_SLOT]: {}
+                  }
+                }],
+                [HeadingContext, {styles: style({
+                  font: 'heading-xs',
+                  margin: 0,
+                  marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
+                })}],
+                [ContentContext, {styles: style({
+                  font: 'body-sm'
+                })}],
+                [FooterContext, {styles: style({
+                  font: 'body-sm',
+                  marginTop: 16
+                })}]
+              ]}>
+              {children}
+            </Provider>
+          </RACDialog>
+        </div>
+      </Popover>
     </DialogTrigger>
   );
 });

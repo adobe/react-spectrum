@@ -14,9 +14,10 @@ import {action} from '@storybook/addon-actions';
 import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
+import './styles.css';
 
 const meta: Meta<typeof TagGroup> = {
-  title: 'React Aria Components',
+  title: 'React Aria Components/TagGroup',
   component: TagGroup,
   args: {
     selectionMode: 'none',
@@ -31,7 +32,8 @@ const meta: Meta<typeof TagGroup> = {
       control: 'inline-radio',
       options: ['toggle', 'replace']
     }
-  }
+  },
+  excludeStories: ['MyTag']
 };
 
 export default meta;
@@ -69,15 +71,13 @@ export const TagGroupExample: Story = {
   )
 };
 
-
-function MyTag(props: TagProps) {
+export function MyTag(props: TagProps) {
   return (
     <Tag
       {...props}
       style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />
   );
 }
-
 
 export const TagGroupExampleWithRemove: Story = {
   render: (props: TagGroupProps) => (
@@ -106,6 +106,16 @@ export const TagGroupExampleWithRemove: Story = {
             I am a tooltip
           </Tooltip>
         </TooltipTrigger>
+      </TagList>
+    </TagGroup>
+  )
+};
+
+export const EmptyTagGroup: Story = {
+  render: (props: TagGroupProps) => (
+    <TagGroup {...props} aria-label="Categories" >
+      <TagList renderEmptyState={() => 'No categories.'}>
+        {[]}
       </TagList>
     </TagGroup>
   )

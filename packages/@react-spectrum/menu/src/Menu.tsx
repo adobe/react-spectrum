@@ -55,7 +55,8 @@ export const Menu = React.forwardRef(function Menu<T extends object>(props: Spec
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
   let prevPopoverContainer = useRef<HTMLElement | null>(null);
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
       prevPopoverContainer.current = popoverContainer;
       let {left} = popoverContainer.getBoundingClientRect();

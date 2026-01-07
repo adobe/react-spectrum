@@ -11,17 +11,41 @@
  */
 
 import {Button, Dialog, DialogTrigger, Heading, OverlayArrow, Popover} from 'react-aria-components';
-import React, {useEffect, useRef, useState} from 'react';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
+import React, {JSX, useEffect, useRef, useState} from 'react';
+import styles from './styles.css';
 
 export default {
-  title: 'React Aria Components'
-};
+  title: 'React Aria Components/Popover',
+  component: Popover,
+  args: {
+    placement: 'bottom start',
+    hideArrow: false
+  },
+  argTypes: {
+    placement: {
+      control: 'select',
+      options: ['bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
+        'top', 'top left', 'top right', 'top start', 'top end',
+        'left', 'left top', 'left bottom', 'start', 'start top', 'start bottom',
+        'right', 'right top', 'right bottom', 'end', 'end top', 'end bottom'
+      ]
+    },
+    animation: {
+      control: 'radio',
+      options: ['transition', 'animation', 'animation-delayed']
+    }
+  }
+} as Meta<typeof Popover>;
 
-export const PopoverExample = () => (
+export type PopoverStory = StoryFn<typeof Popover>;
+
+export const PopoverExample: PopoverStory = (args) => (
   <DialogTrigger>
     <Button>Open popover</Button>
     <Popover
-      placement="bottom start"
+      {...args}
+      className={`${styles['popover-base']} ${styles[(args as any).animation]}`}
       style={{
         background: 'Canvas',
         color: 'CanvasText',
@@ -29,6 +53,11 @@ export const PopoverExample = () => (
         padding: 30,
         zIndex: 5
       }}>
+      {!(args as any).hideArrow && <OverlayArrow style={{display: 'flex'}}>
+        <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
+          <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+        </svg>
+      </OverlayArrow>}
       <Dialog>
         {({close}) => (
           <form style={{display: 'flex', flexDirection: 'column'}}>
@@ -52,7 +81,7 @@ export const PopoverExample = () => (
 
 const COUNTDOWN = 5000;
 
-function PopoverTriggerObserver() {
+function PopoverTriggerObserver(): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [countdown, setCountdown] = useState(COUNTDOWN);
 
@@ -118,11 +147,235 @@ function PopoverTriggerObserver() {
 }
 
 
-export const PopoverTriggerObserverExample = {
-  render: PopoverTriggerObserver
+export const PopoverTriggerObserverExample: StoryObj<typeof PopoverTriggerObserver> = {
+  render: () => <PopoverTriggerObserver />
 };
 
-export const PopoverArrowBoundaryOffsetExample = {
+function PopoverArrowBoundaryOffsetExampleRender({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}:
+  {topLeft: number, topRight: number, leftTop: number, leftBottom: number, rightTop: number, rightBottom: number, bottomLeft: number, bottomRight: number}): JSX.Element {
+  return (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Top left</Button>
+            <Popover
+              placement="top left"
+              shouldFlip={false}
+              arrowBoundaryOffset={topLeft}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Top left</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Top right</Button>
+            <Popover
+              placement="top right"
+              shouldFlip={false}
+              arrowBoundaryOffset={topRight}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Top right</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+      </div>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Left top</Button>
+            <Popover
+              placement="left top"
+              shouldFlip={false}
+              arrowBoundaryOffset={leftTop}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Left top</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Left bottom</Button>
+            <Popover
+              placement="left bottom"
+              shouldFlip={false}
+              arrowBoundaryOffset={leftBottom}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Left bottom</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+      </div>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Right top</Button>
+            <Popover
+              placement="right top"
+              shouldFlip={false}
+              arrowBoundaryOffset={rightTop}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Right top</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Right bottom</Button>
+            <Popover
+              placement="right bottom"
+              shouldFlip={false}
+              arrowBoundaryOffset={rightBottom}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Right bottom</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+      </div>
+      <div style={{display: 'flex'}}>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Bottom left</Button>
+            <Popover
+              placement="bottom left"
+              shouldFlip={false}
+              arrowBoundaryOffset={bottomLeft}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Bottom left</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+        <div style={{padding: 12}}>
+          <DialogTrigger>
+            <Button style={{width: 200, height: 100}}>Bottom right</Button>
+            <Popover
+              placement="bottom right"
+              shouldFlip={false}
+              arrowBoundaryOffset={bottomRight}
+              style={{
+                background: 'Canvas',
+                color: 'CanvasText',
+                border: '1px solid gray',
+                padding: 8,
+                zIndex: 5,
+                borderRadius: '30px'
+              }}>
+              <OverlayArrow style={{display: 'flex'}}>
+                <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
+                  <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                </svg>
+              </OverlayArrow>
+              <Dialog style={{outline: 'none'}}>
+                <div>Bottom right</div>
+              </Dialog>
+            </Popover>
+          </DialogTrigger>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const PopoverArrowBoundaryOffsetExample: StoryObj<typeof PopoverArrowBoundaryOffsetExampleRender> = {
   args: {
     topLeft: 25,
     topRight: 25,
@@ -191,231 +444,10 @@ export const PopoverArrowBoundaryOffsetExample = {
       }
     }
   },
-  render: ({topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
-    return (
-      <div style={{display: 'flex', flexDirection: 'column'}}>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Top left</Button>
-              <Popover
-                placement="top left"
-                shouldFlip={false}
-                arrowBoundaryOffset={topLeft}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Top left</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Top right</Button>
-              <Popover
-                placement="top right"
-                shouldFlip={false}
-                arrowBoundaryOffset={topRight}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Top right</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-        </div>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Left top</Button>
-              <Popover
-                placement="left top"
-                shouldFlip={false}
-                arrowBoundaryOffset={leftTop}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Left top</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Left bottom</Button>
-              <Popover
-                placement="left bottom"
-                shouldFlip={false}
-                arrowBoundaryOffset={leftBottom}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Left bottom</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-        </div>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Right top</Button>
-              <Popover
-                placement="right top"
-                shouldFlip={false}
-                arrowBoundaryOffset={rightTop}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Right top</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Right bottom</Button>
-              <Popover
-                placement="right bottom"
-                shouldFlip={false}
-                arrowBoundaryOffset={rightBottom}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Right bottom</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-        </div>
-        <div style={{display: 'flex'}}>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Bottom left</Button>
-              <Popover
-                placement="bottom left"
-                shouldFlip={false}
-                arrowBoundaryOffset={bottomLeft}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Bottom left</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-          <div style={{padding: 12}}>
-            <DialogTrigger>
-              <Button style={{width: 200, height: 100}}>Bottom right</Button>
-              <Popover
-                placement="bottom right"
-                shouldFlip={false}
-                arrowBoundaryOffset={bottomRight}
-                style={{
-                  background: 'Canvas',
-                  color: 'CanvasText',
-                  border: '1px solid gray',
-                  padding: 8,
-                  zIndex: 5,
-                  borderRadius: '30px'
-                }}>
-                <OverlayArrow style={{display: 'flex'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
-                  </svg>
-                </OverlayArrow>
-                <Dialog style={{outline: 'none'}}>
-                  <div>Bottom right</div>
-                </Dialog>
-              </Popover>
-            </DialogTrigger>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  render: (args) => <PopoverArrowBoundaryOffsetExampleRender {...args} />
 };
 
-export const PopoverTriggerWidthExample = () => (
+export const PopoverTriggerWidthExample: PopoverStory = () => (
   <DialogTrigger>
     <Button>Open popover</Button>
     <Popover
@@ -433,3 +465,56 @@ export const PopoverTriggerWidthExample = () => (
     </Popover>
   </DialogTrigger>
 );
+
+function ScrollingBoundaryContainerExample(args) {
+  let [boundaryElem, setBoundaryElem] = useState<HTMLDivElement | null>(null);
+  return (
+    <div id="scrolling-boundary" ref={setBoundaryElem} style={{height: 300, width: 300, overflow: 'auto', border: '1px solid light-dark(black, white)'}}>
+      <div style={{width: 600, height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <DialogTrigger>
+          <Button style={{width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Open popover</Button>
+          <Popover
+            {...args}
+            boundaryElement={boundaryElem ?? undefined}
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              zIndex: 5
+            }}>
+            <Dialog>
+              This is some dummy content for the popover
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      </div>
+    </div>
+  );
+}
+
+export const ScrollingBoundaryContainer: StoryObj<typeof ScrollingBoundaryContainerExample> = {
+  render: (args) => <ScrollingBoundaryContainerExample {...args} />,
+  args: {
+    containerPadding: 0,
+    placement: 'bottom'
+  },
+  argTypes: {
+    containerPadding: {
+      control: {
+        type: 'range',
+        min: 0,
+        max: 100
+      }
+    },
+    hideArrow: {
+      table: {
+        disable: true
+      }
+    },
+    animation: {
+      table: {
+        disable: true
+      }
+    }
+  }
+};

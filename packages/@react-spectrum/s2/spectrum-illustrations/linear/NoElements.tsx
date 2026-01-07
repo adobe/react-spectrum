@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {IconProps, IllustrationContext} from '../../src/Icon';
+'use client';
 import NoElements_L from 'illustration:./S2_lin_noElements_160.svg';
 import NoElements_M from 'illustration:./S2_lin_noElements_96.svg';
 import NoElements_S from 'illustration:./S2_lin_noElements_48.svg';
+import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function NoElements(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function NoElements(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

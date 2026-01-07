@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
+import {Button, ButtonGroup, Content, DropZone, DropZoneProps, FileTrigger, Heading, IllustratedMessage} from '../src';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
-import type {Meta} from '@storybook/react';
-import React, {useState} from 'react';
+import type {Meta, StoryObj} from '@storybook/react';
+import React, {ReactElement, useState} from 'react';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof DropZone> = {
@@ -29,7 +29,7 @@ const meta: Meta<typeof DropZone> = {
 
 export default meta;
 
-const ExampleRender = (args: any) => {
+const ExampleRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -37,13 +37,13 @@ const ExampleRender = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: 320, height: 280})}
+        styles={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
           <DropToUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -54,11 +54,11 @@ const ExampleRender = (args: any) => {
   );
 };
 
-export const Example = {
+export const Example: StoryObj<typeof ExampleRender> = {
   render: (args: any) => <ExampleRender {...args} />
 };
 
-const ExampleWithFileTriggerRender = (args: any) => {
+const ExampleWithFileTriggerRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -66,13 +66,13 @@ const ExampleWithFileTriggerRender = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: 380, height: 280})}
+        styles={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
           <Cloud />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -89,11 +89,11 @@ const ExampleWithFileTriggerRender = (args: any) => {
   );
 };
 
-export const ExampleWithFileTrigger = {
-  render: (args: any) => <ExampleWithFileTriggerRender {...args} />
+export const ExampleWithFileTrigger: StoryObj<typeof ExampleWithFileTriggerRender> = {
+  render: (args) => <ExampleWithFileTriggerRender {...args} />
 };
 
-const LongBannerRender = (args: any) => {
+const LongBannerRender = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -102,13 +102,13 @@ const LongBannerRender = (args: any) => {
       <DropZone
         {...args}
         replaceMessage="A really long message that will show the text wrapping hopefully"
-        className={style({width: 320, height: 280})}
+        styles={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
           <DropToUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -119,8 +119,8 @@ const LongBannerRender = (args: any) => {
   );
 };
 
-export const LongBanner = {
-  render: (args: any) => <LongBannerRender {...args} />
+export const LongBanner: StoryObj<typeof LongBannerRender> = {
+  render: (args) => <LongBannerRender {...args} />
 };
 
 function Draggable() {
@@ -158,7 +158,7 @@ function Draggable() {
   );
 }
 
-const GradientExample = (args: any) => {
+const GradientExample = (args: DropZoneProps): ReactElement => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -166,13 +166,13 @@ const GradientExample = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: 320, height: 280})}
+        styles={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
           <CloudUpload />
           <Heading>
-            Drag and drop your file
+            Drag or paste your file
           </Heading>
           <Content>
             Or, select a file from your computer
@@ -183,6 +183,6 @@ const GradientExample = (args: any) => {
   );
 };
 
-export const Gradient = {
-  render: (args: any) => <GradientExample {...args} />
+export const Gradient: StoryObj<typeof GradientExample> = {
+  render: (args) => <GradientExample {...args} />
 };

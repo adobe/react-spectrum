@@ -1,4 +1,4 @@
-import '@react-spectrum/s2/src/page';
+import '@react-spectrum/s2/page.css';
 import { themes } from '@storybook/theming';
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 import { store } from 'storybook-dark-mode/dist/esm/Tool';
@@ -16,7 +16,6 @@ channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colo
 /** @type { import('@storybook/react').Preview } */
 const preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {},
       exclude: ['key', 'ref']
