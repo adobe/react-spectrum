@@ -8,7 +8,7 @@ import {TextField as TailwindTextField} from 'tailwind-starter/TextField';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/textfield/docs/anatomy.svg';
 
-export const tags = ['input'];
+export const tags = ['input', 'otp'];
 export const relatedPages = [{'title': 'useTextField', 'url': 'TextField/useTextField.html'}];
 export const description = 'Allows a user to enter a plain text value with a keyboard.';
 
@@ -105,6 +105,147 @@ import {TextField, Label, TextArea} from 'react-aria-components';
     placeholder="Enter a comment" />
 </TextField>
 ```
+
+## OTP Input
+
+TextField can be customized to create an OTP (one-time password) input by hiding the actual input and rendering styled character boxes instead. This uses `InputContext` to access the current value and render each character in a separate box.
+
+<ExampleSwitcher>
+  ```tsx render type="vanilla"
+  "use client";
+  import {TextField, Input, InputContext} from 'react-aria-components';
+  import {useState, useContext} from 'react';
+
+  function OTPInput(props) {
+    let [focused, setFocused] = useState(false);
+    let length = props.length ?? 6;
+
+    return (
+      <TextField
+        aria-label={props['aria-label'] ?? 'One-time password'}
+        maxLength={length}
+        style={{
+          position: 'relative',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+        <OTPBoxes length={length} focused={focused} />
+        <Input
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="one-time-code"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+            pointerEvents: 'auto',
+            cursor: 'text'
+          }}
+        />
+      </TextField>
+    );
+  }
+
+  function OTPBoxes({length, focused}) {
+    let context = useContext(InputContext);
+    let value = context?.value ?? '';
+
+    return (
+      <div style={{display: 'flex', gap: '6px', pointerEvents: 'none'}}>
+        {Array.from({length}, (_, i) => (
+          <div
+            key={i}
+            style={{
+              width: '40px',
+              height: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.25rem',
+              fontWeight: 500,
+              fontVariantNumeric: 'tabular-nums',
+              borderRadius: 'var(--radius)',
+              background: 'var(--field-background)',
+              border: '1px solid var(--border-color)',
+              boxShadow: focused && value.length === i
+                ? '0 0 0 2px var(--focus-ring-color)'
+                : 'none',
+              color: 'var(--field-text-color)',
+              transition: 'box-shadow 150ms'
+            }}>
+            {value[i] ?? ''}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  <OTPInput aria-label="Verification code" />
+  ```
+
+  ```tsx render type="tailwind"
+  "use client";
+  import {TextField, Input, InputContext} from 'react-aria-components';
+  import {useState, useContext} from 'react';
+
+  function OTPInput(props) {
+    let [focused, setFocused] = useState(false);
+    let length = props.length ?? 6;
+
+    return (
+      <TextField
+        aria-label={props['aria-label'] ?? 'One-time password'}
+        maxLength={length}
+        className="relative inline-flex items-center gap-2">
+        <OTPBoxes length={length} focused={focused} />
+        <Input
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="one-time-code"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-text"
+        />
+      </TextField>
+    );
+  }
+
+  function OTPBoxes({length, focused}) {
+    let context = useContext(InputContext);
+    let value = context?.value ?? '';
+
+    return (
+      <div className="flex gap-1.5 pointer-events-none">
+        {Array.from({length}, (_, i) => (
+          <div
+            key={i}
+            className={`
+              w-10 h-12 flex items-center justify-center
+              text-xl font-medium tabular-nums
+              rounded-lg bg-white dark:bg-zinc-900
+              border border-gray-300 dark:border-zinc-600
+              text-gray-900 dark:text-zinc-100
+              transition-shadow duration-150
+              ${focused && value.length === i
+                ? 'ring-2 ring-blue-600 dark:ring-blue-500'
+                : ''}
+            `}>
+            {value[i] ?? ''}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  <OTPInput aria-label="Verification code" />
+  ```
+
+</ExampleSwitcher>
 
 ## API
 
