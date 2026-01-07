@@ -144,7 +144,8 @@ TextField can be customized to create an OTP (one-time password) input by hiding
             height: '100%',
             opacity: 0,
             pointerEvents: 'auto',
-            cursor: 'text'
+            cursor: 'text',
+            caretColor: 'transparent'
           }}
         />
       </TextField>
@@ -209,7 +210,7 @@ TextField can be customized to create an OTP (one-time password) input by hiding
           inputMode="numeric"
           pattern="[0-9]*"
           autoComplete="one-time-code"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-text"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-text caret-transparent"
         />
       </TextField>
     );
