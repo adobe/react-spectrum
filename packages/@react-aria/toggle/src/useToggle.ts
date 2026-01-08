@@ -10,12 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToggleProps} from '@react-types/checkbox';
+import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, InputDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
-import {RefObject} from '@react-types/shared';
-import {ToggleState} from '@react-stately/toggle';
+import {ToggleProps, ToggleState} from '@react-stately/toggle';
 import {useFocusable, usePress} from '@react-aria/interactions';
+
+export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps, InputDOMProps, PressEvents {
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   */
+  'aria-controls'?: string
+}
 
 export interface ToggleAria {
   /** Props to be spread on the label element. */

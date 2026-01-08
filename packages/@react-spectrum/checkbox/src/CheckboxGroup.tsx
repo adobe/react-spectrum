@@ -10,17 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaCheckboxGroupProps, useCheckboxGroup} from '@react-aria/checkbox';
 import {CheckboxGroupContext} from './context';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, Orientation, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
-import React from 'react';
-import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
+import React, {ReactElement} from 'react';
+import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
-import {useCheckboxGroup} from '@react-aria/checkbox';
 import {useCheckboxGroupState} from '@react-stately/checkbox';
 import {useFormProps} from '@react-spectrum/form';
+
+export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation<string[]>, StyleProps, SpectrumHelpTextProps {
+  /**
+   * The Checkboxes contained within the CheckboxGroup.
+   */
+  children: ReactElement<SpectrumCheckboxProps> | ReactElement<SpectrumCheckboxProps>[],
+  /**
+   * The axis the checkboxes should align with.
+   * @default 'vertical'
+   */
+  orientation?: Orientation,
+  /**
+   * By default, checkboxes are not emphasized (gray).
+   * The emphasized (blue) version provides visual prominence.
+   */
+  isEmphasized?: boolean
+}
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.

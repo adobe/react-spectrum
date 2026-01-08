@@ -12,5 +12,4 @@
 
 export {useCheckboxGroupState} from './useCheckboxGroupState';
 
-export type {CheckboxGroupProps} from '@react-types/checkbox';
-export type {CheckboxGroupState} from './useCheckboxGroupState';
+export type {CheckboxGroupProps, CheckboxGroupState} from './useCheckboxGroupState';
