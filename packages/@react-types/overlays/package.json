@@ -9,6 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-aria/overlays": "^3.31.0",
+    "@react-spectrum/overlays": "^5.9.1",
     "@react-types/shared": "^3.32.1"
   },
   "peerDependencies": {

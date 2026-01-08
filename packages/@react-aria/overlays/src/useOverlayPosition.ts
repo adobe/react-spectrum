@@ -12,11 +12,58 @@
 
 import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+
+export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
+    'top' | 'top left' | 'top right' | 'top start' | 'top end' |
+    'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
+    'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
+
+export type Axis = 'top' | 'bottom' | 'left' | 'right';
+export type SizeAxis = 'width' | 'height';
+export type PlacementAxis = Axis | 'center';
+
+export interface PositionProps {
+  /**
+   * The placement of the element with respect to its anchor element.
+   * @default 'bottom'
+   */
+  placement?: Placement,
+  /**
+   * The placement padding that should be applied between the element and its
+   * surrounding container.
+   * @default 12
+   */
+  containerPadding?: number,
+  /**
+   * The additional offset applied along the main axis between the element and its
+   * anchor element.
+   * @default 0
+   */
+  offset?: number,
+  /**
+   * The additional offset applied along the cross axis between the element and its
+   * anchor element.
+   * @default 0
+   */
+  crossOffset?: number,
+  /**
+   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when
+   * there is insufficient room for it to render completely.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  // /**
+  //  * The element that should be used as the bounding container when calculating container offset
+  //  * or whether it should flip.
+  //  */
+  // boundaryElement?: Element,
+  /** Whether the element is rendered. */
+  isOpen?: boolean
+}
 
 export interface AriaPositionProps extends PositionProps {
   /**

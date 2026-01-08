@@ -12,7 +12,7 @@
 
 import {calculatePosition, getRect, PositionResult} from './calculatePosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {Placement, PlacementAxis, PositionProps} from '@react-aria/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';

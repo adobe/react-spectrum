@@ -10,73 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, MutableRefObject, ReactElement, ReactNode} from 'react';
+import {HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {OverlayProps} from '@react-spectrum/overlays';
+import {PlacementAxis} from '@react-aria/overlays';
 import {StyleProps} from '@react-types/shared';
 
-export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
-    'top' | 'top left' | 'top right' | 'top start' | 'top end' |
-    'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
-    'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
+export {Placement, Axis, SizeAxis, PlacementAxis, PositionProps} from '@react-aria/overlays';
+export {OverlayProps} from '@react-spectrum/overlays';
 
-export type Axis = 'top' | 'bottom' | 'left' | 'right';
-export type SizeAxis = 'width' | 'height';
-export type PlacementAxis = Axis | 'center';
-
-export interface PositionProps {
-  /**
-   * The placement of the element with respect to its anchor element.
-   * @default 'bottom'
-   */
-  placement?: Placement,
-  /**
-   * The placement padding that should be applied between the element and its
-   * surrounding container.
-   * @default 12
-   */
-  containerPadding?: number,
-  /**
-   * The additional offset applied along the main axis between the element and its
-   * anchor element.
-   * @default 0
-   */
-  offset?: number,
-  /**
-   * The additional offset applied along the cross axis between the element and its
-   * anchor element.
-   * @default 0
-   */
-  crossOffset?: number,
-  /**
-   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when
-   * there is insufficient room for it to render completely.
-   * @default true
-   */
-  shouldFlip?: boolean,
-  // /**
-  //  * The element that should be used as the bounding container when calculating container offset
-  //  * or whether it should flip.
-  //  */
-  // boundaryElement?: Element,
-  /** Whether the element is rendered. */
-  isOpen?: boolean
-}
-
-export interface OverlayProps {
-  children: ReactNode,
-  isOpen?: boolean,
-  container?: Element,
-  isKeyboardDismissDisabled?: boolean,
-  onEnter?: () => void,
-  onEntering?: () => void,
-  onEntered?: () => void,
-  onExit?: () => void,
-  onExiting?: () => void,
-  onExited?: () => void,
-  nodeRef: MutableRefObject<HTMLElement | null>,
-  disableFocusManagement?: boolean,
-  shouldContainFocus?: boolean
-}
-
+// Old and unused. Left for backward compatibility.
 export interface ModalProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {
   children: ReactElement,
   isOpen?: boolean,
@@ -85,6 +27,7 @@ export interface ModalProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {
   isDismissable?: boolean
 }
 
+// Old and unused. Left for backward compatibility.
 export interface PopoverProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
   children: ReactNode,
   placement?: PlacementAxis,
@@ -97,6 +40,7 @@ export interface PopoverProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> 
   isDismissable?: boolean
 }
 
+// Old and unused. Left for backward compatibility.
 export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
   children: ReactElement,
   isOpen?: boolean,
