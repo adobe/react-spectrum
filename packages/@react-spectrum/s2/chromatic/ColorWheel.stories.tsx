@@ -29,3 +29,14 @@ export const Example: StoryObj<typeof ColorWheel> = {
     defaultValue: 'hsl(30, 100%, 50%)'
   }
 };
+
+export const InContainer: StoryObj<typeof ColorWheel> = {
+  render: (args) => (
+    <div style={{width: 600, border: '1px solid gray', padding: 16}}>
+      <ColorWheel {...args} onChange={undefined} />
+    </div>
+  ),
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)'
+  }
+};
