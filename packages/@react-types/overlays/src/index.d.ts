@@ -15,6 +15,7 @@ import {OverlayProps} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-aria/overlays';
 import {StyleProps} from '@react-types/shared';
 
+export {OverlayTriggerProps} from '@react-stately/overlays';
 export {Placement, Axis, SizeAxis, PlacementAxis, PositionProps} from '@react-aria/overlays';
 export {OverlayProps} from '@react-spectrum/overlays';
 
@@ -48,13 +49,4 @@ export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
   shouldCloseOnBlur?: boolean,
   isFixedHeight?: boolean,
   isNonModal?: boolean
-}
-
-export interface OverlayTriggerProps {
-  /** Whether the overlay is open by default (controlled). */
-  isOpen?: boolean,
-  /** Whether the overlay is open by default (uncontrolled). */
-  defaultOpen?: boolean,
-  /** Handler that is called when the overlay's open state changes. */
-  onOpenChange?: (isOpen: boolean) => void
 }

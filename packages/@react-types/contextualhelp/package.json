@@ -9,8 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/overlays": "^3.9.2",
-    "@react-types/shared": "^3.32.1"
+    "@react-spectrum/contextualhelp": "^3.6.29"
   },
   "publishConfig": {
     "access": "public"

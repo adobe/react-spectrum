@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-aria/overlays": "^3.31.0",
     "@react-spectrum/overlays": "^5.9.1",
+    "@react-stately/overlays": "^3.6.21",
     "@react-types/shared": "^3.32.1"
   },
   "peerDependencies": {
