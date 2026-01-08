@@ -64,6 +64,7 @@ export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerPro
       </PressResponder>
       <Input
         {...domProps}
+        className=""
         type="file"
         ref={inputRef}
         style={{display: 'none'}}

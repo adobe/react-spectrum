@@ -1,11 +1,12 @@
 'use client';
 
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
-import {fontRelative, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {fontRelative, lightDark, style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {getLibraryFromPage, getLibraryLabel} from './library';
-import {Page} from '@parcel/rsc';
-import React, {CSSProperties, lazy, useCallback, useEffect, useState} from 'react';
+import React, {lazy, useCallback, useEffect, useRef, useState} from 'react';
+import {Button as S2Button, ButtonProps as S2ButtonProps} from '@react-spectrum/s2';
 import Search from '@react-spectrum/s2/icons/Search';
+import {useRouter} from './Router';
 
 let SearchMenu = lazy(() => import('./SearchMenu').then(({SearchMenu}) => ({default: SearchMenu})));
 export async function preloadSearchMenu() {
@@ -17,46 +18,33 @@ export async function preloadSearchMenu() {
 }
 
 export interface SearchMenuTriggerProps extends Omit<ButtonProps, 'children' | 'className'> {
-  pages: Page[],
-  currentPage: Page,
   onOpen: () => void,
   onClose: () => void,
   isSearchOpen: boolean,
-  overlayId: string
+  overlayId: string,
+  staticColor?: 'auto' | 'white'
 }
 
 let underlayStyle = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: 'full',
-  height: '--page-height',
+  position: 'fixed',
+  inset: 0,
   isolation: 'isolate',
-  backgroundColor: 'transparent-black-500',
-  opacity: {
-    isEntering: 0,
-    isExiting: 0
-  },
-  transition: 'opacity',
-  transitionDuration: {
-    default: 250,
-    isExiting: 130
-  }
+  backgroundColor: 'transparent-black-500'
 });
 
 let modalStyle = style({
-  position: 'absolute',
+  position: 'fixed',
   top: 8,
   width: 'full',
   // 1280px matches body
   maxWidth: '[min(1280px, 95vw)]',
-  backgroundColor: 'elevated',
+  backgroundColor: 'layer-1',
   paddingX: 16,
   paddingY: 8,
   zIndex: 10,
-  borderWidth: 1,
-  borderColor: 'gray-300',
-  borderStyle: 'solid',
+  outlineWidth: 1,
+  outlineColor: lightDark('transparent-white-25', 'transparent-white-100'),
+  outlineStyle: 'solid',
   borderRadius: 'xl',
   boxShadow: 'elevated',
   left: 0,
@@ -65,13 +53,17 @@ let modalStyle = style({
   height: '[90vh]'
 });
 
-export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overlayId, ...props}: SearchMenuTriggerProps) {
+export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overlayId, staticColor, ...props}: SearchMenuTriggerProps) {
+  let {currentPage} = useRouter();
   let [initialSearchValue, setInitialSearchValue] = useState('');
   let open = useCallback((value: string) => {
     setInitialSearchValue(value);
     onOpen();
   }, [onOpen]);
 
+  useEffect(() => {
+    preloadSearchMenu();
+  }, []);
 
   // Type to search handler
   let onKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -115,21 +107,39 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
       }
     };
 
+    let handleCustomEvent = () => {
+      open('');
+    };
+
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('show-search-menu', handleCustomEvent);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('show-search-menu', handleCustomEvent);
+    };
   }, [isSearchOpen, onClose, open]);
-  
-  
+
+  let [wasOpen, setWasOpen] = useState(isSearchOpen);
+  if (isSearchOpen && !wasOpen) {
+    setWasOpen(true);
+  }
+
+  // Manually restore focus to the trigger when search menu closes, since we don't actually unmount.
+  let buttonRef = useRef<HTMLButtonElement | null>(null);
+  let isOpenRef = useRef(isSearchOpen);
+  useEffect(() => {
+    if (!isSearchOpen && isOpenRef.current && buttonRef.current) {
+      buttonRef.current.focus({preventScroll: true});
+    }
+
+    isOpenRef.current = isSearchOpen;
+  }, [isSearchOpen]);
+    
   return (
-    <div
-      className={style({
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr',
-        alignItems: 'center',
-        gap: 16
-      })}>
+    <>
       <Button
         {...props}
+        ref={buttonRef}
         aria-label="Open search and menu"
         aria-expanded={isSearchOpen}
         aria-controls={isSearchOpen ? overlayId : undefined}
@@ -149,10 +159,34 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
           borderColor: {
             default: 'gray-300',
             isHovered: 'gray-400',
-            isFocusVisible: 'gray-900'
+            isFocusVisible: 'gray-900',
+            staticColor: {
+              auto: {
+                default: lightDark('transparent-black-200', 'transparent-white-300'),
+                isHovered: lightDark('transparent-black-300', 'transparent-white-400'),
+                isFocusVisible: lightDark('transparent-black-900', 'transparent-white-900')
+              },
+              white: {
+                default: 'transparent-white-300',
+                isHovered: 'transparent-white-400',
+                isFocusVisible: 'transparent-white-900'
+              }
+            }
           },
-          backgroundColor: 'gray-25',
-          color: 'neutral-subdued',
+          backgroundColor: {
+            default: 'gray-25',
+            staticColor: {
+              auto: 'transparent-white-50',
+              white: 'transparent-white-50'
+            }
+          },
+          color: {
+            default: 'neutral-subdued',
+            staticColor: {
+              auto: lightDark('transparent-black-600', 'transparent-white-800'),
+              white: 'transparent-white-800'
+            }
+          },
           cursor: 'text',
           width: '[500px]',
           display: 'flex',
@@ -171,45 +205,93 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
             default: 0,
             isFocusVisible: 2
           }
-        })({isHovered, isFocusVisible})}
-        style={{viewTransitionName: !isSearchOpen ? 'search-menu-search-field' : 'none', visibility: isSearchOpen ? 'hidden' : 'visible'} as CSSProperties}>
+        })({isHovered, isFocusVisible, staticColor})}
+        style={{visibility: isSearchOpen ? 'hidden' : 'visible', backdropFilter: 'blur(8px)'}}>
         <Search
           UNSAFE_className={String(style({
             size: fontRelative(20),
             '--iconPrimary': {type: 'fill', value: 'currentColor'},
             flexShrink: 0
           }))} />
-        <span className={style({font: 'ui-lg', color: 'gray-600'})}>Search {getLibraryLabel(getLibraryFromPage(props.currentPage))}</span>
+        <span className={style({font: 'ui-lg', color: {default: 'gray-600', staticColor: {auto: lightDark('transparent-black-600', 'transparent-white-800'), white: 'transparent-white-800'}}})({staticColor})}>Search {getLibraryLabel(getLibraryFromPage(currentPage))}</span>
         <kbd
           className={style({
             marginStart: 'auto',
             font: 'detail',
-            backgroundColor: 'layer-1',
+            color: {
+              default: 'detail',
+              staticColor: {
+                auto: lightDark('transparent-black-600', 'transparent-white-800'),
+                white: 'transparent-white-800'
+              }
+            },
+            backgroundColor: {
+              default: 'layer-1',
+              staticColor: {
+                auto: lightDark('transparent-black-50', 'transparent-white-50'),
+                white: 'transparent-white-50'
+              }
+            },
             paddingY: 2,
             paddingX: 8,
             borderRadius: 'xl',
             borderWidth: 1,
-            borderColor: 'gray-300',
+            borderColor: {
+              default: 'gray-300',
+              staticColor: {
+                auto: lightDark('transparent-black-200', 'transparent-white-300'),
+                white: 'transparent-white-300'
+              }
+            },
             borderStyle: 'solid',
             pointerEvents: 'none',
             alignSelf: 'center'
-          })}>⌘K</kbd>
+          })({staticColor})}>⌘K</kbd>
       </Button>
       <ModalOverlay
         isDismissable
         isOpen={isSearchOpen}
         onOpenChange={(isOpen) => { if (!isOpen) { onClose(); } }}
-        className={underlayStyle}>
-        <Modal className={modalStyle}>
+        className={underlayStyle}
+        // Keep in the DOM after it has opened once to preserve scroll position.
+        isExiting={!isSearchOpen && wasOpen}
+        style={{
+          display: !isSearchOpen ? 'none' : undefined,
+          // @ts-ignore
+          viewTransitionName: 'search-menu-underlay'
+        }}>
+        <Modal
+          className={modalStyle}
+          style={{
+            // @ts-ignore
+            viewTransitionName: 'search-menu'
+          }}>
           <SearchMenu
-            pages={props.pages}
-            currentPage={props.currentPage}
             onClose={onClose}
             overlayId={overlayId}
             initialSearchValue={initialSearchValue}
             isSearchOpen={isSearchOpen} />
         </Modal>
       </ModalOverlay>
-    </div>
+    </>
+  );
+}
+
+export function SearchMenuButton(props: S2ButtonProps) {
+  let onPress = () => {
+    window.dispatchEvent(new CustomEvent('show-search-menu'));
+  };
+
+  return (
+    <S2Button
+      size="XL"
+      staticColor="white"
+      variant="secondary"
+      {...props}
+      onPress={onPress}
+      // @ts-ignore
+      onHoverStart={() => preloadSearchMenu()}>
+      Explore components
+    </S2Button>
   );
 }

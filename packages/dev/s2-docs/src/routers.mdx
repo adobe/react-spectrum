@@ -1,7 +1,7 @@
 import {Counter} from './Step';
 
 <Counter />Render a `RouterProvider` at the root of your app to enable React Aria links to use your client side router. This accepts two props:
-        
+
 1. `navigate` – a function received from your router for performing a client side navigation programmatically.
 2. `useHref` (optional) – converts a router-specific href to a native HTML href, e.g. prepending a base path.
 
@@ -42,7 +42,6 @@ function App() {
 // src/routes/__root.tsx
 import {RouterProvider} from 'react-aria-components';
 import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
-import ReactDOM from 'react-dom/client';
 
 /*- begin highlight -*/
 // Configure the type of the `href` and `routerOptions` props on all React Aria components.
@@ -59,9 +58,15 @@ export const Route = createRootRoute({
     let router = useRouter();
     return (
       /*- begin highlight -*/
-      <RouterProvider 
-        navigate={(href, opts) => router.navigate({...href, ...opts})}
-        useHref={href => router.buildLocation(href).href}>
+      <RouterProvider
+        navigate={(href, opts) => {
+          if (typeof href === "string") return;
+          return router.navigate({ ...href, ...opts });
+        }}
+        useHref={(href) => {
+          if (typeof href === "string") return href;
+          return router.buildLocation(href).href;
+        }}>
         {/*- end highlight -*/}
         {/* Your app here... */}
       </RouterProvider>

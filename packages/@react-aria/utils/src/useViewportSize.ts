@@ -27,6 +27,15 @@ export function useViewportSize(): ViewportSize {
   let [size, setSize] = useState(() => isSSR ? {width: 0, height: 0} : getViewportSize());
 
   useEffect(() => {
+    let updateSize = (newSize: ViewportSize) => {
+      setSize(size => {
+        if (newSize.width === size.width && newSize.height === size.height) {
+          return size;
+        }
+        return newSize;
+      });
+    };
+
     // Use visualViewport api to track available height even on iOS virtual keyboard opening
     let onResize = () => {
       // Ignore updates when zoomed.
@@ -34,13 +43,7 @@ export function useViewportSize(): ViewportSize {
         return;
       }
 
-      setSize(size => {
-        let newSize = getViewportSize();
-        if (newSize.width === size.width && newSize.height === size.height) {
-          return size;
-        }
-        return newSize;
-      });
+      updateSize(getViewportSize());
     };
 
     // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
@@ -55,17 +58,13 @@ export function useViewportSize(): ViewportSize {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
           if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
-            setSize(size => {
-              let newSize = {width: window.innerWidth, height: window.innerHeight};
-              if (newSize.width === size.width && newSize.height === size.height) {
-                return size;
-              }
-              return newSize;
-            });
+            updateSize({width: window.innerWidth, height: window.innerHeight});
           }
         });
       }
     };
+
+    updateSize(getViewportSize());
 
     if (isIOS()) {
       window.addEventListener('blur', onBlur, true);

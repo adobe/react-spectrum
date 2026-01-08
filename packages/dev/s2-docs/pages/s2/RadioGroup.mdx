@@ -1,10 +1,14 @@
 import {Layout} from '../../src/Layout';
 export default Layout;
 
-import {RadioGroup, Radio} from '@react-spectrum/s2';
+import {RadioGroup, Radio, InlineAlert, Heading, Content} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['input'];
+export const relatedPages = [
+  {title: 'Testing RadioGroup', url: './RadioGroup/testing'}
+];
+export const description = 'Allows a user to select a single item from a list of options.';
 
 # RadioGroup
 
@@ -30,7 +34,7 @@ import {RadioGroup, Radio} from '@react-spectrum/s2';
 import {useState} from 'react';
 
 function Example() {
-  let [selected, setSelected] = useState(null);
+  let [selected, setSelected] = useState<string | null>(null);
 
   return (
     <>
@@ -52,7 +56,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.RadioGroup} links={docs.links} props={['isRequired', 'necessityIndicator']} initialProps={{isRequired: true}} wide
 "use client";

@@ -15,7 +15,8 @@ import {
   DateRangePickerProps as AriaDateRangePickerProps,
   ContextValue,
   DateValue,
-  FormContext
+  FormContext,
+  PopoverProps
 } from 'react-aria-components';
 import {CalendarButton, CalendarPopover, timeField} from './DatePicker';
 import {createContext, forwardRef, ReactElement, Ref, useContext, useState} from 'react';
@@ -32,8 +33,9 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DateRangePickerProps<T extends DateValue> extends
-  Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaDateRangePickerProps<T>, 'children' | 'className' | 'style' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
   Pick<RangeCalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
+  Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -87,6 +89,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       ref={ref}
       isRequired={isRequired}
       {...dateFieldProps}
+      isTriggerUpWhenOpen
       style={UNSAFE_style}
       className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
@@ -143,7 +146,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
                 <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
               </div>
             </FieldGroup>
-            <CalendarPopover>
+            <CalendarPopover shouldFlip={props.shouldFlip}>
               <RangeCalendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar} />

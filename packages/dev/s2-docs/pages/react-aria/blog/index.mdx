@@ -16,10 +16,11 @@ export const hideNav = true;
 export const section = 'Blog';
 export const title = 'Blog';
 export const hideFromSearch = true;
+export const description = 'Blog posts from the React Aria team.';
 export const tags = ['blog', 'articles', 'posts'];
 export const isPostList = true;
 
 # Blog
 
-<PostList currentPage={props.currentPage} pages={props.pages.filter(page => page.name.startsWith('react-aria/blog/') && !page.name.endsWith('index.html')) ?? []} />
+<PostList currentPage={props.currentPage} pages={props.pages.filter(page => page.name.startsWith('react-aria/blog/') && !page.name.endsWith('index')) ?? []} />
 

@@ -20,6 +20,7 @@ import {
   Dialog,
   FormContext,
   OverlayTriggerStateContext,
+  PopoverProps,
   Provider,
   TimeValue
 } from 'react-aria-components';
@@ -27,7 +28,7 @@ import {baseColor, focusRing, fontRelative, space, style} from '../style' with {
 import {Calendar, CalendarProps, IconContext, TimeField} from '../';
 import CalendarIcon from '../s2wf-icons/S2_Icon_Calendar_20_N.svg';
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, PropsWithChildren, ReactElement, Ref, useContext, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, Ref, useContext, useRef, useState} from 'react';
 import {DateInput, DateInputContainer, InvalidIndicator} from './DateField';
 import {FieldGroup, FieldLabel, HelpText} from './Field';
 import {forwardRefType, GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -40,8 +41,9 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DatePickerProps<T extends DateValue> extends
-  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
   Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
+  Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps {
@@ -153,6 +155,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       ref={ref}
       isRequired={isRequired}
       {...dateFieldProps}
+      isTriggerUpWhenOpen
       style={UNSAFE_style}
       className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
@@ -203,7 +206,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
               <InvalidIndicator isInvalid={isInvalid} isDisabled={isDisabled} />
               <CalendarButton isOpen={isOpen} size={size} setButtonHasFocus={setButtonHasFocus} />
             </FieldGroup>
-            <CalendarPopover>
+            <CalendarPopover shouldFlip={props.shouldFlip}>
               <Calendar
                 visibleMonths={maxVisibleMonths}
                 createCalendar={createCalendar} />
@@ -238,9 +241,10 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   );
 });
 
-export function CalendarPopover(props: PropsWithChildren): ReactElement {
+export function CalendarPopover(props: Omit<PopoverProps, 'children'> & {children: ReactNode}): ReactElement {
   return (
     <Popover
+      {...props}
       hideArrow
       padding="none">
       <div
@@ -274,9 +278,6 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
   return (
     <Button
       ref={buttonRef}
-      // Prevent press scale from sticking while DatePicker is open.
-      // @ts-ignore
-      isPressed={false}
       onFocusChange={setButtonHasFocus}
       style={pressScale(buttonRef)}
       className={renderProps => inputButton({
