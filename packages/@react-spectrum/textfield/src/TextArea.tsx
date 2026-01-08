@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTextFieldProps, useTextField} from '@react-aria/textfield';
 import {chain, useLayoutEffect} from '@react-aria/utils';
 import React, {Ref, useCallback, useEffect, useRef} from 'react';
-import {SpectrumTextAreaProps, SpectrumTextFieldBaseProps, TextFieldRef} from '@react-types/textfield';
-import {TextFieldBase} from './TextFieldBase';
+import {SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {SpectrumTextFieldBaseProps, TextFieldBase} from './TextFieldBase';
+import {TextFieldRef} from './TextField';
 import {useControlledState} from '@react-stately/utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
+
+export interface SpectrumTextAreaProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps<HTMLTextAreaElement>, 'isInvalid' | 'validationState' | 'type' | 'pattern'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have

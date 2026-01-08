@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTextFieldProps} from '@react-types/textfield';
+import {AriaTextFieldProps, TextFieldAria, useTextField} from './useTextField';
 import {mergeProps, useEffectEvent} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
-import {TextFieldAria, useTextField} from './useTextField';
 import {useEffect, useRef} from 'react';
 
 interface FormattedTextFieldState {
