@@ -10,15 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSliderProps, useSlider} from '@react-aria/slider';
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef, RefObject} from '@react-types/shared';
+import {FocusableRef, LabelPosition, RefObject, StyleProps, ValueBase} from '@react-types/shared';
 import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
-import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSlider} from '@react-aria/slider';
+
+export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<T>, StyleProps {
+  /**
+   * The display format of the value label.
+   */
+  formatOptions?: Intl.NumberFormatOptions,
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
+  labelPosition?: LabelPosition,
+  /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
+  showValueLabel?: boolean,
+  /** A function that returns the content to display as the value's label. Overrides default formatted number. */
+  getValueLabel?: (value: T) => string,
+  /**
+   * A ContextualHelp element to place next to the label.
+   */
+  contextualHelp?: ReactNode
+}
 
 export interface SliderBaseChildArguments {
   inputRef: RefObject<HTMLInputElement | null>,
