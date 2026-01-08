@@ -84,7 +84,7 @@ export const Sections: Story = (args) => (
     {...args}
     style={{width: 800, maxWidth: 'calc(100vw - 80px)'}}
     aria-label="Photos">
-      <GridListSection style={{width: 800, maxWidth: 'calc(100vw - 80px)'}}>
+      <GridListSection>
         <GridListHeader>Fruit</GridListHeader>
         <GridListItem textValue="Apple">
           <img src="https://images.unsplash.com/photo-1630563451961-ac2ff27616ab?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
@@ -102,7 +102,7 @@ export const Sections: Story = (args) => (
           <Text slot="description">JPEG • 11/30/2020</Text>
         </GridListItem>
       </GridListSection>
-      <GridListSection style={{width: 800, maxWidth: 'calc(100vw - 80px)'}}>
+      <GridListSection>
           <GridListHeader>Vegetables</GridListHeader>
           <GridListItem textValue="Broccoli">
           <img src="https://images.unsplash.com/photo-1685504445355-0e7bdf90d415?q=80&w=928&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
