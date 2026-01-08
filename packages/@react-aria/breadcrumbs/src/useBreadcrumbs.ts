@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaBreadcrumbsProps} from '@react-types/breadcrumbs';
-import {DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+
+export interface AriaBreadcrumbsProps extends DOMProps, AriaLabelingProps {}
 
 export interface BreadcrumbsAria {
   /** Props for the breadcrumbs navigation element. */
