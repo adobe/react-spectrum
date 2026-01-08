@@ -10,21 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableProps, LinkDOMProps, PressEvents, StyleProps} from '@react-types/shared';
-import {ReactNode} from 'react';
-
-export interface LinkProps extends PressEvents, FocusableProps {}
-
-export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps { }
-
-export interface SpectrumLinkProps extends Omit<AriaLinkProps, 'onClick'>, StyleProps {
-  /** The content to display in the link. */
-  children: ReactNode,
-  /**
-   * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
-   * @default 'primary'
-   */
-  variant?: 'primary' | 'secondary' | 'overBackground',
-  /** Whether the link should be displayed with a quiet style. */
-  isQuiet?: boolean
-}
+export {LinkProps, AriaLinkProps} from '@react-aria/link';
+export {SpectrumLinkProps} from '@react-spectrum/link';
