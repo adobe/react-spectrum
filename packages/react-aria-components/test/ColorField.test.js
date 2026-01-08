@@ -84,6 +84,30 @@ describe('ColorField', () => {
     expect(input).toHaveValue('');
   });
 
+  it('should support read-only state', async () => {
+    let {getByRole, rerender} = render(
+      <TestColorField />
+    );
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-ColorField')).not.toHaveAttribute('data-readonly');
+    rerender(<TestColorField isReadOnly />);
+    expect(input.closest('.react-aria-ColorField')).toHaveAttribute('data-readonly');
+  });
+
+  it('should support required state', async () => {
+    let {getByRole, rerender} = render(
+      <TestColorField />
+    );
+
+    let input = getByRole('textbox');
+
+    expect(input.closest('.react-aria-ColorField')).not.toHaveAttribute('data-required');
+    rerender(<TestColorField isRequired />);
+    expect(input.closest('.react-aria-ColorField')).toHaveAttribute('data-required');
+  });
+
   it('should render data- attributes only on the outer element', () => {
     let {getAllByTestId} = render(
       <TestColorField data-testid="number-field" />

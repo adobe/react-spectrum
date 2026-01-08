@@ -12,7 +12,7 @@ import './anatomy.css';
 import './footer.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
-import {CodeBlock} from './CodeBlock';
+import {CodeBlock, standaloneCode} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
 import {Divider, Provider, ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
@@ -42,6 +42,15 @@ const components = (isLongForm?: boolean) => ({
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
+  pre: ({children, ...props}) => (
+    <pre {...props} className={standaloneCode}>
+      {React.Children.map(children, child =>
+        React.isValidElement(child)
+          ? React.cloneElement(child as React.ReactElement<any>, {isFencedBlock: true})
+          : child
+      )}
+    </pre>
+  ),
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
@@ -75,7 +84,7 @@ const getTitle = (currentPage: Page): string => {
 
 const getOgImageUrl = (currentPage: Page): string => {
   let currentURL = new URL(currentPage.url);
-  let publicUrl = process.env.PUBLIC_URL || '';
+  let publicUrl = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
   let path = currentURL.pathname || '/';
   if (path.endsWith('/')) {
     path += 'index';

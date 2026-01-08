@@ -109,9 +109,56 @@ describe('ComboBox', () => {
     expect(button).toHaveAttribute('data-pressed');
   });
 
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestComboBox isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support filtering sections', async () => {
     let tree = render(
       <ComboBox>
+        <Label>Preferred fruit or vegetable</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <ListBoxSection>
+              <Header>Fruit</Header>
+              <ListBoxItem id="Apple">Apple</ListBoxItem>
+              <ListBoxItem id="Banana">Banana</ListBoxItem>
+            </ListBoxSection>
+            <ListBoxSection>
+              <Header>Vegetable</Header>
+              <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+              <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
+            </ListBoxSection>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    act(() => {
+      comboboxTester.combobox.focus();
+    });
+    await user.keyboard('p');
+
+    let groups = comboboxTester.sections;
+    expect(groups).toHaveLength(1);
+    expect(groups[0]).toHaveAttribute('aria-labelledby');
+    expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Fruit');
+
+    let options = within(groups[0]).getAllByRole('option');
+    expect(options).toHaveLength(1);
+  });
+
+  it('should support undefined defaultFilter', async () => {
+    let tree = render(
+      <ComboBox defaultFilter={undefined}>
         <Label>Preferred fruit or vegetable</Label>
         <Input />
         <Button />
@@ -216,6 +263,41 @@ describe('ComboBox', () => {
     rerender(<TestComboBox name="test" formValue="text" selectedKey="2" />);
     expect(input).toHaveAttribute('name', 'test');
     expect(document.querySelector('input[type=hidden]')).toBeNull();
+  });
+
+  it('should support form reset', async () => {
+    const tree = render(
+      <form>
+        <ComboBox defaultSelectedKey="2" name="combobox">
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+              <ListBoxItem id="3">Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+        <input type="reset" />
+      </form>
+    );
+  
+    const comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    const combobox = comboboxTester.combobox;
+  
+    expect(combobox).toHaveValue('Dog');
+    await comboboxTester.open();
+  
+    const options = comboboxTester.options();
+    await user.click(options[0]);
+    expect(combobox).toHaveValue('Cat');
+  
+    await user.click(document.querySelector('input[type="reset"]'));
+    expect(combobox).toHaveValue('Dog');
+    expect(document.querySelector('input[name=combobox]')).toHaveValue('2');
   });
 
   it('should render data- attributes on outer element', () => {
@@ -413,7 +495,7 @@ describe('ComboBox', () => {
     let onAction = jest.fn();
     function WithCreateOption() {
       let [inputValue, setInputValue] = useState('');
-    
+
       return (
         <ComboBox
           allowsEmptyCollection
@@ -464,7 +546,7 @@ describe('ComboBox', () => {
     }
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(comboboxTester.combobox).toHaveValue('');
-    
+
     // Repeat with an option selected.
     await comboboxTester.selectOption({option: 'Cat'});
 
@@ -481,5 +563,71 @@ describe('ComboBox', () => {
     }
     expect(onAction).toHaveBeenCalledTimes(2);
     expect(comboboxTester.combobox).toHaveValue('Cat');
+  });
+
+  it('should not close the combobox when clicking on a section header', async () => {
+    let tree = render(
+      <ComboBox>
+        <Label>Preferred fruit or vegetable</Label>
+        <Input />
+        <Button />
+        <Popover>
+          <ListBox>
+            <ListBoxSection>
+              <Header>Fruit</Header>
+              <ListBoxItem id="Apple">Apple</ListBoxItem>
+              <ListBoxItem id="Banana">Banana</ListBoxItem>
+            </ListBoxSection>
+            <ListBoxSection>
+              <Header>Vegetable</Header>
+              <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+              <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
+            </ListBoxSection>
+          </ListBox>
+        </Popover>
+      </ComboBox>
+    );
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
+    let button = tree.getByRole('button');
+    
+    // Open the combobox
+    await user.click(button);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // Verify the listbox is open
+    let listbox = tree.getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    expect(listbox).toBeVisible();
+
+    // Find and click on a section header
+    let fruitHeader = tree.getByText('Fruit');
+    expect(fruitHeader).toBeInTheDocument();
+    
+    await user.click(fruitHeader);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    // Verify the listbox is still open
+    listbox = tree.getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    expect(listbox).toBeVisible();
+
+    // Verify we can still interact with options
+    let options = comboboxTester.options();
+    expect(options.length).toBeGreaterThan(0);
+    
+    // Click an option
+    await user.click(options[0]);
+    act(() => {
+      jest.runAllTimers();
+    });
+    
+    // Verify the combobox is closed and the value is updated
+    expect(tree.queryByRole('listbox')).toBeNull();
+    expect(comboboxTester.combobox).toHaveValue('Apple');
   });
 });

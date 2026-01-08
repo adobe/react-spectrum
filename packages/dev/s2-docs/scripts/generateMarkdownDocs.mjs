@@ -60,6 +60,67 @@ const project = new Project({
   skipAddingFilesFromTsConfig: true
 });
 
+const interfacePathCache = new Map();
+const interfaceTableCache = new Map();
+const classTableCache = new Map();
+const propTableCache = new Map();
+const descriptionCache = new Map();
+let tsFileIndex = null;
+
+function getTsFileIndex() {
+  if (tsFileIndex) {
+    return tsFileIndex;
+  }
+  
+  console.log('Building TypeScript file index...');
+  const startTime = Date.now();
+  
+  // Index files from component roots and packages directory
+  const patterns = [
+    ...COMPONENT_SRC_ROOTS.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}')),
+    path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}')
+  ];
+  
+  const files = glob.sync(patterns, {
+    absolute: true,
+    suppressErrors: true,
+    deep: 5,
+    ignore: ['**/node_modules/**', '**/*.test.*', '**/*.stories.*', '**/dist/**']
+  });
+  
+  // Build index: for each file, extract exported names for quick lookup
+  tsFileIndex = new Map();
+  for (const filePath of files) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      
+      // Extract interface/type/class/function/const names
+      const interfaceMatches = content.matchAll(/(?:export\s+)?interface\s+(\w+)/g);
+      const typeMatches = content.matchAll(/(?:export\s+)?type\s+(\w+)\s*[=<]/g);
+      const classMatches = content.matchAll(/(?:export\s+)?class\s+(\w+)/g);
+      const functionMatches = content.matchAll(/(?:export\s+)?function\s+(\w+)/g);
+      const constMatches = content.matchAll(/(?:export\s+)?const\s+(\w+)\s*[=:]/g);
+      
+      for (const match of [...interfaceMatches, ...typeMatches, ...classMatches, ...functionMatches, ...constMatches]) {
+        const name = match[1];
+        if (!tsFileIndex.has(name)) {
+          tsFileIndex.set(name, []);
+        }
+        // Avoid duplicates for the same file
+        const existing = tsFileIndex.get(name);
+        if (!existing.includes(filePath)) {
+          existing.push(filePath);
+        }
+      }
+    } catch {
+      // Ignore files that can't be read
+    }
+  }
+  
+  console.log(`Built index with ${tsFileIndex.size} symbols in ${Date.now() - startTime}ms`);
+  return tsFileIndex;
+}
+
 /**
  * Clean type text by removing import statements and duplicate type parameters.
  */
@@ -69,6 +130,29 @@ function cleanTypeText(t) {
   // Remove duplicate type parameters.
   cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
   return cleaned;
+}
+
+/**
+ * Get type text from a declaration, preferring the type node (AST) over the resolved type.
+ */
+function getTypeText(decl, fallbackContext) {
+  // Try to get the type node first (preserves declaration order)
+  const typeNode = decl?.getTypeNode?.();
+  if (typeNode) {
+    return cleanTypeText(typeNode.getText());
+  }
+  
+  // Fall back to resolved type with context
+  const type = decl?.getType?.();
+  if (type && fallbackContext) {
+    return cleanTypeText(type.getText(fallbackContext));
+  }
+  
+  if (type) {
+    return cleanTypeText(type.getText());
+  }
+  
+  return 'unknown';
 }
 
 /**
@@ -335,50 +419,109 @@ function extractJSXText(node, file) {
   return '';
 }
 
-function resolveComponentPath(componentName, file) {
-  let roots = COMPONENT_SRC_ROOTS;
+function getRootsForFile(file) {
   if (file?.path) {
     if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-      roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
+      return [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
     } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-      roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
+      return [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
     }
   }
+  return COMPONENT_SRC_ROOTS;
+}
 
+function getCacheKey(name, file) {
+  if (file?.path) {
+    if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
+      return `intl:${name}`;
+    } else if (file.path.includes(path.join('pages', 'react-aria'))) {
+      return `rac:${name}`;
+    } else if (file.path.includes(path.join('pages', 's2'))) {
+      return `s2:${name}`;
+    }
+  }
+  return `default:${name}`;
+}
+
+function resolveComponentPath(componentName, file) {
+  // Check unified cache first
+  const cacheKey = getCacheKey(componentName, file);
+  if (interfacePathCache.has(cacheKey)) {
+    return interfacePathCache.get(cacheKey);
+  }
+  
+  let roots = getRootsForFile(file);
+
+  // Fast path: check direct file paths first
   for (let root of roots) {
     for (let ext of ['tsx', 'ts']) {
       const candidate = path.join(root, `${componentName}.${ext}`);
-      if (fs.existsSync(candidate)) {return candidate;}
+      if (fs.existsSync(candidate)) {
+        interfacePathCache.set(cacheKey, candidate);
+        return candidate;
+      }
     }
   }
 
-  if (!global.__componentPathCache) {
-    global.__componentPathCache = new Map();
-  }
-  if (global.__componentPathCache.has(componentName)) {
-    return global.__componentPathCache.get(componentName);
+  // Use pre-built index for fast lookup
+  const index = getTsFileIndex();
+  const candidates = index.get(componentName);
+  
+  if (candidates && candidates.length > 0) {
+    // Prefer files in the priority roots
+    for (const root of roots) {
+      const match = candidates.find(p => p.startsWith(root));
+      if (match) {
+        interfacePathCache.set(cacheKey, match);
+        return match;
+      }
+    }
+    
+    // Prefer .d.ts files over implementation files
+    const dtsMatch = candidates.find(p => p.endsWith('.d.ts'));
+    if (dtsMatch) {
+      interfacePathCache.set(cacheKey, dtsMatch);
+      return dtsMatch;
+    }
+    
+    // Prefer @react-types package for type lookups
+    const typesMatch = candidates.find(p => p.includes('@react-types'));
+    if (typesMatch) {
+      interfacePathCache.set(cacheKey, typesMatch);
+      return typesMatch;
+    }
+    
+    // Fall back to first match
+    interfacePathCache.set(cacheKey, candidates[0]);
+    return candidates[0];
   }
 
-  const matches = glob.sync(roots.map(r => path.posix.join(r, `**/${componentName}.{ts,tsx}`)), {
-    absolute: true,
-    suppressErrors: true,
-    deep: 5
-  });
-  const resolved = matches[0] || null;
-  global.__componentPathCache.set(componentName, resolved);
-  return resolved;
+  interfacePathCache.set(cacheKey, null);
+  return null;
 }
 
 /**
  * Extract the leading JSDoc description comment placed immediately above the export for a component.
  */
 function getComponentDescription(componentName, file) {
+  // Check cache first
+  const cacheKey = getCacheKey(componentName, file);
+  if (descriptionCache.has(cacheKey)) {
+    return descriptionCache.get(cacheKey);
+  }
+
   const componentPath = resolveComponentPath(componentName, file);
-  if (!componentPath) {return null;}
+  if (!componentPath) {
+    descriptionCache.set(cacheKey, null);
+    return null;
+  }
 
   // Lazily add the source file to the ts-morph project.
   const source = project.addSourceFileAtPathIfExists(componentPath);
-  if (!source) {return null;}
+  if (!source) {
+    descriptionCache.set(cacheKey, null);
+    return null;
+  }
 
   // Try to find an exported declaration named exactly like the component.
   const exportedDecl = source.getExportedDeclarations().get(componentName)?.[0];
@@ -405,12 +548,14 @@ function getComponentDescription(componentName, file) {
       
       // If this is the direct node (not a parent), return its description immediately
       if (isDirectNode) {
+        descriptionCache.set(cacheKey, desc);
         return desc;
       }
       
       // Otherwise, check if the description mentions the component name
       const regex = new RegExp(`\\b${componentName}\\b`, 'i');
       if (regex.test(desc)) {
+        descriptionCache.set(cacheKey, desc);
         return desc;
       }
       
@@ -421,6 +566,7 @@ function getComponentDescription(componentName, file) {
   }
 
   if (typeof firstNodeDesc === 'string') {
+    descriptionCache.set(cacheKey, firstNodeDesc);
     return firstNodeDesc;
   }
 
@@ -428,14 +574,12 @@ function getComponentDescription(componentName, file) {
   for (let doc of allJsDocs.reverse()) {
     const desc = doc.getDescription().trim();
     if (desc && desc.toLowerCase().includes(componentName.toLowerCase())) {
+      descriptionCache.set(cacheKey, desc);
       return desc;
     }
   }
 
-  if (allJsDocs.length) {
-    return allJsDocs[0].getDescription().trim();
-  }
-
+  descriptionCache.set(cacheKey, null);
   return null;
 }
 
@@ -443,53 +587,44 @@ function getComponentDescription(componentName, file) {
  * Build a markdown table of props for the given component by analyzing its interface.
  */
 function generatePropTable(componentName, file) {
-  const interfaceName = `${componentName}Props`;
-  let componentPath = resolveComponentPath(componentName, file);
-
-  // Fallback: deep search for the interface declaration if resolveComponentPath failed.
-  if (!componentPath) {
-    let roots = COMPONENT_SRC_ROOTS;
-    if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      }
-    }
-    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
-    // Also scan other packages if not found in component roots.
-    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
-
-    const matches = glob.sync(patterns, {
-      absolute: true,
-      suppressErrors: true,
-      deep: 5
-    }).filter(p => {
-      try {
-        const txt = fs.readFileSync(p, 'utf8');
-        return new RegExp(`(interface|type)\\s+${interfaceName}\\b`).test(txt) || new RegExp(`export\\s+(function|const|class)\\s+${componentName}\\b`).test(txt);
-      } catch {
-        return false;
-      }
-    });
-    componentPath = matches[0] || null;
+  // Check cache first
+  const cacheKey = getCacheKey(componentName, file);
+  if (propTableCache.has(cacheKey)) {
+    return propTableCache.get(cacheKey);
   }
 
-  if (!componentPath) {return null;}
+  const interfaceName = `${componentName}Props`;
+  
+  // Try to resolve via component path first, then interface path
+  let componentPath = resolveComponentPath(componentName, file);
+  if (!componentPath) {
+    componentPath = resolveComponentPath(interfaceName, file);
+  }
+
+  if (!componentPath) {
+    propTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const source = project.addSourceFileAtPathIfExists(componentPath);
-  if (!source) {return null;}
+  if (!source) {
+    propTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const iface = source.getInterface(interfaceName);
-  if (!iface) {return null;}
+  if (!iface) {
+    propTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const propSymbols = iface.getType().getProperties();
 
   const rows = propSymbols.map((sym) => {
     const name = sym.getName();
+    const decl = sym.getDeclarations()?.[0];
     const type = cleanTypeText(sym.getTypeAtLocation(iface).getText(iface));
 
-    const decl = sym.getDeclarations()?.[0];
     let description = '';
     let defVal = '';
     if (decl && typeof decl.getJsDocs === 'function') {
@@ -506,7 +641,10 @@ function generatePropTable(componentName, file) {
     return {name, type, defVal, description};
   });
 
-  if (!rows.length) {return null;}
+  if (!rows.length) {
+    propTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const header = '| Name | Type | Default | Description |\n|------|------|---------|-------------|';
   const body = rows
@@ -517,52 +655,43 @@ function generatePropTable(componentName, file) {
     })
     .join('\n');
 
-  return `${header}\n${body}`;
+  const result = `${header}\n${body}`;
+  propTableCache.set(cacheKey, result);
+  return result;
 }
 
 function generateInterfaceTable(interfaceName, file) {
-  // Attempt to resolve the file containing the interface.
-  let ifacePath = resolveComponentPath(interfaceName, file);
-
-  // Fallback: deep search for interface declaration if resolveComponentPath failed.
-  if (!ifacePath) {
-    let roots = COMPONENT_SRC_ROOTS;
-    if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      }
-    }
-    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
-    // Also scan other packages if not found in component roots.
-    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
-
-    const matches = glob.sync(patterns, {
-      absolute: true,
-      suppressErrors: true,
-      deep: 5
-    }).filter(p => {
-      try {
-        const txt = fs.readFileSync(p, 'utf8');
-        return new RegExp(`(interface|type)\\s+${interfaceName}\\b`).test(txt);
-      } catch {
-        return false;
-      }
-    });
-    ifacePath = matches[0] || null;
+  // Check cache first
+  const cacheKey = getCacheKey(interfaceName, file);
+  if (interfaceTableCache.has(cacheKey)) {
+    return interfaceTableCache.get(cacheKey);
   }
 
-  if (!ifacePath) {return null;}
+  // Use the unified path resolver which uses the pre-built index
+  let ifacePath = resolveComponentPath(interfaceName, file);
+
+  if (!ifacePath) {
+    interfaceTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const source = project.addSourceFileAtPathIfExists(ifacePath);
-  if (!source) {return null;}
+  if (!source) {
+    interfaceTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const ifaceDecl = source.getInterface(interfaceName);
-  if (!ifaceDecl) {return null;}
+  if (!ifaceDecl) {
+    interfaceTableCache.set(cacheKey, null);
+    return null;
+  }
 
   const propSymbols = ifaceDecl.getType().getProperties();
-  if (!propSymbols.length) {return null;}
+  if (!propSymbols.length) {
+    interfaceTableCache.set(cacheKey, null);
+    return null;
+  }
 
   // Separate properties and methods
   const properties = [];
@@ -608,12 +737,12 @@ function generateInterfaceTable(interfaceName, file) {
     if (callSignatures.length > 0) {
       const sig = callSignatures[0];
       const params = sig.getParameters();
-      const returnType = cleanTypeText(sig.getReturnType().getText());
+      const returnType = cleanTypeText(sig.getReturnType().getText(ifaceDecl));
       
       const paramStrs = params.map(p => {
         const pDecl = p.getDeclarations()?.[0];
         const pName = p.getName();
-        const pType = cleanTypeText(p.getDeclaredType().getText());
+        const pType = getTypeText(pDecl, ifaceDecl);
         const pOptional = pDecl?.hasQuestionToken?.() ? '?' : '';
         return `${pName}${pOptional}: ${pType}`;
       });
@@ -685,7 +814,9 @@ function generateInterfaceTable(interfaceName, file) {
     });
   }
 
-  return sections.join('\n');
+  const result = sections.join('\n');
+  interfaceTableCache.set(cacheKey, result);
+  return result;
 }
 
 /**
@@ -1808,6 +1939,13 @@ function remarkDocsComponentsToMarkdown() {
         // ### {typeName}
         newNodes.push({type: 'heading', depth: 3, children: [{type: 'text', value: typeName}]});
 
+        // Try to generate function signature
+        const funcSig = generateFunctionSignature(typeName, file);
+        if (funcSig) {
+          const sigTree = unified().use(remarkParse).parse(funcSig);
+          newNodes.push(...sigTree.children);
+        }
+
         const desc = getComponentDescription(typeName, file);
         if (desc) {
           newNodes.push({type: 'paragraph', children: [{type: 'text', value: desc}]});
@@ -1841,47 +1979,29 @@ function remarkDocsComponentsToMarkdown() {
  * Generate markdown documentation for a class, including its methods and properties.
  */
 function generateClassAPITable(className, file) {
+  // Check cache first
+  const cacheKey = getCacheKey(className, file);
+  if (classTableCache.has(cacheKey)) {
+    return classTableCache.get(cacheKey);
+  }
+
+  // Use unified path resolver which uses the pre-built index
   let classPath = resolveComponentPath(className, file);
   
   if (!classPath) {
-    // Fallback: deep search for class declaration
-    let roots = COMPONENT_SRC_ROOTS;
-    if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      }
-    }
-    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
-    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
-
-    const matches = glob.sync(patterns, {
-      absolute: true,
-      suppressErrors: true,
-      deep: 5
-    }).filter(p => {
-      try {
-        const txt = fs.readFileSync(p, 'utf8');
-        return new RegExp(`class\\s+${className}\\b`).test(txt);
-      } catch {
-        return false;
-      }
-    });
-    classPath = matches[0] || null;
-  }
-
-  if (!classPath) {
+    classTableCache.set(cacheKey, null);
     return null;
   }
 
   const source = project.addSourceFileAtPathIfExists(classPath);
   if (!source) {
+    classTableCache.set(cacheKey, null);
     return null;
   }
 
   const classDecl = source.getClass(className);
   if (!classDecl) {
+    classTableCache.set(cacheKey, null);
     return null;
   }
 
@@ -1897,7 +2017,7 @@ function generateClassAPITable(className, file) {
       sections.push('### Constructor\n');
       const rows = params.map(param => {
         const name = param.getName();
-        const type = cleanTypeText(param.getType().getText(param));
+        const type = getTypeText(param, param);
         let description = '';
         
         const ctorDocs = ctor.getJsDocs();
@@ -1937,7 +2057,7 @@ function generateClassAPITable(className, file) {
       // Build method signature
       const paramStrs = params.map(p => {
         const pName = p.getName();
-        const pType = cleanTypeText(p.getType().getText(p));
+        const pType = getTypeText(p, p);
         const optional = p.hasQuestionToken() ? '?' : '';
         return `${pName}${optional}: ${pType}`;
       });
@@ -1992,7 +2112,7 @@ function generateClassAPITable(className, file) {
     
     properties.forEach(prop => {
       const propName = prop.getName();
-      const propType = cleanTypeText(prop.getType().getText(prop));
+      const propType = getTypeText(prop, prop);
       let description = '';
       
       const propDocs = prop.getJsDocs();
@@ -2004,7 +2124,9 @@ function generateClassAPITable(className, file) {
     });
   }
 
-  return sections.length > 0 ? sections.join('\n') : null;
+  const result = sections.length > 0 ? sections.join('\n') : null;
+  classTableCache.set(cacheKey, result);
+  return result;
 }
 
 /**
@@ -2013,24 +2135,11 @@ function generateClassAPITable(className, file) {
 function generateStateTable(renderPropsName, {showOptional = false, hideSelector = false} = {}, file) {
   // Attempt to resolve source file by stripping trailing "RenderProps" to get component name.
   let componentName = renderPropsName.replace(/RenderProps$/, '');
+  
+  // Try component path first, then render props interface path
   let componentPath = resolveComponentPath(componentName, file);
-
-  // If not found, fall back to searching all component roots.
   if (!componentPath) {
-    let roots = COMPONENT_SRC_ROOTS;
-    if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      }
-    }
-    const matches = glob.sync(roots.map(r => path.posix.join(r, '**/*.{ts,tsx}')), {
-      absolute: true,
-      suppressErrors: true,
-      deep: 5
-    }).filter(p => fs.readFileSync(p, 'utf8').includes(`interface ${renderPropsName}`));
-    componentPath = matches[0] || null;
+    componentPath = resolveComponentPath(renderPropsName, file);
   }
 
   if (!componentPath) {
@@ -2113,36 +2222,8 @@ function generateStateTable(renderPropsName, {showOptional = false, hideSelector
  * Looks at the first parameter type of the exported function with the given name.
  */
 function generateFunctionOptionsTable(functionName, file) {
-  // Resolve the source file containing the function declaration.
+  // Use unified path resolver which uses the pre-built index
   let funcPath = resolveComponentPath(functionName, file);
-
-  if (!funcPath) {
-    // Fallback deep search similar to other helpers.
-    let roots = COMPONENT_SRC_ROOTS;
-    if (file?.path) {
-      if (file.path.includes(path.join('pages', 'react-aria', 'internationalized'))) {
-        roots = [INTL_SRC_ROOT, S2_SRC_ROOT, RAC_SRC_ROOT];
-      } else if (file.path.includes(path.join('pages', 'react-aria'))) {
-        roots = [RAC_SRC_ROOT, S2_SRC_ROOT, INTL_SRC_ROOT];
-      }
-    }
-    const patterns = roots.map(r => path.posix.join(r, '**/*.{ts,tsx,d.ts}'));
-    patterns.push(path.posix.join(REPO_ROOT, 'packages/**/*.{ts,tsx,d.ts}'));
-
-    const matches = glob.sync(patterns, {
-      absolute: true,
-      suppressErrors: true,
-      deep: 5
-    }).filter(p => {
-      try {
-        const txt = fs.readFileSync(p, 'utf8');
-        return new RegExp(`(function|const)\\s+${functionName}\\b`).test(txt);
-      } catch {
-        return false;
-      }
-    });
-    funcPath = matches[0] || null;
-  }
 
   if (!funcPath) {
     return null;
@@ -2202,6 +2283,54 @@ function generateFunctionOptionsTable(functionName, file) {
 }
 
 /**
+ * Generate a function signature markdown.
+ * Returns the signature like: `functionName(param1: Type1, param2: Type2): ReturnType`
+ */
+function generateFunctionSignature(functionName, file) {
+  let funcPath = resolveComponentPath(functionName, file);
+
+  if (!funcPath) {
+    return null;
+  }
+
+  const source = project.addSourceFileAtPathIfExists(funcPath);
+  if (!source) {
+    return null;
+  }
+
+  // Attempt to get an exported declaration for the function.
+  const exportedDecl = source.getExportedDeclarations().get(functionName)?.[0];
+  const possibleDecls = [exportedDecl, source.getFunction(functionName), source.getVariableDeclaration(functionName)];
+
+  let funcDecl = possibleDecls.find(Boolean);
+  if (!funcDecl) {
+    return null;
+  }
+
+  // Retrieve call signature via type to support arrow functions.
+  const type = funcDecl.getType?.();
+  const callSig = type?.getCallSignatures?.()[0];
+  if (!callSig) {
+    return null;
+  }
+
+  const params = callSig.getParameters();
+  const returnType = cleanTypeText(callSig.getReturnType().getText(funcDecl));
+
+  // Build parameter list
+  const paramStrs = params.map(paramSym => {
+    const paramDecl = paramSym.getDeclarations()?.[0];
+    const pName = paramSym.getName();
+    const pType = getTypeText(paramDecl, funcDecl);
+    const pOptional = paramDecl?.hasQuestionToken?.() ? '?' : '';
+    return `${pName}${pOptional}: ${pType}`;
+  });
+
+  const signature = `${functionName}(${paramStrs.join(', ')}): ${returnType}`;
+  return `\`${signature}\``;
+}
+
+/**
  * Generate llms.txt file for a specific library.
  */
 function generateLibraryLlmsTxt(lib, files) {
@@ -2233,9 +2362,9 @@ function generateLibraryLlmsTxt(lib, files) {
   const sorted = files.sort((a, b) => a.heading.localeCompare(b.heading));
   for (const doc of sorted) {
     if (doc.description) {
-      txt += `- [${doc.heading}](${lib}/${doc.path}): ${doc.description}\n`;
+      txt += `- [${doc.heading}](${doc.path}): ${doc.description}\n`;
     } else {
-      txt += `- [${doc.heading}](${lib}/${doc.path})\n`;
+      txt += `- [${doc.heading}](${doc.path})\n`;
     }
   }
 

@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, Form, Group, Heading, Input, Label, Popover, RangeCalendar, TextField} from 'react-aria-components';
 import clsx from 'clsx';
 import {Meta, StoryFn} from '@storybook/react';
+import {parseAbsoluteToLocal} from '@internationalized/date';
 import React from 'react';
 import styles from '../example/index.css';
 import './styles.css';
@@ -46,6 +47,9 @@ export default {
     validationBehavior: {
       control: 'select',
       options: ['native', 'aria']
+    },
+    isTriggerUpWhenOpen: {
+      control: 'boolean'
     }
   }
 } as Meta<typeof DatePicker>;
@@ -211,7 +215,7 @@ export const DatePickerAutofill = (props) => (
       <Label>Name</Label>
       <Input name="firstName" type="name" id="name" autoComplete="name" />
     </TextField>
-    <DatePicker data-testid="date-picker-example" name="bday" autoComplete="bday" {...props}>
+    <DatePicker data-testid="date-picker-example" name="bday" autoComplete="bday" defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} {...props}>
       <Label style={{display: 'block'}}>Date</Label>
       <Group style={{display: 'inline-flex'}}>
         <DateInput className={styles.field}>
