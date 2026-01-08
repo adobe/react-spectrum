@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorWheelProps} from '@react-types/color';
-import {ColorWheelState} from '@react-stately/color';
-import {DOMAttributes, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {ColorWheelProps, ColorWheelState} from '@react-stately/color';
 import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
+
+export interface AriaColorWheelProps extends ColorWheelProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */

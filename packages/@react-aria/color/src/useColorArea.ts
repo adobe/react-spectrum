@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
-import {ColorAreaState} from '@react-stately/color';
-import {DOMAttributes, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, RefObject} from '@react-types/shared';
+import {ColorAreaProps, ColorAreaState, ColorChannel} from '@react-stately/color';
 import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -21,6 +20,23 @@ import {useColorAreaGradient} from './useColorAreaGradient';
 import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
+
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {
+  /**
+   * The name of the x channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  xName?: string,
+  /**
+   * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  yName?: string,
+  /**
+   * The `<form>` element to associate the ColorArea with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
+}
 
 export interface ColorAreaAria {
   /** Props for the color area container element. */

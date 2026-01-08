@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorField} from '../';
+import {ColorField, SpectrumColorFieldProps} from '../';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
@@ -18,7 +18,6 @@ import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumColorFieldProps} from '@react-types/color';
 
 // Ignore read only because it doesn't apply any distingishable visual features
 let states = [

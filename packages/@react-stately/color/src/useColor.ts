@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from '@react-types/color';
+import {Color} from './types';
 import {parseColor} from './Color';
 import {useMemo} from 'react';
 

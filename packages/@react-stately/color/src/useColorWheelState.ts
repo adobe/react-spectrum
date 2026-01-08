@@ -10,10 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, ColorWheelProps} from '@react-types/color';
+import {Color} from './types';
 import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
+import {ValueBase} from '@react-types/shared';
+
+export interface ColorWheelProps extends Omit<ValueBase<string | Color>, 'onChange'> {
+  /** Whether the ColorWheel is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void,
+  /**
+   * The default value (uncontrolled).
+   * @default 'hsl(0, 100%, 50%)'
+   */
+  defaultValue?: string | Color
+}
 
 export interface ColorWheelState {
   /** The current color value represented by the color wheel. */

@@ -10,18 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaColorFieldProps, useColorChannelField, useColorField} from '@react-aria/color';
 import {classNames} from '@react-spectrum/utils';
-import {ColorChannel, SpectrumColorFieldProps} from '@react-types/color';
+import {Color, ColorChannel, ColorSpace, useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
 import {ColorFieldContext, useContextProps} from 'react-aria-components';
 import React, {Ref, useEffect, useRef} from 'react';
+import {SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import styles from './colorfield.css';
-import {TextFieldBase} from '@react-spectrum/textfield';
-import {TextFieldRef} from '@react-types/textfield';
-import {useColorChannelField, useColorField} from '@react-aria/color';
-import {useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
+import {TextFieldBase, TextFieldRef} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
+  /**
+   * The color channel that this field edits. If not provided,
+   * the color is edited as a hex value.
+   */
+  channel?: ColorChannel,
+  /**
+   * The color space that the color field operates in if a `channel` prop is provided.
+   * If no `channel` is provided, the color field always displays the color as an RGB hex value.
+   */
+  colorSpace?: ColorSpace,
+  /** Whether the ColorField should be displayed with a quiet style. */
+  isQuiet?: boolean
+}
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.
