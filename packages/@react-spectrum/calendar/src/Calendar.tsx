@@ -10,16 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaCalendarProps, useCalendar} from '@react-aria/calendar';
 import {CalendarBase} from './CalendarBase';
-import {createCalendar} from '@internationalized/date';
+import {CalendarIdentifier, createCalendar, Calendar as ICalendar} from '@internationalized/date';
 import {createDOMRef} from '@react-spectrum/utils';
-import {DateValue, SpectrumCalendarProps} from '@react-types/calendar';
-import {FocusableRef} from '@react-types/shared';
+import {DateValue, useCalendarState} from '@react-stately/calendar';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
-import {useCalendar} from '@react-aria/calendar';
-import {useCalendarState} from '@react-stately/calendar';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendarProps<T>, StyleProps {
+  /**
+   * The number of months to display at once. Up to 3 months are supported.
+   * @default 1
+   */
+  visibleMonths?: number,
+
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. If not provided, the `createCalendar` function
+   * from `@internationalized/date` will be used.
+   */
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
+}
 
 /**
  * Calendars display a grid of days in one or more months and allow users to select a single date.

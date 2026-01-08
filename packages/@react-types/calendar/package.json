@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.10.1",
-    "@react-types/shared": "^3.32.1"
+    "@react-aria/calendar": "^3.9.3",
+    "@react-spectrum/calendar": "^3.7.9",
+    "@react-stately/calendar": "^3.9.1"
   },
   "publishConfig": {
     "access": "public"

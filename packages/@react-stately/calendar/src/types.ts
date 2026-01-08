@@ -10,9 +10,70 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate} from '@internationalized/date';
-import {DateValue} from '@react-types/calendar';
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {RangeValue, ValidationState} from '@react-types/shared';
+import {ReactNode} from 'react';
+
+export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
+export type MappedDateValue<T> =
+  T extends ZonedDateTime ? ZonedDateTime :
+  T extends CalendarDateTime ? CalendarDateTime :
+  T extends CalendarDate ? CalendarDate :
+  never;
+
+export type PageBehavior = 'single' | 'visible';
+export interface CalendarPropsBase {
+  /** The minimum allowed date that a user may select. */
+  minValue?: DateValue | null,
+  /** The maximum allowed date that a user may select. */
+  maxValue?: DateValue | null,
+  /** Callback that is called for each date of the calendar. If it returns true, then the date is unavailable. */
+  isDateUnavailable?: (date: DateValue) => boolean,
+  /**
+   * Whether the calendar is disabled.
+   * @default false
+   */
+  isDisabled?: boolean,
+  /**
+   * Whether the calendar value is immutable.
+   * @default false
+   */
+  isReadOnly?: boolean,
+  /**
+   * Whether to automatically focus the calendar when it mounts.
+   * @default false
+   */
+  autoFocus?: boolean,
+  /** Controls the currently focused date within the calendar. */
+  focusedValue?: DateValue | null,
+  /** The date that is focused when the calendar first mounts (uncontrolled). */
+  defaultFocusedValue?: DateValue | null,
+  /** Handler that is called when the focused date changes. */
+  onFocusChange?: (date: CalendarDate) => void,
+  /**
+   * Whether the current selection is valid or invalid according to application logic.
+   * @deprecated Use `isInvalid` instead.
+   */
+  validationState?: ValidationState,
+  /** Whether the current selection is invalid according to application logic. */
+  isInvalid?: boolean,
+  /** An error message to display when the selected value is invalid. */
+  errorMessage?: ReactNode,
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior,
+  /**
+   * The day that starts the week.
+   */
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat',
+  /** 
+   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
+   * @default 'center'
+   */
+  selectionAlignment?: 'start' | 'center' | 'end'
+}
 
 interface CalendarStateBase {
   /** Whether the calendar is disabled. */
