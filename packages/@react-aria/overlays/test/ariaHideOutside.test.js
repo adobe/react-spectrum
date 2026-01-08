@@ -12,7 +12,7 @@
 
 import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ariaHideOutside} from '../src';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 describe('ariaHideOutside', function () {
   it('should hide everything except the provided element [button]', function () {
@@ -274,6 +274,76 @@ describe('ariaHideOutside', function () {
     expect(() => getByRole('button')).not.toThrow();
     expect(() => getByTestId('test')).not.toThrow();
   });
+
+  it('should handle when a new element is added and then reparented', async function () {
+
+    let Test = () => {
+      const ref = useRef(null);
+      const mutate = () => {
+        let parent = document.createElement('ul');
+        let child = document.createElement('li');
+        ref.current.append(parent);
+        parent.appendChild(child);
+        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li (through the new ul parent) in `addedNodes`
+        let newParent = document.createElement('ul');
+        newParent.appendChild(child);
+        ref.current.append(newParent);
+      };
+
+      return (
+        <>
+          <div data-testid="test" ref={ref}>
+            <button onClick={mutate}>Mutate</button>
+          </div>
+        </>
+      );
+    };
+
+    let {queryByRole, getAllByRole, getByTestId} = render(<Test />);
+
+    ariaHideOutside([getByTestId('test')]);
+
+    queryByRole('button').click();
+    await Promise.resolve(); // Wait for mutation observer tick
+
+    expect(getAllByRole('listitem')).toHaveLength(1);
+  });
+
+  it('should handle when a new element is added and then reparented to a hidden container', async function () {
+
+    let Test = () => {
+      const ref = useRef(null);
+      const mutate = () => {
+        let parent = document.createElement('ul');
+        let child = document.createElement('li');
+        ref.current.append(parent);
+        parent.appendChild(child);
+        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li (through the new ul parent) in `addedNodes`
+        let newParent = document.createElement('ul');
+        newParent.appendChild(child);
+        ref.current.append(newParent);
+      };
+
+      return (
+        <>
+          <div data-testid="test">
+            <button onClick={mutate}>Mutate</button>
+          </div>
+          <div data-testid="sibling" ref={ref} />
+        </>
+      );
+    };
+
+    let {queryByRole, queryAllByRole, getByTestId} = render(<Test />);
+
+    ariaHideOutside([getByTestId('test')]);
+
+    queryByRole('button').click();
+    await Promise.resolve(); // Wait for mutation observer tick
+
+    expect(queryAllByRole('listitem')).toHaveLength(0);
+  });
+
 
   it('work when called multiple times', function () {
     let {getByRole, getAllByRole} = render(
