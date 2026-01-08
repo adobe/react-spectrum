@@ -1380,7 +1380,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       isPressed,
       isHovered,
       isSelected,
-      id: cell.key
+      id: cell.key,
+      cellIndex: cell.index
     }
   });
 
