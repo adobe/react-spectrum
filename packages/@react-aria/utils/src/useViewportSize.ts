@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {isIOS} from './platform';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
-import { isIOS } from './platform';
 
 interface ViewportSize {
   width: number,
