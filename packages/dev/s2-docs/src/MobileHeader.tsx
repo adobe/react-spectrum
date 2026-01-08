@@ -87,6 +87,11 @@ const colorSchemeToggleStyles = style({
   borderWidth: 0
 });
 
+const iconContainerStyles = style({
+  position: 'relative',
+  size: 20
+});
+
 function ColorSchemeToggle() {
   let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
   let isOverriding = colorScheme !== systemColorScheme;
@@ -94,6 +99,7 @@ function ColorSchemeToggle() {
     ? `Using ${colorScheme} mode (press to use system)`
     : `Using system ${systemColorScheme} mode (press to switch)`;
   let ref = useRef(null);
+  let isDark = colorScheme === 'dark';
 
   return (
     <Button
@@ -102,7 +108,24 @@ function ColorSchemeToggle() {
       onPress={toggleColorScheme}
       className={renderProps => colorSchemeToggleStyles(renderProps)}
       style={pressScale(ref)}>
-      {colorScheme === 'dark' ? <Lighten /> : <Contrast />}
+      <span className={iconContainerStyles}>
+        <Contrast
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+        <Lighten
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+      </span>
     </Button>
   );
 }
