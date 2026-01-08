@@ -11,4 +11,4 @@
  */
 /// <reference types="css-module-types" />
 export {Avatar} from './Avatar';
-export type {SpectrumAvatarProps} from '@react-types/avatar';
+export type {AvatarProps, SpectrumAvatarProps} from './Avatar';
