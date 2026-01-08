@@ -10,16 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
-import {AriaSearchFieldProps} from '@react-types/searchfield';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaTextFieldProps, useTextField} from '@react-aria/textfield';
 import {chain} from '@react-aria/utils';
 import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {SearchFieldState} from '@react-stately/searchfield';
+import {SearchFieldProps, SearchFieldState} from '@react-stately/searchfield';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useTextField} from '@react-aria/textfield';
+
+export interface AriaSearchFieldProps extends SearchFieldProps, Omit<AriaTextFieldProps, 'type'> {
+  /**
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint).
+   */
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
+  /**
+   * The type of input to render. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdeftype).
+   * @default 'search'
+   */
+  type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {})
+}
 
 export interface SearchFieldAria extends ValidationResult {
   /** Props for the text field's visible label element (if any). */
