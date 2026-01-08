@@ -23,6 +23,7 @@ import {
 import {
   ClassNameOrFunction,
   ContextValue,
+  DOMElement,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -32,7 +33,7 @@ import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {ButtonHTMLAttributes, createContext, ForwardedRef, ReactElement, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -77,7 +78,8 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
    * Whether the button is in a pending state. This disables press and hover events
    * while retaining focusability, and announces the pending state to screen readers.
    */
-  isPending?: boolean
+  isPending?: boolean,
+  render?: (props: ButtonHTMLAttributes<HTMLButtonElement>) => ReactElement
 }
 
 interface ButtonContextValue extends ButtonProps {
@@ -144,7 +146,9 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   delete DOMProps.onClick;
 
   return (
-    <button
+    <DOMElement
+      elementType="button"
+      render={props.render}
       {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.
@@ -163,7 +167,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       <ProgressBarContext.Provider value={{id: progressId}}>
         {renderProps.children}
       </ProgressBarContext.Provider>
-    </button>
+    </DOMElement>
   );
 });
 

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, forwardRefType, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {AllHTMLAttributes, Context, CSSProperties, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -262,3 +262,28 @@ export interface RACValidation {
    */
   validationBehavior?: 'native' | 'aria'
 }
+
+interface DOMElementProps<E extends keyof React.JSX.IntrinsicElements> extends AllHTMLAttributes<HTMLElement> {
+  elementType: E,
+  render?: (props: React.JSX.IntrinsicElements[E]) => ReactElement
+}
+
+export const DOMElement = /*#__PURE__*/(forwardRef as forwardRefType)(function DOMElement<E extends keyof React.JSX.IntrinsicElements>({elementType: ElementType, render, ...otherProps}: DOMElementProps<E>, forwardedRef: ForwardedRef<HTMLElement>) {
+  let elementRef = useRef<HTMLElement | null>(null);
+  let ref = mergeRefs(forwardedRef, elementRef);
+
+  useLayoutEffect(() => {
+    if (!elementRef.current) {
+      console.warn('DOM element ref was not connected. Did you forget to pass through or merge the `ref` prop in `render`?');
+    } else if (elementRef.current.localName !== ElementType) {
+      console.warn(`Expected ${ElementType}, got ${elementRef.current.localName}`);
+    }
+  }, [ElementType]);
+
+  let domProps: any = {...otherProps, ref};
+  if (render) {
+    return render(domProps);
+  }
+
+  return <ElementType {...domProps} />;
+});

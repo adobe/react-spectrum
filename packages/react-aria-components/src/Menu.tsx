@@ -17,6 +17,7 @@ import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
+  DOMElement,
   Provider,
   RenderProps,
   SlotProps,
@@ -37,9 +38,11 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import React, {
+  AnchorHTMLAttributes,
   createContext,
   ForwardedRef,
   forwardRef,
+  HTMLAttributes,
   JSX,
   ReactElement,
   ReactNode,
@@ -413,7 +416,8 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** Handler that is called when the item is selected. */
   onAction?: () => void,
   /** Whether the menu should close when the menu item is selected. */
-  shouldCloseOnSelect?: boolean
+  shouldCloseOnSelect?: boolean,
+  render?: (props: AnchorHTMLAttributes<HTMLElement> | HTMLAttributes<HTMLDivElement>) => ReactElement
 }
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
@@ -454,13 +458,14 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
     }
   });
 
-  let ElementType: React.ElementType = props.href ? 'a' : 'div';
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
 
   return (
-    <ElementType
+    <DOMElement
+      elementType={props.href ? 'a' : 'div'}
+      render={props.render}
       {...mergeProps(DOMProps, renderProps, menuItemProps, hoverProps)}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
@@ -486,6 +491,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
         ]}>
         {renderProps.children}
       </Provider>
-    </ElementType>
+    </DOMElement>
   );
 });
