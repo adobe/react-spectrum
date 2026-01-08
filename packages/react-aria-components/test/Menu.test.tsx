@@ -388,16 +388,16 @@ describe('Menu', () => {
     expect(onFocus).toHaveBeenCalledTimes(1);
     expect(onFocusChange).toHaveBeenCalledTimes(1);
     expect(onBlur).toHaveBeenCalledTimes(0);
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
     let sequence = checkboxes.slice(1).concat(radios);
     for (let item of sequence) {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
-    onFocus.mockClear();
-    onFocusChange.mockClear();
-    onBlur.mockClear();
     expect(onFocus).toHaveBeenCalledTimes(0);
-    expect(onFocusChange).toHaveBeenCalledTimes(0);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
