@@ -12,4 +12,4 @@
 
 export {useComboBoxState} from './useComboBoxState';
 
-export type {ComboBoxStateOptions, ComboBoxState} from './useComboBoxState';
+export type {ComboBoxProps, ComboBoxStateOptions, ComboBoxState, ComboBoxValidationValue, MenuTriggerAction} from './useComboBoxState';

@@ -12,12 +12,11 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
+import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useEvent, useFormReset, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
-import {ComboBoxState} from '@react-stately/combobox';
+import {ComboBoxProps, ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
@@ -28,6 +27,11 @@ import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
+
+export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, InputDOMProps, AriaLabelingProps {
+  /** Whether keyboard navigation is circular. */
+  shouldFocusWrap?: boolean
+}
 
 export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */

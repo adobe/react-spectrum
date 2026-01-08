@@ -60,7 +60,6 @@
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/collections": "^3.12.8",
     "@react-stately/combobox": "^3.12.1",
-    "@react-types/button": "^3.14.1",
     "@react-types/combobox": "^3.13.10",
     "@react-types/shared": "^3.32.1",
     "@spectrum-icons/ui": "^3.6.21",

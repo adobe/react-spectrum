@@ -10,14 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, FocusStrategy, Key, Node} from '@react-types/shared';
-import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {Collection, CollectionBase, CollectionStateBase, FocusableProps, FocusStrategy, HelpTextProps, InputBase, Key, LabelableProps, Node, SingleSelection, TextInputBase, Validation} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
+
+export type MenuTriggerAction = 'focus' | 'input' | 'manual';
+
+export interface ComboBoxValidationValue {
+  /** The selected key in the ComboBox. */
+  selectedKey: Key | null,
+  /** The value of the ComboBox input. */
+  inputValue: string
+}
+
+export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'onSelectionChange'>, InputBase, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+  /** The list of ComboBox items (uncontrolled). */
+  defaultItems?: Iterable<T>,
+  /** The list of ComboBox items (controlled). */
+  items?: Iterable<T>,
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key | null) => void,
+  /** The value of the ComboBox input (controlled). */
+  inputValue?: string,
+  /** The default value of the ComboBox input (uncontrolled). */
+  defaultInputValue?: string,
+  /** Handler that is called when the ComboBox input value changes. */
+  onInputChange?: (value: string) => void,
+  /** Whether the ComboBox allows a non-item matching input value to be set. */
+  allowsCustomValue?: boolean,
+  // /**
+  //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
+  //  * @default 'suggest'
+  //  */
+  // completionMode?: 'suggest' | 'complete',
+ /**
+  * The interaction required to display the ComboBox menu.
+  * @default 'input'
+  */
+  menuTrigger?: MenuTriggerAction
+}
 
 export interface ComboBoxState<T> extends SingleSelectListState<T>, OverlayTriggerState, FormValidationState {
   /** The default selected key. */

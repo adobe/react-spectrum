@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaComboBoxProps, useComboBox} from '@react-aria/combobox';
+import {AsyncLoadable, DimensionValue, DOMRefValue, FocusableRef, FocusableRefValue, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
   classNames,
@@ -21,7 +23,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import comboboxStyles from './combobox.css';
-import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {ComboBoxValidationValue, MenuTriggerAction, useComboBoxState} from '@react-stately/combobox';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
@@ -42,16 +44,47 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useComboBox} from '@react-aria/combobox';
-import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormProps} from '@react-spectrum/form';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<ComboBoxValidationValue>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
+  /** Whether the ComboBox should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /** Alignment of the menu relative to the input target.
+   * @default 'start'
+   */
+  align?: 'start' | 'end',
+  /**
+   * Direction the menu will render relative to the ComboBox.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top',
+  /** The current loading state of the ComboBox. Determines whether or not the progress circle should be shown. */
+  loadingState?: LoadingState,
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  /** Width of the menu. By default, matches width of the combobox. Note that the minimum width of the dropdown is always equal to the combobox's width. */
+  menuWidth?: DimensionValue,
+  /**
+   * Whether the text or key of the selected item is submitted as part of an HTML form.
+   * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
+   * @default 'text'
+   */
+  formValue?: 'text' | 'key'
+}
 
 /**
  * ComboBoxes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
