@@ -51,7 +51,6 @@
     "@react-spectrum/text": "^3.5.23",
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/collections": "^3.12.8",
-    "@react-types/actionbar": "^3.1.19",
     "@react-types/shared": "^3.32.1",
     "@spectrum-icons/ui": "^3.6.21",
     "@swc/helpers": "^0.5.0"

@@ -13,5 +13,5 @@
 export {ActionBar} from './ActionBar';
 export {ActionBarContainer} from './ActionBarContainer';
 export {Item} from '@react-stately/collections';
-export type {SpectrumActionBarContainerProps} from '@react-types/actionbar';
-export type {SpectrumActionBarProps} from '@react-types/actionbar';
+export type {SpectrumActionBarContainerProps} from './ActionBarContainer';
+export type {SpectrumActionBarProps} from './ActionBar';
