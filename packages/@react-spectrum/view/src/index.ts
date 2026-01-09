@@ -14,4 +14,7 @@ export {View} from './View';
 export {Content} from './Content';
 export {Footer} from './Footer';
 export {Header} from './Header';
-export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-types/view';
+export type {ViewProps} from './View';
+export type {ContentProps} from './Content';
+export type {FooterProps} from './Footer';
+export type {HeaderProps} from './Header';

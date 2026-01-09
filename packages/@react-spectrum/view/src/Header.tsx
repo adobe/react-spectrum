@@ -11,10 +11,16 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HeaderProps} from '@react-types/view';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactNode} from 'react';
+
+export interface HeaderProps extends DOMProps, StyleProps {
+  /**
+   * Header content.
+   */
+  children: ReactNode
+}
 
 /**
  * Header represents a header within a Spectrum container.
