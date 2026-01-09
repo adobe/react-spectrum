@@ -15,7 +15,7 @@ import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {getColumnHeaderId} from './utils';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';

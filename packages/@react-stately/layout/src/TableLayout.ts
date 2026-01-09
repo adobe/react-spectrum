@@ -12,7 +12,7 @@
 
 import {DropTarget, ItemDropTarget, Key} from '@react-types/shared';
 import {getChildNodes, getLastItem} from '@react-stately/collections';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';

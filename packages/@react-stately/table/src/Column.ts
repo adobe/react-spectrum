@@ -12,7 +12,7 @@
 
 import {CollectionBuilderContext} from './useTableState';
 import {ColumnProps} from '@react-types/table';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {PartialNode} from '@react-stately/collections';
 import React, {JSX, ReactElement} from 'react';
 

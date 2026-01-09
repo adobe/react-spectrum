@@ -4,7 +4,7 @@ import {ColumnSize} from '@react-types/table';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from '@react-aria/focus';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps, useObjectRef} from '@react-aria/utils';

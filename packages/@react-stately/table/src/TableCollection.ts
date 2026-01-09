@@ -11,8 +11,7 @@
  */
 
 import {getFirstItem, getLastItem} from '@react-stately/collections';
-import {GridCollection} from '@react-stately/grid';
-import {GridNode} from '@react-types/grid';
+import {GridCollection, GridNode} from '@react-stately/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key} from '@react-types/shared';
 

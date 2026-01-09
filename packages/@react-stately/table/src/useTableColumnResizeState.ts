@@ -11,7 +11,7 @@
  */
 
 import {ColumnSize} from '@react-types/table';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {Key} from '@react-types/shared';
 import {TableColumnLayout} from './TableColumnLayout';
 import {TableState} from './useTableState';

@@ -14,9 +14,8 @@ import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shar
 import {focusSafely, isFocusVisible} from '@react-aria/interactions';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
-import {GridCollection, GridNode} from '@react-types/grid';
+import {IGridCollection as GridCollection, GridNode, GridState} from '@react-stately/grid';
 import {gridMap} from './utils';
-import {GridState} from '@react-stately/grid';
 import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';

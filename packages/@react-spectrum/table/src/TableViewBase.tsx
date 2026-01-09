@@ -29,7 +29,7 @@ import type {DraggableCollectionState, DroppableCollectionState} from '@react-st
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

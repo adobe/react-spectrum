@@ -14,3 +14,4 @@ export {useGridState} from './useGridState';
 export {GridCollection} from './GridCollection';
 
 export type {GridStateOptions, GridState} from './useGridState';
+export type {IGridCollection, GridNode, GridRow} from './GridCollection';

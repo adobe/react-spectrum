@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
-import {GridCollection, GridNode} from '@react-types/grid';
+import {IGridCollection as GridCollection, GridNode} from '@react-stately/grid';
 import {JSX, ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */

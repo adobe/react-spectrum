@@ -13,7 +13,7 @@
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
-import type {GridNode} from '@react-types/grid';
+import type {GridNode} from '@react-stately/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes} from 'react';
 import {mergeProps, useSyntheticLinkProps} from '@react-aria/utils';
