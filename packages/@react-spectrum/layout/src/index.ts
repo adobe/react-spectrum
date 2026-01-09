@@ -15,4 +15,5 @@
 export {repeat, minmax, fitContent, Grid} from './Grid';
 export {Flex} from './Flex';
 export type {DimensionValue} from '@react-types/shared';
-export type {FlexProps, GridProps} from '@react-types/layout';
+export type {FlexProps} from './Flex';
+export type {GridProps} from './Grid';
