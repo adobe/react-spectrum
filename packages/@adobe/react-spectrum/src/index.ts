@@ -106,7 +106,7 @@ export type {SpectrumMeterProps} from '@react-spectrum/meter';
 export type {SpectrumNumberFieldProps} from '@react-spectrum/numberfield';
 export type {SpectrumPickerProps} from '@react-spectrum/picker';
 export type {SpectrumProgressBarProps, SpectrumProgressCircleProps} from '@react-spectrum/progress';
-export type {ProviderContext, ProviderProps} from '@react-spectrum/provider';
+export type {ProviderContext, ProviderProps, ColorScheme, Scale, Theme} from '@react-spectrum/provider';
 export type {SpectrumRadioGroupProps, SpectrumRadioProps} from '@react-spectrum/radio';
 export type {SpectrumRangeSliderProps, SpectrumSliderProps} from '@react-spectrum/slider';
 export type {SpectrumSearchFieldProps} from '@react-spectrum/searchfield';

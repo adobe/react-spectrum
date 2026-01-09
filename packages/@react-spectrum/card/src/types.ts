@@ -13,7 +13,7 @@
 import {AriaLabelingProps, AsyncLoadable, Collection, CollectionBase, Direction, DOMProps, KeyboardDelegate, LoadingState, MultipleSelection, Node, Orientation, StyleProps} from '@react-types/shared';
 import {Layout} from '@react-stately/virtualizer';
 import {ReactNode} from 'react';
-import {Scale} from '@react-types/provider';
+import {Scale} from '@react-spectrum/provider';
 
 interface AriaCardProps extends AriaLabelingProps {}
 
