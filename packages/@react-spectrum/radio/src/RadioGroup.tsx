@@ -10,17 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaRadioGroupProps, RadioProps, useRadioGroup} from '@react-aria/radio';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, SpectrumHelpTextProps, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {RadioContext} from './context';
-import React from 'react';
-import {SpectrumRadioGroupProps} from '@react-types/radio';
+import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useRadioGroup} from '@react-aria/radio';
 import {useRadioGroupState} from '@react-stately/radio';
+
+export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps, SpectrumHelpTextProps {
+  /**
+   * The Radio(s) contained within the RadioGroup.
+   */
+  children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
+  /**
+   * By default, radio buttons are not emphasized (gray).
+   * The emphasized (blue) version provides visual prominence.
+   */
+  isEmphasized?: boolean
+}
 
 /**
  * Radio groups allow users to select a single option from a list of mutually exclusive options.

@@ -14,5 +14,5 @@
 
 export {Radio} from './Radio';
 export {RadioGroup} from './RadioGroup';
-export type {SpectrumRadioProps} from '@react-types/radio';
-export type {SpectrumRadioGroupProps} from '@react-types/radio';
+export type {SpectrumRadioProps} from './Radio';
+export type {SpectrumRadioGroupProps} from './RadioGroup';
