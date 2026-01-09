@@ -22,7 +22,7 @@ import {
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode} from 'react';
 import {style} from '../style' with { type: 'macro' };
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface AccordionProps extends UnsafeStyles, DOMProps, SlotProps {

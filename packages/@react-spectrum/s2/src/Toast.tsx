@@ -30,7 +30,7 @@ import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_Toast
 import {Text} from './Content';
 import toastCss from './Toast.module.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMediaQuery} from '@react-spectrum/utils';
+import {useMediaQuery} from './useMediaQuery';
 import {useOverlayTriggerState} from 'react-stately';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';

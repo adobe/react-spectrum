@@ -47,7 +47,7 @@ import {inertValue, useEffectEvent, useId, useLayoutEffect, useResizeObserver} f
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

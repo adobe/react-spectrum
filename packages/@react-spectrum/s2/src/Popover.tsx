@@ -28,7 +28,7 @@ import {lightDark, style} from '../style' with {type: 'macro'};
 import {mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,

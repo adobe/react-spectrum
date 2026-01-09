@@ -21,7 +21,7 @@ import {FocusableRef} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {forwardRef} from 'react';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 interface ClearButtonStyleProps {
   /**
    * The size of the ClearButton.

@@ -24,7 +24,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 

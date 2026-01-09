@@ -22,7 +22,7 @@ import {FocusableRef, GlobalDOMAttributes} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 
 export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**

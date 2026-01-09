@@ -23,7 +23,7 @@ import {
 } from 'react-aria-components';
 import {centerPadding, controlSize, field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useRef} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FocusableRefValue, GlobalDOMAttributes, HelpTextProps, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';

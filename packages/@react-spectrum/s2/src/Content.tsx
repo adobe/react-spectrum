@@ -16,7 +16,7 @@ import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {inertValue} from '@react-aria/utils';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

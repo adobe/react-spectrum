@@ -19,7 +19,7 @@ import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style
 import {Image} from './Image';
 import {isDocsEnv} from './macros' with {type: 'macro'};
 import {style} from '../style' with { type: 'macro' };
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
