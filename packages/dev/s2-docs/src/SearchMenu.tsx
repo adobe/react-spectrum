@@ -3,10 +3,11 @@
 import {ActionButton, SearchField} from '@react-spectrum/s2';
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
-import {ColorSearchSkeleton, ColorSearchView} from './ColorSearchView';
+import {ColorSearchSkeleton} from './colorSearchData';
 import {ComponentCardView} from './ComponentCardView';
 import {
   getResourceTags,
+  LazyColorSearchView,
   LazyIconSearchView,
   SearchEmptyState,
   useFilteredColors,
@@ -196,7 +197,7 @@ export function SearchMenu(props: SearchMenuProps) {
                   {selectedTagId === 'colors' && (
                     <div className={style({flexGrow: 1, overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
                       <Suspense fallback={<ColorSearchSkeleton />}>
-                        <ColorSearchView filteredItems={filteredColors.sections} exactMatches={filteredColors.exactMatches} closestMatches={filteredColors.closestMatches} />
+                        <LazyColorSearchView filteredItems={filteredColors.sections} exactMatches={filteredColors.exactMatches} closestMatches={filteredColors.closestMatches} />
                       </Suspense>
                     </div>
                   )}

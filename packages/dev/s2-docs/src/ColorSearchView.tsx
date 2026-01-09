@@ -1,99 +1,16 @@
 'use client';
 
-import {Badge, Content, Heading, IllustratedMessage, pressScale, Skeleton, Text} from '@react-spectrum/s2';
+import {Badge, Content, Heading, IllustratedMessage, pressScale, Text} from '@react-spectrum/s2';
 import Checkmark from '@react-spectrum/s2/icons/Checkmark';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
-import {colorSwatch, getColorHexMap, getColorScale} from './color.macro' with {type: 'macro'};
+import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Similar from '@react-spectrum/s2/icons/Similar';
-
-export const colorHexMaps = getColorHexMap();
-
-const backgroundColors = [
-  'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
-  'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
-  'negative', 'negative-subtle', 'informative', 'informative-subtle',
-  'positive', 'positive-subtle', 'notice', 'notice-subtle',
-  'gray', 'gray-subtle', 'red', 'red-subtle', 'orange', 'orange-subtle',
-  'yellow', 'yellow-subtle', 'chartreuse', 'chartreuse-subtle',
-  'celery', 'celery-subtle', 'green', 'green-subtle', 'seafoam', 'seafoam-subtle',
-  'cyan', 'cyan-subtle', 'blue', 'blue-subtle', 'indigo', 'indigo-subtle',
-  'purple', 'purple-subtle', 'fuchsia', 'fuchsia-subtle', 'magenta', 'magenta-subtle',
-  'pink', 'pink-subtle', 'turquoise', 'turquoise-subtle',
-  'cinnamon', 'cinnamon-subtle', 'brown', 'brown-subtle',
-  'silver', 'silver-subtle', 'disabled'
-];
-
-const textColors = [
-  'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
-  'heading', 'title', 'body', 'detail', 'code'
-];
-
-const semanticColorRanges: Record<string, number[]> = {
-  'accent-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'informative-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'negative-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'notice-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'positive-color': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600]
-};
-
-const globalColorRanges: Record<string, number[]> = {
-  'gray': [25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-  'blue': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'red': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'orange': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'yellow': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'chartreuse': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'celery': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'green': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'seafoam': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'cyan': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'indigo': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'purple': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'fuchsia': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'magenta': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'pink': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'turquoise': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'brown': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'silver': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600],
-  'cinnamon': [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600]
-};
-
-const semanticColors = Object.entries(semanticColorRanges).flatMap(([scale, ranges]) =>
-  ranges.map(value => ({name: `${scale.replace('-color', '')}-${value}`, section: 'Semantic colors', type: 'backgroundColor'}))
-);
-
-const globalColors = Object.entries(globalColorRanges).flatMap(([scale, ranges]) =>
-  ranges.map(value => ({name: `${scale}-${value}`, section: 'Global colors', type: 'backgroundColor'}))
-);
-
-export const colorSections = [
-  {
-    id: 'background',
-    name: 'Background colors',
-    items: backgroundColors.map(name => ({name, section: 'Background colors', type: 'backgroundColor'}))
-  },
-  {
-    id: 'text',
-    name: 'Text colors',
-    items: textColors.map(name => ({name, section: 'Text colors', type: 'color'}))
-  },
-  {
-    id: 'semantic',
-    name: 'Semantic colors',
-    items: semanticColors
-  },
-  {
-    id: 'global',
-    name: 'Global colors',
-    items: globalColors
-  }
-];
 
 const itemStyle = style({
   ...focusRing(),
@@ -151,7 +68,7 @@ const headerStyle = style({
   marginBottom: 4
 });
 
-const backgroundSwatches = {
+const backgroundSwatches: Record<string, string> = {
   'base': colorSwatch('base'),
   'layer-1': colorSwatch('layer-1'),
   'layer-2': colorSwatch('layer-2'),
@@ -211,7 +128,7 @@ const backgroundSwatches = {
   'disabled': colorSwatch('disabled')
 };
 
-const textSwatches = {
+const textSwatches: Record<string, string> = {
   'accent': colorSwatch('accent', 'color'),
   'neutral': colorSwatch('neutral', 'color'),
   'neutral-subdued': colorSwatch('neutral-subdued', 'color'),
@@ -249,7 +166,7 @@ const brownScale = getColorScale('brown');
 const silverScale = getColorScale('silver');
 const cinnamonScale = getColorScale('cinnamon');
 
-const scaleSwatches = {
+const scaleSwatches: Record<string, string> = {
   ...Object.fromEntries(accentScale),
   ...Object.fromEntries(informativeScale),
   ...Object.fromEntries(negativeScale),
@@ -287,7 +204,11 @@ function CopyInfoMessage() {
 }
 
 interface ColorSearchViewProps {
-  filteredItems: typeof colorSections,
+  filteredItems: Array<{
+    id: string,
+    name: string,
+    items: Array<{name: string, section: string, type: string}>
+  }>,
   /** Names of colors that exactly match the searched hex value. */
   exactMatches?: Set<string>,
   /** Names of the closest matching colors when no exact matches exist. */
@@ -437,82 +358,5 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
         </div>
       )}
     </ListBoxItem>
-  );
-}
-
-function SkeletonColorItem({item}: {item: {id: string}}) {
-  const ref = useRef(null);
-  
-  return (
-    <ListBoxItem 
-      id={item.id} 
-      value={item} 
-      textValue="skeleton" 
-      className={itemStyle} 
-      ref={ref}>
-      <div
-        className={swatchStyle}
-        style={{
-          width: '32px',
-          height: '32px',
-          backgroundColor: 'var(--s2-gray-200)'
-        } as React.CSSProperties} />
-      <div
-        className={style({
-          maxWidth: 'full',
-          textOverflow: 'ellipsis',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textAlign: 'center'
-        })}>
-        <Text styles={style({font: 'ui-sm'})}>Name</Text>
-      </div>
-    </ListBoxItem>
-  );
-}
-
-export function ColorSearchSkeleton() {
-  const mockSections = useMemo(() => [
-    {
-      id: 'background',
-      name: 'Background colors',
-      items: Array.from({length: 20}, (_, i) => ({id: `skeleton-background-${i}`}))
-    },
-    {
-      id: 'text',
-      name: 'Text colors',
-      items: Array.from({length: 10}, (_, i) => ({id: `skeleton-text-${i}`}))
-    },
-    {
-      id: 'semantic',
-      name: 'Semantic colors',
-      items: Array.from({length: 30}, (_, i) => ({id: `skeleton-semantic-${i}`}))
-    },
-    {
-      id: 'global',
-      name: 'Global colors',
-      items: Array.from({length: 40}, (_, i) => ({id: `skeleton-global-${i}`}))
-    }
-  ], []);
-
-  return (
-    <Skeleton isLoading>
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <ListBox
-          aria-label="Colors loading"
-          layout="grid"
-          className={listBoxStyle}
-          items={mockSections}>
-          {section => (
-            <ListBoxSection id={section.id} className={sectionStyle}>
-              <Header className={headerStyle}>{section.name}</Header>
-              {section.items.map(item => (
-                <SkeletonColorItem key={item.id} item={item} />
-              ))}
-            </ListBoxSection>
-          )}
-        </ListBox>
-      </div>
-    </Skeleton>
   );
 }

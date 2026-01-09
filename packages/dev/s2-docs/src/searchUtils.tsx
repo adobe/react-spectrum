@@ -1,6 +1,6 @@
 'use client';
 
-import {colorHexMaps, colorSections} from './ColorSearchView';
+import {colorHexMaps, colorSections} from './colorSearchData';
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
 import {getBaseUrl} from './pageUtils';
 // @ts-ignore
@@ -704,6 +704,10 @@ export function SearchEmptyState({searchValue, libraryLabel}: {searchValue: stri
 
 export const LazyIconSearchView = React.lazy(() =>
   import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView}))
+);
+
+export const LazyColorSearchView = React.lazy(() =>
+  import('./ColorSearchView').then(({ColorSearchView}) => ({default: ColorSearchView}))
 );
 
 export interface SearchMenuStateOptions {
