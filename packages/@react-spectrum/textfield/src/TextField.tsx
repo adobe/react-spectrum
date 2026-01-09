@@ -12,12 +12,17 @@
 
 import {AriaTextFieldProps, useTextField} from '@react-aria/textfield';
 import {FocusableRefValue, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
-import React, {forwardRef, Ref, useEffect, useRef} from 'react';
-import {SpectrumTextFieldBaseProps, TextFieldBase} from './TextFieldBase';
+import React, {forwardRef, ReactElement, Ref, useEffect, useRef} from 'react';
+import {TextFieldBase} from './TextFieldBase';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumTextFieldProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
+export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
+  /** An icon to display at the start of the input. */
+  icon?: ReactElement | null,
+  /** Whether the input should be displayed with a quiet style. */
+  isQuiet?: boolean
+}
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
   select(): void,

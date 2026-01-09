@@ -12,15 +12,20 @@
 
 import {AriaTextFieldProps, useTextField} from '@react-aria/textfield';
 import {chain, useLayoutEffect} from '@react-aria/utils';
-import React, {Ref, useCallback, useEffect, useRef} from 'react';
+import React, {ReactElement, Ref, useCallback, useEffect, useRef} from 'react';
 import {SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
-import {SpectrumTextFieldBaseProps, TextFieldBase} from './TextFieldBase';
+import {TextFieldBase} from './TextFieldBase';
 import {TextFieldRef} from './TextField';
 import {useControlledState} from '@react-stately/utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumTextAreaProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps<HTMLTextAreaElement>, 'isInvalid' | 'validationState' | 'type' | 'pattern'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
+export interface SpectrumTextAreaProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps<HTMLTextAreaElement>, 'isInvalid' | 'validationState' | 'type' | 'pattern'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
+  /** An icon to display at the start of the input. */
+  icon?: ReactElement | null,
+  /** Whether the input should be displayed with a quiet style. */
+  isQuiet?: boolean
+}
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have
@@ -88,7 +93,7 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
 
   return (
     <TextFieldBase
-      {...otherProps as SpectrumTextFieldBaseProps}
+      {...otherProps as any}
       ref={ref}
       inputRef={inputRef}
       {...result}

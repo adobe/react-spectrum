@@ -25,13 +25,6 @@ import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface SpectrumTextFieldBaseProps {
-  /** An icon to display at the start of the input. */
-  icon?: ReactElement | null,
-  /** Whether the input should be displayed with a quiet style. */
-  isQuiet?: boolean
-}
-
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | 'validate'>, PressEvents, Partial<ValidationResult> {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
