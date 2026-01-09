@@ -10,17 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {Alignment, DOMProps, DOMRef, LabelPosition, NecessityIndicator, StyleProps} from '@react-types/shared';
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React from 'react';
-import {SpectrumLabelProps} from '@react-types/label';
+import React, {ElementType, HTMLAttributes, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface LabelProps {
+  children?: ReactNode,
+  htmlFor?: string, // for compatibility with React
+  for?: string,
+  elementType?: ElementType
+}
+
+export interface SpectrumLabelPropsBase extends LabelProps, DOMProps, StyleProps {
+  labelPosition?: LabelPosition, // default top
+  labelAlign?: Alignment, // default start
+  isRequired?: boolean,
+  necessityIndicator?: NecessityIndicator, // default icon
+  includeNecessityIndicatorInAccessibilityName?: boolean
+}
+
+export interface SpectrumLabelProps extends SpectrumLabelPropsBase, HTMLAttributes<HTMLElement> {}
 
 export const Label = React.forwardRef(function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);

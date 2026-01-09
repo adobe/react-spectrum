@@ -15,3 +15,5 @@
 export {Field} from './Field';
 export {Label} from './Label';
 export {HelpText} from './HelpText';
+export type {LabelProps, SpectrumLabelProps} from './Label';
+export type {SpectrumFieldProps} from './Field';
