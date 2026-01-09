@@ -12,7 +12,7 @@
 
 import {Calendar, CalendarIdentifier, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
-import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
+import {DatePickerProps, DateValue, Granularity, MappedDateValue} from './types';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';

@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
+import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
-import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
+import {DateFieldProps, DateFieldState, DateValue, TimeFieldState, TimePickerProps, TimeValue} from '@react-stately/datepicker';
 import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
@@ -24,8 +23,15 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useFormValidation} from '@react-aria/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
+export interface AriaDateFieldProps<T extends DateValue> extends DateFieldProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string
+}
+
 // Allows this hook to also be used with TimeField
-export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue' | 'validate'> {
+export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue' | 'validate'> {
   /** A ref for the hidden input element for HTML form submission. */
   inputRef?: RefObject<HTMLInputElement | null>
 }
@@ -195,6 +201,8 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     validationDetails
   };
 }
+
+export interface AriaTimeFieldProps<T extends TimeValue> extends TimePickerProps<T>, AriaLabelingProps, DOMProps, InputDOMProps {}
 
 export interface AriaTimeFieldOptions<T extends TimeValue> extends AriaTimeFieldProps<T> {
   /** A ref for the hidden input element for HTML form submission. */

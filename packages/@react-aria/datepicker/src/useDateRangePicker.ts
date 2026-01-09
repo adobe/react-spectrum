@@ -11,13 +11,13 @@
  */
 
 import {AriaButtonProps} from '@react-aria/button';
-import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
+import {AriaDatePickerProps} from './useDatePicker';
 import {AriaDialogProps} from '@react-aria/dialog';
+import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRange, RangeCalendarProps} from '@react-stately/calendar';
-import {DateRangePickerState} from '@react-stately/datepicker';
+import {DateRangePickerProps, DateRangePickerState, DateValue} from '@react-stately/datepicker';
 import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
@@ -27,6 +27,8 @@ import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo, useRef} from 'react';
+
+export interface AriaDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T>, AriaLabelingProps, InputDOMProps, DOMProps {}
 
 export interface DateRangePickerAria extends ValidationResult {
   /** Props for the date range picker's visible label element, if any. */

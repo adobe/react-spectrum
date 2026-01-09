@@ -10,33 +10,55 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaDatePickerProps, useDatePicker} from '@react-aria/datepicker';
 import {Calendar} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
+import {CalendarIdentifier, Calendar as ICalendar} from '@internationalized/date';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './styles.css';
-import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
+import {DateValue, useDatePickerState} from '@react-stately/datepicker';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusableRef} from '@react-types/shared';
-import {Input} from './Input';
+import {FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 // @ts-ignore
-import intlMessages from '../intl/*.json';
+import {Input} from './Input';
+import intlMessages from '../intl/*.json'; // HACK: must be included BEFORE inputgroup
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
-import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
+import '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import {SpectrumDateFieldBase} from './DateField';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
-import {useDatePicker} from '@react-aria/datepicker';
-import {useDatePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumDatePickerBase<T extends DateValue> extends SpectrumDateFieldBase<T>, SpectrumLabelableProps, StyleProps {
+  /**
+   * The maximum number of months to display at once in the calendar popover, if screen space permits.
+   * @default 1
+   */
+  maxVisibleMonths?: number,
+  /**
+   * Whether the calendar popover should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. This will be used for the popover calendar. If not provided, the
+   * `createCalendar` function from `@internationalized/date` will be used.
+   */
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
+}
+
+export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState' | 'autoComplete'>, SpectrumDatePickerBase<T> {}
 
 /**
  * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.

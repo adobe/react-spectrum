@@ -15,7 +15,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
-import {DateRange} from '@react-types/datepicker';
+import {DateRange} from '@react-stately/datepicker';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-stately/calendar';
 import {Flex} from '@react-spectrum/layout';

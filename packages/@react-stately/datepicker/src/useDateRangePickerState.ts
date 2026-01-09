@@ -12,7 +12,7 @@
 
 
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue, Granularity, MappedDateValue, TimeValue} from '@react-types/datepicker';
+import {DateRange, DateRangePickerProps, DateValue, Granularity, MappedDateValue, TimeValue} from './types';
 import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';

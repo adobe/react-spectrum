@@ -11,12 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-aria/button';
-import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-aria/dialog';
-import {CalendarProps} from '@react-types/calendar';
+import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, InputDOMProps, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
+import {CalendarProps} from '@react-stately/calendar';
 import {createFocusManager} from '@react-aria/focus';
-import {DatePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
+import {DatePickerProps, DatePickerState, DateValue} from '@react-stately/datepicker';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -27,6 +26,13 @@ import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo, useRef} from 'react';
+
+export interface AriaDatePickerProps<T extends DateValue> extends DatePickerProps<T>, AriaLabelingProps, InputDOMProps, DOMProps, InputDOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string
+}
 
 export interface DatePickerAria extends ValidationResult {
   /** Props for the date picker's visible label element, if any. */
