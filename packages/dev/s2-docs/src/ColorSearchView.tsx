@@ -1,6 +1,6 @@
 'use client';
 
-import {Badge, Content, Heading, IllustratedMessage, pressScale, Text} from '@react-spectrum/s2';
+import {Badge, Content, Heading, IllustratedMessage, Link, pressScale, Text} from '@react-spectrum/s2';
 import Checkmark from '@react-spectrum/s2/icons/Checkmark';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
@@ -57,7 +57,7 @@ const sectionStyle = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
   gap: 32,
-  padding: 16,
+  padding: 8,
   marginBottom: 16
 });
 
@@ -196,9 +196,14 @@ const scaleSwatches: Record<string, string> = {
 
 function CopyInfoMessage() {
   return (
-    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press a color to copy its name</span>
+    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 8})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
+        <InfoCircle styles={iconStyle({size: 'XS'})} />
+        <span className={style({font: 'ui'})}>Press a color to copy its name.</span>
+      </div>
+      <span>
+        See <Link href="styling">styling</Link> for more information.
+      </span>
     </div>
   );
 }
