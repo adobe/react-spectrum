@@ -5453,7 +5453,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.32.0"
     "@react-types/shared": "npm:^3.32.1"
     "@swc/helpers": "npm:^0.5.0"
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -5721,7 +5721,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.32.0"
     "@react-types/shared": "npm:^3.32.1"
     "@swc/helpers": "npm:^0.5.0"
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7870,7 +7870,7 @@ __metadata:
     "@spectrum-icons/ui": "npm:^3.6.21"
     "@swc/helpers": "npm:^0.5.0"
     "@types/use-sync-external-store": "npm:^0.0.3"
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     "@react-spectrum/provider": ^3.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -8339,7 +8339,7 @@ __metadata:
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
     "@types/use-sync-external-store": "npm:^0.0.3"
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -10879,6 +10879,87 @@ __metadata:
     "@typescript-eslint/types": "npm:8.9.0"
     eslint-visitor-keys: "npm:^3.4.3"
   checksum: 10c0/e33208b946841f1838d87d64f4ee230f798e68bdce8c181d3ac0abb567f758cb9c4bdccc919d493167869f413ca4c400e7db0f7dd7e8fc84ab6a8344076a7458
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-darwin-arm64@npm:7.0.0-dev.20251223.1"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-darwin-x64@npm:7.0.0-dev.20251223.1"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-linux-arm64@npm:7.0.0-dev.20251223.1"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-arm@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-linux-arm@npm:7.0.0-dev.20251223.1"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-linux-x64@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-linux-x64@npm:7.0.0-dev.20251223.1"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-win32-arm64@npm:7.0.0-dev.20251223.1"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview-win32-x64@npm:7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview-win32-x64@npm:7.0.0-dev.20251223.1"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/native-preview@npm:^7.0.0-dev.20251223.1":
+  version: 7.0.0-dev.20251223.1
+  resolution: "@typescript/native-preview@npm:7.0.0-dev.20251223.1"
+  dependencies:
+    "@typescript/native-preview-darwin-arm64": "npm:7.0.0-dev.20251223.1"
+    "@typescript/native-preview-darwin-x64": "npm:7.0.0-dev.20251223.1"
+    "@typescript/native-preview-linux-arm": "npm:7.0.0-dev.20251223.1"
+    "@typescript/native-preview-linux-arm64": "npm:7.0.0-dev.20251223.1"
+    "@typescript/native-preview-linux-x64": "npm:7.0.0-dev.20251223.1"
+    "@typescript/native-preview-win32-arm64": "npm:7.0.0-dev.20251223.1"
+    "@typescript/native-preview-win32-x64": "npm:7.0.0-dev.20251223.1"
+  dependenciesMeta:
+    "@typescript/native-preview-darwin-arm64":
+      optional: true
+    "@typescript/native-preview-darwin-x64":
+      optional: true
+    "@typescript/native-preview-linux-arm":
+      optional: true
+    "@typescript/native-preview-linux-arm64":
+      optional: true
+    "@typescript/native-preview-linux-x64":
+      optional: true
+    "@typescript/native-preview-win32-arm64":
+      optional: true
+    "@typescript/native-preview-win32-x64":
+      optional: true
+  bin:
+    tsgo: bin/tsgo.js
+  checksum: 10c0/e7ce674c99fb045d72318e5a9d6d16a0f60e11e7315105197a5115f433ac86ee6a583899f0e54c8022fd799f58dc546fa1d0cd730dd6fe3de1f22751fe281bb1
   languageName: node
   linkType: hard
 
@@ -24544,7 +24625,7 @@ __metadata:
     client-only: "npm:^0.0.1"
     react-aria: "npm:^3.45.0"
     react-stately: "npm:^3.43.0"
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -24759,6 +24840,7 @@ __metadata:
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20251223.1"
     "@yarnpkg/types": "npm:^4.0.0"
     autoprefixer: "npm:^9.6.0"
     axe-playwright: "npm:^1.1.11"
@@ -28691,12 +28773,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "use-sync-external-store@npm:1.4.0"
+"use-sync-external-store@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/ec011a5055962c0f6b509d6e78c0b143f8cd069890ae370528753053c55e3b360d3648e76cfaa854faa7a59eb08d6c5fb1015e60ffde9046d32f5b2a295acea5
+  checksum: 10c0/35e1179f872a53227bdf8a827f7911da4c37c0f4091c29b76b1e32473d1670ebe7bcd880b808b7549ba9a5605c233350f800ffab963ee4a4ee346ee983b6019b
   languageName: node
   linkType: hard
 
