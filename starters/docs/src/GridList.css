@@ -263,6 +263,8 @@
   position: sticky;
   z-index: 2;
   top: -8px;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
   background: var(--gray-100);
   border-block: 0.5px solid var(--gray-400);
   cursor: default;
