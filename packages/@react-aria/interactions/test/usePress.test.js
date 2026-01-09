@@ -420,8 +420,10 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       el.releasePointerCapture = jest.fn();
+      el.hasPointerCapture = jest.fn().mockReturnValue(true);
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      expect(el.releasePointerCapture).toHaveBeenCalled();
+      expect(el.hasPointerCapture).toHaveBeenCalledWith(1);
+      expect(el.releasePointerCapture).toHaveBeenCalledWith(1);
       // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
       fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
@@ -558,6 +560,16 @@ describe('usePress', function () {
           target: el
         }
       ]);
+    });
+
+    it('should not call releasePointerCapture when hasPointerCapture returns false', function () {
+      let res = render(<Example />);
+      let el = res.getByText('test');
+      el.releasePointerCapture = jest.fn();
+      el.hasPointerCapture = jest.fn().mockReturnValue(false);
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(el.hasPointerCapture).toHaveBeenCalledWith(1);
+      expect(el.releasePointerCapture).not.toHaveBeenCalled();
     });
 
     it('should handle pointer cancel events', function () {
@@ -4011,8 +4023,10 @@ describe('usePress', function () {
 
       const el = shadowRoot.getElementById('testElement');
       el.releasePointerCapture = jest.fn();
+      el.hasPointerCapture = jest.fn().mockReturnValue(true);
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      expect(el.releasePointerCapture).toHaveBeenCalled();
+      expect(el.hasPointerCapture).toHaveBeenCalledWith(1);
+      expect(el.releasePointerCapture).toHaveBeenCalledWith(1);
       // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
       fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));

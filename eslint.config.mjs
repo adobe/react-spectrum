@@ -351,6 +351,10 @@ export default [{
     },
 
     languageOptions: {
+        globals: {
+          globalThis: "readonly",
+        },
+
         parser: tseslint.parser,
         ecmaVersion: 6,
         sourceType: "module",

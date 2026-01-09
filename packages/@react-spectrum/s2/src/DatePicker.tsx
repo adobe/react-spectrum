@@ -41,7 +41,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface DatePickerProps<T extends DateValue> extends
-  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaDatePickerProps<T>, 'children' | 'className' | 'style' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
   Pick<CalendarProps<T>, 'createCalendar' | 'pageBehavior' | 'firstDayOfWeek' | 'isDateUnavailable'>,
   Pick<PopoverProps, 'shouldFlip'>,
   StyleProps,
@@ -155,6 +155,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       ref={ref}
       isRequired={isRequired}
       {...dateFieldProps}
+      isTriggerUpWhenOpen
       style={UNSAFE_style}
       className={(UNSAFE_className || '') + style(field(), getAllowedOverrides())({
         isInForm: !!formContext,
@@ -277,9 +278,6 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
   return (
     <Button
       ref={buttonRef}
-      // Prevent press scale from sticking while DatePicker is open.
-      // @ts-ignore
-      isPressed={false}
       onFocusChange={setButtonHasFocus}
       style={pressScale(buttonRef)}
       className={renderProps => inputButton({

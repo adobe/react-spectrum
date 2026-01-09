@@ -128,6 +128,15 @@ describe('DateRangePicker', () => {
     await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
   });
+    
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestDateRangePicker isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
 
   it('should support data-open state', async () => {
     let {getByRole} = render(<TestDateRangePicker />);

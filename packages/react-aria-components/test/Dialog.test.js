@@ -52,6 +52,23 @@ describe('Dialog', () => {
     expect(dialog).toHaveAttribute('data-rac');
   });
 
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(
+      <DialogTrigger isTriggerUpWhenOpen>
+        <Button>Delete…</Button>
+        <Dialog>
+          <Heading slot="title">Title</Heading>
+        </Dialog>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('works with modal', async () => {
     let {getByRole} = render(
       <DialogTrigger>
