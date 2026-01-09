@@ -14,4 +14,5 @@
 
 export {Tooltip} from './Tooltip';
 export {TooltipTrigger} from './TooltipTrigger';
-export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-types/tooltip';
+export type {SpectrumTooltipProps} from './Tooltip';
+export type {SpectrumTooltipTriggerProps} from './TooltipTrigger';

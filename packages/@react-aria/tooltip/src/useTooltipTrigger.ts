@@ -13,8 +13,7 @@
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getInteractionModality, isFocusVisible, useFocusable, useHover} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
-import {TooltipTriggerProps} from '@react-types/tooltip';
-import {TooltipTriggerState} from '@react-stately/tooltip';
+import {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 import {useEffect, useRef} from 'react';
 
 export interface TooltipTriggerAria {
