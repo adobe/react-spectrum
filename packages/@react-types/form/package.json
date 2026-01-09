@@ -9,6 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-spectrum/form": "^3.7.20",
     "@react-types/shared": "^3.32.1"
   },
   "peerDependencies": {
