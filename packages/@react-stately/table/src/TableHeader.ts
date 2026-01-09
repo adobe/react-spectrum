@@ -11,9 +11,16 @@
  */
 
 import {CollectionBuilderContext} from './useTableState';
+import {ColumnElement, ColumnRenderer} from './Column';
 import {PartialNode} from '@react-stately/collections';
 import React, {JSX, ReactElement} from 'react';
-import {TableHeaderProps} from '@react-types/table';
+
+export interface TableHeaderProps<T> {
+  /** A list of table columns. */
+  columns?: T[],
+  /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
+  children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
+}
 
 function TableHeader<T>(props: TableHeaderProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

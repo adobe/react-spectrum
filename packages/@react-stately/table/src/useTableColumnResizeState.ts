@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnSize} from '@react-types/table';
+import {ColumnSize} from './Column';
 import {GridNode} from '@react-stately/grid';
 import {Key} from '@react-types/shared';
 import {TableColumnLayout} from './TableColumnLayout';
@@ -28,6 +28,7 @@ export interface TableColumnResizeStateProps<T> {
   /** A function that is called to find the default minWidth for a given column. */
   getDefaultMinWidth?: (node: GridNode<T>) => ColumnSize | null | undefined
 }
+
 export interface TableColumnResizeState<T> {
   /**
    * Called to update the state that a resize event has occurred.

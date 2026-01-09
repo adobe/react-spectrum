@@ -1,6 +1,6 @@
 
 import {classNames} from '@react-spectrum/utils';
-import {ColumnSize} from '@react-types/table';
+import {ColumnSize, TableColumnResizeState} from '@react-stately/table';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from '@react-aria/focus';
@@ -12,7 +12,6 @@ import {Key, RefObject} from '@react-types/shared';
 import React, {createContext, ForwardedRef, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';

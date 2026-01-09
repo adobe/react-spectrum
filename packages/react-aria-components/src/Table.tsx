@@ -17,8 +17,7 @@ import {
   useRenderProps
 } from './utils';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, UNSTABLE_useFilteredTableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
+import {ColumnSize, ColumnStaticSize, DisabledBehavior, DraggableCollectionState, DroppableCollectionState, ITableCollection, MultipleSelectionState, Node, SelectionBehavior, SelectionMode, TableProps as SharedTableProps, SortDirection, TableState, UNSTABLE_useFilteredTableState, useMultipleSelectionState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';

@@ -10,9 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {CellProps} from '@react-types/table';
-import {JSX, ReactElement} from 'react';
+import {JSX, ReactElement, ReactNode} from 'react';
+import {Key} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
+
+export interface CellProps {
+  /** The contents of the cell. */
+  children: ReactNode,
+  /** A string representation of the cell's contents, used for features like typeahead. */
+  textValue?: string,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number
+}
+
+export type CellElement = ReactElement<CellProps>;
+export type CellRenderer = (columnKey: Key) => CellElement;
 
 function Cell(props: CellProps): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

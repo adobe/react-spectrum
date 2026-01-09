@@ -24,14 +24,13 @@ import {
   useTableSelectionCheckbox
 } from '@react-aria/table';
 import {classNames} from '@react-spectrum/utils';
-import {ColumnSize, TableProps} from '@react-types/table';
+import {ColumnSize, TableProps, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Key} from '@react-types/shared';
 import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import React, {JSX, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
-import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 

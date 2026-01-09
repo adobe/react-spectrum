@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColumnSize} from '@react-types/table';
+import {ColumnSize} from '@react-stately/table';
 import {Key} from '@react-types/shared';
 
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.

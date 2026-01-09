@@ -15,7 +15,7 @@ import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {ColumnSize} from '@react-types/table';
+import {ColumnSize} from '@react-stately/table';
 import {ControllingResize} from '../stories/ControllingResize';
 import {fireEvent, installPointerEvent, pointerMap, simulateDesktop, triggerTouch} from '@react-spectrum/test-utils-internal';
 import {HidingColumns} from '../stories/HidingColumns';

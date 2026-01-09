@@ -167,7 +167,6 @@
     "@react-types/overlays": "^3.9.2",
     "@react-types/provider": "^3.8.13",
     "@react-types/shared": "^3.32.1",
-    "@react-types/table": "^3.13.4",
     "@react-types/textfield": "^3.12.6",
     "csstype": "^3.0.2",
     "react-aria": "^3.45.0",

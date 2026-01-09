@@ -10,10 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
+import {CellElement, CellRenderer} from './Cell';
 import {CollectionBuilderContext} from './useTableState';
+import {LinkDOMProps} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
 import React, {JSX, ReactElement} from 'react';
-import {RowProps} from '@react-types/table';
+
+export type RowElement<T> = ReactElement<RowProps<T>>;
+export interface RowProps<T> extends LinkDOMProps {
+  /**
+   * A list of child item objects used when dynamically rendering row children. Requires the feature flag to be
+   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   * @private
+   */
+  UNSTABLE_childItems?: Iterable<T>,
+  // TODO: update when async loading is supported for expandable rows
+  // /** Whether this row has children, even if not loaded yet. */
+  // hasChildItems?: boolean,
+  /** Rendered contents of the row or row child items. */
+  children: CellElement | CellElement[] | CellRenderer,
+  /** A string representation of the row's contents, used for features like typeahead. */
+  textValue?: string // ???
+}
 
 function Row<T>(props: RowProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

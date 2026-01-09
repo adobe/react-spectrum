@@ -15,8 +15,7 @@ import {getChildNodes, getLastItem} from '@react-stately/collections';
 import {GridNode} from '@react-stately/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
-import {TableCollection} from '@react-types/table';
-import {TableColumnLayout} from '@react-stately/table';
+import {ITableCollection as TableCollection, TableColumnLayout} from '@react-stately/table';
 
 export interface TableLayoutProps extends ListLayoutOptions {
   columnWidths?: Map<Key, number>
