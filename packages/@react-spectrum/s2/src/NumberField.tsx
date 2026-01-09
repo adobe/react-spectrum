@@ -32,7 +32,7 @@ import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
-import {TextFieldRef} from '@react-types/textfield';
+import {TextFieldRef} from './TextField';
 import {useButton, useFocusRing, useHover} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

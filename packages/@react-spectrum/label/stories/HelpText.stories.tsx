@@ -13,8 +13,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Meta, StoryObj} from '@storybook/react';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useState} from 'react';
-import {SpectrumTextFieldProps} from '@react-types/textfield';
-import {TextField} from '@react-spectrum/textfield';
+import {SpectrumTextFieldProps, TextField} from '@react-spectrum/textfield';
 
 const argTypes = {
   label: {

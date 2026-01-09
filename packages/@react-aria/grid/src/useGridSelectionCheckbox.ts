@@ -1,4 +1,4 @@
-import {AriaCheckboxProps} from '@react-types/checkbox';
+import {AriaCheckboxProps} from '@react-aria/checkbox';
 import {IGridCollection as GridCollection, GridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

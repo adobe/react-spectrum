@@ -160,6 +160,7 @@
     "@react-aria/live-announcer": "^3.4.4",
     "@react-aria/overlays": "^3.31.0",
     "@react-aria/utils": "^3.32.0",
+    "@react-spectrum/textfield": "^3.14.3",
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/grid": "^3.11.7",
     "@react-stately/layout": "^4.5.2",

@@ -17,7 +17,7 @@ import {chain} from '@react-aria/utils';
 import {Custom454Calendar} from '../../../@internationalized/date/tests/customCalendarImpl';
 import {DateRange} from '@react-types/datepicker';
 import {DateRangePicker} from '../';
-import {DateValue} from '@react-types/calendar';
+import {DateValue} from '@react-stately/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';

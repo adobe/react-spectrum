@@ -13,8 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {JSX} from 'react';
-import {SliderProps, SliderThumbProps} from '@react-types/slider';
-import {SliderState, useSliderState} from '@react-stately/slider';
+import {SliderProps, SliderState, SliderThumbProps, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';

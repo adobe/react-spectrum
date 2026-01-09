@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {AriaNumberFieldProps, useNumberField} from '@react-aria/numberfield';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';

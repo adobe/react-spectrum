@@ -65,7 +65,7 @@ import {Placement} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {TextFieldRef} from '@react-types/textfield';
+import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

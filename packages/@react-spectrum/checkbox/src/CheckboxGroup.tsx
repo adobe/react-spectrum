@@ -17,7 +17,7 @@ import {DOMRef, Orientation, SpectrumHelpTextProps, SpectrumLabelableProps, Styl
 import {Field} from '@react-spectrum/label';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {ReactElement} from 'react';
-import {SpectrumCheckboxProps} from '@react-types/checkbox';
+import {SpectrumCheckboxProps} from './Checkbox';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useCheckboxGroupState} from '@react-stately/checkbox';
 import {useFormProps} from '@react-spectrum/form';

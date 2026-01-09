@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {AriaLabelingProps, DOMAttributes, DOMProps, GroupDOMAttributes, TextInputDOMEvents, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {

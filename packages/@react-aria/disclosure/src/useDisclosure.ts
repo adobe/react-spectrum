@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {DisclosureState} from '@react-stately/disclosure';
 import {flushSync} from 'react-dom';
 import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';

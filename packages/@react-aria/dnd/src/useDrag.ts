@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {DragEndEvent, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, PressEvent, RefObject} from '@react-types/shared';
 import {DragEvent, HTMLAttributes, version as ReactVersion, useEffect, useRef, useState} from 'react';
 import * as DragManager from './DragManager';

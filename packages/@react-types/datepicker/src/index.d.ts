@@ -26,8 +26,8 @@ import {
   ValueBase
 } from '@react-types/shared';
 import {CalendarDate, CalendarDateTime, CalendarIdentifier, Calendar as ICalendar, Time, ZonedDateTime} from '@internationalized/date';
-import {OverlayTriggerProps} from '@react-types/overlays';
-import {PageBehavior} from '@react-types/calendar';
+import {OverlayTriggerProps} from '@react-stately/overlays';
+import {PageBehavior} from '@react-stately/calendar';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 type MappedDateValue<T> =

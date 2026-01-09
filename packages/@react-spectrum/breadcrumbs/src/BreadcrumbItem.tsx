@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
+import {BreadcrumbItemProps, useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, JSX, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
-import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 

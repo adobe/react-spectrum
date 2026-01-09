@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {AriaMenuOptions} from './useMenu';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, useId} from '@react-aria/utils';

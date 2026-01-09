@@ -11,7 +11,7 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';

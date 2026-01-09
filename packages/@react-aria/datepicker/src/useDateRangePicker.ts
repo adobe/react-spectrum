@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-aria/button';
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-aria/dialog';
 import {createFocusManager} from '@react-aria/focus';
-import {DateRange, RangeCalendarProps} from '@react-types/calendar';
+import {DateRange, RangeCalendarProps} from '@react-stately/calendar';
 import {DateRangePickerState} from '@react-stately/datepicker';
 import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';

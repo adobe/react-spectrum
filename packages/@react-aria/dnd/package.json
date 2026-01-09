@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@internationalized/string": "^3.2.7",
+    "@react-aria/button": "^3.14.3",
     "@react-aria/i18n": "^3.12.14",
     "@react-aria/interactions": "^3.26.0",
     "@react-aria/live-announcer": "^3.4.4",
