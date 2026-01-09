@@ -16,8 +16,7 @@ import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MenuTriggerState} from '@react-stately/menu';
-import {MenuTriggerType} from '@react-types/menu';
+import {MenuTriggerState, MenuTriggerType} from '@react-stately/menu';
 import {PressProps, useLongPress} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useOverlayTrigger} from '@react-aria/overlays';

@@ -10,17 +10,43 @@
  * governing permissions and limitations under the License.
  */
 
+import {Alignment, DOMRef} from '@react-types/shared';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
+import {MenuTriggerProps, useMenuTriggerState} from '@react-stately/menu';
 import {Placement} from '@react-aria/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useInteractOutside} from '@react-aria/interactions';
-import React, {forwardRef, Fragment, useRef} from 'react';
-import {SpectrumMenuTriggerProps} from '@react-types/menu';
+import React, {forwardRef, Fragment, ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
-import {useMenuTriggerState} from '@react-stately/menu';
+
+export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /**
+   * The contents of the MenuTrigger - a trigger and a Menu.
+   */
+  children: ReactElement[],
+  /**
+   * Alignment of the menu relative to the trigger.
+   * @default 'start'
+   */
+  align?: Alignment,
+  /**
+   * Where the Menu opens relative to its trigger.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  /**
+   * Whether the Menu closes when a selection is made.
+   * @default true
+   */
+  closeOnSelect?: boolean
+}
 
 /**
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
