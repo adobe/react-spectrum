@@ -12,7 +12,6 @@ export default Layout;
 
 import docs from 'docs:@react-aria/color';
 import statelyDocs from 'docs:@react-stately/color';
-import typesDocs from 'docs:@react-types/color';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/color/package.json';
 import Anatomy from './ColorSliderAnatomy.svg';
@@ -87,7 +86,7 @@ label, or override this with a more specific label, a `label`, `aria-label` or `
 This example shows how to build a horizontal color slider. It also includes a label which can be clicked to focus the thumb.
 Styling for the track background and positioning of the thumb are provided by `useColorSlider` in the returned `style` prop for each element.
 
-If no `label` prop is given, it uses the <TypeLink links={typesDocs.links} type={typesDocs.exports.Color} /> object to
+If no `label` prop is given, it uses the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Color} /> object to
 get a localized string for the channel name using the `getChannelName` method. In addition, an `<output>` element is used
 to display the current channel value as text. This is formatted using the Color object's `formatChannelValue` method, which
 formats the value according to the channel type and locale settings.
