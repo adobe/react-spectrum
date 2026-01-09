@@ -10,43 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, InputDOMProps, StyleProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {AriaSwitchProps} from '@react-aria/switch';
 
-interface SwitchBase extends InputBase, FocusableProps {
-  /**
-   * The content to render as the Switch's label.
-   */
-  children?: ReactNode,
-  /**
-   * Whether the Switch should be selected (uncontrolled).
-   */
-  defaultSelected?: boolean,
-  /**
-   * Whether the Switch should be selected (controlled).
-   */
-  isSelected?: boolean,
-  /**
-   * Handler that is called when the Switch's selection state changes.
-   */
-  onChange?: (isSelected: boolean) => void,
-  /**
-   * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
-   */
-  value?: string
-}
-export interface SwitchProps extends SwitchBase {}
-export interface AriaSwitchBase extends SwitchBase, FocusableDOMProps, InputDOMProps, AriaLabelingProps {
-  /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
-   */
-  'aria-controls'?: string
-}
-export interface AriaSwitchProps extends SwitchProps, AriaSwitchBase {}
+export {SwitchProps, AriaSwitchProps} from '@react-aria/switch';
+export {SpectrumSwitchProps} from '@react-spectrum/switch';
 
-export interface SpectrumSwitchProps extends AriaSwitchProps, StyleProps {
-  /**
-   * This prop sets the emphasized style which provides visual prominence.
-   */
-  isEmphasized?: boolean
-}
+// Backward compatibility.
+export type AriaSwitchBase = AriaSwitchProps;

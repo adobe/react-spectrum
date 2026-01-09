@@ -29,7 +29,6 @@
     "@react-aria/toggle": "^3.12.3",
     "@react-stately/toggle": "^3.9.3",
     "@react-types/shared": "^3.32.1",
-    "@react-types/switch": "^3.5.15",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
