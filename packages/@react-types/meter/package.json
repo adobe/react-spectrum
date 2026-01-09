@@ -9,7 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/progress": "^3.5.16"
+    "@react-aria/meter": "^3.4.28",
+    "@react-spectrum/meter": "^3.5.15"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"

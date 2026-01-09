@@ -11,9 +11,8 @@
  */
 
 import {Meta, StoryObj} from '@storybook/react';
-import {ProgressBar} from '../';
+import {ProgressBar, SpectrumProgressBarProps} from '../';
 import React, {CSSProperties} from 'react';
-import {SpectrumProgressBarProps} from '@react-types/progress';
 
 const meta: Meta<SpectrumProgressBarProps> = {
   title: 'ProgressBar',
