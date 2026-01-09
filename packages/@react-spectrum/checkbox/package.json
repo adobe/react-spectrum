@@ -48,7 +48,6 @@
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/checkbox": "^3.7.3",
     "@react-stately/toggle": "^3.9.3",
-    "@react-types/checkbox": "^3.10.2",
     "@react-types/shared": "^3.32.1",
     "@spectrum-icons/ui": "^3.6.21",
     "@swc/helpers": "^0.5.0",

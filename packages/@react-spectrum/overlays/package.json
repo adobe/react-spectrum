@@ -45,7 +45,6 @@
     "@react-aria/utils": "^3.32.0",
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/overlays": "^3.6.21",
-    "@react-types/overlays": "^3.9.2",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0",
     "react-transition-group": "^4.4.5"
