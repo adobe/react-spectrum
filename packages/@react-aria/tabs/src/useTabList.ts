@@ -10,15 +10,27 @@
 * governing permissions and limitations under the License.
 */
 
-import {AriaTabListProps} from '@react-types/tabs';
-import {DOMAttributes, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Orientation, RefObject} from '@react-types/shared';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
-import {TabListState} from '@react-stately/tabs';
+import {TabListProps, TabListState} from '@react-stately/tabs';
 import {tabsIds} from './utils';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
 import {useLocale} from '@react-aria/i18n';
 import {useMemo} from 'react';
 import {useSelectableCollection} from '@react-aria/selection';
+
+export interface AriaTabListProps<T> extends TabListProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether tabs are activated automatically on focus or manually.
+   * @default 'automatic'
+   */
+  keyboardActivation?: 'automatic' | 'manual',
+  /**
+   * The orientation of the tabs.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation
+}
 
 export interface AriaTabListOptions<T> extends Omit<AriaTabListProps<T>, 'children'> {}
 
