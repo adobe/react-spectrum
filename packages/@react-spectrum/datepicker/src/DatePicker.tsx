@@ -23,8 +23,8 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusableRef, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
-// @ts-ignore
 import {Input} from './Input';
+// @ts-ignore
 import intlMessages from '../intl/*.json'; // HACK: must be included BEFORE inputgroup
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';

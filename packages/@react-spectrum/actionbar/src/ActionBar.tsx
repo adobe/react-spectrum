@@ -15,13 +15,13 @@ import {ActionGroup} from '@react-spectrum/actiongroup';
 import {announce} from '@react-aria/live-announcer';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
-import {DOMProps, DOMRef, ItemElement, ItemRenderer, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, ItemElement, ItemRenderer, Key, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, Ref, useEffect, useRef, useState} from 'react';
+import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
 import {useKeyboard} from '@react-aria/interactions';

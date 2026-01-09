@@ -15,8 +15,8 @@ import {AriaMenuProps, useMenu} from '@react-aria/menu';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
-// @ts-ignore
 import {FocusScope} from '@react-aria/focus';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';

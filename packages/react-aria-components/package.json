@@ -51,6 +51,7 @@
     "@react-aria/live-announcer": "^3.4.4",
     "@react-aria/overlays": "^3.31.0",
     "@react-aria/ssr": "^3.9.10",
+    "@react-aria/table": "^3.17.9",
     "@react-aria/textfield": "^3.18.3",
     "@react-aria/toolbar": "3.0.0-beta.22",
     "@react-aria/utils": "^3.32.0",

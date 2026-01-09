@@ -1,9 +1,9 @@
-import {AriaSliderProps, useSliderState} from '@react-stately/slider';
+import {AriaSliderProps, useSlider, useSliderThumb} from '@react-aria/slider';
 import {FocusRing} from '@react-aria/focus';
 import React, {JSX} from 'react';
 import styles from './story-slider.css';
 import {useNumberFormatter} from '@react-aria/i18n';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
