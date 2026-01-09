@@ -21,7 +21,7 @@ import {useCollection} from '@react-stately/collections';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
-  children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
+  children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>,
   /**
@@ -59,7 +59,9 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends TableProps<T>, MultipleSelectionStateProps, Sortable {
+export interface TableStateProps<T> extends Omit<TableProps<T>, 'children'>, MultipleSelectionStateProps, Sortable {
+  /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
+  children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A pre-constructed collection to use instead of building one from items and children. */
   collection?: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
