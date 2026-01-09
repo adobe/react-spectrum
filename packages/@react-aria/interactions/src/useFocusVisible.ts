@@ -39,7 +39,7 @@ export interface FocusVisibleResult {
 
 let currentModality: null | Modality = null;
 let currentPointerType: PointerType = 'keyboard';
-let changeHandlers = new Set<Handler>();
+export const changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
   focus: () => void
 }
