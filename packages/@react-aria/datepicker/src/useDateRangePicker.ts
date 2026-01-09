@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
-import {AriaDialogProps} from '@react-types/dialog';
+import {AriaDialogProps} from '@react-aria/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRange, RangeCalendarProps} from '@react-types/calendar';
 import {DateRangePickerState} from '@react-stately/datepicker';

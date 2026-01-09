@@ -163,7 +163,6 @@
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/layout": "^4.5.2",
     "@react-stately/utils": "^3.11.0",
-    "@react-types/dialog": "^3.5.22",
     "@react-types/grid": "^3.3.6",
     "@react-types/overlays": "^3.9.2",
     "@react-types/provider": "^3.8.13",

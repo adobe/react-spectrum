@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaDialogProps, useDialog} from '@react-aria/dialog';
 import {
   classNames,
   SlotProvider,
@@ -22,16 +23,25 @@ import {
 } from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {Grid} from '@react-spectrum/layout';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useMemo, useRef} from 'react';
-import {SpectrumDialogProps} from '@react-types/dialog';
+import React, {ReactNode, useContext, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {useDialog} from '@react-aria/dialog';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+
+export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
+  /** The contents of the Dialog. */
+  children: ReactNode,
+  /** The size of the Dialog. Only applies to "modal" type Dialogs. */
+  size?: 'S' | 'M' | 'L',
+  /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
+  isDismissable?: boolean,
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss?: () => void
+}
 
 let sizeMap = {
   S: 'small',
