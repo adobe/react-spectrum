@@ -11,22 +11,31 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {AriaNumberFieldProps, useNumberField} from '@react-aria/numberfield';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, RefObject} from '@react-types/shared';
+import {FocusableRef, InputDOMProps, RefObject, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import React, {HTMLAttributes, InputHTMLAttributes, Ref, useRef} from 'react';
-import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useNumberField} from '@react-aria/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {
+  /** Whether the numberfield should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /**
+   * Whether to hide the increment and decrement buttons.
+   * @default false
+   */
+  hideStepper?: boolean
+}
 
 /**
  * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.

@@ -29,7 +29,7 @@
     "@internationalized/number": "^3.6.5",
     "@react-stately/form": "^3.2.2",
     "@react-stately/utils": "^3.11.0",
-    "@react-types/numberfield": "^3.8.16",
+    "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
