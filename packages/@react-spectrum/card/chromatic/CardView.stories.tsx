@@ -11,7 +11,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout, SpectrumCardViewProps} from '..';
+import {Card, CardView, GalleryLayout, GridLayout, SpectrumCardViewProps, WaterfallLayout} from '..';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';

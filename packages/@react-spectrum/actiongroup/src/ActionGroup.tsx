@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {AriaActionGroupProps, useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 import {AriaLabelingProps, DOMProps, DOMRef, Key, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
@@ -35,7 +36,6 @@ import React, {forwardRef, ReactElement, ReactNode, useCallback, useMemo, useRef
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {AriaActionGroupProps, useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, StyleProps {

@@ -29,7 +29,7 @@ import {
   StaticCards,
   StaticCardViewStory
 } from './GridCardView.stories';
-import {CardView, WaterfallLayout, SpectrumCardViewProps} from '../';
+import {CardView, SpectrumCardViewProps, WaterfallLayout} from '../';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
