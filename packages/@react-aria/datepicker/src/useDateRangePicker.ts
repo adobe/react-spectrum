@@ -28,7 +28,7 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo, useRef} from 'react';
 
-export interface AriaDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T>, AriaLabelingProps, InputDOMProps, DOMProps {}
+export interface AriaDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T>, AriaLabelingProps, Omit<InputDOMProps, 'name'>, DOMProps {}
 
 export interface DateRangePickerAria extends ValidationResult {
   /** Props for the date range picker's visible label element, if any. */
