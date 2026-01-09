@@ -15,7 +15,7 @@ import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '
 import {DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject, StyleProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
-import {Item, Picker} from '@react-spectrum/picker';
+import {Item, Picker, SpectrumPickerProps} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import React, {
   CSSProperties,
@@ -28,7 +28,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';

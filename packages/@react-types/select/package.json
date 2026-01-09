@@ -9,7 +9,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.32.1"
+    "@react-aria/select": "^3.17.1",
+    "@react-spectrum/picker": "^3.16.5",
+    "@react-stately/select": "^3.9.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"

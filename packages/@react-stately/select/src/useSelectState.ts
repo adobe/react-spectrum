@@ -10,13 +10,48 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, FocusStrategy, Key, Node, Selection} from '@react-types/shared';
+import {CollectionBase, CollectionStateBase, FocusableProps, FocusStrategy, HelpTextProps, InputBase, Key, LabelableProps, Node, Selection, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {ListState, useListState} from '@react-stately/list';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
-import {SelectionMode, SelectProps, ValueType} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
+
+export type SelectionMode = 'single' | 'multiple';
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
+export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
+
+export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>, ChangeValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
+  /**
+   * Whether single or multiple selection is enabled.
+   * @default 'single'
+   */
+  selectionMode?: M,
+  /**
+   * The currently selected key in the collection (controlled).
+   * @deprecated
+   */
+  selectedKey?: Key | null,
+  /**
+   * The initial selected key in the collection (uncontrolled).
+   * @deprecated
+   */
+  defaultSelectedKey?: Key,
+  /**
+   * Handler that is called when the selection changes.
+   * @deprecated
+   */
+  onSelectionChange?: (key: Key | null) => void,
+  /** Sets the open state of the menu. */
+  isOpen?: boolean,
+  /** Sets the default open state of the menu. */
+  defaultOpen?: boolean,
+  /** Method that is called when the open state of the menu changes. */
+  onOpenChange?: (isOpen: boolean) => void,
+  /** Whether the select should be allowed to be open when the collection is empty. */
+  allowsEmptyCollection?: boolean
+}
 
 export interface SelectStateOptions<T, M extends SelectionMode = 'single'> extends Omit<SelectProps<T, M>, 'children'>, CollectionStateBase<T> {}
 

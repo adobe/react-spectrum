@@ -13,8 +13,7 @@
 import {FocusableElement, Key, RefObject} from '@react-types/shared';
 import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
-import {SelectionMode} from '@react-types/select';
-import {SelectState} from '@react-stately/select';
+import {SelectionMode, SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
 import {useFormValidation} from '@react-aria/form';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';

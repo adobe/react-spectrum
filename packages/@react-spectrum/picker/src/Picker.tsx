@@ -11,6 +11,8 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
+import {Alignment, AsyncLoadable, DimensionValue, DOMRef, DOMRefValue, FocusableRefValue, LabelPosition, SingleSelection, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
+import {AriaSelectProps, HiddenSelect, useSelect} from '@react-aria/select';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
   classNames,
@@ -21,10 +23,8 @@ import {
   useSlotProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {HiddenSelect, useSelect} from '@react-aria/select';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
@@ -33,13 +33,35 @@ import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useRef, useState} from 'react';
-import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
+
+export interface SpectrumPickerProps<T> extends Omit<AriaSelectProps<T>, 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | 'allowsEmptyCollection'>, Omit<SingleSelection, 'disallowEmptySelection'>, AsyncLoadable, SpectrumLabelableProps, StyleProps  {
+  /** Whether the textfield should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /** Alignment of the menu relative to the input target.
+   * @default 'start'
+   */
+  align?: Alignment,
+  /**
+   * Direction the menu will render relative to the Picker.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top',
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  menuWidth?: DimensionValue,
+  /** Whether the element should receive focus on render. */
+  autoFocus?: boolean
+}
 
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
