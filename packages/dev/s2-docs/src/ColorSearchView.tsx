@@ -4,7 +4,7 @@ import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {Content, Heading, IllustratedMessage, pressScale, Skeleton, Text} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {GridLayout, ListBox, ListBoxItem, Size, Virtualizer} from 'react-aria-components';
+import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
@@ -123,6 +123,28 @@ const swatchStyle = style({
   borderColor: 'gray-1000/15',
   borderStyle: 'solid',
   flexShrink: 0
+});
+
+const listBoxStyle = style({
+  width: 'full',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 24
+});
+
+const sectionStyle = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+  gap: 32,
+  padding: 16,
+  marginBottom: 16
+});
+
+const headerStyle = style({
+  font: 'heading-sm',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
+  marginBottom: 4
 });
 
 const backgroundSwatches = {
@@ -309,32 +331,34 @@ export function ColorSearchView({filteredItems}: ColorSearchViewProps) {
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
       <CopyInfoMessage />
-      {sections.map(section => (
-        <div key={section.id} className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-          <Heading styles={style({font: 'heading-sm', marginBottom: 0})}>{section.name}</Heading>
-          <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(100, 100), maxItemSize: new Size(100, 100), minSpace: new Size(12, 24), preserveAspectRatio: true}}>
-            <ListBox
-              onAction={(key) => {
-                const item = section.items.find(item => item.id === key.toString());
-                if (item) {
-                  handleCopyColor(item.name, item.id);
-                }
-              }}
-              items={section.items}
-              layout="grid"
-              className={style({width: 'full'})}
-              dependencies={[copiedId]}>
-              {item => (
-                <ColorItem 
-                  key={item.id}
-                  item={item} 
-                  sectionId={section.id}
-                  isCopied={copiedId === item.id} />
-              )}
-            </ListBox>
-          </Virtualizer>
-        </div>
-      ))}
+      <ListBox
+        aria-label="Colors"
+        onAction={(key) => {
+          for (const section of sections) {
+            const item = section.items.find(item => item.id === key.toString());
+            if (item) {
+              handleCopyColor(item.name, item.id);
+              break;
+            }
+          }
+        }}
+        layout="grid"
+        className={listBoxStyle}
+        dependencies={[copiedId]}
+        items={sections}>
+        {section => (
+          <ListBoxSection id={section.id} className={sectionStyle}>
+            <Header className={headerStyle}>{section.name}</Header>
+            {section.items.map(item => (
+              <ColorItem 
+                key={item.id}
+                item={item} 
+                sectionId={section.id}
+                isCopied={copiedId === item.id} />
+            ))}
+          </ListBoxSection>
+        )}
+      </ListBox>
     </div>
   );
 }
@@ -447,19 +471,20 @@ export function ColorSearchSkeleton() {
   return (
     <Skeleton isLoading>
       <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        {mockSections.map(section => (
-          <div key={section.id} className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-            <Heading styles={style({font: 'heading-sm'})}>{section.name}</Heading>
-            <Virtualizer layout={GridLayout} layoutOptions={{minItemSize: new Size(100, 100), maxItemSize: new Size(100, 100), minSpace: new Size(12, 24), preserveAspectRatio: true}}>
-              <ListBox
-                items={section.items}
-                layout="grid"
-                className={style({width: 'full'})}>
-                {(item) => <SkeletonColorItem item={item} />}
-              </ListBox>
-            </Virtualizer>
-          </div>
-        ))}
+        <ListBox
+          aria-label="Colors loading"
+          layout="grid"
+          className={listBoxStyle}
+          items={mockSections}>
+          {section => (
+            <ListBoxSection id={section.id} className={sectionStyle}>
+              <Header className={headerStyle}>{section.name}</Header>
+              {section.items.map(item => (
+                <SkeletonColorItem key={item.id} item={item} />
+              ))}
+            </ListBoxSection>
+          )}
+        </ListBox>
       </div>
     </Skeleton>
   );
