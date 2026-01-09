@@ -1321,7 +1321,11 @@ export interface CellRenderProps {
   /**
    * The unique id of the cell.
    **/
-  id?: Key
+  id?: Key,
+  /**
+   * The index of the cell within its row.
+   */
+  cellIndex: number
 }
 
 export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttributes<HTMLTableCellElement> {
