@@ -196,7 +196,7 @@ export function SearchMenu(props: SearchMenuProps) {
                   {selectedTagId === 'colors' && (
                     <div className={style({flexGrow: 1, overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
                       <Suspense fallback={<ColorSearchSkeleton />}>
-                        <ColorSearchView filteredItems={filteredColors} />
+                        <ColorSearchView filteredItems={filteredColors.sections} exactMatches={filteredColors.exactMatches} closestMatches={filteredColors.closestMatches} />
                       </Suspense>
                     </div>
                   )}
