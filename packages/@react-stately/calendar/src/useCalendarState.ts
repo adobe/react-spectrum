@@ -206,7 +206,6 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     isValueInvalid,
     setFocusedDate(date) {
       focusCell(date);
-      setFocused(true);
     },
     focusNextDay() {
       focusCell(focusedDate.add({days: 1}));
