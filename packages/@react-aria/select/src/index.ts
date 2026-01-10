@@ -12,5 +12,5 @@
 export {useSelect} from './useSelect';
 export {useHiddenSelect, HiddenSelect} from './HiddenSelect';
 export type {AriaSelectOptions, SelectAria} from './useSelect';
-export type {AriaHiddenSelectProps, HiddenSelectProps} from './HiddenSelect';
+export type {AriaHiddenSelectProps, AriaHiddenSelectOptions, HiddenSelectProps, HiddenSelectAria} from './HiddenSelect';
 export type {AriaSelectProps} from '@react-types/select';
