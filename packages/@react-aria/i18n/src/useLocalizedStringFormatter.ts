@@ -11,7 +11,7 @@
  */
 
 import {LocalizedString, LocalizedStringDictionary, LocalizedStringFormatter, LocalizedStrings} from '@internationalized/string';
-import {useLocale} from './context';
+import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 const cache = new WeakMap();

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export {I18nProvider, useLocale} from './context';
+export {I18nProvider, useLocale} from './I18nProvider';
 export {useMessageFormatter} from './useMessageFormatter';
 export {useLocalizedStringFormatter, useLocalizedStringDictionary} from './useLocalizedStringFormatter';
 export {useListFormatter} from './useListFormatter';
@@ -22,8 +22,7 @@ export {isRTL} from './utils';
 
 export type {FormatMessage} from './useMessageFormatter';
 export type {LocalizedStringFormatter} from '@internationalized/string';
-export type {I18nProviderProps} from './context';
-export type {Locale} from './useDefaultLocale';
+export type {I18nProviderProps, Locale} from './I18nProvider';
 export type {LocalizedStrings} from '@internationalized/message';
 export type {DateFormatterOptions} from './useDateFormatter';
 export type {DateFormatter} from '@internationalized/date';

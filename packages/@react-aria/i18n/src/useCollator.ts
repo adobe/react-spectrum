@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useLocale} from './context';
+import {useLocale} from './I18nProvider';
 
 let cache = new Map<string, Intl.Collator>();
 

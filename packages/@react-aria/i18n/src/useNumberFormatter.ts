@@ -11,7 +11,7 @@
  */
 
 import {NumberFormatOptions, NumberFormatter} from '@internationalized/number';
-import {useLocale} from './context';
+import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 /**

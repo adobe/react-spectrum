@@ -10,9 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {Direction} from '@react-types/shared';
 import {isRTL} from './utils';
-import {Locale, useDefaultLocale} from './useDefaultLocale';
 import React, {JSX, ReactNode, useContext} from 'react';
+import {useDefaultLocale} from './useDefaultLocale';
+
+export interface Locale {
+  /** The [BCP47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code for the locale. */
+  locale: string,
+  /** The writing direction for the locale. */
+  direction: Direction
+}
 
 export interface I18nProviderProps {
   /** Contents that should have the locale applied. */

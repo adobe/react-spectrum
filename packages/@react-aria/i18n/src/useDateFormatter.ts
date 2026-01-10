@@ -12,7 +12,7 @@
 
 import {DateFormatter} from '@internationalized/date';
 import {useDeepMemo} from '@react-aria/utils';
-import {useLocale} from './context';
+import {useLocale} from './I18nProvider';
 import {useMemo} from 'react';
 
 export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
