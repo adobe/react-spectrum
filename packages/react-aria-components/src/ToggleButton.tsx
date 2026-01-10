@@ -71,7 +71,7 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     : useToggleButton({...props, id: props.id != null ? String(props.id) : undefined}, state, ref);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({...props, isDisabled});
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
