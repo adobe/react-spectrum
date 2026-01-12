@@ -836,6 +836,9 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
   // Helper to get placeholder text based on selected resource tag
   const getPlaceholderText = useCallback((libraryLabel: string) => {
     const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
+    if (selectedTagId === 'colors') {
+      return 'Search color names or hex values';
+    }
     return selectedResourceTag
       ? `Search ${selectedResourceTag.name}`
       : `Search ${libraryLabel}`;
