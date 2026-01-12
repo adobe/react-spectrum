@@ -1,5 +1,6 @@
 'use client';
 
+import {CopyInfoMessage} from './ColorSearchView';
 import {getColorHexMap} from './color.macro' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import React, {useMemo, useRef} from 'react';
@@ -136,7 +137,7 @@ const sectionStyle = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
   gap: 32,
-  padding: 16,
+  padding: 8,
   marginBottom: 16
 });
 
@@ -182,31 +183,29 @@ export function ColorSearchSkeleton() {
     {
       id: 'background',
       name: 'Background colors',
-      items: Array.from({length: 20}, (_, i) => ({id: `skeleton-background-${i}`}))
+      items: Array.from({length: 59}, (_, i) => ({id: `skeleton-background-${i}`}))
     },
     {
       id: 'text',
       name: 'Text colors',
-      items: Array.from({length: 10}, (_, i) => ({id: `skeleton-text-${i}`}))
+      items: Array.from({length: 12}, (_, i) => ({id: `skeleton-text-${i}`}))
     },
     {
       id: 'semantic',
       name: 'Semantic colors',
-      items: Array.from({length: 30}, (_, i) => ({id: `skeleton-semantic-${i}`}))
+      items: Array.from({length: 80}, (_, i) => ({id: `skeleton-semantic-${i}`}))
     },
     {
       id: 'global',
       name: 'Global colors',
-      items: Array.from({length: 40}, (_, i) => ({id: `skeleton-global-${i}`}))
+      items: Array.from({length: 301}, (_, i) => ({id: `skeleton-global-${i}`}))
     }
   ], []);
 
   return (
-    <Skeleton isLoading>
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-        <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
-          <Text styles={style({font: 'ui'})}>Press a color to copy its name</Text>
-        </div>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+      <CopyInfoMessage />
+      <Skeleton isLoading>
         <ListBox
           aria-label="Colors loading"
           layout="grid"
@@ -221,7 +220,7 @@ export function ColorSearchSkeleton() {
             </ListBoxSection>
           )}
         </ListBox>
-      </div>
-    </Skeleton>
+      </Skeleton>
+    </div>
   );
 }

@@ -199,7 +199,7 @@ const scaleSwatches: Record<string, string> = {
 };
 
 
-function CopyInfoMessage() {
+export function CopyInfoMessage() {
   return (
     <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 8})}>
       <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
