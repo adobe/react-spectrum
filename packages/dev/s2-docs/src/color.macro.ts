@@ -10,7 +10,7 @@ export function getColorScale(this: MacroContext | void, name: string, size: any
 
 export function colorSwatch(this: MacroContext | void, color: string, type = 'backgroundColor', size: any = 20): string {
   // @ts-ignore
-  return style.call(this, {'--v': {type, value: color}, backgroundColor: '--v', width: size, aspectRatio: 'square', borderRadius: 'sm', borderWidth: 1, borderColor: 'gray-1000/15', borderStyle: 'solid'});
+  return style.call(this, {'--v': {type, value: color}, backgroundColor: '--v', width: size, aspectRatio: 'square', borderRadius: 'sm', borderWidth: 1, borderColor: 'gray-1000/15', borderStyle: 'solid', forcedColorAdjust: 'none'});
 }
 
 /**

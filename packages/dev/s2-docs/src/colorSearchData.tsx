@@ -121,7 +121,8 @@ const skeletonSwatchStyle = style({
   borderWidth: 1,
   borderColor: 'gray-1000/15',
   borderStyle: 'solid',
-  flexShrink: 0
+  flexShrink: 0,
+  forcedColorAdjust: 'none'
 });
 
 const listBoxStyle = style({
