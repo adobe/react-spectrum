@@ -13,8 +13,8 @@
 
 import {act, createShadowRoot, render} from '@react-spectrum/test-utils-internal';
 import {focusSafely} from '../';
+import {focusWithoutScrolling} from '@react-aria/utils';
 import React from 'react';
-import * as ReactAriaUtils from '@react-aria/utils';
 import ReactDOM from 'react-dom';
 import {setInteractionModality} from '@react-aria/interactions';
 
@@ -47,7 +47,7 @@ describe('focusSafely', () => {
       jest.runAllTimers();
     });
 
-    expect(ReactAriaUtils.focusWithoutScrolling).toBeCalledTimes(0);
+    expect(focusWithoutScrolling).toBeCalledTimes(0);
   });
 
   it("should focus on the element if it's connected", async function () {
@@ -65,12 +65,10 @@ describe('focusSafely', () => {
       jest.runAllTimers();
     });
 
-    expect(ReactAriaUtils.focusWithoutScrolling).toBeCalledTimes(1);
+    expect(focusWithoutScrolling).toBeCalledTimes(1);
   });
 
   describe('focusSafely with Shadow DOM', function () {
-    const focusWithoutScrollingSpy = jest.spyOn(ReactAriaUtils, 'focusWithoutScrolling').mockImplementation(() => {});
-
     it("should not focus on the element if it's no longer connected within shadow DOM", async function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       setInteractionModality('virtual');
@@ -92,7 +90,7 @@ describe('focusSafely', () => {
         jest.runAllTimers();
       });
 
-      expect(focusWithoutScrollingSpy).toBeCalledTimes(0);
+      expect(focusWithoutScrolling).toBeCalledTimes(0);
     });
 
     it("should focus on the element if it's connected within shadow DOM", async function () {
@@ -112,7 +110,7 @@ describe('focusSafely', () => {
         jest.runAllTimers();
       });
 
-      expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
+      expect(focusWithoutScrolling).toBeCalledTimes(1);
 
       unmount();
       shadowRoot.host.remove();
