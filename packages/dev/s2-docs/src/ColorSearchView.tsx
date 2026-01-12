@@ -69,6 +69,8 @@ const headerStyle = style({
 });
 
 const backgroundSwatches: Record<string, string> = {
+  'black': colorSwatch('black'),
+  'white': colorSwatch('white'),
   'base': colorSwatch('base'),
   'layer-1': colorSwatch('layer-1'),
   'layer-2': colorSwatch('layer-2'),
@@ -129,6 +131,8 @@ const backgroundSwatches: Record<string, string> = {
 };
 
 const textSwatches: Record<string, string> = {
+  'black': colorSwatch('black', 'color'),
+  'white': colorSwatch('white', 'color'),
   'accent': colorSwatch('accent', 'color'),
   'neutral': colorSwatch('neutral', 'color'),
   'neutral-subdued': colorSwatch('neutral-subdued', 'color'),

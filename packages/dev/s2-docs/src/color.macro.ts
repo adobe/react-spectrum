@@ -43,7 +43,7 @@ function getColorRgb(tokenName: string, mode: 'light' | 'dark' = 'light'): [numb
   return null;
 }
 
-// Background color token mappings
+// Background color token mappings (semantic and base layer colors)
 const backgroundColorTokens: Record<string, string> = {
   'base': 'background-base-color',
   'layer-1': 'background-layer-1-color',
@@ -51,7 +51,7 @@ const backgroundColorTokens: Record<string, string> = {
   'pasteboard': 'gray-100',
   'elevated': 'background-base-color',
   'accent': 'accent-background-color-default',
-  'accent-subtle': 'informative-background-color-default',
+  'accent-subtle': 'accent-subtle-background-color-default',
   'neutral': 'neutral-background-color-default',
   'neutral-subdued': 'neutral-subdued-background-color-default',
   'neutral-subtle': 'neutral-subtle-background-color-default',
@@ -63,9 +63,60 @@ const backgroundColorTokens: Record<string, string> = {
   'positive-subtle': 'positive-subtle-background-color-default',
   'notice': 'notice-background-color-default',
   'notice-subtle': 'notice-subtle-background-color-default',
-  'gray': 'gray-subtle-background-color-default',
+  'gray': 'gray-background-color-default',
   'gray-subtle': 'gray-subtle-background-color-default',
-  'disabled': 'disabled-background-color'
+  'disabled': 'disabled-background-color',
+  // Colored background colors use {color}-background-color-default tokens
+  'red': 'red-background-color-default',
+  'red-subtle': 'red-subtle-background-color-default',
+  'orange': 'orange-background-color-default',
+  'orange-subtle': 'orange-subtle-background-color-default',
+  'yellow': 'yellow-background-color-default',
+  'yellow-subtle': 'yellow-subtle-background-color-default',
+  'chartreuse': 'chartreuse-background-color-default',
+  'chartreuse-subtle': 'chartreuse-subtle-background-color-default',
+  'celery': 'celery-background-color-default',
+  'celery-subtle': 'celery-subtle-background-color-default',
+  'green': 'green-background-color-default',
+  'green-subtle': 'green-subtle-background-color-default',
+  'seafoam': 'seafoam-background-color-default',
+  'seafoam-subtle': 'seafoam-subtle-background-color-default',
+  'cyan': 'cyan-background-color-default',
+  'cyan-subtle': 'cyan-subtle-background-color-default',
+  'blue': 'blue-background-color-default',
+  'blue-subtle': 'blue-subtle-background-color-default',
+  'indigo': 'indigo-background-color-default',
+  'indigo-subtle': 'indigo-subtle-background-color-default',
+  'purple': 'purple-background-color-default',
+  'purple-subtle': 'purple-subtle-background-color-default',
+  'fuchsia': 'fuchsia-background-color-default',
+  'fuchsia-subtle': 'fuchsia-subtle-background-color-default',
+  'magenta': 'magenta-background-color-default',
+  'magenta-subtle': 'magenta-subtle-background-color-default',
+  'pink': 'pink-background-color-default',
+  'pink-subtle': 'pink-subtle-background-color-default',
+  'turquoise': 'turquoise-background-color-default',
+  'turquoise-subtle': 'turquoise-subtle-background-color-default',
+  'cinnamon': 'cinnamon-background-color-default',
+  'cinnamon-subtle': 'cinnamon-subtle-background-color-default',
+  'brown': 'brown-background-color-default',
+  'brown-subtle': 'brown-subtle-background-color-default',
+  'silver': 'silver-background-color-default',
+  'silver-subtle': 'silver-subtle-background-color-default'
+};
+
+// Text color token mappings
+const textColorTokens: Record<string, string> = {
+  'accent': 'accent-content-color-default',
+  'neutral': 'neutral-content-color-default',
+  'neutral-subdued': 'neutral-subdued-content-color-default',
+  'negative': 'negative-content-color-default',
+  'disabled': 'disabled-content-color',
+  'heading': 'heading-color',
+  'title': 'title-color',
+  'body': 'body-color',
+  'detail': 'detail-color',
+  'code': 'code-color'
 };
 
 // Semantic and global color scale definitions
@@ -74,7 +125,6 @@ const scaleValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 12
 const globalScales = ['gray', 'blue', 'red', 'orange', 'yellow', 'chartreuse', 'celery', 'green', 'seafoam', 'cyan', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink', 'turquoise', 'brown', 'silver', 'cinnamon'];
 const grayValues = [25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const standardValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600];
-const coloredBgScales = ['red', 'orange', 'yellow', 'chartreuse', 'celery', 'green', 'seafoam', 'cyan', 'blue', 'indigo', 'purple', 'fuchsia', 'magenta', 'pink', 'turquoise', 'cinnamon', 'brown', 'silver'];
 
 /**
  * Generates a color map for a specific mode (light or dark).
@@ -82,8 +132,20 @@ const coloredBgScales = ['red', 'orange', 'yellow', 'chartreuse', 'celery', 'gre
 function buildColorMapForMode(mode: 'light' | 'dark'): Record<string, [number, number, number]> {
   const colorMap: Record<string, [number, number, number]> = {};
   
+  // Add static colors
+  colorMap['black'] = [0, 0, 0];
+  colorMap['white'] = [255, 255, 255];
+  
   // Add background colors
   for (const [name, tokenName] of Object.entries(backgroundColorTokens)) {
+    const rgb = getColorRgb(tokenName, mode);
+    if (rgb) {
+      colorMap[name] = rgb;
+    }
+  }
+  
+  // Add text colors
+  for (const [name, tokenName] of Object.entries(textColorTokens)) {
     const rgb = getColorRgb(tokenName, mode);
     if (rgb) {
       colorMap[name] = rgb;
@@ -111,20 +173,6 @@ function buildColorMapForMode(mode: 'light' | 'dark'): Record<string, [number, n
       if (rgb) {
         colorMap[tokenName] = rgb;
       }
-    }
-  }
-  
-  // Add colored background colors (with -subtle variants)
-  for (const scale of coloredBgScales) {
-    // Main color - use a middle value from the scale
-    const mainRgb = getColorRgb(`${scale}-800`, mode);
-    if (mainRgb) {
-      colorMap[scale] = mainRgb;
-    }
-    // Subtle variant - use a lighter value
-    const subtleRgb = getColorRgb(`${scale}-200`, mode);
-    if (subtleRgb) {
-      colorMap[`${scale}-subtle`] = subtleRgb;
     }
   }
   

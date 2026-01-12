@@ -9,6 +9,7 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 export const colorHexMaps = getColorHexMap();
 
 const backgroundColors = [
+  'black', 'white',
   'base', 'layer-1', 'layer-2', 'pasteboard', 'elevated',
   'accent', 'accent-subtle', 'neutral', 'neutral-subdued', 'neutral-subtle',
   'negative', 'negative-subtle', 'informative', 'informative-subtle',
@@ -24,6 +25,7 @@ const backgroundColors = [
 ];
 
 const textColors = [
+  'black', 'white',
   'accent', 'neutral', 'neutral-subdued', 'negative', 'disabled',
   'heading', 'title', 'body', 'detail', 'code'
 ];
