@@ -889,6 +889,31 @@ describe('Table', () => {
     expect(cells[2]).toHaveTextContent('cell index: 3');
   });  
 
+  it('should support data-col-index attribute', () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Search results">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column isRowHeader>Type</Column>
+          <Column isRowHeader>Price</Column>
+          <Column isRowHeader>Total</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell colSpan={2}>Foo</Cell>
+            <Cell>Bar</Cell>
+            <Cell>Baz</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let cells = getAllByRole('rowheader');
+    expect(cells[0]).toHaveAttribute('data-col-index', '0');
+    expect(cells[1]).toHaveAttribute('data-col-index', '2');
+    expect(cells[2]).toHaveAttribute('data-col-index', '3');
+  });  
+
   it('should support columnHeader typeahead', async () => {
     let {getAllByRole} = render(
       <Table aria-label="Files">

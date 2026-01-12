@@ -1373,6 +1373,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
   let isSelected = cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
+  // colIndex is null, when there is so span, falling back to using the index
+  let colIndex = cell.colIndex || cell.index;
 
   let renderProps = useRenderProps({
     ...props,
@@ -1385,8 +1387,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       isHovered,
       isSelected,
       id: cell.key,
-      // colIndex is null, when there is so span, falling back to using the index
-      colIndex: cell.colIndex || cell.index 
+      colIndex
     }
   });
 
@@ -1400,7 +1401,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
-      data-selected={isSelected || undefined}>
+      data-selected={isSelected || undefined}
+      data-col-index={colIndex}>
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
         {renderProps.children}
       </CollectionRendererContext.Provider>
