@@ -858,20 +858,25 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
-  it('should support cell index in render props', () => {
+  it('should support column index in render props', () => {
     let {getAllByRole} = render(
       <Table aria-label="Search results">
         <TableHeader>
           <Column isRowHeader>Name</Column>
           <Column isRowHeader>Type</Column>
+          <Column isRowHeader>Price</Column>
+          <Column isRowHeader>Total</Column>
         </TableHeader>
         <TableBody>
           <Row>
             <Cell>
-              {({cellIndex}) => `cell index: ${cellIndex}`}
+              {({colIndex}) => `cell index: ${colIndex}`}
+            </Cell>
+            <Cell colSpan={2}>
+              {({colIndex}) => `cell index: ${colIndex}`}
             </Cell>
             <Cell>
-              {({cellIndex}) => `cell index: ${cellIndex}`}
+              {({colIndex}) => `cell index: ${colIndex}`}
             </Cell>
           </Row>
         </TableBody>
@@ -881,7 +886,8 @@ describe('Table', () => {
     let cells = getAllByRole('rowheader');
     expect(cells[0]).toHaveTextContent('cell index: 0');
     expect(cells[1]).toHaveTextContent('cell index: 1');
-  });
+    expect(cells[2]).toHaveTextContent('cell index: 3');
+  });  
 
   it('should support columnHeader typeahead', async () => {
     let {getAllByRole} = render(

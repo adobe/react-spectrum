@@ -1323,9 +1323,9 @@ export interface CellRenderProps {
    **/
   id?: Key,
   /**
-   * The index of the cell within its row.
+   * The index of the column that this cell belongs to. Respects col spanning.
    */
-  cellIndex: number
+  colIndex?: number | null
 }
 
 export interface CellProps extends RenderProps<CellRenderProps>, GlobalDOMAttributes<HTMLTableCellElement> {
@@ -1385,7 +1385,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       isHovered,
       isSelected,
       id: cell.key,
-      cellIndex: cell.index
+      // colIndex is null, when there is so span, falling back to using the index
+      colIndex: cell.colIndex || cell.index 
     }
   });
 
