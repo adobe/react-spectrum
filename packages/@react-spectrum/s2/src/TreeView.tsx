@@ -306,7 +306,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
           <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-              <div className={treeCheckbox({isDisabled: state.disabledKeys.has(id)})}>
+              <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
                 <Checkbox slot="selection" />
               </div>
             )}
