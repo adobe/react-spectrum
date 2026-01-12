@@ -11,7 +11,8 @@
  */
 
 import type {AriaLabelingProps, DisabledBehavior, DOMProps, DOMRef, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
-import type {ColumnSize, TableProps} from '@react-types/table';
+import {Column} from '@react-stately/table';
+import type {ColumnSize, SpectrumColumnProps, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import React, {JSX, ReactElement} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
@@ -101,3 +102,7 @@ const TableViewWrapper = React.forwardRef(function TableViewWrapper<T extends ob
   }
 }) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {TableViewWrapper as TableView};
+
+// Override TS for Column to support spectrum specific props.
+const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
+export {SpectrumColumn as Column};
