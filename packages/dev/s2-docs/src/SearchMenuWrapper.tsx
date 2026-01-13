@@ -23,7 +23,7 @@ export default function SearchMenuWrapper({children}: {children: ReactNode}) {
         <DialogTrigger>
           {children}
           <S2Modal size="fullscreenTakeover">
-            <Provider colorScheme={colorScheme} styles={style({height: 'full'})}>
+            <Provider colorScheme={colorScheme} background="layer-2" styles={style({height: 'full'})}>
               <MobileSearchMenu initialTag="components" />
             </Provider>
           </S2Modal>
