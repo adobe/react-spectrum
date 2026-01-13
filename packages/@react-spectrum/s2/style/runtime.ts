@@ -49,17 +49,23 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
   }
 
   let map = new Map<string, string>();
-  let macroClasses: string[] = [];
+  let macroClasses: string[] | undefined;
+
+  if (process.env.NODE_ENV !== 'production') {
+    macroClasses = [];
+  }
 
   for (let style of definedStyles) {
     // must call toString here for the static macro
     let str = style.toString();
 
-    // Extract and preserve macro debug classes
-    let macroMatches = str.matchAll(/-macro-(static|dynamic)-[^\s]+/g);
-    for (let match of macroMatches) {
-      if (!macroClasses.includes(match[0])) {
-        macroClasses.push(match[0]);
+    // Extract and preserve macro debug classes (dev only)
+    if (process.env.NODE_ENV !== 'production') {
+      let macroMatches = str.matchAll(/-macro-(static|dynamic)-[^\s]+/g);
+      for (let match of macroMatches) {
+        if (!macroClasses!.includes(match[0])) {
+          macroClasses!.push(match[0]);
+        }
       }
     }
 
@@ -73,8 +79,8 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
     res += value;
   }
 
-  // Append all macro debug classes
-  if (macroClasses.length > 0) {
+  // Append all macro debug classes (dev only)
+  if (process.env.NODE_ENV !== 'production' && macroClasses && macroClasses.length > 0) {
     res += ' ' + macroClasses.join(' ');
   }
 
