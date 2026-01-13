@@ -359,7 +359,8 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
       {isBestMatch && !isCopied ? (
         <Badge 
           size="S" 
-          variant={isExactMatch ? 'positive' : 'informative'}>
+          variant={isExactMatch ? 'positive' : 'informative'}
+          UNSAFE_style={{width: 'max-content'}}>
           {isExactMatch ? <Checkmark /> : <Similar />}
           <Text>{item.name}</Text>
         </Badge>
@@ -369,7 +370,7 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
             position: 'relative',
             width: 'full',
             textAlign: 'center',
-            height: 20
+            minHeight: 24
           })}>
           <span
             className={style({
