@@ -7,10 +7,9 @@
  * Default directory: ./dist
  */
 
-import { readdir, readFile, stat } from 'fs/promises';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import {dirname, join} from 'path';
+import {fileURLToPath} from 'url';
+import {readdir, readFile, stat} from 'fs/promises';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -85,7 +84,7 @@ async function main() {
   } else {
     console.log(`❌ Found ${duplicates.length} file(s) with duplicate occurrences:\n`);
     
-    for (const { filePath, count } of duplicates) {
+    for (const {filePath, count} of duplicates) {
       const relativePath = filePath.replace(targetDir, '').replace(/^\//, '');
       console.log(`   📄 ${relativePath}`);
       console.log(`      Pattern appears ${count} times (expected: 1)\n`);
