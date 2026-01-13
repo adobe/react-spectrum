@@ -173,9 +173,9 @@ TextField can be customized to create an OTP (one-time password) input by hiding
               borderRadius: 'var(--radius)',
               background: 'var(--field-background)',
               border: '1px solid var(--border-color)',
-              boxShadow: focused && value.length === i
-                ? '0 0 0 2px var(--focus-ring-color)'
-                : 'none',
+                    boxShadow: focused && (value.length === i || (i === length - 1 && value.length >= length))
+                      ? '0 0 0 2px var(--focus-ring-color)'
+                      : 'none',
               color: 'var(--field-text-color)',
               transition: 'box-shadow 150ms'
             }}>
@@ -232,7 +232,7 @@ TextField can be customized to create an OTP (one-time password) input by hiding
               border border-gray-300 dark:border-zinc-600
               text-gray-900 dark:text-zinc-100
               transition-shadow duration-150
-              ${focused && value.length === i
+              ${focused && (value.length === i || (i === length - 1 && value.length >= length))
                 ? 'ring-2 ring-blue-600 dark:ring-blue-500'
                 : ''}
             `}>
