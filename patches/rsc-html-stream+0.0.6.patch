@@ -1,0 +1,53 @@
+diff --git a/node_modules/rsc-html-stream/server.js b/node_modules/rsc-html-stream/server.js
+index 1234567..abcdefg 100644
+--- a/node_modules/rsc-html-stream/server.js
++++ b/node_modules/rsc-html-stream/server.js
+@@ -14,22 +14,22 @@ export function injectRSCPayload(rscStream, options) {
+   let buffered = [];
+   let timeout = null;
+   function flushBufferedChunks(controller) {
++    // Decode all buffered chunks together so we can reliably detect a trailer that
++    // might be split across chunk boundaries.
++    let combined = '';
+     for (let chunk of buffered) {
+-      let buf = decoder.decode(chunk, {stream: true});
+-      if (buf.endsWith(trailer)) {
+-        buf = buf.slice(0, -trailer.length);
+-      }
+-      controller.enqueue(encoder.encode(buf));
++      combined += decoder.decode(chunk, {stream: true});
+     }
++    combined += decoder.decode();
+ 
+-    let remaining = decoder.decode();
+-    if (remaining.length) {
+-      if (remaining.endsWith(trailer)) {
+-        remaining = remaining.slice(0, -trailer.length);
+-      }
+-      controller.enqueue(encoder.encode(remaining));
++    if (combined.endsWith(trailer)) {
++      combined = combined.slice(0, -trailer.length);
+     }
+ 
++    if (combined.length) {
++      controller.enqueue(encoder.encode(combined));
++    }
++
+     buffered.length = 0;
+     timeout = null;
+   }
+@@ -42,7 +42,13 @@ export function injectRSCPayload(rscStream, options) {
+       }
+ 
+       timeout = setTimeout(async () => {
+-        flushBufferedChunks(controller);
++        try {
++          flushBufferedChunks(controller);
++        } catch (e) {
++          controller.error(e);
++          resolveFlightDataPromise();
++          return;
++        }
+         if (!startedRSC) {
+           startedRSC = true;
+           writeRSCStream(rscStream, controller, nonce)
