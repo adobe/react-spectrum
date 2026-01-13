@@ -327,27 +327,32 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
       className={itemStyle} 
       ref={ref} 
       style={pressScale(ref)}>
-      {isCopied ? (
-        <div
-          className={style({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          })}
-          style={{
-            width: '48px',
-            height: '48px'
-          } as React.CSSProperties}>
-          <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
-        </div>
-      ) : (
-        <div
-          className={swatchClass || swatchStyle}
-          style={{
-            width: '48px',
-            height: '48px'
-          } as React.CSSProperties} />
-      )}
+      <div
+        className={`${swatchClass || swatchStyle} ${style({position: 'relative'})}`}
+        style={{
+          width: '48px',
+          height: '48px',
+          '--s2-container-bg': 'var(--v)'
+        } as React.CSSProperties}>
+        {isCopied && (
+          <div
+            className={style({
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'inherit',
+              color: 'auto',
+              '--iconPrimary': {
+                type: 'fill',
+                value: 'currentColor'
+              }
+            })}>
+            <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
+          </div>
+        )}
+      </div>
       {isBestMatch && !isCopied ? (
         <Badge 
           size="S" 
