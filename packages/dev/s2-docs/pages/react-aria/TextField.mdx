@@ -210,7 +210,8 @@ TextField can be customized to create an OTP (one-time password) input by hiding
           inputMode="numeric"
           pattern="[0-9]*"
           autoComplete="one-time-code"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-text caret-transparent"
+          className="absolute inset-0 w-full h-full
+            opacity-0 cursor-text caret-transparent"
         />
       </TextField>
     );
@@ -222,23 +223,27 @@ TextField can be customized to create an OTP (one-time password) input by hiding
 
     return (
       <div className="flex gap-1.5 pointer-events-none">
-        {Array.from({length}, (_, i) => (
-          <div
-            key={i}
-            className={`
-              w-10 h-12 flex items-center justify-center
-              text-xl font-medium tabular-nums
-              rounded-lg bg-white dark:bg-zinc-900
-              border border-gray-300 dark:border-zinc-600
-              text-gray-900 dark:text-zinc-100
-              transition-shadow duration-150
-              ${focused && (value.length === i || (i === length - 1 && value.length >= length))
-                ? 'ring-2 ring-blue-600 dark:ring-blue-500'
-                : ''}
-            `}>
-            {value[i] ?? ''}
-          </div>
-        ))}
+        {Array.from({length}, (_, i) => {
+          let isAtCaret = value.length === i;
+          let isLastFilled = i === length - 1 && value.length >= length;
+          return (
+            <div
+              key={i}
+              className={`
+                w-10 h-12 flex items-center justify-center
+                text-xl font-medium tabular-nums
+                rounded-lg bg-white dark:bg-zinc-900
+                border border-gray-300 dark:border-zinc-600
+                text-gray-900 dark:text-zinc-100
+                transition-shadow duration-150
+                ${focused && (isAtCaret || isLastFilled)
+                  ? 'ring-2 ring-blue-600 dark:ring-blue-500'
+                  : ''}
+              `}>
+              {value[i] ?? ''}
+            </div>
+          );
+        })}
       </div>
     );
   }
