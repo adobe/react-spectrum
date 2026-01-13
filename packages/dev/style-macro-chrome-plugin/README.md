@@ -1,6 +1,6 @@
 # style-macro-chrome-plugin
 
-This is a chrome plugin to assist in debugging the styles applied by our Style Macro.
+This is a chrome plugin to assist in debugging the styles applied by the React Spectrum Style Macro.
 
 ## Expected Usage
 
@@ -44,15 +44,12 @@ If every tab you have open (or many of them) reload when you make local changes 
 
 ## ToDos
 
-- [ ] Work with RSC
 - [ ] Would be pretty cool if we could match a style condition to trigger it, like hover
-- [ ] Eventually add to https://github.com/astahmer/atomic-css-devtools ??
 - [ ] Our own UI ??
 - [ ] Filtering
 - [ ] Resolve css variables inline
 - [ ] Link to file on the side instead of grouping by filename?
 - [ ] Add classname that is applying style?
-- [ ] Work in MFE's
 
 ## Extension Architecture
 
@@ -67,29 +64,24 @@ This extension uses Chrome's standard extension architecture with three main com
   - Hosts MutationObserver that watches selected element for className changes
 - **Storage**: None - static macros embed data in CSS, dynamic macros send messages
 - **Communication**:
-  - For static macros: Embeds data in CSS custom property `--macro-data`
-  - For dynamic macros: Sends `window.postMessage({ action: 'update-macros', hash, loc, style })` to content script
-  - For className changes: Sends `window.postMessage({ action: 'class-changed', elementId })` to content script
+  - For static macros: Embeds data in CSS custom property `--macro-data-{hash}` (unique per macro)
+  - For dynamic macros: Sends `window.postMessage({ action: 'stylemacro-update-macros', hash, loc, style })` to content script
+  - For className changes: Sends `window.postMessage({ action: 'stylemacro-class-changed', elementId })` to content script
 
 #### 2. **Content Script** (`content-script.js`)
 - **Location**: Isolated sandboxed environment injected into the page
-- **Scope**: Handles dynamic macros only (static macros are read directly from CSS)
+- **Scope**: Acts as a message forwarder between page and extension
 - **Responsibility**:
-  - Listens for `window.postMessage({ action: 'update-macros' })` from the page and stores dynamic macro data in its own `window.__macros`
-  - Forwards `window.postMessage({ action: 'class-changed' })` from page to background script
-  - Responds to queries from DevTools (via background script), with retry logic to handle race conditions
-  - Cleans up stale macros every 5 minutes
-- **Storage**: `window.__macros[hash] = { loc: string, style: object }` (in content script context, not page context)
-- **Race Condition Handling**: When queried for a hash that doesn't exist yet, polls every 50ms for up to 500ms before responding with null
+  - Listens for `window.postMessage({ action: 'stylemacro-update-macros' })` from the page and forwards to background script
+  - Forwards `window.postMessage({ action: 'stylemacro-class-changed' })` from page to background script
+- **Storage**: None - all macro data is stored in DevTools
 - **Communication**:
   - Receives:
-    - `window.postMessage({ action: 'update-macros' })` from page
-    - `window.postMessage({ action: 'class-changed' })` from page
-    - `chrome.runtime.onMessage({ action: 'get-macro' })` from background
+    - `window.postMessage({ action: 'stylemacro-update-macros', hash, loc, style })` from page
+    - `window.postMessage({ action: 'stylemacro-class-changed', elementId })` from page
   - Sends:
-    - `chrome.runtime.sendMessage({ action: 'update-macros' })` to background
-    - `chrome.runtime.sendMessage({ action: 'class-changed' })` to background
-    - `chrome.runtime.sendMessage({ action: 'macro-response' })` to background
+    - `chrome.runtime.sendMessage({ action: 'stylemacro-update-macros', hash, loc, style })` to background
+    - `chrome.runtime.sendMessage({ action: 'stylemacro-class-changed', elementId })` to background
 
 #### 3. **Background Script** (`background.js`)
 - **Location**: Service worker (isolated context)
@@ -98,26 +90,24 @@ This extension uses Chrome's standard extension architecture with three main com
 - **Communication**:
   - Receives:
     - `chrome.runtime.onConnect({ name: 'devtools-page' })` from DevTools
-    - `port.onMessage({ type: 'init' })` from DevTools
-    - `port.onMessage({ type: 'query-macros' })` from DevTools
-    - `chrome.runtime.onMessage({ action: 'update-macros' })` from content script
-    - `chrome.runtime.onMessage({ action: 'macro-response' })` from content script
-    - `chrome.runtime.onMessage({ action: 'class-changed' })` from content script
+    - `port.onMessage({ type: 'stylemacro-init' })` from DevTools
+    - `chrome.runtime.onMessage({ action: 'stylemacro-update-macros', hash, loc, style })` from content script
+    - `chrome.runtime.onMessage({ action: 'stylemacro-class-changed', elementId })` from content script
   - Sends:
-    - `chrome.tabs.sendMessage({ action: 'get-macro' })` to content script
-    - `port.postMessage({ action: 'update-macros' })` to DevTools
-    - `port.postMessage({ action: 'macro-response' })` to DevTools
-    - `port.postMessage({ action: 'class-changed' })` to DevTools
+    - `port.postMessage({ action: 'stylemacro-update-macros', hash, loc, style })` to DevTools
+    - `port.postMessage({ action: 'stylemacro-class-changed', elementId })` to DevTools
 
 #### 4. **DevTools Panel** (`devtool.js`)
 - **Location**: DevTools sidebar panel context
 - **Responsibility**:
+  - Stores all dynamic macro data in a local Map: `macroData[hash] = { loc, style }`
   - Extracts macro class names from selected element:
-    - Static macros: `-macro-static-{hash}` → retrieves data via CSS custom properties (`--macro-data`)
-    - Dynamic macros: `-macro-dynamic-{hash}` → queries data via content script (responds to changing conditions)
-  - Queries for macro data using appropriate method based on macro type
+    - Static macros: `-macro-static-{hash}` → reads `--macro-data-{hash}` custom property via `getComputedStyle()`
+    - Dynamic macros: `-macro-dynamic-{hash}` → looks up data from local storage
   - Displays style information in sidebar
   - **Automatic Updates**: Sets up a MutationObserver on the selected element to detect className changes and automatically refreshes the panel
+  - **Cleanup**: Every 5 minutes, checks the DOM for each stored hash and removes data for macros that no longer exist
+- **Storage**: `Map<hash, {loc: string, style: object}>` - stores all dynamic macro data
 - **Mutation Observer**:
   - Created when an element is selected via `chrome.devtools.panels.elements.onSelectionChanged`
   - Watches the selected element's `class` attribute for changes
@@ -127,29 +117,29 @@ This extension uses Chrome's standard extension architecture with three main com
   - Triggers automatic panel refresh when className changes
 - **Communication**:
   - Receives:
-    - `port.onMessage({ action: 'macro-response' })` from background
-    - `port.onMessage({ action: 'update-macros' })` from background
-    - `port.onMessage({ action: 'class-changed' })` from background (triggers refresh)
+    - `port.onMessage({ action: 'stylemacro-update-macros', hash, loc, style })` from background (stores data and refreshes)
+    - `port.onMessage({ action: 'stylemacro-class-changed', elementId })` from background (triggers refresh)
   - Sends:
     - `chrome.runtime.connect({ name: 'devtools-page' })` to establish connection
-    - `port.postMessage({ type: 'init' })` to background
-    - `port.postMessage({ type: 'query-macros' })` to background (for dynamic macros only)
+    - `port.postMessage({ type: 'stylemacro-init', tabId })` to background
 
 ### Message Flow Diagrams
 
 #### Flow 1a: Static Macro Lookup (DevTools reads CSS)
 
-Static macros are generated when style macro conditions don't change at runtime. The macro data is embedded directly into the CSS as a custom property.
+Static macros are generated when style macro conditions don't change at runtime. The macro data is embedded directly into the CSS as a uniquely-named custom property.
 
 ```
 ┌─────────────────┐
 │ DevTools Panel  │ User selects element with -macro-static-{hash} class
 └────────┬────────┘
-         │ Read CSS custom property --macro-data via getComputedStyle()
+         │ Extract hash from className
+         │ Read --macro-data-{hash} via getComputedStyle($0)
          ↓
 ┌─────────────────┐
-│ Page DOM/CSS    │ Returns macro data from CSS
+│ Page DOM/CSS    │ Returns custom property value for specific hash
 └────────┬────────┘
+         │ getPropertyValue('--macro-data-{hash}')
          │ { loc: "...", style: {...} }
          ↓
 ┌─────────────────┐
@@ -157,78 +147,78 @@ Static macros are generated when style macro conditions don't change at runtime.
 └─────────────────┘
 ```
 
+**Key Design**: Each static macro has its own uniquely-named custom property (`--macro-data-{hash}`), which avoids CSS cascade issues when reading multiple macro data from the same element.
+
 #### Flow 1b: Dynamic Macro Updates (Page → DevTools)
 
-Dynamic macros are generated when style macro conditions can change at runtime. Updates are sent via message passing.
-This could be simplified and we could rely on the MutationObserver to trigger the refresh, but this way ensures
-that the storage is update before we try to access the data.
+Dynamic macros are generated when style macro conditions can change at runtime. Updates are sent via message passing and stored directly in DevTools.
 
 ```
 ┌─────────────────┐
 │ Page Context    │
 │ (style-macro)   │
 └────────┬────────┘
-         │ window.postMessage({ action: 'update-macros', hash, loc, style })
+         │ window.postMessage({ action: 'stylemacro-update-macros', hash, loc, style })
          ↓
 ┌─────────────────┐
-│ Content Script  │ Stores in window.__macros[hash]
+│ Content Script  │ Forwards message (no storage)
 └────────┬────────┘
-         │ chrome.runtime.sendMessage({ action: 'update-macros', ... })
+         │ chrome.runtime.sendMessage({ action: 'stylemacro-update-macros', hash, loc, style })
          ↓
 ┌─────────────────┐
 │ Background      │ Looks up DevTools connection for tabId
 └────────┬────────┘
-         │ port.postMessage({ action: 'update-macros', ... })
+         │ port.postMessage({ action: 'stylemacro-update-macros', hash, loc, style })
          ↓
 ┌─────────────────┐
-│ DevTools Panel  │ Triggers sidebar refresh
+│ DevTools Panel  │ Stores in macroData Map and triggers sidebar refresh
 └─────────────────┘
 ```
 
-#### Flow 2: Query Macro Data (DevTools → Content Script → DevTools)
+#### Flow 2: Display Macro Data (Synchronous Lookup)
+
+When the user selects an element or the panel refreshes, DevTools looks up macro data synchronously from its local storage.
 
 ```
 ┌─────────────────┐
 │ DevTools Panel  │ User selects element with -macro-dynamic-{hash} class
 └────────┬────────┘
-         │ port.postMessage({ type: 'query-macros', hash })
+         │ Extract hash from className
          ↓
 ┌─────────────────┐
-│ Background      │ Forwards to content script in specified tab
+│ DevTools Panel  │ Look up macroData.get(hash)
+│ Local Storage   │ Returns { loc, style } if available
 └────────┬────────┘
-         │ chrome.tabs.sendMessage(tabId, { action: 'get-macro', hash })
+         │ { loc: "...", style: {...} } or null
          ↓
 ┌─────────────────┐
-│ Content Script  │ Checks window.__macros[hash]
-│                 │ • If found → responds immediately
-│                 │ • If not found → polls every 50ms (max 500ms)
-│                 │   to handle race with window.postMessage
-└────────┬────────┘
-         │ chrome.runtime.sendMessage({ action: 'macro-response', hash, data })
-         ↓
-┌─────────────────┐
-│ Background      │ Looks up DevTools connection
-└────────┬────────┘
-         │ port.postMessage({ action: 'macro-response', hash, data })
-         ↓
-┌─────────────────┐
-│ DevTools Panel  │ Resolves Promise, updates sidebar
+│ DevTools Panel  │ Display in sidebar (or show nothing if null)
 └─────────────────┘
 ```
 
-#### Flow 3: Macro Cleanup (Automated)
+**Note**: If macro data hasn't been received yet for a hash, it will appear empty until the next `stylemacro-update-macros` message arrives and triggers a refresh.
+
+#### Flow 3: Macro Data Cleanup (Automated)
+
+Every 5 minutes, DevTools checks if stored macro hashes are still in use on the page and removes stale data.
 
 ```
 ┌─────────────────┐
-│ Content Script  │ Every 5 minutes
+│ DevTools Panel  │ Every 5 minutes
 └────────┬────────┘
-         │ For each hash in window.__macros:
-         │   Check if document.querySelector(`.-macro-dynamic-${hash}`) exists
-         │   If not found, delete window.__macros[hash]
+         │ For each hash in macroData Map:
+         │   chrome.devtools.inspectedWindow.eval(
+         │     `!!document.querySelector('.-macro-dynamic-${hash}')`
+         │   )
          ↓
 ┌─────────────────┐
-│ Garbage         │ Stale macros removed from memory
-│ Collection      │
+│ Page DOM        │ Checks if elements with macro classes exist
+└────────┬────────┘
+         │ Returns true/false for each hash
+         ↓
+┌─────────────────┐
+│ DevTools Panel  │ Removes stale entries from macroData Map
+│                 │ macroData.delete(hash) for non-existent elements
 └─────────────────┘
 ```
 
@@ -251,8 +241,8 @@ When you select an element, the DevTools panel automatically watches for classNa
          │   // Create new MutationObserver on $0
          │   window.__styleMacroObserver = new MutationObserver(() => {
          │     window.postMessage({
-         │       action: 'class-changed',
-         │       elementId: $0.getAttribute('data-devtools-id')
+         │       action: 'stylemacro-class-changed',
+         │       elementId: $0.__devtoolsId
          │     }, '*');
          │   });
          │
@@ -269,17 +259,17 @@ When you select an element, the DevTools panel automatically watches for classNa
          │ ... User interacts with page, element's className changes ...
          │
          │ MutationObserver detects class attribute change
-         │ window.postMessage({ action: 'class-changed', elementId }, '*')
+         │ window.postMessage({ action: 'stylemacro-class-changed', elementId }, '*')
          ↓
 ┌─────────────────┐
 │ Content Script  │ Receives window message, forwards to extension
 └────────┬────────┘
-         │ chrome.runtime.sendMessage({ action: 'class-changed', elementId })
+         │ chrome.runtime.sendMessage({ action: 'stylemacro-class-changed', elementId })
          ↓
 ┌─────────────────┐
 │ Background      │ Looks up DevTools connection for tabId
 └────────┬────────┘
-         │ port.postMessage({ action: 'class-changed', elementId })
+         │ port.postMessage({ action: 'stylemacro-class-changed', elementId })
          ↓
 ┌─────────────────┐
 │ DevTools Panel  │ Verifies elementId matches currently selected element
@@ -320,24 +310,24 @@ The style macro generates different class name patterns based on whether the sty
 
 **Static Macros** (`-macro-static-{hash}`):
 - Used when all style conditions are static (e.g., `style({ color: 'red' })`)
-- Macro data is embedded in CSS as `--macro-data: '{...JSON...}'` custom property
-- DevTools reads directly from CSS via `getComputedStyle()`
+- Macro data is embedded in CSS as a uniquely-named custom property: `--macro-data-{hash}: '{...JSON...}'`
+- DevTools reads the specific custom property via `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')`
+- Unique naming avoids CSS cascade issues when multiple macros are applied to the same element
 
 **Dynamic Macros** (`-macro-dynamic-{hash}`):
-- Used when style conditions can change (e.g., `style({ color: isActive ? 'red' : 'blue' })`)
-- Macro data is sent via `window.postMessage()` whenever conditions change
-- Content script stores data and responds to DevTools queries
+- Used when style conditions can change (e.g., `style({color: {default: 'blue', isActive: 'red'}})`)
+- Macro data is sent via `window.postMessage({ action: 'stylemacro-update-macros', ... })` whenever conditions change
+- Content script forwards data to DevTools, which stores it in a local Map
 - Enables real-time updates when props/state change
 
-#### Race Condition Handling (Dynamic Macros Only)
-When DevTools queries for dynamic macro data, there's a race condition:
-1. Page renders with `-macro-dynamic-{hash}` class name
-2. DevTools sees the class and queries for the hash
-3. **But**: The page's `window.postMessage` with macro data might not have reached the content script yet
-
-**Solution**: The content script polls `window.__macros[hash]` every 50ms for up to 500ms before giving up. This ensures the data has time to arrive via the async `window.postMessage` flow.
-
-Note: Static macros don't have this issue since the data is synchronously available in CSS.
+#### Data Storage
+- **Static Macros**: Data embedded in CSS as uniquely-named custom properties `--macro-data-{hash}`, read via `getComputedStyle($0).getPropertyValue('--macro-data-{hash}')`
+  - Each macro has its own custom property name to prevent cascade conflicts
+  - Example: `.-macro-static-abc123 { --macro-data-abc123: '{"style": {...}, "loc": "..."}'; }`
+- **Dynamic Macros**: Data stored in DevTools panel's `macroData` Map
+- **No Content Script Storage**: Content script only forwards messages, doesn't store macro data
+- **Lifetime**: Macro data persists in DevTools for the duration of the DevTools session
+- **Cleanup**: Stale macro data (for elements no longer in DOM) is removed every 5 minutes
 
 #### Connection Management
 - **DevTools → Background**: Uses persistent `chrome.runtime.connect()` with port-based messaging
@@ -345,10 +335,18 @@ Note: Static macros don't have this issue since the data is synchronously availa
 - **Background tracks**: Map of `tabId → DevTools port` for routing messages
 
 #### Data Structure
+
+**Static Macros (in CSS):**
+```css
+.-macro-static-zsZ9Dc {
+  --macro-data-zsZ9Dc: '{"style":{"paddingX":"4"},"loc":"packages/@react-spectrum/s2/src/Button.tsx:67"}';
+}
+```
+
+**Dynamic Macros (in DevTools panel's macroData Map):**
 ```javascript
-// In window.__macros (content script context only)
-{
-  "zsZ9Dc": {
+Map {
+  "zsZ9Dc" => {
     loc: "packages/@react-spectrum/s2/src/Button.tsx:67",
     style: {
       "paddingX": "4",
@@ -358,18 +356,18 @@ Note: Static macros don't have this issue since the data is synchronously availa
 }
 ```
 
-Note: The page context does NOT have access to `window.__macros`. This is stored only in the content script's sandboxed environment for security.
+**Note**:
+- Static macro data is stored in CSS with uniquely-named custom properties
+- Dynamic macro data is stored directly in the DevTools panel context
+- The content script acts purely as a message forwarder and doesn't store any data
 
 #### Message Types
 
 | Message Type | Direction | Purpose |
 |-------------|-----------|---------|
-| `update-macros` | Page → Content → Background → DevTools | Notify that a macro was added/updated |
-| `query-macros` | DevTools → Background → Content | Request macro data by hash |
-| `macro-response` | Content → Background → DevTools | Return requested macro data |
-| `get-macro` | Background → Content | Internal forwarding of query-macros |
-| `init` | DevTools → Background | Establish connection with tabId |
-| `class-changed` | Page → Content → Background → DevTools | Notify that selected element's className changed |
+| `stylemacro-update-macros` | Page → Content → Background → DevTools | Send macro data (hash, loc, style) to be stored in DevTools |
+| `stylemacro-init` | DevTools → Background | Establish connection with tabId |
+| `stylemacro-class-changed` | Page → Content → Background → DevTools | Notify that selected element's className changed |
 
 ### Debugging
 

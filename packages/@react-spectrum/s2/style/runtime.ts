@@ -49,9 +49,21 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
   }
 
   let map = new Map<string, string>();
+  let macroClasses: string[] = [];
+
   for (let style of definedStyles) {
     // must call toString here for the static macro
-    for (let [k, v] of parse(style.toString())) {
+    let str = style.toString();
+
+    // Extract and preserve macro debug classes
+    let macroMatches = str.matchAll(/-macro-(static|dynamic)-[^\s]+/g);
+    for (let match of macroMatches) {
+      if (!macroClasses.includes(match[0])) {
+        macroClasses.push(match[0]);
+      }
+    }
+
+    for (let [k, v] of parse(str)) {
       map.set(k, v);
     }
   }
@@ -60,6 +72,12 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
   for (let value of map.values()) {
     res += value;
   }
+
+  // Append all macro debug classes
+  if (macroClasses.length > 0) {
+    res += ' ' + macroClasses.join(' ');
+  }
+
   return res as StyleString;
 }
 

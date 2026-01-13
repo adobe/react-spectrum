@@ -385,7 +385,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (isStatic && process.env.NODE_ENV !== 'production') {
       let id = toBase62(hash(className + loc));
       css += `.-macro-static-${id} {
-        --macro-data: ${JSON.stringify({style, loc})};
+        --macro-data-${id}: ${JSON.stringify({style, loc})};
       }\n\n`;
       className += ` -macro-static-${id}`;
     }
@@ -405,7 +405,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       js += `let targetRules = rules + ${JSON.stringify(loc)};\n`;
       js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
       js += 'rules += " -macro-dynamic-" + hash.toString(36);\n';
-      js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
+      js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'stylemacro-update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
     }
     js += 'return rules;';
     if (allowedOverrides) {
@@ -737,11 +737,17 @@ class StyleRule implements Rule {
       if (this.pseudos) {
         conditionStack.push(this.pseudos);
       }
+      let propertyName = JSON.stringify(name);
+      let valueJson = JSON.stringify(this.themeValue);
       if (conditionStack.length) {
         // name += ` (${conditionStack.join(', ')})`;
-        res += ` currentRules[${JSON.stringify(name)}] = typeof currentRules[${JSON.stringify(name)}] === 'object' ? currentRules[${JSON.stringify(name)}] : {"default": currentRules[${JSON.stringify(name)}]}; currentRules[${JSON.stringify(name)}][${JSON.stringify(conditionStack.join(' && '))}] =  ${JSON.stringify(this.themeValue)};`;
+        let conditionKey = JSON.stringify(conditionStack.join(' && '));
+        // Ensure currentRules[name] is an object, converting from simple value if needed
+        res += ` currentRules[${propertyName}] = typeof currentRules[${propertyName}] === 'object' ? currentRules[${propertyName}] : {"default": currentRules[${propertyName}]};`;
+        // Set the value for this specific condition
+        res += ` currentRules[${propertyName}][${conditionKey}] = ${valueJson};`;
       } else {
-        res += ` currentRules[${JSON.stringify(name)}] = ${JSON.stringify(this.themeValue)};`;
+        res += ` currentRules[${propertyName}] = ${valueJson};`;
       }
       if (this.pseudos) {
         conditionStack.pop();

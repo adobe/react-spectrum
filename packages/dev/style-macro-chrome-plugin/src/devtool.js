@@ -23,38 +23,34 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
   // Initialize connection with the background script
   debugLog('Initializing connection with tabId:', chrome.devtools.inspectedWindow.tabId);
   backgroundPageConnection.postMessage({
-    type: 'init',
+    type: 'stylemacro-init',
     tabId: chrome.devtools.inspectedWindow.tabId
   });
   debugLog('Init message sent to background');
 
-  // Track pending queries for macro data
-  const pendingQueries = new Map();
+  // Store macro data directly in DevTools
+  const macroData = new Map();
 
   // Track mutation observer for selected element
   let currentObserver = null;
   let currentElementId = null;
 
-  // Listen for responses from content script (via background script)
+  // Listen for messages from content script (via background script)
   backgroundPageConnection.onMessage.addListener((message) => {
     debugLog('Message from background:', message);
 
-    if (message.action === 'macro-response') {
-      debugLog('Received macro-response for hash:', message.hash, 'Has data:', !!message.data);
-      debugLog('Pending queries has hash:', pendingQueries.has(message.hash), 'Total pending:', pendingQueries.size);
-      const resolve = pendingQueries.get(message.hash);
-      if (resolve) {
-        debugLog('Resolving promise for hash:', message.hash, 'with data:', message.data);
-        resolve(message.data);
-        pendingQueries.delete(message.hash);
-      } else {
-        debugLog('WARNING: No pending query found for hash:', message.hash);
-      }
-    } else if (message.action === 'update-macros') {
-      debugLog('Received update-macros, refreshing...');
+    if (message.action === 'stylemacro-update-macros') {
+      debugLog('Received stylemacro-update-macros for hash:', message.hash);
+      // Store the macro data directly in DevTools
+      macroData.set(message.hash, {
+        loc: message.loc,
+        style: message.style
+      });
+      debugLog('Stored macro data, total macros:', macroData.size);
+      // Refresh the panel to show updated data
       update();
-    } else if (message.action === 'class-changed') {
-      debugLog('Received class-changed notification for element:', message.elementId);
+    } else if (message.action === 'stylemacro-class-changed') {
+      debugLog('Received stylemacro-class-changed notification for element:', message.elementId);
       // Only update if the changed element is the one we're currently watching
       if (message.elementId === currentElementId) {
         debugLog('Class changed on watched element, updating panel...');
@@ -63,43 +59,18 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
     }
   });
 
-  // Query macro data from content script via background script
-  const queryMacro = (hash) => {
-    debugLog('Querying macro with hash:', hash);
-    return new Promise((resolve) => {
-      pendingQueries.set(hash, resolve);
-      debugLog('Added to pendingQueries, total pending:', pendingQueries.size);
-
-      try {
-        backgroundPageConnection.postMessage({
-          type: 'query-macros',
-          hash: hash
-        });
-        debugLog('Query message sent to background for hash:', hash);
-      } catch (err) {
-        debugLog('ERROR sending message:', err);
-        pendingQueries.delete(hash);
-        resolve(null);
-        return;
-      }
-
-      // Timeout after 1 second
-      setTimeout(() => {
-        if (pendingQueries.has(hash)) {
-          debugLog('TIMEOUT: Query timeout for hash:', hash, 'Resolving to null');
-          pendingQueries.delete(hash);
-          resolve(null);
-        } else {
-          debugLog('Timeout fired for hash:', hash, 'but query already resolved');
-        }
-      }, 1000);
-    });
+  // Get macro data from local storage
+  const getDynamicMacroData = (hash) => {
+    debugLog('Looking up dynamic macro with hash:', hash);
+    const data = macroData.get(hash);
+    debugLog('Found data:', !!data);
+    return data || null;
   };
 
   function getMacroData(className) {
     let promise = new Promise((resolve) => {
       debugLog('Getting macro data for:', className);
-      chrome.devtools.inspectedWindow.eval('window.getComputedStyle($0).getPropertyValue("--macro-data")', (style) => {
+      chrome.devtools.inspectedWindow.eval(`window.getComputedStyle($0).getPropertyValue("--macro-data-${className}")`, (style) => {
         debugLog('Got style:', style);
         resolve(style ? JSON.parse(style) : null);
       });
@@ -136,11 +107,11 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
         }
 
         // Generate a unique ID if element doesn't have one
-        if (!element.hasAttribute('data-devtools-id')) {
-          element.setAttribute('data-devtools-id', 'dt-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9));
+        if (!element.__devtoolsId) {
+          element.__devtoolsId = 'dt-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         }
 
-        const elementId = element.getAttribute('data-devtools-id');
+        const elementId = element.__devtoolsId;
 
         // Create mutation observer
         if (window.__styleMacroObserver) {
@@ -153,7 +124,7 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
               // Notify DevTools that the class has changed via window.postMessage
               // (chrome.runtime is not available in page context)
               window.postMessage({
-                action: 'class-changed',
+                action: 'stylemacro-class-changed',
                 elementId: elementId
               }, '*');
               break;
@@ -196,12 +167,22 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
         debugLog('Static macro hashes:', staticMacroHashes);
         debugLog('Dynamic macro hashes:', dynamicMacroHashes);
 
+        // Get static macro data (async from CSS)
         let staticMacros = staticMacroHashes.map(macro => getMacroData(macro));
-        let dynamicMacros = dynamicMacroHashes.map(macro => queryMacro(macro));
 
-        debugLog('Waiting for', staticMacros.length, 'static and', dynamicMacros.length, 'dynamic macros...');
-        let results = await Promise.all([...staticMacros, ...dynamicMacros]);
+        debugLog('Waiting for', staticMacros.length, 'static macros...');
+        let staticResults = await Promise.all(staticMacros);
+
+        // Get dynamic macro data (sync from local storage)
+        let dynamicResults = dynamicMacroHashes.map(hash => getDynamicMacroData(hash));
+
+        // Combine results
+        let results = [...staticResults, ...dynamicResults];
         debugLog('Results:', results);
+
+        // Filter out null results (missing data)
+        results = results.filter(r => r != null);
+        debugLog('Filtered results:', results);
 
         if (results.length === 0) {
           sidebar.setObject({});
@@ -239,4 +220,49 @@ chrome.devtools.panels.elements.createSidebarPane('Style Macros', (sidebar) => {
 
   // Initial observation when the panel is first opened
   startObserving();
+
+  // Cleanup stale macro data every 5 minutes
+  const CLEANUP_INTERVAL = 1000 * 60 * 5;
+  setInterval(() => {
+    if (macroData.size === 0) {
+      return;
+    }
+
+    debugLog('Running macro data cleanup, checking', macroData.size, 'macros...');
+    const hashes = Array.from(macroData.keys());
+
+    // Check all hashes in a single eval for efficiency
+    const checkScript = `
+      (function() {
+        const hashes = ${JSON.stringify(hashes)};
+        const results = {};
+        for (const hash of hashes) {
+          results[hash] = !!document.querySelector('.-macro-dynamic-' + hash);
+        }
+        return results;
+      })();
+    `;
+
+    chrome.devtools.inspectedWindow.eval(checkScript, (results, isException) => {
+      if (isException) {
+        debugLog('Error during cleanup:', results);
+        return;
+      }
+
+      let removedCount = 0;
+      for (const hash in results) {
+        if (!results[hash]) {
+          debugLog('Removing stale macro:', hash);
+          macroData.delete(hash);
+          removedCount++;
+        }
+      }
+
+      if (removedCount > 0) {
+        debugLog(`Cleaned up ${removedCount} stale macro(s). Remaining: ${macroData.size}`);
+      } else {
+        debugLog('No stale macros found.');
+      }
+    });
+  }, CLEANUP_INTERVAL);
 });

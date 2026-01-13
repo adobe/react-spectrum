@@ -8,19 +8,10 @@ chrome.runtime.onConnect.addListener((port) => {
 
     // Listen for messages from DevTools
     const messageListener = (message) => {
-      if (message.type === 'init') {
+      if (message.type === 'stylemacro-init') {
         tabId = message.tabId;
         devtoolsConnections.set(tabId, port);
         console.log(`[Background] DevTools connected for tab ${tabId}`);
-      } else if (message.type === 'query-macros') {
-        console.log(`[Background] Forwarding query-macros to content script, hash: ${message.hash}, tabId: ${tabId}`);
-        // Forward query to content script
-        chrome.tabs.sendMessage(tabId, {
-          action: 'get-macro',
-          hash: message.hash
-        }).catch(err => {
-          console.error('[Background] Error sending message to content script:', err);
-        });
       }
     };
 
@@ -45,7 +36,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   // Forward messages from content script to DevTools
-  if (message.action === 'update-macros' || message.action === 'macro-response' || message.action === 'class-changed') {
+  if (message.action === 'stylemacro-update-macros' || message.action === 'stylemacro-class-changed') {
     console.log(`[Background] Forwarding ${message.action} from content script to DevTools, tabId: ${tabId}`);
     const devtoolsPort = devtoolsConnections.get(tabId);
     if (devtoolsPort) {

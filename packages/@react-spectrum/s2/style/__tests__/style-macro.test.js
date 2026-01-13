@@ -54,7 +54,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-E8tar {
-        --macro-data: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
+        --macro-data-E8tar: {"style":{"marginTop":{":first-child":{"default":4,"lg":8}}},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -119,7 +119,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-ootVze {
-        --macro-data: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
+        --macro-data-ootVze: {"style":{"borderWidth":2,"paddingX":"edge-to-text","width":"calc(200px - self(borderStartWidth) - self(paddingStart))"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -397,7 +397,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-tfFFV {
-        --macro-data: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
+        --macro-data-tfFFV: {"style":{"padding":24},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -419,7 +419,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-S2MtWd {
-        --macro-data: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
+        --macro-data-S2MtWd: {"style":{"backgroundColor":"blue-1000/50"},"loc":"undefined:undefined:undefined"};
       }
 
 "
@@ -444,7 +444,7 @@ describe('style-macro', () => {
 }
 
 .-macro-static-sFmj5 {
-        --macro-data: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
+        --macro-data-sFmj5: {"style":{"--foo":{"type":"backgroundColor","value":"gray-300"}},"loc":"undefined:undefined:undefined"};
       }
 
 "
