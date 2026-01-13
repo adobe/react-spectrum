@@ -86,7 +86,9 @@ export interface SelectProps<T extends object = {}, M extends SelectionMode = 's
    * Temporary text that occupies the select when it is empty.
    * @default 'Select an item' (localized)
    */
-  placeholder?: string
+  placeholder?: string,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
 }
 
 export const SelectContext = createContext<ContextValue<SelectProps<any, SelectionMode>, HTMLDivElement>>(null);
@@ -201,7 +203,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen, autoFocus: props.autoFocus}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: !props.isTriggerUpWhenOpen && state.isOpen, autoFocus: props.autoFocus}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',

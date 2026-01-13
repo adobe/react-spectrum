@@ -20,7 +20,7 @@ interface SlottedValue<T> {
   slots?: Record<string | symbol, T>
 }
 
-export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
+export type SlottedContextValue<T> = (SlottedValue<T> & T) | null | undefined;
 export type ContextValue<T, E> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
