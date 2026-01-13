@@ -334,24 +334,27 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
           height: '48px',
           '--s2-container-bg': 'var(--v)'
         } as React.CSSProperties}>
-        {isCopied && (
-          <div
-            className={style({
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 'inherit',
-              color: 'auto',
-              '--iconPrimary': {
-                type: 'fill',
-                value: 'currentColor'
-              }
-            })}>
-            <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
-          </div>
-        )}
+        <div
+          className={style({
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 'inherit',
+            color: 'auto',
+            '--iconPrimary': {
+              type: 'fill',
+              value: 'currentColor'
+            },
+            transition: 'default'
+          })}
+          style={{
+            opacity: isCopied ? 1 : 0,
+            transform: isCopied ? 'scale(1)' : 'scale(0.5)'
+          }}>
+          <CheckmarkCircle styles={iconStyle({size: 'XL'})} />
+        </div>
       </div>
       {isBestMatch && !isCopied ? (
         <Badge 
@@ -363,13 +366,41 @@ function ColorItem({item, sectionId, isCopied = false, isBestMatch = false, isEx
       ) : (
         <div
           className={style({
-            maxWidth: 'full',
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textAlign: 'center'
+            position: 'relative',
+            width: 'full',
+            textAlign: 'center',
+            height: 20
           })}>
-          {isCopied ? 'Copied!' : item.name}
+          <span
+            className={style({
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'default'
+            })}
+            style={{
+              opacity: isCopied ? 0 : 1
+            }}>
+            <span className={style({textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 'full'})}>
+              {item.name}
+            </span>
+          </span>
+          <span
+            className={style({
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'default'
+            })}
+            style={{
+              opacity: isCopied ? 1 : 0
+            }}>
+            Copied!
+          </span>
         </div>
       )}
     </ListBoxItem>
