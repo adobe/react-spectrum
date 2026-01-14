@@ -12,7 +12,8 @@
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import intlMessages from '../intl';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {ReactNode, useContext, useRef} from 'react';
