@@ -31,7 +31,7 @@
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx'",
     "start:s2-docs": "yarn workspace @react-spectrum/s2-docs start",
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
-    "check:s2-docs-duplicates": "node packages/dev/s2-docs/scripts/checkDuplicateEndTags.mjs",
+    "check:s2-docs-duplicates": "node packages/dev/s2-docs/scripts/temp_checkDuplicateEndTags.mjs",
     "build:mcp": "yarn workspace @react-spectrum/mcp build && yarn workspace @react-aria/mcp build",
     "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn build:mcp && node packages/dev/mcp/s2/dist/index.js && node packages/dev/mcp/react-aria/dist/index.js",
     "test:mcp": "yarn build:s2-docs && yarn build:mcp && node packages/dev/mcp/scripts/smoke-list-pages.mjs",

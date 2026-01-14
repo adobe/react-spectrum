@@ -3,7 +3,7 @@
  * Script to detect duplicate </script></body></html> occurrences in HTML files.
  * This checks for a known bug where the closing tags may appear multiple times.
  * 
- * Usage: node scripts/checkDuplicateEndTags.mjs [directory]
+ * Usage: node scripts/temp_checkDuplicateEndTags.mjs [directory]
  * Default directory: ./dist
  */
 
