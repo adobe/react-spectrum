@@ -39,7 +39,7 @@ export interface FocusVisibleResult {
 
 let currentModality: null | Modality = null;
 let currentPointerType: PointerType = 'keyboard';
-let changeHandlers = new Set<Handler>();
+export const changeHandlers = new Set<Handler>();
 interface GlobalListenerData {
   focus: () => void
 }
@@ -333,10 +333,13 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
 /**
  * Listens for trigger change and reports if focus is visible (i.e., modality is not pointer).
  */
-export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {isTextInput?: boolean}): void {
+export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyArray<any>, opts?: {enabled?: boolean, isTextInput?: boolean}): void {
   setupGlobalFocusEvents();
 
   useEffect(() => {
+    if (opts?.enabled === false) {
+      return;
+    }
     let handler = (modality: Modality, e: HandlerEvent) => {
       // We want to early return for any keyboard events that occur inside text inputs EXCEPT for Tab and Escape
       if (!isKeyboardFocusEvent(!!(opts?.isTextInput), modality, e)) {
@@ -351,3 +354,4 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
+
