@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Script to detect duplicate </script></body></html> occurrences in HTML files.
- * This checks for a known bug where the closing tags may appear multiple times.
- * 
- * Usage: node scripts/temp_checkDuplicateEndTags.mjs [directory]
+ * Script to validate s2-docs build output.
+ * - Confirms the build directory exists and contains files.
+ * - Checks for duplicate </script></body></html> occurrences in HTML files.
+ *
+ * Usage: node scripts/validateS2DocsBuild.mjs [directory]
  * Default directory: ./dist
  */
 
@@ -16,26 +17,29 @@ const __dirname = dirname(__filename);
 
 const PATTERN = '</script></body></html>';
 
-async function findHtmlFiles(dir) {
-  const files = [];
-  
+async function collectBuildFiles(dir) {
+  const htmlFiles = [];
+  let totalFiles = 0;
+
   async function walk(currentDir) {
-    const entries = await readdir(currentDir);
-    
+    const entries = await readdir(currentDir, {withFileTypes: true});
+
     for (const entry of entries) {
-      const fullPath = join(currentDir, entry);
-      const stats = await stat(fullPath);
-      
-      if (stats.isDirectory()) {
+      const fullPath = join(currentDir, entry.name);
+
+      if (entry.isDirectory()) {
         await walk(fullPath);
-      } else if (entry.endsWith('.html')) {
-        files.push(fullPath);
+      } else {
+        totalFiles += 1;
+        if (entry.name.endsWith('.html')) {
+          htmlFiles.push(fullPath);
+        }
       }
     }
   }
-  
+
   await walk(dir);
-  return files;
+  return {htmlFiles, totalFiles};
 }
 
 async function checkFile(filePath) {
@@ -55,22 +59,41 @@ async function checkFile(filePath) {
 async function main() {
   const targetDir = process.argv[2] || join(__dirname, '..', 'dist');
   
-  console.log(`\nChecking for duplicate "${PATTERN}" in HTML files...`);
+  console.log('\nValidating s2-docs build output...');
   console.log(`Directory: ${targetDir}\n`);
-  
-  let htmlFiles;
+
+  let dirStats;
   try {
-    htmlFiles = await findHtmlFiles(targetDir);
-  } catch (error) {
-    console.error(`Error reading directory: ${error.message}`);
+    dirStats = await stat(targetDir);
+  } catch {
+    console.error(`Build directory does not exist: ${targetDir}`);
     process.exit(1);
   }
-  
-  if (htmlFiles.length === 0) {
-    console.log('No HTML files found in the specified directory.');
-    process.exit(0);
+
+  if (!dirStats.isDirectory()) {
+    console.error(`Build path is not a directory: ${targetDir}`);
+    process.exit(1);
   }
-  
+
+  let htmlFiles;
+  let totalFiles;
+  try {
+    ({htmlFiles, totalFiles} = await collectBuildFiles(targetDir));
+  } catch (error) {
+    console.error(`Error reading build directory: ${error.message}`);
+    process.exit(1);
+  }
+
+  if (totalFiles === 0) {
+    console.error('Build directory is empty. No files found.');
+    process.exit(1);
+  }
+
+  if (htmlFiles.length === 0) {
+    console.error('No HTML files found in the build output.');
+    process.exit(1);
+  }
+
   console.log(`Found ${htmlFiles.length} HTML files to check.\n`);
   
   const results = await Promise.all(htmlFiles.map(checkFile));
