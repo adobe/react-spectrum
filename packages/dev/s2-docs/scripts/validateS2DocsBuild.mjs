@@ -9,8 +9,9 @@
  */
 
 import {dirname, join} from 'path';
+import fg from 'fast-glob';
 import {fileURLToPath} from 'url';
-import {readdir, readFile, stat} from 'fs/promises';
+import {readFile, stat} from 'fs/promises';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,28 +19,15 @@ const __dirname = dirname(__filename);
 const PATTERN = '</script></body></html>';
 
 async function collectBuildFiles(dir) {
-  const htmlFiles = [];
-  let totalFiles = 0;
+  const files = await fg(['**/*'], {
+    cwd: dir,
+    onlyFiles: true,
+    dot: true,
+    absolute: true
+  });
 
-  async function walk(currentDir) {
-    const entries = await readdir(currentDir, {withFileTypes: true});
-
-    for (const entry of entries) {
-      const fullPath = join(currentDir, entry.name);
-
-      if (entry.isDirectory()) {
-        await walk(fullPath);
-      } else {
-        totalFiles += 1;
-        if (entry.name.endsWith('.html')) {
-          htmlFiles.push(fullPath);
-        }
-      }
-    }
-  }
-
-  await walk(dir);
-  return {htmlFiles, totalFiles};
+  const htmlFiles = files.filter(filePath => filePath.endsWith('.html'));
+  return {htmlFiles, totalFiles: files.length};
 }
 
 async function checkFile(filePath) {
@@ -98,25 +86,17 @@ async function main() {
   
   const results = await Promise.all(htmlFiles.map(checkFile));
   const duplicates = results.filter(r => r.hasDuplicate);
-  const filesWithPattern = results.filter(r => r.count >= 1);
   
   if (duplicates.length === 0) {
-    console.log('✅ No duplicate occurrences found!');
-    console.log(`   ${filesWithPattern.length} files have the pattern once (expected).`);
-    console.log(`   ${results.length - filesWithPattern.length} files don't have the pattern at all.`);
+    console.log('✅ All HTML validated for duplicate \'</script></body></html>\' occurrences.');
   } else {
-    console.log(`❌ Found ${duplicates.length} file(s) with duplicate occurrences:\n`);
+    console.log(`❌ Found ${duplicates.length} file(s) with duplicate '</script></body></html>' occurrences:\n`);
     
     for (const {filePath, count} of duplicates) {
       const relativePath = filePath.replace(targetDir, '').replace(/^\//, '');
       console.log(`   📄 ${relativePath}`);
       console.log(`      Pattern appears ${count} times (expected: 1)\n`);
     }
-    
-    console.log('\n Summary:');
-    console.log(`   Total HTML files checked: ${results.length}`);
-    console.log(`   Files with duplicates: ${duplicates.length}`);
-    console.log(`   Files without issues: ${results.length - duplicates.length}`);
     
     process.exit(1);
   }
