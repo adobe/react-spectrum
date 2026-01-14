@@ -306,7 +306,7 @@ describe('useCalendar', () => {
 
   describe('focus behavior', () => {
     it('should not focus the calendar when setFocusedDate is called externally', async () => {
-      let {getByRole, getByTestId} = render(<Example defaultValue={new CalendarDate(2019, 6, 5)} visibleDuration={{months: 1}} />);
+      let {getByRole} = render(<Example defaultValue={new CalendarDate(2019, 6, 5)} visibleDuration={{months: 1}} />);
       let grid = getByRole('grid');
       let externalButton = document.createElement('button');
       externalButton.textContent = 'External';
