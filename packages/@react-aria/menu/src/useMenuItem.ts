@@ -307,7 +307,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onKeyUp
   });
 
-  let {focusableProps} = useFocusable({onBlur, onFocus, onFocusChange});
+  let {focusableProps} = useFocusable({onBlur, onFocus, onFocusChange}, ref);
   let domProps = filterDOMProps(item?.props);
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
