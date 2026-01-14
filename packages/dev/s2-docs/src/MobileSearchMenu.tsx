@@ -3,11 +3,14 @@
 import {Autocomplete, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CloseButton, SearchField, TextContext} from '@react-spectrum/s2';
+import {ColorSearchSkeleton} from './colorSearchData';
 import {ComponentCardView} from './ComponentCardView';
 import {
   getResourceTags,
+  LazyColorSearchView,
   LazyIconSearchView,
   SearchEmptyState,
+  useFilteredColors,
   useSearchMenuState
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
@@ -237,6 +240,9 @@ function MobileNav({initialTag}: {initialTag?: string}) {
     isOpen
   });
 
+  const filteredColors = useFilteredColors(searchValue);
+  const isColorsSelected = selectedSection === 'colors';
+
   let handleSearchFocus = () => {
     setSearchFocused(true);
   };
@@ -327,17 +333,47 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
                   </div>
-                  <div key={selectedLibrary + selectedSection} className={style({paddingX: 12, minHeight: 0, flexGrow: 1, overflow: 'clip', display: 'flex', flexDirection: 'column'})}>
-                    {showIcons ? (
+                  <div
+                    key={selectedLibrary + selectedSection}
+                    className={style({
+                      paddingX: 12,
+                      minHeight: 0,
+                      flexGrow: 1,
+                      overflow: 'clip',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    })}>
+                    {showIcons && (
                       <Suspense fallback={<IconSearchSkeleton />}>
-                        <LazyIconSearchView 
-                          filteredItems={filteredIcons} 
-                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
+                        <LazyIconSearchView
+                          filteredItems={filteredIcons}
+                          listBoxClassName={style({
+                            flexGrow: 1,
+                            overflow: 'auto',
+                            width: '100%',
+                            scrollPaddingY: 4
+                          })} />
                       </Suspense>
-                    ) : (
+                    )}
+                    {!showIcons && isColorsSelected && library.id === 'react-spectrum' && (
+                      <div
+                        className={style({
+                          flexGrow: 1,
+                          overflow: 'auto',
+                          paddingBottom: 16
+                        })}>
+                        <Suspense fallback={<ColorSearchSkeleton />}>
+                          <LazyColorSearchView
+                            filteredItems={filteredColors.sections}
+                            exactMatches={filteredColors.exactMatches}
+                            closestMatches={filteredColors.closestMatches} />
+                        </Suspense>
+                      </div>
+                    )}
+                    {!showIcons && (!isColorsSelected || library.id !== 'react-spectrum') && (
                       <ComponentCardView
                         currentUrl={currentUrl}
-                        onAction={(key) => {
+                        onAction={key => {
                           if (key === currentPage.url) {
                             overlayTriggerState?.close();
                           }
@@ -345,7 +381,11 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         items={library.id === selectedLibrary ? selectedItems : []}
                         ariaLabel="Pages"
                         size="S"
-                        renderEmptyState={() => <SearchEmptyState searchValue={searchValue} libraryLabel={library.label} />} />
+                        renderEmptyState={() => (
+                          <SearchEmptyState
+                            searchValue={searchValue}
+                            libraryLabel={library.label} />
+                        )} />
                     )}
                   </div>
                 </Autocomplete>
