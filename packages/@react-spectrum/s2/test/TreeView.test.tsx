@@ -339,7 +339,7 @@ describe('TreeView', () => {
               </MenuItem>
             </ActionMenu>
           </TreeViewItemContent>
-          <TreeViewItem id="projects-1" textValue="Projects-1">
+          <TreeViewItem id="projects-1" textValue="Projects-1" isDisabled>
             <TreeViewItemContent>
               <Text>Projects-1</Text>
               <Folder />
@@ -439,7 +439,7 @@ describe('TreeView', () => {
 
   it('should disable interactive items if the row isDisabled and disabledBehavior is all', async () => {
     let {getAllByLabelText, queryByRole} = render(
-      <TreeView expandedKeys={['projects']} aria-label="Test tree" disabledKeys={['projects-1']} disabledBehavior="all">
+      <TreeView expandedKeys={['projects']} aria-label="Test tree" disabledBehavior="all">
         <TreeViewItem id="projects" textValue="Projects">
           <TreeViewItemContent>
             <Text>Projects</Text>
@@ -453,7 +453,7 @@ describe('TreeView', () => {
               </MenuItem>
             </ActionMenu>
           </TreeViewItemContent>
-          <TreeViewItem id="projects-1" textValue="Projects-1">
+          <TreeViewItem id="projects-1" textValue="Projects-1" isDisabled>
             <TreeViewItemContent>
               <Text>Projects-1</Text>
               <Folder />
