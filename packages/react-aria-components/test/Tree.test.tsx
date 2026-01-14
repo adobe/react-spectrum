@@ -24,7 +24,8 @@ import {useTreeData} from 'react-stately';
 
 let {
   EmptyTreeStaticStory: EmptyLoadingTree,
-  LoadingStoryDepOnTopStory: LoadingMoreTree
+  LoadingStoryDepOnTopStory: LoadingMoreTree,
+  SelectionPropagation
 } = composeStories(stories);
 
 let onSelectionChange = jest.fn();
@@ -1880,6 +1881,66 @@ describe('Tree', () => {
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('multiple selection with selectionPropagation', () => {
+    it('should select all the children when selecting a parent', async () => {
+      const {getAllByRole} = render(<SelectionPropagation />);
+      const rows = getAllByRole('row');
+      expect(rows[2]).toHaveAttribute('aria-label', 'Project 2');
+      await user.click(within(rows[2]).getByRole('checkbox'));
+  
+      const selectedKeys = new Set(['project-2', 'project-2A', 'project-2B', 'project-2C']);
+      for (const row of rows) {
+        const checkbox = within(row).getByRole('checkbox');
+        if (selectedKeys.has(row.dataset.key!)) {
+          expect(checkbox).toBeChecked();
+        } else {
+          expect(checkbox).not.toBeChecked();
+        }
+      }
+  
+      await user.click(within(rows[2]).getByRole('checkbox'));
+      for (const row of rows) {
+        const checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+    });
+  
+    it('should select all the parents when selecting a child', async () => {
+      const {getAllByRole} = render(<SelectionPropagation />);
+      const rows = getAllByRole('row');
+      expect(rows[16]).toHaveAttribute('aria-label', 'Reports 1ABC');
+      await user.click(within(rows[16]).getByRole('checkbox'));
+  
+      const selectedKeys = new Set(['reports-1A', 'reports-1AB', 'reports-1ABC']);
+      for (const row of rows) {
+        const checkbox = within(row).getByRole('checkbox');
+        if (selectedKeys.has(row.dataset.key!)) {
+          expect(checkbox).toBeChecked();
+        } else {
+          expect(checkbox).not.toBeChecked();
+        }
+      }
+  
+      await user.click(within(rows[16]).getByRole('checkbox'));
+      for (const row of rows) {
+        const checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+    });
+  
+    it('should update the intermediate state of the parent when selecting a child', async () => {
+      const {getAllByRole} = render(<SelectionPropagation />);
+      const rows = getAllByRole('row');
+      expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+  
+      const checkbox = within(rows[0]).getByRole('checkbox');
+      expect(checkbox).not.toBePartiallyChecked();
+      expect(rows[1]).toHaveAttribute('aria-label', 'Project 1');
+      await user.click(within(rows[1]).getByRole('checkbox'));
+      expect(checkbox).toBePartiallyChecked();
     });
   });
 });
