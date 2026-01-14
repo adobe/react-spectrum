@@ -13,7 +13,7 @@
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useFocusable, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
 import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
@@ -307,7 +307,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onKeyUp
   });
 
-  let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
+  let {focusableProps} = useFocusable({onBlur, onFocus, onFocusChange});
   let domProps = filterDOMProps(item?.props);
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
@@ -324,7 +324,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         pressProps,
         hoverProps,
         keyboardProps,
-        focusProps,
+        focusableProps,
         // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
         data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined,
         isDisabled ? undefined : {onClick}

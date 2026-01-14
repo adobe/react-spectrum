@@ -384,7 +384,11 @@ describe('Menu', () => {
     onFocus.mockClear();
     onFocusChange.mockClear();
     onBlur.mockClear();
-    act(() => checkboxes[0].focus());
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(checkboxes[0]);
     expect(onFocus).toHaveBeenCalledTimes(1);
     expect(onFocusChange).toHaveBeenCalledTimes(1);
     expect(onBlur).toHaveBeenCalledTimes(0);
