@@ -350,13 +350,13 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
  * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
  * and optionally supports row selection and sorting.
  */
-export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement | HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, TableContext);
+export const Table = forwardRef(function Table(props: TableProps, outerRef: ForwardedRef<HTMLTableElement | HTMLDivElement>) {
+  let [allProps, ref] = useContextProps(props, outerRef, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
-  let selectionState = useMultipleSelectionState(props);
+  let selectionState = useMultipleSelectionState(allProps);
   let {selectionBehavior, selectionMode, disallowEmptySelection} = selectionState;
-  let hasDragHooks = !!props.dragAndDropHooks?.useDraggableCollectionState;
+  let hasDragHooks = !!allProps.dragAndDropHooks?.useDraggableCollectionState;
   let ctx = useMemo(() => ({
     selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
     selectionMode,
@@ -366,13 +366,13 @@ export const Table = forwardRef(function Table(props: TableProps, ref: Forwarded
 
   let content = (
     <TableOptionsContext.Provider value={ctx}>
-      <Collection {...props} />
+      <Collection {...allProps} />
     </TableOptionsContext.Provider>
   );
 
   return (
     <CollectionBuilder content={content} createCollection={() => new TableCollection<any>()}>
-      {collection => <TableInner props={props} forwardedRef={ref as any} selectionState={selectionState} collection={collection} />}
+      {collection => <TableInner props={allProps} forwardedRef={ref as any} selectionState={selectionState} collection={collection} />}
     </CollectionBuilder>
   );
 });

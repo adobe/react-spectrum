@@ -67,14 +67,13 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
         yield computeHasOverflow();
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domRef, orientation, scale, setHasOverflow, children]);
+  }, [domRef, orientation, setHasOverflow]);
 
   // There are two main reasons we need to remeasure:
   // 1. Internal changes: Check for initial overflow or when orientation/scale/children change (from checkForOverflow dep array)
   useLayoutEffect(() => {
     checkForOverflow();
-  }, [checkForOverflow]);
+  }, [checkForOverflow, children, scale]);
 
   // 2. External changes: buttongroup won't change size due to any parents changing size, so listen to its container for size changes to figure out if we should remeasure
   let parent = useRef<HTMLElement>(undefined);
@@ -82,8 +81,7 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
     if (domRef.current) {
       parent.current = domRef.current.parentElement as HTMLElement;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domRef.current]);
+  }, [domRef]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
   return (

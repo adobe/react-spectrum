@@ -158,15 +158,15 @@ function ButtonGroupWithRefs(props) {
   let button1 = useRef();
   let button2 = useRef();
   let button3 = useRef();
+  let {setUp} = props;
   useEffect(() => {
-    props.setUp({
+    setUp({
       buttonGroup: buttonGroup.current.UNSAFE_getDOMNode(),
       button1: button1.current.UNSAFE_getDOMNode(),
       button2: button2.current.UNSAFE_getDOMNode(),
       button3: button3.current.UNSAFE_getDOMNode()
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setUp]);
   return (
     <Provider theme={theme}>
       <ButtonGroup ref={buttonGroup} data-testid={buttonGroupId} {...props}>

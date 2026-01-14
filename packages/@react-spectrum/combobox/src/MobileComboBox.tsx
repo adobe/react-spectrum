@@ -46,7 +46,7 @@ import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export const MobileComboBox = React.forwardRef(function MobileComboBox(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
+  let allProps = useProviderProps(props);
 
   let {
     isQuiet,
@@ -57,14 +57,14 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
     name,
     formValue = 'text',
     allowsCustomValue
-  } = props;
+  } = allProps;
   if (allowsCustomValue) {
     formValue = 'text';
   }
 
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
-    ...props,
+    ...allProps,
     defaultFilter: contains,
     allowsEmptyCollection: true,
     // Needs to be false here otherwise we double up on commitSelection/commitCustomValue calls when
@@ -79,25 +79,28 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
 
   let inputRef = useRef<HTMLInputElement>(null);
   useFormValidation({
-    ...props,
+    ...allProps,
     focus: () => buttonRef.current?.focus()
   }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
-  let errorMessage = props.errorMessage ?? validationErrors.join(' ');
+  let validationState = allProps.validationState || (isInvalid ? 'invalid' : undefined);
+  let errorMessage = allProps.errorMessage ?? validationErrors.join(' ');
 
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
-    ...props,
+  let {labelProps: fieldLabelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...allProps,
     labelElementType: 'span',
     isInvalid,
     errorMessage
   });
 
-  // Focus the button and show focus ring when clicking on the label
-  labelProps.onClick = () => {
-    if (!props.isDisabled) {
-      buttonRef.current?.focus();
-      setInteractionModality('keyboard');
+  let labelProps = {
+    ...fieldLabelProps,
+    onClick: () => {
+      // Focus the button and show focus ring when clicking on the label
+      if (!allProps.isDisabled) {
+        buttonRef.current?.focus();
+        setInteractionModality('keyboard');
+      }
     }
   };
 
@@ -126,7 +129,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
   return (
     <>
       <Field
-        {...props}
+        {...allProps}
         labelProps={labelProps}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
@@ -145,13 +148,13 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
           isPlaceholder={!state.inputValue}
           validationState={validationState}
           onPress={() => !isReadOnly && state.open(null, 'manual')}>
-          {state.inputValue || props.placeholder || ''}
+          {state.inputValue || allProps.placeholder || ''}
         </ComboBoxButton>
       </Field>
       <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
         <ComboBoxTray
-          {...props}
+          {...allProps}
           onClose={state.close}
           overlayProps={overlayProps}
           state={state} />
@@ -385,10 +388,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   // "double tap to edit text", as with a textbox or searchbox. We'd like double tapping to
   // open the virtual keyboard rather than closing the tray.
   // Unlike "combobox", "aria-expanded" is not a valid attribute on "searchbox".
-  inputProps.role = 'searchbox';
-  inputProps['aria-haspopup'] = 'listbox';
-  delete inputProps['aria-expanded'];
-  delete inputProps.onTouchEnd;
+  let newInputProps = {...inputProps};
+  newInputProps.role = 'searchbox';
+  newInputProps['aria-haspopup'] = 'listbox';
+  delete newInputProps['aria-expanded'];
+  delete newInputProps.onTouchEnd;
 
   let clearButton = (
     <ClearButton
@@ -440,10 +444,12 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       return;
     }
 
-    popoverRef.current?.focus();
+    if (popoverRef.current) {
+      popoverRef.current.focus();
+    }
   }, [inputRef, popoverRef, isTouchDown]);
 
-  let inputValue = inputProps.value;
+  let inputValue = newInputProps.value;
   let lastInputValue = useRef(inputValue);
   useEffect(() => {
     if (loadingState === 'filtering' && !showLoading) {
@@ -477,7 +483,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
       popoverRef.current?.focus();
     } else {
-      inputProps.onKeyDown?.(e);
+      newInputProps.onKeyDown?.(e);
     }
   };
 
@@ -496,7 +502,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
         <TextFieldBase
           label={label}
           labelProps={labelProps}
-          inputProps={{...inputProps, onKeyDown}}
+          inputProps={{...newInputProps, onKeyDown}}
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}

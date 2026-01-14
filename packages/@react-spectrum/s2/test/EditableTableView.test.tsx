@@ -121,11 +121,11 @@ describe('TableView', () => {
     let columns = editableColumns;
     let data = useListData({initialItems: defaultItems});
 
+    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
     let saveItem = useEffectEvent((id: Key, columnId: Key) => {
       data.update(id, (prevItem) => ({...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}}));
       currentRequests.current.delete(id);
     });
-    let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
     let onChange = useCallback((id: Key, columnId: Key, values: any) => {
       let value = values[columnId];
       if (value === null) {
@@ -499,11 +499,11 @@ describe('TableView', () => {
         let columns = editableColumns;
         let data = useListData({initialItems: defaultItems});
 
+        let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
         let saveItem = useEffectEvent((id: Key, columnId: Key) => {
           data.update(id, (prevItem) => ({...prevItem, isSaving: {...prevItem.isSaving, [columnId]: false}}));
           currentRequests.current.delete(id);
         });
-        let currentRequests = useRef<Map<Key, {request: ReturnType<typeof setTimeout>}>>(new Map());
         let onChange = useCallback((id: Key, columnId: Key, values: any) => {
           let value = values.get(columnId);
           if (value === null) {

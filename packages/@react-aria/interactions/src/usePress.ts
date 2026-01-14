@@ -102,7 +102,7 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
   }
-  useSyncRef(context, props.ref);
+  useSyncRef(context.ref, props.ref);
 
   return props;
 }

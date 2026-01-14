@@ -55,7 +55,7 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
 
   // @ts-ignore - ignore unused incompatible props
   let {groupProps, trackProps, labelProps, outputProps} = useSlider({...props, 'aria-label': ariaLabel}, state, trackRef);
-  let {inputProps, thumbProps} = useSliderThumb({
+  let {inputProps: sliderInputProps, thumbProps} = useSliderThumb({
     index: 0,
     orientation,
     isDisabled: props.isDisabled,
@@ -64,6 +64,7 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     trackRef,
     inputRef
   }, state);
+  let inputProps = {...sliderInputProps};
 
   let value = state.getDisplayColor();
   let generateBackground = () => {

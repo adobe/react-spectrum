@@ -47,23 +47,23 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
+  let propsWithProvider = useProviderProps(props);
+  let allProps = useFormProps(propsWithProvider);
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+    if (allProps.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
       console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
       hasWarned.current = true;
     }
-  }, [props.placeholder]);
+  }, [allProps.placeholder]);
 
   let isMobile = useIsMobileDevice();
   if (isMobile) {
     // menuTrigger=focus/manual don't apply to mobile searchwithin
-    return <MobileSearchAutocomplete {...props} menuTrigger="input" ref={ref} />;
+    return <MobileSearchAutocomplete {...allProps} menuTrigger="input" ref={ref} />;
   } else {
-    return <SearchAutocompleteBase {...props} ref={ref} />;
+    return <SearchAutocompleteBase {...allProps} ref={ref} />;
   }
 }
 

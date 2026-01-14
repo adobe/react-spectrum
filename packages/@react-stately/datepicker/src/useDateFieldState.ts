@@ -16,7 +16,7 @@ import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-t
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type SegmentType = 'era' | 'year' | 'month' | 'day' |  'hour' | 'minute' | 'second' | 'dayPeriod' | 'literal' | 'timeZoneName';
@@ -224,38 +224,34 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let clearedSegment = useRef<string | null>(null);
 
   // Reset placeholder when calendar changes
-  let lastCalendar = useRef(calendar);
-  useEffect(() => {
-    if (!isEqualCalendar(calendar, lastCalendar.current)) {
-      lastCalendar.current = calendar;
-      setPlaceholderDate(placeholder =>
-        Object.keys(validSegments).length > 0
-          ? toCalendar(placeholder, calendar)
-          : createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
-      );
-    }
-  }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
+  let [lastCalendar, setLastCalendar] = useState(calendar);
+  if (!isEqualCalendar(calendar, lastCalendar)) {
+    setLastCalendar(calendar);
+    setPlaceholderDate(placeholder =>
+      Object.keys(validSegments).length > 0
+        ? toCalendar(placeholder, calendar)
+        : createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
+    );
+  }
 
   // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
   if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
-    validSegments = {...allSegments};
-    setValidSegments(validSegments);
+    setValidSegments({...allSegments});
   }
 
   // If the value is set to null and all segments are valid, reset the placeholder.
   if (value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
-    validSegments = {};
-    setValidSegments(validSegments);
+    setValidSegments({});
     setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
   }
 
   // If all segments are valid, use the date from state, otherwise use the placeholder date.
   let displayValue = calendarValue && Object.keys(validSegments).length >= Object.keys(allSegments).length ? calendarValue : placeholderDate;
-  let setValue = (newValue: DateValue) => {
+  let setValue = (newValue: DateValue, newValidSegments: Partial<typeof EDITABLE_SEGMENTS> = validSegments) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
-    let validKeys = Object.keys(validSegments);
+    let validKeys = Object.keys(newValidSegments);
     let allKeys = Object.keys(allSegments);
 
     // if all the segments are completed or a timefield with everything but am/pm set the time, also ignore when am/pm cleared
@@ -266,13 +262,12 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     } else if (
       (validKeys.length === 0 && clearedSegment.current == null) ||
       validKeys.length >= allKeys.length ||
-      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
+      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !newValidSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
     ) {
       // If the field was empty (no valid segments) or all segments are completed, commit the new value.
       // When committing from an empty state, mark every segment as valid so value is committed.
       if (validKeys.length === 0) {
-        validSegments = {...allSegments};
-        setValidSegments(validSegments);
+        setValidSegments({...allSegments});
       }
 
       // The display calendar should not have any effect on the emitted value.
@@ -293,28 +288,27 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
   if (allSegments.era && validSegments.year && !validSegments.era) {
-    validSegments.era = true;
-    setValidSegments({...validSegments});
+    setValidSegments({...validSegments, era: true});
   } else if (!allSegments.era && validSegments.era) {
-    delete validSegments.era;
-    setValidSegments({...validSegments});
+    setValidSegments({...validSegments, era: undefined});
   }
 
   let markValid = (part: Intl.DateTimeFormatPartTypes) => {
-    validSegments[part] = true;
+    let newValidSegments = {...validSegments, [part]: true};
     if (part === 'year' && allSegments.era) {
-      validSegments.era = true;
+      newValidSegments.era = true;
     }
-    setValidSegments({...validSegments});
+    setValidSegments(newValidSegments);
+    return newValidSegments;
   };
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
     if (!validSegments[type]) {
-      markValid(type);
-      let validKeys = Object.keys(validSegments);
+      let newValidSegments = markValid(type);
+      let validKeys = Object.keys(newValidSegments);
       let allKeys = Object.keys(allSegments);
-      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        setValue(displayValue);
+      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !newValidSegments.dayPeriod)) {
+        setValue(displayValue, newValidSegments);
       }
     } else {
       setValue(addSegment(displayValue, type, amount, resolvedOptions));
@@ -367,27 +361,26 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       adjustSegment(part, -(PAGE_STEP[part] || 1));
     },
     setSegment(part, v: string | number) {
-      markValid(part);
-      setValue(setSegment(displayValue, part, v, resolvedOptions));
+      let newValidSegments = markValid(part);
+      setValue(setSegment(displayValue, part, v, resolvedOptions), newValidSegments);
     },
     confirmPlaceholder() {
       if (props.isDisabled || props.isReadOnly) {
         return;
       }
-
       // Confirm the placeholder if only the day period is not filled in.
       let validKeys = Object.keys(validSegments);
       let allKeys = Object.keys(allSegments);
       if (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod) {
-        validSegments = {...allSegments};
-        setValidSegments(validSegments);
+        setValidSegments({...allSegments});
         setValue(displayValue.copy());
       }
     },
     clearSegment(part) {
-      delete validSegments[part];
+      let newValidSegments = {...validSegments};
+      delete newValidSegments[part];
       clearedSegment.current = part;
-      setValidSegments({...validSegments});
+      setValidSegments(newValidSegments);
 
       let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
       let value = displayValue;
@@ -401,14 +394,14 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         } else if (!isPM && shouldBePM) {
           value = displayValue.set({hour: displayValue.hour + 12});
         }
-      } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
+      } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && newValidSegments.dayPeriod) {
         value = displayValue.set({hour: placeholder['hour'] + 12});
       } else if (part in displayValue) {
         value = displayValue.set({[part]: placeholder[part]});
       }
 
       setDate(null);
-      setValue(value);
+      setValue(value, newValidSegments);
     },
     formatValue(fieldOptions: FieldOptions) {
       if (!calendarValue) {

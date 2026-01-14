@@ -187,12 +187,6 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   let x = useTransform(scrollXProgress, (x) => transform(x, 'offsetLeft'));
   let width = useTransform(scrollXProgress, (x) => transform(x, 'offsetWidth'));
 
-  // When the user scrolls, update the selected key
-  // so that the correct tab panel becomes interactive.
-  useMotionValueEvent(scrollXProgress, 'change', (x) => {
-    if (animationRef.current || !tabElements.length) {return;}
-    setSelectedKey(tabs[getIndex(x)].id);
-  });
 
   // When the user clicks on a tab perform an animation of
   // the scroll position to the newly selected tab panel.
@@ -237,6 +231,13 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       }
     );
   };
+
+  // When the user scrolls, update the selected key
+  // so that the correct tab panel becomes interactive.
+  useMotionValueEvent(scrollXProgress, 'change', (x) => {
+    if (animationRef.current || !tabElements.length) {return;}
+    setSelectedKey(tabs[getIndex(x)].id);
+  });
 
   // Scroll selected tab into view.
   let tabListScrollRef = useRef<HTMLDivElement>(null);

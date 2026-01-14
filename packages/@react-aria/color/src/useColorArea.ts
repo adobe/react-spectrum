@@ -63,7 +63,12 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let {direction, locale} = useLocale();
 
-  let [focusedInput, setFocusedInput] = useState<'x' | 'y' | null>(null);
+  let [focusedInput, _setFocusedInput] = useState<'x' | 'y' | null>(null);
+  let focusedInputRef = useRef<'x' | 'y' | null>(focusedInput);
+  let setFocusedInput = useCallback((newFocusedInput: 'x' | 'y' | null) => {
+    focusedInputRef.current = newFocusedInput;
+    _setFocusedInput(newFocusedInput);
+  }, [_setFocusedInput]);
   let focusInput = useCallback((inputRef:RefObject<HTMLInputElement | null> = inputXRef) => {
     if (inputRef.current) {
       focusWithoutScrolling(inputRef.current);
@@ -157,8 +162,8 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
         }
         setValueChangedViaKeyboard(valueChanged);
         // set the focused input based on which axis has the greater delta
-        focusedInput = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x';
-        setFocusedInput(focusedInput);
+        let newFocusedInput = valueChanged && Math.abs(deltaY) > Math.abs(deltaX) ? 'y' as const : 'x' as const;
+        setFocusedInput(newFocusedInput);
       } else {
         currentPosition.current.x += (direction === 'rtl' ? -1 : 1) * deltaX / width ;
         currentPosition.current.y += deltaY / height;
@@ -168,7 +173,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     onMoveEnd() {
       isOnColorArea.current = false;
       state.setDragging(false);
-      let input = focusedInput === 'x' ? inputXRef : inputYRef;
+      let input = focusedInputRef.current === 'x' ? inputXRef : inputYRef;
       focusInput(input);
     }
   };

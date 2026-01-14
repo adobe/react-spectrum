@@ -52,7 +52,7 @@ export const Menu = React.forwardRef(function Menu<T extends object>(props: Spec
   let submenuRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
-  useSyncRef(contextProps, domRef);
+  useSyncRef(contextProps.ref, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
   let prevPopoverContainer = useRef<HTMLElement | null>(null);
 

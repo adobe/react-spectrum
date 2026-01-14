@@ -92,9 +92,10 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   );
   let endId = useSlotId();
   let endProps: DOMAttributes = {};
+  let newMenuItemProps = {...menuItemProps};
   if (endId) {
     endProps.id = endId;
-    menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
+    newMenuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
   }
 
   let contents = typeof rendered === 'string'
@@ -104,7 +105,7 @@ export function MenuItem<T>(props: MenuItemProps<T>): JSX.Element {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...menuItemProps}
+        {...newMenuItemProps}
         ref={ref}
         className={classNames(
           styles,

@@ -53,7 +53,8 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
   } = props;
 
   let menuTriggerId = useId();
-  let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
+  let {triggerProps: overlayTriggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
+  let triggerProps = {...overlayTriggerProps};
 
   let onKeyDown = (e) => {
     if (isDisabled) {

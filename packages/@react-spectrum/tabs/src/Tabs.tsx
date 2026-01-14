@@ -364,13 +364,14 @@ function TabPanel(props: TabPanelProps) {
   const {tabPanelProps} = useTabPanel(props, tabListState, ref);
   let {styleProps} = useStyleProps(props);
 
+  let internalTabPanelProps = {...tabPanelProps};
   if (ctxTabPanelProps['aria-labelledby']) {
-    tabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
+    internalTabPanelProps['aria-labelledby'] = ctxTabPanelProps['aria-labelledby'];
   }
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...styleProps} {...tabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel', styleProps.className)}>
+      <div {...styleProps} {...internalTabPanelProps} ref={ref} className={classNames(styles, 'spectrum-TabsPanel-tabpanel', styleProps.className)}>
         {props.children}
       </div>
     </FocusRing>

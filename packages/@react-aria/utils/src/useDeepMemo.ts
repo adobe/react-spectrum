@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable rulesdir/pure-render */
-
 import {useRef} from 'react';
 
 export function useDeepMemo<T>(value: T, isEqual: (a: T, b: T) => boolean): T {

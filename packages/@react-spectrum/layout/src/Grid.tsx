@@ -50,13 +50,14 @@ export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLD
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
-  if (styleProps.style) {
-    styleProps.style.display = 'grid'; // inline-grid?
+  let newStyleProps = {...styleProps};
+  if (newStyleProps.style) {
+    newStyleProps.style.display = 'grid'; // inline-grid?
   }
   let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <div {...filterDOMProps(otherProps)} {...newStyleProps} ref={domRef}>
       {children}
     </div>
   );

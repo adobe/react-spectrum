@@ -155,6 +155,8 @@ export function useSpinButton(
       _async.current = window.setTimeout(
         () => {
           if ((maxValue === undefined || isNaN(maxValue)) || (value === undefined || isNaN(value)) || value < maxValue) {
+            // https://github.com/facebook/react/issues/34888
+            // eslint-disable-next-line react-hooks/immutability
             onIncrementPressStart(60);
           }
         },
@@ -172,6 +174,8 @@ export function useSpinButton(
       _async.current = window.setTimeout(
         () => {
           if ((minValue === undefined || isNaN(minValue)) || (value === undefined || isNaN(value)) || value > minValue) {
+            // https://github.com/facebook/react/issues/34888
+            // eslint-disable-next-line react-hooks/immutability
             onDecrementPressStart(60);
           }
         },

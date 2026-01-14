@@ -37,7 +37,7 @@ export let FocusableContext: React.Context<FocusableContextValue | null> = React
 
 function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
-  useSyncRef(context, ref);
+  useSyncRef(context.ref, ref);
 
   // eslint-disable-next-line
   let {ref: _, ...otherProps} = context;

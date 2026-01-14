@@ -37,7 +37,7 @@ React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<F
     }
   });
 
-  useSyncRef(prevContext, ref);
+  useSyncRef(prevContext.ref, ref);
 
   useEffect(() => {
     if (!isRegistered.current) {

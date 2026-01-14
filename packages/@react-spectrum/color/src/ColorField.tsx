@@ -27,22 +27,22 @@ import {useProviderProps} from '@react-spectrum/provider';
  * A color field allows users to edit a hex color or individual color channel value.
  */
 export const ColorField = React.forwardRef(function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
-  [props] = useContextProps(props, null, ColorFieldContext);
-  
+  let propsWithProvider = useProviderProps(props);
+  let propsWithForm = useFormProps(propsWithProvider);
+  let [allProps] = useContextProps(propsWithForm, null, ColorFieldContext);
+
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (props.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
+    if (allProps.placeholder && !hasWarned.current && process.env.NODE_ENV !== 'production') {
       console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
       hasWarned.current = true;
     }
-  }, [props.placeholder]);
+  }, [allProps.placeholder]);
 
-  if (props.channel) {
-    return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;
+  if (allProps.channel) {
+    return <ColorChannelField {...allProps} channel={allProps.channel} forwardedRef={ref} />;
   } else {
-    return <HexColorField {...props} forwardedRef={ref} />;
+    return <HexColorField {...allProps} forwardedRef={ref} />;
   }
 });
 

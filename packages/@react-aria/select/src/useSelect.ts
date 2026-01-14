@@ -99,7 +99,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
     if (state.selectionManager.selectionMode === 'multiple') {
       return;
     }
-    
+
     switch (e.key) {
       case 'ArrowLeft': {
         // prevent scrolling containers
@@ -124,13 +124,14 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
     }
   };
 
-  let {typeSelectProps} = useTypeSelect({
+  let {typeSelectProps: selectTypeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
     selectionManager: state.selectionManager,
     onTypeSelect(key) {
       state.setSelectedKey(key);
     }
   });
+  let typeSelectProps = {...selectTypeSelectProps};
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
