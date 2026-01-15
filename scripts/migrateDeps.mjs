@@ -188,19 +188,30 @@ function migrateScope(scope, monopackage) {
     }
   }
 
-  // rewriteIndex(`packages/${monopackage}/src/index.ts`, scope);
-  rewriteMonopackageImports(`packages/${monopackage}/src/index.ts`);
+  fs.renameSync(`packages/${monopackage}/src/index.ts`, `packages/${monopackage}/exports/index.ts`);
+  rewriteMonopackageImports(`packages/${monopackage}/exports/index.ts`);
 }
 
 function prepareMonopackage(monopackage) {
   let monopackageJSON = JSON.parse(fs.readFileSync(`packages/${monopackage}/package.json`, 'utf8'));
-  monopackageJSON.source = ['src/index.ts', 'src/*/index.ts'];
+  monopackageJSON.source = 'exports/*.ts';
   if (!monopackageJSON.exports['.']) {
     monopackageJSON.exports = {
-      '.': monopackageJSON.exports,
-      './*': {
+      '.': {
+        source: './exports/index.ts',
+        types: './exports/index.ts',
+        import: './dist/import.mjs',
+        require: './dist/module.js'
+      },
+      './private/*': {
         source: ['./src/*.ts', './src/*.tsx', './src/*/index.ts'],
         types: ['./dist/*.d.ts', './src/*.ts', './src/*.tsx'],
+        import: './dist/*.mjs',
+        require: './dist/*.js'
+      },
+      './*': {
+        source: ['./exports/*.ts'],
+        types: ['./dist/*.d.ts', './exports/*.ts', './exports/*.tsx'],
         import: './dist/*.mjs',
         require: './dist/*.js'
       }
@@ -208,10 +219,21 @@ function prepareMonopackage(monopackage) {
   } else {
     // TODO
     monopackageJSON.exports = {
-      '.': monopackageJSON.exports['.'],
-      './*': {
+      '.': {
+        source: './exports/index.ts',
+        types: './exports/index.ts',
+        import: './dist/import.mjs',
+        require: './dist/module.js'
+      },
+      './private/*': {
         source: ['./src/*.ts', './src/*.tsx', './src/*/index.ts'],
         types: ['./dist/*.d.ts', './src/*.ts', './src/*.tsx'],
+        import: './dist/*.mjs',
+        require: './dist/*.js'
+      },
+      './*': {
+        source: ['./exports/*.ts'],
+        types: ['./dist/*.d.ts', './exports/*.ts', './exports/*.tsx'],
         import: './dist/*.mjs',
         require: './dist/*.js'
       }
@@ -229,7 +251,9 @@ function prepareMonopackage(monopackage) {
     }
   }
 
+  fs.mkdirSync(`packages/${monopackage}/exports`, {recursive: true});
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
+  fs.rmSync(`packages/${monopackage}/index.ts`);
 }
 
 function migratePackage(scope, name, monopackage) {
@@ -263,12 +287,18 @@ function migratePackage(scope, name, monopackage) {
 
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
 
-  packageJSON.source = 'index.ts';
-  delete packageJSON.exports; // TODO
+  packageJSON.source = 'src/index.ts';
+  // delete packageJSON.exports; // TODO
+  packageJSON.exports = {
+    source: './src/index.ts',
+    types: './src/index.ts',
+    // TODO
+  };
   packageJSON.dependencies = {
     [monopackage]: '^' + monopackageJSON.version
   };
   fs.writeFileSync(`packages/${scope}/${name}/package.json`, JSON.stringify(packageJSON, false, 2) + '\n');
+  fs.rmSync(`packages/${scope}/${name}/index.ts`);
 
   createPublicExports(monopackage, scope, name);
 }
@@ -289,7 +319,7 @@ function remapExports(exports, name) {
 
 function moveTree(scope, name, tree, monopackage) {
   if (fs.existsSync(`packages/${scope}/${name}/${tree}`)) {
-    let monopackageTree = tree === 'src' ? 'src/private' : tree;
+    let monopackageTree = tree;
     fs.rmSync(`packages/${monopackage}/${monopackageTree}/${name}`, {recursive: true, force: true});
     fs.mkdirSync(`packages/${monopackage}/${monopackageTree}`, {recursive: true});
     fs.renameSync(`packages/${scope}/${name}/${tree}`, `packages/${monopackage}/${monopackageTree}/${name}`);
@@ -489,7 +519,7 @@ function rewriteMonopackageImports(file, name, scope) {
       } else if (source === '../package.json') {
         source = '../../package.json';
       } else {
-        source = source.replace(/\.\.\/(src|stories|chromatic|intl)/, (_, tree) => `../../${tree}/${tree === 'src' ? 'private/' : ''}${name}`);
+        source = source.replace(/\.\.\/(src|stories|chromatic|intl)/, (_, tree) => `../../${tree}/${name}`);
       }
       node.source = t.stringLiteral(source);
     } else if (source.startsWith('/packages/') && !source.startsWith('/packages/@internationalized/')) {
@@ -512,7 +542,7 @@ function rewriteMonopackageImports(file, name, scope) {
 
       let tree = parts.shift();
 
-      source = `packages/${monopackage}/${tree}/${tree === 'src' ? 'private/' : ''}${pkg}/${parts.join('/')}`;
+      source = `packages/${monopackage}/${tree}/${pkg}/${parts.join('/')}`;
       source = path.relative(path.dirname(file), source);
       if (!source.startsWith('.')) {
         source = './' + source;
@@ -613,7 +643,7 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
     let subpath = pkg === monopackage ? name : `${pkg}/${name}`;
     let fullPath = monopackage === 'react-aria-components' || monopackage === '@react-spectrum/s2'
       ? `packages/${monopackage}/src/${subpath}`
-      : `packages/${monopackage}/src/private/${subpath}`;
+      : `packages/${monopackage}/src/${subpath}`;
     let relative = path.relative(path.dirname(from), fullPath);
     if (!relative.startsWith('.')) {
       relative = './' + relative;
@@ -648,7 +678,7 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
 }
 
 function createPublicExports(monopackage, scope, pkg) {
-  let file = `packages/${monopackage}/src/private/${pkg}/index.ts`;
+  let file = `packages/${monopackage}/src/${pkg}/index.ts`;
   let content = fs.readFileSync(file, 'utf8');
   let ast = recast.parse(content, {
     parser: {
@@ -687,7 +717,7 @@ function createPublicExports(monopackage, scope, pkg) {
       node.specifiers = node.specifiers.filter(s => importMap[monopackage][s.exported.name]);
       if (node.source.value.startsWith('./') && node.specifiers.length > 0) {
         let source = node.source.value.slice(2);
-        node.source.value = `./private/${pkg}/${source}`;
+        node.source.value = `${monopackage}/private/${pkg}/${source}`;
         if (standalone.has(source)) {
           groups[source] ||= [];
           groups[source].push(node);
@@ -705,7 +735,7 @@ function createPublicExports(monopackage, scope, pkg) {
       type: 'Program',
       body: groups[source].concat(unmatched)
     }, {objectCurlySpacing: false, quote: 'single'}).code;
-    fs.writeFileSync(`packages/${monopackage}/src/${path.basename(source)}.ts`, content);
+    fs.writeFileSync(`packages/${monopackage}/exports/${path.basename(source)}.ts`, content);
   }
 
   fs.rmSync(file);

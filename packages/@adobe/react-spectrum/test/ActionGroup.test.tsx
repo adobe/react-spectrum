@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroup, Item} from '../';
+import {ActionGroup, Item} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
