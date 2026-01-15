@@ -679,7 +679,7 @@ export function GridListScrollIntoView() {
   );
 }
 
-        export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> = {
+export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> = {
   render: (args) => <GridListInModalPickerRender {...args} />,
   parameters: {
     docs: {
