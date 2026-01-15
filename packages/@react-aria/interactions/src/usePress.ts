@@ -84,7 +84,8 @@ interface EventBase {
   altKey: boolean,
   clientX?: number,
   clientY?: number,
-  targetTouches?: Array<{clientX?: number, clientY?: number}>
+  targetTouches?: Array<{clientX?: number, clientY?: number}>,
+  key?: string
 }
 
 export interface PressResult {
@@ -117,6 +118,7 @@ class PressEvent implements IPressEvent {
   altKey: boolean;
   x: number;
   y: number;
+  key: string | undefined;
   #shouldStopPropagation = true;
 
   constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase, state?: PressState) {
@@ -146,6 +148,7 @@ class PressEvent implements IPressEvent {
     this.altKey = originalEvent.altKey;
     this.x = x;
     this.y = y;
+    this.key = originalEvent.key;
   }
 
   continuePropagation() {
@@ -983,7 +986,8 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
     metaKey: e.metaKey,
     altKey: e.altKey,
     clientX,
-    clientY
+    clientY,
+    key: e.key
   };
 }
 
