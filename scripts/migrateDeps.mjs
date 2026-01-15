@@ -50,10 +50,12 @@ standalone.add('Column');
 standalone.add('TableBody');
 standalone.add('TableHeader');
 standalone.add('useToggleGroupState');
+standalone.add('useColorPickerState');
 
 // Documented but not in the monopackage.
 standalone.delete('useAutocomplete');
 standalone.delete('useAutocompleteState');
+standalone.delete('useToolbar');
 
 // Public but grouped with a parent component/hook.
 let parentFile = {
@@ -129,7 +131,24 @@ const privateNames = new Set([
   'useSlotId',
   'createFocusManager',
   'isFocusVisible',
-  'UNSTABLE_createLandmarkController'
+  'UNSTABLE_createLandmarkController',
+  'isElementInChildOfActiveScope',
+  'getFocusableTreeWalker',
+  'getPointerType',
+  'addWindowFocusTracking',
+  'useInteractionModality',
+  'useFocusVisibleListener',
+  'FocusVisibleHandler',
+  'Modality',
+  'LandmarkControllerOptions',
+  'useOverlayFocusContain',
+  'useSSRSafeId',
+  'mergeIds',
+  'useFormProps',
+  'IconPropsWithoutChildren',
+  'useProviderProps',
+  'CollectionBuilderContext',
+  'useLocalizedStringDictionary'
 ]);
 
 let publicFiles = new Set();
@@ -244,10 +263,6 @@ function migratePackage(scope, name, monopackage) {
 
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
 
-  let index = fs.readFileSync(`packages/${scope}/${name}/index.ts`, 'utf8');
-  index = index.replace('./src', `${monopackage}/private/${name}/index`);
-  fs.writeFileSync(`packages/${scope}/${name}/index.ts`, index);
-
   packageJSON.source = 'index.ts';
   delete packageJSON.exports; // TODO
   packageJSON.dependencies = {
@@ -255,7 +270,7 @@ function migratePackage(scope, name, monopackage) {
   };
   fs.writeFileSync(`packages/${scope}/${name}/package.json`, JSON.stringify(packageJSON, false, 2) + '\n');
 
-  createPublicExports(monopackage, name);
+  createPublicExports(monopackage, scope, name);
 }
 
 function remapExports(exports, name) {
@@ -281,7 +296,7 @@ function moveTree(scope, name, tree, monopackage) {
 
     for (let file of fs.globSync(`packages/${monopackage}/${monopackageTree}/${name}/**/*.{ts,tsx,js,jsx,mdx}`)) {
       // rewriteImports(file, scope, name);
-      rewriteMonopackageImports(file, name);
+      rewriteMonopackageImports(file, name, scope);
     }
   }
 }
@@ -415,7 +430,7 @@ function buildImportMap(file) {
   return map;
 }
 
-function rewriteMonopackageImports(file, name) {
+function rewriteMonopackageImports(file, name, scope) {
   if (path.extname(file) === '.mdx') {
     return;
   }
@@ -465,55 +480,12 @@ function rewriteMonopackageImports(file, name) {
 
     if (importMap[source]) {
       hadImports = true;
-
-      let groups = {};
-      for (let specifier of node.specifiers) {
-        let importedName = specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
-        if (!importedName || !importMap[source][importedName]) {
-          continue;
-        }
-        let importSource = source;
-        let [src, imported] = importMap[source][importedName];
-        if (importMap[src] && importMap[src][imported]) {
-          importSource = src;
-          [src, imported] = importMap[src][imported];
-        }
-
-        if (src.startsWith('./')) {
-          src = `${importSource}/${src.slice(2)}`;
-          src = getRenamedSpecifier(src, file, importedName);
-        }
-        groups[src] ||= [];
-        if (node.type === 'ImportDeclaration') {
-          groups[src].push(t.importSpecifier(specifier.local, t.identifier(imported)));
-        } else if (node.type === 'ExportNamedDeclaration') {
-          groups[src].push(t.exportSpecifier(t.identifier(imported), specifier.exported));
-        }
-      }
-      
-      let res = Object.entries(groups).map(([source, specifiers]) => {
-        if (node.type === 'ImportDeclaration') {
-          let decl = t.importDeclaration(specifiers, t.stringLiteral(source));
-          decl.importKind = node.importKind;
-          return decl;
-        } else if (node.type === 'ExportNamedDeclaration') {
-          let decl = t.exportNamedDeclaration(null, specifiers, t.stringLiteral(source));
-          decl.exportKind = node.exportKind;
-          return decl;
-        }
-      });
-
-      if (res.length === 0) {
-        return [node];
-      }
-
-      res[0].comments = node.leadingComments;
-      return res;
+      return getImportStatements(node, file);
     } else if (source.startsWith('.') && name) {
       hadImports = true;
-      // source = path.relative(file, path.resolve(path.dirname(file), source));
-      if (source === '../' || source === '..' || source === '../index' || source === '../src') {
-        source = `../../src/private/${name}`;
+      if (source === '.' || source === './' || source === './index' || source === '../' || source === '..' || source === '../index' || source === '../src') {
+        node.source = t.stringLiteral(`${scope}/${name}`);
+        return getImportStatements(node, file);
       } else if (source === '../package.json') {
         source = '../../package.json';
       } else {
@@ -560,11 +532,58 @@ function rewriteMonopackageImports(file, name) {
   fs.writeFileSync(file, content);
 }
 
+function getImportStatements(node, file, relative = true) {
+  let source = node.source.value;
+  let groups = {};
+  for (let specifier of node.specifiers) {
+    let importedName = specifier.type === 'ImportSpecifier' ? specifier.imported.name : specifier.local.name;
+    if (!importedName || !importMap[source][importedName]) {
+      continue;
+    }
+    let importSource = source;
+    let [src, imported] = importMap[source][importedName];
+    if (importMap[src] && importMap[src][imported]) {
+      importSource = src;
+      [src, imported] = importMap[src][imported];
+    }
+
+    if (src.startsWith('./')) {
+      src = `${importSource}/${src.slice(2)}`;
+      src = getRenamedSpecifier(src, file, importedName, relative);
+    }
+    groups[src] ||= [];
+    if (node.type === 'ImportDeclaration') {
+      groups[src].push(t.importSpecifier(specifier.local, t.identifier(imported)));
+    } else if (node.type === 'ExportNamedDeclaration') {
+      groups[src].push(t.exportSpecifier(t.identifier(imported), specifier.exported));
+    }
+  }
+  
+  let res = Object.entries(groups).map(([source, specifiers]) => {
+    if (node.type === 'ImportDeclaration') {
+      let decl = t.importDeclaration(specifiers, t.stringLiteral(source));
+      decl.importKind = node.importKind;
+      return decl;
+    } else if (node.type === 'ExportNamedDeclaration') {
+      let decl = t.exportNamedDeclaration(null, specifiers, t.stringLiteral(source));
+      decl.exportKind = node.exportKind;
+      return decl;
+    }
+  });
+
+  if (res.length === 0) {
+    return [node];
+  }
+
+  res[0].comments = node.leadingComments;
+  return res;
+}
+
 function parsePackage(file) {
   return file.match(/packages\/((?:@[^/]+\/)?[^/]+)\/([^/]+)/).slice(1);
 }
 
-function getRenamedSpecifier(specifier, from, importedName) {
+function getRenamedSpecifier(specifier, from, importedName, relative = true) {
   if (skipped.some(s => specifier.includes(s))) {
     return specifier;
   }
@@ -590,7 +609,7 @@ function getRenamedSpecifier(specifier, from, importedName) {
   let name = parts.join('/');
 
   let [fromPkg] = parsePackage(from);
-  if (fromPkg === monopackage) {
+  if (relative && fromPkg === monopackage) {
     let subpath = pkg === monopackage ? name : `${pkg}/${name}`;
     let fullPath = monopackage === 'react-aria-components' || monopackage === '@react-spectrum/s2'
       ? `packages/${monopackage}/src/${subpath}`
@@ -607,7 +626,10 @@ function getRenamedSpecifier(specifier, from, importedName) {
   }
 
   let isPrivate = privateNames.has(importedName);
-  if (monopackage === 'react-aria' && name === 'Virtualizer') {
+  if (
+    (monopackage === 'react-aria' && name === 'Virtualizer') ||
+    (monopackage === '@adobe/react-spectrum' && (name === 'CardView' || name === 'Card' || name === 'Overlay' || name === 'Popover' || name === 'Modal' || name === 'StepList' || name === 'SearchAutocomplete'))
+  ) {
     isPrivate = true;
   }
 
@@ -625,7 +647,7 @@ function getRenamedSpecifier(specifier, from, importedName) {
   return `${monopackage}/${subpath}`;
 }
 
-function createPublicExports(monopackage, pkg) {
+function createPublicExports(monopackage, scope, pkg) {
   let file = `packages/${monopackage}/src/private/${pkg}/index.ts`;
   let content = fs.readFileSync(file, 'utf8');
   let ast = recast.parse(content, {
@@ -644,8 +666,24 @@ function createPublicExports(monopackage, pkg) {
 
   let groups = {};
   let unmatched = [];
+  let specifiers = [];
+  let typeSpecifiers = [];
   for (let node of ast.program.body) {
     if (node.type === 'ExportNamedDeclaration' && node.source) {
+      if (node.source.value.startsWith('./')) {
+        if (node.exportKind === 'type') {
+          typeSpecifiers.push(...node.specifiers);
+        } else {
+          specifiers.push(...node.specifiers);
+        }
+      } else {
+        let n = t.cloneNode(node, true);
+        if (n.source.value.startsWith('../')) {
+          n.source.value = `${monopackage}/private/${n.source.value.slice(3)}`;
+        }
+        unmatched.push(n);
+      }
+
       node.specifiers = node.specifiers.filter(s => importMap[monopackage][s.exported.name]);
       if (node.source.value.startsWith('./') && node.specifiers.length > 0) {
         let source = node.source.value.slice(2);
@@ -656,13 +694,7 @@ function createPublicExports(monopackage, pkg) {
         } else if (parentFile[source]) {
           groups[parentFile[source]] ||= [];
           groups[parentFile[source]].push(node);
-        } else {
-          console.log('unmatched', source);
-          // unmatched.push(node);
         }
-      } else if (node.specifiers.length > 0) {
-        // unmatched.push(node);
-        console.log('unmatched', node.source.value);
       }
     }
   }
@@ -675,4 +707,25 @@ function createPublicExports(monopackage, pkg) {
     }, {objectCurlySpacing: false, quote: 'single'}).code;
     fs.writeFileSync(`packages/${monopackage}/src/${path.basename(source)}.ts`, content);
   }
+
+  fs.rmSync(file);
+  
+  let imports = [];
+  if (specifiers.length) {
+    imports.push(...getImportStatements(t.exportNamedDeclaration(null, specifiers, t.stringLiteral(`${scope}/${pkg}`)), `packages/${scope}/${pkg}/src/index.ts`, false));
+  }
+  if (typeSpecifiers.length) {
+    let decl = t.exportNamedDeclaration(null, typeSpecifiers, t.stringLiteral(`${scope}/${pkg}`));
+    decl.exportKind = 'type';
+    imports.push(...getImportStatements(decl, `packages/${scope}/${pkg}/src/index.ts`, false));
+  }
+  imports.push(...unmatched);
+
+  imports[0].comments = ast.program.body[0].leadingComments;
+  let index = recast.print({
+    type: 'Program',
+    body: imports
+  }, {objectCurlySpacing: false, quote: 'single'}).code;
+  fs.mkdirSync(`packages/${scope}/${pkg}/src`);
+  fs.writeFileSync(`packages/${scope}/${pkg}/src/index.ts`, index);
 }
