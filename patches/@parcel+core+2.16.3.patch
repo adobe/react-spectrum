@@ -1,0 +1,17 @@
+diff --git a/node_modules/@parcel/core/lib/requests/WriteBundleRequest.js b/node_modules/@parcel/core/lib/requests/WriteBundleRequest.js
+index 1234567..abcdefg 100644
+--- a/node_modules/@parcel/core/lib/requests/WriteBundleRequest.js
++++ b/node_modules/@parcel/core/lib/requests/WriteBundleRequest.js
+@@ -240,8 +240,10 @@ function replaceStream(hashRefToNameHash) {
+           lastMatchI = matchI + HASH_REF_PREFIX_LEN + _constants.HASH_REF_HASH_LEN;
+         }
+       }
+-      boundaryStr = replaced.subarray(replacedLength - BOUNDARY_LENGTH, replacedLength);
+-      let strUpToBoundary = replaced.subarray(0, replacedLength - BOUNDARY_LENGTH);
++      // Copy buffers to avoid reuse issues - subarray returns a view that can be
++      // corrupted if the underlying buffer is modified before the data is written
++      boundaryStr = Buffer.from(replaced.subarray(replacedLength - BOUNDARY_LENGTH, replacedLength));
++      let strUpToBoundary = Buffer.from(replaced.subarray(0, replacedLength - BOUNDARY_LENGTH));
+       cb(null, strUpToBoundary);
+     },
+     flush(cb) {
