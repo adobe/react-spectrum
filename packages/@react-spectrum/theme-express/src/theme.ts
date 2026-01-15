@@ -11,4 +11,23 @@
  */
 
 /// <reference types="css-module-types" />
-export {theme} from './theme';
+
+import {theme as defaultTheme} from '@react-spectrum/theme-default';
+import express from '@adobe/spectrum-css-temp/vars/express.css';
+import {Theme} from '@react-types/provider';
+
+export let theme: Theme = {
+  ...defaultTheme,
+  global: {
+    ...defaultTheme.global,
+    express: express.express
+  },
+  medium: {
+    ...defaultTheme.medium,
+    express: express.medium
+  },
+  large: {
+    ...defaultTheme.large,
+    express: express.large
+  }
+};
