@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, openLink} from '@react-aria/utils';
+import {getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, openLink} from '@react-aria/utils';
 import {ignoreFocusEvent} from './utils';
 import {PointerType} from '@react-types/shared';
 import {useEffect, useState} from 'react';
@@ -98,7 +98,7 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document || ignoreFocusEvent || !e.isTrusted) {
+  if (getEventTarget(e) === window || getEventTarget(e) === document || ignoreFocusEvent || !e.isTrusted) {
     return;
   }
 
@@ -302,11 +302,11 @@ const nonTextInputTypes = new Set([
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  let document = getOwnerDocument(e?.target as Element);
-  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLInputElement : HTMLInputElement;
-  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLTextAreaElement : HTMLTextAreaElement;
-  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLElement : HTMLElement;
-  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).KeyboardEvent : KeyboardEvent;
+  let document = getOwnerDocument(getEventTarget(e) as Element);
+  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).HTMLElement : HTMLElement;
+  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).KeyboardEvent : KeyboardEvent;
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element

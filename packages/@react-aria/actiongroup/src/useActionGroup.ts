@@ -13,7 +13,7 @@
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, Orientation, RefObject} from '@react-types/shared';
-import {filterDOMProps, nodeContains, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, nodeContains, useLayoutEffect} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
 import {useLocale} from '@react-aria/i18n';
 import {useState} from 'react';
@@ -48,7 +48,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   let focusManager = createFocusManager(ref);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
   let onKeyDown = (e) => {
-    if (!nodeContains(e.currentTarget, e.target)) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e))) {
       return;
     }
 

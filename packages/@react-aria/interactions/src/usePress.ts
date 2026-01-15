@@ -450,7 +450,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && nodeContains(state.target, e.target as Element) && state.pointerType != null) {
+        if (state.target && nodeContains(state.target, getEventTarget(e) as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
@@ -618,7 +618,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         if (e.button === 0) {
           if (preventFocusOnPress) {
-            let dispose = preventFocus(e.target as FocusableElement);
+            let dispose = preventFocus(getEventTarget(e) as FocusableElement);
             if (dispose) {
               state.disposables.push(dispose);
             }
@@ -692,7 +692,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         if (preventFocusOnPress) {
-          let dispose = preventFocus(e.target as FocusableElement);
+          let dispose = preventFocus(getEventTarget(e) as FocusableElement);
           if (dispose) {
             state.disposables.push(dispose);
           }

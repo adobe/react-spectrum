@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, LongPressEvent} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
@@ -80,11 +80,11 @@ export function useLongPress(props: LongPressProps): LongPressResult {
 
         timeRef.current = setTimeout(() => {
           // Prevent other usePress handlers from also handling this event.
-          e.target.dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
+          getEventTarget(e).dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
 
           // Ensure target is focused. On touch devices, browsers typically focus on pointer up.
-          if (getOwnerDocument(e.target).activeElement !== e.target) {
-            focusWithoutScrolling(e.target as FocusableElement);
+          if (getOwnerDocument(getEventTarget(e)).activeElement !== getEventTarget(e)) {
+            focusWithoutScrolling(getEventTarget(e) as FocusableElement);
           }
 
           if (onLongPress) {
@@ -102,12 +102,12 @@ export function useLongPress(props: LongPressProps): LongPressResult {
             e.preventDefault();
           };
 
-          addGlobalListener(e.target, 'contextmenu', onContextMenu, {once: true});
+          addGlobalListener(getEventTarget(e), 'contextmenu', onContextMenu, {once: true});
           addGlobalListener(window, 'pointerup', () => {
             // If no contextmenu event is fired quickly after pointerup, remove the handler
             // so future context menu events outside a long press are not prevented.
             setTimeout(() => {
-              removeGlobalListener(e.target, 'contextmenu', onContextMenu);
+              removeGlobalListener(getEventTarget(e), 'contextmenu', onContextMenu);
             }, 30);
           }, {once: true});
         }

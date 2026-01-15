@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, nodeContains, useEffectEvent} from '@react-aria/utils';
+import {getEventTarget, getOwnerDocument, nodeContains, useEffectEvent} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef} from 'react';
 
@@ -118,14 +118,14 @@ function isValidEvent(event, ref) {
   if (event.button > 0) {
     return false;
   }
-  if (event.target) {
+  if (getEventTarget(event)) {
     // if the event target is no longer in the document, ignore
-    const ownerDocument = event.target.ownerDocument;
-    if (!ownerDocument || !nodeContains(ownerDocument.documentElement, event.target)) {
+    const ownerDocument = getEventTarget(event).ownerDocument;
+    if (!ownerDocument || !nodeContains(ownerDocument.documentElement, getEventTarget(event))) {
       return false;
     }
     // If the target is within a top layer element (e.g. toasts), ignore.
-    if (event.target.closest('[data-react-aria-top-layer]')) {
+    if (getEventTarget(event).closest('[data-react-aria-top-layer]')) {
       return false;
     }
   }

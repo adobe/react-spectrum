@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
-import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
@@ -208,7 +208,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // drag, and release over an item (matching native behavior).
     if (e.pointerType === 'mouse') {
       if (!isPressedRef.current) {
-        (e.target as HTMLElement).click();
+        (getEventTarget(e) as HTMLElement).click();
       }
     }
 
@@ -285,14 +285,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       switch (e.key) {
         case ' ':
           interaction.current = {pointerType: 'keyboard', key: ' '};
-          (e.target as HTMLElement).click();
+          (getEventTarget(e) as HTMLElement).click();
           break;
         case 'Enter':
           interaction.current = {pointerType: 'keyboard', key: 'Enter'};
 
           // Trigger click unless this is a link. Links trigger click natively.
-          if ((e.target as HTMLElement).tagName !== 'A') {
-            (e.target as HTMLElement).click();
+          if ((getEventTarget(e) as HTMLElement).tagName !== 'A') {
+            (getEventTarget(e) as HTMLElement).click();
           }
           break;
         default:

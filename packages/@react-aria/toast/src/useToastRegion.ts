@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -190,7 +190,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       // listen to focus events separate from focuswithin because that will only fire once
       // and we need to follow all focus changes
       onFocus: (e) => {
-        let target = e.target.closest('[role="alertdialog"]');
+        let target = getEventTarget(e).closest('[role="alertdialog"]');
         focusedToast.current = toasts.current.findIndex(t => t === target);
       },
       onBlur: () => {

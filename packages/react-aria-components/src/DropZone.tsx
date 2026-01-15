@@ -21,7 +21,7 @@ import {
   useRenderProps
 } from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, isFocusable, nodeContains, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, isFocusable, nodeContains, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -116,7 +116,7 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
         slot={props.slot || undefined}
         ref={dropzoneRef}
         onClick={(e) => {
-          let target = e.target as HTMLElement | null;
+          let target = getEventTarget(e) as HTMLElement | null;
           while (target && nodeContains(dropzoneRef.current, target)) {
             if (isFocusable(target)) {
               break;

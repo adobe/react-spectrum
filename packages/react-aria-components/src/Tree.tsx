@@ -31,7 +31,7 @@ import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, Globa
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
@@ -305,8 +305,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         dropTargetDelegate: treeDropTargetDelegate,
         onDropActivate: (e) => {
           // Expand collapsed item when dragging over. For keyboard, allow collapsing.
-          if (e.target.type === 'item') {
-            let key = e.target.key;
+          if (getEventTarget(e).type === 'item') {
+            let key = getEventTarget(e).key;
             let item = state.collection.getItem(key);
             let isExpanded = expandedKeys !== 'all' && expandedKeys.has(key);
             if (item && item.hasChildNodes && (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())) {

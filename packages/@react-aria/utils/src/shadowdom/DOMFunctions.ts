@@ -1,5 +1,5 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
-/* eslint-disable rsp-rules/no-non-shadow-contains */
+/* eslint-disable rsp-rules/no-non-shadow-contains, rsp-rules/safe-event-target */
 
 import {isShadowRoot} from '../domHelpers';
 import {shadowDOM} from '@react-stately/flags';
@@ -61,7 +61,10 @@ export const getActiveElement = (doc: Document = document): Element | null => {
 /**
  * ShadowDOM safe version of event.target.
  */
-export function getEventTarget<T extends Event>(event: T): Element {
+export function getEventTarget<T extends Event>(event: T | null | undefined): Element | null {
+  if (!event) {
+    return null;
+  }
   if (shadowDOM() && (event.target as HTMLElement).shadowRoot) {
     if (event.composedPath) {
       return event.composedPath()[0] as Element;

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, useObjectRef} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
@@ -69,7 +69,7 @@ export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerPro
         ref={inputRef}
         style={{display: 'none'}}
         accept={acceptedFileTypes?.toString()}
-        onChange={(e) => onSelect?.(e.target.files)}
+        onChange={(e) => onSelect?.(getEventTarget(e).files)}
         capture={defaultCamera}
         multiple={allowsMultiple}
         // @ts-expect-error
