@@ -50,8 +50,8 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    * @default {months: 1}
    */
   visibleDuration?: DateDuration,
-  /** 
-   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection. 
+  /**
+   * Determines the alignment of the visible months on initial render based on the current selection or current date if there is no selection.
    * @default 'center'
    */
   selectionAlignment?: 'start' | 'center' | 'end'
@@ -335,7 +335,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       let dates: (CalendarDate | null)[] = [];
 
       date = startOfWeek(date, locale, firstDayOfWeek);
-      
+
       // startOfWeek will clamp dates within the calendar system's valid range, which may
       // start in the middle of a week. In this case, add null placeholders.
       let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);

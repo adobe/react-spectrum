@@ -303,35 +303,4 @@ describe('useCalendar', () => {
       expect(getByTestId('range')).toHaveTextContent(expected);
     });
   });
-
-  describe('focus behavior', () => {
-    it('should not focus the calendar when setFocusedDate is called externally', async () => {
-      let {getByRole} = render(<Example defaultValue={new CalendarDate(2019, 6, 5)} visibleDuration={{months: 1}} />);
-      let grid = getByRole('grid');
-      let externalButton = document.createElement('button');
-      externalButton.textContent = 'External';
-      document.body.appendChild(externalButton);
-
-      // Focus the external button
-      act(() => {
-        externalButton.focus();
-      });
-      expect(document.activeElement).toBe(externalButton);
-
-      // The calendar grid should not have focus
-      expect(grid).not.toContainElement(document.activeElement);
-
-      // Clean up
-      document.body.removeChild(externalButton);
-    });
-
-    it('should focus the calendar when clicking on a cell', async () => {
-      let {getByLabelText} = render(<Example defaultValue={new CalendarDate(2019, 6, 5)} visibleDuration={{months: 1}} />);
-
-      let cell = getByLabelText('Saturday, June 15, 2019', {exact: false});
-      await user.click(cell);
-
-      expect(document.activeElement).toBe(cell);
-    });
-  });
 });

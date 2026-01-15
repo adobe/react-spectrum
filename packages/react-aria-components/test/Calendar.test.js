@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from 'react-aria-components';
+import {Button, ButtonContext, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React, {useContext} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -84,7 +84,7 @@ describe('Calendar', () => {
   });
 
   it('should support aria props on the Calendar', () => {
-    let {getByRole} = renderCalendar({      
+    let {getByRole} = renderCalendar({
       'aria-label': 'label',
       'aria-labelledby': 'labelledby',
       'aria-describedby': 'describedby',
@@ -95,7 +95,7 @@ describe('Calendar', () => {
     expect(group).toHaveAttribute('aria-label', expect.stringContaining('label'));
     expect(group).toHaveAttribute('aria-labelledby', expect.stringContaining('labelledby'));
     expect(group).toHaveAttribute('aria-describedby', 'describedby');
-    expect(group).toHaveAttribute('aria-details', 'details');    
+    expect(group).toHaveAttribute('aria-details', 'details');
   });
 
   it('should support custom CalendarGridHeader', () => {
@@ -399,5 +399,45 @@ describe('Calendar', () => {
     fireEvent.click(day16);
     await user.keyboard('[ArrowLeft][Enter]');
     expect(calendar.getByLabelText(/selected/)).toBe(day16);
+  });
+
+  it('should not become focused just by setting the focused date', async () => {
+    let DatePicker = () => {
+      let state = useContext(CalendarStateContext);
+      return <Button onPress={() => state.setFocusedDate(new CalendarDate(2020, 3, 3))}>Set focused date</Button>;
+    };
+
+    let MyCalendar = () => {
+      return (
+        <Calendar aria-label="Appointment date">
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <ButtonContext.Provider value={null}>
+              <DatePicker />
+            </ButtonContext.Provider>
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            <CalendarGridHeader className="grid-header">
+              {(day) => (
+                <CalendarHeaderCell className="header-cell">
+                  {day}
+                </CalendarHeaderCell>
+              )}
+            </CalendarGridHeader>
+            <CalendarGridBody className="grid-body">
+              {(date) => <CalendarCell date={date} className={({isSelected}) => isSelected ? 'selected' : ''} />}
+            </CalendarGridBody>
+          </CalendarGrid>
+        </Calendar>
+      );
+    };
+    let {getByRole} = render(
+      <MyCalendar />
+    );
+    let setFocusedDateButton = getByRole('button', {name: 'Set focused date'});
+    await user.click(setFocusedDateButton);
+    expect(setFocusedDateButton).toHaveFocus();
   });
 });
