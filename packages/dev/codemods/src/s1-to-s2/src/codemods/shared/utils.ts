@@ -58,11 +58,11 @@ export function nameFromExpression(expr: t.Node): string {
   }
 }
 
-export function capitalize(string: string) {
+export function capitalize(string: string): string {
   return string[0].toUpperCase() + string.slice(1);
 }
 
-export function addComment(node: any, comment: string) {
+export function addComment(node: any, comment: string): void {
   if (!node.comments) {
     node.comments = [];
   }
@@ -73,7 +73,7 @@ export function addComment(node: any, comment: string) {
   });
 }
 
-export function addComponentImport(path: NodePath<t.Program>, newComponentName: string) {
+export function addComponentImport(path: NodePath<t.Program>, newComponentName: string): string {
   // If newComponentName variable already exists in scope, alias new import to avoid conflict.
   let existingBinding = path.scope.getBinding(newComponentName);
   let localName = newComponentName;
@@ -118,7 +118,7 @@ export function addComponentImport(path: NodePath<t.Program>, newComponentName: 
   return localName;
 }
 
-export function removeComponentImport(path: NodePath<t.Program>, component: string) {
+export function removeComponentImport(path: NodePath<t.Program>, component: string): void {
   let existingImport = path.node.body.find((node) => t.isImportDeclaration(node) && node.source.value === '@adobe/react-spectrum' || t.isImportDeclaration(node) &&  node.source.value.startsWith('@react-spectrum/'));
   if (existingImport && t.isImportDeclaration(existingImport)) {
     let specifier = existingImport.specifiers.find((specifier) => {
@@ -141,7 +141,7 @@ export function removeComponentImport(path: NodePath<t.Program>, component: stri
  * Look up the name in path.scope and find the original binding.
  * Returns the original name even if an alias is used.
  */
-export function getName(path: NodePath<t.JSXElement>, identifier: t.JSXIdentifier) {
+export function getName(path: NodePath<t.JSXElement>, identifier: t.JSXIdentifier): string {
   let binding = path.scope.getBinding(identifier.name);
   if (binding && t.isImportSpecifier(binding.path.node) && t.isIdentifier(binding.path.node.imported)) {
     return binding.path.node.imported.name;

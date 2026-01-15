@@ -489,6 +489,25 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(
+      <MenuTrigger isTriggerUpWhenOpen>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support onScroll', () => {
     let onScroll = jest.fn();
     let {getByRole} = renderMenu({onScroll});
@@ -508,6 +527,119 @@ describe('Menu', () => {
 
     let menuitem = getByRole('menuitem');
     expect(menuitem).toHaveTextContent('No results');
+  });
+
+  it('should not close the menu when shouldCloseOnSelect is false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu shouldCloseOnSelect={false}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+  });
+
+  it('should not close individual menu item when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open" shouldCloseOnSelect={false}>Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[1];
+    expect(item).toHaveTextContent('Rename');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  it('should not close menu items within a section when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuSection shouldCloseOnSelect={false}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+            </MenuSection>
+            <MenuSection>
+              <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[3];
+    expect(item).toHaveTextContent('Share');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
   });
 
   describe('supports links', function () {
@@ -534,11 +666,12 @@ describe('Menu', () => {
         expect(items[1].tagName).toBe('A');
         expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
-        let onClick = mockClickDefault();
+        let onClick = mockClickDefault({capture: true});
         if (type === 'mouse') {
           await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.click(items[1]);
           fireEvent.keyUp(items[1], {key: 'Enter'});
         }
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1440,6 +1573,141 @@ describe('Menu', () => {
     act(() => {jest.runAllTimers();});
     expect(menu).toBeInTheDocument();
     expect(document.activeElement).toBe(activeElement);
+  });
+
+  it('should support press events on menu items', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let onClickCapture = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, onClickCapture}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClickCapture).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items with closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when dragging and releasing', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await user.pointer({target: menuTester.trigger, keys: '[MouseLeft>]'});
+    await user.pointer({target: menuTester.findOption({optionIndexOrText: 'Cat'}), keys: '[/MouseLeft]'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).not.toHaveBeenCalled();
+    expect(onPressEnd).not.toHaveBeenCalled();
+    expect(onPress).not.toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard'});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    // React 17 has different batching in tests? This doesn't happen in the browser.
+    if (!React.version.startsWith('17')) {
+      expect(onPressEnd).not.toHaveBeenCalled();
+      expect(onPress).not.toHaveBeenCalled();
+    }
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support press events on menu items when using keyboard and closeOnSelect: false', async function () {
+    let onAction = jest.fn();
+    let onPressStart = jest.fn();
+    let onPressEnd = jest.fn();
+    let onPress = jest.fn();
+    let onClick = jest.fn();
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <TestMenu itemProps={{onAction, onPressStart, onPressEnd, onPress, onClick, closeOnSelect: false}} />
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    await menuTester.open();
+    await menuTester.selectOption({option: 'Cat', interactionType: 'keyboard', closesOnSelect: false});
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onPressStart).toHaveBeenCalledTimes(1);
+    expect(onPressEnd).toHaveBeenCalledTimes(1);
+    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
 

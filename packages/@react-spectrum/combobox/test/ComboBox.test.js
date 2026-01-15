@@ -5266,6 +5266,35 @@ describe('ComboBox', function () {
         expect(combobox).toHaveValue('');
       });
 
+      if (parseInt(React.version, 10) >= 19) {
+        it('resets to defaultSelectedKey when submitting form action', async () => {
+          function Test(props) {        
+            const [value, formAction] = React.useActionState(() => '2', '1');
+            
+            return (
+              <Provider theme={theme}>
+                <form action={formAction}>
+                  <ExampleComboBox defaultSelectedKey={value} name="combobox" {...props} />
+                  <input type="submit" data-testid="submit" />
+                </form>
+              </Provider>
+            );
+          }
+    
+          let {getByTestId, getByRole, rerender} = render(<Test />);
+          let input = getByRole('combobox');
+          expect(input).toHaveValue('One');
+    
+          let button = getByTestId('submit');
+          await act(async () => await user.click(button));
+          expect(input).toHaveValue('Two');
+
+          rerender(<Test formValue="key" />);
+          await act(async () => await user.click(button));
+          expect(document.querySelector('input[name=combobox]')).toHaveValue('2');
+        });
+      }
+
       it('should support formValue', () => {
         let {getByRole, rerender} = render(<ExampleComboBox name="test" selectedKey="2" />);
         let input = getByRole('combobox');
@@ -5569,6 +5598,35 @@ describe('ComboBox', function () {
         await user.click(reset);
         expect(input).toHaveValue('');
       });
+
+      if (parseInt(React.version, 10) >= 19) {
+        it('resets to defaultSelectedKey when submitting form action', async () => {
+          function Test(props) {
+            const [value, formAction] = React.useActionState(() => '2', '1');
+            
+            return (
+              <Provider theme={theme}>
+                <form action={formAction}>
+                  <ExampleComboBox name="combobox" defaultSelectedKey={value} {...props} />
+                  <input type="submit" data-testid="submit" />
+                </form>
+              </Provider>
+            );
+          }
+    
+          let {getByTestId, rerender} = render(<Test />);
+          let input = document.querySelector('input[name=combobox]');
+          expect(input).toHaveValue('One');
+    
+          let button = getByTestId('submit');
+          await act(async () => await user.click(button));
+          expect(input).toHaveValue('Two');
+
+          rerender(<Test formValue="key" />);
+          await act(async () => await user.click(button));
+          expect(input).toHaveValue('2');
+        });
+      }
 
       it('should support formValue', () => {
         let {rerender} = render(<ExampleComboBox name="test" selectedKey="2" />);

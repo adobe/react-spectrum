@@ -13,13 +13,13 @@
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SelectionIndicator, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
 import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useCallback, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
-import {useDOMRef, useFocusableRef, useMediaQuery} from '@react-spectrum/utils';
+import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -110,9 +110,17 @@ const slider = style<{isDisabled: boolean}>({
       isDisabled: 'GrayText'
     }
   },
+  top: 0,
   left: 0,
   width: 'full',
   height: 'full',
+  contain: 'strict',
+  transition: {
+    default: '[translate,width]',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  },
+  transitionDuration: 200,
+  transitionTimingFunction: 'out',
   position: 'absolute',
   boxSizing: 'border-box',
   borderStyle: 'solid',
@@ -130,8 +138,6 @@ const slider = style<{isDisabled: boolean}>({
 
 interface InternalSegmentedControlContextProps {
   register?: (value: Key, isDisabled?: boolean) => void,
-  prevRef?: RefObject<DOMRect | null>,
-  currentSelectedRef?: RefObject<HTMLDivElement | null>,
   isJustified?: boolean
 }
 
@@ -139,8 +145,6 @@ interface DefaultSelectionTrackProps {
   defaultValue?: Key | null,
   value?: Key | null,
   children: ReactNode,
-  prevRef: RefObject<DOMRect | null>,
-  currentSelectedRef: RefObject<HTMLDivElement | null>,
   isJustified?: boolean
 }
 
@@ -158,14 +162,7 @@ export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedContr
   } = props;
   let domRef = useDOMRef(ref);
 
-  let prevRef = useRef<DOMRect>(null);
-  let currentSelectedRef = useRef<HTMLDivElement>(null);
-
   let onChange = (values: Set<Key>) => {
-    if (currentSelectedRef.current) {
-      prevRef.current = currentSelectedRef?.current.getBoundingClientRect();
-    }
-
     if (onSelectionChange) {
       let firstKey = values.values().next().value;
       if (firstKey != null) {
@@ -186,7 +183,7 @@ export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedContr
       onSelectionChange={onChange}
       className={(props.UNSAFE_className || '') + segmentedControl(null, props.styles)}
       aria-label={props['aria-label']}>
-      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} prevRef={prevRef} currentSelectedRef={currentSelectedRef} isJustified={props.isJustified}>
+      <DefaultSelectionTracker defaultValue={defaultSelectedKey} value={selectedKey} isJustified={props.isJustified}>
         {props.children}
       </DefaultSelectionTracker>
     </ToggleButtonGroup>
@@ -203,12 +200,13 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
       isRegistered.current = true;
       state.toggleKey(value);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Provider
       values={[
-        [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef, isJustified: props.isJustified}]
+        [InternalSegmentedControlContext, {register: register, isJustified: props.isJustified}]
       ]}>
       {props.children}
     </Provider>
@@ -221,36 +219,11 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
 export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let divRef = useRef<HTMLDivElement>(null);
-  let {register, prevRef, currentSelectedRef, isJustified} = useContext(InternalSegmentedControlContext);
-  let state = useContext(ToggleGroupStateContext);
-  let isSelected = state?.selectedKeys.has(props.id);
-  // do not apply animation if a user has the prefers-reduced-motion setting
-  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  let {register, isJustified} = useContext(InternalSegmentedControlContext);
 
   useLayoutEffect(() => {
     register?.(props.id);
-  }, []);
-
-  useLayoutEffect(() => {
-    if (isSelected && prevRef?.current && currentSelectedRef?.current && !reduceMotion) {
-      let currentItem = currentSelectedRef?.current.getBoundingClientRect();
-
-      let deltaX = prevRef?.current.left - currentItem?.left;
-
-      currentSelectedRef.current.animate(
-        [
-          {transform: `translateX(${deltaX}px)`, width: `${prevRef?.current.width}px`},
-          {transform: 'translateX(0px)', width: `${currentItem.width}px`}
-        ],
-        {
-          duration: 200,
-          easing: 'ease-out'
-        }
-      );
-
-      prevRef.current = null;
-    }
-  }, [isSelected, reduceMotion]);
+  }, [register, props.id]);
 
   return (
     <ToggleButton
@@ -258,9 +231,9 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
       ref={domRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isJustified}, props.styles)} >
-      {({isSelected, isPressed, isDisabled}) => (
+      {({isPressed, isDisabled}) => (
         <>
-          {isSelected && <div className={slider({isDisabled})} ref={currentSelectedRef} />}
+          <SelectionIndicator className={slider({isDisabled})} />
           <Provider
             values={[
               [IconContext, {

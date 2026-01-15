@@ -10,16 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ValidationResult} from '@react-types/shared';
+import {ClassNameOrFunction, RenderProps, useRenderProps} from './utils';
+import {DOMProps, GlobalDOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
-import {RenderProps, useRenderProps} from './utils';
 import {Text} from './Text';
 
 export const FieldErrorContext = createContext<ValidationResult | null>(null);
 
 export interface FieldErrorRenderProps extends ValidationResult {}
-export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps {}
+export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-FieldError'
+   */
+  className?: ClassNameOrFunction<FieldErrorRenderProps>
+}
 
 /**
  * A FieldError displays validation errors for a form field.
@@ -35,7 +41,7 @@ export const FieldError = forwardRef(function FieldError(props: FieldErrorProps,
 
 const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) => {
   let validation = useContext(FieldErrorContext)!;
-  let domProps = filterDOMProps(props)!;
+  let domProps = filterDOMProps(props, {global: true})!;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-FieldError',

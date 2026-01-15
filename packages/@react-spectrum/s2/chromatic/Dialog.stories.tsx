@@ -11,9 +11,9 @@
  */
 
 import {Dialog} from '../src';
-import {DialogContainerExample, DialogTriggerExample, Example} from '../stories/Dialog.stories';
+import {DialogContainerExample, DialogTriggerExample, Example, ExampleStoryType} from '../stories/Dialog.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog,
@@ -25,8 +25,9 @@ const meta: Meta<typeof Dialog> = {
 };
 
 export default meta;
+type Story = StoryObj<ExampleStoryType>;
 
-export const Default = {
+export const Default: Story = {
   ...Example,
 // TODO: maybe render dialogs with different args instead (showHero/showHeader, etc)
   play: async ({canvasElement}) => {
@@ -35,14 +36,14 @@ export const Default = {
     let body = canvasElement.ownerDocument.body;
     await within(body).findByRole('dialog');
   }
-} as StoryObj;
+};
 
-export const WithDialogTrigger = {
+export const WithDialogTrigger: Story = {
   ...DialogTriggerExample,
   play: async (context) => await Default.play!(context)
-} as StoryObj;
+};
 
-export const DialogContainer = {
+export const DialogContainer: Story = {
   ...DialogContainerExample,
   play: async (context) => await Default.play!(context)
-} as StoryObj;
+};

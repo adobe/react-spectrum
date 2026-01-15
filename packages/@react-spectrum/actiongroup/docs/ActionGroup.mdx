@@ -75,7 +75,7 @@ function Example() {
 
 ## Content
 
-ActionGroups accept a list of <TypeLink links={docs.links} type={docs.exports.Item} /> elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported. See the [collection components](../react-stately/collections.html) docs for more details about this API.
+ActionGroups accept a list of <TypeLink links={docs.links} type={docs.exports.Item} /> elements as children, each with a `key` prop. Alternatively, a function that returns `Item` elements is also supported. See the [collection components](collections.html) docs for more details about this API.
 
 ```tsx example
 const items = [
@@ -158,7 +158,7 @@ In order to internationalize an ActionGroup, the content provided to all child i
 ## Selection
 ActionGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+See the `react-stately` [Selection docs](selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
 <ActionGroup selectionMode="single" defaultSelectedKeys={['list']}>

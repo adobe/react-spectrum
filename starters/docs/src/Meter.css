@@ -1,0 +1,38 @@
+@import "./theme.css";
+@import "./utilities.css";
+
+.react-aria-Meter {
+  display: grid;
+  grid-template-areas: "label value"
+                       "bar bar";
+  grid-template-columns: 1fr auto;
+  width: 250px;
+  color: var(--text-color);
+  font: var(--font-size) system-ui;
+
+  .value {
+    grid-area: value;
+  }
+
+  .track {
+    grid-area: bar;
+    forced-color-adjust: none;
+    height: calc(var(--spacing-2) + 2px);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .fill {
+    --fill-color: var(--green);
+    background: oklch(from var(--fill-color) var(--lightness-700) c h);
+    height: calc(100% - 2px);
+    margin: 1px 0 0 1px;
+    border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), 0 1px 0 lch(from var(--fill-color) 42% c h), 0 0 0 1px var(--fill-color);
+
+    @media (forced-colors: active) {
+      box-shadow: none;
+      background: Highlight;
+    }
+  }
+}

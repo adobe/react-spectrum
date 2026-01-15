@@ -11,17 +11,30 @@
  */
 
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {
+ ClassNameOrFunction,
+ ContextValue,
+ removeDataAttributes,
+ RenderProps,
+ SlotProps,
+ useContextProps,
+ useRenderProps
+} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
-  /**
-   * A ref for the HTML input element.
-   */
-  inputRef?: RefObject<HTMLInputElement | null>
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+ /**
+  * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+  * @default 'react-aria-Switch'
+  */
+ className?: ClassNameOrFunction<SwitchRenderProps>,
+ /**
+  * A ref for the HTML input element.
+  */
+ inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export interface SwitchRenderProps {
@@ -107,8 +120,9 @@ export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Swit
     }
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
+  delete DOMProps.onClick;
 
   return (
     <label

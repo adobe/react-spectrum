@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncComboBoxStory, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithIcons} from '../stories/ComboBox.stories';
+import {AsyncComboBoxStory, AsyncComboBoxStoryType, ContextualHelpExample, CustomWidth, Dynamic, EmptyCombobox, Example, Sections, WithAvatars, WithIcons} from '../stories/ComboBox.stories';
 import {ComboBox} from '../src';
 import {expect} from '@storybook/jest';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, waitFor, within} from '@storybook/testing-library';
+import {userEvent, waitFor, within} from '@storybook/test';
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -27,8 +27,9 @@ const meta: Meta<typeof ComboBox<any>> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ComboBox<any>>;
 
-export const Static = {
+export const Static: Story = {
   ...Example,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -38,26 +39,32 @@ export const Static = {
   }
 } as StoryObj;
 
-export const WithSections = {
+export const WithSections: Story = {
   ...Sections,
   name: 'Sections',
-  play: async (context) => await Static.play!(context)
+  play: Static.play
 };
 
-export const WithDynamic = {
+export const WithDynamic: Story = {
   ...Dynamic,
   name: 'Dynamic',
   args: {...Dynamic.args, selectedKey: 'chocolate'},
-  play: async (context) => await Static.play!(context)
+  play: Static.play
 };
 
-export const Icons = {
+export const Icons: Story = {
   ...WithIcons,
   name: 'With Icons',
-  play: async (context) => await Static.play!(context)
+  play: Static.play
 };
 
-export const ContextualHelp = {
+export const Avatars: Story = {
+  ...WithAvatars,
+  name: 'With Avatars',
+  play: Static.play
+};
+
+export const ContextualHelp: Story = {
   ...ContextualHelpExample,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -67,12 +74,12 @@ export const ContextualHelp = {
   }
 };
 
-export const WithCustomWidth = {
+export const WithCustomWidth: Story = {
   ...CustomWidth,
-  play: async (context) => await Static.play!(context)
-} as StoryObj;
+  play: Static.play
+};
 
-export const WithEmptyState = {
+export const WithEmptyState: Story = {
   ...EmptyCombobox,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -83,7 +90,7 @@ export const WithEmptyState = {
   }
 };
 
-export const WithInitialLoading = {
+export const WithInitialLoading: Story = {
   ...EmptyCombobox,
   args: {
     loadingState: 'loading',
@@ -98,7 +105,7 @@ export const WithInitialLoading = {
   }
 };
 
-export const WithLoadMore = {
+export const WithLoadMore: Story = {
   ...Example,
   args: {
     loadingState: 'loadingMore',
@@ -113,7 +120,7 @@ export const WithLoadMore = {
   }
 };
 
-export const AsyncResults = {
+export const AsyncResults: StoryObj<AsyncComboBoxStoryType> = {
   ...AsyncComboBoxStory,
   args: {
     ...AsyncComboBoxStory.args,
@@ -130,7 +137,7 @@ export const AsyncResults = {
   }
 };
 
-export const Filtering = {
+export const Filtering: StoryObj<AsyncComboBoxStoryType> = {
   ...AsyncComboBoxStory,
   args: {
     ...AsyncComboBoxStory.args,

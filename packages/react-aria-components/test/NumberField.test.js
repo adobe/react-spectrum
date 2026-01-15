@@ -126,12 +126,19 @@ describe('NumberField', () => {
   });
 
   it('should support form value', () => {
-    let {rerender} = render(<TestNumberField name="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let {rerender} = render(<TestNumberField name="test" form="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
     let input = document.querySelector('input[name=test]');
     expect(input).toHaveValue('25');
+    expect(input).toHaveAttribute('form', 'test');
 
-    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    rerender(<TestNumberField name="test" form="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
     expect(input).toHaveValue('');
+  });
+
+  it('should support disabled when having a form value', () => {
+    render(<TestNumberField isDisabled name="test" form="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = document.querySelector('input[name=test]');
+    expect(input).toBeDisabled();
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -181,5 +188,22 @@ describe('NumberField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should trigger onChange via programmatic click() on stepper buttons', () => {
+    const onChange = jest.fn();
+    const {container} = render(
+      <TestNumberField defaultValue={1024} onChange={onChange} />
+    );
+    act(() => {
+      container.querySelector('[slot=increment]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(1025);
+    act(() => {
+      container.querySelector('[slot=decrement]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenCalledWith(1024);
   });
 });

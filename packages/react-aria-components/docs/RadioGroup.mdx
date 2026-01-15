@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/radio';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, VersionBadge, ClassAPI} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/radio/docs/anatomy.svg';
@@ -148,11 +148,13 @@ to provide more context about the field, and any validation messages. These are 
 inputs via the `aria-describedby` attribute.
 
 ```tsx
-import {RadioGroup, Radio, Label, Text, FieldError} from 'react-aria-components';
+import {RadioGroup, Radio, Label, Text, FieldError, SelectionIndicator} from 'react-aria-components';
 
 <RadioGroup>
   <Label />
-  <Radio />
+  <Radio>
+    <SelectionIndicator />
+  </Radio>
   <Text slot="description" />
   <FieldError />
 </RadioGroup>

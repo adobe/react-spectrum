@@ -9,14 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
+import {Meta, StoryObj} from '@storybook/react';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useState} from 'react';
 import {SpectrumTextFieldProps} from '@react-types/textfield';
 import {TextField} from '@react-spectrum/textfield';
-
-type HelpTextStory = ComponentStoryObj<typeof TextField>;
 
 const argTypes = {
   label: {
@@ -57,11 +55,13 @@ export default {
     description: 'Password must be at least 8 characters.'
   },
   argTypes: argTypes
-} as ComponentMeta<typeof TextField>;
+} as Meta<typeof TextField>;
 
-export let Default: HelpTextStory = {};
+export type HelpTextStory = StoryObj<typeof TextField>;
 
-export let WithState: HelpTextStory = {
+export const Default: HelpTextStory = {};
+
+export const WithState: HelpTextStory = {
   args: {
     label: 'Empty field',
     description: 'This input is only valid when it\'s empty.',
@@ -86,7 +86,7 @@ export let AriaLabel: HelpTextStory = {
   }
 };
 
-export const DescriptionAndCustomDescription = {
+export const DescriptionAndCustomDescription: StoryObj<SpectrumTextFieldProps & {customDescription: string}> = {
   args: {
     customDescription: 'Custom description.',
     'aria-describedby': 'custom-description'
@@ -150,7 +150,7 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
 
 function TextFieldWithAriaLabelAndDynamicHelpText(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
-  
+
   return (
     <TextField
       {...props}

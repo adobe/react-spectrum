@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import React from 'react';
 import { ColorArea } from '../src/ColorArea';
 
@@ -12,5 +12,5 @@ const meta: Meta<typeof ColorArea> = {
 
 export default meta;
 
-export const Example = (args: any) => <ColorArea {...args} />;
+export const Example = (args: any) => <ColorArea {...args} className="w-50" />;
 

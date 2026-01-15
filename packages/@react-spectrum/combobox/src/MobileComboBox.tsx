@@ -117,7 +117,11 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox(props: Sp
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, String(inputProps.value ?? ''), formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+  useFormReset<any>(
+    inputRef,
+    formValue === 'text' ? state.defaultInputValue : state.defaultSelectedKey,
+    formValue === 'text' ? state.setInputValue : state.setSelectedKey
+  );
 
   return (
     <>
@@ -179,9 +183,10 @@ export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: Co
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let valueId = useId();
   let invalidId = useId();
+  let validId = useId();
   let validationIcon = validationState === 'invalid'
     ? <AlertMedium id={invalidId} aria-label={stringFormatter.format('invalid')} />
-    : <CheckmarkMedium />;
+    : <CheckmarkMedium id={validId} aria-label={stringFormatter.format('valid')} />;
 
   let validation = React.cloneElement(validationIcon, {
     UNSAFE_className: classNames(
@@ -202,7 +207,8 @@ export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: Co
       props['aria-labelledby'],
       props['aria-label'] && !props['aria-labelledby'] ? props.id : null,
       valueId,
-      validationState === 'invalid' ? invalidId : null
+      validationState === 'invalid' ? invalidId : null,
+      validationState === 'valid' ? validId : null
     ].filter(Boolean).join(' '),
     elementType: 'div'
   }, objRef);

@@ -23,7 +23,7 @@ import {Item} from '@react-stately/collections';
 import {ItemDropTarget, Key} from '@react-types/shared';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
 import {useDraggableCollection, useDraggableItem, useDropIndicator, useDroppableCollection} from '..';
@@ -33,7 +33,7 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-export function ReorderableGridExample(props) {
+export function ReorderableGridExample(props: any): JSX.Element {
   let list = useListData({
     initialItems: props.items || [
       {id: '1', type: 'item', text: 'One'},
@@ -65,6 +65,7 @@ export function ReorderableGridExample(props) {
   );
 }
 
+let randomDragTypeReorderExample = `keys-${Math.random().toString(36).slice(2)}`;
 function ReorderableGrid(props) {
   let ref = React.useRef<HTMLDivElement>(null);
   let state = useListState(props);
@@ -91,7 +92,7 @@ function ReorderableGrid(props) {
   });
 
   // Use a random drag type so the items can only be reordered within this list and not dragged elsewhere.
-  let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
+  let dragType = React.useMemo(() => randomDragTypeReorderExample, []);
   let preview = useRef(null);
   let dragState = useDraggableCollectionState({
     collection: gridState.collection,

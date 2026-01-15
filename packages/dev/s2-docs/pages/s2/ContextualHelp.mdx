@@ -1,0 +1,38 @@
+import {Layout} from '../../src/Layout';
+export default Layout;
+
+import {ContextualHelp, Heading, Content, Footer} from '@react-spectrum/s2';
+import docs from 'docs:@react-spectrum/s2';
+
+export const tags = ['help'];
+export const description = 'Shows extra information about an adjacent component.';
+
+# ContextualHelp
+
+<PageDescription>{docs.exports.ContextualHelp.description}</PageDescription>
+
+```tsx render docs={docs.exports.ContextualHelp} links={docs.links} props={['variant', 'size', 'placement']} initialProps={{variant: 'help'}} type="s2"
+import {ContextualHelp, Heading, Content, Footer, Link} from '@react-spectrum/s2';
+
+<ContextualHelp/* PROPS */>
+  <Heading>Permission required</Heading>
+  <Content>Your admin must grant you permission before you can create a segment.</Content>
+  <Footer>
+    <Link isStandalone href="#" target="_blank">Learn more about segments</Link>
+  </Footer>
+</ContextualHelp>
+```
+
+## API
+
+```tsx links={{ContextualHelp: '#contextualhelp', Heading: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements', Content: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div', Footer: 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer'}}
+<ContextualHelp>
+  <Heading />
+  <Content />
+  <Footer />
+</ContextualHelp>
+```
+
+### ContextualHelp
+
+<PropTable component={docs.exports.ContextualHelp} links={docs.links} />

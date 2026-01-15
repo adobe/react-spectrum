@@ -83,7 +83,7 @@ Each tab can be clicked, tapped, or navigated to via arrow keys. Depending on th
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTabListState} />
 hook in `@react-stately/tabs`. The state object should be passed as an option to `useTabList`, `useTab`,
 and `useTabPanel`. The <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> component
-is used to represent each tab, following the [Collections API](../react-stately/collections.html) used by many other components.
+is used to represent each tab, following the [Collections API](v3:collections.html) used by many other components.
 
 ## Example
 
@@ -209,7 +209,7 @@ The following examples show how to use the `Tabs` component created in the above
 
 A default selected tab can be provided using the `defaultSelectedKey` prop, which should correspond to the `key` prop provided to each item.
 When `Tabs` is used with dynamic items as described below, the key of each item is derived from the data.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the `react-stately` [Selection docs](v3:selection.html) for more details.
 
 ```tsx example
 <Tabs aria-label="Input settings" defaultSelectedKey="keyboard">
@@ -266,7 +266,7 @@ This example uses the same `Tabs` component from above. Try navigating from the 
 
 The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `Tabs` component is called for each item in the list, and returns an `<Item>` representing the tab.
 
-Each item accepts a `key` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
+Each item accepts a `key` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a `key` prop is not required. See [Collection Components](v3:collections.html) for more details.
 
 ```tsx example
 function Example() {
@@ -353,7 +353,7 @@ All tabs can be disabled using the `isDisabled` prop.
 
 Individual tabs can be disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `key` prop passed to the `Item` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See [Collections](v3:collections.html) for more details.
 
 ```tsx example
 <Tabs aria-label="Input settings" disabledKeys={['gamepad']}>
@@ -384,8 +384,8 @@ function Tab({item, state}) {
 
 By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
 
-1. Set up a <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [client side routing guide](routing.html) to learn how to set this up.
-2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#selection).
+1. Set up a <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [framework setup guide](../frameworks) to learn how to set this up.
+2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#controlled-selection).
 
 This example uses [React Router](https://reactrouter.com/en/main) to setup routes for each tab and synchronize the selection with the URL.
 

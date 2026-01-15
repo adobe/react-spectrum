@@ -66,7 +66,8 @@ function generate(dir) {
   }
 
   let relative = path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
-  let typeImport = dir.includes('ui-icons') ? "import {ReactNode, SVGProps} from 'react';" : `import {IconProps, IllustrationContext} from '${relative}';`;
+  let typeImport = dir.includes('ui-icons') ? "import {ReactNode, SVGProps} from 'react';" : `import {ReactNode} from 'react';
+import {IconProps, IllustrationContext} from '${relative}';`;
   let ctx = dir.includes('spectrum-illustrations') ? '[props] = useContextProps(props, null, IllustrationContext);\n  ' : '';
   let type = dir.includes('ui-icons') ? 'SVGProps<SVGSVGElement>' : 'IconProps';
   let isIllustration =  dir.includes('spectrum-illustrations');
@@ -87,7 +88,7 @@ function generate(dir) {
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+${dir.includes('spectrum-illustrations') ? "'use client';" : ''}
 `;
 
     let imports = [typeImport];
@@ -124,7 +125,7 @@ let styles = style({
     }
 
     src += `
-export default function ${importName}(props: ${type} & {size?: ${Object.keys(sizes).map(s => `'${s}'`).join(' | ')}})${isIllustration ? '' : ': ReactNode'} {
+export default function ${importName}(props: ${type} & {size?: ${Object.keys(sizes).map(s => `'${s}'`).join(' | ')}}): ReactNode {
   ${ctx}let {size = 'M', ...otherProps} = props;
   switch (size) {${Object.keys(sizes).map(size => `
     case '${size}':

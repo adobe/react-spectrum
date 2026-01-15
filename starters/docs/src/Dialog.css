@@ -1,0 +1,14 @@
+@import "./theme.css";
+
+.react-aria-Dialog {
+  outline: none;
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: var(--spacing-10);
+
+  .react-aria-Heading[slot=title] {
+    margin-top: 0;
+    margin-bottom: 1em;
+  }
+}

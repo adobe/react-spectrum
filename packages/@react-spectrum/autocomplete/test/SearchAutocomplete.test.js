@@ -1844,7 +1844,7 @@ describe('SearchAutocomplete', function () {
       expect(() => within(tray).getByText('No results')).toThrow();
     });
 
-    it.skip('user can select options by pressing them', async function () {
+    it('user can select options by pressing them', async function () {
       let {getByRole, getByText, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1892,7 +1892,7 @@ describe('SearchAutocomplete', function () {
       expect(items[1]).toHaveAttribute('aria-selected', 'true');
     });
 
-    it.skip('user can select options by focusing them and hitting enter', async function () {
+    it('user can select options by focusing them and hitting enter', async function () {
       let {getByRole, getByText, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -2459,6 +2459,31 @@ describe('SearchAutocomplete', function () {
         expect(combobox).toHaveValue('');
       });
 
+      if (parseInt(React.version, 10) >= 19) {
+        it('resets to defaultInputValue when submitting form action', async () => {
+          function Test() {        
+            const [value, formAction] = React.useActionState(() => 'hi', 'test');
+            
+            return (
+              <Provider theme={theme}>
+                <form action={formAction}>
+                  <ExampleSearchAutocomplete defaultInputValue={value} />
+                  <input type="submit" data-testid="submit" />
+                </form>
+              </Provider>
+            );
+          }
+    
+          let {getByTestId, getByRole} = render(<Test />);
+          let input = getByRole('combobox');
+          expect(input).toHaveValue('test');
+    
+          let button = getByTestId('submit');
+          await act(async () => await user.click(button));
+          expect(input).toHaveValue('hi');
+        });
+      }
+
       describe('validation', () => {
         describe('validationBehavior=native', () => {
           it('supports isRequired', async () => {
@@ -2748,6 +2773,31 @@ describe('SearchAutocomplete', function () {
         await user.click(reset);
         expect(input).toHaveValue('');
       });
+
+      if (parseInt(React.version, 10) >= 19) {
+        it('resets to defaultInputValue when submitting form action', async () => {
+          function Test() {
+            const [value, formAction] = React.useActionState(() => 'hi', 'test');
+            
+            return (
+              <Provider theme={theme}>
+                <form action={formAction}>
+                  <ExampleSearchAutocomplete name="combobox" defaultInputValue={value} />
+                  <input type="submit" data-testid="submit" />
+                </form>
+              </Provider>
+            );
+          }
+    
+          let {getByTestId} = render(<Test />);
+          let input = document.querySelector('input[name=combobox]');
+          expect(input).toHaveValue('test');
+    
+          let button = getByTestId('submit');
+          await act(async () => await user.click(button));
+          expect(input).toHaveValue('hi');
+        });
+      }
 
       describe('validation', () => {
         describe('validationBehavior=native', () => {

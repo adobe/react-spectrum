@@ -1,30 +1,29 @@
+'use client';
 import { Check, ChevronRight } from 'lucide-react';
 import React from 'react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
-  MenuProps as AriaMenuProps,
+  MenuProps,
   MenuItemProps,
   MenuSection as AriaMenuSection,
   MenuSectionProps as AriaMenuSectionProps,
+  MenuTrigger as AriaMenuTrigger,
+  SubmenuTrigger as AriaSubmenuTrigger,
   Separator,
   SeparatorProps,
   composeRenderProps,
   Header,
-  Collection
+  Collection,
+  SubmenuTriggerProps,
+  MenuTriggerProps as AriaMenuTriggerProps
 } from 'react-aria-components';
 import { dropdownItemStyles } from './ListBox';
 import { Popover, PopoverProps } from './Popover';
 
-interface MenuProps<T> extends AriaMenuProps<T> {
-  placement?: PopoverProps['placement']
-}
-
 export function Menu<T extends object>(props: MenuProps<T>) {
   return (
-    <Popover placement={props.placement} className="min-w-[150px]">
-      <AriaMenu {...props} className="p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]" />
-    </Popover>
+    <AriaMenu {...props} className="font-sans p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)] empty:text-center empty:pb-2" />
   );
 }
 
@@ -50,7 +49,7 @@ export function MenuItem(props: MenuItemProps) {
 }
 
 export function MenuSeparator(props: SeparatorProps) {
-  return <Separator {...props} className="mx-3 my-1 border-b border-gray-300 dark:border-zinc-700" />
+  return <Separator {...props} className="mx-3 my-1 border-b border-neutral-300 dark:border-neutral-700" />
 }
 
 export interface MenuSectionProps<T> extends AriaMenuSectionProps<T> {
@@ -61,10 +60,40 @@ export interface MenuSectionProps<T> extends AriaMenuSectionProps<T> {
 export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   return (
     <AriaMenuSection {...props} className="first:-mt-[5px] after:content-[''] after:block after:h-[5px]">
-      <Header className="text-sm font-semibold text-gray-500 dark:text-zinc-300 px-4 py-1 truncate sticky -top-[5px] -mt-px -mx-1 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 border-y border-y-gray-200 dark:border-y-zinc-700 [&+*]:mt-1">{props.title}</Header>
+      {props.title && <Header className="text-sm font-semibold text-neutral-500 dark:text-neutral-300 px-4 py-1 truncate sticky -top-[5px] -mt-px -mx-1 z-10 bg-neutral-100/60 dark:bg-neutral-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-neutral-100 border-y border-y-neutral-200 dark:border-y-neutral-700 [&+*]:mt-1">{props.title}</Header>}
       <Collection items={props.items}>
         {props.children}
       </Collection>
     </AriaMenuSection>
   )
+}
+
+interface MenuTriggerProps extends AriaMenuTriggerProps {
+  placement?: PopoverProps['placement']
+}
+
+export function MenuTrigger(props: MenuTriggerProps) {
+  let [trigger, menu] = React.Children.toArray(props.children) as [React.ReactElement, React.ReactElement];
+  return (
+    <AriaMenuTrigger {...props}>
+      {trigger}
+      <Popover placement={props.placement} className="min-w-[150px]">
+        {menu}
+      </Popover>
+    </AriaMenuTrigger>
+  );
+}
+
+export function SubmenuTrigger(
+  props: SubmenuTriggerProps
+) {
+  let [trigger, menu] = React.Children.toArray(props.children) as [React.ReactElement, React.ReactElement];
+  return (
+    <AriaSubmenuTrigger {...props}>
+      {trigger}
+      <Popover offset={-2} crossOffset={-4}>
+        {menu}
+      </Popover>
+    </AriaSubmenuTrigger>
+  );
 }

@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/toast",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.5.0",
-    "use-sync-external-store": "^1.4.0"
+    "use-sync-external-store": "^1.6.0"
   },
   "devDependencies": {
     "@types/use-sync-external-store": "^0.0.3"

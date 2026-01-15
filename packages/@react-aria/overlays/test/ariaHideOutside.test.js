@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ariaHideOutside} from '../src';
-import React from 'react';
-import {render, waitFor} from '@react-spectrum/test-utils-internal';
+import React, {useRef, useState} from 'react';
 
 describe('ariaHideOutside', function () {
   it('should hide everything except the provided element [button]', function () {
@@ -275,6 +275,76 @@ describe('ariaHideOutside', function () {
     expect(() => getByTestId('test')).not.toThrow();
   });
 
+  it('should handle when a new element is added and then reparented', async function () {
+
+    let Test = () => {
+      const ref = useRef(null);
+      const mutate = () => {
+        let parent = document.createElement('ul');
+        let child = document.createElement('li');
+        ref.current.append(parent);
+        parent.appendChild(child);
+        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li (through the new ul parent) in `addedNodes`
+        let newParent = document.createElement('ul');
+        newParent.appendChild(child);
+        ref.current.append(newParent);
+      };
+
+      return (
+        <>
+          <div data-testid="test" ref={ref}>
+            <button onClick={mutate}>Mutate</button>
+          </div>
+        </>
+      );
+    };
+
+    let {queryByRole, getAllByRole, getByTestId} = render(<Test />);
+
+    ariaHideOutside([getByTestId('test')]);
+
+    queryByRole('button').click();
+    await Promise.resolve(); // Wait for mutation observer tick
+
+    expect(getAllByRole('listitem')).toHaveLength(1);
+  });
+
+  it('should handle when a new element is added and then reparented to a hidden container', async function () {
+
+    let Test = () => {
+      const ref = useRef(null);
+      const mutate = () => {
+        let parent = document.createElement('ul');
+        let child = document.createElement('li');
+        ref.current.append(parent);
+        parent.appendChild(child);
+        parent.remove(); // this results in a mutation record for a disconnected ul with a connected li (through the new ul parent) in `addedNodes`
+        let newParent = document.createElement('ul');
+        newParent.appendChild(child);
+        ref.current.append(newParent);
+      };
+
+      return (
+        <>
+          <div data-testid="test">
+            <button onClick={mutate}>Mutate</button>
+          </div>
+          <div data-testid="sibling" ref={ref} />
+        </>
+      );
+    };
+
+    let {queryByRole, queryAllByRole, getByTestId} = render(<Test />);
+
+    ariaHideOutside([getByTestId('test')]);
+
+    queryByRole('button').click();
+    await Promise.resolve(); // Wait for mutation observer tick
+
+    expect(queryAllByRole('listitem')).toHaveLength(0);
+  });
+
+
   it('work when called multiple times', function () {
     let {getByRole, getAllByRole} = render(
       <>
@@ -354,10 +424,13 @@ describe('ariaHideOutside', function () {
   });
 
   it('should hide everything except the provided element [row]', function () {
-    let {getAllByRole} = render(
+    let {getAllByRole, getByTestId} = render(
       <div role="grid">
         <div role="row">
-          <div role="gridcell">Cell 1</div>
+          <div role="gridcell">
+            <span data-testid="test-span">
+              Cell 1
+            </span></div>
         </div>
         <div role="row">
           <div role="gridcell">Cell 2</div>
@@ -367,6 +440,7 @@ describe('ariaHideOutside', function () {
 
     let cells = getAllByRole('gridcell');
     let rows = getAllByRole('row');
+    let span = getByTestId('test-span');
 
     let revert = ariaHideOutside([rows[1]]);
 
@@ -374,6 +448,7 @@ describe('ariaHideOutside', function () {
     // for https://bugs.webkit.org/show_bug.cgi?id=222623
     expect(rows[0]).toHaveAttribute('aria-hidden', 'true');
     expect(cells[0]).toHaveAttribute('aria-hidden', 'true');
+    expect(span).not.toHaveAttribute('aria-hidden');
     expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
     expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
 
@@ -383,5 +458,51 @@ describe('ariaHideOutside', function () {
     expect(cells[0]).not.toHaveAttribute('aria-hidden', 'true');
     expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
     expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(span).not.toHaveAttribute('aria-hidden');
+  });
+
+  it('should unhide after item reorder', async function () {
+    function Item(props) {
+      return (
+        <div role="presentation">
+          <div data-testid={props.testid} role="row">
+            <div role="gridcell" />
+          </div>
+        </div>
+      );
+    }
+
+    function Test() {
+      let [count, setCount] = useState(0);
+      let items = ['row1', 'row2', 'row3', 'row4', 'row5'];
+      if (count === 1) {
+        items = ['row2', 'row1', 'row3', 'row4', 'row5'];
+      } else if (count === 2) {
+        items = ['row2', 'row3', 'row1', 'row4', 'row5'];
+      }
+
+      return (
+        <>
+          <button onClick={() => setCount((old) => old + 1)}>press</button>
+          {items.map((item) => <Item testid={item} key={item} />)}
+        </>
+
+      );
+    }
+
+    let {getByRole, getByTestId} = render(
+      <Test />
+    );
+
+    let button = getByRole('button');
+    let row = getByTestId('row1');
+    let revert = ariaHideOutside([button]);
+
+    act(() => button.click());
+    await Promise.resolve();
+    act(() => button.click());
+    await Promise.resolve();
+    revert();
+    expect(row.parentElement).not.toHaveAttribute('aria-hidden', 'true');
   });
 });

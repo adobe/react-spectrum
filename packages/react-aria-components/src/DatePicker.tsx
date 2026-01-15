@@ -12,15 +12,28 @@
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext
+} from './utils';
 import {DateFieldContext} from './DateField';
 import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {GroupContext} from './Group';
+import {HiddenDateInput} from './HiddenDateInput';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
@@ -43,6 +56,11 @@ export interface DatePickerRenderProps {
    */
   isDisabled: boolean,
   /**
+   * Whether the date picker is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
    * Whether the date picker is invalid.
    * @selector [data-invalid]
    */
@@ -64,8 +82,24 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DatePicker'
+   */
+  className?: ClassNameOrFunction<DatePickerRenderProps>,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
+}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-DateRangePicker'
+   */
+  className?: ClassNameOrFunction<DateRangePickerRenderProps>,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
+}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -129,12 +163,13 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
       isFocusVisible,
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
-      isOpen: state.isOpen
+      isOpen: state.isOpen,
+      isReadOnly: props.isReadOnly || false
     },
     defaultClassName: 'react-aria-DatePicker'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -143,7 +178,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DatePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
-        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
@@ -164,16 +199,20 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [FieldErrorContext, validation]
       ]}>
       <div
-        {...focusProps}
-        {...DOMProps}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-focus-within={isFocused || undefined}
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-open={state.isOpen || undefined} />
+      <HiddenDateInput
+        autoComplete={props.autoComplete}
+        name={props.name}
+        isDisabled={props.isDisabled}
+        state={state} />
     </Provider>
   );
 });
@@ -234,12 +273,13 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isFocusVisible,
       isDisabled: props.isDisabled || false,
       isInvalid: state.isInvalid,
-      isOpen: state.isOpen
+      isOpen: state.isOpen,
+      isReadOnly: props.isReadOnly || false
     },
     defaultClassName: 'react-aria-DateRangePicker'
   });
 
-  let DOMProps = filterDOMProps(props);
+  let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
   return (
@@ -247,7 +287,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       values={[
         [DateRangePickerStateContext, state],
         [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
-        [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
@@ -274,15 +314,14 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         [FieldErrorContext, validation]
       ]}>
       <div
-        {...focusProps}
-        {...DOMProps}
-        {...renderProps}
+        {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         data-focus-within={isFocused || undefined}
         data-invalid={state.isInvalid || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-readonly={props.isReadOnly || undefined}
         data-open={state.isOpen || undefined} />
     </Provider>
   );

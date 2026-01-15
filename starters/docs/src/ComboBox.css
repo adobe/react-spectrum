@@ -1,0 +1,24 @@
+@import "./theme.css";
+@import "./TextField.css";
+
+.react-aria-ComboBox {
+  color: var(--text-color);
+  width: calc(var(--spacing) * 50);
+
+  .combobox-field {
+    display: flex;
+    align-items: center;
+    height: var(--spacing-8);
+    width: 100%;
+  }
+
+  .react-aria-Input {
+    width: 100%;
+    padding: 0 calc(var(--spacing-3) + var(--spacing-6)) 0 var(--spacing-3);
+  }
+}
+
+.combobox-popover[data-trigger=ComboBox] {
+  width: var(--trigger-width);
+  padding: 0;
+}

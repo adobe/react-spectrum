@@ -11,6 +11,7 @@
  */
 
 import {
+  Avatar,
   Button,
   Content,
   ContextualHelp,
@@ -21,15 +22,19 @@ import {
   Link,
   Picker,
   PickerItem,
+  PickerProps,
   PickerSection,
   Text
 } from '../src';
-import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import {categorizeArgTypes, getActionArgs, StaticColorDecorator} from './utils';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useAsyncList} from '@react-stately/data';
+
+const events = ['onOpenChange', 'onChange', 'onLoadMore'];
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -39,16 +44,24 @@ const meta: Meta<typeof Picker<any>> = {
   decorators: [StaticColorDecorator],
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
+    ...categorizeArgTypes('Events', events),
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    children: {table: {disable: true}},
+    contextualHelp: {table: {disable: true}},
+    defaultSelectedKey: {table: {disable: true}},
+    selectedKey: {table: {disable: true}}
   },
+  args: {...getActionArgs(events)},
   title: 'Picker'
 };
 
 export default meta;
 type Story = StoryObj<typeof Picker<any>>;
 
-export const Example = {
-  render: (args: any) => (
+export const Example: Story = {
+  render: (args) => (
     <Picker {...args}>
       <PickerItem>Chocolate</PickerItem>
       <PickerItem>Mint</PickerItem>
@@ -132,6 +145,33 @@ export const WithIcons: Story = {
   }
 };
 
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <Picker {...args}>
+      <PickerItem textValue="User One">
+        <Avatar slot="avatar" src={SRC_URL_1} />
+        <Text>User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </PickerItem>
+      <PickerItem textValue="User Two">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text>User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </PickerItem>
+      <PickerItem textValue="User Three">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text>User Three</Text>
+      </PickerItem>
+    </Picker>
+  ),
+  args: {
+    label: 'Share'
+  }
+};
+
 function VirtualizedPicker(props) {
   let items: IExampleItem[] = [];
   for (let i = 0; i < 10000; i++) {
@@ -154,16 +194,16 @@ export const ManyItems: Story = {
   }
 };
 
-const ValidationRender = (props) => (
+const ValidationRender = (props: PickerProps<IExampleItem>): ReactElement => (
   <Form>
     <Picker {...props}>
-      {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
+      {(item) => <PickerItem id={item.id} textValue={item.label}>{item.label}</PickerItem>}
     </Picker>
     <Button type="submit" variant="primary">Submit</Button>
   </Form>
 );
 
-export const Validation = {
+export const Validation: StoryObj<typeof ValidationRender> = {
   render: (args) => <ValidationRender {...args} />,
   args: {
     ...Dynamic.args,
@@ -171,8 +211,8 @@ export const Validation = {
   }
 };
 
-export const CustomWidth = {
-  render: (args: any) => (
+export const CustomWidth: StoryObj<typeof Picker<any>> = {
+  render: (args) => (
     <Picker {...args} styles={style({width: 384})}>
       <PickerItem>Chocolate</PickerItem>
       <PickerItem>Mint</PickerItem>
@@ -189,7 +229,7 @@ export const CustomWidth = {
   }
 };
 
-const ContextualHelpExampleRender = (props) => (
+const ContextualHelpExampleRender = (props: PickerProps<any>): ReactElement => (
   <Picker
     {...props}
     contextualHelp={
@@ -218,7 +258,7 @@ const ContextualHelpExampleRender = (props) => (
   </Picker>
 );
 
-export const ContextualHelpExample = {
+export const ContextualHelpExample: StoryObj<typeof ContextualHelpExampleRender> = {
   render: (args) => <ContextualHelpExampleRender {...args} />,
   args: {
     label: 'Ice cream flavor'
@@ -232,7 +272,7 @@ interface Character {
   birth_year: number
 }
 
-const AsyncPicker = (args: any) => {
+const AsyncPicker = (args: PickerProps<Character> & {delay: number}): ReactElement => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -257,7 +297,8 @@ const AsyncPicker = (args: any) => {
   );
 };
 
-export const AsyncPickerStory  = {
+export type AsyncPickerStoryType = typeof AsyncPicker;
+export const AsyncPickerStory: StoryObj<AsyncPickerStoryType> = {
   render: AsyncPicker,
   args: {
     ...Example.args,

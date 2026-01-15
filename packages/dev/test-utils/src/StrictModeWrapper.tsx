@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {StrictMode} from 'react';
+import React, {ReactNode, StrictMode} from 'react';
 
-export function StrictModeWrapper(props) {
+export function StrictModeWrapper(props: {children?: ReactNode}): ReactNode {
   if (process.env.STRICT_MODE) {
     return (
       <StrictMode>

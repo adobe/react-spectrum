@@ -10,21 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton, ActionButtonContext} from './ActionButton';
 import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
+  ButtonContext,
   CellRenderProps,
   Collection,
   ColumnRenderProps,
   ColumnResizer,
   ContextValue,
+  DEFAULT_SLOT,
+  Form,
   Key,
+  OverlayTriggerStateContext,
   Provider,
   Cell as RACCell,
   CellProps as RACCellProps,
   CheckboxContext as RACCheckboxContext,
   Column as RACColumn,
   ColumnProps as RACColumnProps,
+  Popover as RACPopover,
   Row as RACRow,
   RowProps as RACRowProps,
   Table as RACTable,
@@ -38,32 +44,37 @@ import {
   RowRenderProps,
   TableBodyRenderProps,
   TableLayout,
+  TableLoadMoreItem,
   TableRenderProps,
-  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {ButtonGroup} from './ButtonGroup';
+import {centerPadding, colorScheme, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
+import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
 import Chevron from '../ui-icons/Chevron';
+import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
-import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
+import {CustomDialog, DialogContainer} from '..';
+import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
+import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuSection, MenuTrigger} from './Menu';
-import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, CSSProperties, FormEvent, FormHTMLAttributes, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {Button as SpectrumButton} from './Button';
 import {useActionBarContainer} from './ActionBar';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -109,12 +120,12 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
 
-let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean}>({});
+let InternalTableContext = createContext<TableViewProps & {layout?: S2TableLayout<unknown>, setIsInResizeMode?:(val: boolean) => void, isInResizeMode?: boolean, selectionMode?: 'none' | 'single' | 'multiple'}>({});
 
 const tableWrapper = style({
   minHeight: 0,
@@ -125,10 +136,12 @@ const tableWrapper = style({
   position: 'relative',
   // Clip ActionBar animation.
   overflow: 'clip'
-});
+}, getAllowedOverrides({height: true}));
 
 const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
   width: 'full',
+  height: 'full',
+  boxSizing: 'border-box',
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
@@ -163,7 +176,7 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   scrollPaddingStart: {
     isCheckboxSelection: 40
   }
-}, getAllowedOverrides({height: true}));
+});
 
 // component-height-100
 const DEFAULT_HEADER_HEIGHT = {
@@ -196,11 +209,10 @@ export class S2TableLayout<T> extends TableLayout<T> {
     if (!header) {
       return [];
     }
-    let {children, layoutInfo} = body;
+    let {layoutInfo} = body;
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
-    // TODO: we may want to adjust RAC layouts to do something simlar? Current users of RAC table will probably run into something similar
-    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
       layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
@@ -219,7 +231,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // If performing first load or empty, the body will be sticky so we don't want to apply sticky to the loader, otherwise it will
     // affect the positioning of the empty state renderer
     let collection = this.virtualizer!.collection;
-    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    let isEmptyOrLoading = collection?.size === 0;
     layoutInfo.isSticky = !isEmptyOrLoading;
     return layoutNode;
   }
@@ -227,11 +239,11 @@ export class S2TableLayout<T> extends TableLayout<T> {
   // y is the height of the headers
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
-    let {children, layoutInfo} = layoutNode;
+    let {layoutInfo} = layoutNode;
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
-    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    let isEmptyOrLoading = this.virtualizer?.collection.size === 0;
     if (isEmptyOrLoading) {
       layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
@@ -282,6 +294,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     onResizeEnd: propsOnResizeEnd,
     onAction,
     onLoadMore,
+    selectionMode = 'none',
     ...otherProps
   } = props;
 
@@ -306,11 +319,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     loadingState,
     onLoadMore,
     isInResizeMode,
-    setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
+    setIsInResizeMode,
+    selectionMode
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode, selectionMode]);
 
   let scrollRef = useRef<HTMLElement | null>(null);
-  let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+  let isCheckboxSelection = selectionMode === 'multiple' || selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
@@ -321,7 +335,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
       onResize={propsOnResize}
       onResizeEnd={onResizeEnd}
       onResizeStart={onResizeStart}
-      className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
+      className={(UNSAFE_className || '') + tableWrapper(null, styles)}
       style={UNSAFE_style}>
       <Virtualizer
         layout={S2TableLayout}
@@ -353,6 +367,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
               isQuiet
             })}
             selectionBehavior="toggle"
+            selectionMode={selectionMode}
             onRowAction={onAction}
             {...otherProps}
             selectedKeys={selectedKeys}
@@ -373,7 +388,7 @@ const centeredWrapper = style({
   height: 'full'
 });
 
-export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className'> {}
+export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
 
 /**
  * The body of a `<Table>`, containing the table rows.
@@ -390,13 +405,13 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
   // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    <TableLoadMoreItem isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
-    </UNSTABLE_TableLoadingSentinel>
+    </TableLoadMoreItem>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
@@ -462,7 +477,7 @@ const cellFocus = {
 } as const;
 
 function CellFocusRing() {
-  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />;
+  return <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0, pointerEvents: 'none'})({isFocusVisible: true})} />;
 }
 
 const columnStyles = style({
@@ -507,7 +522,7 @@ const columnStyles = style({
   forcedColorAdjust: 'none'
 });
 
-export interface ColumnProps extends RACColumnProps {
+export interface ColumnProps extends Omit<RACColumnProps, 'style' | 'className' | keyof GlobalDOMAttributes> {
   /** Whether the column should render a divider between it and the next column. */
   showDivider?: boolean,
   /** Whether the column allows resizing. */
@@ -547,7 +562,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
                 {children}
               </ColumnWithMenu>
             ) : (
-              <ColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection}>
+              <ColumnContents align={align} allowsSorting={allowsSorting} sortDirection={sortDirection}>
                 {children}
               </ColumnContents>
             )
@@ -562,7 +577,14 @@ const columnContentWrapper = style({
   minWidth: 0,
   display: 'flex',
   alignItems: 'center',
-  width: 'full'
+  width: 'full',
+  justifyContent: {
+    align: {
+      default: 'start',
+      center: 'center',
+      end: 'end'
+    }
+  }
 });
 
 const sortIcon = style({
@@ -579,13 +601,13 @@ const sortIcon = style({
   }
 });
 
-interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'children'> {}
+interface ColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sortDirection'>, Pick<ColumnProps, 'align' | 'children'> {}
 
 function ColumnContents(props: ColumnContentProps) {
-  let {allowsSorting, sortDirection, children} = props;
+  let {align, allowsSorting, sortDirection, children} = props;
 
   return (
-    <div className={columnContentWrapper}>
+    <div className={columnContentWrapper({align})}>
       {allowsSorting && (
         <Provider
           values={[
@@ -598,7 +620,7 @@ function ColumnContents(props: ColumnContentProps) {
           )}
         </Provider>
       )}
-      <span className={style({truncate: true, width: 'full'})}>
+      <span className={columnHeaderText}>
         {children}
       </span>
     </div>
@@ -863,7 +885,7 @@ const selectAllCheckboxColumn = style({
   backgroundColor: 'gray-75'
 });
 
-export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
+export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | keyof GlobalDOMAttributes> {}
 
 /**
  * A header within a `<Table>`, containing the table columns.
@@ -893,7 +915,7 @@ export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function
                 </>
               }
               {selectionMode === 'multiple' &&
-                <Checkbox isEmphasized styles={selectAllCheckbox} slot="selection" />
+                <Checkbox styles={selectAllCheckbox} slot="selection" />
               }
             </>
           )}
@@ -931,7 +953,10 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: baseColor('neutral'),
+  color: {
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral')
+  },
   paddingY: centerPadding(),
   minHeight: {
     default: 40,
@@ -1005,7 +1030,7 @@ const cellContent = style({
   }
 });
 
-export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'showDivider'> {
+export interface CellProps extends Omit<RACCellProps, 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<ColumnProps, 'align' | 'showDivider'> {
   /** @private */
   isSticky?: boolean,
   /** The content to render as the cell children. */
@@ -1036,17 +1061,319 @@ export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLD
       {...otherProps}>
       {({isFocusVisible}) => (
         <>
-          {isFocusVisible && <CellFocusRing />}
           <span className={cellContent({...tableVisualOptions, isSticky, align: align || 'start'})}>{children}</span>
+          {isFocusVisible && <CellFocusRing />}
         </>
       )}
     </RACCell>
   );
 });
 
+
+const editableCell = style<CellRenderProps & S2TableProps & {isDivider: boolean, selectionMode?: 'none' | 'single' | 'multiple', isSaving?: boolean}>({
+  ...commonCellStyles,
+  color: {
+    default: baseColor('neutral'),
+    isSaving: baseColor('neutral-subdued')
+  },
+  paddingY: centerPadding(),
+  boxSizing: 'border-box',
+  height: 'calc(100% - 1px)', // so we don't overlap the border of the next cell
+  width: 'full',
+  fontSize: controlFont(),
+  alignItems: 'center',
+  display: 'flex',
+  borderStyle: {
+    default: 'none',
+    isDivider: 'solid'
+  },
+  borderEndWidth: {
+    default: 0,
+    isDivider: 1
+  },
+  borderColor: {
+    default: 'gray-300',
+    forcedColors: 'ButtonBorder'
+  }
+});
+
+let editPopover = style({
+  ...colorScheme(),
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: 'layer-2'
+  },
+  backgroundColor: '--s2-container-bg',
+  borderBottomRadius: 'default',
+  // Use box-shadow instead of filter when an arrow is not shown.
+  // This fixes the shadow stacking problem with submenus.
+  boxShadow: 'elevated',
+  borderStyle: 'solid',
+  borderWidth: 1,
+  borderColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  boxSizing: 'content-box',
+  isolation: 'isolate',
+  pointerEvents: {
+    isExiting: 'none'
+  },
+  outlineStyle: 'none',
+  minWidth: '--trigger-width',
+  padding: 8,
+  display: 'flex',
+  alignItems: 'center'
+}, getAllowedOverrides());
+
+interface EditableCellProps extends Omit<CellProps, 'isSticky'> {
+  /** The component which will handle editing the cell. For example, a `TextField` or a `Picker`. */
+  renderEditing: () => ReactNode,
+  /** Whether the cell is currently being saved. */
+  isSaving?: boolean,
+  /** Handler that is called when the value has been changed and is ready to be saved. */
+  onSubmit?: (e: FormEvent<HTMLFormElement>) => void,
+  /** Handler that is called when the user cancels the edit. */
+  onCancel?: () => void,
+  /** The action to submit the form to. Only available in React 19+. */
+  action?: string | FormHTMLAttributes<HTMLFormElement>['action']
+}
+
+/**
+ * An editable cell within a table row.
+ */
+export const EditableCell = forwardRef(function EditableCell(props: EditableCellProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {children, showDivider = false, textValue, isSaving, ...otherProps} = props;
+  let tableVisualOptions = useContext(InternalTableContext);
+  let domRef = useObjectRef(ref);
+  textValue ||= typeof children === 'string' ? children : undefined;
+
+  return (
+    <RACCell
+      ref={domRef}
+      className={renderProps => editableCell({
+        ...renderProps,
+        ...tableVisualOptions,
+        isDivider: showDivider,
+        isSaving
+      })}
+      textValue={textValue}
+      {...otherProps}>
+      {({isFocusVisible}) => (
+        <EditableCellInner {...props} isFocusVisible={isFocusVisible} cellRef={domRef as RefObject<HTMLDivElement>} />
+      )}
+    </RACCell>
+  );
+});
+
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
+function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, cellRef: RefObject<HTMLDivElement>}) {
+  let {children, align, renderEditing, isSaving, onSubmit, isFocusVisible, cellRef, action, onCancel} = props;
+  let [isOpen, setIsOpen] = useState(false);
+  let popoverRef = useRef<HTMLDivElement>(null);
+  let formRef = useRef<HTMLFormElement>(null);
+  let [triggerWidth, setTriggerWidth] = useState(0);
+  let [tableWidth, setTableWidth] = useState(0);
+  let [verticalOffset, setVerticalOffset] = useState(0);
+  let tableVisualOptions = useContext(InternalTableContext);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let dialogRef = useRef<DOMRefValue<HTMLElement>>(null);
+
+  let {density} = useContext(InternalTableContext);
+  let size: 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = 'M';
+  if (density === 'compact') {
+    size = 'S';
+  } else if (density === 'spacious') {
+    size = 'L';
+  }
+
+  // Popover positioning
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    let width = cellRef.current?.clientWidth || 0;
+    let cell = cellRef.current;
+    let boundingRect = cell?.parentElement?.getBoundingClientRect();
+    let verticalOffset = (boundingRect?.top ?? 0) - (boundingRect?.bottom ?? 0);
+
+    let tableWidth = cellRef.current?.closest('[role="grid"]')?.clientWidth || 0;
+    setTriggerWidth(width);
+    setVerticalOffset(verticalOffset);
+    setTableWidth(tableWidth);
+  }, [cellRef, density, isOpen]);
+
+  // Auto select the entire text range of the autofocused input on overlay opening
+  // Maybe replace with FocusScope or one of those utilities
+  useEffect(() => {
+    if (isOpen) {
+      let activeElement = getActiveElement(getOwnerDocument(formRef.current));
+      if (activeElement
+        && formRef.current?.contains(activeElement)
+        // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
+        // seems like an edge case anyways
+        && (
+          (activeElement instanceof HTMLInputElement && !nonTextInputTypes.has(activeElement.type))
+          || activeElement instanceof HTMLTextAreaElement)
+        && typeof activeElement.select === 'function') {
+        activeElement.select();
+      }
+    }
+  }, [isOpen]);
+
+  let cancel = useCallback(() => {
+    setIsOpen(false);
+    onCancel?.();
+  }, [onCancel]);
+
+  let isMobile = !useMediaQuery('(hover: hover) and (pointer: fine)');
+  // Can't differentiate between Dialog click outside dismissal and Escape key dismissal
+  let prevIsOpen = useRef(isOpen);
+  useEffect(() => {
+    let dialog = dialogRef.current?.UNSAFE_getDOMNode();
+    if (isOpen && dialog && !prevIsOpen.current) {
+      let handler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          cancel();
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      };
+      dialog.addEventListener('keydown', handler);
+      prevIsOpen.current = isOpen;
+      return () => {
+        dialog.removeEventListener('keydown', handler);
+      };
+    }
+    prevIsOpen.current = isOpen;
+  }, [isOpen, cancel]);
+
+  return (
+    <Provider
+      values={[
+        [ButtonContext, null],
+        [ActionButtonContext, {
+          slots: {
+            [DEFAULT_SLOT]: {},
+            edit: {
+              onPress: () => setIsOpen(true),
+              isPending: isSaving,
+              isQuiet: !isSaving,
+              size,
+              excludeFromTabOrder: true,
+              styles: style({
+                // TODO: really need access to display here instead, but not possible right now
+                // will be addressable with displayOuter
+                // Could use `hidden` attribute instead of css, but I don't have access to much of this state at the moment
+                visibility: {
+                  default: 'hidden',
+                  isForcedVisible: 'visible',
+                  ':is([role="row"]:hover *)': 'visible',
+                  ':is([role="row"][data-focus-visible-within] *)': 'visible',
+                  '@media not ((hover: hover) and (pointer: fine))': 'visible'
+                }
+              })({isForcedVisible: isOpen || !!isSaving})
+            }
+          }
+        }]
+      ]}>
+      <span className={cellContent({...tableVisualOptions, align: align || 'start'})}>{children}</span>
+      {isFocusVisible && <CellFocusRing />}
+
+      <Provider
+        values={[
+          [ActionButtonContext, null]
+        ]}>
+        {!isMobile && (
+          <RACPopover
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+            ref={popoverRef}
+            shouldCloseOnInteractOutside={() => {
+              if (!popoverRef.current?.contains(document.activeElement)) {
+                return false;
+              }
+              formRef.current?.requestSubmit();
+              return false;
+            }}
+            triggerRef={cellRef}
+            aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}
+            offset={verticalOffset}
+            placement="bottom start"
+            style={{
+              minWidth: `min(${triggerWidth}px, ${tableWidth}px)`,
+              maxWidth: `${tableWidth}px`,
+              // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+              zIndex: undefined
+            }}
+            className={editPopover}>
+            <Provider
+              values={[
+                [OverlayTriggerStateContext, null]
+              ]}>
+              <Form
+                ref={formRef}
+                action={action}
+                onSubmit={(e) => {
+                  onSubmit?.(e);
+                  setIsOpen(false);
+                }}
+                className={style({width: 'full', display: 'flex', alignItems: 'start', gap: 16})}
+                style={{'--input-width': `calc(${triggerWidth}px - 32px)`} as CSSProperties}>
+                {renderEditing()}
+                <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'baseline', flexShrink: 0, flexGrow: 0})}>
+                  <ActionButton isQuiet onPress={cancel} aria-label={stringFormatter.format('table.cancel')}><Close /></ActionButton>
+                  <ActionButton isQuiet type="submit" aria-label={stringFormatter.format('table.save')}><Checkmark /></ActionButton>
+                </div>
+              </Form>
+            </Provider>
+          </RACPopover>
+        )}
+        {isMobile && (
+          <DialogContainer onDismiss={() => formRef.current?.requestSubmit()}>
+            {isOpen && (
+              <CustomDialog
+                ref={dialogRef}
+                isDismissible
+                isKeyboardDismissDisabled
+                aria-label={props['aria-label'] ?? stringFormatter.format('table.editCell')}>
+                <Form
+                  ref={formRef}
+                  action={action}
+                  onSubmit={(e) => {
+                    onSubmit?.(e);
+                    setIsOpen(false);
+                  }}
+                  className={style({width: 'full', display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 16})}>
+                  {renderEditing()}
+                  <ButtonGroup align="end" styles={style({alignSelf: 'end'})}>
+                    <SpectrumButton onPress={cancel} variant="secondary" fillStyle="outline">Cancel</SpectrumButton>
+                    <SpectrumButton type="submit" variant="accent">Save</SpectrumButton>
+                  </ButtonGroup>
+                </Form>
+              </CustomDialog>
+            )}
+          </DialogContainer>
+        )}
+      </Provider>
+    </Provider>
+  );
+};
+
 // Use color-mix instead of transparency so sticky cells work correctly.
-const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
-const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900', 15), colorMix('gray-25', 'informative-700', 15));
+const selectedBackground = colorMix('gray-25', 'gray-900', 7);
+const selectedActiveBackground = colorMix('gray-25', 'gray-900', 10);
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
@@ -1119,7 +1446,7 @@ const row = style<RowRenderProps & S2TableProps>({
   forcedColorAdjust: 'none'
 });
 
-export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue' | 'dependencies'>  {}
+export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'isDisabled' | 'onAction' | 'children' | 'textValue' | 'dependencies' | keyof GlobalDOMAttributes>, LinkDOMProps {}
 
 /**
  * A row within a `<Table>`.
@@ -1141,8 +1468,11 @@ export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T e
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}
       {...otherProps}>
       {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+        // Not sure what we want to do with this className, in Cell it currently overrides the className that would have been applied.
+        // The `spread` otherProps must be after className in Cell.
+        // @ts-ignore
         <Cell isSticky className={checkboxCellStyle}>
-          <Checkbox isEmphasized slot="selection" />
+          <Checkbox slot="selection" />
         </Cell>
       )}
       <Collection items={columns} dependencies={[...dependencies, columns]}>

@@ -22,15 +22,18 @@ async function *createAnimationQueue() {
   }
 }
 
-export let animationQueue = createAnimationQueue();
+export let animationQueue: AsyncGenerator<undefined, void, {
+  isCanceled: boolean,
+  run: () => Promise<void>
+}> = createAnimationQueue();
 animationQueue.next(); // advance to first yield
 
-export function animate(steps: any[]) {
+export function animate(steps: {time: number, perform: () => void}[]): () => void {
   let cancelCurrentStep;
   async function run() {
     for (let step of steps) {
       try {
-        await step.perform();
+        step.perform();
         let {promise, cancel} = sleep(step.time);
         cancelCurrentStep = cancel;
         await promise;
@@ -68,7 +71,7 @@ function sleep(ms: number) {
   };
 }
 
-export function useIntersectionObserver(ref: RefObject<HTMLElement | null>, onIntersect: () => Function | void) {
+export function useIntersectionObserver(ref: RefObject<HTMLElement | null>, onIntersect: () => Function | void): void {
   useEffect(() => {
     let element = ref.current;
     if (!element) {

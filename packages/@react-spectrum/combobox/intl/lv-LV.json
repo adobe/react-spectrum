@@ -2,5 +2,6 @@
   "clear": "Notīrīt",
   "invalid": "(nederīgs)",
   "loading": "Notiek ielāde...",
-  "noResults": "Nav rezultātu"
+  "noResults": "Nav rezultātu",
+  "valid": "(derīgs)"
 }

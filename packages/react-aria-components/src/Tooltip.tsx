@@ -10,20 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, FocusableElement, forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  Provider,
+  RenderProps,
+  useContextProps,
+  useRenderProps
+} from './utils';
+import {filterDOMProps, useEnterAnimation, useExitAnimation} from '@react-aria/utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
-import {useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
 }
 
-export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {
+export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Tooltip'
+   */
+  className?: ClassNameOrFunction<TooltipRenderProps>,
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
@@ -121,27 +133,19 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
-
-  // Calculate the arrow size internally
-  // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
-  let [arrowWidth, setArrowWidth] = useState(0);
-  useLayoutEffect(() => {
-    if (arrowRef.current && state.isOpen) {
-      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
-    }
-  }, [state.isOpen, arrowRef]);
 
-  let {overlayProps, arrowProps, placement} = useOverlayPosition({
+  let {overlayProps, arrowProps, placement, triggerAnchorPoint} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: props.triggerRef!,
     overlayRef: props.tooltipRef,
+    arrowRef,
     offset: props.offset,
     crossOffset: props.crossOffset,
     isOpen: state.isOpen,
-    arrowSize: arrowWidth,
     arrowBoundaryOffset: props.arrowBoundaryOffset,
     shouldFlip: props.shouldFlip,
+    containerPadding: props.containerPadding,
     onClose: () => state.close(true)
   });
 
@@ -160,12 +164,17 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
   props = mergeProps(props, overlayProps);
   let {tooltipProps} = useTooltip(props, state);
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <div
-      {...tooltipProps}
+      {...mergeProps(DOMProps, renderProps, tooltipProps)}
       ref={props.tooltipRef}
-      {...renderProps}
-      style={{...overlayProps.style, ...renderProps.style}}
+      style={{
+        ...overlayProps.style,
+        '--trigger-anchor-point': triggerAnchorPoint ? `${triggerAnchorPoint.x}px ${triggerAnchorPoint.y}px` : undefined,
+        ...renderProps.style
+      } as CSSProperties}
       data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>

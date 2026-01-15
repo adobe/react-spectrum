@@ -12,8 +12,8 @@
 
 import {ContextualHelp} from '../src';
 import {Example} from '../stories/ContextualHelp.stories';
-import type {Meta} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import type {Meta, StoryObj} from '@storybook/react';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof ContextualHelp> = {
   component: ContextualHelp,
@@ -25,8 +25,9 @@ const meta: Meta<typeof ContextualHelp> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof ContextualHelp>;
 
-export const Default = {
+export const Default: Story = {
   ...Example,
   play: async ({canvasElement}) => {
     await userEvent.tab();

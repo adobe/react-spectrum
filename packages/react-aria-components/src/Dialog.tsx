@@ -12,8 +12,8 @@
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
-import {forwardRefType} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
@@ -22,6 +22,8 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallb
 import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -29,7 +31,12 @@ export interface DialogRenderProps {
   close: () => void
 }
 
-export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps {
+export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
+   * @default 'react-aria-Dialog'
+   */
+  className?: string,
   /** Children of the dialog. A function may be provided to access a function to close the dialog. */
   children?: ReactNode | ((opts: DialogRenderProps) => ReactNode)
 }
@@ -81,7 +88,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>
@@ -122,11 +129,11 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
     }
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
     <section
-      {...filterDOMProps(props)}
-      {...dialogProps}
-      {...renderProps}
+      {...mergeProps(DOMProps, renderProps, dialogProps)}
       ref={ref}
       slot={props.slot || undefined}>
       <Provider
