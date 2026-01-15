@@ -52,12 +52,12 @@ export {chain, mergeProps, useId, useObjectRef, RouterProvider} from '@react-ari
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
-export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria} from '@react-aria/button';
+export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ToggleButtonAria, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
 export type {AriaColorAreaOptions, AriaColorAreaProps, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSliderProps, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
 export type {AriaComboBoxOptions, AriaComboBoxProps, ComboBoxAria} from '@react-aria/combobox';
-export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, AriaTimeFieldProps, DateFieldAria, DatePickerAria, DateRangePickerAria, DateSegmentAria, DateRange, DateValue, TimeValue} from '@react-aria/datepicker';
+export type {AriaDateFieldProps, AriaDateFieldOptions, AriaDatePickerProps, AriaDateRangePickerProps, AriaTimeFieldProps, AriaTimeFieldOptions, DateFieldAria, DatePickerAria, DateRangePickerAria, DateSegmentAria, DateRange, DateValue, TimeValue} from '@react-aria/datepicker';
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
 export type {DisclosureAria, AriaDisclosureProps} from '@react-aria/disclosure';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
@@ -72,18 +72,18 @@ export type {AriaGridListOptions, AriaGridListProps, GridListAria, AriaGridListI
 export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria, SubmenuTriggerAria, AriaSubmenuTriggerProps} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';
-export type {AriaModalOptions, AriaModalOverlayProps, AriaOverlayProps, AriaPopoverProps, AriaPositionProps, DismissButtonProps, ModalAria, ModalOverlayAria, ModalProviderAria, ModalProviderProps, OverlayAria, OverlayContainerProps, OverlayProps, OverlayTriggerAria, OverlayTriggerProps, PopoverAria, PositionAria, Placement, PlacementAxis, PositionProps} from '@react-aria/overlays';
+export type {AriaModalOptions, AriaModalOverlayProps, AriaOverlayProps, AriaPopoverProps, AriaPositionProps, DismissButtonProps, ModalAria, ModalOverlayAria, ModalProviderAria, ModalProviderProps, OverlayAria, OverlayContainerProps, OverlayProps, OverlayTriggerAria, OverlayTriggerProps, PopoverAria, PositionAria, Placement, PlacementAxis, PositionProps, PortalProviderProps, PortalProviderContextValue} from '@react-aria/overlays';
 export type {AriaProgressBarProps, ProgressBarAria} from '@react-aria/progress';
 export type {AriaRadioGroupProps, AriaRadioProps, RadioAria, RadioGroupAria} from '@react-aria/radio';
 export type {AriaSearchFieldProps, SearchFieldAria} from '@react-aria/searchfield';
-export type {AriaHiddenSelectProps, AriaSelectProps, AriaSelectOptions, HiddenSelectProps, SelectAria} from '@react-aria/select';
+export type {AriaHiddenSelectProps, AriaHiddenSelectOptions, HiddenSelectAria, AriaSelectProps, AriaSelectOptions, HiddenSelectProps, SelectAria} from '@react-aria/select';
 export type {SeparatorAria, SeparatorProps} from '@react-aria/separator';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {AriaSliderProps, AriaSliderThumbProps, AriaSliderThumbOptions, SliderAria, SliderThumbAria} from '@react-aria/slider';
 export type {AriaSwitchProps, SwitchAria} from '@react-aria/switch';
 export type {AriaTableCellProps, AriaTableColumnHeaderProps, AriaTableColumnResizeProps, AriaTableProps, AriaTableSelectionCheckboxProps, GridAria, GridRowAria, GridRowProps, TableCellAria, TableColumnHeaderAria, TableColumnResizeAria, TableHeaderRowAria, TableSelectAllCheckboxAria, TableSelectionCheckboxAria} from '@react-aria/table';
 export type {AriaTabListProps, AriaTabListOptions, AriaTabPanelProps, AriaTabProps, TabAria, TabListAria, TabPanelAria} from '@react-aria/tabs';
-export type {AriaTagGroupProps, AriaTagProps, TagAria, TagGroupAria} from '@react-aria/tag';
+export type {AriaTagGroupProps, AriaTagGroupOptions, AriaTagProps, TagAria, TagGroupAria} from '@react-aria/tag';
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria} from '@react-aria/textfield';
 export type {AriaToastRegionProps, AriaToastProps, ToastAria, ToastRegionAria} from '@react-aria/toast';
 export type {AriaTooltipProps, TooltipAria, TooltipTriggerAria, TooltipTriggerProps} from '@react-aria/tooltip';
