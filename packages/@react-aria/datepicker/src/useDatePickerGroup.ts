@@ -1,7 +1,7 @@
 import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, nodeContains} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useMemo} from 'react';
 import {usePress} from '@react-aria/interactions';
@@ -12,7 +12,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, e.target)) {
       return;
     }
 

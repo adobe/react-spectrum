@@ -13,6 +13,7 @@
  /* eslint-disable rulesdir/pure-render */
 
 import {getOffset} from './getOffset';
+import {nodeContains} from '@react-aria/utils';
 import {Orientation} from '@react-types/shared';
 import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
@@ -99,7 +100,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     const target = e.currentTarget;
     // If we're already handling dragging on a descendant with useDrag1D, then
     // we don't want to handle the drag motion on this target as well.
-    if (draggingElements.some(elt => target.contains(elt))) {
+    if (draggingElements.some(elt => nodeContains(target, elt))) {
       return;
     }
     draggingElements.push(target);
