@@ -13,7 +13,7 @@
  /* eslint-disable rulesdir/pure-render */
 
 import {getOffset} from './getOffset';
-import {nodeContains} from '@react-aria/utils';
+import {nodeContains} from './shadowdom/DOMFunctions';
 import {Orientation} from '@react-types/shared';
 import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
