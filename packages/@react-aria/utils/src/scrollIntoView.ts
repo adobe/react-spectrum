@@ -11,7 +11,7 @@
  */
 
 import {getScrollParents} from './getScrollParents';
-import {nodeContains} from '@react-aria/utils';
+import {nodeContains} from './shadowdom/DOMFunctions';
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
