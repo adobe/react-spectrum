@@ -20,7 +20,17 @@ export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, F
   shouldFocusWrap?: boolean
 }
 
-interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {}
+interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether pressing the escape key should clear selection in the listbox or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
+}
 export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   /**
    * An optional visual label for the listbox.
@@ -28,6 +38,10 @@ export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   label?: ReactNode,
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+  /** Whether options should be focused when the user hovers over them. */
+  shouldFocusOnHover?: boolean,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.

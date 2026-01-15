@@ -206,3 +206,25 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 
 <TextField label="Name" styles={style({width: 160})} />
 `);
+
+test('Handles multi-value margin/padding shorthands', `
+import {View} from '@adobe/react-spectrum';
+
+<>
+  <View margin="10px">Single Value Margin</View>
+
+  <View margin="10px 16px">Two Value Margin</View>
+
+  <View margin="10px 16px 20px">Three Value Margin</View>
+
+  <View margin="10px 16px 20px 24px">Four Value Margin</View>
+
+  <View padding="10px">Single Value Padding</View>
+
+  <View padding="10px 16px">Two Value Padding</View>
+
+  <View padding="10px 16px 20px">Three Value Padding</View>
+
+  <View padding="10px 16px 20px 24px">Four Value Padding</View>
+</>
+`);

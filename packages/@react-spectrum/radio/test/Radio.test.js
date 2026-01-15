@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, User} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -102,6 +102,7 @@ expect.extend({
 describe('Radios', function () {
   let onChangeSpy = jest.fn();
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -459,6 +460,40 @@ describe('Radios', function () {
     expect(radios[1]).not.toBeChecked();
     expect(radios[2]).not.toBeChecked();
   });
+
+  if (parseInt(React.version, 10) >= 19) {
+    it('resets to defaultValue when submitting form action', async () => {
+      function Test() {
+        const [value, formAction] = React.useActionState(() => 'cats', 'dogs');
+
+        return (
+          <Provider theme={theme}>
+            <form action={formAction}>
+              <RadioGroup name="pet" label="Favorite Pet" defaultValue={value}>
+                <Radio value="dogs">Dogs</Radio>
+                <Radio value="cats">Cats</Radio>
+                <Radio value="dragons">Dragons</Radio>
+              </RadioGroup>
+              <input type="submit" data-testid="submit" />
+            </form>
+          </Provider>
+        );
+      }
+
+      let {getByTestId, getAllByRole} = render(<Test />);
+      let radios = getAllByRole('radio');
+
+      expect(radios[0]).toBeChecked();
+      expect(radios[1]).not.toBeChecked();
+      expect(radios[2]).not.toBeChecked();
+
+      let button = getByTestId('submit');
+      await user.click(button);
+      expect(radios[0]).not.toBeChecked();
+      expect(radios[1]).toBeChecked();
+      expect(radios[2]).not.toBeChecked();
+    });
+  }
 
   describe('Radio group supports roving tabIndex ', function () {
     afterEach(() => {
@@ -911,6 +946,47 @@ describe('Radios', function () {
         expect(group).not.toHaveAttribute('aria-describedby');
         expect(group).not.toHaveAttribute('aria-invalid');
       });
+    });
+  });
+
+  describe('test util tests', () => {
+    it.each`
+      Name                    | props
+      ${'ltr + vertical'}     | ${{locale: 'de-DE', orientation: 'vertical'}}
+      ${'rtl + verfical'}     | ${{locale: 'ar-AE', orientation: 'vertical'}}
+      ${'ltr + horizontal'}   | ${{locale: 'de-DE', orientation: 'horizontal'}}
+      ${'rtl + horizontal'}   | ${{locale: 'ar-AE', orientation: 'horizontal'}}
+    `('$Name should select the correct radio via keyboard regardless of orientation and disabled radios', async function ({Name, props}) {
+      let {getByRole} = render(
+        <Provider theme={theme} locale={props.locale}>
+          <RadioGroup aria-label="favorite pet" orientation={props.orientation}>
+            <Radio value="dogs">Dogs</Radio>
+            <Radio value="cats" isDisabled>Cats</Radio>
+            <Radio value="dragons" isDisabled>Dragons</Radio>
+            <Radio value="unicorns">Unicorns</Radio>
+            <Radio value="chocobo">Chocobo</Radio>
+          </RadioGroup>
+        </Provider>
+      );
+      let direction = props.locale === 'ar-AE' ? 'rtl' : 'ltr';
+      let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup'), direction});
+      let radios = radioGroupTester.radios;
+      await radioGroupTester.triggerRadio({radio: radios[0]});
+      expect(radios[0]).toBeChecked();
+
+      await radioGroupTester.triggerRadio({radio: 4, interactionType: 'keyboard'});
+      expect(radios[4]).toBeChecked();
+
+      let radio4 = radioGroupTester.findRadio({radioIndexOrText: 3});
+      await radioGroupTester.triggerRadio({radio: radio4, interactionType: 'keyboard'});
+      expect(radios[3]).toBeChecked();
+
+      await radioGroupTester.triggerRadio({radio: 'Dogs', interactionType: 'mouse'});
+      expect(radios[0]).toBeChecked();
+
+      let radio5 = radioGroupTester.findRadio({radioIndexOrText: 'Chocobo'});
+      await radioGroupTester.triggerRadio({radio: radio5, interactionType: 'mouse'});
+      expect(radios[4]).toBeChecked();
     });
   });
 });

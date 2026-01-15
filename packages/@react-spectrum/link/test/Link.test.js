@@ -88,17 +88,6 @@ describe('Link', function () {
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('Handles deprecated onClick', async () => {
-    let user = userEvent.setup({delay: null, pointerMap});
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    let {getByRole} = render(<Link onClick={onPressSpy} >Click me</Link>);
-    let link = getByRole('link');
-    await user.click(link);
-    act(() => {jest.runAllTimers();});
-    expect(onPressSpy).toHaveBeenCalledTimes(1);
-    expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
-  });
-
   it('supports custom data attributes', () => {
     let {getByRole} = render(<Link data-testid="test">Click me</Link>);
     let link = getByRole('link');

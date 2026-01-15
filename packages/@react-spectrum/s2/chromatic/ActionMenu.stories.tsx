@@ -13,9 +13,9 @@
 import {ActionMenu} from '../src';
 import {DynamicExample, Example} from '../stories/ActionMenu.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
-const meta: Meta<typeof ActionMenu> = {
+const meta: Meta<typeof ActionMenu<any>> = {
   component: ActionMenu,
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
@@ -26,20 +26,22 @@ const meta: Meta<typeof ActionMenu> = {
 export default meta;
 type Story = StoryObj<typeof ActionMenu<any>>;
 
-export const Static: Story = {...Example};
-
-Static.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[Enter]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
+export const Static: Story = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
 };
 
-export const Dynamic = {...DynamicExample};
-
-Dynamic.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[Enter]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
+export const Dynamic: Story = {
+  ...DynamicExample,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('[Enter]');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
 };

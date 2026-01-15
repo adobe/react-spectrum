@@ -1,0 +1,27 @@
+<svg style="background:var(--anatomy-gray-100); padding: 30px 10px" height="160" viewBox="0 0 260 160">
+  <rect id="Placement_Area" data-name="Placement Area" width="260" height="160" fill="red" opacity="0"/>
+  <g id="Card_1">
+    <rect width="124" height="76" rx="4" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)" stroke-width="1"/>
+    <rect x="6" y="6" width="112" height="42" rx="2" fill="var(--anatomy-gray-200)"/>
+    <rect x="6" y="56" width="65" height="7" rx="1.5" fill="var(--anatomy-gray-500)"/>
+    <rect x="6" y="66" width="90" height="5" rx="1.5" fill="var(--anatomy-gray-300)"/>
+  </g>
+  <g id="Card_2" transform="translate(136 0)">
+    <rect width="124" height="76" rx="4" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)" stroke-width="1"/>
+    <rect x="6" y="6" width="112" height="42" rx="2" fill="var(--anatomy-gray-200)"/>
+    <rect x="6" y="56" width="65" height="7" rx="1.5" fill="var(--anatomy-gray-500)"/>
+    <rect x="6" y="66" width="90" height="5" rx="1.5" fill="var(--anatomy-gray-300)"/>
+  </g>
+  <g id="Card_3" transform="translate(0 84)">
+    <rect width="124" height="76" rx="4" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)" stroke-width="1"/>
+    <rect x="6" y="6" width="112" height="42" rx="2" fill="var(--anatomy-gray-200)"/>
+    <rect x="6" y="56" width="65" height="7" rx="1.5" fill="var(--anatomy-gray-500)"/>
+    <rect x="6" y="66" width="90" height="5" rx="1.5" fill="var(--anatomy-gray-300)"/>
+  </g>
+  <g id="Card_4" transform="translate(136 84)">
+    <rect width="124" height="76" rx="4" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-300)" stroke-width="1"/>
+    <rect x="6" y="6" width="112" height="42" rx="2" fill="var(--anatomy-gray-200)"/>
+    <rect x="6" y="56" width="65" height="7" rx="1.5" fill="var(--anatomy-gray-500)"/>
+    <rect x="6" y="66" width="90" height="5" rx="1.5" fill="var(--anatomy-gray-300)"/>
+  </g>
+</svg>

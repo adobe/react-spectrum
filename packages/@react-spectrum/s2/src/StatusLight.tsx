@@ -13,9 +13,9 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue, SlotProps} from 'react-aria-components';
+import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -26,8 +26,10 @@ interface StatusLightStyleProps {
   /**
    * The variant changes the color of the status light.
    * When status lights have a semantic meaning, they should use the variant for semantic colors.
+   *
+   * @default 'neutral'
    */
-  variant: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
+  variant?: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
   /**
    * The size of the StatusLight.
    *
@@ -49,14 +51,14 @@ export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaL
   role?: 'status'
 }
 
-export const StatusLightContext = createContext<ContextValue<StatusLightProps, DOMRefValue<HTMLDivElement>>>(null);
+export const StatusLightContext = createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<StatusLightStyleProps>({
   display: 'flex',
   gap: 'text-to-visual',
   alignItems: 'baseline',
   width: 'fit',
-  font: 'control',
+  font: controlFont(),
   color: {
     default: 'neutral',
     variant: {
@@ -108,15 +110,15 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
  */
 export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
-  let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
+  let {children, size = 'M', variant = 'neutral', role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);
   let isSkeleton = useIsSkeleton();
 
-  if (!children && !props['aria-label']) {
+  if (!children && !props['aria-label'] && process.env.NODE_ENV !== 'production') {
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
-  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
     console.warn('A labelled StatusLight must have a role.');
   }
 

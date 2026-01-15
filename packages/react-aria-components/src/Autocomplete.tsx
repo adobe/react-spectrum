@@ -10,59 +10,52 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
+import {FieldInputContext, SelectableCollectionContext} from './RSPContexts';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, RefObject, useRef} from 'react';
-import {SearchFieldContext} from './SearchField';
-import {TextFieldContext} from './TextField';
+import React, {createContext, JSX, useRef} from 'react';
 
-export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
-
-interface InternalAutocompleteContextValue {
-  filterFn?: (nodeTextValue: string) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
-}
-
-export const UNSTABLE_AutocompleteContext = createContext<SlottedContextValue<AutocompleteProps>>(null);
-export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
-// This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-// TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
+export interface AutocompleteProps<T = object> extends AriaAutocompleteProps<T>, SlotProps {}
+export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
+export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 
 /**
- * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
+ * An autocomplete allows users to search or filter a list of suggestions.
  */
-export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
-  let ctx = useSlottedContext(UNSTABLE_AutocompleteContext, props.slot);
+export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX.Element {
+  let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
-  let {filter} = props;
-  let state = UNSTABLE_useAutocompleteState(props);
+  let {filter, disableAutoFocusFirst} = props;
+  let state = useAutocompleteState(props);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
-
   let {
-    textFieldProps,
+    inputProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
-    filterFn
-  } = UNSTABLE_useAutocomplete({
+    filter: filterFn
+  } = useAutocomplete({
     ...removeDataAttributes(props),
     filter,
+    disableAutoFocusFirst,
+    inputRef,
     collectionRef
   }, state);
 
   return (
     <Provider
       values={[
-        [UNSTABLE_AutocompleteStateContext, state],
-        [SearchFieldContext, textFieldProps],
-        [TextFieldContext, textFieldProps],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filterFn,
-          collectionProps,
-          collectionRef: mergedCollectionRef
+        [AutocompleteStateContext, state],
+        [FieldInputContext, {
+          ...inputProps,
+          ref: inputRef
+        }],
+        [SelectableCollectionContext, {
+          ...collectionProps,
+          filter: filterFn,
+          ref: mergedCollectionRef
         }]
       ]}>
       {props.children}

@@ -90,6 +90,8 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
   outline: none;
   max-width: 250px;
   transition: transform 200ms, opacity 200ms;
+  --starting-scale: scale(0.9);
+  transform-origin: var(--trigger-anchor-point);
 
   .react-aria-OverlayArrow svg {
     display: block;
@@ -100,7 +102,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
 
   &[data-entering],
   &[data-exiting] {
-    transform: var(--origin);
+    transform: var(--starting-scale) var(--origin);
     opacity: 0;
   }
 
@@ -207,6 +209,7 @@ This example wraps `Popover` and all of its children together into a single comp
 
 ```tsx example export=true
 import type {PopoverProps} from 'react-aria-components';
+import {HelpCircle} from 'lucide-react';
 
 interface MyPopoverProps extends Omit<PopoverProps, 'children'> {
   children: React.ReactNode
@@ -226,7 +229,7 @@ function MyPopover({children, ...props}: MyPopoverProps) {
 }
 
 <DialogTrigger>
-  <Button aria-label="Help">ⓘ</Button>
+  <Button aria-label="Help"><HelpCircle size={18} /></Button>
   <MyPopover>
     <Heading slot="title">Help</Heading>
     <p>For help accessing your account, please contact support.</p>
@@ -243,21 +246,22 @@ prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.expo
 Popovers will also automatically [flip](#flipping) to the opposite direction if there isn't enough space.
 
 ```tsx example
+import {ArrowUp, ArrowDown, ArrowRight, ArrowLeft} from 'lucide-react';
 <div style={{display: 'flex', gap: 8}}>
   <DialogTrigger>
-    <Button>⬅️</Button>
+    <Button><ArrowLeft size={18} /></Button>
     <MyPopover placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyPopover>
   </DialogTrigger>
   <DialogTrigger>
-    <Button>⬆️</Button>
+    <Button><ArrowUp size={18} /></Button>
     <MyPopover placement="top">This popover is above the button.</MyPopover>
   </DialogTrigger>
   <DialogTrigger>
-    <Button>⬇️</Button>
+    <Button><ArrowDown size={18} /></Button>
     <MyPopover placement="bottom">This popover is below the button.</MyPopover>
   </DialogTrigger>
   <DialogTrigger>
-    <Button>➡️</Button>
+    <Button><ArrowRight size={18} /></Button>
     <MyPopover placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyPopover>
   </DialogTrigger>
 </div>
@@ -364,6 +368,34 @@ function Example() {
 }
 ```
 
+## Custom trigger
+
+`DialogTrigger` works out of the box with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Custom trigger elements such as third party components and other DOM elements are also supported by wrapping them with the `<Pressable>` component, or using the [usePress](usePress.html) hook.
+
+```tsx example
+import {Pressable} from 'react-aria-components';
+
+<DialogTrigger>
+  {/*- begin highlight -*/}
+  <Pressable>
+    <span role="button">Custom trigger</span>
+  </Pressable>
+  {/*- end highlight -*/}
+  <MyPopover>
+    <Heading slot="title">Dialog</Heading>
+    <p>This popover was triggered by a custom button.</p>
+  </MyPopover>
+</DialogTrigger>
+```
+
+Note that any `<Pressable>` child must have an [interactive ARIA role](https://www.w3.org/TR/wai-aria-1.2/#widget_roles) or use an appropriate semantic HTML element so that screen readers can announce the trigger. Trigger components must forward their `ref` and spread all props to a DOM element.
+
+```tsx
+const CustomTrigger = React.forwardRef((props, ref) => (
+  <button {...props} ref={ref} />
+));
+```
+
 ## Props
 
 ### Popover
@@ -408,15 +440,17 @@ The `className` and `style` props also accept functions which receive states for
 </OverlayArrow>
 ```
 
-Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM. See the [animation guide](styling.html#animation) for more details.
+Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM. The `--trigger-anchor-point` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
 .react-aria-Popover {
-  transition: opacity 300ms;
+  transition: opacity 300ms, scale 300ms;
+  transform-origin: var(--trigger-anchor-point);
 
   &[data-entering],
   &[data-exiting] {
     opacity: 0;
+    scale: 0.85;
   }
 }
 ```
@@ -428,6 +462,14 @@ The states, selectors, and render props for each component used in a `Popover` a
 A `Popover` can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a DialogTrigger, the popover will have the `data-trigger="DialogTrigger"` attribute. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the trigger button. The `--trigger-anchor-point` variable is set to the position of the trigger relative to the popover, which is useful for origin-aware animations.
+
+```css render=false
+.react-aria-Popover[data-trigger=DialogTrigger] {
+  width: var(--trigger-width);
+}
+```
 
 ### OverlayArrow
 

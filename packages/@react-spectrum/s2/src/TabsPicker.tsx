@@ -23,6 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -35,27 +36,29 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
-import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
-import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {Placement} from 'react-aria';
-import {PopoverBase} from './Popover';
+import {Placement, useLocale} from 'react-aria';
+import {Popover} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
+import {useGlobalListeners} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder' | 'isTriggerUpWhenOpen'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -107,7 +110,7 @@ const inputButton = style({
   paddingX: 0,
   backgroundColor: 'transparent',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {
@@ -127,11 +130,12 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  width: 'full',
+  maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont()
 });
 const valueStyles = style({
   flexGrow: 0,
@@ -177,96 +181,125 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   const menuOffset: number = 6;
   const size = 'M';
   let ariaLabelledby = props['aria-labelledby'] ?? '';
+  let {direction: dir} = useLocale();
+  let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
+
+  // For mouse interactions, pickers open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
   return (
     <div>
       <AriaSelect
         {...pickerProps}
+        isTriggerUpWhenOpen
+        className=""
         aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>
             <FieldLabel isQuiet={isQuiet} />
-            <Button
-              ref={domRef}
-              style={renderProps => pressScale(domRef)(renderProps)}
-              // Prevent press scale from sticking while Picker is open.
-              // @ts-ignore
-              isPressed={false}
-              className={renderProps => inputButton({
-                ...renderProps,
-                size: 'M',
-                isOpen,
-                isQuiet,
-                density
-              })}>
-              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
-                {({defaultChildren}) => {
-                  return (
-                    <Provider
-                      values={[
-                        [IconContext, {
-                          slots: {
-                            icon: {
-                              render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
-                              styles: icon
+            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+              <Button
+                ref={domRef}
+                style={renderProps => pressScale(domRef)(renderProps)}
+                className={renderProps => inputButton({
+                  ...renderProps,
+                  size: 'M',
+                  isOpen,
+                  isQuiet,
+                  density
+                })}>
+                <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                  {({defaultChildren}) => {
+                    return (
+                      <Provider
+                        values={[
+                          [IconContext, {
+                            slots: {
+                              icon: {
+                                render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
+                                styles: icon
+                              }
                             }
-                          }
-                        }],
-                        [TextContext, {
-                          slots: {
-                            // Default slot is useful when converting other collections to PickerItems.
-                            [DEFAULT_SLOT]: {
-                              id: valueId,
-                              styles: style({
-                                display: {
-                                  default: 'block',
-                                  labelBehavior: {
-                                    hide: 'none'
-                                  }
-                                },
-                                flexGrow: 1,
-                                truncate: true
-                              })({labelBehavior})
+                          }],
+                          [TextContext, {
+                            slots: {
+                              // Default slot is useful when converting other collections to PickerItems.
+                              [DEFAULT_SLOT]: {
+                                id: valueId,
+                                styles: style({
+                                  display: {
+                                    default: 'block',
+                                    labelBehavior: {
+                                      hide: 'none'
+                                    }
+                                  },
+                                  flexGrow: 1,
+                                  truncate: true
+                                })({labelBehavior})
+                              }
                             }
-                          }
-                        }],
-                        [InsideSelectValueContext, true]
-                      ]}>
-                      {defaultChildren}
-                    </Provider>
-                  );
-                }}
-              </SelectValue>
-              <ChevronIcon
-                size={size}
-                className={iconStyles} />
-            </Button>
-            <PopoverBase
+                          }],
+                          [InsideSelectValueContext, true]
+                        ]}>
+                        {defaultChildren}
+                      </Provider>
+                    );
+                  }}
+                </SelectValue>
+                <ChevronIcon
+                  size={size}
+                  className={iconStyles} />
+              </Button>
+            </PressResponder>
+            <Popover
               hideArrow
               offset={menuOffset}
+              crossOffset={RTLFlipOffset * -12}
               placement={`${direction} ${align}` as Placement}
               shouldFlip={shouldFlip}
               styles={style({
-                marginStart: -12,
                 minWidth: 192,
-                width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                width: 'calc(var(--trigger-width) - 24)'
               })}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {styles: sectionHeading}],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <ListBox
-                  items={items}
-                  className={menu}>
-                  {children}
-                </ListBox>
-              </Provider>
-            </PopoverBase>
+              <div
+                className={style({
+                  display: 'flex',
+                  size: 'full'
+                })}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: sectionHeader({size})}],
+                    [HeadingContext, {
+                      // @ts-ignore
+                      role: 'presentation',
+                      styles: sectionHeading
+                    }],
+                    [TextContext, {
+                      slots: {
+                        description: {styles: description({size})}
+                      }
+                    }]
+                  ]}>
+                  <ListBox
+                    items={items}
+                    className={menu}>
+                    {children}
+                  </ListBox>
+                </Provider>
+              </div>
+            </Popover>
           </>
         )}
       </AriaSelect>
@@ -281,7 +314,7 @@ let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
 
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled?: boolean}>({
   backgroundColor: {
     default: 'neutral',
     isDisabled: 'disabled',
@@ -297,7 +330,7 @@ const selectedIndicator = style({
   transitionDuration: 130,
   transitionTimingFunction: 'in-out'
 });
-function TabLine(props) {
+function TabLine(props: {isDisabled?: boolean}) {
   return <div className={selectedIndicator(props)} />;
 }
 
@@ -305,7 +338,7 @@ function TabLine(props) {
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
 }
-export function PickerItem(props: PickerItemProps) {
+export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';

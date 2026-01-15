@@ -29,7 +29,10 @@ import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AlertDialogProps extends DOMProps, UnsafeStyles {
-  /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.
+   * @default 'confirmation'
+   */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
   title: string,
@@ -129,7 +132,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
                 onPress={() => chain(close(), onCancel())}
                 variant="secondary"
                 fillStyle="outline"
-                autoFocus={autoFocusButton === 'cancel'}>
+                autoFocus={autoFocusButton === 'cancel'}
+                data-testid="rsp-AlertDialog-cancelButton">
                 {cancelLabel}
               </Button>
             }
@@ -139,7 +143,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
                 variant="secondary"
                 isDisabled={isSecondaryActionDisabled}
                 fillStyle="outline"
-                autoFocus={autoFocusButton === 'secondary'}>
+                autoFocus={autoFocusButton === 'secondary'}
+                data-testid="rsp-AlertDialog-secondaryButton">
                 {secondaryActionLabel}
               </Button>
             }
@@ -147,7 +152,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
               variant={buttonVariant as 'primary' | 'accent' | 'negative'}
               isDisabled={isPrimaryActionDisabled}
               autoFocus={autoFocusButton === 'primary'}
-              onPress={() => chain(close(), onPrimaryAction())}>
+              onPress={() => chain(close(), onPrimaryAction())}
+              data-testid="rsp-AlertDialog-confirmButton">
               {primaryActionLabel}
             </Button>
           </ButtonGroup>

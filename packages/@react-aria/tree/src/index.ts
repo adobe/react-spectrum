@@ -11,8 +11,7 @@
  */
 
 export {useTree} from './useTree';
-export {useTreeGridList} from './useTreeGridList';
-export {useTreeGridListItem} from './useTreeGridListItem';
+export {useTreeItem} from './useTreeItem';
 
-export type {AriaTreeGridListOptions, AriaTreeGridListProps, TreeGridListAria, TreeGridListProps} from './useTreeGridList';
-export type {AriaTreeGridListItemOptions, TreeGridListItemAria} from './useTreeGridListItem';
+export type {AriaTreeOptions, AriaTreeProps, TreeAria, TreeProps} from './useTree';
+export type {AriaTreeItemOptions, TreeItemAria} from './useTreeItem';

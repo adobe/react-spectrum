@@ -14,24 +14,19 @@ import {useCallback, useMemo} from 'react';
 // Shim to support React 17 and below.
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
+type ToastAction = 'add' | 'remove' | 'clear';
 export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */
   maxVisibleToasts?: number,
-  /**
-   * Whether toasts have an exit animation. If true, toasts are not
-   * removed immediately but transition into an "exiting" state instead.
-   * Once the animation is complete, call the `remove` function.
-   */
-  hasExitAnimation?: boolean
+  /** Function to wrap updates in (i.e. document.startViewTransition()). */
+  wrapUpdate?: (fn: () => void, action: ToastAction) => void
 }
 
 export interface ToastOptions {
   /** Handler that is called when the toast is closed, either by the user or after a timeout. */
   onClose?: () => void,
   /** A timeout to automatically close the toast after, in milliseconds. */
-  timeout?: number,
-  /** The priority of the toast relative to other toasts. Larger numbers indicate higher priority. */
-  priority?: number
+  timeout?: number
 }
 
 export interface QueuedToast<T> extends ToastOptions {
@@ -40,21 +35,16 @@ export interface QueuedToast<T> extends ToastOptions {
   /** A unique key for the toast. */
   key: string,
   /** A timer for the toast, if a timeout was set. */
-  timer?: Timer,
-  /** The current animation state for the toast. */
-  animation?: 'entering' | 'queued' | 'exiting' | null
+  timer?: Timer
 }
 
 export interface ToastState<T> {
   /** Adds a new toast to the queue. */
   add(content: T, options?: ToastOptions): string,
   /**
-   * Closes a toast. If `hasExitAnimation` is true, the toast
-   * transitions to an "exiting" state instead of being removed immediately.
+   * Closes a toast.
    */
   close(key: string): void,
-  /** Removes a toast from the visible toasts after an exiting animation. */
-  remove(key: string): void,
   /** Pauses the timers for all visible toasts. */
   pauseAll(): void,
   /** Resumes the timers for all visible toasts. */
@@ -68,8 +58,8 @@ export interface ToastState<T> {
  * of actions, errors, or other events in an application.
  */
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
-  let {maxVisibleToasts = 1, hasExitAnimation = false} = props;
-  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts, hasExitAnimation}), [maxVisibleToasts, hasExitAnimation]);
+  let {maxVisibleToasts = 1, wrapUpdate} = props;
+  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts, wrapUpdate}), [maxVisibleToasts, wrapUpdate]);
   return useToastQueue(queue);
 }
 
@@ -85,37 +75,44 @@ export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
     visibleToasts,
     add: (content, options) => queue.add(content, options),
     close: key => queue.close(key),
-    remove: key => queue.remove(key),
     pauseAll: () => queue.pauseAll(),
     resumeAll: () => queue.resumeAll()
   };
 }
 
 /**
- * A ToastQueue is a priority queue of toasts.
+ * A ToastQueue manages the order of toasts.
  */
 export class ToastQueue<T> {
   private queue: QueuedToast<T>[] = [];
   private subscriptions: Set<() => void> = new Set();
   private maxVisibleToasts: number;
-  private hasExitAnimation: boolean;
+  private wrapUpdate?: (fn: () => void, action: ToastAction) => void;
   /** The currently visible toasts. */
   visibleToasts: QueuedToast<T>[] = [];
 
   constructor(options?: ToastStateProps) {
-    this.maxVisibleToasts = options?.maxVisibleToasts ?? 1;
-    this.hasExitAnimation = options?.hasExitAnimation ?? false;
+    this.maxVisibleToasts = options?.maxVisibleToasts ?? Infinity;
+    this.wrapUpdate = options?.wrapUpdate;
+  }
+
+  private runWithWrapUpdate(fn: () => void, action: ToastAction): void {
+    if (this.wrapUpdate) {
+      this.wrapUpdate(fn, action);
+    } else {
+      fn();
+    }
   }
 
   /** Subscribes to updates to the visible toasts. */
-  subscribe(fn: () => void) {
+  subscribe(fn: () => void): () => void {
     this.subscriptions.add(fn);
     return () => this.subscriptions.delete(fn);
   }
 
   /** Adds a new toast to the queue. */
-  add(content: T, options: ToastOptions = {}) {
-    let toastKey = Math.random().toString(36);
+  add(content: T, options: ToastOptions = {}): string {
+    let toastKey = '_' + Math.random().toString(36).slice(2);
     let toast: QueuedToast<T> = {
       ...options,
       content,
@@ -123,77 +120,37 @@ export class ToastQueue<T> {
       timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
     };
 
-    let low = 0;
-    let high = this.queue.length;
-    while (low < high) {
-      let mid = Math.floor((low + high) / 2);
-      if ((toast.priority || 0) > (this.queue[mid].priority || 0)) {
-        high = mid;
-      } else {
-        low = mid + 1;
-      }
-    }
+    this.queue.unshift(toast);
 
-    this.queue.splice(low, 0, toast);
-
-    toast.animation = low < this.maxVisibleToasts ? 'entering' : 'queued';
-    let i = this.maxVisibleToasts;
-    while (i < this.queue.length) {
-      this.queue[i++].animation = 'queued';
-    }
-
-    this.updateVisibleToasts({action: 'add'});
+    this.updateVisibleToasts('add');
     return toastKey;
   }
 
   /**
-   * Closes a toast. If `hasExitAnimation` is true, the toast
-   * transitions to an "exiting" state instead of being removed immediately.
+   * Closes a toast.
    */
-  close(key: string) {
+  close(key: string): void {
     let index = this.queue.findIndex(t => t.key === key);
     if (index >= 0) {
       this.queue[index].onClose?.();
       this.queue.splice(index, 1);
     }
 
-    this.updateVisibleToasts({action: 'close', key});
+    this.updateVisibleToasts('remove');
   }
 
-  /** Removes a toast from the visible toasts after an exiting animation. */
-  remove(key: string) {
-    this.updateVisibleToasts({action: 'remove', key});
-  }
+  private updateVisibleToasts(action: ToastAction) {
+    this.visibleToasts = this.queue.slice(0, this.maxVisibleToasts);
 
-  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
-    let {action, key} = options;
-    let toasts = this.queue.slice(0, this.maxVisibleToasts);
-
-    if (action === 'add' && this.hasExitAnimation) {
-      let prevToasts: QueuedToast<T>[] = this.visibleToasts
-        .filter(t => !toasts.some(t2 => t.key === t2.key))
-        .map(t => ({...t, animation: 'exiting'}));
-      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
-    } else if (action === 'close' && this.hasExitAnimation) {
-      // Cause a rerender to happen for exit animation
-      this.visibleToasts = this.visibleToasts.map(t => {
-        if (t.key !== key) {
-          return t;
-        } else {
-          return {...t, animation: 'exiting'};
-        }
-      });
-    } else {
-      this.visibleToasts = toasts;
-    }
-
-    for (let fn of this.subscriptions) {
-      fn();
-    }
+    this.runWithWrapUpdate(() => {
+      for (let fn of this.subscriptions) {
+        fn();
+      }
+    }, action);
   }
 
   /** Pauses the timers for all visible toasts. */
-  pauseAll() {
+  pauseAll(): void {
     for (let toast of this.visibleToasts) {
       if (toast.timer) {
         toast.timer.pause();
@@ -202,12 +159,17 @@ export class ToastQueue<T> {
   }
 
   /** Resumes the timers for all visible toasts. */
-  resumeAll() {
+  resumeAll(): void {
     for (let toast of this.visibleToasts) {
       if (toast.timer) {
         toast.timer.resume();
       }
     }
+  }
+
+  clear(): void {
+    this.queue = [];
+    this.updateVisibleToasts('clear');
   }
 }
 
@@ -222,12 +184,12 @@ class Timer {
     this.callback = callback;
   }
 
-  reset(delay: number) {
+  reset(delay: number): void {
     this.remaining = delay;
     this.resume();
   }
 
-  pause() {
+  pause(): void {
     if (this.timerId == null) {
       return;
     }
@@ -237,7 +199,7 @@ class Timer {
     this.remaining -= Date.now() - this.startTime!;
   }
 
-  resume() {
+  resume(): void {
     if (this.remaining <= 0) {
       return;
     }

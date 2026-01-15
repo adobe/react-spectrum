@@ -14,7 +14,7 @@ import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
 import {composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {ImageContext} from './Image';
 import {Modal} from './Modal';
@@ -23,7 +23,7 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
+export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * Whether the Dialog is dismissible.
    */
@@ -33,7 +33,7 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L' | 'XL',
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean
 }
@@ -41,29 +41,33 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>
 const image = style({
   width: 'full',
   height: 140,
+  flexShrink: 0,
   objectFit: 'cover'
 });
 
 const heading = style({
   flexGrow: 1,
   marginY: 0,
-  font: 'heading'
+  font: 'title-2xl'
 });
 
 const header = style({
-  font: 'body-lg'
+  font: 'body'
 });
 
 const content =  style({
   flexGrow: 1,
+  flexShrink: {
+    [`@container (height < ${500 / 16}rem)`]: 0
+  },
   overflowY: {
     default: 'auto',
-    // Make the whole dialog scroll rather than only the content when the height it small.
-    '@media (height < 400)': 'visible'
+    // Make the whole dialog scroll rather than only the content when the height is small.
+    [`@container (height < ${500 / 16}rem)`]: 'visible'
   },
   font: 'body',
   // TODO: adjust margin on mobile?
-  marginX: {
+  paddingX: {
     default: 32
   }
 });
@@ -82,11 +86,11 @@ export const dialogInner = style({
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   fontFamily: 'sans',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto'
 });
 
@@ -129,14 +133,14 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                 display: 'flex',
                 alignItems: 'start',
                 columnGap: 12,
-                marginStart: {
+                paddingStart: {
                   default: 32
                 },
-                marginEnd: {
+                paddingEnd: {
                   default: 32,
                   isDismissible: 12
                 },
-                marginTop: {
+                paddingTop: {
                   default: 12 // margin to dismiss button
                 }
               })({isDismissible: props.isDismissible})}>
@@ -177,7 +181,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible && 
+              {props.isDismissible &&
                 <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>

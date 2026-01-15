@@ -51,10 +51,18 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
   );
 }
 
-const ScrollViewForwardRef = React.forwardRef(ScrollView);
+const ScrollViewForwardRef:
+  React.ForwardRefExoticComponent<ScrollViewProps & React.RefAttributes<HTMLDivElement | null>> =
+React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
-export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>) {
+interface ScrollViewAria {
+  isScrolling: boolean,
+  scrollViewProps: HTMLAttributes<HTMLElement>,
+  contentProps: HTMLAttributes<HTMLElement>
+}
+
+export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>): ScrollViewAria {
   let {
     contentSize,
     onVisibleRectChange,
@@ -77,6 +85,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
+
   let onScroll = useCallback((e) => {
     if (e.target !== e.currentTarget) {
       return;
@@ -93,7 +102,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // Prevent rubber band scrolling from shaking when scrolling out of bounds
       state.scrollTop = Math.max(0, Math.min(scrollTop, contentSize.height - state.height));
       state.scrollLeft = Math.max(0, Math.min(scrollLeft, contentSize.width - state.width));
-
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
 
       if (!state.isScrolling) {
@@ -135,7 +143,6 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
 
-   
   useEffect(() => {
     return () => {
       if (state.scrollTimeout != null) {
@@ -150,7 +157,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   }, []);
 
   let isUpdatingSize = useRef(false);
-  let updateSize = useEffectEvent((flush: typeof flushSync) => {
+  let updateSize = useCallback((flush: typeof flushSync) => {
     let dom = ref.current;
     if (!dom || isUpdatingSize.current) {
       return;
@@ -190,10 +197,14 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     }
 
     isUpdatingSize.current = false;
-  });
+  }, [ref, state, onVisibleRectChange]);
+  let updateSizeEvent = useEffectEvent(updateSize);
 
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
+  let [update, setUpdate] = useState({});
+  // We only contain a call to setState in here for testing environments.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
       // React doesn't allow flushSync inside effects, so queue a microtask.
@@ -204,14 +215,23 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       // https://github.com/reactwg/react-18/discussions/102
       // @ts-ignore
       if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
-        updateSize(fn => fn());
+        // This is so we update size in a separate render but within the same act. Needs to be setState instead of refs
+        // due to strict mode.
+        setUpdate({});
+        lastContentSize.current = contentSize;
+        return;
       } else {
-        queueMicrotask(() => updateSize(flushSync));
+        queueMicrotask(() => updateSizeEvent(flushSync));
       }
     }
 
     lastContentSize.current = contentSize;
   });
+
+  // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
+  useLayoutEffect(() => {
+    updateSizeEvent(fn => fn());
+  }, [update]);
 
   let onResize = useCallback(() => {
     updateSize(flushSync);
@@ -249,6 +269,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   };
 
   return {
+    isScrolling,
     scrollViewProps: {
       ...otherProps,
       style

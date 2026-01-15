@@ -755,7 +755,7 @@ describe('useDraggableCollection', () => {
 
     beforeEach(() => {
       // reset focus visible state
-      fireEvent.focus(document.body);
+      fireEvent.click(document.body, {detail: 0, pointerType: null});
     });
 
     afterEach(async () => {

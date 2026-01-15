@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {ProgressBar} from '../src';
 import {StaticColorDecorator} from '../stories/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -26,14 +26,16 @@ const meta: Meta<typeof ProgressBar> = {
 
 export default meta;
 
-export const Example = {
+type Story = StoryObj<typeof ProgressBar>;
+
+export const Example: Story = {
   args: {
     label: 'Loading…',
     value: 80
   }
 };
 
-export const LabelPositionSide = {
+export const LabelPositionSide: Story = {
   args: {
     label: 'Loading…',
     value: 80,
@@ -41,7 +43,7 @@ export const LabelPositionSide = {
   }
 };
 
-export const Size = {
+export const Size: Story = {
   render: (args) => (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 24})}>
       <ProgressBar label="S" size="S" {...args} />
@@ -55,7 +57,7 @@ export const Size = {
   }
 };
 
-export const StaticColorWhite = {
+export const StaticColorWhite: Story = {
   args: {
     label: 'Loading',
     value: 80,
@@ -63,7 +65,7 @@ export const StaticColorWhite = {
   }
 };
 
-export const StaticColorBlack = {
+export const StaticColorBlack: Story = {
   args: {
     label: 'Loading',
     value: 80,
@@ -71,14 +73,14 @@ export const StaticColorBlack = {
   }
 };
 
-export const Value0 = {
+export const Value0: Story = {
   args: {
     label: 'Loading',
     value: 0
   }
 };
 
-export const Value100 = {
+export const Value100: Story = {
   args: {
     label: 'Loading',
     value: 100

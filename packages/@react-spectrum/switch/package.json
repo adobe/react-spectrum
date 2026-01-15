@@ -1,12 +1,16 @@
 {
   "name": "@react-spectrum/switch",
-  "version": "3.5.11",
+  "version": "3.6.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
+    "source": "./src/index.ts",
+    "types": [
+      "./dist/types.d.ts",
+      "./src/index.ts"
+    ],
     "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
@@ -36,13 +40,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.19.1",
-    "@react-aria/interactions": "^3.23.0",
-    "@react-aria/switch": "^3.6.11",
-    "@react-spectrum/utils": "^3.12.1",
-    "@react-stately/toggle": "^3.8.1",
-    "@react-types/shared": "^3.27.0",
-    "@react-types/switch": "^3.5.8",
+    "@react-aria/focus": "^3.21.3",
+    "@react-aria/interactions": "^3.26.0",
+    "@react-aria/switch": "^3.7.9",
+    "@react-spectrum/utils": "^3.12.10",
+    "@react-stately/toggle": "^3.9.3",
+    "@react-types/shared": "^3.32.1",
+    "@react-types/switch": "^3.5.15",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
@@ -50,7 +54,8 @@
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

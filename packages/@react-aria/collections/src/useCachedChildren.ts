@@ -19,7 +19,7 @@ export interface CachedChildrenOptions<T> {
   /** The contents of the collection. */
   children?: ReactNode | ((item: T) => ReactNode),
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: any[],
+  dependencies?: ReadonlyArray<any>,
   /** A scope to prepend to all child item ids to ensure they are unique. */
   idScope?: Key,
   /** Whether to add `id` and `value` props to all child items. */
@@ -50,7 +50,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
             throw new Error('Could not determine key for item');
           }
            
-          if (idScope) {
+          if (idScope != null) {
             key = idScope + ':' + key;
           }
           // Note: only works if wrapped Item passes through id...

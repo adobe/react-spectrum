@@ -137,6 +137,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isDisabled,
     onAction: onAction || item?.props?.onAction ? chain(item?.props?.onAction, onAction) : undefined,
     linkBehavior: data?.linkBehavior,
+    // @ts-ignore
+    UNSTABLE_itemBehavior: data?.['UNSTABLE_itemBehavior'],
     id
   });
 
@@ -167,7 +169,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
       id: descriptionId
     },
     isFocused,
-    isFocusVisible: isFocused && isFocusVisible(),
+    isFocusVisible: isFocused && state.selectionManager.isFocused && isFocusVisible(),
     isSelected,
     isDisabled,
     isPressed,

@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {isAppleDevice} from '@react-aria/utils';
+import {Collection, Key} from '@react-types/shared';
+import {isAppleDevice, useId} from '@react-aria/utils';
+import {RefObject} from 'react';
 
 interface Event {
   altKey: boolean,
@@ -18,8 +20,28 @@ interface Event {
   metaKey: boolean
 }
 
-export function isNonContiguousSelectionModifier(e: Event) {
+export function isNonContiguousSelectionModifier(e: Event): boolean {
   // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
   // On Windows and Ubuntu, Alt + Space has a system wide meaning.
   return isAppleDevice() ? e.altKey : e.ctrlKey;
+}
+
+export function getItemElement(collectionRef: RefObject<HTMLElement | null>, key: Key): Element | null | undefined {
+  let selector = `[data-key="${CSS.escape(String(key))}"]`;
+  let collection = collectionRef.current?.dataset.collection;
+  if (collection) {
+    selector = `[data-collection="${CSS.escape(collection)}"]${selector}`;
+  }
+  return collectionRef.current?.querySelector(selector);
+}
+
+const collectionMap = new WeakMap<Collection<any>, string>();
+export function useCollectionId(collection: Collection<any>): string {
+  let id = useId();
+  collectionMap.set(collection, id);
+  return id;
+}
+
+export function getCollectionId(collection: Collection<any>): string {
+  return collectionMap.get(collection)!;
 }

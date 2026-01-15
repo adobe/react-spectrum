@@ -11,8 +11,9 @@
  */
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
-import React from 'react';
+import {Button, Focusable, OverlayArrow, Pressable, Tooltip, TooltipTrigger} from 'react-aria-components';
+import React, {useRef} from 'react';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 function TestTooltip(props) {
@@ -168,6 +169,49 @@ describe('Tooltip', () => {
     expect(tooltip1).not.toBeVisible();
   });
 
+  describe('portalProvider', () => {
+    function InfoTooltip(props) {
+      return (
+        <TooltipTrigger delay={0}>
+          <Button><span aria-hidden="true">✏️</span></Button>
+          <Tooltip data-test="tooltip" {...props}>
+            <OverlayArrow>
+              <svg width={8} height={8}>
+                <path d="M0 0,L4 4,L8 0" />
+              </svg>
+            </OverlayArrow>
+            Edit
+          </Tooltip>
+        </TooltipTrigger>
+      );
+    }
+    function App() {
+      let container = useRef(null);
+      return (
+        <>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
+            <InfoTooltip container={container} />
+          </UNSAFE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the tooltip in the portal container provided by the PortalProvider', async () => {
+      let {getByRole, getByTestId} = render(<App />);
+      let button = getByRole('button');
+
+      fireEvent.mouseMove(document.body);
+      await user.hover(button);
+      act(() => jest.runAllTimers());
+
+      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+
+      await user.unhover(button);
+      act(() => jest.runAllTimers());
+    });
+  });
+
+  // TODO: delete this test when we get rid of the deprecated prop
   describe('portalContainer', () => {
     function InfoTooltip(props) {
       return (
@@ -206,5 +250,94 @@ describe('Tooltip', () => {
       await user.unhover(button);
       act(() => jest.runAllTimers());
     });
+  });
+
+  it('should support custom Focusable trigger on focus', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger>
+        <Focusable>
+          <span role="button">Trigger</span>
+        </Focusable>
+        <Tooltip>Test</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('tabindex', '0');
+
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeInTheDocument();
+  });
+
+  it('should support custom Focusable trigger on hover', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger>
+        <Focusable>
+          <span role="button">Trigger</span>
+        </Focusable>
+        <Tooltip>Test</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('tabindex', '0');
+
+    fireEvent.mouseMove(document.body);
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeInTheDocument();
+  });
+
+  it('should support custom Pressable trigger', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger>
+        <Pressable>
+          <span role="button">Trigger</span>
+        </Pressable>
+        <Tooltip>Test</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+
+    fireEvent.mouseMove(document.body);
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toBeInTheDocument();
+  });
+
+  it('should not override child properties for excludeFromTabOrder', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger>
+        <Button excludeFromTabOrder>
+          Check my tabindex
+        </Button>
+        <Tooltip>hello world</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('should not override child properties', async () => {
+    let {getByRole} = render(
+      <TooltipTrigger>
+        <Button>
+          Check my tabindex
+        </Button>
+        <Tooltip>hello world</Tooltip>
+      </TooltipTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('tabindex', '0');
   });
 });

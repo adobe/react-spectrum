@@ -18,6 +18,7 @@ export {useDateFormatter} from './useDateFormatter';
 export {useNumberFormatter} from './useNumberFormatter';
 export {useCollator} from './useCollator';
 export {useFilter} from './useFilter';
+export {isRTL} from './utils';
 
 export type {FormatMessage} from './useMessageFormatter';
 export type {LocalizedStringFormatter} from '@internationalized/string';

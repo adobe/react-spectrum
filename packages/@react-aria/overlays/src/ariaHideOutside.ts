@@ -10,10 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {getOwnerWindow} from '@react-aria/utils';
+const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
+
+interface AriaHideOutsideOptions {
+  root?: Element,
+  shouldUseInert?: boolean
+}
+
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
 interface ObserverWrapper {
+  visibleNodes: Set<Element>,
+  hiddenNodes: Set<Element>,
   observe: () => void,
   disconnect: () => void
 }
@@ -27,9 +37,32 @@ let observerStack: Array<ObserverWrapper> = [];
  * @param root - Nothing will be hidden above this element.
  * @returns - A function to restore all hidden elements.
  */
-export function ariaHideOutside(targets: Element[], root = document.body) {
+export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOptions | Element) {
+  let windowObj = getOwnerWindow(targets?.[0]);
+  let opts = options instanceof windowObj.Element ? {root: options} : options;
+  let root = opts?.root ?? document.body;
+  let shouldUseInert = opts?.shouldUseInert && supportsInert;
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
+
+  let getHidden = (element: Element) => {
+    return shouldUseInert && element instanceof windowObj.HTMLElement ? element.inert : element.getAttribute('aria-hidden') === 'true';
+  };
+
+  let setHidden = (element: Element, hidden: boolean) => {
+    if (shouldUseInert && element instanceof windowObj.HTMLElement) {
+      element.inert = hidden;
+    } else if (hidden) {
+      element.setAttribute('aria-hidden', 'true');
+    } else {
+      element.removeAttribute('aria-hidden');
+      if (element instanceof windowObj.HTMLElement) {
+        // We only ever call setHidden with hidden = false when the nodeCount is 1 aka
+        // we are trying to make the element visible to screen readers again, so remove inert as well
+        element.inert = false;
+      }
+    }
+  };
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
@@ -43,6 +76,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
       // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
       // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
       if (
+        hiddenNodes.has(node) ||
         visibleNodes.has(node) ||
         (node.parentElement && hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
       ) {
@@ -85,12 +119,12 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
     // If already aria-hidden, and the ref count is zero, then this element
     // was already hidden and there's nothing for us to do.
-    if (node.getAttribute('aria-hidden') === 'true' && refCount === 0) {
+    if (getHidden(node) && refCount === 0) {
       return;
     }
 
     if (refCount === 0) {
-      node.setAttribute('aria-hidden', 'true');
+      setHidden(node, true);
     }
 
     hiddenNodes.add(node);
@@ -107,20 +141,18 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
-      if (change.type !== 'childList' || change.addedNodes.length === 0) {
+      if (change.type !== 'childList') {
         continue;
       }
 
       // If the parent element of the added nodes is not within one of the targets,
       // and not already inside a hidden node, hide all of the new children.
-      if (![...visibleNodes, ...hiddenNodes].some(node => node.contains(change.target))) {
-        for (let node of change.removedNodes) {
-          if (node instanceof Element) {
-            visibleNodes.delete(node);
-            hiddenNodes.delete(node);
-          }
-        }
-
+      if (
+        change.target.isConnected &&
+        ![...visibleNodes, ...hiddenNodes].some((node) =>
+          node.contains(change.target)
+        )
+      ) {
         for (let node of change.addedNodes) {
           if (
             (node instanceof HTMLElement || node instanceof SVGElement) &&
@@ -138,6 +170,8 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   observer.observe(root, {childList: true, subtree: true});
 
   let observerWrapper: ObserverWrapper = {
+    visibleNodes,
+    hiddenNodes,
     observe() {
       observer.observe(root, {childList: true, subtree: true});
     },
@@ -148,7 +182,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
   observerStack.push(observerWrapper);
 
-  return () => {
+  return (): void => {
     observer.disconnect();
 
     for (let node of hiddenNodes) {
@@ -157,7 +191,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
         continue;
       }
       if (count === 1) {
-        node.removeAttribute('aria-hidden');
+        setHidden(node, false);
         refCountMap.delete(node);
       } else {
         refCountMap.set(node, count - 1);
@@ -174,4 +208,14 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
       observerStack.splice(observerStack.indexOf(observerWrapper), 1);
     }
   };
+}
+
+export function keepVisible(element: Element): (() => void) | undefined {
+  let observer = observerStack[observerStack.length - 1];
+  if (observer && !observer.visibleNodes.has(element)) {
+    observer.visibleNodes.add(element);
+    return () => {
+      observer.visibleNodes.delete(element);
+    };
+  }
 }

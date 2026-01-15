@@ -43,7 +43,7 @@ export function nodeContains(
 /**
  * ShadowDOM safe version of document.activeElement.
  */
-export const getActiveElement = (doc: Document = document) => {
+export const getActiveElement = (doc: Document = document): Element | null => {
   if (!shadowDOM()) {
     return doc.activeElement;
   }
@@ -60,11 +60,11 @@ export const getActiveElement = (doc: Document = document) => {
 /**
  * ShadowDOM safe version of event.target.
  */
-export function getEventTarget(event): Element {
-  if (shadowDOM() && event.target.shadowRoot) {
+export function getEventTarget<T extends Event>(event: T): Element {
+  if (shadowDOM() && (event.target as HTMLElement).shadowRoot) {
     if (event.composedPath) {
-      return event.composedPath()[0];
+      return event.composedPath()[0] as Element;
     }
   }
-  return event.target;
+  return event.target as Element;
 }

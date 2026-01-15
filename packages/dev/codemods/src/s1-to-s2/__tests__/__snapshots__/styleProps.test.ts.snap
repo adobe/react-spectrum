@@ -171,6 +171,56 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
   })}>Test</Button>"
 `;
 
+exports[`Handles multi-value margin/padding shorthands 1`] = `
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<>
+  <div className={style({
+    margin: "[10px]"
+  })}>Single Value Margin</div>
+
+  <div className={style({
+    marginY: "[10px]",
+    marginX: 16
+  })}>Two Value Margin</div>
+
+  <div className={style({
+    marginTop: "[10px]",
+    marginX: 16,
+    marginBottom: 20
+  })}>Three Value Margin</div>
+
+  <div className={style({
+    marginTop: "[10px]",
+    marginRight: 16,
+    marginBottom: 20,
+    marginLeft: 24
+  })}>Four Value Margin</div>
+
+  <div className={style({
+    padding: "[10px]"
+  })}>Single Value Padding</div>
+
+  <div className={style({
+    paddingY: "[10px]",
+    paddingX: 16
+  })}>Two Value Padding</div>
+
+  <div className={style({
+    paddingTop: "[10px]",
+    paddingX: 16,
+    paddingBottom: 20
+  })}>Three Value Padding</div>
+
+  <div className={style({
+    paddingTop: "[10px]",
+    paddingRight: 16,
+    paddingBottom: 20,
+    paddingLeft: 24
+  })}>Four Value Padding</div>
+</>"
+`;
+
 exports[`Handles responsive style props 1`] = `
 "import { TextField } from "@react-spectrum/s2";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };

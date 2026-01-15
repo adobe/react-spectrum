@@ -107,6 +107,15 @@ describe('DatePicker', () => {
     expect(button).toHaveAttribute('data-pressed');
   });
 
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestDatePicker isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support data-open state', async () => {
     let {getByRole} = render(<TestDatePicker />);
     let datePicker = document.querySelector('.react-aria-DatePicker');
@@ -153,9 +162,10 @@ describe('DatePicker', () => {
   });
 
   it('should support form value', () => {
-    render(<TestDatePicker name="birthday" value={new CalendarDate(2020, 2, 3)} />);
+    render(<TestDatePicker name="birthday" form="test" value={new CalendarDate(2020, 2, 3)} />);
     let input = document.querySelector('input[name=birthday]');
     expect(input).toHaveValue('2020-02-03');
+    expect(input).toHaveAttribute('form', 'test');
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -273,5 +283,64 @@ describe('DatePicker', () => {
 
     let hiddenInput = getByRole('textbox', {hidden: true});
     expect(hiddenInput).toHaveAttribute('disabled');
+  });
+
+  it('should clear contexts inside popover', async () => {
+    let {getByRole, getByTestId} = render(
+      <DatePicker data-foo="bar">
+        <Label>Birth date</Label>
+        <Group>
+          <DateInput>
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <Button>▼</Button>
+        </Group>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+        <Popover data-testid="popover">
+          <Dialog>
+            <Label>Hi</Label>
+            <Group>Yo</Group>
+            <Button>Hi</Button>
+            <Text>test</Text>
+            <Calendar>
+              <header>
+                <Button slot="previous">◀</Button>
+                <Heading />
+                <Button slot="next">▶</Button>
+              </header>
+              <CalendarGrid>
+                {(date) => <CalendarCell date={date} />}
+              </CalendarGrid>
+            </Calendar>
+          </Dialog>
+        </Popover>
+      </DatePicker>
+    );
+
+    await user.click(getByRole('button'));
+
+    let popover = await getByTestId('popover');
+    let label = popover.querySelector('.react-aria-Label');
+    expect(label).not.toHaveAttribute('id');
+
+    let button = popover.querySelector('.react-aria-Button');
+    expect(button).not.toHaveAttribute('aria-expanded');
+
+    let group = popover.querySelector('.react-aria-Group');
+    expect(group).not.toHaveAttribute('id');
+
+    let text = popover.querySelector('.react-aria-Text');
+    expect(text).not.toHaveAttribute('id');
+  });
+
+  it('should support autofill', async() => {
+    let {getByRole} = render(<TestDatePicker />);
+
+    let hiddenDateInput = document.querySelector('input[type=date]');
+    await user.type(hiddenDateInput, '2000-05-30');
+    let group = getByRole('group');
+    let input = group.querySelector('.react-aria-DateInput');
+    expect(input).toHaveTextContent('5/30/2000');
   });
 });

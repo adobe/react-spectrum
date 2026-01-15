@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import ChartAreaStack_L from 'illustration:./S2_lin_chartAreaStack_160.svg';
 import ChartAreaStack_M from 'illustration:./S2_lin_chartAreaStack_96.svg';
 import ChartAreaStack_S from 'illustration:./S2_lin_chartAreaStack_48.svg';
+import {ReactNode} from 'react';
 import {IconProps, IllustrationContext} from '../../src/Icon';
 import {useContextProps} from 'react-aria-components';
 
-export default function ChartAreaStack(props: IconProps & {size?: 'L' | 'S' | 'M'}) {
+export default function ChartAreaStack(props: IconProps & {size?: 'L' | 'S' | 'M'}): ReactNode {
   [props] = useContextProps(props, null, IllustrationContext);
   let {size = 'M', ...otherProps} = props;
   switch (size) {

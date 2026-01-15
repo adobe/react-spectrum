@@ -4,8 +4,7 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import {useFocusable} from '@react-aria/focus';
-import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useFocusable, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
@@ -52,7 +51,8 @@ export function useSliderThumb(
     trackRef,
     inputRef,
     orientation = state.orientation,
-    name
+    name,
+    form
   } = opts;
 
   let isDisabled = opts.isDisabled || state.isDisabled;
@@ -228,7 +228,7 @@ export function useSliderThumb(
     }
   ) : {};
 
-  useFormReset(inputRef, value, (v) => {
+  useFormReset(inputRef, state.defaultValues[index], (v) => {
     state.setThumbValue(index, v);
   });
 
@@ -245,6 +245,7 @@ export function useSliderThumb(
       step: state.step,
       value: value,
       name,
+      form,
       disabled: isDisabled,
       'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),

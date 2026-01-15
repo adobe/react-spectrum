@@ -17,7 +17,7 @@ import {
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
+import {DOMRef, DOMRefValue, GlobalDOMAttributes, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {lightDark, style} from '../style' with {type: 'macro'};
@@ -48,12 +48,12 @@ interface MeterStyleProps {
   labelPosition?: LabelPosition
 }
 
-export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style'>, MeterStyleProps, StyleProps {
+export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, MeterStyleProps, StyleProps {
   /** The content to display as the label. */
   label?: ReactNode
 }
 
-export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
+export const MeterContext = createContext<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style({
   ...bar()

@@ -15,24 +15,45 @@ import {flushSync} from 'react-dom';
 import React, {ForwardedRef, JSX, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
 export interface DragPreviewProps {
-  children: (items: DragItem[]) => JSX.Element | null
+  /**
+   * A render function which returns a preview element, or an object containing the element
+   * and a custom offset. If an object is returned, the provided `x` and `y` values will be
+   * used as the drag preview offset instead of the default calculation.
+   */
+  children: (items: DragItem[]) => JSX.Element | {element: JSX.Element, x: number, y: number} | null
 }
 
-export const DragPreview = React.forwardRef(function DragPreview(props: DragPreviewProps, ref: ForwardedRef<DragPreviewRenderer | null>) {
+export const DragPreview:
+  React.ForwardRefExoticComponent<DragPreviewProps & React.RefAttributes<DragPreviewRenderer | null>> =
+React.forwardRef(function DragPreview(props: DragPreviewProps, ref: ForwardedRef<DragPreviewRenderer | null>) {
   let render = props.children;
   let [children, setChildren] = useState<JSX.Element | null>(null);
   let domRef = useRef<HTMLDivElement | null>(null);
   let raf = useRef<ReturnType<typeof requestAnimationFrame> | undefined>(undefined);
 
-  useImperativeHandle(ref, () => (items: DragItem[], callback: (node: HTMLElement | null) => void) => {
+  useImperativeHandle(ref, () => (items: DragItem[], callback: (node: HTMLElement | null, x?: number, y?: number) => void) => {
     // This will be called during the onDragStart event by useDrag. We need to render the
     // preview synchronously before this event returns so we can call event.dataTransfer.setDragImage.
+
+    let result = render(items);
+    let element: JSX.Element | null;
+    let offsetX: number | undefined;
+    let offsetY: number | undefined;
+
+    if (result && typeof result === 'object' && 'element' in result) {
+      element = result.element;
+      offsetX = result.x;
+      offsetY = result.y;
+    } else {
+      element = result as JSX.Element | null;
+    }
+
     flushSync(() => {
-      setChildren(render(items));
+      setChildren(element);
     });
 
     // Yield back to useDrag to set the drag image.
-    callback(domRef.current);
+    callback(domRef.current, offsetX, offsetY);
 
     // Remove the preview from the DOM after a frame so the browser has time to paint.
     raf.current = requestAnimationFrame(() => {
@@ -53,7 +74,7 @@ export const DragPreview = React.forwardRef(function DragPreview(props: DragPrev
   }
 
   return (
-    <div style={{zIndex: -100, position: 'absolute', top: 0, left: -100000}} ref={domRef}>
+    <div style={{zIndex: -100, position: 'fixed', top: 0, left: -100000}} ref={domRef}>
       {children}
     </div>
   );

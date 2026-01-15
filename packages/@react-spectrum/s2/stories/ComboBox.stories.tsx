@@ -10,13 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
-import {categorizeArgTypes} from './utils';
+import {Avatar, Button, ComboBox, ComboBoxItem, ComboBoxSection, Content, ContextualHelp, Footer, Form, Header, Heading, Link, Text} from '../src';
+import {categorizeArgTypes, getActionArgs} from './utils';
 import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactElement, useState} from 'react';
 import {style} from '../style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
+
+const events = ['onInputChange', 'onOpenChange', 'onSelectionChange', 'onLoadMore'];
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -25,7 +29,17 @@ const meta: Meta<typeof ComboBox<any>> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
+    ...categorizeArgTypes('Events', events),
+    label: {control: {type: 'text'}},
+    description: {control: {type: 'text'}},
+    errorMessage: {control: {type: 'text'}},
+    children: {table: {disable: true}},
+    contextualHelp: {table: {disable: true}},
+    placeholder: {control: {type: 'text'}}
+  },
+  args: {
+    ...getActionArgs(events),
+    placeholder: 'Select a value'
   },
   title: 'ComboBox'
 };
@@ -33,7 +47,7 @@ const meta: Meta<typeof ComboBox<any>> = {
 export default meta;
 type Story = StoryObj<typeof ComboBox<any>>;
 
-export const Example = {
+export const Example: Story = {
   render: (args: ComboBoxProps<any>) => (
     <ComboBox {...args}>
       <ComboBoxItem>Chocolate</ComboBoxItem>
@@ -94,10 +108,31 @@ export const Dynamic: Story = {
   ),
   args: {
     label: 'Favorite ice cream flavor',
-    items
+    defaultItems: items
   }
 };
 
+function VirtualizedCombobox(props) {
+  let items: IExampleItem[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i.toString(), label: `Item ${i}`});
+  }
+
+  return (
+    <ComboBox {...props} defaultItems={items}>
+      {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+    </ComboBox>
+  );
+}
+
+export const ManyItems: Story = {
+  render: (args) => (
+    <VirtualizedCombobox {...args} />
+  ),
+  args: {
+    label: 'Many items'
+  }
+};
 
 export const WithIcons: Story = {
   render: (args) => (
@@ -119,8 +154,35 @@ export const WithIcons: Story = {
   }
 };
 
-export const Validation = {
-  render: (args: any) => (
+const SRC_URL_1 = 'https://i.imgur.com/xIe7Wlb.png';
+const SRC_URL_2 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+
+export const WithAvatars: Story = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <ComboBoxItem textValue="User One">
+        <Avatar slot="avatar" src={SRC_URL_1} />
+        <Text slot="label">User One</Text>
+        <Text slot="description">user.one@example.com</Text>
+      </ComboBoxItem>
+      <ComboBoxItem textValue="User Two">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text slot="label">User Two</Text>
+        <Text slot="description">user.two@example.com<br />123-456-7890</Text>
+      </ComboBoxItem>
+      <ComboBoxItem textValue="User Three">
+        <Avatar slot="avatar" src={SRC_URL_2} />
+        <Text slot="label">User Three</Text>
+      </ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Share'
+  }
+};
+
+export const Validation: Story = {
+  render: (args) => (
     <Form>
       <ComboBox {...args}>
         {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
@@ -168,7 +230,7 @@ export const ContextualHelpExample: Story = {
   }
 };
 
-export const CustomWidth = {
+export const CustomWidth: Story = {
   render: (args) => (
     <ComboBox {...args} styles={style({width: 384})}>
       <ComboBoxItem>Chocolate</ComboBoxItem>
@@ -185,3 +247,118 @@ export const CustomWidth = {
     }
   }
 };
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const AsyncComboBox = (args: ComboBoxProps<Character> & {delay: number, label: string}): ReactElement => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, args.delay));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      {...args}
+      styles={style({marginBottom: 40})}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item: Character) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+    </ComboBox>
+  );
+};
+
+export type AsyncComboBoxStoryType = typeof AsyncComboBox;
+export const AsyncComboBoxStory: StoryObj<AsyncComboBoxStoryType> = {
+  render: AsyncComboBox,
+  args: {
+    ...Example.args,
+    label: 'Star Wars Character Lookup',
+    delay: 50
+  },
+  name: 'Async loading combobox',
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+let list = useAsyncList({
+  async load({signal, cursor, filterText}) {
+    // API call here
+    ...
+  }
+});
+
+return (
+  <ComboBox
+    items={list.items}
+    inputValue={list.filterText}
+    onInputChange={list.setFilterText}
+    loadingState={list.loadingState}
+    onLoadMore={list.loadMore}>
+    {(item: Character) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+  </ComboBox>
+);`;
+        }
+      }
+    }
+  }
+};
+
+export const EmptyCombobox: Story = {
+  render: (args) => (
+    <ComboBox {...args}>
+      {[]}
+    </ComboBox>
+  ),
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export function WithCreateOption() {
+  let [inputValue, setInputValue] = useState('');
+
+  return (
+    <ComboBox
+      label="Favorite Animal"
+      placeholder="Select an animal"
+      inputValue={inputValue}
+      onInputChange={setInputValue}>
+      {inputValue.length > 0 && (
+        <ComboBoxItem onAction={() => alert('hi')}>
+          {`Create "${inputValue}"`}
+        </ComboBoxItem>
+      )}
+      <ComboBoxItem>Aardvark</ComboBoxItem>
+      <ComboBoxItem>Cat</ComboBoxItem>
+      <ComboBoxItem>Dog</ComboBoxItem>
+      <ComboBoxItem>Kangaroo</ComboBoxItem>
+      <ComboBoxItem>Panda</ComboBoxItem>
+      <ComboBoxItem>Snake</ComboBoxItem>
+    </ComboBox>
+  );
+}

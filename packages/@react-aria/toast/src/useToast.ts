@@ -12,11 +12,11 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {filterDOMProps, useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {useEffect} from 'react';
-import {useId, useSlotId} from '@react-aria/utils';
+import {useEffect, useState} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
@@ -46,8 +46,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   let {
     key,
     timer,
-    timeout,
-    animation
+    timeout
   } = props.toast;
 
   useEffect(() => {
@@ -61,35 +60,33 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [timer, timeout]);
 
-  let [isEntered, setIsEntered] = React.useState(false);
-  useEffect(() => {
-    if (animation === 'entering' || animation === 'queued') {
-      setIsEntered(true);
-    }
-  }, [animation]);
-
   let titleId = useId();
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
+  // This is required for NVDA announcements, without it NVDA will NOT announce the toast when it appears.
+  // Originally was tied to animationStart/End via https://github.com/adobe/react-spectrum/pull/6223/commits/e22e319df64958e822ab7cd9685e96818cae9ba5
+  // but toasts don't always have animations.
+  let [isVisible, setIsVisible] = useState(false);
+  useLayoutEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  let toastProps = filterDOMProps(props, {labelable: true});
+
   return {
     toastProps: {
+      ...toastProps,
       role: 'alertdialog',
       'aria-modal': 'false',
-      'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
-      'aria-details': props['aria-details'],
-      // Hide toasts that are animating out so VoiceOver doesn't announce them.
-      'aria-hidden': animation === 'exiting' ? 'true' : undefined,
       tabIndex: 0
     },
     contentProps: {
       role: 'alert',
       'aria-atomic': 'true',
-      style: {
-        visibility: isEntered || animation === null ? 'visible' : 'hidden'
-      }
+      'aria-hidden': isVisible ? undefined : 'true'
     },
     titleProps: {
       id: titleId

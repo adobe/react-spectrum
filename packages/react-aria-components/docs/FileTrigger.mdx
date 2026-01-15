@@ -49,7 +49,7 @@ function Example(){
     <>
       <FileTrigger
         onSelect={(e) => {
-          let files = Array.from(e);
+          let files = e ? Array.from(e) : [];
           let filenames = files.map((file) => file.name);
           setFile(filenames);
         }}>
@@ -68,9 +68,9 @@ function Example(){
 
 ## Features
 
-A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a `Button` to create accessible file inputs that can be style as needed.
+A file input can be created with an `<input type=“file”>` element, but this supports limited styling options and may not integrate well with the overall design of a website or application. To overcome this, `FileTrigger` extends the functionality of the standard file input element by working with a pressable child such as a `Button` to create accessible file inputs that can be styled as needed.
 
-* **Customizable** – Works with any pressable React Aria or React Spectrum component, and custom components built with [usePress](usePress.html).
+* **Customizable** – Works with any pressable React Aria or React Spectrum component, and custom components built with [usePress](https://react-spectrum.adobe.com/react-aria/usePress.html).
 
 ## Anatomy
 
@@ -112,7 +112,7 @@ By default, the file trigger will accept any file type. To support only certain 
 
 ## Multiple files
 
-A file trigger can accept multiple files by passsing the `allowsMultiple` property.
+A file trigger can accept multiple files by passing the `allowsMultiple` property.
 
 ```tsx example
 <FileTrigger allowsMultiple>

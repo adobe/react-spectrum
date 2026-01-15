@@ -4,7 +4,7 @@ import {S1ToS2CodemodOptions} from '../..';
 
 const transformPath = path.join(__dirname, 'codemods', 'codemod.js');
 
-export async function transform(options: S1ToS2CodemodOptions) {
+export async function transform(options: S1ToS2CodemodOptions): Promise<ReturnType<typeof jscodeshift>> {
   let {
     path: filePath = '.',
     ...rest

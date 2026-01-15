@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import { Meta, StoryFn } from '@storybook/react';
 import Add from '../Add';
 import Alert from '../Alert';
 import Bell from '../Bell';
@@ -17,39 +18,39 @@ import React from 'react';
 
 export default {
   title: 'Icons/Express'
-};
+} as Meta<typeof Add>;
 
-export const IconAddWithSizes = () => renderIconSizes(Add, {'aria-label': 'Add'});
+export const IconAddWithSizes: StoryFn<typeof Add> = () => renderIconSizes(Add, {'aria-label': 'Add'});
 
 IconAddWithSizes.story = {
   name: 'icon: Add with sizes'
 };
 
-export const IconBellWithSizes = () => renderIconSizes(Bell, {'aria-label': 'Bell'});
+export const IconBellWithSizes: StoryFn<typeof Bell> = () => renderIconSizes(Bell, {'aria-label': 'Bell'});
 
 IconBellWithSizes.story = {
   name: 'icon: Bell with sizes'
 };
 
-export const IconAlertNegative = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'});
+export const IconAlertNegative: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'});
 
 IconAlertNegative.story = {
   name: 'icon: Alert negative'
 };
 
-export const IconAlertInformative = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'});
+export const IconAlertInformative: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'});
 
 IconAlertInformative.story = {
   name: 'icon: Alert informative'
 };
 
-export const IconAlertPositive = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'});
+export const IconAlertPositive: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'});
 
 IconAlertPositive.story = {
   name: 'icon: Alert positive'
 };
 
-export const IconAlertNotice = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'});
+export const IconAlertNotice: StoryFn<typeof Alert> = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'});
 
 IconAlertNotice.story = {
   name: 'icon: Alert notice'

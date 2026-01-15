@@ -11,18 +11,18 @@
  */
 
 import {ActionButtonContext} from './ActionButton';
-import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
+import {baseColor, focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
 import {Button, ContextValue, DisclosureStateContext, Heading, Provider, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel, DisclosurePanelProps as RACDisclosurePanelProps, DisclosureProps as RACDisclosureProps, useLocale, useSlottedContext} from 'react-aria-components';
 import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, lightDark, style} from '../style' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the disclosure.
    * @default 'M'
@@ -39,7 +39,7 @@ export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 
   children: ReactNode
 }
 
-export const DisclosureContext = createContext<ContextValue<Omit<DisclosureProps, 'children'>, DOMRefValue<HTMLDivElement>>>(null);
+export const DisclosureContext = createContext<ContextValue<Partial<DisclosureProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const disclosure = style({
   color: 'heading',
@@ -66,7 +66,7 @@ const disclosure = style({
 }, getAllowedOverrides());
 
 /**
- * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ * A disclosure is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
  */
 export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
@@ -99,7 +99,7 @@ export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps,
 
 export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
-   * 
+   *
    * @default 3
    */
   level?: number,
@@ -124,54 +124,58 @@ const buttonStyles = style({
   outlineOffset: -2,
   font: 'heading',
   color: {
-    default: 'neutral',
-    isDisabled: 'disabled'
+    default: baseColor('neutral'),
+    forcedColors: 'ButtonText',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
   },
   fontWeight: 'bold',
   fontSize: {
     size: {
-      S: 'heading-xs',
-      M: 'heading-sm',
-      L: 'heading',
-      XL: 'heading-lg'
+      S: 'title-sm',
+      M: 'title',
+      L: 'title-lg',
+      XL: 'title-xl'
     }
   },
   lineHeight: 'ui',
   display: 'flex',
   flexGrow: 1,
   alignItems: 'baseline',
-  paddingX: '[calc(self(minHeight) * 3/8 - 1px)]',
+  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   paddingY: centerPadding(),
-  gap: '[calc(self(minHeight) * 3/8 - 1px)]',
+  gap: 'calc(self(minHeight) * 3/8 - 1px)',
   minHeight: {
     // compact is equivalent to 'control', but other densities have more padding.
     size: {
       S: {
+        density: {
+          compact: 18,
+          regular: 24,
+          spacious: 32
+        }
+      },
+      M: {
         density: {
           compact: 24,
           regular: 32,
           spacious: 40
         }
       },
-      M: {
+      L: {
         density: {
           compact: 32,
           regular: 40,
           spacious: 48
         }
       },
-      L: {
+      XL: {
         density: {
           compact: 40,
           regular: 48,
           spacious: 56
-        }
-      },
-      XL: {
-        density: {
-          compact: 48,
-          regular: 56,
-          spacious: 64
         }
       }
     }
@@ -188,8 +192,8 @@ const buttonStyles = style({
   borderRadius: {
     // Only rounded for keyboard focus and quiet.
     default: 'none',
-    isFocusVisible: 'control',
-    isQuiet: 'control'
+    isFocusVisible: 'default',
+    isQuiet: 'default'
   },
   textAlign: 'start',
   disableTapHighlight: true
@@ -219,18 +223,12 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
   let domRef = useDOMRef(ref);
   let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
 
-  let mapSize = {
-    S: 'XS',
-    M: 'S',
-    L: 'M',
-    XL: 'L'
-  };
-
-  // maps to one size smaller in the compact density to ensure there is space between the top and bottom of the action button and container
+  // Shift button size down by 2 for compact density, 1 for regular/spacious to ensure there is space between the top and bottom of the action button and container
   let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = size;
-  if (density === 'compact') {
-    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L';
-  }
+  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  const currentIndex = sizes.indexOf(size ?? 'M');
+  const shift = density === 'compact' ? 2 : 1;
+  newSize = sizes[Math.max(0, currentIndex - shift)] as 'XS' | 'S' | 'M' | 'L' | 'XL';
 
   return (
     <Provider
@@ -303,20 +301,23 @@ export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'cla
 
 const panelStyles = style({
   font: 'body',
-  paddingTop: {
-    isExpanded: 8
-  },
-  paddingBottom: {
-    isExpanded: 16
-  },
+  height: '--disclosure-panel-height',
+  overflow: 'clip',
+  transition: {
+    default: '[height]',
+    '@media (prefers-reduced-motion: reduce)': 'none'
+  }
+});
+
+const panelInner = style({
+  paddingTop: 8,
+  paddingBottom: 16,
   paddingX: {
-    isExpanded: {
-      size: {
-        S: 8,
-        M: 9,
-        L: 12,
-        XL: 15
-      }
+    size: {
+      S: 8,
+      M: space(9),
+      L: 12,
+      XL: space(15)
     }
   }
 });
@@ -332,16 +333,16 @@ export const DisclosurePanel = forwardRef(function DisclosurePanel(props: Disclo
   } = props;
   const domProps = filterDOMProps(otherProps);
   let {size} = useSlottedContext(DisclosureContext)!;
-  let {isExpanded} = useContext(DisclosureStateContext)!;
   let panelRef = useDOMRef(ref);
   return (
     <RACDisclosurePanel
       {...domProps}
       ref={panelRef}
       style={UNSAFE_style}
-      className={(UNSAFE_className ?? '') + panelStyles({size, isExpanded})}>
-      {props.children}
+      className={(UNSAFE_className ?? '') + panelStyles}>
+      <div className={panelInner({size})}>
+        {props.children}
+      </div>
     </RACDisclosurePanel>
   );
 });
-

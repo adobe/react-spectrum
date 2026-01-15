@@ -34,7 +34,6 @@ describe('useToastState', () => {
     act(() => {result.current.add(newValue[0].content, newValue[0].props);});
     expect(result.current.visibleToasts).toHaveLength(1);
     expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
     expect(result.current.visibleToasts[0].timeout).toBe(0);
     expect(result.current.visibleToasts[0].timer).toBe(undefined);
     expect(result.current.visibleToasts[0]).toHaveProperty('key');
@@ -47,7 +46,6 @@ describe('useToastState', () => {
     act(() => {result.current.add('Test', {timeout: 5000});});
     expect(result.current.visibleToasts).toHaveLength(1);
     expect(result.current.visibleToasts[0].content).toBe('Test');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
     expect(result.current.visibleToasts[0].timeout).toBe(5000);
     expect(result.current.visibleToasts[0].timer).not.toBe(undefined);
     expect(result.current.visibleToasts[0]).toHaveProperty('key');
@@ -66,8 +64,8 @@ describe('useToastState', () => {
 
     act(() => {result.current.add(secondToast.content, secondToast.props);});
     expect(result.current.visibleToasts.length).toBe(2);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-    expect(result.current.visibleToasts[1].content).toBe(secondToast.content);
+    expect(result.current.visibleToasts[0].content).toBe(secondToast.content);
+    expect(result.current.visibleToasts[1].content).toBe(newValue[0].content);
   });
 
   it('should be able to display three toasts and remove the middle toast via timeout then the visible toast', () => {
@@ -85,7 +83,7 @@ describe('useToastState', () => {
       result.current.add('Second Toast', {timeout: 1000});
     });
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     result.current.resumeAll();
 
@@ -94,24 +92,24 @@ describe('useToastState', () => {
       result.current.add('Third Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(3);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
     expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[2].content).toBe('First Toast');
 
     act(() => jest.advanceTimersByTime(500));
     expect(result.current.visibleToasts).toHaveLength(3);
 
     act(() => jest.advanceTimersByTime(1000));
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[1].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
 
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
   });
 
-  it('should be able to display one toast without exitAnimation, add multiple toasts, and remove the middle not visible one programmatically', () => {
+  it('should be able to display one toast, add multiple toasts, and remove the middle not visible one programmatically', () => {
     let {result} = renderHook(() => useToastState());
 
     // Add the first toast
@@ -127,28 +125,28 @@ describe('useToastState', () => {
       secondToastKey = result.current.add('Second Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     // Add the third toast
     act(() => {
       result.current.add('Third Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
 
     // Remove a toast that isn't visible
     act(() => {result.current.close(secondToastKey);});
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
 
     // Remove the visible toast to confirm the middle toast was removed
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
   });
 
-  it('should be able to display one toast with exitAnimation, add multiple toasts, and remove the middle not visible one programmatically', () => {
-    let {result} = renderHook(() => useToastState({hasExitAnimation: true}));
+  it('should be able to display one toast, add multiple toasts', () => {
+    let {result} = renderHook(() => useToastState());
 
     // Add the first toast
     act(() => {
@@ -157,118 +155,43 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts).toHaveLength(1);
     expect(result.current.visibleToasts[0].content).toBe('First Toast');
 
-    let secondToastKey = null;
     // Add the second toast
     act(() => {
-      secondToastKey = result.current.add('Second Toast', {timeout: 0});
+      result.current.add('Second Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     // Add the third toast
     act(() => {
       result.current.add('Third Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-
-    // Remove a toast that isn't visible
-    act(() => {result.current.close(secondToastKey);});
-    expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-
-    // Remove the visible toast to confirm the middle toast was removed
-    act(() => {result.current.close(result.current.visibleToasts[0].key);});
-    expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('exiting');
-    act(() => {result.current.remove(result.current.visibleToasts[0].key);});
-
-    // there should only be one Toast left, the third one
-    expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe('Third Toast');
   });
 
-  it('should add a exit animation to a toast that is moved out of the visible list by a higher priority toast', () => {
-    let {result} = renderHook(() => useToastState({hasExitAnimation: true, maxVisibleToasts: 2}));
-
-    act(() => {result.current.add('First Toast', {priority: 5});});
-    expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-
-    act(() => {result.current.add('Second Toast', {priority: 1});});
-    expect(result.current.visibleToasts.length).toBe(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('entering');
-
-    act(() => {result.current.add('Third Toast', {priority: 10});});
-    expect(result.current.visibleToasts.length).toBe(3);
-    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-    expect(result.current.visibleToasts[1].content).toBe('First Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('entering');
-    expect(result.current.visibleToasts[2].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[2].animation).toBe('exiting');
-
-    // Remove shouldn't get rid of the lower priority toast from the queue so that it may return when there is
-    // enough room. The below mimics a remove call that might be called in onAnimationEnd
-    act(() => {result.current.remove(result.current.visibleToasts[2].key);});
-    expect(result.current.visibleToasts.length).toBe(2);
-    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
-    expect(result.current.visibleToasts[1].content).toBe('First Toast');
-
-    act(() => {result.current.close(result.current.visibleToasts[0].key);});
-    act(() => {result.current.remove(result.current.visibleToasts[0].key);});
-    expect(result.current.visibleToasts.length).toBe(2);
-
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('queued');
-  });
-
-  it('should maintain the toast queue order on close and apply exiting to the closing toast', () => {
-    let {result} = renderHook(() => useToastState({hasExitAnimation: true, maxVisibleToasts: 3}));
+  it('should maintain the toast queue order on close', () => {
+    let {result} = renderHook(() => useToastState({maxVisibleToasts: 3}));
 
     act(() => {result.current.add('First Toast');});
     expect(result.current.visibleToasts).toHaveLength(1);
     expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
 
     act(() => {result.current.add('Second Toast');});
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('entering');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
 
     act(() => {result.current.add('Third Toast');});
     expect(result.current.visibleToasts).toHaveLength(3);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
     expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('entering');
-    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
-    expect(result.current.visibleToasts[2].animation).toBe('entering');
+    expect(result.current.visibleToasts[2].content).toBe('First Toast');
 
     act(() => {result.current.close(result.current.visibleToasts[1].key);});
-    expect(result.current.visibleToasts).toHaveLength(3);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('exiting');
-    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
-    expect(result.current.visibleToasts[2].animation).toBe('entering');
-
-    act(() => {result.current.remove(result.current.visibleToasts[1].key);});
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('entering');
-    expect(result.current.visibleToasts[1].content).toBe('Third Toast');
-    expect(result.current.visibleToasts[1].animation).toBe('entering');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
   });
 
   it('should close a toast', () => {
@@ -276,18 +199,6 @@ describe('useToastState', () => {
     act(() => {result.current.add(newValue[0].content, newValue[0].props);});
 
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
-    expect(result.current.visibleToasts).toStrictEqual([]);
-  });
-
-  it('should close a toast with animations', () => {
-    let {result} = renderHook(() => useToastState({hasExitAnimation: true}));
-    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
-
-    act(() => {result.current.close(result.current.visibleToasts[0].key);});
-    expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].animation).toBe('exiting');
-
-    act(() => {result.current.remove(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts).toStrictEqual([]);
   });
 
@@ -300,28 +211,34 @@ describe('useToastState', () => {
 
     act(() => {result.current.add('Second Toast');});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[0].animation).toBe('queued');
+    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
   });
 
-  it('should queue toasts with priority', () => {
-    let {result} = renderHook(() => useToastState());
+  it('should use provided wrapUpdate', () => {
+    let wrapUpdate = jest.fn(fn => fn());
+
+    let {result} = renderHook(() => useToastState({wrapUpdate}));
     expect(result.current.visibleToasts).toStrictEqual([]);
 
     act(() => {result.current.add(newValue[0].content, newValue[0].props);});
     expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
 
-    act(() => {result.current.add('Second Toast', {priority: 1});});
+    expect(wrapUpdate).toHaveBeenCalledTimes(1);
+
+    act(() => {result.current.add('Second Toast');});
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe('Second Toast');
+
+    expect(wrapUpdate).toHaveBeenCalledTimes(2);
 
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-    expect(result.current.visibleToasts[0].animation).toBe('queued');
+
+    expect(wrapUpdate).toHaveBeenCalledTimes(3);
   });
 });

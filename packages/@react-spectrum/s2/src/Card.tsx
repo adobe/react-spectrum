@@ -14,14 +14,13 @@ import {ActionMenuContext} from './ActionMenu';
 import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
-import {colorToken} from '../style/tokens' with {type: 'macro'};
-import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
+import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
+import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Link, Provider} from 'react-aria-components';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {filterDOMProps, inertValue} from '@react-aria/utils';
-import {focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
@@ -37,7 +36,7 @@ interface CardRenderProps {
   size: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
   /**
@@ -92,15 +91,15 @@ let card = style({
     isHovered: 'elevated',
     isFocusVisible: 'elevated',
     isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px ButtonBorder]',
+    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
     variant: {
       tertiary: {
         // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 1px ${colorToken('gray-100')}]`,
-        isHovered: `[0 0 0 1px ${colorToken('gray-200')}]`,
-        isFocusVisible: `[0 0 0 1px ${colorToken('gray-200')}]`,
+        default: `[0 0 0 2px ${color('gray-100')}]`,
+        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
+        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
         isSelected: 'none',
-        forcedColors: '[0 0 0 1px ButtonBorder]'
+        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
       },
       quiet: 'none'
     }
@@ -108,6 +107,7 @@ let card = style({
   forcedColorAdjust: 'none',
   transition: 'default',
   fontFamily: 'sans',
+  textDecoration: 'none',
   overflow: {
     default: 'clip',
     variant: {
@@ -139,7 +139,7 @@ let card = style({
       density: {
         compact: {
           size: {
-            XS: 6,
+            XS: '[6px]',
             S: 8,
             M: 12,
             L: 16,
@@ -228,10 +228,10 @@ let preview = style({
   position: 'relative',
   transition: 'default',
   overflow: 'clip',
-  marginX: '[calc(var(--card-padding-x) * -1)]',
-  marginTop: '[calc(var(--card-padding-y) * -1)]',
+  marginX: 'calc(var(--card-padding-x) * -1)',
+  marginTop: 'calc(var(--card-padding-y) * -1)',
   marginBottom: {
-    ':last-child': '[calc(var(--card-padding-y) * -1)]'
+    ':last-child': 'calc(var(--card-padding-y) * -1)'
   },
   borderRadius: {
     isQuiet: borderRadius
@@ -254,7 +254,11 @@ let preview = style({
 
 const image = style({
   width: 'full',
-  aspectRatio: '[3/2]',
+  aspectRatio: {
+    layout: {
+      grid: '3/2'
+    }
+  },
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'
@@ -326,7 +330,7 @@ let content = style({
     ':first-child': 0
   },
   paddingBottom: {
-    default: '[calc(var(--card-spacing) * 1.5 / 2)]',
+    default: 'calc(var(--card-spacing) * 1.5 / 2)',
     ':last-child': 0
   }
 });
@@ -335,7 +339,7 @@ let actionMenu = style({
   gridArea: 'menu',
   // Don't cause the row to expand, preserve gap between title and description text.
   // Would use -100% here but it doesn't work in Firefox.
-  marginY: '[calc(-1 * self(height))]'
+  marginY: 'calc(-1 * self(height))'
 });
 
 let footer = style({
@@ -344,10 +348,13 @@ let footer = style({
   alignItems: 'end',
   justifyContent: 'space-between',
   gap: 8,
-  paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
+  paddingTop: 'calc(var(--card-spacing) * 1.5 / 2)'
 });
 
-export const InternalCardViewContext = createContext<'div' | typeof GridListItem>('div');
+export const InternalCardViewContext = createContext({
+  ElementType: 'div' as 'div' | typeof GridListItem,
+  layout: 'grid' as 'grid' | 'waterfall'
+});
 export const CardContext = createContext<ContextValue<Partial<CardProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 interface InternalCardContextValue {
@@ -378,8 +385,12 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
+/**
+ * A Card summarizes an object that a user can select or navigate to.
+ */
 export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLDivElement>) {
   [props] = useSpectrumContextProps(props, ref, CardContext);
+  let {ElementType, layout} = useContext(InternalCardViewContext);
   let domRef = useDOMRef(ref);
   let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
   let isQuiet = variant === 'quiet';
@@ -387,7 +398,7 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
   let children = (
     <Provider
       values={[
-        [ImageContext, {alt: '', styles: image}],
+        [ImageContext, {alt: '', styles: image({layout})}],
         [TextContext, {
           slots: {
             [DEFAULT_SLOT]: {},
@@ -414,7 +425,28 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
-  let ElementType = useContext(InternalCardViewContext);
+  let press = pressScale(domRef, UNSAFE_style);
+  if (ElementType === 'div' && !isSkeleton && props.href) {
+    // Standalone Card that has an href should be rendered as a Link.
+    // NOTE: In this case, the card must not contain interactive elements.
+    return (
+      <Link
+        {...filterDOMProps(otherProps, {isLink: true})}
+        ref={domRef as any}
+        className={renderProps => UNSAFE_className + card({...renderProps, size, density, variant, isCardView: false, isLink: true}, styles)}
+        style={renderProps =>
+          // Only the preview in quiet cards scales down on press
+          variant === 'quiet' ? UNSAFE_style : press(renderProps)
+        }>
+        {(renderProps) => (
+          <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: false, isSelected: false, ...renderProps}}>
+            {children}
+          </InternalCardContext.Provider>
+        )}
+      </Link>
+    );
+  }
+
   if (ElementType === 'div' || isSkeleton) {
     return (
       <div
@@ -432,7 +464,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     );
   }
 
-  let press = pressScale(domRef, UNSAFE_style);
   return (
     <ElementType
       {...props}
@@ -501,7 +532,7 @@ export interface CardPreviewProps extends UnsafeStyles, DOMProps {
 
 export const CardPreview = forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} = useContext(InternalCardContext);
-  let {UNSAFE_className, UNSAFE_style} = props;
+  let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
   return (
     <div
@@ -512,7 +543,7 @@ export const CardPreview = forwardRef(function CardPreview(props: CardPreviewPro
       style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
-      <div className={style({borderRadius: '[inherit]', overflow: 'clip'})}>
+      <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>
         {props.children}
       </div>
     </div>
@@ -535,7 +566,7 @@ const collectionImage = style({
   width: 'full',
   aspectRatio: {
     default: 'square',
-    ':nth-last-child(4):first-child': '[3/2]'
+    ':nth-last-child(4):first-child': '3/2'
   },
   gridColumnEnd: {
     ':nth-last-child(4):first-child': 'span 3'
@@ -561,6 +592,7 @@ export const CollectionCardPreview = forwardRef(function CollectionCardPreview(p
 export interface AssetCardProps extends Omit<CardProps, 'density'> {}
 
 export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, ref: DOMRef<HTMLDivElement>) {
+  let {layout} = useContext(InternalCardViewContext);
   return (
     <Card {...props} ref={ref} density="regular">
       {composeRenderProps(props.children, children => (
@@ -570,11 +602,15 @@ export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, re
               alt: '',
               styles: style({
                 width: 'full',
-                aspectRatio: 'square',
+                aspectRatio: {
+                  layout: {
+                    grid: 'square'
+                  }
+                },
                 objectFit: 'contain',
                 pointerEvents: 'none',
                 userSelect: 'none'
-              })
+              })({layout})
             }],
             [IllustrationContext, {
               render(icon) {
@@ -597,7 +633,7 @@ export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, re
                 height: 'auto',
                 maxSize: 160,
                 // TODO: this is made up.
-                width: '[50%]'
+                width: '50%'
               })
             }]
           ]}>
@@ -618,10 +654,11 @@ const avatarSize = {
 
 export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and avatar.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
-export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMRef<HTMLDivElement>) {
+export const UserCard = forwardRef(function UserCard(props: UserCardProps, ref: DOMRef<HTMLDivElement>) {
   let {size = 'M'} = props;
   return (
     <Card {...props} ref={ref} density="spacious">
@@ -632,7 +669,7 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
               alt: '',
               styles: style({
                 width: 'full',
-                aspectRatio: '[3/1]',
+                aspectRatio: '3/1',
                 objectFit: 'cover',
                 pointerEvents: 'none',
                 userSelect: 'none'
@@ -641,13 +678,13 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
             [AvatarContext, {
               size: avatarSize[size],
               UNSAFE_style: {
-                '--size': avatarSize[size] + 'px'
+                '--size': (avatarSize[size] / 16) + 'rem'
               } as CSSProperties,
               styles: style({
                 position: 'relative',
                 marginTop: {
                   default: 0,
-                  ':is([slot=preview] + &)': '[calc(var(--size) / -2)]'
+                  ':is([slot=preview] + *)': 'calc(var(--size) / -2)'
                 }
               }),
               isOverBackground: true
@@ -670,6 +707,7 @@ const buttonSize = {
 
 export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and thumbnail.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
@@ -686,7 +724,7 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
                   alt: '',
                   styles: style({
                     width: 'full',
-                    aspectRatio: '[5/1]',
+                    aspectRatio: '5/1',
                     objectFit: 'cover',
                     pointerEvents: 'none',
                     userSelect: 'none'
@@ -717,7 +755,7 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
                     objectFit: 'cover',
                     marginTop: {
                       default: 0,
-                      ':is([slot=preview] + &)': '[calc(self(height) / -2)]'
+                      ':is([slot=preview] + *)': 'calc(self(height) / -2)'
                     },
                     outlineStyle: 'solid',
                     outlineWidth: {

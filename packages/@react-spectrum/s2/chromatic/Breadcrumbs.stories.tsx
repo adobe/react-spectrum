@@ -12,11 +12,12 @@
 
 import {Breadcrumb, Breadcrumbs} from '../src';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import {Many} from '../stories/Breadcrumbs.stories';
+import {type IMany, Many} from '../stories/Breadcrumbs.stories';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactNode} from 'react';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
-import {userEvent, within} from '@storybook/testing-library';
+import {userEvent, within} from '@storybook/test';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
@@ -26,19 +27,19 @@ const meta: Meta<typeof Breadcrumbs> = {
 
 export default meta;
 
-export const Dynamic = Many as StoryObj;
-
-Dynamic.parameters = {
-  // TODO: move these options back to meta above once we get strings for ar-AE. This is just to prevent the RTL story's config from actually applying
-  chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
-};
-
-Dynamic.play = async ({canvasElement}) => {
-  // This uses click because using .tab twice didn't move focus to the menu
-  let trigger = await within(canvasElement).findByRole('button');
-  await userEvent.click(trigger);
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
+export const Dynamic: StoryObj<IMany> = {
+  ...Many,
+  parameters: {
+    // TODO: move these options back to meta above once we get strings for ar-AE. This is just to prevent the RTL story's config from actually applying
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+  },
+  play: async ({canvasElement}) => {
+    // This uses click because using .tab twice didn't move focus to the menu
+    let trigger = await within(canvasElement).findByRole('button');
+    await userEvent.click(trigger);
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
 };
 
 let states = [
@@ -48,9 +49,9 @@ let states = [
 
 let combinations = generatePowerset(states);
 
-const Template = () => {
+const Template = (): ReactNode => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
       {combinations.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -76,8 +77,8 @@ const Template = () => {
   );
 };
 
-export const Powerset = {
-  render: Template,
+export const Powerset: StoryObj<typeof Template> = {
+  render: () => <Template />,
   parameters: {
     chromaticProvider: {locales: ['en-US'], disableAnimations: true}
   }

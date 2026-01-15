@@ -1,4 +1,4 @@
-import '@react-spectrum/s2/src/page';
+import '@react-spectrum/s2/page.css';
 import { themes } from '@storybook/theming';
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 import { store } from 'storybook-dark-mode/dist/esm/Tool';
@@ -6,6 +6,7 @@ import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
 import {withProviderSwitcher} from './custom-addons/provider';
+import {Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/blocks';
 import './global.css';
 
 const channel = addons.getChannel();
@@ -15,7 +16,6 @@ channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colo
 /** @type { import('@storybook/react').Preview } */
 const preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {},
       exclude: ['key', 'ref']
@@ -42,7 +42,17 @@ const preview = {
           }
           return code;
         }
-      }
+      },
+      page: () => (
+        <>
+          <Title />
+          <Subtitle />
+          <Description />
+          <Primary />
+          <Controls />
+          <Stories includePrimary={false} />
+        </>
+      )
     },
     darkMode: {
       light: {

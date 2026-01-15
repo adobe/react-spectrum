@@ -58,7 +58,7 @@ export const ProgressCircle = React.forwardRef(function ProgressCircle(props: Sp
     }
   }
 
-  if (!ariaLabel && !ariaLabelledby) {
+  if (!ariaLabel && !ariaLabelledby && process.env.NODE_ENV !== 'production') {
     console.warn('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
   }
 

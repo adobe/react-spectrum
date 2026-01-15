@@ -1,7 +1,14 @@
-import {AriaLabelingProps, HoverEvents, ValueBase} from '@react-types/shared';
-import {Color, parseColor, useColorPickerState} from '@react-stately/color';
+import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, PressEvents, ValueBase} from '@react-types/shared';
+import {
+  ClassNameOrFunction,
+  composeRenderProps,
+  ContextValue,
+  RenderProps,
+  StyleRenderProps,
+  useContextProps
+} from './utils';
+import {Color, parseColor, useColorPickerState} from 'react-stately';
 import {ColorSwatchContext} from './ColorSwatch';
-import {composeRenderProps, ContextValue, RenderProps, StyleRenderProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -10,7 +17,12 @@ import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, u
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
-export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColorSwatchPicker'
+   */
+  className?: ClassNameOrFunction<ColorSwatchPickerRenderProps>,
   /** The children of the ColorSwatchPicker. */
   children?: ReactNode,
   /**
@@ -61,7 +73,12 @@ export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRender
   color: Color
 }
 
-export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents {
+export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ColorSwatchPickerItem'
+   */
+  className?: ClassNameOrFunction<ColorSwatchPickerItemRenderProps>,
   /** The color of the swatch. */
   color: string | Color,
   /** Whether the color swatch is disabled. */

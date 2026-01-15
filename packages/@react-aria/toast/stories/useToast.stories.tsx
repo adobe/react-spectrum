@@ -10,24 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, {JSX} from 'react';
+import {StoryFn} from '@storybook/react';
 import {ToastContainer} from './Example';
+import {ToastStateProps} from '@react-stately/toast';
 
 export default {
   title: 'useToast',
   args: {
-    maxVisibleToasts: 1
+    maxVisibleToasts: 1,
+    timeout: null
+  },
+  argTypes: {
+    timeout: {
+      control: 'radio',
+      options: [null, 5000] as const
+    }
   }
 };
 
 let count = 0;
 
-export const Default = args => (
-  <ToastContainer {...args}>
+let ToastStory = (props: ToastStateProps & {timeout?: number}): JSX.Element => (
+  <ToastContainer {...props}>
     {state => (<>
-      <button onClick={() => state.add('High ' + ++count, {priority: 10})}>Add high priority toast</button>
-      <button onClick={() => state.add('Medium ' + ++count, {priority: 5})}>Add medium priority toast</button>
-      <button onClick={() => state.add('Low ' + ++count, {priority: 1})}>Add low priority toast</button>
+      <button onClick={() => state.add('Mmmmm toast ' + ++count, {timeout: props.timeout})}>Add toast</button>
     </>)}
   </ToastContainer>
 );
+
+export const Default: StoryFn<typeof ToastStory> = args => <ToastStory {...args} />;

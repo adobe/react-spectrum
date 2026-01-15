@@ -28,7 +28,12 @@ export interface AriaCalendarCellProps {
    * Whether the cell is disabled. By default, this is determined by the
    * Calendar's `minValue`, `maxValue`, and `isDisabled` props.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+
+  /**
+   * Whether the cell is outside of the current month.
+   */
+  isOutsideMonth?: boolean
 }
 
 export interface CalendarCellAria {
@@ -85,7 +90,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     timeZone: state.timeZone
   });
   let isSelected = state.isSelected(date);
-  let isFocused = state.isCellFocused(date);
+  let isFocused = state.isCellFocused(date) && !props.isOutsideMonth;
   isDisabled = isDisabled || state.isCellDisabled(date);
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
@@ -333,7 +338,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         // outside the original pressed element.
         // (JSDOM does not support this)
         if ('releasePointerCapture' in e.target) {
-          e.target.releasePointerCapture(e.pointerId);
+          if ('hasPointerCapture' in e.target) {
+            if (e.target.hasPointerCapture(e.pointerId)) {
+              e.target.releasePointerCapture(e.pointerId);
+            }
+          } else {
+            e.target.releasePointerCapture(e.pointerId);
+          }
         }
       },
       onContextMenu(e) {

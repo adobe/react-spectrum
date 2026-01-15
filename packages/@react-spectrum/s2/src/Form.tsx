@@ -11,7 +11,7 @@
  */
 
 import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
-import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
+import {DOMRef, GlobalDOMAttributes, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
@@ -30,11 +30,11 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
   isEmphasized?: boolean
 }
 
-export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children'>, StyleProps {
-  children?: ReactNode
+export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
+  children: ReactNode
 }
 
-export const FormContext = createContext<FormStyleProps | null>(null);
+export const FormContext = createContext<Partial<FormStyleProps | null>>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
   let isSkeleton = useIsSkeleton();
@@ -74,6 +74,8 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
     isDisabled,
     isEmphasized,
     size = 'M',
+    UNSAFE_style,
+    UNSAFE_className = '',
     ...formProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -82,8 +84,8 @@ export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref
     <RACForm
       {...formProps}
       ref={domRef}
-      style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({
+      style={UNSAFE_style}
+      className={UNSAFE_className + style({
         display: 'grid',
         gridTemplateColumns: {
           labelPosition: {

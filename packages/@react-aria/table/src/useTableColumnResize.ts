@@ -13,14 +13,13 @@
 import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely} from '@react-aria/focus';
+import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
 import {TableColumnResizeState} from '@react-stately/table';
-import {useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -71,25 +70,8 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
 
   let {direction} = useLocale();
-  let {keyboardProps} = useKeyboard({
-    onKeyDown: (e) => {
-      if (editModeEnabled) {
-        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
-          e.preventDefault();
-          endResize(item);
-        }
-      } else {
-        // Continue propagation on keydown events so they still bubbles to useSelectableCollection and are handled there
-        e.continuePropagation();
 
-        if (e.key === 'Enter') {
-          startResize(item);
-        }
-      }
-    }
-  });
-
-  let startResize = useEffectEvent((item) => {
+  let startResize = useCallback((item) => {
     if (!isResizingRef.current) {
       lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
       state.startResize(item.key);
@@ -97,15 +79,15 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       onResizeStart?.(lastSize.current);
     }
     isResizingRef.current = true;
-  });
+  }, [state, onResizeStart]);
 
-  let resize = useEffectEvent((item, newWidth) => {
+  let resize = useCallback((item, newWidth) => {
     let sizes = state.updateResizedColumns(item.key, newWidth);
     onResize?.(sizes);
     lastSize.current = sizes;
-  });
+  }, [state, onResize]);
 
-  let endResize = useEffectEvent((item) => {
+  let endResize = useCallback((item) => {
     if (isResizingRef.current) {
       if (lastSize.current == null) {
         lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
@@ -122,6 +104,24 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
     }
     lastSize.current = null;
+  }, [state, triggerRef, onResizeEnd]);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      if (editModeEnabled) {
+        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
+          e.preventDefault();
+          endResize(item);
+        }
+      } else {
+        // Continue propagation on keydown events so they still bubbles to useSelectableCollection and are handled there
+        e.continuePropagation();
+
+        if (e.key === 'Enter') {
+          startResize(item);
+        }
+      }
+    }
   });
 
   const columnResizeWidthRef = useRef<number>(0);
@@ -195,10 +195,11 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let resizingColumn = state.resizingColumn;
   let prevResizingColumn = useRef<Key | null>(null);
+  let startResizeEvent = useEffectEvent(startResize);
   useEffect(() => {
     if (prevResizingColumn.current !== resizingColumn && resizingColumn != null && resizingColumn === item.key) {
       wasFocusedOnResizeStart.current = document.activeElement === ref.current;
-      startResize(item);
+      startResizeEvent(item);
       // Delay focusing input until Android Chrome's delayed click after touchend happens: https://bugs.chromium.org/p/chromium/issues/detail?id=1150073
       let timeout = setTimeout(() => focusInput(), 0);
       // VoiceOver on iOS has problems focusing the input from a menu.
@@ -209,7 +210,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       };
     }
     prevResizingColumn.current = resizingColumn;
-  }, [resizingColumn, item, focusInput, ref, startResize]);
+  }, [resizingColumn, item, focusInput, ref]);
 
   let onChange = (e: ChangeEvent<HTMLInputElement>) => {
     let currentWidth = state.getColumnWidth(item.key);

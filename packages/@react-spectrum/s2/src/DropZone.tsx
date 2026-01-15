@@ -12,7 +12,7 @@
 
 import {ContextValue, DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMProps, DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustratedMessageContext} from './IllustratedMessage';
 // @ts-ignore
@@ -22,24 +22,27 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, UnsafeStyles, DOMProps {
+export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the drop zone. */
-  children?: ReactNode,
+  children: ReactNode,
   /** Whether the drop zone has been filled. */
   isFilled?: boolean,
-  /** The message to replace the default banner message that is shown when the drop zone is filled. */
+  /**
+   * The message to replace the default banner message that is shown when the drop zone is filled.
+   * @default 'Drop file to replace'
+   */
   replaceMessage?: string,
   /**
    * The size of the DropZone.
    *
    * @default 'M'
    */
-    size?: 'S' | 'M' | 'L'
+  size?: 'S' | 'M' | 'L'
 }
 
-export const DropZoneContext = createContext<ContextValue<DropZoneProps, DOMRefValue<HTMLDivElement>>>(null);
+export const DropZoneContext = createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const dropzone = style<DropZoneRenderProps>({
   display: 'flex',
@@ -62,7 +65,8 @@ const dropzone = style<DropZoneRenderProps>({
     isFocusVisible: 'blue-800'
   },
   borderRadius: 'lg',
-  padding: 24
+  padding: 24,
+  boxSizing: 'border-box'
 }, getAllowedOverrides({height: true}));
 
 const banner = style({
@@ -86,7 +90,7 @@ const banner = style({
   borderRadius: 'default',
   color: 'white',
   fontWeight: 'bold',
-  padding: '[calc((self(minHeight))/1.5)]'
+  padding: 'calc((self(minHeight))/1.5)'
 });
 
 /**

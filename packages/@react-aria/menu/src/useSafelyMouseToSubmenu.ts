@@ -1,8 +1,8 @@
 
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
-import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
@@ -24,7 +24,7 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
-export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
+export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): void {
   let {menuRef, submenuRef, isOpen, isDisabled} = options;
   let prevPointerPos = useRef<{x: number, y: number} | undefined>(undefined);
   let submenuRect = useRef<DOMRect | undefined>(undefined);
@@ -51,6 +51,14 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
   let modality = useInteractionModality();
 
+  // Prevent mouse down over safe triangle. Clicking while pointer-events: none is applied
+  // will cause focus to move unexpectedly since it will go to an element behind the menu.
+  let onPointerDown = useEffectEvent((e: PointerEvent) => {
+    if (preventPointerEvents) {
+      e.preventDefault();
+    }
+  });
+
   useEffect(() => {
     if (preventPointerEvents && menuRef.current) {
       (menuRef.current as HTMLElement).style.pointerEvents = 'none';
@@ -59,7 +67,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
     }
   }, [menuRef, preventPointerEvents]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let submenu = submenuRef.current;
     let menu = menuRef.current;
 
@@ -150,8 +158,17 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
     window.addEventListener('pointermove', onPointerMove);
 
+    // Prevent pointer down over the safe triangle. See above comment.
+    // Do not enable in tests, because JSDom doesn't do hit testing.
+    if (process.env.NODE_ENV !== 'test') {
+      window.addEventListener('pointerdown', onPointerDown, true);
+    }
+
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
+      if (process.env.NODE_ENV !== 'test') {
+        window.removeEventListener('pointerdown', onPointerDown, true);
+      }
       clearTimeout(timeout.current);
       clearTimeout(autoCloseTimeout.current);
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;

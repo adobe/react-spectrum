@@ -252,7 +252,14 @@ const color = {
   LinkText: 'LinkText'
 };
 
-export function baseColor(base: keyof typeof color) {
+interface ColorStates {
+  default: keyof typeof color,
+  isHovered: keyof typeof color,
+  isFocusVisible: keyof typeof color,
+  isPressed: keyof typeof color
+}
+
+export function baseColor(base: keyof typeof color): ColorStates {
   let keys = Object.keys(color) as (keyof typeof color)[];
   let index = keys.indexOf(base);
   if (index === -1) {
@@ -431,6 +438,16 @@ const timingFunction = {
 let durationProperty = createArbitraryProperty((value: number | string, property) => ({[property]: typeof value === 'number' ? value + 'ms' : value}));
 
 const colorWithAlpha = createColorProperty(color);
+
+export const focusRing = () => ({
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineColor: 'focus-ring',
+  outlineWidth: 2,
+  outlineOffset: 2
+} as const);
 
 export const style = createTheme({
   properties: {
@@ -686,7 +703,8 @@ export const style = createTheme({
     hyphens: ['none', 'manual', 'auto'] as const,
     whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
-    wordBreak: ['normal', 'break-all', 'keep-all'] as const, // also overflowWrap??
+    wordBreak: ['normal', 'break-all', 'keep-all'] as const,
+    overflowWrap: ['normal', 'anywhere', 'break-word'] as const,
     boxDecorationBreak: ['slice', 'clone'] as const,
 
     // effects

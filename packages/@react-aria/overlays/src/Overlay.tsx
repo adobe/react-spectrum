@@ -16,7 +16,7 @@ import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useUNSTABLE_PortalContext} from './PortalProvider';
+import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface OverlayProps {
   /**
@@ -33,26 +33,31 @@ export interface OverlayProps {
    */
   disableFocusManagement?: boolean,
   /**
+   * Whether to contain focus within the overlay.
+   */
+  shouldContainFocus?: boolean,
+  /**
    * Whether the overlay is currently performing an exit animation. When true,
    * focus is allowed to move outside.
    */
   isExiting?: boolean
 }
 
-export const OverlayContext = React.createContext<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null>(null);
+export const OverlayContext: React.Context<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null> =
+  React.createContext<{contain: boolean, setContain: React.Dispatch<React.SetStateAction<boolean>>} | null>(null);
 
 /**
  * A container which renders an overlay such as a popover or modal in a portal,
  * and provides a focus scope for the child elements.
  */
-export function Overlay(props: OverlayProps) {
+export function Overlay(props: OverlayProps): React.ReactPortal | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
-  let {getContainer} = useUNSTABLE_PortalContext();
-  if  (!props.portalContainer && getContainer) {
+  let {getContainer} = useUNSAFE_PortalContext();
+  if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
   }
 
@@ -63,7 +68,7 @@ export function Overlay(props: OverlayProps) {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope restoreFocus contain={contain && !isExiting}>
+      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
         {contents}
       </FocusScope>
     );
@@ -81,7 +86,7 @@ export function Overlay(props: OverlayProps) {
 }
 
 /** @private */
-export function useOverlayFocusContain() {
+export function useOverlayFocusContain(): void {
   let ctx = useContext(OverlayContext);
   let setContain = ctx?.setContain;
   useLayoutEffect(() => {

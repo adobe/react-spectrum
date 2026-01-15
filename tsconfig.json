@@ -16,7 +16,7 @@
     // allows importing of json files, needed for locales as of right now
     "resolveJsonModule": true,
     // Search under node_modules for non-relative imports.
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "esnext",
     // Process & infer types from .js files.
     "allowJs": true,
@@ -40,17 +40,21 @@
       }
     ],
     "paths": {
+      "vanilla-starter/*": ["./starters/docs/src/*"],
       "tailwind-starter/*": ["./starters/tailwind/src/*"]
     }
   },
   "include": [
     "packages",
-    "lib/svg.d.ts"
+    "lib/svg.d.ts",
+    "lib/viewTransitions.d.ts",
+    "lib/css.d.ts"
   ],
   "exclude": [
     "**/node_modules",
     "packages/dev/optimize-locales-plugin",
     "packages/@react-spectrum/s2/s2wf-icons",
-    "packages/@react-spectrum/s2/icon.d.ts"
+    "packages/@react-spectrum/s2/icon.d.ts",
+    "packages/dev/s2-docs/pages/**"
   ]
 }

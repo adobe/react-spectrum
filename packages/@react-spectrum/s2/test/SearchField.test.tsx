@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {Autocomplete} from 'react-aria-components';
 import {Menu, MenuItem, SearchField} from '../src';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {UNSTABLE_Autocomplete} from 'react-aria-components';
 import userEvent from '@testing-library/user-event';
 
 describe('SearchField', () => {
@@ -24,14 +24,14 @@ describe('SearchField', () => {
 
   it('should not apply the focus visible styles on the group when typing in the Autocomplete wrapped SearchField', async () => {
     let {getByRole} = render(
-      <UNSTABLE_Autocomplete>
+      <Autocomplete>
         <SearchField autoFocus label="Search" />
         <Menu aria-label="test menu">
           <MenuItem>Foo</MenuItem>
           <MenuItem>Bar</MenuItem>
           <MenuItem>Baz</MenuItem>
         </Menu>
-      </UNSTABLE_Autocomplete>
+      </Autocomplete>
     );
 
     let input = getByRole('searchbox');

@@ -16,7 +16,6 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
 import {CRUDExample} from './CRUDExample';
@@ -28,12 +27,13 @@ import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {HidingColumnsAllowsResizing} from './HidingColumnsAllowsResizing';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import {Key, LoadingState} from '@react-types/shared';
+import {Key, LoadingState, SortDescriptor} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
+import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {useCallback, useState} from 'react';
+import React, {JSX, useCallback, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
@@ -123,9 +123,9 @@ export default {
       options: ['all', 'selection']
     }
   }
-} as ComponentMeta<typeof TableView>;
+} as Meta<typeof TableView>;
 
-export type TableStory = ComponentStoryObj<typeof TableView>;
+export type TableStory = StoryObj<Omit<typeof TableView, 'children'>>;
 
 
 // Known accessibility issue that will be caught by aXe: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
@@ -163,7 +163,7 @@ export let columns = [
   {name: 'Foo', key: 'foo'},
   {name: 'Bar', key: 'bar'},
   {name: 'Baz', key: 'baz'}
-];
+] as any[];
 
 let items = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
@@ -423,6 +423,107 @@ export const DynamicNestedColumnsWithResizing: TableStory = {
   name: 'dynamic with nested columns with resizing'
 };
 
+
+let timeTableColumns = [
+  {name: 'Time', key: 'time', isRowHeader: true},
+  {name: 'Monday', key: 'monday'},
+  {name: 'Tuesday', key: 'tuesday'},
+  {name: 'Wednesday', key: 'wednesday'},
+  {name: 'Thursday', key: 'thursday'},
+  {name: 'Friday', key: 'friday'}
+];
+
+
+let timeTableRows = [
+  {id: 9, time: '09:00 - 10:00', name: 'Break', type: 'break'},
+  {id: 1, time: '08:00 - 09:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {id: 2, time: '09:00 - 10:00', name: 'Break', type: 'break'},
+  {id: 3, time: '10:00 - 11:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {id: 4, time: '11:00 - 12:00', monday: 'Math', tuesday: 'History', wednesday: 'Science', thursday: 'English', friday: 'Art'},
+  {id: 5, time: '12:00 - 13:00', name: 'Break', type: 'break'},
+  {id: 6, time: '13:00 - 14:00', monday: 'History', tuesday: 'Math', wednesday: 'English', thursday: 'Science', friday: 'Art'}
+];
+
+export type TableStoryFn = StoryFn<Omit<typeof TableView, 'children'>>;
+
+export const TableColSpanExample: TableStoryFn = () => {
+  return (
+    <TableView aria-label="Timetable">
+      <TableHeader columns={timeTableColumns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={timeTableRows}>
+        {(item) => (
+          <Row key={item.id}>
+            {item.type === 'break' ? (
+            [
+              <Cell>{item.time}</Cell>,
+              <Cell colSpan={5}>{item.name}</Cell>
+            ]) : ([
+              <Cell>{item.time}</Cell>,
+              <Cell>{item.monday}</Cell>,
+              <Cell>{item.tuesday}</Cell>,
+              <Cell>{item.wednesday}</Cell>,
+              <Cell>{item.thursday}</Cell>,
+              <Cell>{item.friday}</Cell>]
+            )}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+};
+
+export const TableCellColSpanWithVariousSpansExample: TableStoryFn = () => {
+  return (
+    <TableView aria-label="Table with various colspans">
+      <TableHeader>
+        <Column isRowHeader>Col 1</Column>
+        <Column >Col 2</Column>
+        <Column >Col 3</Column>
+        <Column >Col 4</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell colSpan={2}>Span 2</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell colSpan={4}>Span 4</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell colSpan={3}>Span 3</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell colSpan={3}>Span 3</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+};
 export const FocusableCells: TableStory = {
   args: {
     'aria-label': 'TableView with focusable cells',
@@ -531,7 +632,7 @@ export const ManyColumnsAndRows: TableStory = {
   name: 'many columns and rows'
 };
 
-const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}) => {
+const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsResizing: boolean}): JSX.Element => {
   let {allowsResizing, ...otherProps} = props;
   return (
     <TableView {...otherProps}>
@@ -642,7 +743,7 @@ const TableViewFilledCellWidths = (props: SpectrumTableProps<unknown> & {allowsR
   );
 };
 
-export const ShouldFillCellWidth: ComponentStoryObj<typeof TableViewFilledCellWidths> = {
+export const ShouldFillCellWidth: StoryObj<typeof TableViewFilledCellWidths> = {
   args: {
     'aria-label': 'TableView with filled cells',
     width: 500,
@@ -762,7 +863,7 @@ export const CRUD: TableStory = {
   name: 'CRUD'
 };
 
-function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
+function DeletableRowsTable(props: Omit<SpectrumTableProps<unknown>, 'children'>) {
   let list = useListData({
     initialItems: [
       {id: 1, firstName: 'Sam', lastName: 'Smith', birthday: 'May 3'},
@@ -906,10 +1007,10 @@ function renderEmptyState() {
   );
 }
 
-export function EmptyStateTable(props) {
+export let EmptyStateTable = (props: Omit<SpectrumTableProps<unknown>, 'children'> & {items: any[], columns: any[], allowsSorting: boolean}): JSX.Element => {
   let {items, columns, allowsSorting, ...otherProps} = props;
   let [show, setShow] = useState(false);
-  let [sortDescriptor, setSortDescriptor] = useState({});
+  let [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>();
   return (
     <Flex direction="column">
       <ActionButton width="100px" onPress={() => setShow(show => !show)}>Toggle items</ActionButton>
@@ -929,9 +1030,9 @@ export function EmptyStateTable(props) {
       </TableView>
     </Flex>
   );
-}
+};
 
-export const EmptyStateStory: TableStory = {
+export const EmptyStateStory: StoryObj<typeof EmptyStateTable> = {
   render: (args) => <EmptyStateTable {...args} />,
   name: 'renderEmptyState'
 };
@@ -1152,6 +1253,7 @@ function useMountEffect(fn: () => void, deps: Array<unknown>): void {
     } else {
       mounted.current = true;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 
@@ -1386,14 +1488,13 @@ export const AsyncLoadingClientFiltering: TableStory = {
   name: 'async client side filter loading'
 };
 
+interface StarWarsItem {
+  name: string,
+  height: string,
+  mass: string
+}
 
 function AsyncServerFilterTable(props) {
-  interface Item {
-    name: string,
-    height: string,
-    mass: string
-  }
-
   let columns = [
     {
       name: 'Name',
@@ -1410,7 +1511,7 @@ function AsyncServerFilterTable(props) {
     }
   ];
 
-  let list = useAsyncList<Item>({
+  let list = useAsyncList<StarWarsItem>({
     getKey: (item) => item.name,
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -1531,12 +1632,12 @@ function TableWithBreadcrumbs(props) {
     {key: 'd', name: 'File D', value: '10 MB', parent: 'a'}
   ];
 
-  const [loadingState, setLoadingState] = useState<LoadingState>('idle' as 'idle');
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle' as const);
   const [selection, setSelection] = useState<'all' | Iterable<Key>>(new Set([]));
   const [items, setItems] = useState(() => fs.filter(item => !item.parent));
   const changeFolder = (folder) => {
     setItems([]);
-    setLoadingState('loading' as 'loading');
+    setLoadingState('loading' as const);
 
     // mimic loading behavior
     setTimeout(() => {
@@ -2019,7 +2120,7 @@ export const TypeaheadWithDialog: TableStory = {
   )
 };
 
-export const Links = (args) => {
+export const Links: TableStoryFn = (args) => {
   return (
     <TableView {...args} aria-label="Bookmarks table" onSelectionChange={action('onSelectionChange')}>
       <TableHeader>
@@ -2053,7 +2154,7 @@ export const Links = (args) => {
   );
 };
 
-export const ColumnHeaderFocusRingTable = {
+export const ColumnHeaderFocusRingTable: StoryObj<typeof LoadingTable> = {
   render: () => <LoadingTable />,
   name: 'column header focus after loading',
   parameters: {
@@ -2068,14 +2169,14 @@ const allItems = [
   {key: 'julia', name: 'Julia', height: 70, birthday: 'February 10'}
 ];
 
-function LoadingTable() {
+function LoadingTable(): JSX.Element {
   const [items, setItems] = useState(allItems);
   const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const onSortChange = () => {
     setItems([]);
     setLoadingState('loading');
     setTimeout(() => {
-      setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
+      setItems(items.length > 1 ? items.slice(0, 1) : []);
       setLoadingState('idle');
     }, 1000);
   };
@@ -2097,5 +2198,68 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+function AsyncLoadOverflowWrapRepro() {
+  let columns = [
+    {name: 'Name', key: 'name'},
+    {name: 'Height', key: 'height'},
+    {name: 'Mass', key: 'mass'},
+    {name: 'Birth Year', key: 'birth_year'}
+  ];
+
+  let list = useAsyncList<StarWarsItem>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      let res = await fetch(
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <TableView
+      aria-label="example async loading table"
+      height="size-3000"
+      overflowMode="wrap">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column align={column.key !== 'name' ? 'end' : 'start'}>
+            {column.name}
+          </Column>
+        )}
+      </TableHeader>
+      <TableBody
+        items={list.items}
+        loadingState={list.loadingState}
+        onLoadMore={list.loadMore}>
+        {(item) => (
+          <Row key={item.name}>
+            {(key) => (
+              <Cell>{`${item[key]}++++${item[key]}++++${item[key]}++++`}</Cell>
+            )}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export const AsyncLoadOverflowWrapReproStory: TableStory = {
+  render: (args) => <AsyncLoadOverflowWrapRepro {...args} />,
+  name: 'async, overflow wrap scroll jumping reproduction',
+  parameters: {description: {data: `
+    Rapidly scrolling down through this table should not cause the scroll position to jump to the top.
+  `}}
+};
 
 export {Performance} from './Performance';

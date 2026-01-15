@@ -12,12 +12,27 @@
 
 import {AriaMeterProps, useMeter} from 'react-aria';
 import {clamp} from '@react-stately/utils';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {forwardRefType} from '@react-types/shared';
+import {
+  ClassNameOrFunction,
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot
+} from './utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps>, SlotProps {}
+export interface MeterProps extends Omit<AriaMeterProps, 'label'>, RenderProps<MeterRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-Meter'
+   */
+  className?: ClassNameOrFunction<MeterRenderProps>
+}
 
 export interface MeterRenderProps {
   /**
@@ -65,8 +80,10 @@ export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter
     }
   });
 
+  let DOMProps = filterDOMProps(props, {global: true});
+
   return (
-    <div {...meterProps} {...renderProps} ref={ref} slot={props.slot || undefined}>
+    <div {...mergeProps(DOMProps, renderProps, meterProps)} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

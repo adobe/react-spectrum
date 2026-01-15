@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime} from './types';
+import {AnyCalendarDate, AnyTime, Calendar} from './types';
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 import {weekStartData} from './weekStartData';
@@ -42,21 +42,22 @@ export function isSameYear(a: DateValue, b: DateValue): boolean {
 
 /** Returns whether the given dates occur on the same day, and are of the same calendar system. */
 export function isEqualDay(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
+  return isEqualCalendar(a.calendar, b.calendar) && isSameDay(a, b);
 }
 
 /** Returns whether the given dates occur in the same month, and are of the same calendar system. */
 export function isEqualMonth(a: DateValue, b: DateValue): boolean {
-  a = startOfMonth(a);
-  b = startOfMonth(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
+  return isEqualCalendar(a.calendar, b.calendar) && isSameMonth(a, b);
 }
 
 /** Returns whether the given dates occur in the same year, and are of the same calendar system. */
 export function isEqualYear(a: DateValue, b: DateValue): boolean {
-  a = startOfYear(a);
-  b = startOfYear(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year;
+  return isEqualCalendar(a.calendar, b.calendar) && isSameYear(a, b);
+}
+
+/** Returns whether two calendars are the same. */
+export function isEqualCalendar(a: Calendar, b: Calendar): boolean {
+  return a.isEqual?.(b) ?? b.isEqual?.(a) ?? a.identifier === b.identifier;
 }
 
 /** Returns whether the date is today in the given time zone. */
@@ -132,12 +133,21 @@ let localTimeZone: string | null = null;
 
 /** Returns the time zone identifier for the current user. */
 export function getLocalTimeZone(): string {
-  // TODO: invalidate this somehow?
   if (localTimeZone == null) {
     localTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
   return localTimeZone!;
+}
+
+/** Sets the time zone identifier for the current user. */
+export function setLocalTimeZone(timeZone: string): void {
+  localTimeZone = timeZone;
+}
+
+/** Resets the time zone identifier for the current user. */
+export function resetLocalTimeZone(): void {
+  localTimeZone = null;
 }
 
 /** Returns the first date of the month for the given date. */
@@ -177,7 +187,7 @@ export function endOfYear(date: DateValue): DateValue {
   return endOfMonth(date.add({months: date.calendar.getMonthsInYear(date) - date.month}));
 }
 
-export function getMinimumMonthInYear(date: AnyCalendarDate) {
+export function getMinimumMonthInYear(date: AnyCalendarDate): number {
   if (date.calendar.getMinimumMonthInYear) {
     return date.calendar.getMinimumMonthInYear(date);
   }
@@ -185,7 +195,7 @@ export function getMinimumMonthInYear(date: AnyCalendarDate) {
   return 1;
 }
 
-export function getMinimumDayInMonth(date: AnyCalendarDate) {
+export function getMinimumDayInMonth(date: AnyCalendarDate): number {
   if (date.calendar.getMinimumDayInMonth) {
     return date.calendar.getMinimumDayInMonth(date);
   }
@@ -213,6 +223,7 @@ export function endOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayO
 }
 
 const cachedRegions = new Map<string, string>();
+const cachedWeekInfo = new Map<string, {firstDay: number}>();
 
 function getRegion(locale: string): string | undefined {
   // If the Intl.Locale API is available, use it to get the region for the locale.
@@ -241,8 +252,49 @@ function getRegion(locale: string): string | undefined {
 function getWeekStart(locale: string): number {
   // TODO: use Intl.Locale for this once browsers support the weekInfo property
   // https://github.com/tc39/proposal-intl-locale-info
-  let region = getRegion(locale);
-  return region ? weekStartData[region] || 0 : 0;
+  let weekInfo = cachedWeekInfo.get(locale);
+  if (!weekInfo) {
+    if (Intl.Locale) {
+      // @ts-ignore
+      let localeInst = new Intl.Locale(locale);
+      if ('getWeekInfo' in localeInst) {
+        // @ts-expect-error
+        weekInfo = localeInst.getWeekInfo();
+        if (weekInfo) {
+          cachedWeekInfo.set(locale, weekInfo);
+          return weekInfo.firstDay;
+        }
+      }
+    }
+    let region = getRegion(locale);
+    if (locale.includes('-fw-')) {
+      // pull the value for the attribute fw from strings such as en-US-u-ca-iso8601-fw-tue or en-US-u-ca-iso8601-fw-mon-nu-thai
+      // where the fw attribute could be followed by another unicode locale extension or not
+      let day = locale.split('-fw-')[1].split('-')[0];
+      if (day === 'mon') {
+        weekInfo = {firstDay: 1};
+      } else if (day === 'tue') {
+        weekInfo = {firstDay: 2};
+      } else if (day === 'wed') {
+        weekInfo = {firstDay: 3};
+      } else if (day === 'thu') {
+        weekInfo = {firstDay: 4};
+      } else if (day === 'fri') {
+        weekInfo = {firstDay: 5};
+      } else if (day === 'sat') {
+        weekInfo = {firstDay: 6};
+      } else {
+        weekInfo = {firstDay: 0};
+      }
+    } else if (locale.includes('-ca-iso8601')) {
+      weekInfo = {firstDay: 1};
+    } else {
+      weekInfo = {firstDay: region ? weekStartData[region] || 0 : 0};
+    }
+    cachedWeekInfo.set(locale, weekInfo);
+  }
+
+  return weekInfo.firstDay;
 }
 
 /** Returns the number of weeks in the given month and locale. */

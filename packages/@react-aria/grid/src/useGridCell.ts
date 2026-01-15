@@ -11,12 +11,12 @@
  */
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {focusSafely, isFocusVisible} from '@react-aria/interactions';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -30,6 +30,8 @@ export interface GridCellProps {
   focusMode?: 'child' | 'cell',
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number,
   /**
    * Handler that is called when a user performs an action on the cell.
    * Please use onCellAction at the collection level instead.
@@ -251,6 +253,9 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture,
+    'aria-colspan': node.colSpan,
+    'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
+    colSpan: isVirtualized ? undefined : node.colSpan,
     onFocus
   });
 

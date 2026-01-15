@@ -11,23 +11,17 @@
  */
 
 import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps} from 'react-aria-components';
-import {PressResponder} from '@react-aria/interactions';
+import {ReactNode} from 'react';
 
-export interface DialogTriggerProps extends AriaDialogTriggerProps {}
+export type DialogTriggerProps = Omit<AriaDialogTriggerProps, 'isTriggerUpWhenOpen'>;
 
 /**
  * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
  * open state with the trigger's press state. Additionally, it allows you to customize the type and
  * positioning of the Dialog.
  */
-export function DialogTrigger(props: DialogTriggerProps) {
+export function DialogTrigger(props: DialogTriggerProps): ReactNode {
   return (
-    <AriaDialogTrigger {...props}>
-      {/* RAC sets isPressed via PressResponder when the dialog is open.
-          We don't want press scaling to appear to get "stuck", so override this. */}
-      <PressResponder isPressed={false}>
-        {props.children}
-      </PressResponder>
-    </AriaDialogTrigger>
+    <AriaDialogTrigger {...props} isTriggerUpWhenOpen />
   );
 }

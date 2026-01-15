@@ -12,10 +12,10 @@
 
 import {BlendModes, DynamicExample, Example, KeyboardShortcuts, PublishAndExport} from '../stories/Menu.stories';
 import {Menu} from '../src';
-import type {Meta} from '@storybook/react';
-import {userEvent, within} from '@storybook/testing-library';
+import type {Meta, StoryObj} from '@storybook/react';
+import {userEvent, within} from '@storybook/test';
 
-const meta: Meta<typeof Menu> = {
+const meta: Meta<typeof Menu<any>> = {
   component: Menu,
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
@@ -25,8 +25,9 @@ const meta: Meta<typeof Menu> = {
 };
 
 export default meta;
+type Story = StoryObj<typeof Menu<any>>;
 
-export const Default = {
+export const Default: Story = {
   ...Example,
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -36,22 +37,22 @@ export const Default = {
   }
 };
 
-export const WithKeyboardShortcuts = {
+export const WithKeyboardShortcuts: Story = {
   ...KeyboardShortcuts,
   play: async (context) => await Default.play!(context)
 };
 
-export const WithIcons = {
+export const WithIcons: Story = {
   ...PublishAndExport,
   play: async (context) => await Default.play!(context)
 };
 
-export const WithImages = {
+export const WithImages: Story = {
   ...BlendModes,
   play: async (context) => await Default.play!(context)
 };
 
-export const Dynamic = {
+export const Dynamic: Story = {
   ...DynamicExample,
   play: async (context) => await Default.play!(context)
 };
