@@ -37,6 +37,7 @@ if (typeof FinalizationRegistry !== 'undefined') {
 /**
  * If a default is not provided, generate an id.
  * @param defaultId - Default component id.
+ * @param cleanupCallback - A callback for when the id is no longer in use. Useful because id's don't always go out of use due to unmounting as it may have originated from a parent component.
  */
 export function useId(defaultId?: string, cleanupCallback?: (id: string) => void): string {
   let [value, setValue] = useState(defaultId);
