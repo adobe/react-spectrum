@@ -606,7 +606,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (getInteractionModality() === 'keyboard' && nodeContains(headerRef.current, document.activeElement) && bodyRef.current) {
+    if (getInteractionModality() === 'keyboard' && headerRef.current && nodeContains(headerRef.current, document.activeElement) && bodyRef.current) {
       scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
       scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;

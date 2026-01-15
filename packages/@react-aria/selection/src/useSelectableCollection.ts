@@ -133,7 +133,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!nodeContains(ref.current, e.target as Element)) {
+    if (!ref.current || !nodeContains(ref.current, e.target as Element)) {
       return;
     }
 

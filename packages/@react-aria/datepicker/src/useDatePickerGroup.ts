@@ -12,7 +12,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, e.target)) {
+    if (!nodeContains(e.currentTarget, e.target as Element)) {
       return;
     }
 
