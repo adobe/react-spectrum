@@ -52,7 +52,7 @@ export {chain, mergeProps, useId, useObjectRef, RouterProvider} from '@react-ari
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
-export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ToggleButtonAria, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria} from '@react-aria/button';
+export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, AriaToggleButtonOptions, ToggleButtonAria, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria, AriaToggleButtonGroupItemProps, AriaToggleButtonGroupItemOptions} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
 export type {AriaColorAreaOptions, AriaColorAreaProps, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSliderProps, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
@@ -68,7 +68,7 @@ export type {AriaFieldProps, FieldAria, LabelAria, LabelAriaProps} from '@react-
 export type {AriaLandmarkRole, AriaLandmarkProps, LandmarkAria, LandmarkController} from '@react-aria/landmark';
 export type {AriaLinkOptions, LinkAria} from '@react-aria/link';
 export type {AriaListBoxOptions, AriaListBoxProps, AriaListBoxSectionProps, AriaOptionProps, ListBoxAria, ListBoxSectionAria, OptionAria} from '@react-aria/listbox';
-export type {AriaGridListOptions, AriaGridListProps, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/gridlist';
+export type {AriaGridListOptions, GridListProps, AriaGridListProps, GridListAria, AriaGridListItemOptions, GridListItemAria, AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria} from '@react-aria/gridlist';
 export type {AriaMenuProps, AriaMenuItemProps, AriaMenuOptions, AriaMenuSectionProps, AriaMenuTriggerProps, MenuAria, MenuItemAria, MenuSectionAria, MenuTriggerAria, SubmenuTriggerAria, AriaSubmenuTriggerProps} from '@react-aria/menu';
 export type {AriaMeterProps, MeterAria} from '@react-aria/meter';
 export type {AriaNumberFieldProps, NumberFieldAria} from '@react-aria/numberfield';

@@ -19,10 +19,10 @@ import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export type SegmentType = 'era' | 'year' | 'month' | 'day' |  'hour' | 'minute' | 'second' | 'dayPeriod' | 'literal' | 'timeZoneName';
+export type DateSegmentType = 'era' | 'year' | 'month' | 'day' |  'hour' | 'minute' | 'second' | 'dayPeriod' | 'literal' | 'timeZoneName';
 export interface DateSegment {
   /** The type of segment. */
-  type: SegmentType,
+  type: DateSegmentType,
   /** The formatted text for the segment. */
   text: string,
   /** The numeric value for the segment, if applicable. */
@@ -72,28 +72,28 @@ export interface DateFieldState extends FormValidationState {
   /** Whether the field is required. */
   isRequired: boolean,
   /** Increments the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
-  increment(type: SegmentType): void,
+  increment(type: DateSegmentType): void,
   /** Decrements the given segment. Upon reaching the minimum or maximum value, the value wraps around to the opposite limit. */
-  decrement(type: SegmentType): void,
+  decrement(type: DateSegmentType): void,
   /**
    * Increments the given segment by a larger amount, rounding it to the nearest increment.
    * The amount to increment by depends on the field, for example 15 minutes, 7 days, and 5 years.
    * Upon reaching the minimum or maximum value, the value wraps around to the opposite limit.
    */
-  incrementPage(type: SegmentType): void,
+  incrementPage(type: DateSegmentType): void,
   /**
    * Decrements the given segment by a larger amount, rounding it to the nearest increment.
    * The amount to decrement by depends on the field, for example 15 minutes, 7 days, and 5 years.
    * Upon reaching the minimum or maximum value, the value wraps around to the opposite limit.
    */
-  decrementPage(type: SegmentType): void,
+  decrementPage(type: DateSegmentType): void,
   /** Sets the value of the given segment. */
   setSegment(type: 'era', value: string): void,
-  setSegment(type: SegmentType, value: number): void,
+  setSegment(type: DateSegmentType, value: number): void,
   /** Updates the remaining unfilled segments with the placeholder value. */
   confirmPlaceholder(): void,
   /** Clears the value of the given segment, reverting it to the placeholder. */
-  clearSegment(type: SegmentType): void,
+  clearSegment(type: DateSegmentType): void,
   /** Formats the current date value using the given options. */
   formatValue(fieldOptions: FieldOptions): string,
   /** Gets a formatter based on state's props. */

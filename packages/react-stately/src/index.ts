@@ -14,7 +14,7 @@ export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalen
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
 export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
-export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
+export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, DateSegmentType, DateSegmentType as SegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DisclosureState, DisclosureProps, DisclosureGroupState, DisclosureGroupProps} from '@react-stately/disclosure';
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';

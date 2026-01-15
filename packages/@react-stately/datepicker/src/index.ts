@@ -15,7 +15,7 @@ export {useDateFieldState} from './useDateFieldState';
 export {useDateRangePickerState} from './useDateRangePickerState';
 export {useTimeFieldState} from './useTimeFieldState';
 
-export type {DateFieldStateOptions, DateFieldState, DateSegment, SegmentType} from './useDateFieldState';
+export type {DateFieldStateOptions, DateFieldState, DateSegment, DateSegmentType, DateSegmentType as SegmentType} from './useDateFieldState';
 export type {DatePickerStateOptions, DatePickerState} from './useDatePickerState';
 export type {DateRangePickerStateOptions, DateRangePickerState} from './useDateRangePickerState';
 export type {TimeFieldStateOptions, TimeFieldState} from './useTimeFieldState';
