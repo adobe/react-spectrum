@@ -13,13 +13,12 @@
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {getLastItem} from '@react-stately/collections';
 import {getRowLabelledBy} from './utils';
-import type {GridNode} from '@react-types/grid';
+import type {GridNode} from '@react-stately/grid';
 import {GridRowAria, GridRowProps, useGridRow} from '@react-aria/grid';
 import {HTMLAttributes} from 'react';
+import {ITableCollection, TableState, TreeGridState} from '@react-stately/table';
 import {mergeProps, useSyntheticLinkProps} from '@react-aria/utils';
-import {TableCollection} from '@react-types/table';
 import {tableNestedRows} from '@react-stately/flags';
-import {TableState, TreeGridState} from '@react-stately/table';
 import {useLocale} from '@react-aria/i18n';
 
 const EXPANSION_KEYS = {
@@ -40,7 +39,7 @@ const EXPANSION_KEYS = {
  */
 export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<FocusableElement | null>): GridRowAria {
   let {node, isVirtualized} = props;
-  let {rowProps, ...states} = useGridRow<T, TableCollection<T>, TableState<T>>(props, state, ref);
+  let {rowProps, ...states} = useGridRow<T, ITableCollection<T>, TableState<T>>(props, state, ref);
   let {direction} = useLocale();
 
   if (isVirtualized && !(tableNestedRows() && 'expandedKeys' in state)) {

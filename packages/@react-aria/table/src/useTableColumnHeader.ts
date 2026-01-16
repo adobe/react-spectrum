@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getColumnHeaderId} from './utils';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';

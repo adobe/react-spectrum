@@ -14,7 +14,7 @@
 
 import {theme as defaultTheme} from '@react-spectrum/theme-default';
 import express from '@adobe/spectrum-css-temp/vars/express.css';
-import {Theme} from '@react-types/provider';
+import {Theme} from '@react-spectrum/provider';
 
 export let theme: Theme = {
   ...defaultTheme,

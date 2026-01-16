@@ -10,19 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableDOMProps, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions} from '@react-aria/listbox';
-import {AriaSelectProps, SelectionMode} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {FocusEvent, useMemo} from 'react';
 import {HiddenSelectProps} from './HiddenSelect';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
-import {SelectState} from '@react-stately/select';
+import {SelectionMode, SelectProps, SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useCollator} from '@react-aria/i18n';
 import {useField} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
+
+export interface AriaSelectProps<T, M extends SelectionMode = 'single'> extends SelectProps<T, M>, DOMProps, AriaLabelingProps, FocusableDOMProps {
+  /**
+   * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
+   */
+  autoComplete?: string,
+  /**
+   * The name of the input, used when submitting an HTML form.
+   */
+  name?: string,
+  /**
+   * The `<form>` element to associate the input with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#form).
+   */
+  form?: string
+}
 
 export interface AriaSelectOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaSelectProps<T, M>, 'children'> {
   /**

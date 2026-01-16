@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
+import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-aria/overlays';
 import {clamp, isWebKit} from '@react-aria/utils';
 
 interface Position {

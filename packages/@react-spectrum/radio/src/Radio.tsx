@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaRadioProps, useRadio} from '@react-aria/radio';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
-import {SpectrumRadioProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useHover} from '@react-aria/interactions';
-import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';
+
+export interface SpectrumRadioProps extends Omit<AriaRadioProps, 'onClick'>, StyleProps {}
 
 /**
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.

@@ -51,8 +51,6 @@
     "@react-spectrum/textfield": "^3.14.3",
     "@react-spectrum/utils": "^3.12.10",
     "@react-stately/numberfield": "^3.10.3",
-    "@react-types/button": "^3.14.1",
-    "@react-types/numberfield": "^3.8.16",
     "@react-types/shared": "^3.32.1",
     "@spectrum-icons/ui": "^3.6.21",
     "@spectrum-icons/workflow": "^4.2.26",

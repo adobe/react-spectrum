@@ -18,11 +18,21 @@ import {
   InputHTMLAttributes,
   RefObject
 } from 'react';
-import {AriaToggleButtonProps} from '@react-types/button';
-import {ButtonAria, useButton} from './useButton';
+import {AriaBaseButtonProps, AriaButtonElementTypeProps, ButtonAria, ButtonProps, useButton} from './useButton';
 import {chain, mergeProps} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
+
+export interface ToggleButtonProps extends ButtonProps {
+  /** Whether the element should be selected (controlled). */
+  isSelected?: boolean,
+  /** Whether the element should be selected (uncontrolled). */
+  defaultSelected?: boolean,
+  /** Handler that is called when the element's selection state changes. */
+  onChange?: (isSelected: boolean) => void
+}
+
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, Omit<AriaBaseButtonProps, 'aria-current' | 'form' | 'formAction' | 'formEncType' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'name' | 'value' | 'type'>, AriaButtonElementTypeProps<T> {}
 
 export interface AriaToggleButtonOptions<E extends ElementType> extends Omit<AriaToggleButtonProps<E>, 'children'> {}
 

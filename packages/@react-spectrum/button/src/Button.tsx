@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps, useButton} from '@react-aria/button';
 import {
   classNames,
   SlotProvider,
@@ -18,20 +19,38 @@ import {
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAppleDevice, isFirefox, mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
-import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
 import {useFocus, useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
+
+/** @deprecated */
+type LegacyButtonVariant = 'cta' | 'overBackground';
+export interface SpectrumButtonProps<T extends ElementType = 'button'> extends Omit<AriaButtonProps<T>, 'onClick'>, StyleProps {
+  /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
+  variant: 'accent' | 'primary' | 'secondary' | 'negative' | LegacyButtonVariant,
+  /** The background style of the button. */
+  style?: 'fill' | 'outline',
+  /** The static color style to apply. Useful when the button appears over a color background. */
+  staticColor?: 'white' | 'black',
+  /**
+   * Whether to disable events immediately and display a loading spinner after a 1 second delay.
+   */
+  isPending?: boolean,
+  /**
+   * Whether the button should be displayed with a quiet style.
+   * @deprecated
+   */
+  isQuiet?: boolean
+}
 
 function disablePendingProps(props) {
   // Don't allow interaction while isPending is true

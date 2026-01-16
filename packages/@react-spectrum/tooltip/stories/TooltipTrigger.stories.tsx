@@ -19,8 +19,7 @@ import {Link} from '@react-spectrum/link';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
 import SaveTo from '@spectrum-icons/workflow/SaveTo';
-import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
-import {Tooltip, TooltipTrigger} from '../src';
+import {SpectrumTooltipTriggerProps, Tooltip, TooltipTrigger} from '../src';
 
 interface TooltipTooltipTriggerProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',

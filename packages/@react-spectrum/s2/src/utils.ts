@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useMediaQuery} from '@react-spectrum/utils';
+import {useMediaQuery} from './useMediaQuery';
 
 export type Scale = 'large' | 'medium';
 

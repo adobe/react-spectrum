@@ -16,4 +16,7 @@ export {FieldButton} from './FieldButton';
 export {LogicButton} from './LogicButton';
 export {ClearButton} from './ClearButton';
 export {ToggleButton} from './ToggleButton';
-export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButtonProps, SpectrumToggleButtonProps} from '@react-types/button';
+export type {SpectrumActionButtonProps} from './ActionButton';
+export type {SpectrumButtonProps} from './Button';
+export type {SpectrumLogicButtonProps} from './LogicButton';
+export type {SpectrumToggleButtonProps} from './ToggleButton';

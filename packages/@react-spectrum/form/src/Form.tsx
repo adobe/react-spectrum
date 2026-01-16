@@ -10,14 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
+import {Alignment, DOMProps, DOMRef, FormProps, LabelPosition, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormValidationContext} from '@react-stately/form';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
-import React, {useContext} from 'react';
-import {SpectrumFormProps} from '@react-types/form';
+import React, {ReactElement, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+
+export interface SpectrumFormProps extends FormProps, DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
+  /** The contents of the Form. */
+  children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
+  /** Whether the Form elements are displayed with their quiet style. */
+  isQuiet?: boolean,
+  /** Whether the Form elements are rendered with their emphasized style. */
+  isEmphasized?: boolean,
+  /** Whether the Form elements are disabled. */
+  isDisabled?: boolean,
+  /** Whether user input is required on each of the Form elements before Form submission. */
+  isRequired?: boolean,
+  /** Whether the Form elements can be selected but not changed by the user. */
+  isReadOnly?: boolean,
+  /**
+   * Whether the Form elements should display their "valid" or "invalid" visual styling.
+   * @default 'valid'
+   */
+  validationState?: ValidationState,
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when a field value is missing or invalid, or mark fields as required
+   * or invalid via ARIA.
+   * @default 'aria'
+   */
+  validationBehavior?: 'aria' | 'native'
+}
 
 interface FormContextValue extends SpectrumLabelableProps {
   validationBehavior?: 'aria' | 'native'

@@ -13,7 +13,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {Card, CardView, GridLayout} from '../';
+import {Card, CardView, GridLayout, SpectrumCardViewProps} from '../';
 import {Content, View} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
@@ -26,7 +26,6 @@ import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useMemo, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
-import {SpectrumCardViewProps} from '@react-types/card';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
 import {useCollator} from '@react-aria/i18n';

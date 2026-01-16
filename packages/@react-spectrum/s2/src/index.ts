@@ -159,7 +159,7 @@ export type {SwitchProps} from './Switch';
 export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellProps, ColumnProps} from './TableView';
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
-export type {TextFieldProps, TextAreaProps} from './TextField';
+export type {TextFieldProps, TextAreaProps, TextFieldRef} from './TextField';
 export type {TimeFieldProps} from './TimeField';
 export type {ToastOptions, ToastContainerProps} from './Toast';
 export type {ToggleButtonProps} from './ToggleButton';

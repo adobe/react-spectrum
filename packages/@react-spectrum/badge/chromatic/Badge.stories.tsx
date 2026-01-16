@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Badge} from '../';
+import {Badge, SpectrumBadgeProps} from '../';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import {Flex} from '@react-spectrum/layout';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {SpectrumBadgeProps} from '@react-types/badge';
 import {Text} from '@react-spectrum/text';
 
 let variants: SpectrumBadgeProps['variant'][] =

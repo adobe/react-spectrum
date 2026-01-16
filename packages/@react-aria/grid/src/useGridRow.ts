@@ -12,9 +12,8 @@
 
 import {chain} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {GridCollection, GridNode} from '@react-types/grid';
+import {IGridCollection as GridCollection, GridNode, GridState} from '@react-stately/grid';
 import {gridMap} from './utils';
-import {GridState} from '@react-stately/grid';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface GridRowProps<T> {

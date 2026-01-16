@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react-aria/gridlist';
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore

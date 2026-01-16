@@ -15,8 +15,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {Slider} from '../';
-import {SpectrumSliderProps} from '@react-types/slider';
+import {Slider, SpectrumSliderProps} from '../';
 
 const meta: Meta<SpectrumSliderProps> = {
   title: 'Slider',

@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:@react-spectrum/table';
 import dndDocs from 'docs:@react-spectrum/dnd';
 import tableUtil from 'docs:@react-aria/test-utils/src/table.ts';
-import tableTypes from 'docs:@react-types/table/src/index.d.ts';
+import tableTypes from 'docs:@react-stately/table';
 import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge, ClassAPI} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
@@ -1644,9 +1644,9 @@ function CustomDragPreviewExample() {
 
 <PropTable component={{
   props: {
-    properties: Object.fromEntries(Object.entries(tableTypes.exports.SpectrumColumnProps.properties))
+    properties: Object.fromEntries(Object.entries(docs.exports.SpectrumColumnProps.properties))
   }
-}} links={tableTypes.links} style={{marginBottom: '40px'}} />
+}} links={docs.links} style={{marginBottom: '40px'}} />
 
 ### TableBody props
 

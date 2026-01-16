@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
+import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel, SpectrumColorAreaProps} from '../';
 import {Flex} from '@adobe/react-spectrum';
 import {Meta, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {JSX, useState} from 'react';
-import {SpectrumColorAreaProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',

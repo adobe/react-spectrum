@@ -13,8 +13,7 @@
 import {Flex} from '@react-spectrum/layout';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
-import {SpectrumStatusLightProps} from '@react-types/statuslight';
-import {StatusLight} from '../';
+import {SpectrumStatusLightProps, StatusLight} from '../';
 import {View} from '@react-spectrum/view';
 
 let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'] as SpectrumStatusLightProps['variant'][];

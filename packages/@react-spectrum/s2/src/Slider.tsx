@@ -28,7 +28,7 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

@@ -20,12 +20,11 @@ import {
   useLocale
 } from 'react-aria-components';
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {ColorScheme} from '@react-types/provider';
-import {ColorSchemeContext} from './Provider';
+import {ColorScheme, ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMProps, DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay' | keyof GlobalDOMAttributes>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'crossOffset'> {
   /** The content of the tooltip. */

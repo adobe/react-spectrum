@@ -11,12 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel} from '../';
+import {ColorArea, ColorField, ColorSlider, ColorSwatch, ColorWheel, SpectrumColorAreaProps} from '../';
 import {Flex, Grid, useLocale, View} from '@adobe/react-spectrum';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {SpectrumColorAreaProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',

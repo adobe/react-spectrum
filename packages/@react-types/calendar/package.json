@@ -9,13 +9,16 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.10.1",
-    "@react-types/shared": "^3.32.1"
+    "@react-aria/calendar": "^3.9.3",
+    "@react-spectrum/calendar": "^3.7.9",
+    "@react-stately/calendar": "^3.9.1"
   },
   "publishConfig": {
     "access": "public"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+    "@react-spectrum/provider": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   }
 }

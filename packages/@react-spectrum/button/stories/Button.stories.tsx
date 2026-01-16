@@ -13,12 +13,11 @@
 import {action} from '@storybook/addon-actions';
 import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
-import {Button} from '../';
+import {Button, SpectrumButtonProps} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {ElementType, useState} from 'react';
-import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {View} from '@react-spectrum/view';

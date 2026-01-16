@@ -14,11 +14,10 @@ import ariaStyles from './docs-example.css';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {JSX, useCallback, useRef} from 'react';
-import {TableProps} from '@react-types/table';
+import {TableProps, useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useButton} from 'react-aria';
 import {useFocusRing} from '@react-aria/focus';
 import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria/table';
-import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 
 export function Table<T extends object>(props: TableProps<T> & {
   onResizeStart?: (columnKey: string) => void,

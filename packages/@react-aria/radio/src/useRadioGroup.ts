@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps} from '@react-types/radio';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, InputDOMProps, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, getOwnerWindow, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {radioGroupData} from './utils';
-import {RadioGroupState} from '@react-stately/radio';
+import {RadioGroupProps, RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+
+export interface AriaRadioGroupProps extends RadioGroupProps, InputDOMProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface RadioGroupAria extends ValidationResult {
   /** Props for the radio group wrapper element. */

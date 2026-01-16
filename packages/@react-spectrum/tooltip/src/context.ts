@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {PlacementAxis} from '@react-types/overlays';
+import {PlacementAxis} from '@react-aria/overlays';
 import React, {HTMLAttributes} from 'react';
 import {RefObject, StyleProps} from '@react-types/shared';
 import {TooltipTriggerState} from '@react-stately/tooltip';

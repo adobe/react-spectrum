@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, useButton} from '@react-aria/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
@@ -32,12 +32,11 @@ import {mergeProps, useFormReset, useId, useObjectRef} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ForwardedRef, HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {SpectrumComboBoxProps} from '@react-types/combobox';
+import {SpectrumComboBoxProps} from './ComboBox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {Tray} from '@react-spectrum/overlays';
-import {useButton} from '@react-aria/button';
 import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
 import {useField} from '@react-aria/label';

@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ariaHideOutside, AriaPositionProps, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {ariaHideOutside, AriaPositionProps, PlacementAxis, useOverlay, usePreventScroll} from '@react-aria/overlays';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {PlacementAxis} from '@react-types/overlays';
 import {useEffect} from 'react';
 import {useOverlayPosition} from './useOverlayPosition';
 

@@ -11,7 +11,7 @@
  */
 
 import {DateFieldState, useDateFieldState} from '.';
-import {DateValue, MappedTimeValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
+import {DateValue, MappedTimeValue, TimePickerProps, TimeValue} from './types';
 import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
 import {useCallback, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';

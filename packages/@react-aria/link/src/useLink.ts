@@ -10,11 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLinkProps} from '@react-types/link';
-import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, FocusableProps, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter} from '@react-aria/utils';
 import React from 'react';
 import {useFocusable, usePress} from '@react-aria/interactions';
+
+export interface LinkProps extends PressEvents, FocusableProps {}
+
+export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps { }
 
 export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */

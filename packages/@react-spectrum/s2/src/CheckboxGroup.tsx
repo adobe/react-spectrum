@@ -22,7 +22,7 @@ import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type:
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {

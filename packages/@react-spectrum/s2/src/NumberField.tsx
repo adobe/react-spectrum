@@ -25,14 +25,14 @@ import {
 import {baseColor, space, style} from '../style' with {type: 'macro'};
 import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import Dash from '../ui-icons/Dash';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';
-import {TextFieldRef} from '@react-types/textfield';
+import {TextFieldRef} from './TextField';
 import {useButton, useFocusRing, useHover} from 'react-aria';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

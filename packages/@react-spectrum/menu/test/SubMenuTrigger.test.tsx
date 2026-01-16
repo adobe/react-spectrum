@@ -12,9 +12,8 @@
 
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
 import {ComplexRender as Complex, SubmenuDynamicRender as SubmenuDynamic, SubmenuStaticRender as SubmenuStatic, TabBehaviorRender as TabBehaviorStory} from '../stories/Submenu.stories';
-import {Provider} from '@react-spectrum/provider';
+import {Provider, Scale} from '@react-spectrum/provider';
 import React from 'react';
-import type {Scale} from '@react-types/provider';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 

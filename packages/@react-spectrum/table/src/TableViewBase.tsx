@@ -22,14 +22,14 @@ import {
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import {ColumnSize, SpectrumColumnProps, TableCollection} from '@react-types/table';
+import {ColumnSize, ITableCollection as TableCollection, TableState, TreeGridState, useTableColumnResizeState} from '@react-stately/table';
 import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key, RefObject} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
-import {GridNode} from '@react-types/grid';
+import {GridNode} from '@react-stately/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -44,11 +44,11 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Resizer, ResizeStateContext} from './Resizer';
 import {RootDropIndicator} from './RootDropIndicator';
+import {SpectrumColumnProps} from './types';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumTableProps} from './TableViewWrapper';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableState, TreeGridState, useTableColumnResizeState} from '@react-stately/table';
 import {TableViewLayout} from './TableViewLayout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';

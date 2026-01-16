@@ -11,9 +11,28 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
-import {Color, ColorAreaProps, ColorChannel} from '@react-types/color';
+import {Color, ColorChannel, ColorSpace} from './types';
 import {normalizeColor, parseColor} from './Color';
 import {useMemo, useRef, useState} from 'react';
+import {ValueBase} from '@react-types/shared';
+
+export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
+  /**
+   * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
+  /** Color channel for the horizontal axis. */
+  xChannel?: ColorChannel,
+  /** Color channel for the vertical axis. */
+  yChannel?: ColorChannel,
+  /** Whether the ColorArea is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void
+}
 
 export interface ColorAreaState {
   /** The current color value displayed by the color area. */

@@ -10,15 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLinkProps, useLink} from '@react-aria/link';
 import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {ForwardedRef, JSX, MutableRefObject, useRef} from 'react';
-import {SpectrumLinkProps} from '@react-types/link';
+import React, {ForwardedRef, JSX, MutableRefObject, ReactNode, useRef} from 'react';
+import {StyleProps} from '@react-types/shared';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useHover} from '@react-aria/interactions';
-import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumLinkProps extends Omit<AriaLinkProps, 'onClick'>, StyleProps {
+  /** The content to display in the link. */
+  children: ReactNode,
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
+   * @default 'primary'
+   */
+  variant?: 'primary' | 'secondary' | 'overBackground',
+  /** Whether the link should be displayed with a quiet style. */
+  isQuiet?: boolean
+}
 
 let isOldReact = parseInt(React.version, 10) <= 18;
 /**

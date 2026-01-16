@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, useButton} from '@react-aria/button';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useFocusableRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
@@ -39,12 +39,11 @@ import React, {
 } from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
+import {SpectrumSearchAutocompleteProps} from './SearchAutocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {Tray} from '@react-spectrum/overlays';
-import {useButton} from '@react-aria/button';
 import {useDialog} from '@react-aria/dialog';
 import {useField} from '@react-aria/label';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';

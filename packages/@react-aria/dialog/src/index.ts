@@ -10,5 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export {useDialog} from './useDialog';
-export type {AriaDialogProps} from '@react-types/dialog';
-export type {DialogAria} from './useDialog';
+export type {AriaDialogProps, DialogAria} from './useDialog';

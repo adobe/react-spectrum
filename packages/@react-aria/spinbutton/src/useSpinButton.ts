@@ -11,7 +11,7 @@
  */
 
 import {announce, clearAnnouncer} from '@react-aria/live-announcer';
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';

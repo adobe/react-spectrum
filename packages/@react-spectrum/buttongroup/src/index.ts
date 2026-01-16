@@ -11,4 +11,4 @@
  */
 /// <reference types="css-module-types" />
 export {ButtonGroup} from './ButtonGroup';
-export type {SpectrumButtonGroupProps} from '@react-types/buttongroup';
+export type {SpectrumButtonGroupProps} from './ButtonGroup';

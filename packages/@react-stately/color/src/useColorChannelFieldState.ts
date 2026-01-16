@@ -1,4 +1,5 @@
-import {Color, ColorChannel, ColorFieldProps, ColorSpace} from '@react-types/color';
+import {Color, ColorChannel, ColorSpace} from './types';
+import {ColorFieldProps} from './useColorFieldState';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';

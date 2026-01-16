@@ -44,7 +44,6 @@
     "@react-aria/overlays": "^3.31.0",
     "@react-aria/utils": "^3.32.0",
     "@react-spectrum/utils": "^3.12.10",
-    "@react-types/provider": "^3.8.13",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0",
     "clsx": "^2.0.0"

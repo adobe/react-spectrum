@@ -12,5 +12,4 @@
 
 export {useSliderState} from './useSliderState';
 
-export type {SliderStateOptions} from './useSliderState';
-export type {SliderState} from './useSliderState';
+export type {SliderProps, SliderStateOptions, SliderState} from './useSliderState';

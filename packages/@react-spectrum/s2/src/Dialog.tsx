@@ -20,7 +20,7 @@ import {ImageContext} from './Image';
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorFormat} from '@react-types/color';
+import {ColorFormat} from '@react-stately/color';
 import fc from 'fast-check';
 import {getDeltaE00} from 'delta-e';
 import {parseColor} from '../src/Color';

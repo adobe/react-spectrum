@@ -11,12 +11,11 @@
  */
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {Color} from '@react-types/color';
+import {Color, parseColor} from '@react-stately/color';
 import {filterDOMProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {parseColor} from '@react-stately/color';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaColorSwatchProps extends AriaLabelingProps, DOMProps {

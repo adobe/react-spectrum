@@ -10,5 +10,4 @@
  * governing permissions and limitations under the License.
  */
 export {useProgressBar} from './useProgressBar';
-export type {AriaProgressBarProps} from '@react-types/progress';
-export type {ProgressBarAria} from './useProgressBar';
+export type {ProgressBarProps, ProgressBarBaseProps, AriaProgressBarBaseProps, AriaProgressBarProps, ProgressBarAria} from './useProgressBar';

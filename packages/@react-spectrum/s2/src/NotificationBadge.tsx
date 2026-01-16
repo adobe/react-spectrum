@@ -19,7 +19,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef} from 'react';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

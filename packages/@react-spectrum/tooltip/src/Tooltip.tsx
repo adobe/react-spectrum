@@ -11,16 +11,35 @@
  */
 
 import AlertSmall from '@spectrum-icons/ui/AlertSmall';
+import {AriaTooltipProps, useTooltip} from '@react-aria/tooltip';
 import {classNames, createDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import InfoSmall from '@spectrum-icons/ui/InfoSmall';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useImperativeHandle, useRef} from 'react';
-import {SpectrumTooltipProps} from '@react-types/tooltip';
+import React, {ReactNode, useContext, useImperativeHandle, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import SuccessSmall from '@spectrum-icons/ui/SuccessSmall';
 import {TooltipContext} from './context';
-import {useTooltip} from '@react-aria/tooltip';
+
+export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/tooltip/#Semantic-variants) of the Tooltip.
+   */
+  variant?: 'neutral' | 'positive' | 'negative' | 'info',
+
+  /**
+   * The placement of the element with respect to its anchor element.
+   * @default 'top'
+   */
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
+
+  /**
+   * Whether the element is rendered.
+   */
+  showIcon?: boolean,
+
+  children: ReactNode
+}
 
 let iconMap = {
   info: InfoSmall,

@@ -43,7 +43,6 @@
     "@react-aria/utils": "^3.32.0",
     "@react-spectrum/utils": "^3.12.10",
     "@react-types/shared": "^3.32.1",
-    "@react-types/statuslight": "^3.3.21",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

@@ -11,11 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Checkbox, CheckboxGroup} from '../';
+import {Checkbox, CheckboxGroup, SpectrumCheckboxGroupProps} from '../';
 import {Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {useState} from 'react';
-import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
 
 export type CheckboxGroupStory = StoryObj<typeof CheckboxGroup>;
 

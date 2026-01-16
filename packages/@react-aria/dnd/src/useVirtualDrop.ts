@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
 import {DOMAttributes} from 'react';
 import * as DragManager from './DragManager';
 // @ts-ignore

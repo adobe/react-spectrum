@@ -11,11 +11,10 @@
  */
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {AlertDialog, DialogTrigger} from '../';
+import {AlertDialog, DialogTrigger, SpectrumAlertDialogProps} from '../';
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {singleParagraph} from './Dialog.stories';
-import {SpectrumAlertDialogProps} from '@react-types/dialog';
 
 export default {
   title: 'Dialog/Alert'

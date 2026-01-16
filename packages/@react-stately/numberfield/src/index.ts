@@ -13,4 +13,4 @@
 export {useNumberFieldState} from './useNumberFieldState';
 
 export type {NumberFieldStateOptions} from './useNumberFieldState';
-export type {NumberFieldState} from './useNumberFieldState';
+export type {NumberFieldProps, NumberFieldState} from './useNumberFieldState';

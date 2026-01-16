@@ -11,14 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Color, SpectrumColorFieldProps} from '@react-types/color';
-import {ColorField} from '../';
+import {Color, parseColor} from '@react-stately/color';
+import {ColorField, SpectrumColorFieldProps} from '../';
 import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Meta, StoryObj} from '@storybook/react';
-import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {useId} from '@react-aria/utils';
 import {VisuallyHidden} from '@react-aria/visually-hidden';

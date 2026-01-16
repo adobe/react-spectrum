@@ -11,9 +11,8 @@
  */
 
 import {ArgTypes, Meta, StoryObj} from '@storybook/react';
-import {Link} from '../';
+import {Link, SpectrumLinkProps} from '../';
 import React from 'react';
-import {SpectrumLinkProps} from '@react-types/link';
 
 type LinkStory = StoryObj<typeof Link>;
 

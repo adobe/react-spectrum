@@ -14,7 +14,6 @@ import docs from 'docs:@react-spectrum/color';
 import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/color/package.json';
 import statelyDocs from 'docs:@react-stately/color';
-import colorTypes from 'docs:@react-types/color/src/index.d.ts';
 
 ```jsx import
 import {ColorField} from '@react-spectrum/color';
@@ -45,7 +44,7 @@ keywords: [color field, input]
 ## Value
 
 A ColorField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
-Alternatively, a controlled value can be provided using the `value` prop.  The value provided to either of these props should be a color string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object.
+Alternatively, a controlled value can be provided using the `value` prop.  The value provided to either of these props should be a color string or <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Color} /> object.
 
 In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color
 from a hex value, stored in state.

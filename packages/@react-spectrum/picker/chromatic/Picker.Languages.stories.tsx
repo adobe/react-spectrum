@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Item, Picker, Section} from '..';
+import {Item, Picker, Section, SpectrumPickerProps} from '..';
 import {Meta, StoryObj} from '@storybook/react';
 import React, {JSX} from 'react';
-import {SpectrumPickerProps} from '@react-types/select';
 
 export default {
   title: 'Languages/Picker',

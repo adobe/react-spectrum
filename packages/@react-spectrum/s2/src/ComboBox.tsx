@@ -50,7 +50,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
@@ -65,7 +65,7 @@ import {Placement} from 'react-aria';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
-import {TextFieldRef} from '@react-types/textfield';
+import {TextFieldRef} from './TextField';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';

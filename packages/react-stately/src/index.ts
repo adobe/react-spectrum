@@ -27,7 +27,7 @@ export type {SelectProps, SelectState, SelectStateOptions} from '@react-stately/
 export type {SliderState, SliderStateOptions} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
-export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
+export type {TableProps, TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps, ColumnSize, ColumnStaticSize, ColumnDynamicSize, ITableCollection} from '@react-stately/table';
 export type {TabListProps, TabListState} from '@react-stately/tabs';
 export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from '@react-stately/toast';
 export type {ToggleProps, ToggleState, ToggleGroupProps, ToggleGroupState} from '@react-stately/toggle';

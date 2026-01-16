@@ -11,10 +11,18 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {FocusableProps, HelpTextProps, InputBase, LabelableProps, RangeInputBase, TextInputBase, Validation, ValueBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
-import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
+
+export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
+  /**
+   * Formatting options for the value displayed in the number field.
+   * This also affects what characters are allowed to be typed by the user.
+   */
+  formatOptions?: Intl.NumberFormatOptions
+}
 
 export interface NumberFieldState extends FormValidationState {
   /**

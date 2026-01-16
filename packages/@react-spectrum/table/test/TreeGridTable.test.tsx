@@ -30,9 +30,8 @@ import {
   UserSetRowHeaderRender as UserSetRowHeaderTable
 } from '../stories/TreeGridTable.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
-import {Provider} from '@react-spectrum/provider';
+import {Provider, Scale} from '@react-spectrum/provider';
 import React from 'react';
-import {Scale} from '@react-types/provider';
 import {scrollIntoView} from '@react-aria/utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';

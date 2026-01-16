@@ -13,7 +13,7 @@
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
-import {DateValue} from '@react-types/calendar';
+import {DateValue} from '@react-stately/calendar';
 import {RangeValue} from '@react-types/shared';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

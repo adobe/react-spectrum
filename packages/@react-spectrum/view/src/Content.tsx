@@ -11,10 +11,16 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {ContentProps} from '@react-types/view';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactNode} from 'react';
+
+export interface ContentProps extends DOMProps, StyleProps {
+  /**
+   * Content content.
+   */
+  children: ReactNode
+}
 
 /**
  * Content represents the primary content within a Spectrum container.

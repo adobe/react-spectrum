@@ -15,8 +15,8 @@ import {
   getMaxWidth,
   getMinWidth
 } from './TableUtils';
-import {ColumnSize, TableCollection} from '@react-types/table';
-import {GridNode} from '@react-types/grid';
+import {ColumnSize, ITableCollection as TableCollection} from '@react-stately/table';
+import {GridNode} from '@react-stately/grid';
 import {Key} from '@react-types/shared';
 
 export interface TableColumnLayoutOptions<T> {

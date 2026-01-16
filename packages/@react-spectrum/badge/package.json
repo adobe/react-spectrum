@@ -43,7 +43,6 @@
     "@react-aria/utils": "^3.32.0",
     "@react-spectrum/text": "^3.5.23",
     "@react-spectrum/utils": "^3.12.10",
-    "@react-types/badge": "^3.1.21",
     "@react-types/shared": "^3.32.1",
     "@swc/helpers": "^0.5.0"
   },

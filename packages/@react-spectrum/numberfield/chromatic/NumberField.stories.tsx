@@ -18,9 +18,8 @@ import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {mergeProps} from '@react-aria/utils';
 import {Meta, StoryObj} from '@storybook/react';
-import {NumberField} from '../src';
+import {NumberField, SpectrumNumberFieldProps} from '../src';
 import React, {JSX} from 'react';
-import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import stepperStyles from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 
 let states = [

@@ -19,7 +19,7 @@ import {
   startOfYear,
   toCalendarDate
 } from '@internationalized/date';
-import {DateValue} from '@react-types/calendar';
+import {DateValue} from './types';
 
 export function isInvalid(date: DateValue, minValue?: DateValue | null, maxValue?: DateValue | null): boolean {
   return (minValue != null && date.compare(minValue) < 0) ||

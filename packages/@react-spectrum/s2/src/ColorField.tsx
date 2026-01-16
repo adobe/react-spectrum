@@ -17,13 +17,13 @@ import {
   InputProps
 } from 'react-aria-components';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {GlobalDOMAttributes, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
-import {TextFieldRef} from '@react-types/textfield';
+import {TextFieldRef} from './TextField';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {

@@ -8,8 +8,8 @@ import {
   Flex,
   Grid,
   View,
+  ColorScheme,
 } from "@adobe/react-spectrum";
-import { ColorScheme } from "@react-types/provider";
 import { useState } from "react";
 import Moon from "@spectrum-icons/workflow/Moon";
 import Light from "@spectrum-icons/workflow/Light";

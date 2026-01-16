@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
+import {AriaLabelingProps, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {FocusableElement, RefObject} from '@react-types/shared';
-import {RangeCalendarState} from '@react-stately/calendar';
+import {DateValue, RangeCalendarProps, RangeCalendarState} from '@react-stately/calendar';
 import {useEvent} from '@react-aria/utils';
 import {useRef} from 'react';
+
+export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {}
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.

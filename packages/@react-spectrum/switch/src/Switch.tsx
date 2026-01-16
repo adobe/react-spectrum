@@ -10,16 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSwitchProps, useSwitch} from '@react-aria/switch';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
-import {SpectrumSwitchProps} from '@react-types/switch';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
+
+export interface SpectrumSwitchProps extends AriaSwitchProps, StyleProps {
+  /**
+   * This prop sets the emphasized style which provides visual prominence.
+   */
+  isEmphasized?: boolean
+}
 
 /**
  * Switches allow users to turn an individual option on or off.

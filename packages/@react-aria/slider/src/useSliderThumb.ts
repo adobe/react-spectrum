@@ -1,12 +1,35 @@
-import {AriaSliderThumbProps} from '@react-types/slider';
+import {AriaLabelingProps, AriaValidationProps, DOMAttributes, DOMProps, FocusableDOMProps, FocusableProps, InputDOMProps, LabelableProps, Orientation, RefObject, ValidationState} from '@react-types/shared';
 import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
-import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
+
+export interface SliderThumbProps extends FocusableProps, LabelableProps {
+  /**
+   * The orientation of the Slider.
+   * @default 'horizontal'
+   * @deprecated - pass to the slider instead.
+   */
+  orientation?: Orientation,
+  /** Whether the Thumb is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Index of the thumb within the slider.
+   * @default 0
+   */
+  index?: number,
+  /** @deprecated */
+  isRequired?: boolean,
+  /** @deprecated */
+  isInvalid?: boolean,
+  /** @deprecated */
+  validationState?: ValidationState
+}
+
+export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, Omit<FocusableDOMProps, 'excludeFromTabOrder'>, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */

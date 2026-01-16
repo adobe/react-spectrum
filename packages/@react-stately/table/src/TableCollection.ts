@@ -11,10 +11,22 @@
  */
 
 import {getFirstItem, getLastItem} from '@react-stately/collections';
-import {GridCollection} from '@react-stately/grid';
-import {GridNode} from '@react-types/grid';
-import {TableCollection as ITableCollection} from '@react-types/table';
+import {GridCollection, GridNode, IGridCollection} from '@react-stately/grid';
 import {Key} from '@react-types/shared';
+
+export interface ITableCollection<T> extends IGridCollection<T> {
+  // TODO perhaps elaborate on this? maybe not clear enough, essentially returns the table header rows (e.g. in a tiered headers table, will return the nodes containing the top tier column, next tier, etc)
+  /** A list of header row nodes in the table. */
+  headerRows: GridNode<T>[],
+  /** A list of column nodes in the table. */
+  columns: GridNode<T>[],
+  /** A set of column keys that serve as the [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader). */
+  rowHeaderColumnKeys: Set<Key>,
+  /** The node that makes up the header of the table. */
+  head?: GridNode<T>,
+  /** The node that makes up the body of the table. */
+  body: GridNode<T>
+}
 
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean,

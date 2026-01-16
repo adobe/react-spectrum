@@ -10,11 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaProgressBarProps} from '@react-types/progress';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {clamp, filterDOMProps, mergeProps} from '@react-aria/utils';
-import {DOMAttributes} from '@react-types/shared';
+import {ReactNode} from 'react';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
+
+export interface ProgressBarBaseProps {
+  /**
+   * The current value (controlled).
+   * @default 0
+   */
+  value?: number,
+  /**
+   * The smallest value allowed for the input.
+   * @default 0
+   */
+  minValue?: number,
+  /**
+   * The largest value allowed for the input.
+   * @default 100
+   */
+  maxValue?: number,
+  /** The content to display as the label. */
+  label?: ReactNode,
+  /**
+   * The display format of the value label.
+   * @default {style: 'percent'}
+   */
+  formatOptions?: Intl.NumberFormatOptions,
+  /** The content to display as the value's label (e.g. 1 of 4). */
+  valueLabel?: ReactNode
+}
+
+export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}
+
+export interface ProgressBarProps extends ProgressBarBaseProps {
+  /**
+   * Whether presentation is indeterminate when progress isn't known.
+   */
+  isIndeterminate?: boolean
+}
+
+export interface AriaProgressBarProps extends ProgressBarProps, DOMProps, AriaLabelingProps {}
 
 export interface ProgressBarAria {
   /** Props for the progress bar container element. */

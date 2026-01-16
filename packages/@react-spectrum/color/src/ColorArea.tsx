@@ -10,18 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaColorAreaProps, useColorArea} from '@react-aria/color';
 import {classNames, dimensionValue, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {ColorAreaContext, useContextProps} from 'react-aria-components';
 import {ColorThumb} from './ColorThumb';
-import {FocusableRef} from '@react-types/shared';
+import {DimensionValue, FocusableRef, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement, useRef} from 'react';
-import {SpectrumColorAreaProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorarea/vars.css';
-import {useColorArea} from '@react-aria/color';
 import {useColorAreaState} from '@react-stately/color';
 import {useFocusRing} from '@react-aria/focus';
 import {useProviderProps} from '@react-spectrum/provider';
+
+export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+  /** Size of the Color Area. */
+  size?: DimensionValue
+}
 
 /**
  * ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.

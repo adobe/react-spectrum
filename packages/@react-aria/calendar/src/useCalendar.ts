@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCalendarProps, DateValue} from '@react-types/calendar';
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {CalendarState} from '@react-stately/calendar';
+import {CalendarProps, CalendarState, DateValue} from '@react-stately/calendar';
+
+export interface AriaCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, AriaLabelingProps {}
 
 /**
  * Provides the behavior and accessibility implementation for a calendar component.

@@ -14,4 +14,5 @@
 
 export {Calendar} from './Calendar';
 export {RangeCalendar} from './RangeCalendar';
-export type {SpectrumCalendarProps, SpectrumRangeCalendarProps} from '@react-types/calendar';
+export type {SpectrumCalendarProps} from './Calendar';
+export type {SpectrumRangeCalendarProps} from './RangeCalendar';

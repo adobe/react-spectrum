@@ -10,11 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {KeyboardProps} from '@react-types/text';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, ReactNode} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+
+export interface KeyboardProps extends DOMProps, StyleProps {
+  /**
+   * Keyboard shortcut text.
+   */
+  children: ReactNode,
+  /**
+   * A slot to place the keyboard shortcut in.
+   * @default 'keyboard'
+   */
+  slot?: string
+}
 
 /**
  * Keyboard represents text that specifies a keyboard command.

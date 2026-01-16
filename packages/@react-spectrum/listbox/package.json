@@ -54,7 +54,6 @@
     "@react-stately/layout": "^4.5.2",
     "@react-stately/list": "^3.13.2",
     "@react-stately/virtualizer": "^4.4.4",
-    "@react-types/listbox": "^3.7.4",
     "@react-types/shared": "^3.32.1",
     "@spectrum-icons/ui": "^3.6.21",
     "@swc/helpers": "^0.5.0"

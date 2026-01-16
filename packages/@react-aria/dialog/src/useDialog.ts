@@ -10,12 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDialogProps} from '@react-types/dialog';
-import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, FocusableElement, RefObject} from '@react-types/shared';
 import {filterDOMProps, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
 import {useOverlayFocusContain} from '@react-aria/overlays';
+
+export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
+  /**
+   * The accessibility role for the dialog.
+   * @default 'dialog'
+   */
+  role?: 'dialog' | 'alertdialog'
+}
 
 export interface DialogAria {
   /** Props for the dialog container element. */

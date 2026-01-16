@@ -9,10 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaSearchAutocompleteProps, useSearchAutocomplete} from '@react-aria/autocomplete';
+import {AsyncLoadable, DimensionValue, DOMRefValue, FocusableRef, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {classNames, dimensionValue, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
-import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -20,6 +21,7 @@ import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
+import {MenuTriggerAction, useComboBoxState} from '@react-stately/combobox';
 import {MobileSearchAutocomplete} from './MobileSearchAutocomplete';
 import {Popover} from '@react-spectrum/overlays';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -35,16 +37,44 @@ import React, {
 } from 'react';
 import searchAutocompleteStyles from './searchautocomplete.css';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
-import {SpectrumSearchAutocompleteProps} from '@react-types/autocomplete';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useSearchAutocomplete} from '@react-aria/autocomplete';
+
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState' | 'validate'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+  /**
+   * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
+  /** Whether the SearchAutocomplete should be displayed with a quiet style. */
+  isQuiet?: boolean,
+  /** Alignment of the menu relative to the input target.
+   * @default 'start'
+   */
+  align?: 'start' | 'end',
+  /**
+   * Direction the menu will render relative to the SearchAutocomplete.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top',
+  /** The current loading state of the SearchAutocomplete. Determines whether or not the progress circle should be shown. */
+  loadingState?: LoadingState,
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
+  shouldFlip?: boolean,
+  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
+  menuWidth?: DimensionValue,
+  onLoadMore?: () => void,
+  /** An icon to display at the start of the input. */
+  icon?: ReactElement | null
+}
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);

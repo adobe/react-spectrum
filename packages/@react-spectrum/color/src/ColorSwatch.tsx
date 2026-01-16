@@ -11,7 +11,7 @@
  */
 
 import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
-import {Color} from '@react-types/color';
+import {Color} from '@react-stately/color';
 import {ColorSwatchContext, useContextProps} from 'react-aria-components';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import React, {createContext, forwardRef, JSX, ReactElement, useContext} from 'react';

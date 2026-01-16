@@ -15,13 +15,18 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
-import {SpectrumToggleButtonProps} from '@react-types/button';
+import {SpectrumActionButtonProps} from './ActionButton';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
+import {ToggleButtonProps, useToggleButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useToggleButton} from '@react-aria/button';
 import {useToggleState} from '@react-stately/toggle';
+
+export interface SpectrumToggleButtonProps extends Omit<ToggleButtonProps, 'onClick'>, Omit<SpectrumActionButtonProps, 'aria-current' | 'type' | 'form' | 'formAction' | 'formEncType' | 'formMethod' | 'formNoValidate' | 'formTarget' | 'name' | 'value'> {
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  isEmphasized?: boolean
+}
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example

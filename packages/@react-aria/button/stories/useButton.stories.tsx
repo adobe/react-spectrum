@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, useButton} from '../';
 import React, {JSX, useRef} from 'react';
 import {StoryObj} from '@storybook/react';
-import {useButton} from '../';
 
 export default {
   title: 'useButton'

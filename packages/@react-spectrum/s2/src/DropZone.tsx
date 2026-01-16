@@ -18,7 +18,7 @@ import {IllustratedMessageContext} from './IllustratedMessage';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 

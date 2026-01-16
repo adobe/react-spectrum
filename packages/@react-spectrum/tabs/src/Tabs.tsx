@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTabPanelProps, SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
+import {AriaLabelingProps, CollectionChildren, DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject, SingleSelection, StyleProps} from '@react-types/shared';
+import {AriaTabPanelProps, useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject, StyleProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
-import {Item, Picker} from '@react-spectrum/picker';
+import {Item, Picker, SpectrumPickerProps} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import React, {
   CSSProperties,
@@ -28,7 +28,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';
@@ -36,7 +35,35 @@ import {useCollection} from '@react-stately/collections';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+
+export interface SpectrumTabsProps<T> extends Omit<SingleSelection, 'onSelectionChange' | 'disallowEmptySelection'>, AriaLabelingProps, DOMProps, StyleProps {
+  /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
+  children: ReactNode,
+  /** The item objects for each tab, for dynamic collections. */
+  items?: Iterable<T>,
+  /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
+  disabledKeys?: Iterable<Key>,
+  /** Whether the Tabs are disabled. */
+  isDisabled?: boolean,
+  /** Whether the tabs are displayed in a quiet style. */
+  isQuiet?: boolean,
+  /** Whether the tabs are displayed in an emphasized style. */
+  isEmphasized?: boolean,
+  /** The amount of space between the tabs. */
+  density?: 'compact' | 'regular',
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key) => void,
+  /**
+   * Whether tabs are activated automatically on focus or manually.
+   * @default 'automatic'
+   */
+  keyboardActivation?: 'automatic' | 'manual',
+  /**
+   * The orientation of the tabs.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation
+}
 
 interface TabsContext<T> {
   tabProps: SpectrumTabsProps<T>,
@@ -257,6 +284,11 @@ function TabLine(props: TabLineProps) {
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
 
+export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
+  /** The tab items to display. Item keys should match the key of the corresponding `<Item>` within the `<TabPanels>` element. */
+  children: CollectionChildren<T>
+}
+
 /**
  * A TabList is used within Tabs to group tabs that a user can switch between.
  * The keys of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
@@ -331,6 +363,11 @@ export function TabList<T>(props: SpectrumTabListProps<T>): ReactElement {
       </div>
     );
   }
+}
+
+export interface SpectrumTabPanelsProps<T> extends DOMProps, StyleProps {
+  /** The contents of each tab. Item keys should match the key of the corresponding `<Item>` within the `<TabList>` element. */
+  children: CollectionChildren<T>
 }
 
 /**

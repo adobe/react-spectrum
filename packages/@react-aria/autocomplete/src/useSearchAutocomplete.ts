@@ -10,15 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-aria/button';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, Key, KeyboardDelegate, LayoutDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {AriaListBoxOptions} from '@react-aria/listbox';
-import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
-import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes, KeyboardDelegate, LayoutDelegate, RefObject, ValidationResult} from '@react-types/shared';
+import {AriaSearchFieldProps, useSearchField} from '@react-aria/searchfield';
+import {ComboBoxState, MenuTriggerAction} from '@react-stately/combobox';
 import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {SearchFieldProps} from '@react-stately/searchfield';
 import {useComboBox} from '@react-aria/combobox';
-import {useSearchField} from '@react-aria/searchfield';
+
+export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {
+  /** The list of SearchAutocomplete items (uncontrolled). */
+  defaultItems?: Iterable<T>,
+  /** The list of SearchAutocomplete items (controlled). */
+  items?: Iterable<T>,
+  /** Method that is called when the open state of the menu changes. Returns the new open state and the action that caused the opening of the menu. */
+  onOpenChange?: (isOpen: boolean, menuTrigger?: MenuTriggerAction) => void,
+  /** The value of the SearchAutocomplete input (controlled). */
+  inputValue?: string,
+  /** The default value of the SearchAutocomplete input (uncontrolled). */
+  defaultInputValue?: string,
+  /** Handler that is called when the SearchAutocomplete input value changes. */
+  onInputChange?: (value: string) => void,
+  /**
+   * The interaction required to display the SearchAutocomplete menu.
+   * @default 'input'
+   */
+  menuTrigger?: MenuTriggerAction,
+  /** Handler that is called when the SearchAutocomplete is submitted.
+   *
+   * A `value` will be passed if the submission is a custom value (e.g. a user types then presses enter).
+   * If the input is a selected item, `value` will be null.
+   *
+   * A `key` will be passed if the submission is a selected item (e.g. a user clicks or presses enter on an option).
+   * If the input is a custom value, `key` will be null.
+   */
+  onSubmit?: (value: string | null, key: Key | null) => void
+}
+
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, Omit<AriaSearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'>, DOMProps, AriaLabelingProps {}
 
 export interface SearchAutocompleteAria<T> extends ValidationResult {
   /** Props for the label element. */

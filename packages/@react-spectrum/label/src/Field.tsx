@@ -13,13 +13,23 @@
 import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Flex} from '@react-spectrum/layout';
 import {HelpText} from './HelpText';
-import {Label} from './Label';
-import {LabelPosition, RefObject} from '@react-types/shared';
+import {Label, SpectrumLabelPropsBase} from './Label';
+import {LabelPosition, RefObject, SpectrumFieldValidation, SpectrumHelpTextProps, Validation, ValidationResult} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {ReactNode, Ref} from 'react';
-import {SpectrumFieldProps} from '@react-types/label';
+import React, {HTMLAttributes, LabelHTMLAttributes, ReactElement, ReactNode, Ref} from 'react';
 import {useFormProps} from '@react-spectrum/form';
+
+export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelpTextProps, Omit<Validation<any>, 'validationState'>, SpectrumFieldValidation<any>, Partial<ValidationResult> {
+  children: ReactElement,
+  label?: ReactNode,
+  contextualHelp?: ReactNode,
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
+  descriptionProps?: HTMLAttributes<HTMLElement>,
+  errorMessageProps?: HTMLAttributes<HTMLElement>,
+  wrapperClassName?: string,
+  wrapperProps?: HTMLAttributes<HTMLElement>
+}
 
 export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
   let formProps = useFormProps(props);
