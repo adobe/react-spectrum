@@ -8,9 +8,9 @@ index 1234567..abcdefg 100644
        }
 -      boundaryStr = replaced.subarray(replacedLength - BOUNDARY_LENGTH, replacedLength);
 -      let strUpToBoundary = replaced.subarray(0, replacedLength - BOUNDARY_LENGTH);
-+      // Copy buffers to avoid reuse issues - subarray returns a view that can be
++      // Copy buffer to avoid reuse issues - subarray returns a view that can be
 +      // corrupted if the underlying buffer is modified before the data is written
-+      boundaryStr = Buffer.from(replaced.subarray(replacedLength - BOUNDARY_LENGTH, replacedLength));
++      boundaryStr = replaced.subarray(replacedLength - BOUNDARY_LENGTH, replacedLength);
 +      let strUpToBoundary = Buffer.from(replaced.subarray(0, replacedLength - BOUNDARY_LENGTH));
        cb(null, strUpToBoundary);
      },
