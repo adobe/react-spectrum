@@ -74,7 +74,7 @@ export interface MenuTriggerProps extends Omit<AriaMenuTriggerProps, 'isTriggerU
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'render' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -421,7 +421,7 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {
   /**
    * The children of the menu section.
    */
@@ -442,7 +442,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>): React
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */

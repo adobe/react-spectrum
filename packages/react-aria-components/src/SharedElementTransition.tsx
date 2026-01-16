@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {dom, DOMRenderProps, RenderProps, useRenderProps} from './utils';
 import {flushSync} from 'react-dom';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useRef, useState} from 'react';
-import {RenderProps, useRenderProps} from './utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useObjectRef} from 'react-aria';
 
@@ -52,7 +52,7 @@ export interface SharedElementRenderProps {
   isExiting: boolean
 }
 
-export interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps> {}
+export interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps>, DOMRenderProps<'div'> {}
 
 export interface SharedElementProps extends SharedElementPropsBase {
   name: string,
@@ -175,7 +175,8 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
   }
 
   return (
-    <div
+    <dom.div
+      render={props.render}
       {...divProps}
       {...renderProps}
       ref={ref}

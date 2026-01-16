@@ -36,7 +36,7 @@ interface CheckboxStyleProps {
 
 interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, CheckboxStyleProps {
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, CheckboxStyleProps {
   /** The label for the element. */
   children?: ReactNode
 }

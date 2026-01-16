@@ -50,7 +50,7 @@ interface ProgressBarStyleProps {
 
 }
 
-export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, ProgressBarStyleProps, StyleProps {
+export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, ProgressBarStyleProps, StyleProps {
   /** The content to display as the label. */
   label?: ReactNode
 }

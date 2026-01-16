@@ -54,6 +54,19 @@ describe('Link', () => {
     expect(link).toHaveTextContent('Hovered');
   });
 
+  it('should support custom render function', () => {
+    // eslint-disable-next-line
+    let {getByRole} =  render(<Link href="#foo" render={props => <a {...props} data-custom="true" />} />);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support custom render function without href', () => {
+    let {getByRole} =  render(<Link render={props => <span {...props} data-custom="true" />} />);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <LinkContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

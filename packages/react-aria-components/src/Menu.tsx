@@ -17,7 +17,9 @@ import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
-  DOMElement,
+  dom,
+  DOMRenderProps,
+  PossibleLinkDOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -38,11 +40,9 @@ import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import React, {
-  AnchorHTMLAttributes,
   createContext,
   ForwardedRef,
   forwardRef,
-  HTMLAttributes,
   JSX,
   ReactElement,
   ReactNode,
@@ -192,7 +192,7 @@ export interface MenuRenderProps {
   isEmpty: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Menu'
@@ -262,7 +262,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 
   return (
     <FocusScope>
-      <div
+      <dom.div
+        render={props.render}
         {...mergeProps(DOMProps, renderProps, menuProps)}
         ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
@@ -291,12 +292,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           </SharedElementTransition>
         </Provider>
         {emptyState}
-      </div>
+      </dom.div>
     </FocusScope>
   );
 }
 
-export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {
+export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection, DOMRenderProps<'section'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-MenuSection'
@@ -362,7 +363,8 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
   delete DOMProps.id;
 
   return (
-    <section
+    <dom.section
+      render={props.render}
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}>
       <Provider
@@ -373,7 +375,7 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
         ]}>
         <CollectionBranch collection={state.collection} parent={section} />
       </Provider>
-    </section>
+    </dom.section>
   );
 }
 
@@ -397,7 +399,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, PossibleLinkDOMRenderProps, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-MenuItem'
@@ -416,8 +418,7 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** Handler that is called when the item is selected. */
   onAction?: () => void,
   /** Whether the menu should close when the menu item is selected. */
-  shouldCloseOnSelect?: boolean,
-  render?: (props: AnchorHTMLAttributes<HTMLElement> | HTMLAttributes<HTMLDivElement>) => ReactElement
+  shouldCloseOnSelect?: boolean
 }
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
@@ -458,14 +459,14 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
     }
   });
 
+  let ElementType = props.href ? dom.a : dom.div;
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
 
   return (
-    <DOMElement
-      elementType={props.href ? 'a' : 'div'}
-      render={props.render}
+    <ElementType
+      render={props.render as any}
       {...mergeProps(DOMProps, renderProps, menuItemProps, hoverProps)}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
@@ -491,6 +492,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
         ]}>
         {renderProps.children}
       </Provider>
-    </DOMElement>
+    </ElementType>
   );
 });

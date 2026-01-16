@@ -12,12 +12,12 @@
 
 import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
-import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
+import {ContextValue, dom, DOMRenderProps, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
-import React, {createContext, ElementType, ForwardedRef} from 'react';
+import React, {createContext, ForwardedRef} from 'react';
 
-export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {
+export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, DOMRenderProps<'hr' | 'div'>, GlobalDOMAttributes<HTMLElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Separator'
@@ -49,10 +49,12 @@ export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, functi
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 
   let {elementType, orientation, style, className, slot, ...otherProps} = props;
-  let Element = (elementType as ElementType) || 'hr';
+  let Element = elementType || 'hr';
   if (Element === 'hr' && orientation === 'vertical') {
     Element = 'div';
   }
+
+  let ElementType = dom[Element];
 
   let {separatorProps} = useSeparator({
     ...otherProps,
@@ -63,7 +65,8 @@ export const Separator = /*#__PURE__*/ createLeafComponent(SeparatorNode, functi
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <Element
+    <ElementType
+      render={props.render}
       {...mergeProps(DOMProps, separatorProps)}
       style={style}
       className={className ?? 'react-aria-Separator'}

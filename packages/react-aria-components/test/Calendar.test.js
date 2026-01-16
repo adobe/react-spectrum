@@ -83,6 +83,23 @@ describe('Calendar', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderCalendar(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <table {...props} data-custom="true" />},
+      {render: props => <td {...props} data-custom="true" />}
+    );
+    let group = getByRole('application');
+    expect(group).toHaveAttribute('data-custom', 'true');
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let cell of within(grid).getAllByRole('gridcell')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support aria props on the Calendar', () => {
     let {getByRole} = renderCalendar({      
       'aria-label': 'label',

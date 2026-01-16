@@ -2,6 +2,8 @@ import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
+  DOMRenderProps,
   SlotProps,
   StyleRenderProps,
   useContextProps,
@@ -17,7 +19,7 @@ export interface ColorSwatchRenderProps {
   color: Color
 }
 
-export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps<ColorSwatchRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorSwatch'
@@ -45,7 +47,8 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
   let DOMProps = filterDOMProps(props, {global: true});
   
   return (
-    <div
+    <dom.div
+      render={props.render}
       {...mergeProps(DOMProps, colorSwatchProps, renderProps)}
       slot={props.slot || undefined}
       ref={ref} />

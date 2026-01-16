@@ -98,6 +98,46 @@ describe('Tabs', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderTabs(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-custom', 'true');
+    expect(tablist).toHaveAttribute('data-custom', 'true');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('data-custom', 'true');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderTabs(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line
+      {href: '#foo', render: props => <a {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-custom', 'true');
+    expect(tablist).toHaveAttribute('data-custom', 'true');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('href');
+      expect(tab).toHaveAttribute('data-custom', 'true');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">

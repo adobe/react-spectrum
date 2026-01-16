@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from './utils';
+import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+
+export interface KeyboardProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'kbd'> {}
 
 export const KeyboardContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
 export const Keyboard = forwardRef(function Keyboard(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, KeyboardContext);
-  return <kbd dir="ltr" {...props} ref={ref} />;
+  return <dom.kbd dir="ltr" {...props} ref={ref} />;
 });

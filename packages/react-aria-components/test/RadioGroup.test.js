@@ -68,6 +68,19 @@ describe('RadioGroup', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderGroup(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line
+      {render: props => <label {...props} data-custom="true" />}
+    );
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    for (let radio of getAllByRole('radio')) {
+      expect(radio.closest('label')).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <RadioGroup isRequired>

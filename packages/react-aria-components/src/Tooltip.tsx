@@ -15,6 +15,8 @@ import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxi
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
+  DOMRenderProps,
   Provider,
   RenderProps,
   useContextProps,
@@ -30,7 +32,7 @@ export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
 }
 
-export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tooltip'
@@ -167,7 +169,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
+      render={props.render}
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
       ref={props.tooltipRef}
       style={{
@@ -181,6 +184,6 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
-    </div>
+    </dom.div>
   );
 }

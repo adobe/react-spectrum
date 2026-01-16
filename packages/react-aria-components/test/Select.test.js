@@ -93,6 +93,12 @@ describe('Select', () => {
     expect(trigger).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByTestId} =  render(<TestSelect render={props => <div {...props} data-custom="true" />} />);
+    let field = getByTestId('select');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('supports items with render props', () => {
     let MyItem = (props) => (
       <ListBoxItem {...props}>

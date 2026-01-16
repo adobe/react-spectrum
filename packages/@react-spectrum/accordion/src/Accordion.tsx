@@ -20,7 +20,7 @@ import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, StyleProps, DOMProps {
+export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'render' | 'children' | 'render'>, StyleProps, DOMProps {
   /** Whether the Accordion should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** The disclosures within the accordion group. */
@@ -47,7 +47,7 @@ export const Accordion = /*#__PURE__*/(forwardRef as forwardRefType)(function Ac
   );
 });
 
-export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'children'>, AriaLabelingProps, StyleProps {
+export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'render' | 'children' | 'render'>, AriaLabelingProps, StyleProps {
   /** Whether the Disclosure should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** The contents of the disclosure. The first child should be the header, and the second child should be the panel. */
@@ -76,7 +76,7 @@ export const Disclosure = /*#__PURE__*/(forwardRef as forwardRefType)(function D
   );
 });
 
-export interface SpectrumDisclosurePanelProps extends Omit<DisclosurePanelProps, 'className' | 'style' | 'children'>, DOMProps, AriaLabelingProps, StyleProps {
+export interface SpectrumDisclosurePanelProps extends Omit<DisclosurePanelProps, 'className' | 'style' | 'render' | 'children' | 'render'>, DOMProps, AriaLabelingProps, StyleProps {
   /** The contents of the accordion panel. */
   children: React.ReactNode
 }

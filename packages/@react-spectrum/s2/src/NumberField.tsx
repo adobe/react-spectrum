@@ -38,7 +38,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 
 export interface NumberFieldProps extends
-  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>,
+  Omit<AriaNumberFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>,
   StyleProps,
   SpectrumLabelableProps,
   HelpTextProps,

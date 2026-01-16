@@ -15,6 +15,8 @@ import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, 
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
+  DOMRenderProps,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -28,7 +30,7 @@ import {OverlayTriggerStateContext} from './Dialog';
 import React, {Context, createContext, ForwardedRef, forwardRef, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'groupRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, DOMRenderProps<'div'>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Popover'
@@ -145,7 +147,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   );
 });
 
-interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
+interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, DOMRenderProps<'div'>, SlotProps {
   state: OverlayTriggerState,
   isEntering?: boolean,
   isExiting: boolean,
@@ -220,7 +222,8 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   };
 
   let overlay = (
-    <div
+    <dom.div
+      render={props.render}
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
       role={isDialog ? 'dialog' : undefined}
@@ -240,7 +243,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
         {children}
       </OverlayArrowContext.Provider>
       <DismissButton onDismiss={state.close} />
-    </div>
+    </dom.div>
   );
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.

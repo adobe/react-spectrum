@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {dom, DOMRenderProps, useContextProps} from './utils';
 import {HeadingContext} from './RSPContexts';
-import React, {ElementType, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
-import {useContextProps} from './utils';
+import React, {ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface HeadingProps extends HTMLAttributes<HTMLElement> {
+export interface HeadingProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'h1'> {
   level?: number
 }
 
 export const Heading = forwardRef(function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   [props, ref] = useContextProps(props, ref, HeadingContext);
   let {children, level = 3, className, ...domProps} = props;
-  let Element = `h${level}` as ElementType;
+  let Element = dom[`h${level}`];
 
   return (
     <Element {...domProps} ref={ref} className={className ?? 'react-aria-Heading'}>

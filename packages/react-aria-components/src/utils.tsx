@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {AllHTMLAttributes, Context, CSSProperties, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {AllHTMLAttributes, AnchorHTMLAttributes, Context, CSSProperties, DetailedHTMLProps, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefCallback, useCallback, useContext, useMemo, useRef, useState} from 'react';
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -263,22 +263,55 @@ export interface RACValidation {
   validationBehavior?: 'native' | 'aria'
 }
 
-interface DOMElementProps<E extends keyof React.JSX.IntrinsicElements> extends AllHTMLAttributes<HTMLElement> {
-  elementType: E,
-  render?: (props: React.JSX.IntrinsicElements[E]) => ReactElement
+export type DOMRenderFunction<E extends keyof React.JSX.IntrinsicElements> = (props: React.JSX.IntrinsicElements[E]) => ReactElement;
+export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements> {
+  /**
+   * Overrides the default DOM element with a custom render function.
+   * This allows rendering existing components with built-in styles and behaviors
+   * such as router links, animation libraries, and pre-styled components.
+   * 
+   * Requirements:
+   * - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`).
+   * - Only a single root DOM element can be rendered (no fragments).
+   * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   */
+  render?: DOMRenderFunction<E>
 }
 
-export const DOMElement = /*#__PURE__*/(forwardRef as forwardRefType)(function DOMElement<E extends keyof React.JSX.IntrinsicElements>({elementType: ElementType, render, ...otherProps}: DOMElementProps<E>, forwardedRef: ForwardedRef<HTMLElement>) {
+// Makes `href` required in AnchorHTMLAttributes
+type LinkWithRequiredHref = Required<Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>> & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>; 
+
+// Same as DOMRenderProps but specific for the case where the element could be a 'a' or 'div' element.
+export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.IntrinsicElements = 'div'> {
+  /**
+   * Overrides the default DOM element with a custom render function.
+   * This allows rendering existing components with built-in styles and behaviors
+   * such as router links, animation libraries, and pre-styled components.
+   * 
+   * Note: You can check if `'href' in props` in order to tell whether to render an `<a>` element.
+   * 
+   * Requirements:
+   * - You must render the expected element type (e.g. if `<a>` is expected, you cannot render a `<button>`).
+   * - Only a single root DOM element can be rendered (no fragments).
+   * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   */
+  render?: (props: DetailedHTMLProps<LinkWithRequiredHref, HTMLAnchorElement> | React.JSX.IntrinsicElements[Fallback]) => ReactElement
+}
+
+function DOMElement(ElementType: string, props: DOMRenderProps<any> & AllHTMLAttributes<HTMLElement>, forwardedRef: ForwardedRef<HTMLElement>) {
+  let {render, ...otherProps} = props;
   let elementRef = useRef<HTMLElement | null>(null);
-  let ref = mergeRefs(forwardedRef, elementRef);
+  let ref = useMemo(() => mergeRefs(forwardedRef, elementRef), [forwardedRef, elementRef]);
 
   useLayoutEffect(() => {
-    if (!elementRef.current) {
-      console.warn('DOM element ref was not connected. Did you forget to pass through or merge the `ref` prop in `render`?');
-    } else if (elementRef.current.localName !== ElementType) {
-      console.warn(`Expected ${ElementType}, got ${elementRef.current.localName}`);
+    if (process.env.NODE_ENV !== 'production' && render) {
+      if (!elementRef.current) {
+        console.warn('Ref was not connected to DOM element returned by custom `render` function. Did you forget to pass through or merge the `ref`?');
+      } else if (elementRef.current.localName !== ElementType) {
+        console.warn(`Unexpected DOM element returned by custom \`render\` function. Expected <${ElementType}>, got <${elementRef.current.localName}>. This may break the component behavior and accessibility.`);
+      }
     }
-  }, [ElementType]);
+  }, [ElementType, render]);
 
   let domProps: any = {...otherProps, ref};
   if (render) {
@@ -286,4 +319,27 @@ export const DOMElement = /*#__PURE__*/(forwardRef as forwardRefType)(function D
   }
 
   return <ElementType {...domProps} />;
-});
+}
+
+type DOMComponents = {
+  [E in keyof React.JSX.IntrinsicElements]: (props: DOMRenderProps<E> & React.JSX.IntrinsicElements[E]) => ReactElement
+};
+
+const domComponentCache = {};
+
+// Dynamically generates and caches components for each DOM element (e.g. `dom.button`).
+export const dom = new Proxy({}, {
+  get(target, elementType) {
+    if (typeof elementType !== 'string') {
+      return undefined;
+    }
+
+    let res = domComponentCache[elementType];
+    if (!res) {
+      res = forwardRef(DOMElement.bind(null, elementType));
+      domComponentCache[elementType] = res;
+    }
+
+    return res;
+  }
+}) as DOMComponents;

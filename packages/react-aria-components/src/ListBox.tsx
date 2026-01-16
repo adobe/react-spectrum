@@ -15,6 +15,9 @@ import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
+  dom,
+  DOMRenderProps,
+  PossibleLinkDOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -71,7 +74,7 @@ export interface ListBoxRenderProps {
   state: ListState<unknown>
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ListBox'
@@ -253,7 +256,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
 
   return (
     <FocusScope>
-      <div
+      <dom.div
+        render={props.render}
         {...mergeProps(DOMProps, renderProps, listBoxProps, focusProps, droppableCollection?.collectionProps)}
         ref={listBoxRef as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
@@ -283,12 +287,12 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         </Provider>
         {emptyState}
         {dragPreview}
-      </div>
+      </dom.div>
     </FocusScope>
   );
 }
 
-export interface ListBoxSectionProps<T> extends SectionProps<T> {
+export interface ListBoxSectionProps<T> extends SectionProps<T>, DOMRenderProps<'section'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-ListBoxSection'
@@ -316,7 +320,8 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
   delete DOMProps.id;
 
   return (
-    <section
+    <dom.section
+      render={props.render}
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}>
       <HeaderContext.Provider value={{...headingProps, ref: headingRef}}>
@@ -325,7 +330,7 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
           parent={section}
           renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
       </HeaderContext.Provider>
-    </section>
+    </dom.section>
   );
 }
 
@@ -336,7 +341,7 @@ export const ListBoxSection = /*#__PURE__*/ createBranchComponent(SectionNode, L
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
-export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, FocusEvents<HTMLDivElement>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, PossibleLinkDOMRenderProps, LinkDOMProps, HoverEvents, PressEvents, FocusEvents<HTMLDivElement>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ListBoxItem'
@@ -416,18 +421,18 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent(ItemNode, function 
     }
   }, [item.textValue]);
 
-  let ElementType: React.ElementType = props.href ? 'a' : 'div';
-
+  let ElementType = props.href ? dom.a : dom.div;
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;
 
-  if (ElementType === 'a' && optionProps.tabIndex == null) {
+  if (props.href && optionProps.tabIndex == null) {
     optionProps.tabIndex = -1;
   }
 
   return (
     <ElementType
+      render={props.render as any}
       {...mergeProps(DOMProps, renderProps, optionProps, hoverProps, focusProps, draggableItem?.dragProps, droppableItem?.dropProps)}
       ref={ref}
       data-allows-dragging={!!dragState || undefined}
@@ -496,10 +501,10 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
   });
 
   return (
-    <div
+    <dom.div
+      render={props.render}
       {...dropIndicatorProps}
       {...renderProps}
-      // eslint-disable-next-line
       role="option"
       ref={ref as RefObject<HTMLDivElement | null>}
       data-drop-target={isDropTarget || undefined} />
@@ -508,7 +513,7 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
-export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ListBoxLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-ListBoxLoadMoreItem'
@@ -560,15 +565,15 @@ export const ListBoxLoadMoreItem = createLeafComponent(LoaderNode, function List
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
       {isLoading && renderProps.children && (
-        <div
+        <dom.div
+          render={props.render}
           {...mergeProps(filterDOMProps(props, {global: true}), optionProps)}
           {...renderProps}
           // aria-selected isn't needed here since this option is not selectable.
-          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
           role="option"
           ref={ref as ForwardedRef<HTMLDivElement>}>
           {renderProps.children}
-        </div>
+        </dom.div>
       )}
     </>
   );

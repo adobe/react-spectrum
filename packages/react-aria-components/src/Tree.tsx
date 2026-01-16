@@ -18,6 +18,8 @@ import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
+  dom,
+  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -147,7 +149,7 @@ export interface TreeRenderProps {
 
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
-export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
+export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, DOMRenderProps<'div'>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tree'
@@ -401,7 +403,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   return (
     <>
       <FocusScope>
-        <div
+        <dom.div
+          render={props.render}
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot || undefined}
@@ -427,7 +430,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
             </SharedElementTransition>
           </Provider>
           {emptyState}
-        </div>
+        </dom.div>
       </FocusScope>
       {dragPreview}
     </>
@@ -490,7 +493,7 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, DOMRenderProps<'div'>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TreeItem'
@@ -673,15 +676,16 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
         </div>
       </div>
     )}
-      <div
+      <dom.div
+        render={props.render}
         {...mergeProps(
-        DOMProps,
-        rowProps,
-        focusProps,
-        hoverProps,
-        focusWithinProps,
-        draggableItem?.dragProps
-      )}
+          DOMProps,
+          rowProps,
+          focusProps,
+          hoverProps,
+          focusWithinProps,
+          draggableItem?.dragProps
+        )}
         {...renderProps}
         ref={ref}
       // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
@@ -732,7 +736,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
             {children}
           </Provider>
         </div>
-      </div>
+      </dom.div>
     </>
   );
 });
@@ -745,7 +749,7 @@ export interface TreeLoadMoreItemRenderProps {
   level: number
 }
 
-export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
+export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps>, DOMRenderProps<'div'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TreeLoadMoreItem'
@@ -811,7 +815,8 @@ export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoa
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
       {isLoading && renderProps.children && (
-        <div
+        <dom.div
+          render={props.render}
           ref={ref}
           {...mergeProps(filterDOMProps(props as any), ariaProps)}
           {...renderProps}
@@ -819,7 +824,7 @@ export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoa
           <div {...gridCellProps} style={style}>
             {renderProps.children}
           </div>
-        </div>
+        </dom.div>
       )}
     </>
   );

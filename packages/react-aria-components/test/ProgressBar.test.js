@@ -71,4 +71,10 @@ describe('ProgressBar', () => {
     expect(progressbar).toHaveAttribute('slot', 'test');
     expect(progressbar).toHaveAttribute('aria-label', 'test');
   });
+
+  it('should support custom render function', () => {
+    let {getByRole} = render(<TestProgressBar render={props => <div {...props} data-custom="bar" />} />);
+    let progressbar = getByRole('progressbar');
+    expect(progressbar).toHaveAttribute('data-custom', 'bar');
+  });
 });

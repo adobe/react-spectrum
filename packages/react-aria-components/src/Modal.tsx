@@ -14,6 +14,8 @@ import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
+  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -26,7 +28,7 @@ import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef} from 'react';
 
-export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ModalOverlay'
@@ -200,7 +202,8 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
 
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
-      <div
+      <dom.div
+        render={props.render}
         {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
         {...renderProps}
         style={style}
@@ -214,12 +217,12 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
           ]}>
           {renderProps.children}
         </Provider>
-      </div>
+      </dom.div>
     </Overlay>
   );
 }
 
-interface ModalContentProps extends RenderProps<ModalRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
+interface ModalContentProps extends RenderProps<ModalRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ModalContent'
@@ -246,7 +249,8 @@ function ModalContent(props: ModalContentProps) {
   });
 
   return (
-    <div
+    <dom.div
+      render={props.render}
       {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
       {...renderProps}
       ref={ref}
@@ -256,6 +260,6 @@ function ModalContent(props: ModalContentProps) {
         <DismissButton onDismiss={state.close} />
       }
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 }
