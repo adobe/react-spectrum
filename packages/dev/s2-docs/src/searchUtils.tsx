@@ -51,7 +51,7 @@ export function stripMarkdown(description: string | undefined): string {
 }
 
 /**
- * Gets all of the subheadings underneath a heading within the Table of Contents 
+ * Gets all of the subheadings underneath a heading within the Table of Contents.
  */
 function getToCSubheadings(TocNode: TocNode, headings: string[]): string[] {
   headings.push(TocNode.title);
@@ -69,11 +69,11 @@ function getToCSubheadings(TocNode: TocNode, headings: string[]): string[] {
 export function transformPageToComponentItem(page: Page): ComponentItem {
   // get all headings on a page and add them a tags for the search feature
   let Toc = page.tableOfContents;
-  let headings: string[] = []
+  let headings: string[] = [];
   if (Toc) {
     for (let node of Toc) {
       let subHeadings: string[] = getToCSubheadings(node, []);
-      headings.push(...subHeadings)
+      headings.push(...subHeadings);
     }
   }
   let allTags = (page.exports?.tags || page.exports?.keywords as string[]) || [];
