@@ -195,4 +195,21 @@ describe('NumberField', () => {
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
   });
+
+  it('should trigger onChange via programmatic click() on stepper buttons', () => {
+    const onChange = jest.fn();
+    const {container} = render(
+      <TestNumberField defaultValue={1024} onChange={onChange} />
+    );
+    act(() => {
+      container.querySelector('[slot=increment]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(1025);
+    act(() => {
+      container.querySelector('[slot=decrement]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenCalledWith(1024);
+  });
 });

@@ -12,8 +12,8 @@
 
 const {parse, TYPE} = require('@formatjs/icu-messageformat-parser');
 
-function compileStrings(messages) {
-  let res = 'module.exports = {';
+function compileStrings(messages, options) {
+  let res = options?.format  === 'esm' ? 'export default {' : 'module.exports = {';
   for (let key in messages) {
     res += '  ' + JSON.stringify(key) + ': ' + compileString(messages[key]) + ',\n';
   }

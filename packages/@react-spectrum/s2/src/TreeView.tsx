@@ -217,7 +217,11 @@ const treeCheckbox = style({
   gridArea: 'checkbox',
   marginStart: 12,
   marginEnd: 0,
-  paddingEnd: 0
+  paddingEnd: 0,
+  visibility: {
+    default: 'visible',
+    isDisabled: 'hidden'
+  }
 });
 
 const treeIcon = style({
@@ -302,7 +306,7 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
           <div className={treeCellGrid({isDisabled, isNextSelected, isSelected, isFirst, isNextFocused})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-              <div className={treeCheckbox}>
+              <div className={treeCheckbox({isDisabled: isDisabled || !state.selectionManager.canSelectItem(id) || state.disabledKeys.has(id)})}>
                 <Checkbox slot="selection" />
               </div>
             )}
@@ -319,8 +323,8 @@ export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode 
                   render: centerBaseline({slot: 'icon', styles: treeIcon}),
                   styles: style({size: fontRelative(20), flexShrink: 0})
                 }],
-                [ActionButtonGroupContext, {styles: treeActions}],
-                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
+                [ActionButtonGroupContext, {styles: treeActions, isDisabled}],
+                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, isDisabled}]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}
             </Provider>
