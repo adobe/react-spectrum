@@ -11,7 +11,7 @@ import {type Library, TAB_DEFS} from './constants';
 // @ts-ignore
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-import {Page} from '@parcel/rsc';
+import {Page, TocNode} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -51,12 +51,37 @@ export function stripMarkdown(description: string | undefined): string {
 }
 
 /**
+ * Gets all of the subheadings underneath a heading within the Table of Contents 
+ */
+function getToCSubheadings(TocNode: TocNode, headings: string[]): string[] {
+  headings.push(TocNode.title);
+
+  for (let node of TocNode.children) {
+    getToCSubheadings(node, headings);
+  }
+
+  return headings;
+}
+
+/**
  * Transforms a page into a ComponentItem for search/display.
  */
 export function transformPageToComponentItem(page: Page): ComponentItem {
+  // get all headings on a page and add them a tags for the search feature
+  let Toc = page.tableOfContents;
+  let headings: string[] = []
+  if (Toc) {
+    for (let node of Toc) {
+      let subHeadings: string[] = getToCSubheadings(node, []);
+      headings.push(...subHeadings)
+    }
+  }
+  let allTags = (page.exports?.tags || page.exports?.keywords as string[]) || [];
+  allTags.push(...headings);
+
   const title = getPageTitle(page);
   const section: string = getSearchSection(page);
-  const tags: string[] = (page.exports?.tags || page.exports?.keywords as string[]) || [];
+  const tags: string[] = allTags;
   const description: string = stripMarkdown(page.exports?.description);
   const date: string | undefined = page.exports?.date;
   return {
