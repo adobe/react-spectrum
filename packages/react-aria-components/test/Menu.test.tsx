@@ -334,13 +334,16 @@ describe('Menu', () => {
   });
 
   it('should support section-level selection', async () => {
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
     function Example() {
       let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
       let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
           <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
-            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">Lettuce</MenuItem>
             <MenuItem id="tomato">Tomato</MenuItem>
             <MenuItem id="onion">Onion</MenuItem>
           </MenuSection>
@@ -378,12 +381,28 @@ describe('Menu', () => {
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
     expect(radios[2]).toHaveAttribute('aria-checked', 'false');
 
-    act(() => checkboxes[0].focus());
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
     let sequence = checkboxes.slice(1).concat(radios);
     for (let item of sequence) {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
+    expect(onFocus).toHaveBeenCalledTimes(0);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
