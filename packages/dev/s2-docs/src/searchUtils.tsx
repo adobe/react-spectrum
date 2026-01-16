@@ -68,6 +68,7 @@ function getToCSubheadings(TocNode: TocNode, headings: string[]): string[] {
  */
 export function transformPageToComponentItem(page: Page): ComponentItem {
   // get all headings on a page and add them a tags for the search feature
+  let filterTags = new Set(['Content', 'Examples', 'API', 'Accessibility', 'Events', 'Features', 'Introduction', 'Interface']);
   let Toc = page.tableOfContents;
   let headings: string[] = [];
   if (Toc) {
@@ -77,7 +78,9 @@ export function transformPageToComponentItem(page: Page): ComponentItem {
     }
   }
   let allTags = (page.exports?.tags || page.exports?.keywords as string[]) || [];
-  allTags.push(...headings);
+  let relatedPages = (page.exports?.relatedPages?.map(page => page.title)) || [];
+  allTags.push(...headings, ...relatedPages);
+  allTags = allTags.filter(tags => (!filterTags.has(tags) && !tags.startsWith('Testing')));
 
   const title = getPageTitle(page);
   const section: string = getSearchSection(page);
