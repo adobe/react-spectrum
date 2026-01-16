@@ -20,7 +20,7 @@ import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface SpectrumDropZoneProps extends Omit<DropZoneProps, 'onHoverStart' | 'onHoverChange' | 'onHoverEnd' | 'isDisabled' | 'className' | 'style'>, DOMProps, StyleProps, AriaLabelingProps {
+export interface SpectrumDropZoneProps extends Omit<DropZoneProps, 'onHoverStart' | 'onHoverChange' | 'onHoverEnd' | 'isDisabled' | 'className' | 'style' | 'render'>, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the drop zone. */
   children: ReactNode,
   /** Whether the drop zone has been filled. */
