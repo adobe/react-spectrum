@@ -22,7 +22,8 @@ import {useRef} from 'react';
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
 export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement | null>): CalendarAria {
-  let res = useCalendarBase(props, state);
+  let {pointerUpOutsideAction = 'select', ...otherProps} = props;
+  let res = useCalendarBase(otherProps, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
   // https://bugs.webkit.org/show_bug.cgi?id=222627
@@ -36,7 +37,13 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
 
-  // Stop range selection when pressing or releasing a pointer outside the calendar body,
+  const pointerUpOutsideActionMapping = {
+    clear: () => state.clearSelection(),
+    reset: () => state.setAnchorDate(null),
+    select: () => state.selectFocusedDate()
+  };
+
+  // Execute method corresponding to `pointerUpOutsideAction` when pressing or releasing a pointer outside the calendar body,
   // except when pressing the next or previous buttons to switch months.
   let endDragging = (e: PointerEvent) => {
     if (isVirtualClick.current) {
@@ -55,19 +62,20 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
       ref.current.contains(document.activeElement) &&
       (!ref.current.contains(target) || !target.closest('button, [role="button"]'))
     ) {
-      state.selectFocusedDate();
+      pointerUpOutsideActionMapping[pointerUpOutsideAction]();
     }
   };
 
   useEvent(windowRef, 'pointerup', endDragging);
 
-  // Also stop range selection on blur, e.g. tabbing away from the calendar.
+  // Also execute method corresponding to `pointerUpOutsideAction` on blur,
+  // e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
     if (!ref.current) {
       return;
     }
     if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
-      state.selectFocusedDate();
+      pointerUpOutsideActionMapping[pointerUpOutsideAction]();
     }
   };
 

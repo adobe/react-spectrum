@@ -191,7 +191,11 @@ export function useRangeCalendarState<T extends DateValue = DateValue>(props: Ra
       return calendar.isInvalid(date) || isInvalid(date, availableRangeRef.current?.start, availableRangeRef.current?.end);
     },
     isDragging,
-    setDragging
+    setDragging,
+    clearSelection() {
+      setAnchorDate(null);
+      setValue(null);
+    }
   };
 }
 
