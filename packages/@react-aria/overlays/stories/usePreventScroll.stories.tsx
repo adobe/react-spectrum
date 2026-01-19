@@ -46,6 +46,9 @@ function App(): JSX.Element {
       <ActionButton onPress={startPreventScroll} margin="20px">
         Click Me in safari and then scroll
       </ActionButton>
+
+      <p>Should be able to scroll the range input on iOS Safari</p>
+      <input type="range" />
     </div>
   );
 }
