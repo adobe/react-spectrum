@@ -3,7 +3,6 @@ import {
   ClassNameOrFunction,
   composeRenderProps,
   ContextValue,
-  DOMRenderProps,
   RenderProps,
   StyleRenderProps,
   useContextProps
@@ -18,7 +17,7 @@ import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, u
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
-export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorSwatchPicker'
@@ -74,7 +73,7 @@ export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRender
   color: Color
 }
 
-export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, DOMRenderProps<'div'>, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorSwatchPickerItem'

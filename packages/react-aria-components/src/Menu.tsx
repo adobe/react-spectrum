@@ -192,7 +192,7 @@ export interface MenuRenderProps {
   isEmpty: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Menu'
@@ -239,9 +239,9 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-Menu',
-    className: props.className,
-    style: props.style,
     values: {
       isEmpty: state.collection.size === 0
     }
@@ -263,7 +263,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   return (
     <FocusScope>
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, menuProps)}
         ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
@@ -297,7 +296,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   );
 }
 
-export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection, DOMRenderProps<'section'> {
+export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection, DOMRenderProps<'section', undefined> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-MenuSection'
@@ -347,10 +346,13 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
     'aria-label': section.props['aria-label'] ?? undefined
   });
   let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
     defaultClassName: className,
     className: section.props?.className,
     style: section.props?.style,
-    values: {}
+    values: undefined
   });
 
   let parent = useContext(SelectionManagerContext)!;
@@ -364,7 +366,6 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
 
   return (
     <dom.section
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}>
       <Provider
@@ -399,7 +400,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, PossibleLinkDOMRenderProps, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface MenuItemProps<T = object> extends Omit<RenderProps<MenuItemRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'div', MenuItemRenderProps>, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-MenuItem'
@@ -443,7 +444,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
   let {hoverProps, isHovered} = useHover({
     isDisabled: states.isDisabled
   });
-  let renderProps = useRenderProps({
+  let renderProps = useRenderProps<MenuItemRenderProps, any>({
     ...props,
     id: undefined,
     children: item.rendered,
@@ -466,7 +467,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
 
   return (
     <ElementType
-      render={props.render as any}
       {...mergeProps(DOMProps, renderProps, menuItemProps, hoverProps)}
       ref={ref}
       data-disabled={states.isDisabled || undefined}

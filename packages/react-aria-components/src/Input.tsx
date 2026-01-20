@@ -14,7 +14,6 @@ import {
  ClassNameOrFunction,
  ContextValue,
  dom,
- DOMRenderProps,
  StyleRenderProps,
  useContextProps,
  useRenderProps
@@ -51,7 +50,7 @@ export interface InputRenderProps {
   isInvalid: boolean
 }
 
-export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps>, DOMRenderProps<'input'> {
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps, 'input'> {
  /**
   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
   * @default 'react-aria-Input'
@@ -102,7 +101,6 @@ export const Input = /*#__PURE__*/ createHideableComponent(function Input(props:
 
   return (
     <dom.input
-      render={props.render}
       {...mergeProps(filterHoverProps(props), focusProps, hoverProps)}
       {...renderProps}
       ref={ref}

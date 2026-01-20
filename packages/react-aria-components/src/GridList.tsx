@@ -72,7 +72,7 @@ export interface GridListRenderProps {
   state: ListState<unknown>
 }
 
-export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-GridList'
@@ -233,8 +233,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     state: filteredState
   };
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-GridList',
     values: renderValues
   });
@@ -245,11 +245,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   if (isEmpty && props.renderEmptyState) {
     let content = props.renderEmptyState(renderValues);
     emptyState = (
-      <dom.div render={props.render} role="row" aria-rowindex={1} style={{display: 'contents'}}>
-        <dom.div render={props.render} role="gridcell" style={{display: 'contents'}}>
+      <div role="row" aria-rowindex={1} style={{display: 'contents'}}>
+        <div role="gridcell" style={{display: 'contents'}}>
           {content}
-        </dom.div>
-      </dom.div>
+        </div>
+      </div>
     );
   }
 
@@ -258,7 +258,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   return (
     <FocusScope>
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
         ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
@@ -292,7 +291,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
-export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, DOMRenderProps<'div'>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-GridListItem'
@@ -406,7 +405,6 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent(ItemNode, function
         </div>
       }
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps)}
         ref={ref}
         data-selected={states.isSelected || undefined}
@@ -504,7 +502,6 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
 
   return (
     <dom.div
-      render={props.render}
       {...renderProps}
       role="row"
       ref={ref as RefObject<HTMLDivElement | null>}
@@ -541,7 +538,7 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface GridListLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-GridListLoadMoreItem'
@@ -576,7 +573,7 @@ export const GridListLoadMoreItem = createLeafComponent(LoaderNode, function Gri
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-GridListLoadingIndicator',
-    values: null
+    values: undefined
   });
   // For now don't include aria-posinset and aria-setsize on loader since they aren't keyboard focusable
   // Arguably shouldn't include them ever since it might be confusing to the user to include the loaders as part of the
@@ -591,7 +588,6 @@ export const GridListLoadMoreItem = createLeafComponent(LoaderNode, function Gri
       </div>
       {isLoading && renderProps.children && (
         <dom.div
-          render={props.render}
           {...renderProps}
           {...filterDOMProps(props, {global: true})}
           role="row"
@@ -607,7 +603,7 @@ export const GridListLoadMoreItem = createLeafComponent(LoaderNode, function Gri
   );
 });
 
-export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div'> {
+export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'div', undefined> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-GridListSection'
@@ -627,10 +623,11 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, 
     'aria-label': props['aria-label'] ?? undefined
   }, state, ref);
   let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
     defaultClassName: 'react-aria-GridListSection',
-    className: props.className,
-    style: props.style,
-    values: {}
+    values: undefined
   });
 
   let DOMProps = filterDOMProps(props as any, {global: true});
@@ -638,7 +635,6 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, 
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref}>
       <Provider
@@ -654,7 +650,7 @@ export const GridListSection = /*#__PURE__*/ createBranchComponent(SectionNode, 
   );
 });
 
-export interface GridListHeaderProps extends DOMRenderProps<'div'>, DOMProps, GlobalDOMAttributes<HTMLElement> {}
+export interface GridListHeaderProps extends DOMRenderProps<'div', undefined>, DOMProps, GlobalDOMAttributes<HTMLElement> {}
 
 export const GridListHeaderContext = createContext<ContextValue<GridListHeaderProps, HTMLDivElement>>({});
 const GridListHeaderInnerContext = createContext<HTMLAttributes<HTMLElement> | null>(null);

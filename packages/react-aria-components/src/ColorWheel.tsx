@@ -3,7 +3,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -30,7 +29,7 @@ export interface ColorWheelRenderProps {
   state: ColorWheelState
 }
 
-export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<ColorWheelRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<ColorWheelRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorWheel'
@@ -66,7 +65,6 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
 
   return (
     <dom.div
-      render={props.render}
       {...DOMProps}
       {...renderProps}
       ref={ref}
@@ -85,14 +83,14 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
 });
 
 export interface ColorWheelTrackRenderProps extends ColorWheelRenderProps {}
-export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorWheelTrack'
    */
   className?: ClassNameOrFunction<ColorWheelTrackRenderProps>
 }
-interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, StyleRenderProps<ColorWheelTrackRenderProps>, DOMRenderProps<'div'> {}
+interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, StyleRenderProps<ColorWheelTrackRenderProps> {}
 
 export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrackContextValue, HTMLDivElement>>(null);
 
@@ -116,7 +114,6 @@ export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorW
 
   return (
     <dom.div
-      render={props.render}
       {...rest}
       {...renderProps}
       ref={ref}

@@ -13,7 +13,7 @@
 import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface TextProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<any> {
+export interface TextProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<any, any> {
   elementType?: string
 }
 

@@ -17,7 +17,7 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef} from 'react';
 
-export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, DOMRenderProps<'hr' | 'div'>, GlobalDOMAttributes<HTMLElement> {
+export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps, DOMRenderProps<'hr' | 'div', undefined>, GlobalDOMAttributes<HTMLElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Separator'

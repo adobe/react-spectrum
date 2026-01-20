@@ -14,7 +14,7 @@ import {dom, DOMRenderProps, useContextProps} from './utils';
 import {HeadingContext} from './RSPContexts';
 import React, {ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface HeadingProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'h1'> {
+export interface HeadingProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'h1', undefined> {
   level?: number
 }
 

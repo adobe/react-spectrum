@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   removeDataAttributes,
   RenderProps,
   SlotProps,
@@ -27,7 +26,7 @@ import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/share
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, DOMRenderProps<'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps, 'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
  /**
   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
   * @default 'react-aria-Switch'
@@ -128,7 +127,6 @@ export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Swit
 
   return (
     <dom.label
-      render={props.render}
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       slot={props.slot || undefined}

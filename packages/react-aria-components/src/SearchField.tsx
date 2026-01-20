@@ -16,7 +16,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -72,7 +71,7 @@ export interface SearchFieldRenderProps {
   state: SearchFieldState
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SearchField'
@@ -123,7 +122,6 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
 
   return (
     <dom.div
-      render={props.render}
       {...DOMProps}
       {...renderProps}
       ref={ref}

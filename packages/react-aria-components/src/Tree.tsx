@@ -19,7 +19,6 @@ import {
   ContextValue,
   DEFAULT_SLOT,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -149,7 +148,7 @@ export interface TreeRenderProps {
 
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
-export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, DOMRenderProps<'div'>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
+export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, Expandable, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tree'
@@ -374,8 +373,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   };
 
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-Tree',
     values: renderValues
   });
@@ -404,7 +403,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     <>
       <FocusScope>
         <dom.div
-          render={props.render}
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot || undefined}
@@ -493,7 +491,7 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent(TreeContentNode
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, DOMRenderProps<'div'>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Pick<AriaTreeItemOptions, 'hasChildItems'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TreeItem'
@@ -677,7 +675,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
       </div>
     )}
       <dom.div
-        render={props.render}
         {...mergeProps(
           DOMProps,
           rowProps,
@@ -749,7 +746,7 @@ export interface TreeLoadMoreItemRenderProps {
   level: number
 }
 
-export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps>, DOMRenderProps<'div'> {
+export interface TreeLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, RenderProps<TreeLoadMoreItemRenderProps> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TreeLoadMoreItem'
@@ -816,7 +813,6 @@ export const TreeLoadMoreItem = createLeafComponent(LoaderNode, function TreeLoa
       </div>
       {isLoading && renderProps.children && (
         <dom.div
-          render={props.render}
           ref={ref}
           {...mergeProps(filterDOMProps(props as any), ariaProps)}
           {...renderProps}
@@ -968,7 +964,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
   });
 
   return (
-    <div
+    <dom.div
       {...renderProps}
       role="row"
       aria-level={level}
@@ -978,7 +974,7 @@ function TreeDropIndicator(props: TreeDropIndicatorProps, ref: ForwardedRef<HTML
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </div>
-    </div>
+    </dom.div>
   );
 }
 

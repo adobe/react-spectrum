@@ -2,7 +2,6 @@ import {AriaColorAreaProps, useColorArea} from 'react-aria';
 import {
   ClassNameOrFunction,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -28,7 +27,7 @@ export interface ColorAreaRenderProps {
   state: ColorAreaState
 }
 
-export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAreaRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorArea'
@@ -74,7 +73,6 @@ export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, re
 
   return (
     <dom.div
-      render={props.render}
       ref={ref}
       {...mergeProps(DOMProps, colorAreaProps, renderProps)}
       slot={props.slot || undefined}

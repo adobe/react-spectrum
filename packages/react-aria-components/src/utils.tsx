@@ -66,7 +66,7 @@ export interface DOMProps extends StyleProps, SharedDOMProps {
 export type ClassNameOrFunction<T> = string | ((values: T & {defaultClassName: string | undefined}) => string);
 type StyleOrFunction<T> = CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined);
 
-export interface StyleRenderProps<T> {
+export interface StyleRenderProps<T, E extends keyof React.JSX.IntrinsicElements = 'div'> extends DOMRenderProps<E, T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
   className?: ClassNameOrFunction<T>,
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
@@ -75,26 +75,27 @@ export interface StyleRenderProps<T> {
 
 export type ChildrenOrFunction<T> = ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode);
 
-export interface RenderProps<T> extends StyleRenderProps<T> {
+export interface RenderProps<T, E extends keyof React.JSX.IntrinsicElements = 'div'> extends StyleRenderProps<T, E> {
   /** The children of the component. A function may be provided to alter the children based on component state. */
   children?: ChildrenOrFunction<T>
 }
 
-interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, AriaLabelingProps {
+interface RenderPropsHookOptions<T, E extends keyof React.JSX.IntrinsicElements> extends RenderProps<T, E>, SharedDOMProps, AriaLabelingProps {
   values: T,
   defaultChildren?: ReactNode,
   defaultClassName?: string,
   defaultStyle?: CSSProperties
 }
 
-interface RenderPropsHookRetVal {
+interface RenderPropsHookRetVal<T, E extends keyof React.JSX.IntrinsicElements> {
   className?: string,
   style?: CSSProperties,
   children?: ReactNode,
-  'data-rac': string
+  'data-rac': string,
+  render?: DOMRenderFunction<E, T>
 }
 
-export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderPropsHookRetVal {
+export function useRenderProps<T, E extends keyof React.JSX.IntrinsicElements>(props: RenderPropsHookOptions<T, E>): RenderPropsHookRetVal<T, E> {
   let {
     className,
     style,
@@ -102,7 +103,8 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderProps
     defaultClassName = undefined,
     defaultChildren = undefined,
     defaultStyle,
-    values
+    values,
+    render
   } = props;
 
   return useMemo(() => {
@@ -134,9 +136,10 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderProps
       className: computedClassName ?? defaultClassName,
       style: (computedStyle || defaultStyle) ? {...defaultStyle, ...computedStyle} : undefined,
       children: computedChildren ?? defaultChildren,
-      'data-rac': ''
+      'data-rac': '',
+      render: render ? (props => render(props, values)) : undefined
     };
-  }, [className, style, children, defaultClassName, defaultChildren, defaultStyle, values]);
+  }, [className, style, children, defaultClassName, defaultChildren, defaultStyle, values, render]);
 }
 
 /**
@@ -263,8 +266,8 @@ export interface RACValidation {
   validationBehavior?: 'native' | 'aria'
 }
 
-export type DOMRenderFunction<E extends keyof React.JSX.IntrinsicElements> = (props: React.JSX.IntrinsicElements[E]) => ReactElement;
-export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements> {
+export type DOMRenderFunction<E extends keyof React.JSX.IntrinsicElements, T> = (props: React.JSX.IntrinsicElements[E], renderProps: T) => ReactElement;
+export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements, T> {
   /**
    * Overrides the default DOM element with a custom render function.
    * This allows rendering existing components with built-in styles and behaviors
@@ -275,14 +278,14 @@ export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements> {
    * - Only a single root DOM element can be rendered (no fragments).
    * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
    */
-  render?: DOMRenderFunction<E>
+  render?: DOMRenderFunction<E, T>
 }
 
 // Makes `href` required in AnchorHTMLAttributes
 type LinkWithRequiredHref = Required<Pick<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>> & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>; 
 
 // Same as DOMRenderProps but specific for the case where the element could be a 'a' or 'div' element.
-export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.IntrinsicElements = 'div'> {
+export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.IntrinsicElements, T> {
   /**
    * Overrides the default DOM element with a custom render function.
    * This allows rendering existing components with built-in styles and behaviors
@@ -295,10 +298,10 @@ export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.Int
    * - Only a single root DOM element can be rendered (no fragments).
    * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
    */
-  render?: (props: DetailedHTMLProps<LinkWithRequiredHref, HTMLAnchorElement> | React.JSX.IntrinsicElements[Fallback]) => ReactElement
+  render?: (props: DetailedHTMLProps<LinkWithRequiredHref, HTMLAnchorElement> | React.JSX.IntrinsicElements[Fallback], renderProps: T) => ReactElement
 }
 
-function DOMElement(ElementType: string, props: DOMRenderProps<any> & AllHTMLAttributes<HTMLElement>, forwardedRef: ForwardedRef<HTMLElement>) {
+function DOMElement(ElementType: string, props: DOMRenderProps<any, any> & AllHTMLAttributes<HTMLElement>, forwardedRef: ForwardedRef<HTMLElement>) {
   let {render, ...otherProps} = props;
   let elementRef = useRef<HTMLElement | null>(null);
   let ref = useMemo(() => mergeRefs(forwardedRef, elementRef), [forwardedRef, elementRef]);
@@ -315,14 +318,14 @@ function DOMElement(ElementType: string, props: DOMRenderProps<any> & AllHTMLAtt
 
   let domProps: any = {...otherProps, ref};
   if (render) {
-    return render(domProps);
+    return render(domProps, undefined);
   }
 
   return <ElementType {...domProps} />;
 }
 
 type DOMComponents = {
-  [E in keyof React.JSX.IntrinsicElements]: (props: DOMRenderProps<E> & React.JSX.IntrinsicElements[E]) => ReactElement
+  [E in keyof React.JSX.IntrinsicElements]: (props: DOMRenderProps<E, any> & React.JSX.IntrinsicElements[E]) => ReactElement
 };
 
 const domComponentCache = {};

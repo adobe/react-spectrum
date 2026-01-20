@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -64,7 +63,7 @@ export interface ComboBoxRenderProps {
   isRequired: boolean
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ComboBox'
@@ -236,7 +235,6 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [FieldErrorContext, validation]
       ]}>
       <dom.div
-        render={props.render}
         {...DOMProps}
         {...renderProps}
         ref={ref}

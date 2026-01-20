@@ -16,7 +16,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -35,14 +34,14 @@ import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo} from 'react';
 import {TextContext} from './Text';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-CheckboxGroup'
    */
   className?: ClassNameOrFunction<CheckboxGroupRenderProps>
 }
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, DOMRenderProps<'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps, 'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Checkbox'
@@ -173,7 +172,6 @@ export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -262,7 +260,6 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
 
   return (
     <dom.label
-      render={props.render}
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       slot={props.slot || undefined}

@@ -14,7 +14,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -43,7 +42,7 @@ export interface ToggleButtonGroupRenderProps {
   state: ToggleGroupState
 }
 
-export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, RenderProps<ToggleButtonGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ToggleButtonGroup'
@@ -76,7 +75,6 @@ export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(fu
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}
       slot={props.slot || undefined}

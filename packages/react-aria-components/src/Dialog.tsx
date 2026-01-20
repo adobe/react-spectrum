@@ -31,7 +31,7 @@ export interface DialogRenderProps {
   close: () => void
 }
 
-export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps, DOMRenderProps<'section'>, GlobalDOMAttributes<HTMLElement> {
+export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps, DOMRenderProps<'section', undefined>, GlobalDOMAttributes<HTMLElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Dialog'
@@ -133,8 +133,8 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
 
   return (
     <dom.section
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, dialogProps)}
+      render={props.render}
       ref={ref}
       slot={props.slot || undefined}>
       <Provider

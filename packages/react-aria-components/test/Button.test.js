@@ -44,9 +44,15 @@ describe('Button', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
-  it('should support custom render function', () => {
-    let {getByRole} = render(<Button render={props => <button {...props} data-custom="bar" />}>Test</Button>);
+  it('should support custom render function', async () => {
+    let {getByRole} = render(<Button render={(props, {isPressed}) => <button {...props} data-custom={isPressed ? 'pressed' : 'bar'} />}>Test</Button>);
     let button = getByRole('button');
+    expect(button).toHaveAttribute('data-custom', 'bar');
+
+    await user.pointer({target: button, keys: '[MouseLeft>]'});
+    expect(button).toHaveAttribute('data-custom', 'pressed');
+
+    await user.pointer({target: button, keys: '[/MouseLeft]'});
     expect(button).toHaveAttribute('data-custom', 'bar');
   });
 

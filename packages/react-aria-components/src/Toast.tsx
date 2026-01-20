@@ -55,7 +55,7 @@ export interface ToastRegionRenderProps<T> {
   isFocusVisible: boolean
 }
 
-export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ToastRegion'
@@ -105,7 +105,6 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let region = (
     <ToastStateContext.Provider value={state}>
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, regionProps, focusProps, hoverProps)}
         dir={direction}
         ref={objectRef}
@@ -122,7 +121,7 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     : null;
 });
 
-export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | 'children' | 'render'>, DOMRenderProps<'ol'> {
+export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | 'children' | 'render'>, DOMRenderProps<'ol', ToastRegionRenderProps<T>> {
   /** A function to render each toast. */
   children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
 }
@@ -170,7 +169,7 @@ export interface ToastRenderProps<T> {
   isFocusVisible: boolean
 }
 
-export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Toast'
@@ -205,7 +204,6 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, toastProps, focusProps)}
       ref={objectRef}
       data-focused={isFocused || undefined}
@@ -233,7 +231,7 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
   );
 });
 
-export interface ToastContentProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'div'> {}
+export interface ToastContentProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'div', undefined> {}
 
 export const ToastContentContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
 

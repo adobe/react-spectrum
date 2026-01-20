@@ -14,7 +14,7 @@ import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import {createLeafComponent, HeaderNode} from '@react-aria/collections';
 import React, {createContext, ForwardedRef, HTMLAttributes} from 'react';
 
-export interface HeaderProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'header'> {}
+export interface HeaderProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'header', undefined> {}
 
 export const HeaderContext = createContext<ContextValue<HeaderProps, HTMLElement>>({});
 

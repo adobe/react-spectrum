@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -30,7 +29,7 @@ import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
-export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Slider'
@@ -104,7 +103,6 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
         [LabelContext, {...labelProps, ref: labelRef}]
       ]}>
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, groupProps)}
         ref={ref}
         slot={props.slot || undefined}
@@ -114,7 +112,7 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   );
 });
 
-export interface SliderOutputProps extends RenderProps<SliderRenderProps>, DOMRenderProps<'output'>, GlobalDOMAttributes<HTMLOutputElement> {
+export interface SliderOutputProps extends RenderProps<SliderRenderProps, 'output'>, GlobalDOMAttributes<HTMLOutputElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SliderOutput'
@@ -128,12 +126,13 @@ interface SliderOutputContextValue extends Omit<OutputHTMLAttributes<HTMLOutputE
  */
 export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   [props, ref] = useContextProps(props, ref, SliderOutputContext);
-  let {children, style, className, ...otherProps} = props;
+  let {children, style, className, render, ...otherProps} = props;
   let state = useContext(SliderStateContext)!;
   let renderProps = useRenderProps({
     className,
     style,
     children,
+    render,
     defaultChildren: state.getThumbValueLabel(0),
     defaultClassName: 'react-aria-SliderOutput',
     values: {
@@ -161,7 +160,7 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
   isHovered: boolean
 }
 
-export interface SliderTrackProps extends HoverEvents, RenderProps<SliderTrackRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface SliderTrackProps extends HoverEvents, RenderProps<SliderTrackRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SliderTrack'
@@ -191,7 +190,6 @@ export const SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(otherProps, hoverProps)}
       {...renderProps}
       ref={ref}
@@ -233,7 +231,7 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SliderThumb'
@@ -289,7 +287,6 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, thumbProps, hoverProps)}
       {...renderProps}
       ref={ref}

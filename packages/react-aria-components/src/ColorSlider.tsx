@@ -2,7 +2,6 @@ import {AriaColorSliderProps, Orientation, useColorSlider, useLocale} from 'reac
 import {
   ClassNameOrFunction,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -36,7 +35,7 @@ export interface ColorSliderRenderProps {
   state: ColorSliderState
 }
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorSlider'
@@ -100,7 +99,6 @@ export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderPro
         [InternalColorThumbContext, {state, thumbProps, inputXRef: inputRef, xInputProps: inputProps, isDisabled: props.isDisabled}]
       ]}>
       <dom.div
-        render={props.render}
         {...DOMProps}
         {...renderProps}
         ref={ref}

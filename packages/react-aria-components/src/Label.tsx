@@ -14,7 +14,7 @@ import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import React, {createContext, ForwardedRef, LabelHTMLAttributes} from 'react';
 
-export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement>, DOMRenderProps<'label'> {
+export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement>, DOMRenderProps<'label', undefined> {
   elementType?: string
 }
 

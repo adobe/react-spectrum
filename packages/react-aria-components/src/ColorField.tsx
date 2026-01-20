@@ -14,7 +14,6 @@ import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} fro
 import {
   ClassNameOrFunction,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -67,7 +66,7 @@ export interface ColorFieldRenderProps {
   state: ColorFieldState
 }
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorField'
@@ -230,7 +229,6 @@ function useChildren(
         [FieldErrorContext, validation]
       ]}>
       <dom.div
-        render={props.render}
         {...DOMProps}
         {...renderProps}
         ref={ref}

@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -33,7 +32,7 @@ export interface ToolbarRenderProps {
   orientation: Orientation
 }
 
-export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Toolbar'
@@ -60,7 +59,6 @@ export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, toolbarProps)}
       ref={ref}
       slot={props.slot || undefined}

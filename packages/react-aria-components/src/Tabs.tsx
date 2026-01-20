@@ -21,7 +21,7 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 
-export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface TabsProps extends Omit<AriaTabListProps<any>, 'items' | 'children'>, RenderProps<TabsRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tabs'
@@ -37,7 +37,7 @@ export interface TabsRenderProps {
   orientation: Orientation
 }
 
-export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, DOMRenderProps<'div'>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TabListProps<T> extends StyleRenderProps<TabListRenderProps>, AriaLabelingProps, Omit<CollectionProps<T>, 'disabledKeys'>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TabList'
@@ -57,7 +57,7 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, PossibleLinkDOMRenderProps, AriaLabelingProps, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface TabProps extends Omit<RenderProps<TabRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'div', TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tab'
@@ -102,7 +102,7 @@ export interface TabRenderProps {
   isDisabled: boolean
 }
 
-export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TabPanelProps extends AriaTabPanelProps, RenderProps<TabPanelRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TabPanel'
@@ -200,7 +200,6 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, focusProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -262,7 +261,6 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, tabListProps)}
       ref={objectRef}
       data-orientation={orientation || undefined}>
@@ -292,7 +290,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabPro
     onHoverChange: props.onHoverChange
   });
 
-  let renderProps = useRenderProps({
+  let renderProps = useRenderProps<TabRenderProps, any>({
     ...props,
     id: undefined,
     children: item.rendered,
@@ -314,7 +312,6 @@ export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabPro
 
   return (
     <ElementType
-      render={props.render as any}
       {...mergeProps(DOMProps, renderProps, tabProps, focusProps, hoverProps)}
       ref={ref}
       data-selected={isSelected || undefined}
@@ -330,7 +327,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent(TabItemNode, (props: TabPro
   );
 });
 
-export interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TabPanelsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-TabPanels'
@@ -474,7 +471,6 @@ function TabPanelInner(props: TabPanelProps & {tabPanelRef: RefObject<HTMLDivEle
 
   return (
     <dom.div
-      render={props.render}
       {...domProps}
       ref={ref}
       data-focused={isFocused || undefined}

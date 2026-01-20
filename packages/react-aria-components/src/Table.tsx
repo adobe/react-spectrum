@@ -220,7 +220,7 @@ interface ResizableTableContainerContextValue {
 
 const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
 
-export interface ResizableTableContainerProps extends DOMProps, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ResizableTableContainerProps extends DOMProps, DOMRenderProps<'div', undefined>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-ResizableTableContainer'
@@ -325,7 +325,7 @@ export interface TableRenderProps {
   state: TableState<unknown>
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, DOMRenderProps<'table' | 'div'>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLTableElement> {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps, 'table' | 'div'>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLTableElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Table'
@@ -478,8 +478,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderProps = useRenderProps({
-    className: props.className,
-    style: props.style,
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-Table',
     values: {
       isDropTarget: isRootDropTarget,
@@ -520,7 +520,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       ]}>
       <FocusScope>
         <TableElementType
-          render={props.render}
           {...mergeProps(DOMProps, renderProps, gridProps, focusProps, droppableCollection?.collectionProps)}
           style={style}
           ref={ref as RefObject<HTMLTableElement>}
@@ -571,7 +570,7 @@ export interface TableHeaderRenderProps {
   isHovered: boolean
 }
 
-export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, DOMRenderProps<'thead' | 'div'>, HoverEvents, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps, 'thead' | 'div'>, HoverEvents, GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TableHeader'
@@ -624,8 +623,8 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
     });
 
     let renderProps = useRenderProps({
-      className: props.className,
-      style: props.style,
+      ...props,
+      children: undefined,
       defaultClassName: 'react-aria-TableHeader',
       values: {
         isHovered
@@ -634,7 +633,6 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
 
     return (
       <THeadElementType
-        render={props.render}
         {...mergeProps(filterDOMProps(props, {global: true}), rowGroupProps, hoverProps)}
         {...renderProps}
         ref={ref as any}
@@ -727,7 +725,7 @@ export interface ColumnRenderProps {
   startResize(): void
 }
 
-export interface ColumnProps extends RenderProps<ColumnRenderProps>, DOMRenderProps<'th' | 'div'>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
+export interface ColumnProps extends RenderProps<ColumnRenderProps, 'th' | 'div'>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Column'
@@ -829,7 +827,6 @@ export const Column = /*#__PURE__*/ createLeafComponent(TableColumnNode, (props:
 
   return (
     <ColumnElementType
-      render={props.render}
       {...mergeProps(DOMProps, columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
@@ -880,7 +877,7 @@ export interface ColumnResizerRenderProps {
   resizableDirection: 'right' | 'left' | 'both'
 }
 
-export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColumnResizer'
@@ -971,7 +968,6 @@ export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResi
 
   return (
     <dom.div
-      render={props.render}
       ref={objectRef}
       role="presentation"
       {...mergeProps(DOMProps, renderProps, resizerProps, {onPointerDown}, hoverProps)}
@@ -1002,7 +998,7 @@ export interface TableBodyRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps>, DOMRenderProps<'tbody' | 'div'>, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps, 'tbody' | 'div'>, GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TableBody'
@@ -1080,7 +1076,6 @@ export const TableBody = /*#__PURE__*/ createBranchComponent(TableBodyNode, <T e
   // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
   return (
     <TableBodyElementType
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref as any}
       data-empty={isEmpty || undefined}>
@@ -1101,7 +1096,7 @@ export interface RowRenderProps extends ItemRenderProps {
   id?: Key
 }
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, DOMRenderProps<'tr' | 'div'>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps, 'tr' | 'div'>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLTableRowElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Row'
@@ -1246,7 +1241,6 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           </TableRowElementType>
         )}
         <TableRowElementType
-          render={props.render}
           {...mergeProps(DOMProps, renderProps, rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           ref={ref as any}
           data-disabled={states.isDisabled || undefined}
@@ -1337,7 +1331,7 @@ export interface CellRenderProps {
   colIndex?: number | null
 }
 
-export interface CellProps extends RenderProps<CellRenderProps>, DOMRenderProps<'td' | 'div'>, GlobalDOMAttributes<HTMLTableCellElement> {
+export interface CellProps extends RenderProps<CellRenderProps, 'td' | 'div'>, GlobalDOMAttributes<HTMLTableCellElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Cell'
@@ -1405,7 +1399,6 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
 
   return (
     <TableCellElementType
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, gridCellProps, focusProps, hoverProps)}
       ref={ref as any}
       data-focused={isFocused || undefined}
@@ -1480,7 +1473,6 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
 
   return (
     <TableDropIndicatorRowElementType
-      render={props.render}
       {...filterDOMProps(props as any, {global: true})}
       {...renderProps}
       role="row"
@@ -1490,7 +1482,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
         role="gridcell"
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
-        <dom.div render={props.render} {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
+        <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
         {renderProps.children}
       </TableDropIndicatorTDElementType>
     </TableDropIndicatorRowElementType>
@@ -1528,7 +1520,7 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'tr' | 'div'>, GlobalDOMAttributes<HTMLTableRowElement> {
+export interface TableLoadMoreItemProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps, DOMRenderProps<'tr' | 'div', undefined>, GlobalDOMAttributes<HTMLTableRowElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-TableLoadMoreItem'
@@ -1564,7 +1556,7 @@ export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableL
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TableLoadingIndicator',
-    values: null
+    values: undefined
   });
   let rowProps = {};
   let rowHeaderProps = {};
@@ -1591,7 +1583,6 @@ export const TableLoadMoreItem = createLeafComponent(LoaderNode, function TableL
       </TableRowElementType>
       {isLoading && renderProps.children && (
         <TableRowElementType
-          render={props.render}
           {...mergeProps(filterDOMProps(props, {global: true}), rowProps)}
           {...renderProps}
           role="row"

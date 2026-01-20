@@ -70,7 +70,7 @@ export interface RangeCalendarRenderProps extends Omit<CalendarRenderProps, 'sta
   state: RangeCalendarState
 }
 
-export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps>, DOMRenderProps<'div'>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<CalendarRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Calendar'
@@ -89,7 +89,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarPro
   createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
-export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, DOMRenderProps<'div'>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps, 'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-RangeCalendar'
@@ -141,7 +141,6 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, calendarProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -220,7 +219,6 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(renderProps, DOMProps, calendarProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -348,7 +346,7 @@ export interface CalendarCellRenderProps {
   isToday: boolean
 }
 
-export interface CalendarGridProps extends StyleProps, DOMRenderProps<'table'>, GlobalDOMAttributes<HTMLTableElement> {
+export interface CalendarGridProps extends StyleProps, DOMRenderProps<'table', undefined>, GlobalDOMAttributes<HTMLTableElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-CalendarGrid'
@@ -434,7 +432,7 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   );
 });
 
-export interface CalendarGridHeaderProps extends StyleProps, DOMRenderProps<'thead'>, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface CalendarGridHeaderProps extends StyleProps, DOMRenderProps<'thead', undefined>, GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-CalendarGridHeader'
@@ -469,7 +467,7 @@ function CalendarGridHeader(props: CalendarGridHeaderProps, ref: ForwardedRef<HT
 const CalendarGridHeaderForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridHeader);
 export {CalendarGridHeaderForwardRef as CalendarGridHeader};
 
-export interface CalendarHeaderCellProps extends DOMProps, DOMRenderProps<'th'>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
+export interface CalendarHeaderCellProps extends DOMProps, DOMRenderProps<'th', undefined>, GlobalDOMAttributes<HTMLTableHeaderCellElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-CalendarHeaderCell'
@@ -498,7 +496,7 @@ function CalendarHeaderCell(props: CalendarHeaderCellProps, ref: ForwardedRef<HT
 const CalendarHeaderCellForwardRef = forwardRef(CalendarHeaderCell);
 export {CalendarHeaderCellForwardRef as CalendarHeaderCell};
 
-export interface CalendarGridBodyProps extends StyleProps, DOMRenderProps<'tbody'>, GlobalDOMAttributes<HTMLTableSectionElement> {
+export interface CalendarGridBodyProps extends StyleProps, DOMRenderProps<'tbody', undefined>, GlobalDOMAttributes<HTMLTableSectionElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-CalendarGridBody'
@@ -542,7 +540,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
-export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, DOMRenderProps<'td'>, HoverEvents, GlobalDOMAttributes<HTMLTableCellElement> {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps, 'div'>, HoverEvents, GlobalDOMAttributes<HTMLTableCellElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-CalendarCell'
@@ -555,7 +553,7 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>,
 /**
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, render, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
+export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
@@ -615,8 +613,8 @@ export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let DOMProps = filterDOMProps(otherProps, {global: true});
 
   return (
-    <dom.td render={render} {...cellProps} ref={ref}>
-      <div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
-    </dom.td>
+    <td {...cellProps} ref={ref}>
+      <dom.div {...mergeProps(DOMProps, buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
+    </td>
   );
 });

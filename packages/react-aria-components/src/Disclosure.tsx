@@ -17,7 +17,6 @@ import {
   ContextValue,
   DEFAULT_SLOT,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -29,7 +28,7 @@ import {DOMProps, forwardRefType, GlobalDOMAttributes, Key} from '@react-types/s
 import {filterDOMProps, mergeProps, mergeRefs, useId} from '@react-aria/utils';
 import React, {createContext, DOMAttributes, ForwardedRef, forwardRef, ReactNode, useContext} from 'react';
 
-export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMRenderProps<'div'>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosureGroupProps extends StatelyDisclosureGroupProps, RenderProps<DisclosureGroupRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DisclosureGroup'
@@ -71,7 +70,6 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
 
   return (
     <dom.div
-      render={props.render}
       {...domProps}
       {...renderProps}
       ref={ref}
@@ -83,7 +81,7 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
   );
 });
 
-export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Disclosure'
@@ -190,7 +188,6 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [DisclosureStateContext, state]
       ]}>
       <dom.div
-        render={props.render}
         {...mergeProps(domProps, renderProps, focusWithinProps)}
         ref={ref}
         data-expanded={state.isExpanded || undefined}
@@ -210,7 +207,7 @@ export interface DisclosurePanelRenderProps {
   isFocusVisibleWithin: boolean
 }
 
-export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMRenderProps<'div'>, DOMProps, LabelAriaProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, LabelAriaProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DisclosurePanel'
@@ -247,7 +244,6 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   let DOMProps = filterDOMProps(props, {global: true, labelable: true});
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}
       ref={mergeRefs(ref, panelRef)}
       role={role}

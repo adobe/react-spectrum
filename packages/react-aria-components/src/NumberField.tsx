@@ -16,7 +16,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -60,7 +59,7 @@ export interface NumberFieldRenderProps {
   state: NumberFieldState
 }
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-NumberField'
@@ -140,7 +139,6 @@ export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         [FieldErrorContext, validation]
       ]}>
       <dom.div
-        render={props.render}
         {...DOMProps}
         {...renderProps}
         ref={ref}

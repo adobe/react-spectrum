@@ -16,7 +16,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -41,7 +40,7 @@ export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPend
   state: ToggleState
 }
 
-export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType' | 'id'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps>, DOMRenderProps<'button'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType' | 'id'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ToggleButton'
@@ -87,7 +86,6 @@ export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
 
   return (
     <dom.button
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
       ref={ref}
       slot={props.slot || undefined}

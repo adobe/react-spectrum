@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {dom, DOMRenderProps, RenderProps, useRenderProps} from './utils';
+import {dom, RenderProps, useRenderProps} from './utils';
 import {flushSync} from 'react-dom';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -52,7 +52,7 @@ export interface SharedElementRenderProps {
   isExiting: boolean
 }
 
-export interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps>, DOMRenderProps<'div'> {}
+export interface SharedElementPropsBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'className' | 'style'>, RenderProps<SharedElementRenderProps> {}
 
 export interface SharedElementProps extends SharedElementPropsBase {
   name: string,
@@ -63,7 +63,7 @@ export interface SharedElementProps extends SharedElementPropsBase {
  * An element that animates between its old and new position when moving between parents.
  */
 export const SharedElement = forwardRef(function SharedElement(props: SharedElementProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {name, isVisible = true, children, className, style, ...divProps} = props;
+  let {name, isVisible = true, children, className, style, render, ...divProps} = props;
   let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
   let scopeRef = useContext(SharedElementContext);
   if (!scopeRef) {
@@ -164,6 +164,7 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
     children,
     className,
     style,
+    render,
     values: {
       isEntering: state === 'entering',
       isExiting: state === 'exiting'
@@ -176,7 +177,6 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
 
   return (
     <dom.div
-      render={props.render}
       {...divProps}
       {...renderProps}
       ref={ref}

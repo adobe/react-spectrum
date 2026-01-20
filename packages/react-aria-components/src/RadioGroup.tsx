@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -37,14 +36,14 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-RadioGroup'
    */
   className?: ClassNameOrFunction<RadioGroupRenderProps>
 }
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, DOMRenderProps<'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps, 'label'>, SlotProps, Omit<GlobalDOMAttributes<HTMLLabelElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Radio'
@@ -178,7 +177,6 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(DOMProps, renderProps, radioGroupProps)}
       ref={ref}
       slot={props.slot || undefined}
@@ -253,7 +251,6 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 
   return (
     <dom.label
-      render={props.render}
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}

@@ -13,7 +13,7 @@
 import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface KeyboardProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'kbd'> {}
+export interface KeyboardProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<'kbd', undefined> {}
 
 export const KeyboardContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 

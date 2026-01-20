@@ -1,4 +1,4 @@
-import {ClassNameOrFunction, dom, DOMRenderProps, RenderProps, useRenderProps} from './utils';
+import {ClassNameOrFunction, dom, RenderProps, useRenderProps} from './utils';
 import {Color} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes, HoverEvents, RefObject} from '@react-types/shared';
@@ -54,7 +54,7 @@ export interface ColorThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ColorThumb'
@@ -92,7 +92,6 @@ export const ColorThumb = forwardRef(function ColorThumb(props: ColorThumbProps,
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(thumbProps, hoverProps, DOMProps)}
       {...renderProps}
       ref={ref}

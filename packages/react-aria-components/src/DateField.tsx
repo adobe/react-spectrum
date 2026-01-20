@@ -14,7 +14,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -60,14 +59,14 @@ export interface DateFieldRenderProps {
    */
   isReadOnly: boolean
 }
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DateField'
    */
   className?: ClassNameOrFunction<DateFieldRenderProps>
 }
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TimeField'
@@ -138,7 +137,6 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         [FieldErrorContext, validation]
       ]}>
       <dom.div
-        render={props.render}
         {...DOMProps}
         {...renderProps}
         ref={ref}
@@ -212,7 +210,6 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         [FieldErrorContext, validation]
       ]}>
       <dom.div
-        render={props.render}
         {...DOMProps}
         {...renderProps}
         ref={ref}
@@ -253,7 +250,7 @@ export interface DateInputRenderProps {
   isInvalid: boolean
 }
 
-export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DateInput'
@@ -365,7 +362,7 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   type: DateSegmentType
 }
 
-export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, DOMRenderProps<'span'>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
+export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps, 'span'>, HoverEvents, GlobalDOMAttributes<HTMLSpanElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DateSegment'
@@ -378,7 +375,7 @@ export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, D
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateSegment({segment, render, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLSpanElement>) {
+export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLSpanElement>) {
   let dateFieldState = useContext(DateFieldStateContext);
   let timeFieldState = useContext(TimeFieldStateContext);
   let state = dateFieldState ?? timeFieldState!;
@@ -403,7 +400,6 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 
   return (
     <dom.span
-      render={render}
       {...mergeProps(filterDOMProps(otherProps, {global: true}), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       style={segmentProps.style}

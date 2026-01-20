@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -52,7 +51,7 @@ export interface GroupRenderProps {
   isInvalid: boolean
 }
 
-export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'render' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, DOMRenderProps<'div'>, SlotProps {
+export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'render' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
  /**
   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
   * @default 'react-aria-Group'
@@ -98,7 +97,6 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
 
   return (
     <dom.div
-      render={props.render}
       {...mergeProps(otherProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}

@@ -16,7 +16,6 @@ import {
   ContextValue,
   dom,
   DOMProps,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -63,7 +62,7 @@ export interface TextFieldRenderProps {
   isRequired: boolean
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'render' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, DOMRenderProps<'div'>, GlobalDOMAttributes<HTMLDivElement> {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'render' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps>, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-TextField'
@@ -120,7 +119,6 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
 
   return (
     <dom.div
-      render={props.render}
       {...DOMProps}
       {...renderProps}
       ref={ref}

@@ -16,7 +16,7 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
-export interface FormProps extends SharedFormProps, DOMProps, DOMRenderProps<'form'>, GlobalDOMAttributes<HTMLFormElement> {
+export interface FormProps extends SharedFormProps, DOMProps, DOMRenderProps<'form', undefined>, GlobalDOMAttributes<HTMLFormElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Form'

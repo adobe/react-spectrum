@@ -30,7 +30,7 @@ import {LinkContext} from './Link';
 import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
-export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, AriaLabelingProps, DOMRenderProps<'ol'>, GlobalDOMAttributes<HTMLOListElement> {
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, AriaLabelingProps, DOMRenderProps<'ol', undefined>, GlobalDOMAttributes<HTMLOListElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Breadcrumbs'
@@ -85,7 +85,7 @@ export interface BreadcrumbRenderProps {
   isDisabled: boolean
 }
 
-export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, DOMRenderProps<'li'>, AriaLabelingProps, GlobalDOMAttributes<HTMLLIElement>  {
+export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps, 'li'>, AriaLabelingProps, GlobalDOMAttributes<HTMLLIElement>  {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Breadcrumb'
@@ -124,7 +124,6 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent(BreadcrumbNode, func
 
   return (
     <dom.li
-      render={props.render}
       {...DOMProps}
       {...renderProps}
       ref={ref}

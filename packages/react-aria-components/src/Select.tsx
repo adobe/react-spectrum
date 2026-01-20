@@ -16,7 +16,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -78,7 +77,7 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object = {}, M extends SelectionMode = 'single'> extends Omit<AriaSelectProps<T, M>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface SelectProps<T extends object = {}, M extends SelectionMode = 'single'> extends Omit<AriaSelectProps<T, M>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Select'
@@ -227,7 +226,6 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [FieldErrorContext, validation]
       ]}>
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
@@ -265,7 +263,7 @@ export interface SelectValueRenderProps<T> {
   state: SelectState<T, 'single' | 'multiple'>
 }
 
-export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>>, DOMRenderProps<'span'> {
+export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>, 'span'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SelectValue'
@@ -350,7 +348,7 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <dom.span render={props.render} ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
+    <dom.span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}

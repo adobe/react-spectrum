@@ -16,7 +16,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -28,7 +27,7 @@ import {GlobalDOMAttributes} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 
-export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, DOMRenderProps<'div'>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'label'>, RenderProps<ProgressBarRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ProgressBar'
@@ -93,7 +92,7 @@ export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarPro
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <dom.div render={props.render} {...mergeProps(DOMProps, renderProps, progressBarProps)} ref={ref} slot={props.slot || undefined}>
+    <dom.div {...mergeProps(DOMProps, renderProps, progressBarProps)} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>

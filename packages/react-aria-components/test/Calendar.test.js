@@ -87,7 +87,7 @@ describe('Calendar', () => {
     let {getByRole} = renderCalendar(
       {render: props => <div {...props} data-custom="true" />},
       {render: props => <table {...props} data-custom="true" />},
-      {render: props => <td {...props} data-custom="true" />}
+      {render: props => <div {...props} data-custom="true" />}
     );
     let group = getByRole('application');
     expect(group).toHaveAttribute('data-custom', 'true');
@@ -95,7 +95,7 @@ describe('Calendar', () => {
     let grid = getByRole('grid');
     expect(grid).toHaveAttribute('data-custom', 'true');
 
-    for (let cell of within(grid).getAllByRole('gridcell')) {
+    for (let cell of within(grid).getAllByRole('button')) {
       expect(cell).toHaveAttribute('data-custom', 'true');
     }
   });

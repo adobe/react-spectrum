@@ -15,7 +15,6 @@ import {
   ClassNameOrFunction,
   ContextValue,
   dom,
-  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -57,7 +56,7 @@ export interface DropZoneRenderProps {
   isDisabled: boolean
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, DOMRenderProps<'div'>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DropZone'
@@ -114,7 +113,6 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
       ]}>
       { }
       <dom.div
-        render={props.render}
         {...mergeProps(DOMProps, renderProps, dropProps, hoverProps)}
         slot={props.slot || undefined}
         ref={dropzoneRef}
