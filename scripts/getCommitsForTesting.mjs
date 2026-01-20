@@ -1,4 +1,4 @@
-import Octokit from "@octokit/rest";
+import Octokit from '@octokit/rest';
 import fs from 'fs';
 import {parseArgs} from 'node:util';
 import remarkParse from 'remark-parse';
@@ -42,12 +42,34 @@ async function writeTestingCSV() {
     let regex = /\(#(\d+)\)/g;
     let messages = d.commit.message.split('\n');
     let title = messages[0];
-    row.push(title);
 
     // Get info about the PR using PR number
     if (regex.test(title)) {
-      let num = title.match(regex)[0].replace(/[\(\)#]/g, '');
+      let num = title.match(regex)[0].replace(/[()#]/g, '');
       let info = await getPR(num);
+      let labels = new Set(info.data.labels.map(label => label.name));
+
+      // Skip PR if it has the no testing label
+      if (labels.has('no testing')) {
+        continue;
+      }
+
+      let matches = [...validLabels].filter(name => labels.has(name));
+      if (matches.length > 0) {
+        let title = matches[0];
+
+        if (title === 'documentation') {
+          row.push('Docs');
+        } else {
+          row.push(matches[0]);
+        }
+      }
+
+      // If there is no component label, use the title of the PR
+      if (matches.length === 0) {
+
+        row.push(removePRNumber(title));
+      } 
 
       // Get testing instructions if it exists
       let content = info.data.body;
@@ -62,20 +84,19 @@ async function writeTestingCSV() {
       // Add PR url to the row
       row.push(info.data.html_url);
 
+      // Add PR title for additional context
+      row.push(removePRNumber(title));
+
       // Categorize commit into V3, RAC, S2, or other (utilizes labels on PR's to categorize)
-      let labels = info.data.labels;
-      if (labels.length === 0) {
+      if (labels.size === 0) {
         otherPRs.push(row);
       } else {
-        for (let label of labels) {
-          // eslint-disable-next-line max-depth
-          if (label.name === 'S2') {
-            s2PRs.push(row);
-          } else if (label.name === 'RAC') {
-            racPRs.push(row);
-          } else if (label.name === 'V3') {
-            v3PRs.push(row);
-          }
+        if (labels.has('S2')) {
+          s2PRs.push(row);
+        } else if (labels.has('RAC')) {
+          racPRs.push(row);
+        } else if (labels.has('V3')) {
+          v3PRs.push(row);
         }
       }
     }
@@ -205,3 +226,106 @@ function escapeCSV(value) {
   // Wrap in quotes so commas/newlines don't break the cell
   return `"${escaped}"`;
 }
+
+function removePRNumber(title) {
+  return title.replace(/\s*\(#\d+\)\s*$/, '');
+}
+
+let validLabels = new Set([
+  'Accordion',
+  'ActionBar',
+  'ActionButton',
+  'ActionButtonGroup',
+  'ActionMenu',
+  'Autocomplete',
+  'Avatar',
+  'AvatarGroup',
+  'Badge',
+  'Breadcrumbs',
+  'Button',
+  'ButtonGroup',
+  'Calendar',
+  'Card',
+  'CardView',
+  'Checkbox',
+  'CheckboxGroup',
+  'ColorArea',
+  'ColorField',
+  'ColorPicker',
+  'ColorSlider',
+  'ColorSwatch',
+  'ColorSwatchPicker',
+  'ColorWheel',
+  'ComboBox',
+  'ContextualHelp',
+  'DateField',
+  'DatePicker',
+  'DateRangePicker',
+  'Dialog',
+  'Disclosure',
+  'DisclosureGroup',
+  'Divider',
+  'DropZone',
+  'FileTrigger',
+  'FocusRing',
+  'FocusScope',
+  'Form',
+  'GridList',
+  'Group',
+  'I18nProvider',
+  'IllustratedMessage',
+  'Image',
+  'InlineAlert',
+  'Link',
+  'LinkButton',
+  'ListBox',
+  'Menu',
+  'Meter',
+  'Modal',
+  'NumberField',
+  'Picker',
+  'Popover',
+  'PortalProvider',
+  'ProgressBar',
+  'ProgressCircle',
+  'Provider',
+  'RadioGroup',
+  'RangeCalendar',
+  'RangeSlider',
+  'SearchField',
+  'SegmentedControl',
+  'Select',
+  'SelectBoxGroup',
+  'Separator',
+  'Skeleton',
+  'Slider',
+  'SSRProvider',
+  'StatusLight',
+  'Switch',
+  'Table',
+  'TableView',
+  'Tabs',
+  'TagGroup',
+  'TextArea',
+  'TextField',
+  'TimeField',
+  'Toast',
+  'ToggleButton',
+  'ToggleButtonGroup',
+  'Toolbar',
+  'Tooltip',
+  'Tree',
+  'TreeView',
+  'Virtualizer',
+  'VisuallyHidden',
+  'documentation',
+  'usePress',
+  'scrollIntoView',
+  'ResizeObserver',
+  'FocusScope',
+  'Focus',
+  'Overlays',
+  'Overlay Positioning',
+  'drag and drop',
+  'ssr'
+]);
