@@ -67,7 +67,6 @@ async function writeTestingCSV() {
 
       // If there is no component label, use the title of the PR
       if (matches.length === 0) {
-
         row.push(removePRNumber(title));
       } 
 
