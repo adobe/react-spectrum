@@ -164,7 +164,10 @@ describe('Tabs', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
+    let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : '', onFocus, onFocusChange, onBlur});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-focus-visible');
@@ -175,10 +178,19 @@ describe('Tabs', () => {
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
     expect(tab).toHaveAttribute('data-focused', 'true');
     expect(tab).toHaveClass('focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
 
     await user.tab();
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
+    expect(onFocus).not.toHaveBeenCalled();
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state', async () => {
@@ -634,7 +646,7 @@ describe('Tabs', () => {
       let {getByRole} = renderTabs({keyboardActivation: 'manual'}, {}, {onPressStart, onPressEnd, onPress, onClick});
       let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
       await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
-  
+
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);
