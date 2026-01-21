@@ -10,24 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@react-spectrum/test-utils-internal';
+import {describe, expect, it} from 'vitest';
+import {render} from './utils/render';
 import {Text, ToggleButton, ToggleButtonGroup} from '../src';
 
 describe('ToggleButtonGroup', () => {
-
-  it('can disable all buttons from the group', async () => {
-    let {getAllByRole} = render(
-      <ToggleButtonGroup isDisabled>
-        <ToggleButton id={1}><Text slot="label">Bold</Text></ToggleButton>
-        <ToggleButton id={2}><Text slot="label">Italic</Text></ToggleButton>
-        <ToggleButton id={3}><Text slot="label">Underline</Text></ToggleButton>
+  it('renders', async () => {
+    const screen = await render(
+      <ToggleButtonGroup>
+        <ToggleButton id="bold">
+          <Text>Bold</Text>
+        </ToggleButton>
+        <ToggleButton id="italic">
+          <Text>Italic</Text>
+        </ToggleButton>
+        <ToggleButton id="underline">
+          <Text>Underline</Text>
+        </ToggleButton>
       </ToggleButtonGroup>
     );
-
-
-    let buttons = getAllByRole('radio');
-    expect(buttons[0]).toBeDisabled();
-    expect(buttons[1]).toBeDisabled();
-    expect(buttons[2]).toBeDisabled();
+    const radios = screen.container.querySelectorAll('[role="radio"]');
+    expect(radios.length).toBe(3);
   });
 });

@@ -137,16 +137,30 @@
   "scripts": {
     "prepublishOnly": "rm -rf dist/page.cjs* && mv dist/page*.css page.css && mv dist/page.css.map page.css.map || true",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
-    "postpack": "git checkout -- package.json"
+    "postpack": "git checkout -- package.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^14.0.0",
     "@react-aria/test-utils": "^1.0.0-alpha.8",
     "@storybook/jest": "^0.2.3",
     "@testing-library/dom": "^10.1.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.0.0",
-    "jest": "^29.5.0"
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/browser": "^4.0.0",
+    "@vitest/ui": "^4.0.0",
+    "glob": "^10.3.0",
+    "jsdom": "^25.0.0",
+    "playwright": "^1.45.3",
+    "unplugin-parcel-macros": "^0.1.2-alpha.1",
+    "vite": "^6.0.0",
+    "vitest": "^4.0.0",
+    "vitest-browser-react": "^2.0.2"
   },
   "dependencies": {
     "@internationalized/date": "^3.10.1",

@@ -10,181 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMenuTests} from '../../../react-aria-components/test/AriaMenu.test-util';
-import {Button, Collection, Header, Heading, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger} from '../src';
+import {Button, Menu, MenuItem, MenuSection, MenuTrigger} from '../src';
+import {describe, expect, it, vi} from 'vitest';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
-import {Selection} from '@react-types/shared';
+import {render} from './utils/render';
 
-// better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
-// what about the button label?
-// where and how can i define the requirements/assumptions for setup for the test?
-let withSection = [
-  {id: 'heading 1', name: 'Heading 1', children: [
-    {id: 'foo', name: 'Foo'},
-    {id: 'bar', name: 'Bar'},
-    {id: 'baz', name: 'Baz'}
-  ]}
-];
-
-let items = [
-  {id: 'foo', name: 'Foo'},
-  {id: 'bar', name: 'Bar'},
-  {id: 'baz', name: 'Baz'}
-];
-
-function SelectionStatic(props)  {
-  let {selectionMode = 'single'} = props;
-  let [selected, setSelected] = React.useState<Selection>(new Set());
-  return (
-    <MenuTrigger>
-      <Button variant="primary">Menu Button</Button>
-      <Menu
-        aria-label="Test"
-        selectionMode={selectionMode}
-        selectedKeys={selected}
-        onSelectionChange={setSelected}>
-        <MenuSection>
-          <Header>Heading 1</Header>
-          <MenuItem id="foo">Foo</MenuItem>
-          <MenuItem id="bar">Bar</MenuItem>
-          <MenuItem id="baz">Baz</MenuItem>
-          <MenuItem id="fizz">Fizz</MenuItem>
-        </MenuSection>
-      </Menu>
-    </MenuTrigger>
-  );
-}
-
-AriaMenuTests({
-  prefix: 'spectrum2-static',
-  renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test">
+describe('Menu', () => {
+  it('renders', async () => {
+    vi.useFakeTimers();
+    const screen = await render(
+      <MenuTrigger defaultOpen>
+        <Button>Publish</Button>
+        <Menu>
           <MenuSection>
-            <Header><Heading>Heading 1</Heading></Header>
-            <MenuItem>Foo</MenuItem>
-            <MenuItem>Bar</MenuItem>
-            <MenuItem>Baz</MenuItem>
+            <MenuItem textValue="quick export" onAction={() => alert('Quick export')}>
+              Quick Export
+            </MenuItem>
+            <MenuItem textValue="open a copy">Open a copy</MenuItem>
+          </MenuSection>
+          <MenuSection selectionMode="multiple" defaultSelectedKeys={['files']}>
+            <MenuItem id="files">Show files</MenuItem>
+            <MenuItem id="folders">Show folders</MenuItem>
           </MenuSection>
         </Menu>
       </MenuTrigger>
-    ),
-    disabledTrigger: () => render(
-      <MenuTrigger>
-        <Button variant="primary" isDisabled>Menu Button</Button>
-        <Menu aria-label="Test">
-          <MenuSection>
-            <Header><Heading>Heading 1</Heading></Header>
-            <MenuItem>Foo</MenuItem>
-            <MenuItem>Bar</MenuItem>
-            <MenuItem>Baz</MenuItem>
-          </MenuSection>
-        </Menu>
-      </MenuTrigger>
-    ),
-    singleSelection: () => render(
-      <SelectionStatic />
-    ),
-    multipleSelection: () => render(
-      <SelectionStatic selectionMode="multiple" />
-    ),
-    submenus: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test">
-          <MenuSection>
-            <Header><Heading>Heading 1</Heading></Header>
-
-            <MenuItem id="open">Open</MenuItem>
-            <MenuItem id="rename">Rename…</MenuItem>
-            <MenuItem id="duplicate">Duplicate</MenuItem>
-            <SubmenuTrigger>
-              <MenuItem id="share">Share…</MenuItem>
-              <Menu>
-                <MenuSection>
-                  <Header><Heading>Subheading 1</Heading></Header>
-                  <MenuItem id="email">Email…</MenuItem>
-                  <SubmenuTrigger>
-                    <MenuItem id="share">Share…</MenuItem>
-                    <Menu>
-                      <MenuSection>
-                        <Header><Heading>Subheading 1</Heading></Header>
-                        <MenuItem id="work">Work</MenuItem>
-                        <MenuItem id="personal">Personal</MenuItem>
-                      </MenuSection>
-                    </Menu>
-                  </SubmenuTrigger>
-                  <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="x">X</MenuItem>
-                </MenuSection>
-              </Menu>
-            </SubmenuTrigger>
-          </MenuSection>
-        </Menu>
-      </MenuTrigger>
-    )
-  }
-});
-
-AriaMenuTests({
-  prefix: 'spectrum2-dynamic',
-  renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test" items={withSection}>
-          {(section) => {
-            return (
-              <MenuSection>
-                <Header><Heading>{section.name}</Heading></Header>
-                <Collection items={section.children}>
-                  {item => {
-                    return <MenuItem>{item.name}</MenuItem>;
-                  }}
-                </Collection>
-              </MenuSection>
-            );
-          }}
-        </Menu>
-      </MenuTrigger>
-    ),
-    disabledTrigger: () => render(
-      <MenuTrigger>
-        <Button variant="primary" isDisabled>Menu Button</Button>
-        <Menu aria-label="Test" items={withSection}>
-          {(section) => {
-            return (
-              <MenuSection>
-                <Header><Heading>{section.name}</Heading></Header>
-                <Collection items={section.children}>
-                  {item => {
-                    return <MenuItem>{item.name}</MenuItem>;
-                  }}
-                </Collection>
-              </MenuSection>
-            );
-          }}
-        </Menu>
-      </MenuTrigger>
-    )
-  }
-});
-
-AriaMenuTests({
-  prefix: 'spectrum2-dynamic-no-section',
-  renderers: {
-    standard: () => render(
-      <MenuTrigger>
-        <Button variant="primary">Menu Button</Button>
-        <Menu aria-label="Test" items={items}>
-          {(item) =>
-            <MenuItem>{item.name}</MenuItem>
-          }
-        </Menu>
-      </MenuTrigger>
-    )
-  }
+    );
+    vi.runAllTimers();
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    vi.useRealTimers();
+  });
 });

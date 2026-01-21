@@ -22,7 +22,12 @@ const devDependencies = new Set([
   '@parcel/macros',
   '@adobe/spectrum-tokens',
   'playwright',
-  'axe-playwright'
+  'axe-playwright',
+  'vitest',
+  '@vitejs/plugin-react',
+  '@vitest/browser',
+  '@vitest/ui',
+  'vite'
 ]);
 
 module.exports = {
