@@ -39,7 +39,7 @@ describe('Popover', () => {
               <TextField label="Subject" placeholder="Enter a summary" />
               <TextField label="Description" isRequired placeholder="Enter your feedback" />
               <Switch>Adobe can contact me for further questions concerning this feedback</Switch>
-              <Button style={{marginLeft: 'auto'}}>Submit</Button>
+              <Button>Submit</Button>
             </Form>
           </div>
         </Popover>

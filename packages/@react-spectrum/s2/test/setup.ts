@@ -52,10 +52,9 @@ console.warn = function (message: unknown, ...args: unknown[]) {
 
 // Mock process for browser environment
 if (typeof process === 'undefined') {
-  // @ts-expect-error - adding process mock for browser
   globalThis.process = {
     env: {},
-    versions: {node: '0.0.0'},
+    versions: {node: '0.0.0'} as NodeJS.ProcessVersions,
     browser: true
-  };
+  } as unknown as NodeJS.Process;
 }

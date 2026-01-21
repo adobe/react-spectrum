@@ -153,6 +153,7 @@
     "@testing-library/user-event": "^14.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/browser": "^4.0.0",
+    "@vitest/browser-playwright": "^4.0.0",
     "@vitest/ui": "^4.0.0",
     "glob": "^10.3.0",
     "jsdom": "^25.0.0",

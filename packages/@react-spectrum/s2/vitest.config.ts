@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {defineConfig, Plugin} from 'vitest/config';
+import {defineConfig} from 'vitest/config';
 import fs from 'fs';
 import macros from 'unplugin-parcel-macros';
 import path from 'path';
 import {playwright} from '@vitest/browser-playwright';
+import type {Plugin} from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 
@@ -118,9 +119,13 @@ function buildIconAliases(): Record<string, string> {
 
 export default defineConfig({
   plugins: [
+    // @ts-expect-error
     macros.vite(), // Must be first!
+    // @ts-expect-error
     illustrationResolverPlugin(), // Resolve @react-spectrum/s2/illustrations/* imports
+    // @ts-expect-error
     illustrationPlugin(), // Handle illustration: protocol
+    // @ts-expect-error
     svgr({
       // Process all SVG files as React components
       include: [
@@ -146,7 +151,9 @@ export default defineConfig({
         }
       }
     }),
+    // @ts-expect-error
     react(),
+    // @ts-expect-error
     intlJsonPlugin()
   ],
   test: {
@@ -187,6 +194,7 @@ export default defineConfig({
       // Disable PostCSS processing for macro-generated CSS
       // The macros plugin handles CSS generation, and PostCSS was causing parsing errors
       // with nested selectors like &:before
+      // @ts-expect-error
       config: false
     }
   }

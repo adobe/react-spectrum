@@ -26,8 +26,11 @@ const devDependencies = new Set([
   'vitest',
   '@vitejs/plugin-react',
   '@vitest/browser',
+  '@vitest/browser-playwright',
   '@vitest/ui',
-  'vite'
+  'unplugin-parcel-macros',
+  'vite',
+  'vite-plugin-svgr'
 ]);
 
 module.exports = {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Content, ContextualHelp, Heading, Text} from '../src';
+import {Content, ContextualHelp, Heading} from '../src';
 import {describe, expect, it} from 'vitest';
 import React from 'react';
 import {render} from './utils/render';
