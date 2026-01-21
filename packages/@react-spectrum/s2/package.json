@@ -159,6 +159,7 @@
     "playwright": "^1.45.3",
     "unplugin-parcel-macros": "^0.1.2-alpha.1",
     "vite": "^6.0.0",
+    "vite-plugin-svgr": "^4.3.0",
     "vitest": "^4.0.0",
     "vitest-browser-react": "^2.0.2"
   },

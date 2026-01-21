@@ -16,9 +16,7 @@ import macros from 'unplugin-parcel-macros';
 import path from 'path';
 import {playwright} from '@vitest/browser-playwright';
 import react from '@vitejs/plugin-react';
-
-const svgMockPath = path.resolve(__dirname, 'test/__mocks__/svg.tsx');
-const uiIconsMockPath = path.resolve(__dirname, 'test/__mocks__/ui-icons.tsx');
+import svgr from 'vite-plugin-svgr';
 
 // Handles ../intl/*.json imports
 function intlJsonPlugin(): Plugin {
@@ -55,31 +53,40 @@ function intlJsonPlugin(): Plugin {
   };
 }
 
-// Mock icon imports
-function iconMockPlugin(): Plugin {
+// Resolve @react-spectrum/s2/illustrations/* imports
+function illustrationResolverPlugin(): Plugin {
   return {
-    name: 'style-plugin',
+    name: 'illustration-resolver',
+    enforce: 'pre',
+    resolveId(source) {
+      if (source.startsWith('@react-spectrum/s2/illustrations/')) {
+        const illustrationPath = source.replace('@react-spectrum/s2/illustrations/', '');
+        const tsxPath = path.resolve(__dirname, 'spectrum-illustrations', illustrationPath + '.tsx');
+        
+        if (fs.existsSync(tsxPath)) {
+          return tsxPath;
+        }
+        
+        return null;
+      }
+      return null;
+    }
+  };
+}
+
+// Handle illustration: protocol
+function illustrationPlugin(): Plugin {
+  return {
+    name: 'illustration-loader',
     enforce: 'pre',
     resolveId(source, importer) {
-      if (source.startsWith('@react-spectrum/s2/icons/')) {
-        return svgMockPath;
-      }
-      if (source.startsWith('@react-spectrum/s2/illustrations/')) {
-        return uiIconsMockPath;
-      }
-      // Intercept icon/illustration imports from s2 package
-      if (importer && importer.includes('@react-spectrum/s2')) {
-        // Match ui-icons imports
-        if (source.match(/^\.\.?\/ui-icons\/[A-Z][a-zA-Z]*$/)) {
-          return uiIconsMockPath;
-        }
-        // Match s2wf-icons SVG imports
-        if (source.match(/^\.\.?\/s2wf-icons\/.*\.svg$/)) {
-          return svgMockPath;
-        }
-        // Match spectrum-illustrations imports
-        if (source.match(/^\.\.?\/spectrum-illustrations\//)) {
-          return uiIconsMockPath;
+      if (source.startsWith('illustration:')) {
+        // Convert illustration:./path.svg to actual SVG path
+        const svgPath = source.replace('illustration:', '');
+        if (importer) {
+          const dir = path.dirname(importer);
+          const resolvedPath = path.resolve(dir, svgPath);
+          return resolvedPath;
         }
       }
       return null;
@@ -87,26 +94,60 @@ function iconMockPlugin(): Plugin {
   };
 }
 
-// Mock SVG imports
-function svgMockPlugin(): Plugin {
-  return {
-    name: 'svg-mock',
-    resolveId(source) {
-      if (source.endsWith('.svg')) {
-        return svgMockPath;
+// Build icon aliases to resolve @react-spectrum/s2/icons/* imports
+function buildIconAliases(): Record<string, string> {
+  const aliases: Record<string, string> = {};
+  const iconsDir = path.resolve(__dirname, 's2wf-icons');
+  
+  if (fs.existsSync(iconsDir)) {
+    const iconFiles = fs.readdirSync(iconsDir).filter(f => f.startsWith('S2_Icon_') && f.endsWith('_20_N.svg'));
+    
+    for (const iconFile of iconFiles) {
+      // Extract icon name: S2_Icon_Feedback_20_N.svg -> Feedback
+      const match = iconFile.match(/^S2_Icon_(.+)_20_N\.svg$/);
+      if (match) {
+        const iconName = match[1];
+        const iconPath = path.resolve(iconsDir, iconFile);
+        aliases[`@react-spectrum/s2/icons/${iconName}`] = iconPath;
       }
-      return null;
     }
-  };
+  }
+  
+  return aliases;
 }
 
 export default defineConfig({
   plugins: [
     macros.vite(), // Must be first!
-    iconMockPlugin(),
-    svgMockPlugin(),
-    intlJsonPlugin(),
-    react()
+    illustrationResolverPlugin(), // Resolve @react-spectrum/s2/illustrations/* imports
+    illustrationPlugin(), // Handle illustration: protocol
+    svgr({
+      // Process all SVG files as React components
+      include: [
+        '**/s2wf-icons/**/*.svg',
+        '**/ui-icons/**/*.svg',
+        '**/spectrum-illustrations/**/*.svg'
+      ],
+      exclude: ['**/node_modules/**'],
+      svgrOptions: {
+        ref: true,
+        typescript: false,
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  removeViewBox: false
+                }
+              }
+            }
+          ]
+        }
+      }
+    }),
+    react(),
+    intlJsonPlugin()
   ],
   test: {
     globals: true,
@@ -131,15 +172,10 @@ export default defineConfig({
   },
   resolve: {
     conditions: ['source', 'import', 'module', 'default'],
-    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
+    extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json', '.svg'],
     alias: {
-      '@react-spectrum/s2/icons/Edit': svgMockPath,
-      '@react-spectrum/s2/icons/Copy': svgMockPath,
-      '@react-spectrum/s2/icons/Cut': svgMockPath,
-      '@react-spectrum/s2/icons/Paste': svgMockPath,
-      '@react-spectrum/s2/icons/Delete': svgMockPath,
-      '@react-spectrum/s2/icons/Feedback': svgMockPath,
-      '@react-spectrum/s2/illustrations/gradient/generic1/CloudUpload': uiIconsMockPath,
+      ...buildIconAliases(),
+      '@react-spectrum/s2/illustrations': path.resolve(__dirname, 'spectrum-illustrations'),
       '@react-spectrum/s2': path.resolve(__dirname, 'src')
     }
   },

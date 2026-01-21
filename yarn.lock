@@ -7968,6 +7968,7 @@ __metadata:
     react-stately: "npm:^3.43.0"
     unplugin-parcel-macros: "npm:^0.1.2-alpha.1"
     vite: "npm:^6.0.0"
+    vite-plugin-svgr: "npm:^4.3.0"
     vitest: "npm:^4.0.0"
     vitest-browser-react: "npm:^2.0.2"
   peerDependencies:
@@ -9376,6 +9377,22 @@ __metadata:
   version: 1.0.0-beta.27
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.27"
   checksum: 10c0/9658f235b345201d4f6bfb1f32da9754ca164f892d1cb68154fe5f53c1df42bd675ecd409836dff46884a7847d6c00bdc38af870f7c81e05bba5c2645eb4ab9c
+  languageName: node
+  linkType: hard
+
+"@rollup/pluginutils@npm:^5.2.0":
+  version: 5.3.0
+  resolution: "@rollup/pluginutils@npm:5.3.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    estree-walker: "npm:^2.0.2"
+    picomatch: "npm:^4.0.2"
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 10c0/001834bf62d7cf5bac424d2617c113f7f7d3b2bf3c1778cbcccb72cdc957b68989f8e7747c782c2b911f1dde8257f56f8ac1e779e29e74e638e3f1e2cac2bcd0
   languageName: node
   linkType: hard
 
@@ -17100,6 +17117,13 @@ __metadata:
     "@types/estree-jsx": "npm:^0.0.1"
     "@types/unist": "npm:^2.0.0"
   checksum: 10c0/dbbe08dbe7ac4a30376c4fa555915e364a2da844631d75e16d5b39dd82801e724ed713516adcbb9b831ab1e29a5be839bb2f6423c6eebc2e64b26e8e2d6d369c
+  languageName: node
+  linkType: hard
+
+"estree-walker@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "estree-walker@npm:2.0.2"
+  checksum: 10c0/53a6c54e2019b8c914dc395890153ffdc2322781acf4bd7d1a32d7aedc1710807bdcd866ac133903d5629ec601fbb50abe8c2e5553c7f5a0afdd9b6af6c945af
   languageName: node
   linkType: hard
 
@@ -26353,6 +26377,7 @@ __metadata:
     typescript: "npm:^5.8.2"
     typescript-eslint: "npm:^8.38.0"
     verdaccio: "npm:^6.0.0"
+    vite-plugin-svgr: "npm:^4.5.0"
     vitest: "npm:^4.0.17"
     vitest-browser-react: "npm:^2.0.2"
     walk-object: "npm:^4.0.0"
@@ -30880,6 +30905,19 @@ __metadata:
     replace-ext: "npm:^2.0.0"
     teex: "npm:^1.0.1"
   checksum: 10c0/566ab41a84c1a167023a07cb94110d40a07835a5239297e3266a11b0e9c522969a1e623ec2a4f9b05ac7fef596cf47685b410359e5b2ca00bd77400657808816
+  languageName: node
+  linkType: hard
+
+"vite-plugin-svgr@npm:^4.3.0, vite-plugin-svgr@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "vite-plugin-svgr@npm:4.5.0"
+  dependencies:
+    "@rollup/pluginutils": "npm:^5.2.0"
+    "@svgr/core": "npm:^8.1.0"
+    "@svgr/plugin-jsx": "npm:^8.1.0"
+  peerDependencies:
+    vite: ">=2.6.0"
+  checksum: 10c0/3e1959fec626bb4f5a8ec13ff15bc40ffbc1c0ff38149bebe3f37dc2d67ed1f276f129ff7983e06946cf712e19996affd9d6868aa7d20d8921d1fe4449109b55
   languageName: node
   linkType: hard
 
