@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {Button, ButtonGroup, Content, Heading, IllustratedMessage} from '../src';
 import {describe, expect, it} from 'vitest';
-import {IllustratedMessage} from '../src';
+import Image from '@react-spectrum/s2/illustrations/gradient/generic1/Image';
 import React from 'react';
 import {render} from './utils/render';
 
@@ -19,7 +20,13 @@ describe('IllustratedMessage', () => {
   it('renders', async () => {
     const screen = await render(
       <IllustratedMessage>
-        <div>Content</div>
+        <Image />
+        <Heading>Create your first asset.</Heading>
+        <Content>Get started by uploading or importing some assets.</Content>
+        <ButtonGroup>
+          <Button variant="secondary">Import</Button>
+          <Button variant="accent">Upload</Button>
+        </ButtonGroup>
       </IllustratedMessage>
     );
     expect(screen.container.firstChild).toBeInTheDocument();
