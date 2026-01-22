@@ -57,7 +57,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // The ARIA spec says aria-valuenow is optional if there's no value, but aXe seems to require it.
     // This doesn't seem to have any negative effects with real AT since we also use aria-valuetext.
     // https://github.com/dequelabs/axe-core/issues/3505
-    value: segment.value,
+    value: segment.value ?? undefined,
     textValue,
     minValue: segment.minValue,
     maxValue: segment.maxValue,
@@ -235,7 +235,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
               break;
           }
 
-          if (segment.value !== undefined && segment.value >= 12 && numberValue > 1) {
+          if (segment.value != null && segment.value >= 12 && numberValue > 1) {
             numberValue += 12;
           }
         } else if (segment.maxValue !== undefined && numberValue > segment.maxValue) {

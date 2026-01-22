@@ -103,7 +103,7 @@ describe('DateRangePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, Start Date, ');
@@ -157,7 +157,7 @@ describe('DateRangePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, Start Date, ');
@@ -1433,8 +1433,8 @@ describe('DateRangePicker', function () {
       expect(segments[1]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
-      beforeInput(document.activeElement, '3');
-      expectPlaceholder(startDate, '2/3/yyyy');
+      beforeInput(document.activeElement, '4');
+      expectPlaceholder(startDate, '2/4/yyyy');
       expect(segments[2]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1442,7 +1442,7 @@ describe('DateRangePicker', function () {
       beforeInput(document.activeElement, '0');
       beforeInput(document.activeElement, '2');
       beforeInput(document.activeElement, '0');
-      expectPlaceholder(startDate, '2/3/2020');
+      expectPlaceholder(startDate, '2/4/2020');
       expect(segments[3]).toHaveFocus();
       expect(onChange).not.toHaveBeenCalled();
 
@@ -1465,7 +1465,7 @@ describe('DateRangePicker', function () {
       beforeInput(document.activeElement, '2');
       expect(onChange).toHaveBeenCalledTimes(4);
 
-      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
+      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2020, 2, 4), end: new CalendarDate(2022, 4, 8)});
     });
 
     it('should reset to the placeholder if controlled value is set to null', function () {

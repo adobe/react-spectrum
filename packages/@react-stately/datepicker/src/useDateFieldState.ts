@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, CalendarIdentifier, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
+import {AnyDateTime, Calendar, CalendarDate, CalendarIdentifier, CycleTimeOptions, DateField, DateFields, DateFormatter, GregorianCalendar, isEqualCalendar, TimeField, TimeFields, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
+import {NumberFormatter} from '@internationalized/number';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export type SegmentType = 'era' | 'year' | 'month' | 'day' |  'hour' | 'minute' | 'second' | 'dayPeriod' | 'literal' | 'timeZoneName';
@@ -26,7 +27,7 @@ export interface DateSegment {
   /** The formatted text for the segment. */
   text: string,
   /** The numeric value for the segment, if applicable. */
-  value?: number,
+  value?: number | null,
   /** The minimum numeric value for the segment, if applicable. */
   minValue?: number,
   /** The maximum numeric value for the segment, if applicable. */
@@ -185,16 +186,21 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let [initialValue] = useState(value);
   let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
-  // We keep track of the placeholder date separately in state so that onChange is not called
-  // until all segments are set. If the value === null (not undefined), then assume the component
-  // is controlled, so use the placeholder as the value until all segments are entered so it doesn't
-  // change from uncontrolled to controlled and emit a warning.
-  let [placeholderDate, setPlaceholderDate] = useState(
-    () => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
+  let [displayValue, setDisplayValue] = useState(
+    () => new IncompleteDate(calendar, calendarValue)
   );
 
-  let val = calendarValue || placeholderDate;
-  let showEra = calendar.identifier === 'gregory' && val.era === 'BC';
+  let [lastValue, setLastValue] = useState(value);
+  let [lastCalendar, setLastCalendar] = useState(calendar);
+  if (calendarValue !== lastValue) {
+    setLastValue(calendarValue);
+    setDisplayValue(new IncompleteDate(calendar, calendarValue));
+  } else if (!isEqualCalendar(calendar, lastCalendar)) {
+    setLastCalendar(calendar);
+    setDisplayValue(new IncompleteDate(calendar, calendarValue));
+  }
+
+  let showEra = calendar.identifier === 'gregory' && displayValue.era === 'BC';
   let formatOpts = useMemo(() => ({
     granularity,
     maxGranularity: props.maxGranularity ?? 'year',
@@ -208,117 +214,61 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let dateFormatter = useMemo(() => new DateFormatter(locale, opts), [locale, opts]);
   let resolvedOptions = useMemo(() => dateFormatter.resolvedOptions(), [dateFormatter]);
+  let placeholder = useMemo(() => createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone), [props.placeholderValue, granularity, calendar, defaultTimeZone]);
+  let displaySegments = useMemo(() => {
+    let segments: (DateField | TimeField)[] = ['era', 'year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+    let minIndex = segments.indexOf(props.maxGranularity || 'year');
+    let maxIndex = segments.indexOf(granularity);
+    return segments.slice(minIndex, maxIndex + 1);
+  }, [props.maxGranularity, granularity]);
 
-  // Determine how many editable segments there are for validation purposes.
-  // The result is cached for performance.
-  let allSegments: Partial<typeof EDITABLE_SEGMENTS> = useMemo(() =>
-    dateFormatter.formatToParts(new Date())
-      .filter(seg => EDITABLE_SEGMENTS[seg.type])
-      .reduce((p, seg) => (p[TYPE_MAPPING[seg.type] || seg.type] = true, p), {})
-  , [dateFormatter]);
-
-  let [validSegments, setValidSegments] = useState<Partial<typeof EDITABLE_SEGMENTS>>(
-    () => props.value || props.defaultValue ? {...allSegments} : {}
-  );
-
-  let clearedSegment = useRef<string | null>(null);
-
-  // Reset placeholder when calendar changes
-  let lastCalendar = useRef(calendar);
-  useEffect(() => {
-    if (!isEqualCalendar(calendar, lastCalendar.current)) {
-      lastCalendar.current = calendar;
-      setPlaceholderDate(placeholder =>
-        Object.keys(validSegments).length > 0
-          ? toCalendar(placeholder, calendar)
-          : createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone)
-      );
-    }
-  }, [calendar, granularity, validSegments, defaultTimeZone, props.placeholderValue]);
-
-  // If there is a value prop, and some segments were previously placeholders, mark them all as valid.
-  if (value && Object.keys(validSegments).length < Object.keys(allSegments).length) {
-    validSegments = {...allSegments};
-    setValidSegments(validSegments);
-  }
-
-  // If the value is set to null and all segments are valid, reset the placeholder.
-  if (value == null && Object.keys(validSegments).length === Object.keys(allSegments).length) {
-    validSegments = {};
-    setValidSegments(validSegments);
-    setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
-  }
-
-  // If all segments are valid, use the date from state, otherwise use the placeholder date.
-  let displayValue = calendarValue && Object.keys(validSegments).length >= Object.keys(allSegments).length ? calendarValue : placeholderDate;
-  let setValue = (newValue: DateValue) => {
+  let setValue = (newValue: DateValue | IncompleteDate | null) => {
     if (props.isDisabled || props.isReadOnly) {
       return;
     }
-    let validKeys = Object.keys(validSegments);
-    let allKeys = Object.keys(allSegments);
 
-    // if all the segments are completed or a timefield with everything but am/pm set the time, also ignore when am/pm cleared
-    if (newValue == null) {
+    if (newValue == null || (newValue instanceof IncompleteDate && newValue.isCleared(displaySegments))) {
+      setDisplayValue(new IncompleteDate(calendar, calendarValue));
       setDate(null);
-      setPlaceholderDate(createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone));
-      setValidSegments({});
-    } else if (
-      (validKeys.length === 0 && clearedSegment.current == null) ||
-      validKeys.length >= allKeys.length ||
-      (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod && clearedSegment.current !== 'dayPeriod')
-    ) {
-      // If the field was empty (no valid segments) or all segments are completed, commit the new value.
-      // When committing from an empty state, mark every segment as valid so value is committed.
-      if (validKeys.length === 0) {
-        validSegments = {...allSegments};
-        setValidSegments(validSegments);
-      }
-
+    } else if (!(newValue instanceof IncompleteDate)) {
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
       newValue = toCalendar(newValue, v?.calendar || new GregorianCalendar());
+      setDisplayValue(new IncompleteDate(calendar, calendarValue));
       setDate(newValue);
     } else {
-      setPlaceholderDate(newValue);
+      // If the new value is complete and valid, trigger onChange eagerly.
+      // If it represents an incomplete or invalid value (e.g. February 30th),
+      // wait until the field is blurred to trigger onChange.
+      if (newValue.isComplete(displaySegments)) {
+        let dateValue = newValue.toValue(calendarValue ?? placeholder);
+        if (newValue.validate(dateValue, displaySegments)) {
+          let newDateValue = toCalendar(dateValue, v?.calendar || new GregorianCalendar());
+          if (!value || newDateValue.compare(value) !== 0) {
+            setDisplayValue(new IncompleteDate(calendar, calendarValue)); // reset in case prop isn't updated
+            setDate(newDateValue);
+            return;
+          }
+        }
+      }
+
+      // Incomplete/invalid value. Set temporary display override.
+      setDisplayValue(newValue);
     }
-    clearedSegment.current = null;
   };
 
-  let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
-  let segments = useMemo(() =>
-    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity),
-    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]);
+  let dateValue = useMemo(() => {
+    let v = displayValue.toValue(calendarValue ?? placeholder);
+    return v.toDate(timeZone);
+  }, [displayValue, timeZone, calendarValue, placeholder]);
 
-  // When the era field appears, mark it valid if the year field is already valid.
-  // If the era field disappears, remove it from the valid segments.
-  if (allSegments.era && validSegments.year && !validSegments.era) {
-    validSegments.era = true;
-    setValidSegments({...validSegments});
-  } else if (!allSegments.era && validSegments.era) {
-    delete validSegments.era;
-    setValidSegments({...validSegments});
-  }
-
-  let markValid = (part: Intl.DateTimeFormatPartTypes) => {
-    validSegments[part] = true;
-    if (part === 'year' && allSegments.era) {
-      validSegments.era = true;
-    }
-    setValidSegments({...validSegments});
-  };
+  let segments = useMemo(
+    () => processSegments(dateValue, displayValue, dateFormatter, resolvedOptions, calendar, locale, granularity),
+    [dateValue, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]
+  );
 
   let adjustSegment = (type: Intl.DateTimeFormatPartTypes, amount: number) => {
-    if (!validSegments[type]) {
-      markValid(type);
-      let validKeys = Object.keys(validSegments);
-      let allKeys = Object.keys(allSegments);
-      if (validKeys.length >= allKeys.length || (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod)) {
-        setValue(displayValue);
-      }
-    } else {
-      setValue(addSegment(displayValue, type, amount, resolvedOptions));
-    }
+    setValue(addSegment(displayValue, type, amount, resolvedOptions, placeholder));
   };
 
   let builtinValidation = useMemo(() => getValidationResult(
@@ -367,7 +317,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       adjustSegment(part, -(PAGE_STEP[part] || 1));
     },
     setSegment(part, v: string | number) {
-      markValid(part);
       setValue(setSegment(displayValue, part, v, resolvedOptions));
     },
     confirmPlaceholder() {
@@ -375,39 +324,34 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         return;
       }
 
-      // Confirm the placeholder if only the day period is not filled in.
-      let validKeys = Object.keys(validSegments);
-      let allKeys = Object.keys(allSegments);
-      if (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod) {
-        validSegments = {...allSegments};
-        setValidSegments(validSegments);
-        setValue(displayValue.copy());
+      // If the display value is complete but invalid, we need to constrain it and emit onChange on blur.
+      if (displayValue.isComplete(displaySegments)) {
+        let dateValue = displayValue.toValue(calendarValue ?? placeholder);
+        let newDateValue = toCalendar(dateValue, v?.calendar || new GregorianCalendar());
+        if (!value || newDateValue.compare(value) !== 0) {
+          setDate(dateValue);
+        }
+        setDisplayValue(new IncompleteDate(calendar, calendarValue));
       }
     },
     clearSegment(part) {
-      delete validSegments[part];
-      clearedSegment.current = part;
-      setValidSegments({...validSegments});
-
-      let placeholder = createPlaceholderDate(props.placeholderValue, granularity, calendar, defaultTimeZone);
       let value = displayValue;
 
       // Reset day period to default without changing the hour.
-      if (part === 'dayPeriod' && 'hour' in displayValue && 'hour' in placeholder) {
-        let isPM = displayValue.hour >= 12;
-        let shouldBePM = placeholder.hour >= 12;
-        if (isPM && !shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour - 12});
-        } else if (!isPM && shouldBePM) {
-          value = displayValue.set({hour: displayValue.hour + 12});
+      if (part === 'dayPeriod') {
+        if (displayValue.hour != null) {
+          let isPM = displayValue.hour >= 12;
+          let shouldBePM = 'hour' in placeholder && placeholder.hour >= 12;
+          if (isPM && !shouldBePM) {
+            value = displayValue.set({hour: displayValue.hour - 12});
+          } else if (!isPM && shouldBePM) {
+            value = displayValue.set({hour: displayValue.hour + 12});
+          }
         }
-      } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
-        value = displayValue.set({hour: placeholder['hour'] + 12});
-      } else if (part in displayValue) {
-        value = displayValue.set({[part]: placeholder[part]});
+      } else if (part !== 'timeZoneName' && part !== 'literal') {
+        value = displayValue.clear(part);
       }
 
-      setDate(null);
       setValue(value);
     },
     formatValue(fieldOptions: FieldOptions) {
@@ -427,9 +371,42 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 }
 
-function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity) : DateSegment[] {
+function processSegments(
+  dateValue: Date,
+  displayValue: IncompleteDate,
+  dateFormatter: Intl.DateTimeFormat,
+  resolvedOptions: Intl.ResolvedDateTimeFormatOptions,
+  calendar: Calendar,
+  locale: string,
+  granularity: Granularity
+) : DateSegment[] {
   let timeValue = ['hour', 'minute', 'second'];
   let segments = dateFormatter.formatToParts(dateValue);
+
+  // In order to allow formatting temporarily invalid dates during editing (e.g. February 30th),
+  // use a NumberFormatter to manually format segments directly from raw numbers.
+  // When the user blurs the date field, the invalid segments will be constrained.
+  let numberFormatter = new NumberFormatter(locale, {useGrouping: false});
+  let twoDigitFormatter = new NumberFormatter(locale, {useGrouping: false, minimumIntegerDigits: 2});
+  for (let segment of segments) {
+    if (segment.type === 'year' || segment.type === 'month' || segment.type === 'day' || segment.type === 'hour') {
+      let value = displayValue[segment.type] ?? 0;
+      if (segment.type === 'hour' && dateFormatter.resolvedOptions().hour12) {
+        if (value === 0) {
+          value = 12;
+        } else if (value > 12) {
+          value -= 12;
+        }
+      }
+
+      if (resolvedOptions[segment.type] === '2-digit') {
+        segment.value = twoDigitFormatter.format(value);
+      } else {
+        segment.value = numberFormatter.format(value);
+      }
+    }
+  }
+
   let processedSegments: DateSegment[] = [];
   for (let segment of segments) {
     let type = TYPE_MAPPING[segment.type] || segment.type;
@@ -438,7 +415,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
       isEditable = false;
     }
 
-    let isPlaceholder = EDITABLE_SEGMENTS[type] && !validSegments[type];
+    let isPlaceholder = EDITABLE_SEGMENTS[type] && (segment.type === 'dayPeriod' ? displayValue.hour == null : displayValue[segment.type] == null);
     let placeholder = EDITABLE_SEGMENTS[type] ? getPlaceholder(type, segment.value, locale) : null;
 
     let dateSegment = {
@@ -495,7 +472,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
   return processedSegments;
 }
 
-function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedDateTimeFormatOptions) {
+function getSegmentLimits(date: IncompleteDate, type: string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (type) {
     case 'era': {
       let eras = date.calendar.getEras();
@@ -509,82 +486,95 @@ function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedD
       return {
         value: date.year,
         minValue: 1,
-        maxValue: date.calendar.getYearsInEra(date)
+        maxValue: 9999
       };
     case 'month':
       return {
         value: date.month,
-        minValue: getMinimumMonthInYear(date),
-        maxValue: date.calendar.getMonthsInYear(date)
+        minValue: 1,
+        maxValue: date.calendar.getMaximumMonthsInYear()
       };
     case 'day':
       return {
         value: date.day,
-        minValue: getMinimumDayInMonth(date),
-        maxValue: date.calendar.getDaysInMonth(date)
+        minValue: 1,
+        maxValue: date.calendar.getMaximumDaysInMonth()
       };
   }
 
-  if ('hour' in date) {
-    switch (type) {
-      case 'dayPeriod':
-        return {
-          value: date.hour >= 12 ? 12 : 0,
-          minValue: 0,
-          maxValue: 12
-        };
-      case 'hour':
-        if (options.hour12) {
-          let isPM = date.hour >= 12;
-          return {
-            value: date.hour,
-            minValue: isPM ? 12 : 0,
-            maxValue: isPM ? 23 : 11
-          };
-        }
-
+  switch (type) {
+    case 'dayPeriod': {
+      let hour = date.hour ?? 0;
+      return {
+        value: hour >= 12 ? 12 : 0,
+        minValue: 0,
+        maxValue: 12
+      };
+    }
+    case 'hour':
+      if (options.hour12) {
+        let isPM = date.hour != null && date.hour >= 12;
         return {
           value: date.hour,
-          minValue: 0,
-          maxValue: 23
+          minValue: isPM ? 12 : 0,
+          maxValue: isPM ? 23 : 11
         };
-      case 'minute':
-        return {
-          value: date.minute,
-          minValue: 0,
-          maxValue: 59
-        };
-      case 'second':
-        return {
-          value: date.second,
-          minValue: 0,
-          maxValue: 59
-        };
-    }
-  }
+      }
 
-  return {};
+      return {
+        value: date.hour,
+        minValue: 0,
+        maxValue: 23
+      };
+    case 'minute':
+      return {
+        value: date.minute,
+        minValue: 0,
+        maxValue: 59
+      };
+    case 'second':
+      return {
+        value: date.second,
+        minValue: 0,
+        maxValue: 59
+      };
+  }
 }
 
-function addSegment(value: DateValue, part: string, amount: number, options: Intl.ResolvedDateTimeFormatOptions) {
+function addSegment(
+  value: IncompleteDate,
+  part: string,
+  amount: number,
+  options: Intl.ResolvedDateTimeFormatOptions,
+  placeholder: DateValue
+) {
   switch (part) {
     case 'era':
     case 'year':
     case 'month':
     case 'day':
+      if (value[part] == null) {
+        return value.set({[part]: placeholder[part]});
+      }
       return value.cycle(part, amount, {round: part === 'year'});
   }
 
   if ('hour' in value) {
     switch (part) {
       case 'dayPeriod': {
-        let hours = value.hour;
+        if (value.hour == null && 'hour' in placeholder) {
+          return value.set({hour: placeholder.hour});
+        }
+        let hours = value.hour ?? 0;
         let isPM = hours >= 12;
         return value.set({hour: isPM ? hours - 12 : hours + 12});
       }
       case 'hour':
       case 'minute':
       case 'second':
+        if (value[part] == null) {
+          return value.set({[part]: placeholder[part]});
+        }
         return value.cycle(part, amount, {
           round: part !== 'hour',
           hourCycle: options.hour12 ? 12 : 24
@@ -595,7 +585,7 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
   throw new Error('Unknown segment: ' + part);
 }
 
-function setSegment(value: DateValue, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
+function setSegment(value: IncompleteDate, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
   switch (part) {
     case 'day':
     case 'month':
@@ -607,7 +597,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
   if ('hour' in value && typeof segmentValue === 'number') {
     switch (part) {
       case 'dayPeriod': {
-        let hours = value.hour;
+        let hours = value.hour ?? 0;
         let wasPM = hours >= 12;
         let isPM = segmentValue >= 12;
         if (isPM === wasPM) {
@@ -618,7 +608,7 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
       case 'hour':
         // In 12 hour time, ensure that AM/PM does not change
         if (options.hour12) {
-          let hours = value.hour;
+          let hours = value.hour ?? 0;
           let wasPM = hours >= 12;
           if (!wasPM && segmentValue === 12) {
             segmentValue = 0;
@@ -635,4 +625,173 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
   }
 
   throw new Error('Unknown segment: ' + part);
+}
+
+class IncompleteDate {
+  calendar: Calendar;
+  era: string;
+  year: number | null;
+  month: number | null;
+  day: number | null;
+  hour: number | null;
+  minute: number | null;
+  second: number | null;
+  millisecond: number | null;
+
+  constructor(calendar: Calendar, dateValue?: Partial<Omit<AnyDateTime, 'copy'>> | null) {
+    let eras = calendar.getEras();
+    this.era = dateValue?.era ?? eras[eras.length - 1];
+    this.calendar = calendar;
+    this.year = dateValue?.year ?? null;
+    this.month = dateValue?.month ?? null;
+    this.day = dateValue?.day ?? null;
+    this.hour = dateValue?.hour ?? null;
+    this.minute = dateValue?.minute ?? null;
+    this.second = dateValue?.second ?? null;
+    this.millisecond = dateValue?.millisecond ?? null;
+  }
+
+  copy(): IncompleteDate {
+    let res = new IncompleteDate(this.calendar);
+    res.era = this.era;
+    res.year = this.year;
+    res.month = this.month;
+    res.day = this.day;
+    res.hour = this.hour;
+    res.minute = this.minute;
+    res.second = this.second;
+    res.millisecond = this.millisecond;
+    return res;
+  }
+
+  isComplete(segments: (DateField | TimeField)[]) {
+    return segments.every(segment => this[segment] != null);
+  }
+
+  validate(dt: DateValue, segments: (DateField | TimeField)[]) {
+    return segments.every(segment => this[segment] === dt[segment]);
+  }
+
+  isCleared(segments: (DateField | TimeField)[]): boolean {
+    return segments.every(segment => this[segment] === null);
+  }
+
+  set(fields: DateFields & TimeFields): IncompleteDate {
+    let result = this.copy();
+    for (let key in fields) {
+      result[key] = fields[key];
+    }
+    return result;
+  }
+
+  clear(field: DateField | TimeField): IncompleteDate {
+    let result = this.copy();
+    // @ts-ignore
+    result[field] = null;
+    if (field === 'year') {
+      let eras = this.calendar.getEras();
+      result.era = eras[eras.length - 1];
+    }
+    return result;
+  }
+
+  cycle(field: DateField | TimeField, amount: number, options?: CycleTimeOptions): IncompleteDate {
+    let res = this.copy();
+    switch (field) {
+      case 'era':
+      case 'year': {
+        // Use CalendarDate to cycle so that we update the era when going between 1 AD and 1 BC.
+        let date = new CalendarDate(this.calendar, this.era, this.year ?? 1, 1, 1);
+        date = date.cycle(field, amount, options);
+        res.era = date.era;
+        res.year = date.year;
+        break;
+      }
+      case 'month':
+        res.month = cycleValue(res.month ?? 1, amount, 1, this.calendar.getMaximumMonthsInYear(), options?.round);
+        break;
+      case 'day':
+        // Allow incrementing up to the maximum number of days in any month.
+        res.day = cycleValue(res.day ?? 1, amount, 1, this.calendar.getMaximumDaysInMonth(), options?.round);
+        break;
+      case 'hour': {
+        // TODO: in the case of a "fall back" DST transition, the 1am hour repeats twice.
+        // With this logic, it's no longer possible to select the second instance.
+        // Using cycle from ZonedDateTime works as expected, but requires the date already be complete.
+        let hours = res.hour ?? 0;
+        let min = 0;
+        let max = 23;
+        if (options?.hourCycle === 12) {
+          let isPM = hours >= 12;
+          min = isPM ? 12 : 0;
+          max = isPM ? 23 : 11;
+        }
+        res.hour = cycleValue(hours, amount, min, max, options?.round);
+        break;
+      }
+      case 'minute':
+        res.minute = cycleValue(res.minute ?? 0, amount, 0, 59, options?.round);
+        break;
+      case 'second':
+        res.second = cycleValue(res.second ?? 0, amount, 0, 59, options?.round);
+        break;
+      case 'millisecond':
+        res.millisecond = cycleValue(res.millisecond ?? 0, amount, 0, 999, options?.round);
+        break;
+    }
+
+    return res;
+  }
+
+  toValue(value: DateValue): DateValue {
+    if ('hour' in value) {
+      return value.set({
+        era: this.era,
+        year: this.year ?? value.year,
+        month: this.month ?? value.month,
+        day: this.day ?? value.day,
+        hour: this.hour ?? value.hour,
+        minute: this.minute ?? value.minute,
+        second: this.second ?? value.second,
+        millisecond: this.millisecond ?? value.millisecond
+      });
+    } else {
+      return value.set({
+        era: this.era,
+        year: this.year ?? value.year,
+        month: this.month ?? value.month,
+        day: this.day ?? value.day
+      });
+    }
+  }
+}
+
+function cycleValue(value: number, amount: number, min: number, max: number, round = false) {
+  if (round) {
+    value += Math.sign(amount);
+
+    if (value < min) {
+      value = max;
+    }
+
+    let div = Math.abs(amount);
+    if (amount > 0) {
+      value = Math.ceil(value / div) * div;
+    } else {
+      value = Math.floor(value / div) * div;
+    }
+
+    if (value > max) {
+      value = min;
+    }
+  } else {
+    value += amount;
+    if (value < min) {
+      value = max - (min - value - 1);
+    } else if (value > max) {
+      value = min + (value - max - 1);
+    }
+  }
+
+  return value;
 }
