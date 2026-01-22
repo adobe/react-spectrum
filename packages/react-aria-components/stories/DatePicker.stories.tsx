@@ -125,7 +125,7 @@ export const DatePickerTriggerWidthExample: DatePickerStory = (args) => (
   </DatePicker>
 );
 
-export const DateRangePickerExample = (args) => (
+export const DateRangePickerExample: DateRangePickerStory = (args) => (
   <DateRangePicker data-testid="date-range-picker-example" {...args}>
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>

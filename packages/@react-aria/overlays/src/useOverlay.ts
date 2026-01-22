@@ -93,7 +93,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   let onInteractOutsideStart = (e: PointerEvent) => {
-    const topMostOverlay = (lastVisibleOverlay.current = visibleOverlays[visibleOverlays.length - 1]);
+    const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
+    lastVisibleOverlay.current = topMostOverlay;
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (topMostOverlay === ref) {
         e.stopPropagation();

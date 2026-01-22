@@ -176,6 +176,7 @@ function DateRangePickerInsideModal() {
             padding: 30
           }}>
           <Dialog>
+            {/* @ts-ignore */}
             <DateRangePickerExample />
           </Dialog>
         </Modal>
