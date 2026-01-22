@@ -7958,6 +7958,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.0.0"
     "@vitejs/plugin-react": "npm:^4.3.4"
     "@vitest/browser": "npm:^4.0.0"
+    "@vitest/browser-playwright": "npm:^4.0.0"
     "@vitest/ui": "npm:^4.0.0"
     csstype: "npm:^3.0.2"
     glob: "npm:^10.3.0"
@@ -12080,7 +12081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/browser-playwright@npm:^4.0.17":
+"@vitest/browser-playwright@npm:^4.0.0, @vitest/browser-playwright@npm:^4.0.17":
   version: 4.0.17
   resolution: "@vitest/browser-playwright@npm:4.0.17"
   dependencies:
