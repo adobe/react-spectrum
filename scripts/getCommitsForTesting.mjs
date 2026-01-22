@@ -94,7 +94,7 @@ async function writeTestingCSV() {
           s2PRs.push(row);
         } else if (labels.has('RAC')) {
           racPRs.push(row);
-        } else if (labels.has('V3')) {
+        } else if (labels.has('v3')) {
           v3PRs.push(row);
         }
       }
