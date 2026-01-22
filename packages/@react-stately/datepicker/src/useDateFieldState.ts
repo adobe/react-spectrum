@@ -190,14 +190,13 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => new IncompleteDate(calendar, calendarValue)
   );
 
-  let [lastValue, setLastValue] = useState(value);
+  let [lastValue, setLastValue] = useState(calendarValue);
   let [lastCalendar, setLastCalendar] = useState(calendar);
-  if (calendarValue !== lastValue) {
+  if (calendarValue !== lastValue || !isEqualCalendar(calendar, lastCalendar)) {
+    displayValue = new IncompleteDate(calendar, calendarValue);
     setLastValue(calendarValue);
-    setDisplayValue(new IncompleteDate(calendar, calendarValue));
-  } else if (!isEqualCalendar(calendar, lastCalendar)) {
     setLastCalendar(calendar);
-    setDisplayValue(new IncompleteDate(calendar, calendarValue));
+    setDisplayValue(displayValue);
   }
 
   let showEra = calendar.identifier === 'gregory' && displayValue.era === 'BC';
