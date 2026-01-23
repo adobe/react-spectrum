@@ -1,0 +1,51 @@
+# Style 
+
+Macro
+
+The `style` macro supports a constrained set of values per property that conform to Spectrum 2.
+
+## Colors
+
+All Spectrum 2 color tokens are available across color properties (e.g., `backgroundColor`, `color`, `borderColor`).
+
+<StyleMacroProperties properties={getPropertyDefinitions('color')}/>
+
+## Dimensions
+
+<StyleMacroProperties properties={getPropertyDefinitions('dimensions')}/>
+
+## Text
+
+Spectrum 2 typography can be applied via the `font` shorthand, which sets `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `color`. You can override any of these individually.
+Note that `font` should be applied on a per element basis rather than globally so as to properly conform with Spectrum designs.
+
+```tsx
+<main>
+  <h1 className={style({font: 'heading-xl'})}>Heading</h1>
+  <p className={style({font: 'body'})}>Body</p>
+  <ul className={style({font: 'body-sm', fontWeight: 'bold'})}>
+    <li>List item</li>
+  </ul>
+</main>
+```
+
+<StyleMacroProperties properties={getPropertyDefinitions('text')}/>
+
+## Effects
+
+<StyleMacroProperties properties={getPropertyDefinitions('effects')}/>
+
+## Layout
+
+<StyleMacroProperties properties={getPropertyDefinitions('layout')}/>
+
+## Misc
+
+<StyleMacroProperties properties={getPropertyDefinitions('misc')}/>
+
+## Conditions
+
+<StyleMacroProperties
+  properties={getPropertyDefinitions('conditions')}
+  sort={false}
+/>

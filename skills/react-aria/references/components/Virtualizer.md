@@ -1,0 +1,550 @@
+# Virtualizer
+
+A Virtualizer renders a scrollable collection of data using customizable layouts.
+It supports very large collections by only rendering visible items to the DOM, reusing
+them as the user scrolls.
+
+```tsx
+import {Virtualizer, ListLayout} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+
+let items: {id: number, name: string}[] = [];
+for (let i = 0; i < 5000; i++) {
+  items.push({id: i, name: `Item ${i}`});
+}
+
+<Virtualizer
+  /*- begin focus -*/
+  layout={ListLayout}
+  
+>
+  {/*- end focus -*/}
+  <ListBox
+    aria-label="Virtualized ListBox"
+    selectionMode="multiple"
+    items={items}
+    style={{display: 'block', padding: 0}}>
+    {item => <ListBoxItem style={{height: '100%', minHeight: 0}}>{item.name}</ListBoxItem>}
+  </ListBox>
+</Virtualizer>
+```
+
+## Layouts
+
+Virtualizer uses `Layout` objects to determine the position and size of each item, and provide the list of currently visible items. When using a Virtualizer, all items are positioned by the `Layout`, and CSS layout properties such as flexbox and grid do not apply.
+
+### List
+
+`ListLayout` supports layout of items in a vertical stack. Rows can be fixed or variable height. When using variable heights, set the `estimatedRowHeight` to a reasonable guess for how tall the rows will be on average. This allows the size of the scrollbar to be calculated.
+
+```tsx
+import {Virtualizer, ListLayout} from 'react-aria-components';
+import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+
+let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.'.split(' ');
+let items: {id: number, name: string}[] = [];
+for (let i = 0; i < 5000; i++) {
+  let words = Math.max(2, Math.floor(Math.random() * 25));
+  let name = lorem.slice(0, words).join(' ');
+  items.push({id: i, name});
+}
+
+<Virtualizer
+  /*- begin highlight -*/
+  layout={ListLayout}
+  
+>
+  {/*- end highlight -*/}
+  <ListBox
+    aria-label="Virtualized ListBox"
+    selectionMode="multiple"
+    items={items}
+    style={{display: 'block', padding: 0}}>
+    {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+  </ListBox>
+</Virtualizer>
+```
+
+### Grid
+
+`GridLayout` supports layout of items in an equal size grid. The items are sized between a minimum and maximum size depending on the width of the container. Make sure to set `layout="grid"` on the `ListBox` or `GridList` component as well so that keyboard navigation behavior is correct.
+
+```tsx
+import {Virtualizer, GridLayout, Text} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+let albumOptions = [
+  {
+    image: 'https://images.unsplash.com/photo-1593958812614-2db6a598c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlzY298ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Euphoric Echoes',
+    artist: 'Luna Solstice'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmVvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Neon Dreamscape',
+    artist: 'Electra Skyline'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNwYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60',
+    title: 'Cosmic Serenade',
+    artist: 'Orion\'s Symphony'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Melancholy Melodies',
+    artist: 'Violet Mistral'
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1608433319511-dfe8ea4cbd3c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJlYXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=900&q=60',
+    title: 'Rhythmic Illusions',
+    artist: 'Mirage Beats'
+  }
+];
+
+type Album = {id: number, image: string, title: string, artist: string};
+let albums: Album[] = [];
+for (let i = 0; i < 1000; i++) {
+  albums.push({
+    id: i,
+    ...albumOptions[i % albumOptions.length]
+  })
+}
+
+function Example(props) {
+  return (
+    <div className="resizable">
+      <Virtualizer
+        /*- begin highlight -*/
+        layout={GridLayout}
+        
+        {...props}>
+        {/*- end highlight -*/}
+        <GridList
+          /*- begin highlight -*/
+          layout="grid"
+          /*- end highlight -*/
+          aria-label="Virtualized grid layout"
+          selectionMode="multiple"
+          items={albums}
+          data-size="small"
+          style={{display: 'block', padding: 0, height: 300, width: '100%'}}>
+          {item => (
+            <GridListItem textValue={item.title} style={{height: '100%'}}>
+              <img src={item.image} alt="" />
+              <Text>{item.title}</Text>
+              <Text slot="description">{item.artist}</Text>
+            </GridListItem>
+          )}
+        </GridList>
+      </Virtualizer>
+    </div>
+  );
+}
+```
+
+```css
+.resizable {
+  resize: horizontal;
+  width: 400px;
+  min-width: 240px;
+  max-width: 100%;
+  overflow: hidden;
+}
+```
+
+### Waterfall
+
+`WaterfallLayout` arranges variable height items in a column layout. The columns are sized between a minimum and maximum size depending on the width of the container.
+
+```tsx
+import {Virtualizer, WaterfallLayout, Text} from 'react-aria-components';
+import {GridList, GridListItem} from 'vanilla-starter/GridList';
+
+let images = [
+    {
+        "id": "8SXaMMWCTGc",
+        "title": "A Ficus Lyrata Leaf in the sunlight (2/2) (IG: @clay.banks)",
+        "user": "Clay Banks",
+        "image": "https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666"
+    },
+    {
+        "id": "pYjCqqDEOFo",
+        "title": "beach of Italy",
+        "user": "alan bajura",
+        "image": "https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "CF-2tl6MQj0",
+        "title": "A winding road in the middle of a forest",
+        "user": "Artem Stoliar",
+        "image": "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.3333333333333333"
+    },
+    {
+        "id": "OW97sLU0cOw",
+        "title": "A green and purple aurora over a snow covered forest",
+        "user": "Janosch Diggelmann",
+        "image": "https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6669921875"
+    },
+    {
+        "id": "WfeLZ02IhkM",
+        "title": "A blue and white firework is seen from above",
+        "user": "Janosch Diggelmann",
+        "image": "https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.3353596757852078"
+    },
+    {
+        "id": "w1GpST72Bg8",
+        "title": "A snow covered mountain with a sky background",
+        "user": "Daniil Silantev",
+        "image": "https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.4978580171358629"
+    },
+    {
+        "id": "0iN0KIt6lYI",
+        "title": "\"Pastel Sunset\"",
+        "user": "Marek Piwnicki",
+        "image": "https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6249763481551561"
+    },
+    {
+        "id": "-mFKPfXXUG0",
+        "title": "Leave the weight behind! You must make yourself light to strive upwards — to reach the light. (A serene winter landscape featuring a dense collection of bare, white trees.)",
+        "user": "Simon Berger",
+        "image": "https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1"
+    },
+    {
+        "id": "MOk6URQ28R4",
+        "title": "A snow covered tree with a sky background",
+        "user": "Daniil Silantev",
+        "image": "https://images.unsplash.com/photo-1738081359113-a7a33c509cf9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.666598611678236"
+    },
+    {
+        "id": "y36Nj_edtRE",
+        "title": "A lake surrounded by trees covered in snow",
+        "user": "Daniel Seßler",
+        "image": "https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.667"
+    },
+    {
+        "id": "NvBV-YwlgBw",
+        "title": "The night sky with stars above a rock formation",
+        "user": "Dennis Haug",
+        "image": "https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1"
+    },
+    {
+        "id": "UthQdrPFxt0",
+        "title": "A pine tree covered in snow in a forest",
+        "user": "Anita Austvika",
+        "image": "https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "2k74xaf8dfc",
+        "title": "The sun shines through the trees in the forest",
+        "user": "Joyce G",
+        "image": "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "Yje5kgfvCm0",
+        "title": "A blurry photo of a field of flowers",
+        "user": "Eugene Golovesov",
+        "image": "https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6661569826707442"
+    },
+    {
+        "id": "G2bsj2LVttI",
+        "title": "A foggy road lined with trees and grass",
+        "user": "Ingmar H",
+        "image": "https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.7499509707785841"
+    },
+    {
+        "id": "ppyNBOkfiuY",
+        "title": "A close up of a green palm tree",
+        "user": "Junel Mujar",
+        "image": "https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.7507507507507507"
+    },
+    {
+        "id": "UcWUMqIsld8",
+        "title": "A green leaf floating on top of a body of water",
+        "user": "Allec Gomes",
+        "image": "https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "xHqOVq9w8OI",
+        "title": "green-leafed plant",
+        "user": "Joshua Michaels",
+        "image": "https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.504"
+    },
+    {
+        "id": "uWx3_XEc-Jw",
+        "title": "A view of a mountain covered in fog",
+        "user": "iuliu illes",
+        "image": "https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.3430962343096233"
+    },
+    {
+        "id": "2_3lhGt8i-Y",
+        "title": "A field with tall grass and fog in the background",
+        "user": "Ingmar H",
+        "image": "https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "FV-__IOxb08",
+        "title": "A close up of a wave on a sandy beach",
+        "user": "Jonathan Borba",
+        "image": "https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "_BS-vK3boOU",
+        "title": "Desert textures",
+        "user": "Braden Jarvis",
+        "image": "https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.7135258358662614"
+    },
+    {
+        "id": "LjAcS9lJdBg",
+        "title": "Tew Falls, waterfall, in Hamilton, Canada.",
+        "user": "Andre Portolesi",
+        "image": "https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.8"
+    },
+    {
+        "id": "hlj6xJG30FE",
+        "title": "Find me on Instagram! @intricateexplorer",
+        "user": "Intricate Explorer",
+        "image": "https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.4992510164776376"
+    },
+    {
+        "id": "vMoZvKeZOhw",
+        "title": "Salt Marshes, Isle of Harris, Scotland by Nils Leonhardt. Visit my website: https://nilsleonhardt.com/storytelling-harris/ Instagram: @am.basteir",
+        "user": "Nils Leonhardt",
+        "image": "https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "wCLCK9LDDjI",
+        "title": "An aerial view of a snow covered forest",
+        "user": "Lukas Hädrich",
+        "image": "https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.5"
+    },
+    {
+        "id": "OdDx3_NB-Wk",
+        "title": "A close up of a tall grass with a sky in the background",
+        "user": "Ingmar H",
+        "image": "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "Gn-FOw1geFc",
+        "title": "Larches on Maple Pass, Washington",
+        "user": "noelle",
+        "image": "https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    },
+    {
+        "id": "VhKJHOz2tJ8",
+        "title": "IC 1805 La nébuleuse du coeur",
+        "user": "arnaud girault",
+        "image": "https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "1.504158004158004"
+    },
+    {
+        "id": "w5QmH_uqB0U",
+        "title": "A pile of shells sitting on top of a sandy beach",
+        "user": "Toa Heftiba",
+        "image": "https://images.unsplash.com/photo-1725366351350-a64a1be919ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+        "aspectRatio": "0.6666666666666666"
+    }
+];
+
+for (let i = 0; images.length < 500; i++) {
+  images.push({...images[i % 30], id: String(i)});
+}
+
+<Virtualizer
+  /*- begin highlight -*/
+  layout={WaterfallLayout}
+  
+  /*- end highlight -*/
+>
+  <GridList
+    layout="grid"
+    aria-label="Virtualized waterfall layout"
+    selectionMode="multiple"
+    items={images}
+    data-size="small"
+    style={{display: 'block', padding: 0, height: 400, width: '100%'}}>
+    {item => (
+      <GridListItem textValue={item.title}>
+        <img src={item.image} alt="" style={{aspectRatio: item.aspectRatio, maxWidth: 'none'}} />
+        <Text>{item.title}</Text>
+        <Text slot="description">{item.user}</Text>
+      </GridListItem>
+    )}
+  </GridList>
+</Virtualizer>
+```
+
+### Table
+
+`TableLayout` provides layout of items in rows and columns, supporting virtualization of both horizontal and vertical scrolling. It should be used with the [Table](Table.md) component. Rows can be fixed or variable height. When using variable heights, set the `estimatedRowHeight` to a reasonable guess for how tall the rows will be on average. This allows the size of the scrollbar to be calculated.
+
+```tsx
+import {Virtualizer, TableLayout} from 'react-aria-components';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from 'vanilla-starter/Table';
+
+type Row = { id: number; foo: string; bar: string; baz: string };
+let rows: Row[] = [];
+for (let i = 0; i < 1000; i++) {
+  rows.push({ id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}` });
+}
+
+<Virtualizer
+  /*- begin highlight -*/
+  layout={TableLayout}
+  
+  /*- end highlight -*/
+>
+  <Table
+    aria-label="Virtualized Table"
+    selectionMode="multiple"
+    style={{
+      width: '100%',
+      height: 300,
+      overflow: 'auto',
+      scrollPaddingTop: 38
+    }}>
+    <TableHeader
+      style={{
+        background: 'var(--gray-100)',
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+        fontWeight: 'bold'
+      }}>
+      <Column isRowHeader>Foo</Column>
+      <Column>Bar</Column>
+      <Column>Baz</Column>
+    </TableHeader>
+    <TableBody items={rows}>
+      {(item) => (
+        <Row style={{width: 'inherit', height: 'inherit'}}>
+          <Cell>{item.foo}</Cell>
+          <Cell>{item.bar}</Cell>
+          <Cell>{item.baz}</Cell>
+        </Row>
+      )}
+    </TableBody>
+  </Table>
+</Virtualizer>
+```
+
+## Examples
+
+<ExampleList
+  tag="virtualizer"
+  pages={props.pages}
+/>
+
+## A
+
+PI
+
+### Virtualizer
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | — | The child collection to virtualize (e.g. ListBox, GridList, or Table). |
+| `layout` | `LayoutClass<O> | ILayout<O>` | — | The layout object that determines the position and size of the visible elements. |
+| `layoutOptions` | `O | undefined` | — | Options for the layout. |
+
+### List
+
+Layout
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `rowHeight` | `number | undefined` | 48 | The fixed height of a row in px. |
+| `estimatedRowHeight` | `number | undefined` | — | The estimated height of a row, when row heights are variable. |
+| `headingHeight` | `number | undefined` | 48 | The fixed height of a section header in px. |
+| `estimatedHeadingHeight` | `number | undefined` | — | The estimated height of a section header, when the height is variable. |
+| `loaderHeight` | `number | undefined` | 48 | The fixed height of a loader element in px. This loader is specifically for "load more" elements rendered when loading more rows at the root level or inside nested row/sections. |
+| `dropIndicatorThickness` | `number | undefined` | 2 | The thickness of the drop indicator. |
+| `gap` | `number | undefined` | 0 | The gap between items. |
+| `padding` | `number | undefined` | 0 | The padding around the list. |
+
+### Grid
+
+Layout
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `minItemSize` | `Size | undefined` | 208 x 208 for horizontal card orientation. 102 x 102 for vertical card orientation. | The minimum item size. |
+| `maxItemSize` | `Size | undefined` | Infinity | The maximum item size. |
+| `minSpace` | `Size | undefined` | 18 x 18 | The minimum space required between items. |
+| `maxColumns` | `number | undefined` | Infinity | The maximum number of columns. |
+| `itemPadding` | `number | undefined` | 95 | The additional padding along the card's main axis. Affects the sizing of the content area following the card image. |
+| `cardOrientation` | `Orientation | undefined` | vertical | The orientation of the cards withn the grid. |
+| `collator` | `Intl.Collator | undefined` | — | — |
+| `scale` | `Scale | undefined` | — | — |
+| `margin` | `number | undefined` | 24 | The margin around the grid view between the edges and the items. |
+
+### Waterfall
+
+Layout
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `minItemSize` | `Size | undefined` | 240 x 136 | The minimum item size. |
+| `maxItemSize` | `Size | undefined` | Infinity | The maximum item size. |
+| `minSpace` | `Size | undefined` | 18 x 18 | The minimum space required between items. |
+| `maxColumns` | `number | undefined` | Infinity | The maximum number of columns. |
+| `collator` | `Intl.Collator | undefined` | — | — |
+| `scale` | `Scale | undefined` | — | — |
+| `margin` | `number | undefined` | 24 | The margin around the grid view between the edges and the items. |
+
+### Table
+
+Layout
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `rowHeight` | `number | undefined` | 48 | The fixed height of a row in px. |
+| `estimatedRowHeight` | `number | undefined` | — | The estimated height of a row, when row heights are variable. |
+| `headingHeight` | `number | undefined` | 48 | The fixed height of a section header in px. |
+| `estimatedHeadingHeight` | `number | undefined` | — | The estimated height of a section header, when the height is variable. |
+| `loaderHeight` | `number | undefined` | 48 | The fixed height of a loader element in px. This loader is specifically for "load more" elements rendered when loading more rows at the root level or inside nested row/sections. |
+| `dropIndicatorThickness` | `number | undefined` | 2 | The thickness of the drop indicator. |
+| `gap` | `number | undefined` | 0 | The gap between items. |
+| `padding` | `number | undefined` | 0 | The padding around the list. |
+
+## Related 
+
+Types
+
+### Layout
+
+Virtualizer supports arbitrary layout objects, which compute what items are visible, and how
+to position and style them. However, layouts do not render items directly. Instead,
+layouts produce lightweight LayoutInfo objects which describe various properties of an item,
+such as its position and size. The Virtualizer is then responsible for creating the actual
+views as needed, based on this layout information.
+
+Every layout extends from the Layout abstract base class. Layouts must implement the \`getVisibleLayoutInfos\`,
+\`getLayoutInfo\`, and \`getContentSize\` methods. All other methods can be optionally overridden to implement custom behavior.
