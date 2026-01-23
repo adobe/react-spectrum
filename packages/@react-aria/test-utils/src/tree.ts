@@ -13,6 +13,7 @@
 import {act, within} from '@testing-library/react';
 import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
+import {nodeContains} from '@react-aria/utils';
 
 interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
 interface TreeToggleRowOpts extends ToggleGridRowOpts {}
@@ -73,13 +74,13 @@ export class TreeTester {
       throw new Error('Option provided is not in the tree');
     }
 
-    if (document.activeElement !== this._tree && !this._tree.contains(document.activeElement)) {
+    if (document.activeElement !== this._tree && !nodeContains(this._tree, document.activeElement)) {
       act(() => this._tree.focus());
     }
 
     if (document.activeElement === this.tree) {
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
-    } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    } else if (nodeContains(this._tree, document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -178,7 +179,7 @@ export class TreeTester {
       row,
       interactionType = this._interactionType
     } = opts;
-    if (!this.tree.contains(document.activeElement)) {
+    if (!nodeContains(this.tree, document.activeElement)) {
       await act(async () => {
         this.tree.focus();
       });
