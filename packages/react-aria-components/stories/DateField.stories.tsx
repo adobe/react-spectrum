@@ -94,8 +94,7 @@ export const DateFieldAutoFill = (props) => (
       {...props}
       name="bday"
       autoComplete="bday"
-      defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')
-    }
+      defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')}
       data-testid="date-field-example">
       <Label style={{display: 'block'}}>Date</Label>
       <DateInput className={styles.field} data-testid2="date-input">

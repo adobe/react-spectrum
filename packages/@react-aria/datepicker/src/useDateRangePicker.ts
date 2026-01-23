@@ -116,7 +116,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     onBlurWithin: e => {
       // Ignore when focus moves into the popover.
       let dialog = document.getElementById(dialogId);
-      if (!dialog || !nodeContains(dialog, e.relatedTarget as Element)) {
+      if (!nodeContains(dialog, e.relatedTarget)) {
         isFocused.current = false;
         props.onBlur?.(e);
         props.onFocusChange?.(false);

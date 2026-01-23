@@ -55,6 +55,15 @@ export function useViewportSize(): ViewportSize {
   });
 
   useEffect(() => {
+    let updateSize = (newSize: ViewportSize) => {
+      setSize(size => {
+        if (newSize.width === size.width && newSize.height === size.height) {
+          return size;
+        }
+        return newSize;
+      });
+    };
+
     // Use visualViewport api to track available height even on iOS virtual keyboard opening
     let onResize = () => {
       // Ignore updates when zoomed.
@@ -111,6 +120,8 @@ export function useViewportSize(): ViewportSize {
         });
       }
     };
+
+    updateSize(getViewportSize());
 
     window.addEventListener('blur', onBlur, true);
 

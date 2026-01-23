@@ -37,7 +37,7 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
           return;
         }
 
-        onResizeEvent();
+        requestAnimationFrame(() => onResizeEvent());
       });
       resizeObserverInstance.observe(element, {box});
 

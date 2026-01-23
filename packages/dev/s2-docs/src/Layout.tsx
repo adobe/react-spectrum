@@ -12,7 +12,7 @@ import './anatomy.css';
 import './footer.css';
 import {ClassAPI} from './ClassAPI';
 import {Code} from './Code';
-import {CodeBlock} from './CodeBlock';
+import {CodeBlock, standaloneCode} from './CodeBlock';
 import {CodePlatterProvider} from './CodePlatter';
 import {Divider, Provider, ToastContainer} from '@react-spectrum/s2';
 import {ExampleSwitcher} from './ExampleSwitcher';
@@ -24,6 +24,7 @@ import {Link} from './Link';
 import {Main, NavigationSuspense, Router} from './Router';
 import {MobileHeader} from './MobileHeader';
 import {PropTable} from './PropTable';
+import {SettingsProvider} from './SettingsProvider';
 import {StateTable} from './StateTable';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {TypeLink} from './types';
@@ -42,6 +43,15 @@ const components = (isLongForm?: boolean) => ({
   Figure: (props) => <figure {...props} className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 32, marginX: 0})} />,
   Caption: (props) => <figcaption {...props} className={style({font: 'body-sm'})} />,
   CodeBlock: CodeBlock,
+  pre: ({children, ...props}) => (
+    <pre {...props} className={standaloneCode}>
+      {React.Children.map(children, child =>
+        React.isValidElement(child)
+          ? React.cloneElement(child as React.ReactElement<any>, {isFencedBlock: true})
+          : child
+      )}
+    </pre>
+  ),
   code: (props) => <Code {...props} />,
   strong: ({children, ...props}) => <strong {...props} className={style({fontWeight: 'bold'})}>{children}</strong>,
   a: (props) => <Link {...props} />,
@@ -206,94 +216,96 @@ export async function Layout(props: PageProps & {children: ReactElement<any>}) {
               lg: 'none'
             }
           })}>
-          <div
-            className={style({
-              isolation: 'isolate',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              maxWidth: {
-                default: 'full',
-                lg: 1440
-              },
-              marginX: 'auto',
-              marginY: 0,
-              padding: {
-                default: 0,
-                lg: 12
-              },
-              paddingBottom: 0,
-              gap: {
-                default: 0,
-                lg: 12
-              },
-              minHeight: {
-                default: 'screen',
-                lg: 'auto'
-              }
-            })}>
-            <Header />
-            <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
-            <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
-              <Nav />
-              <Main
-                style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
-                className={style({
-                  isolation: 'isolate',
-                  backgroundColor: 'base',
-                  padding: {
-                    default: 12,
-                    lg: 40
-                  },
-                  borderRadius: {
-                    default: 'none',
-                    lg: 'xl'
-                  },
-                  boxShadow: {
-                    lg: 'emphasized'
-                  },
-                  width: 'full',
-                  boxSizing: 'border-box',
-                  flexGrow: 1,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  columnGap: {
-                    default: 12,
-                    lg: 40
-                  },
-                  position: 'relative',
-                  height: {
-                    lg: '[calc(100vh - 72px)]'
-                  },
-                  overflow: {
-                    lg: 'auto'
-                  }
-                })}>
-                <div
+          <SettingsProvider>
+            <div
+              className={style({
+                isolation: 'isolate',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                maxWidth: {
+                  default: 'full',
+                  lg: 1440
+                },
+                marginX: 'auto',
+                marginY: 0,
+                padding: {
+                  default: 0,
+                  lg: 12
+                },
+                paddingBottom: 0,
+                gap: {
+                  default: 0,
+                  lg: 12
+                },
+                minHeight: {
+                  default: 'screen',
+                  lg: 'auto'
+                }
+              })}>
+              <Header />
+              <MobileHeader toc={(currentPage.tableOfContents?.[0]?.children?.length ?? 0) <= 1 ? null : <OptimisticMobileToc />} />
+              <div className={style({display: 'flex', width: 'full', flexGrow: {default: 1, lg: 0}})}>
+                <Nav />
+                <Main
+                  style={{borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
                   className={style({
-                    display: 'flex',
-                    flexDirection: 'column',
+                    isolation: 'isolate',
+                    backgroundColor: 'base',
+                    padding: {
+                      default: 12,
+                      lg: 40
+                    },
+                    borderRadius: {
+                      default: 'none',
+                      lg: 'xl'
+                    },
+                    boxShadow: {
+                      lg: 'emphasized'
+                    },
+                    width: 'full',
+                    boxSizing: 'border-box',
                     flexGrow: 1,
-                    minWidth: 0,
-                    width: 'full'
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    columnGap: {
+                      default: 12,
+                      lg: 40
+                    },
+                    position: 'relative',
+                    height: {
+                      lg: '[calc(100vh - 72px)]'
+                    },
+                    overflow: {
+                      lg: 'auto'
+                    }
                   })}>
-                  <CodePlatterProvider library={getLibraryFromPage(currentPage)}>
-                    <NavigationSuspense>
-                      <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
-                        {React.cloneElement(children, {
-                          components: components(isLongForm),
-                          pages
-                        })}
-                      </Content>
-                    </NavigationSuspense>
-                  </CodePlatterProvider>
-                  <Footer />
-                </div>
-                <OptimisticToc />
-              </Main>
+                  <div
+                    className={style({
+                      display: 'flex',
+                      flexDirection: 'column',
+                      flexGrow: 1,
+                      minWidth: 0,
+                      width: 'full'
+                    })}>
+                    <CodePlatterProvider library={getLibraryFromPage(currentPage)}>
+                      <NavigationSuspense>
+                        <Content page={currentPage} parentPage={parentPage} isLongForm={isLongForm} isWide={isWide}>
+                          {React.cloneElement(children, {
+                            components: components(isLongForm),
+                            pages
+                          })}
+                        </Content>
+                      </NavigationSuspense>
+                    </CodePlatterProvider>
+                    <Footer />
+                  </div>
+                  <OptimisticToc />
+                </Main>
+              </div>
             </div>
-          </div>
-          {!isToastPage && <ToastContainer placement="bottom" />}
+            {!isToastPage && <ToastContainer placement="bottom" />}
+          </SettingsProvider>
         </body>
       </Provider>
     </Router>

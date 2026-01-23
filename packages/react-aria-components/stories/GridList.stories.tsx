@@ -68,15 +68,15 @@ export const GridListExample: GridListStory = (args) => (
       gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
       gridAutoFlow: 'row'
     }}>
-    <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,1">1,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,2">1,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,3">1,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,1">2,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,2">2,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,3">2,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,1">3,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,2">3,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,3">3,3 <Button>Actions</Button></MyGridListItem>
   </GridList>
 );
 
@@ -103,7 +103,8 @@ GridListExample.story = {
   args: {
     layout: 'stack',
     escapeKeyBehavior: 'clearSelection',
-    shouldSelectOnPressUp: false
+    shouldSelectOnPressUp: false,
+    disallowTypeAhead: false
   },
   argTypes: {
     layout: {
@@ -620,6 +621,60 @@ function GridListInModalPickerRender(props: ModalOverlayProps): JSX.Element {
           </Dialog>
         </Modal>
       </ModalOverlay>
+    </>
+  );
+}
+
+export function GridListScrollIntoView() {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+
+  let list = useListData({
+    initialItems: items
+  });
+
+  const getElement = (id: number) => document.querySelector(`[data-key="${id}"]`) as HTMLElement;
+
+  const rowHeight = 25;
+
+  return (
+    <>
+      <div style={{height: 500, overflow: 'auto'}}>
+        <GridList
+          className={styles.menu}
+          selectionMode="multiple"
+          aria-label="virtualized listbox"
+          items={list.items}
+          style={{
+            position: 'relative',
+            overflow: 'hidden',
+            width: 100,
+            height: list.items.length * rowHeight
+          }}>
+          {item => (
+            <GridListItem
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                overflow: 'visible',
+                transform: `translateY(${item.id * rowHeight}px)`
+              }}>
+              {item.name}
+            </GridListItem>)}
+        </GridList>
+      </div>
+      <button onClick={() => getElement(40)?.scrollIntoView({block: 'start'})}>Scroll to item 40</button>
+      <button
+        tabIndex={0}
+        onKeyDown={() => {
+          getElement(70)?.focus();
+        }}>
+        Click, press ESC key focus item 70
+      </button>
     </>
   );
 }

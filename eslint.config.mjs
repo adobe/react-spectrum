@@ -249,6 +249,7 @@ export default [{
 
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
+        "rsp-rules/no-non-shadow-contains": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
@@ -361,6 +362,10 @@ export default [{
     },
 
     languageOptions: {
+        globals: {
+          globalThis: "readonly",
+        },
+
         parser: tseslint.parser,
         ecmaVersion: 6,
         sourceType: "module",
@@ -424,6 +429,7 @@ export default [{
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/act-events-test": ERROR,
         "rsp-rules/no-getByRole-toThrow": ERROR,
+        "rsp-rules/no-non-shadow-contains": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
         "jsdoc/require-jsdoc": OFF

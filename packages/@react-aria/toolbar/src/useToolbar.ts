@@ -56,7 +56,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
 
   const onKeyDown: KeyboardEventHandler = (e) => {
     // don't handle portalled events
-    if (!e.currentTarget.contains(e.target as HTMLElement)) {
+    if (!nodeContains(e.currentTarget, e.target as HTMLElement)) {
       return;
     }
     if (
@@ -101,7 +101,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   // Record the last focused child when focus moves out of the toolbar.
   const lastFocused = useRef<HTMLElement | null>(null);
   const onBlur = (e) => {
-    if (!nodeContains(e.currentTarget as Element, e.relatedTarget as Element) && !lastFocused.current) {
+    if (!nodeContains(e.currentTarget, e.relatedTarget) && !lastFocused.current) {
       lastFocused.current = e.target;
     }
   };
@@ -110,7 +110,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
   const onFocus = (e) => {
-    if (lastFocused.current && !nodeContains(e.currentTarget as Element, e.relatedTarget as Element) && ref.current?.contains(e.target)) {
+    if (lastFocused.current && !nodeContains(e.currentTarget, e.relatedTarget) && nodeContains(ref.current, e.target)) {
       lastFocused.current?.focus();
       lastFocused.current = null;
     }

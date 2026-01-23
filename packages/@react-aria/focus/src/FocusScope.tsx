@@ -772,7 +772,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
     {
       acceptNode(node) {
         // Skip nodes inside the starting node.
-        if (opts?.from && nodeContains(opts.from, node)) {
+        if (nodeContains(opts?.from, node)) {
           return NodeFilter.FILTER_REJECT;
         }
 

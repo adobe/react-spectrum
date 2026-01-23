@@ -85,5 +85,5 @@ export function zip(files: {[name: string]: string}): Blob {
   putUint32s(eocd, 12, cdSz, offset);
   records.push(eocd);
 
-  return new Blob(records, {type: 'application/zip'});
+  return new Blob(records as BlobPart[], {type: 'application/zip'});
 }

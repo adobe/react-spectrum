@@ -334,13 +334,16 @@ describe('Menu', () => {
   });
 
   it('should support section-level selection', async () => {
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
     function Example() {
       let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
       let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
           <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
-            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">Lettuce</MenuItem>
             <MenuItem id="tomato">Tomato</MenuItem>
             <MenuItem id="onion">Onion</MenuItem>
           </MenuSection>
@@ -378,12 +381,28 @@ describe('Menu', () => {
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
     expect(radios[2]).toHaveAttribute('aria-checked', 'false');
 
-    act(() => checkboxes[0].focus());
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
     let sequence = checkboxes.slice(1).concat(radios);
     for (let item of sequence) {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
+    expect(onFocus).toHaveBeenCalledTimes(0);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
@@ -489,6 +508,25 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(
+      <MenuTrigger isTriggerUpWhenOpen>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('should support onScroll', () => {
     let onScroll = jest.fn();
     let {getByRole} = renderMenu({onScroll});
@@ -508,6 +546,119 @@ describe('Menu', () => {
 
     let menuitem = getByRole('menuitem');
     expect(menuitem).toHaveTextContent('No results');
+  });
+
+  it('should not close the menu when shouldCloseOnSelect is false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu shouldCloseOnSelect={false}>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+  });
+
+  it('should not close individual menu item when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open" shouldCloseOnSelect={false}>Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[1];
+    expect(item).toHaveTextContent('Rename');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
+  });
+
+  it('should not close menu items within a section when shouldCloseOnSelect=false', async () => {
+    let {queryByRole, getByRole, getAllByRole} = render(
+      <MenuTrigger>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuSection shouldCloseOnSelect={false}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+            </MenuSection>
+            <MenuSection>
+              <MenuItem id="share">Share…</MenuItem>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    expect(queryByRole('menu')).not.toBeInTheDocument();
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
+
+    let items = getAllByRole('menuitem');
+    expect(items).toHaveLength(5);
+
+    let item = items[0];
+    expect(item).toHaveTextContent('Open');
+    await user.click(item);
+    expect(menu).toBeInTheDocument();
+
+    item = items[3];
+    expect(item).toHaveTextContent('Share');
+    await user.click(item);
+    expect(menu).not.toBeInTheDocument();
   });
 
   describe('supports links', function () {

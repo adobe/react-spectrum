@@ -84,7 +84,8 @@ interface EventBase {
   altKey: boolean,
   clientX?: number,
   clientY?: number,
-  targetTouches?: Array<{clientX?: number, clientY?: number}>
+  targetTouches?: Array<{clientX?: number, clientY?: number}>,
+  key?: string
 }
 
 export interface PressResult {
@@ -117,6 +118,7 @@ class PressEvent implements IPressEvent {
   altKey: boolean;
   x: number;
   y: number;
+  key: string | undefined;
   #shouldStopPropagation = true;
 
   constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase, state?: PressState) {
@@ -146,6 +148,7 @@ class PressEvent implements IPressEvent {
     this.altKey = originalEvent.altKey;
     this.x = x;
     this.y = y;
+    this.key = originalEvent.key;
   }
 
   continuePropagation() {
@@ -450,7 +453,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && state.target.contains(e.target as Element) && state.pointerType != null) {
+        if (state.target && nodeContains(state.target, e.target as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
@@ -596,7 +599,13 @@ export function usePress(props: PressHookProps): PressResult {
           // This enables onPointerLeave and onPointerEnter to fire.
           let target = getEventTarget(e.nativeEvent);
           if ('releasePointerCapture' in target) {
-            target.releasePointerCapture(e.pointerId);
+            if ('hasPointerCapture' in target) {
+              if (target.hasPointerCapture(e.pointerId)) {
+                target.releasePointerCapture(e.pointerId);
+              }
+            } else {
+              (target as Element).releasePointerCapture(e.pointerId);
+            }
           }
         }
 
@@ -977,7 +986,8 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
     metaKey: e.metaKey,
     altKey: e.altKey,
     clientX,
-    clientY
+    clientY,
+    key: e.key
   };
 }
 

@@ -223,7 +223,7 @@ export function useSelect<T, M extends SelectionMode = 'single'>(props: AriaSele
       disallowEmptySelection: true,
       linkBehavior: 'selection',
       onBlur: (e) => {
-        if (nodeContains(e.currentTarget as Element, e.relatedTarget as Element)) {
+        if (nodeContains(e.currentTarget, e.relatedTarget as Node)) {
           return;
         }
 

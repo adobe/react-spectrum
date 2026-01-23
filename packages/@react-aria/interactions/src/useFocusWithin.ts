@@ -54,7 +54,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onBlur = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!nodeContains(e.currentTarget as Element, e.target as Element)) {
+    if (!nodeContains(e.currentTarget, e.target)) {
       return;
     }
 
@@ -92,7 +92,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
-    if (!nodeContains(e.currentTarget as Element, e.target as Element)) {
+    if (!nodeContains(e.currentTarget, e.target)) {
       return;
     }
 

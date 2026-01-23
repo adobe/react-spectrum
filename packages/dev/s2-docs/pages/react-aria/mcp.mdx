@@ -12,6 +12,10 @@ export const tags = ['mcp', 'ai', 'documentation', 'tools'];
 
 <PageDescription>Learn how to use the React Aria [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) server to help AI agents browse the documentation.</PageDescription>
 
+## Pre-requisites
+
+[Node.js](https://nodejs.org/) must be installed on your system to run the MCP server.
+
 ## Using with an MCP client
 
 Add the server to your MCP client configuration (the exact file and schema may depend on your client).
@@ -61,7 +65,7 @@ For more information, see the [Claude Code MCP documentation](https://docs.claud
 
 Create or edit the configuration file `~/.codex/config.toml` and add:
 
-```js
+```
 [mcp_servers.react-aria]
 command = "npx"
 args = ["@react-aria/mcp@latest"]
