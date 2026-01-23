@@ -41,7 +41,7 @@ describe('Switch', () => {
   });
 
   it('should support custom render function', () => {
-    // eslint-disable-next-line
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     let {getByRole} = render(<Switch render={props => <label {...props} data-custom="bar" />}>Test</Switch>);
     let checkbox = getByRole('switch').closest('label');
     expect(checkbox).toHaveAttribute('data-custom', 'bar');

@@ -55,7 +55,7 @@ describe('Link', () => {
   });
 
   it('should support custom render function', () => {
-    // eslint-disable-next-line
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
     let {getByRole} =  render(<Link href="#foo" render={props => <a {...props} data-custom="true" />} />);
     let link = getByRole('link');
     expect(link).toHaveAttribute('data-custom', 'true');

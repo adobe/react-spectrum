@@ -111,7 +111,6 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
       values={[
         [TextContext, {id: textId, slot: 'label'}]
       ]}>
-      { }
       <dom.div
         {...mergeProps(DOMProps, renderProps, dropProps, hoverProps)}
         slot={props.slot || undefined}

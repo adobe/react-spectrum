@@ -450,6 +450,6 @@ function MenuItemWithCustomElement(props: MenuItemProps) {
 }
 
 function RouterLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  // eslint-disable-next-line
+  // eslint-disable-next-line jsx-a11y/anchor-has-content
   return <a {...mergeProps(props, {onClick: e => {e.preventDefault(); console.log('click');}})} />;
 }

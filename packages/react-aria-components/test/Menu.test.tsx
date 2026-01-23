@@ -138,7 +138,7 @@ describe('Menu', () => {
   it('should support custom render function as a link', () => {
     let {getAllByRole, getByRole} = renderMenu(
       {render: props => <div {...props} data-custom="true" />},
-      // eslint-disable-next-line
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
       {href: '#foo', render: props => <a {...props} data-custom="true" />}
     );
     let menu = getByRole('menu');

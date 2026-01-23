@@ -71,7 +71,7 @@ describe('RadioGroup', () => {
   it('should support custom render function', () => {
     let {getAllByRole, getByRole} = renderGroup(
       {render: props => <div {...props} data-custom="true" />},
-      // eslint-disable-next-line
+      // eslint-disable-next-line jsx-a11y/label-has-associated-control
       {render: props => <label {...props} data-custom="true" />}
     );
     let group = getByRole('radiogroup');
