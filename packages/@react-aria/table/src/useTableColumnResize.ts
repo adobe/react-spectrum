@@ -16,8 +16,8 @@ import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shar
 import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {getColumnHeaderId} from './utils';
 import {getEventTarget, mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
-// @ts-ignore
 import {GridNode} from '@react-types/grid';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';

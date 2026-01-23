@@ -13,7 +13,7 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaMenuOptions} from './useMenu';
 import {FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, getEventTarget, useId} from '@react-aria/utils';
+import {focusWithoutScrolling, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
@@ -114,21 +114,21 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
 
   let pressProps: PressProps =  {
     preventFocusOnPress: true,
-    onPressStart(e) {
+    onPressStart(pressEvent) {
       // For consistency with native, open the menu on mouse/key down, but touch up.
-      if (e.pointerType !== 'touch' && e.pointerType !== 'keyboard' && !isDisabled) {
+      if (pressEvent.pointerType !== 'touch' && pressEvent.pointerType !== 'keyboard' && !isDisabled) {
         // Ensure trigger has focus before opening the menu so it can be restored by FocusScope on close.
-        focusWithoutScrolling(getEventTarget(e) as FocusableElement);
+        focusWithoutScrolling(pressEvent.target as FocusableElement);
 
         // If opened with a screen reader, auto focus the first item.
         // Otherwise, the menu itself will be focused.
-        state.open(e.pointerType === 'virtual' ? 'first' : null);
+        state.open(pressEvent.pointerType === 'virtual' ? 'first' : null);
       }
     },
-    onPress(e) {
-      if (e.pointerType === 'touch' && !isDisabled) {
+    onPress(pressEvent) {
+      if (pressEvent.pointerType === 'touch' && !isDisabled) {
         // Ensure trigger has focus before opening the menu so it can be restored by FocusScope on close.
-        focusWithoutScrolling(getEventTarget(e) as FocusableElement);
+        focusWithoutScrolling(pressEvent.target as FocusableElement);
 
         state.toggle();
       }

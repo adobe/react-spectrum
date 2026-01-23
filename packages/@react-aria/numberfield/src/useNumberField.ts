@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {
   InputHTMLAttributes,
@@ -251,7 +251,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     inputProps['aria-required'] = undefined;
   }
 
-  let onButtonPressStart = (e) => {
+  let onButtonPressStart = (pressEvent) => {
     // If focus is already on the input, keep it there so we don't hide the
     // software keyboard when tapping the increment/decrement buttons.
     if (document.activeElement === inputRef.current) {
@@ -261,10 +261,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     // Otherwise, when using a mouse, move focus to the input.
     // On touch, or with a screen reader, focus the button so that the software
     // keyboard does not appear and the screen reader cursor is not moved off the button.
-    if (e.pointerType === 'mouse') {
+    if (pressEvent.pointerType === 'mouse') {
       inputRef.current?.focus();
     } else {
-      getEventTarget(e).focus();
+      pressEvent.target.focus();
     }
   };
 

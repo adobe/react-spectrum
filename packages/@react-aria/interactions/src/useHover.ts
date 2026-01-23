@@ -108,7 +108,7 @@ export function useHover(props: HoverProps): HoverResult {
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
       state.pointerType = pointerType;
-      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, getEventTarget(event))) {
+      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, getEventTarget(event) as Element)) {
         return;
       }
 
@@ -120,7 +120,7 @@ export function useHover(props: HoverProps): HoverResult {
       // even though the originally hovered target may have shrunk in size so it is no longer hovered.
       // However, a pointerover event will be fired on the new target the mouse is over.
       // In Chrome this happens immediately. In Safari and Firefox, it happens upon moving the mouse one pixel.
-      addGlobalListener(getOwnerDocument(getEventTarget(event)), 'pointerover', e => {
+      addGlobalListener(getOwnerDocument(getEventTarget(event) as Element), 'pointerover', e => {
         if (state.isHovered && state.target && !nodeContains(state.target, getEventTarget(e) as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }

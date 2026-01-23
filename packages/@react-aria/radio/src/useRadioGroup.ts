@@ -14,6 +14,7 @@ import {AriaRadioGroupProps} from '@react-types/radio';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, getEventTarget, getOwnerWindow, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
+import {KeyboardEventHandler} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
@@ -75,7 +76,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     onFocusWithinChange: props.onFocusChange
   });
 
-  let onKeyDown = (e) => {
+  let onKeyDown: KeyboardEventHandler<Element> = (e) => {
     let nextDir;
     switch (e.key) {
       case 'ArrowRight':

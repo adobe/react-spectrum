@@ -13,7 +13,7 @@
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, getEventTarget, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useFocusable, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
 import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
@@ -199,20 +199,20 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let interaction = useRef<{pointerType: string, key?: string} | null>(null);
-  let onPressUp = (e: PressEvent) => {
-    if (e.pointerType !== 'keyboard') {
-      interaction.current = {pointerType: e.pointerType};
+  let onPressUp = (pressEvent: PressEvent) => {
+    if (pressEvent.pointerType !== 'keyboard') {
+      interaction.current = {pointerType: pressEvent.pointerType};
     }
 
     // If interacting with mouse, allow the user to mouse down on the trigger button,
     // drag, and release over an item (matching native behavior).
-    if (e.pointerType === 'mouse') {
+    if (pressEvent.pointerType === 'mouse') {
       if (!isPressedRef.current) {
-        (getEventTarget(e) as HTMLElement).click();
+        (pressEvent.target as HTMLElement).click();
       }
     }
 
-    pressUpProp?.(e);
+    pressUpProp?.(pressEvent);
   };
 
   let onClick = (e: MouseEvent<FocusableElement>) => {
@@ -307,7 +307,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onKeyUp
   });
 
-  let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
+  let {focusableProps} = useFocusable({onBlur, onFocus, onFocusChange}, ref);
   let domProps = filterDOMProps(item?.props);
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
@@ -324,7 +324,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         pressProps,
         hoverProps,
         keyboardProps,
-        focusProps,
+        focusableProps,
         // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
         data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined,
         isDisabled ? undefined : {onClick}

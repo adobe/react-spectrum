@@ -189,8 +189,8 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       'data-react-aria-top-layer': true,
       // listen to focus events separate from focuswithin because that will only fire once
       // and we need to follow all focus changes
-      onFocus: (e) => {
-        let target = getEventTarget(e).closest('[role="alertdialog"]');
+      onFocus: (e: FocusEvent) => {
+        let target = (getEventTarget(e) as Element).closest('[role="alertdialog"]');
         focusedToast.current = toasts.current.findIndex(t => t === target);
       },
       onBlur: () => {

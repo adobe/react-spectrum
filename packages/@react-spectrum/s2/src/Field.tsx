@@ -20,8 +20,8 @@ import {ContextualHelpContext} from './ContextualHelp';
 import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {getEventTarget, useId} from '@react-aria/utils';
-// @ts-ignore
 import {IconContext} from './Icon';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {StyleString} from '../style/types';

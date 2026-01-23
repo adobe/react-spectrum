@@ -14,9 +14,9 @@ import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, Orientation, RefObject} from '@react-types/shared';
 import {filterDOMProps, getEventTarget, nodeContains, useLayoutEffect} from '@react-aria/utils';
+import {KeyboardEventHandler, useState} from 'react';
 import {ListState} from '@react-stately/list';
 import {useLocale} from '@react-aria/i18n';
-import {useState} from 'react';
 
 const BUTTON_GROUP_ROLES = {
   'none': 'toolbar',
@@ -47,7 +47,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   let {direction} = useLocale();
   let focusManager = createFocusManager(ref);
   let flipDirection = direction === 'rtl' && orientation === 'horizontal';
-  let onKeyDown = (e) => {
+  let onKeyDown: KeyboardEventHandler = (e) => {
     if (!nodeContains(e.currentTarget, getEventTarget(e))) {
       return;
     }

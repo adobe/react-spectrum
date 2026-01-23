@@ -54,15 +54,15 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: 
     // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
     // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
     // For browsers that do, focusout fires before the MutationObserver, so onBlur should not fire twice.
+    let target = getEventTarget(e);
     if (
-      getEventTarget(e) instanceof HTMLButtonElement ||
-      getEventTarget(e) instanceof HTMLInputElement ||
-      getEventTarget(e) instanceof HTMLTextAreaElement ||
-      getEventTarget(e) instanceof HTMLSelectElement
+      target instanceof HTMLButtonElement ||
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement
     ) {
       stateRef.current.isFocused = true;
 
-      let target = getEventTarget(e);
       let onBlurHandler: EventListenerOrEventListenerObject | null = (e) => {
         stateRef.current.isFocused = false;
 

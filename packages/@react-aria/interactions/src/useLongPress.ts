@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, LongPressEvent} from '@react-types/shared';
-import {focusWithoutScrolling, getEventTarget, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
@@ -68,28 +68,28 @@ export function useLongPress(props: LongPressProps): LongPressResult {
 
   let {pressProps} = usePress({
     isDisabled,
-    onPressStart(e) {
-      e.continuePropagation();
-      if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
+    onPressStart(pressEvent) {
+      pressEvent.continuePropagation();
+      if (pressEvent.pointerType === 'mouse' || pressEvent.pointerType === 'touch') {
         if (onLongPressStart) {
           onLongPressStart({
-            ...e,
+            ...pressEvent,
             type: 'longpressstart'
           });
         }
 
         timeRef.current = setTimeout(() => {
           // Prevent other usePress handlers from also handling this event.
-          getEventTarget(e).dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
+          pressEvent.target.dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
 
           // Ensure target is focused. On touch devices, browsers typically focus on pointer up.
-          if (getOwnerDocument(getEventTarget(e)).activeElement !== getEventTarget(e)) {
-            focusWithoutScrolling(getEventTarget(e) as FocusableElement);
+          if (getOwnerDocument(pressEvent.target).activeElement !== pressEvent.target) {
+            focusWithoutScrolling(pressEvent.target as FocusableElement);
           }
 
           if (onLongPress) {
             onLongPress({
-              ...e,
+              ...pressEvent,
               type: 'longpress'
             });
           }
@@ -97,17 +97,17 @@ export function useLongPress(props: LongPressProps): LongPressResult {
         }, threshold);
 
         // Prevent context menu, which may be opened on long press on touch devices
-        if (e.pointerType === 'touch') {
+        if (pressEvent.pointerType === 'touch') {
           let onContextMenu = e => {
             e.preventDefault();
           };
 
-          addGlobalListener(getEventTarget(e), 'contextmenu', onContextMenu, {once: true});
+          addGlobalListener(pressEvent.target, 'contextmenu', onContextMenu, {once: true});
           addGlobalListener(window, 'pointerup', () => {
             // If no contextmenu event is fired quickly after pointerup, remove the handler
             // so future context menu events outside a long press are not prevented.
             setTimeout(() => {
-              removeGlobalListener(getEventTarget(e), 'contextmenu', onContextMenu);
+              removeGlobalListener(pressEvent.target, 'contextmenu', onContextMenu);
             }, 30);
           }, {once: true});
         }

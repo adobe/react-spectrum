@@ -16,8 +16,8 @@ import {DragEvent, HTMLAttributes, version as ReactVersion, useEffect, useRef, u
 import * as DragManager from './DragManager';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './constants';
 import {getEventTarget, isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners} from '@react-aria/utils';
-// @ts-ignore
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -266,12 +266,12 @@ export function useDrag(options: DragOptions): DragResult {
     };
   }, [state]);
 
-  let onPress = (e: PressEvent) => {
-    if (e.pointerType !== 'keyboard' && e.pointerType !== 'virtual') {
+  let onPress = (pressEvent: PressEvent) => {
+    if (pressEvent.pointerType !== 'keyboard' && pressEvent.pointerType !== 'virtual') {
       return;
     }
 
-    startDragging(getEventTarget(e) as HTMLElement);
+    startDragging(pressEvent.target as HTMLElement);
   };
 
   let startDragging = (target: HTMLElement) => {

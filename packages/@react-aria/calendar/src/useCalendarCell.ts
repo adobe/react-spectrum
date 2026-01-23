@@ -333,17 +333,18 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           state.highlightDate(date);
         }
       },
-      onPointerDown(e) {
+      onPointerDown(e: PointerEvent) {
         // This is necessary on touch devices to allow dragging
         // outside the original pressed element.
         // (JSDOM does not support this)
-        if ('releasePointerCapture' in getEventTarget(e)) {
-          if ('hasPointerCapture' in getEventTarget(e)) {
-            if (getEventTarget(e).hasPointerCapture(e.pointerId)) {
-              getEventTarget(e).releasePointerCapture(e.pointerId);
+        let target = getEventTarget(e);
+        if (target instanceof HTMLElement && 'releasePointerCapture' in target) {
+          if ('hasPointerCapture' in target) {
+            if (target.hasPointerCapture(e.pointerId)) {
+              target.releasePointerCapture(e.pointerId);
             }
           } else {
-            getEventTarget(e).releasePointerCapture(e.pointerId);
+            (target as HTMLElement).releasePointerCapture(e.pointerId);
           }
         }
       },

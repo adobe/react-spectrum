@@ -302,11 +302,11 @@ const nonTextInputTypes = new Set([
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  let document = getOwnerDocument(getEventTarget(e) as Element);
-  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).HTMLInputElement : HTMLInputElement;
-  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).HTMLTextAreaElement : HTMLTextAreaElement;
-  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).HTMLElement : HTMLElement;
-  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(getEventTarget(e) as Element).KeyboardEvent : KeyboardEvent;
+  let document = getOwnerDocument(e ? getEventTarget(e) as Element : undefined);
+  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(e ? getEventTarget(e) as Element : undefined).HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(e ? getEventTarget(e) as Element : undefined).HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(e ? getEventTarget(e) as Element : undefined).HTMLElement : HTMLElement;
+  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(e ? getEventTarget(e) as Element : undefined).KeyboardEvent : KeyboardEvent;
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element

@@ -118,14 +118,15 @@ function isValidEvent(event, ref) {
   if (event.button > 0) {
     return false;
   }
-  if (getEventTarget(event)) {
+  let target = getEventTarget(event) as Element;
+  if (target) {
     // if the event target is no longer in the document, ignore
-    const ownerDocument = getEventTarget(event).ownerDocument;
-    if (!ownerDocument || !nodeContains(ownerDocument.documentElement, getEventTarget(event))) {
+    const ownerDocument = target.ownerDocument;
+    if (!ownerDocument || !nodeContains(ownerDocument.documentElement, target)) {
       return false;
     }
     // If the target is within a top layer element (e.g. toasts), ignore.
-    if (getEventTarget(event).closest('[data-react-aria-top-layer]')) {
+    if (target.closest('[data-react-aria-top-layer]')) {
       return false;
     }
   }

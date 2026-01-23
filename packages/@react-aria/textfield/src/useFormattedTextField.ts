@@ -12,9 +12,9 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {getEventTarget, mergeProps, useEffectEvent} from '@react-aria/utils';
+import {InputEventHandler, useEffect, useRef} from 'react';
 import {RefObject} from '@react-types/shared';
 import {TextFieldAria, useTextField} from './useTextField';
-import {useEffect, useRef} from 'react';
 
 interface FormattedTextFieldState {
   validate: (val: string) => boolean,
@@ -106,12 +106,12 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
     };
   }, [inputRef]);
 
-  let onBeforeInput = !supportsNativeBeforeInputEvent()
+  let onBeforeInput: InputEventHandler<HTMLInputElement> | null = !supportsNativeBeforeInputEvent()
     ? e => {
       let nextValue =
-        getEventTarget(e).value.slice(0, getEventTarget(e).selectionStart) +
+        getEventTarget(e).value.slice(0, getEventTarget(e).selectionStart!) +
         e.data +
-        getEventTarget(e).value.slice(getEventTarget(e).selectionEnd);
+        getEventTarget(e).value.slice(getEventTarget(e).selectionEnd!);
 
       if (!state.validate(nextValue)) {
         e.preventDefault();
