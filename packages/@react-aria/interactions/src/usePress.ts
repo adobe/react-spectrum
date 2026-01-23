@@ -453,7 +453,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && state.target.contains(e.target as Element) && state.pointerType != null) {
+        if (state.target && nodeContains(state.target, e.target as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {

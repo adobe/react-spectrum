@@ -221,7 +221,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // We also check if this is globalThis, which happens in non-strict mode bundles.
     // Also allow style to be called as a normal function in tests.
     // @ts-ignore
-    // eslint-disable-next-line
+     
     if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
       throw new Error('The style macro must be imported with {type: "macro"}.');
     }
@@ -803,7 +803,7 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a'): stri
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
-  // eslint-disable-next-line
+   
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
     throw new Error('The raw macro must be imported with {type: "macro"}.');
   }
@@ -833,7 +833,7 @@ export function keyframes(this: MacroContext | void, css: string): string {
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
-  // eslint-disable-next-line
+   
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
     throw new Error('The keyframes macro must be imported with {type: "macro"}.');
   }

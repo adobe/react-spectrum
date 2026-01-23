@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {nodeContains} from '@react-aria/utils';
 import {RefObject} from '@react-types/shared';
 import {useEffect} from 'react';
 
@@ -39,7 +40,7 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
       let target = e.target;
       // window is not a Node and doesn't have contain, but window contains everything
-      if (!triggerRef.current || ((target instanceof Node) && !target.contains(triggerRef.current))) {
+      if (!triggerRef.current || ((target instanceof Node) && !nodeContains(target, triggerRef.current))) {
         return;
       }
 

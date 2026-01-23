@@ -59,7 +59,7 @@ import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -1220,7 +1220,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
     if (isOpen) {
       let activeElement = getActiveElement(getOwnerDocument(formRef.current));
       if (activeElement
-        && formRef.current?.contains(activeElement)
+        && nodeContains(formRef.current, activeElement)
         // not going to handle contenteditable https://stackoverflow.com/questions/6139107/programmatically-select-text-in-a-contenteditable-html-element
         // seems like an edge case anyways
         && (
@@ -1301,7 +1301,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!popoverRef.current?.contains(document.activeElement)) {
+              if (!nodeContains(popoverRef.current, document.activeElement)) {
                 return false;
               }
               formRef.current?.requestSubmit();
