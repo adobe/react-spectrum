@@ -113,7 +113,10 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let warmupTooltip = () => {
     closeOpenTooltips();
     ensureTooltipEntry();
-    if (!isOpen && !globalWarmUpTimeout && !globalWarmedUp) {
+    if (!isOpen && !globalWarmedUp) {
+      if (globalWarmUpTimeout) {
+        return;
+      }
       globalWarmUpTimeout = setTimeout(() => {
         globalWarmUpTimeout = null;
         globalWarmedUp = true;
