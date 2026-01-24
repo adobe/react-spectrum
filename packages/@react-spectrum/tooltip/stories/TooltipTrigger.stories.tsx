@@ -45,6 +45,12 @@ const argTypes = {
     max: 50000,
     step: 500
   },
+  closeDelay: {
+    control: 'number',
+    min: 0,
+    max: 50000,
+    step: 500
+  },
   offset: {
     control: 'number',
     min: -500,
