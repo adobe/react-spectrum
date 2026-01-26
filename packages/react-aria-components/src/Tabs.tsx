@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {ClassNameOrFunction, ContextValue, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {Collection, CollectionBuilder, CollectionNode, createHideableComponent, createLeafComponent} from '@react-aria/collections';
@@ -57,7 +57,7 @@ export interface TabListRenderProps {
   state: TabListState<unknown>
 }
 
-export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Tab'
@@ -354,7 +354,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
     if (hasTransition.current == null) {
       hasTransition.current = /width|height|all/.test(window.getComputedStyle(el).transition);
     }
-    
+
     if (hasTransition.current && selectedKeyRef.current != null && selectedKeyRef.current !== state.selectedKey) {
       // Measure auto size.
       el.style.setProperty('--tab-panel-width', 'auto');
@@ -365,7 +365,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
         // Revert to previous size.
         el.style.setProperty('--tab-panel-width', prevSize.current.width + 'px');
         el.style.setProperty('--tab-panel-height', prevSize.current.height + 'px');
-        
+
         // Force style re-calculation to trigger animations.
         window.getComputedStyle(el).height;
 
@@ -382,7 +382,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
           .catch(() => {});
       }
     }
-    
+
     selectedKeyRef.current = state.selectedKey;
   }, [ref, state.selectedKey]);
 
@@ -398,7 +398,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
   delete DOMProps.id;
 
   return (
-    <div 
+    <div
       {...DOMProps}
       ref={ref}
       className={props.className || 'react-aria-TabPanels'}>

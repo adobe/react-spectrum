@@ -344,7 +344,7 @@ export function MobileHeader({toc}) {
               width: 'full',
               height: '--visual-viewport-height'
             })}>
-            <Provider colorScheme={colorScheme} background="layer-2">
+            <Provider colorScheme={colorScheme} background="layer-2" styles={style({height: 'full'})}>
               <MobileSearchMenu />
             </Provider>
           </Modal>

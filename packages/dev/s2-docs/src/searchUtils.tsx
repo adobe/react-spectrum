@@ -1,5 +1,6 @@
 'use client';
 
+import {colorHexMaps, colorSections} from './colorSearchData';
 import {Content, Heading, IllustratedMessage} from '@react-spectrum/s2';
 import {getBaseUrl} from './pageUtils';
 // @ts-ignore
@@ -14,6 +15,91 @@ import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchRes
 import {Page, TocNode} from '@parcel/rsc';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useSettings} from './SettingsContext';
+
+/**
+ * Parses a hex color string to RGB values.
+ * Supports #RGB, #RRGGBB formats (with or without #).
+ */
+function parseHexColor(hex: string): [number, number, number] | null {
+  // Remove # if present and trim whitespace
+  const cleanHex = hex.replace(/^#/, '').trim();
+  
+  if (!/^[0-9A-Fa-f]+$/.test(cleanHex)) {
+    return null;
+  }
+  
+  let r: number, g: number, b: number;
+  
+  if (cleanHex.length === 3) {
+    // #RGB format
+    r = parseInt(cleanHex[0] + cleanHex[0], 16);
+    g = parseInt(cleanHex[1] + cleanHex[1], 16);
+    b = parseInt(cleanHex[2] + cleanHex[2], 16);
+  } else if (cleanHex.length === 6) {
+    // #RRGGBB format
+    r = parseInt(cleanHex.slice(0, 2), 16);
+    g = parseInt(cleanHex.slice(2, 4), 16);
+    b = parseInt(cleanHex.slice(4, 6), 16);
+  } else {
+    return null;
+  }
+  
+  return [r, g, b];
+}
+
+/**
+ * Checks if a search string looks like a hex color code.
+ */
+function isHexColorSearch(searchValue: string): boolean {
+  const trimmed = searchValue.trim();
+  // Must start with # or be a valid 3 or 6 character hex string
+  if (trimmed.startsWith('#')) {
+    const hex = trimmed.slice(1);
+    return /^[0-9A-Fa-f]{3}$/.test(hex) || /^[0-9A-Fa-f]{6}$/.test(hex);
+  }
+  // Also match without # if it's exactly 3 or 6 hex characters
+  return /^[0-9A-Fa-f]{6}$/.test(trimmed);
+}
+
+/**
+ * Calculates the color distance between two RGB colors using weighted Euclidean distance.
+ * Uses weights that better approximate human color perception.
+ * Reference: https://en.wikipedia.org/wiki/Color_difference.
+ */
+function colorDistance(rgb1: [number, number, number], rgb2: [number, number, number]): number {
+  const [r1, g1, b1] = rgb1;
+  const [r2, g2, b2] = rgb2;
+  const rMean = (r1 + r2) / 2;
+  const dr = r1 - r2;
+  const dg = g1 - g2;
+  const db = b1 - b2;
+  const weightR = 2 + rMean / 256;
+  const weightG = 4;
+  const weightB = 2 + (255 - rMean) / 256;
+  
+  return Math.sqrt(weightR * dr * dr + weightG * dg * dg + weightB * db * db);
+}
+
+/**
+ * Finds the closest colors to a given hex code from the color map.
+ * Returns an array of color names sorted by distance (closest first).
+ */
+function findClosestColors(
+  targetRgb: [number, number, number], 
+  colorHexMap: Record<string, [number, number, number]>,
+  maxResults = 10
+): Array<{name: string, distance: number}> {
+  const results: Array<{name: string, distance: number}> = [];
+  
+  for (const [name, rgb] of Object.entries(colorHexMap)) {
+    const distance = colorDistance(targetRgb, rgb as [number, number, number]);
+    results.push({name, distance});
+  }
+  
+  // Sort by distance and return top results
+  return results.sort((a, b) => a.distance - b.distance).slice(0, maxResults);
+}
 
 export interface SearchableItem {
   name: string,
@@ -390,7 +476,11 @@ export function getOrderedLibraries(currentPage: Page) {
 
 export function getResourceTags(library: Library): Tag[] {
   if (library === 'react-spectrum') {
-    return [{id: 'icons', name: 'Icons'}, {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}];
+    return [
+      {id: 'icons', name: 'Icons'},
+      {id: 'colors', name: 'Colors'},
+      {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}
+    ];
   }
   return [];
 }
@@ -403,6 +493,104 @@ export function useFilteredIcons(searchValue: string) {
     }
     return iconList.filter(item => iconFilter(item.id, searchValue));
   }, [searchValue, iconFilter]);
+}
+
+export interface ColorSearchResult {
+  sections: typeof colorSections,
+  /** Names of colors that exactly match the searched hex (distance = 0). */
+  exactMatches: Set<string>,
+  /** Names of the closest matching colors when no exact matches exist. */
+  closestMatches: Set<string>
+}
+
+export function useFilteredColors(searchValue: string): ColorSearchResult {
+  const {colorScheme} = useSettings();
+  const colorHexMap = colorHexMaps[colorScheme];
+  
+  return useMemo(() => {
+    if (!searchValue.trim()) {
+      return {sections: colorSections, exactMatches: new Set(), closestMatches: new Set()};
+    }
+    
+    // Check if user is searching for a hex color
+    if (isHexColorSearch(searchValue)) {
+      const targetRgb = parseHexColor(searchValue);
+      if (targetRgb) {
+        const closestColors = findClosestColors(targetRgb, colorHexMap, 20);
+        const closestColorNames = new Set(closestColors.map(c => c.name));
+        
+        // Find all exact matches (distance === 0)
+        const exactMatches = new Set(
+          closestColors.filter(c => c.distance === 0).map(c => c.name)
+        );
+        
+        // If no exact matches, find all colors with the minimum distance
+        let closestMatches = new Set<string>();
+        if (exactMatches.size === 0 && closestColors.length > 0) {
+          const minDistance = closestColors[0].distance;
+          closestMatches = new Set(
+            closestColors.filter(c => c.distance === minDistance).map(c => c.name)
+          );
+        }
+        
+        // Filter sections to only include colors that are in the closest matches
+        const filteredSections = colorSections.map(section => ({
+          ...section,
+          items: section.items.filter(item => closestColorNames.has(item.name))
+        })).filter(section => section.items.length > 0);
+        
+        // If we found matches, sort items within each section by distance
+        // and sort sections by the minimum distance of their items (closest match section first)
+        if (filteredSections.length > 0) {
+          const distanceMap = new Map(closestColors.map(c => [c.name, c.distance]));
+          
+          // Sort items within each section and calculate section min distance
+          const sectionsWithSortedItems = filteredSections.map(section => {
+            const sortedItems = [...section.items].sort((a, b) => {
+              const distA = distanceMap.get(a.name) ?? Infinity;
+              const distB = distanceMap.get(b.name) ?? Infinity;
+              return distA - distB;
+            });
+            // Min distance is the distance of the first (closest) item
+            const minDistance = sortedItems.length > 0 
+              ? (distanceMap.get(sortedItems[0].name) ?? Infinity) 
+              : Infinity;
+            return {
+              ...section,
+              items: sortedItems,
+              minDistance
+            };
+          });
+          
+          // Sort sections by minimum distance (section with closest color first)
+          sectionsWithSortedItems.sort((a, b) => a.minDistance - b.minDistance);
+          
+          // Remove the temporary minDistance property
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const sortedSections = sectionsWithSortedItems.map(({minDistance, ...section}) => section);
+          
+          return {
+            sections: sortedSections,
+            exactMatches,
+            closestMatches
+          };
+        }
+      }
+    }
+    
+    // Default text search
+    const searchLower = searchValue.toLowerCase();
+    return {
+      sections: colorSections.map(section => ({
+        ...section,
+        items: section.items.filter(item => 
+          item.name.toLowerCase().includes(searchLower)
+        )
+      })).filter(section => section.items.length > 0),
+      exactMatches: new Set(),
+      closestMatches: new Set()
+    };
+  }, [searchValue, colorHexMap]);
 }
 
 export function useSearchTagSelection(
@@ -546,6 +734,10 @@ export const LazyIconSearchView = React.lazy(() =>
   import('./IconSearchView').then(({IconSearchView}) => ({default: IconSearchView}))
 );
 
+export const LazyColorSearchView = React.lazy(() =>
+  import('./ColorSearchView').then(({ColorSearchView}) => ({default: ColorSearchView}))
+);
+
 export interface SearchMenuStateOptions {
   pages: Page[],
   currentPage: Page,
@@ -672,6 +864,9 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
   // Helper to get placeholder text based on selected resource tag
   const getPlaceholderText = useCallback((libraryLabel: string) => {
     const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
+    if (selectedTagId === 'colors') {
+      return 'Search color names or hex values';
+    }
     return selectedResourceTag
       ? `Search ${selectedResourceTag.name}`
       : `Search ${libraryLabel}`;

@@ -187,7 +187,10 @@ const CustomTrigger = React.forwardRef((props, ref) => (
   <Button />
   <ModalOverlay>
     <Modal>
-      <Dialog />
+      <Dialog>
+        <Heading slot="title" />
+        <Button slot="close" />
+      </Dialog>
     </Modal>
   </ModalOverlay>
 </DialogTrigger>

@@ -12,7 +12,7 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, nodeContains, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
@@ -281,7 +281,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // Otherwise, when tapping on a segment in Android Chrome and then entering text,
     // composition events will be fired that break the DOM structure and crash the page.
     let selection = window.getSelection();
-    if (selection?.anchorNode && ref.current?.contains(selection?.anchorNode)) {
+    if (selection?.anchorNode && nodeContains(ref.current, selection?.anchorNode)) {
       selection.collapse(ref.current);
     }
   });
