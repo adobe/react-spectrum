@@ -40,7 +40,7 @@ function InfoMessage() {
         padding: 8
       })}>
       <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Select a typography style to preview and copy the code snippet. See <Link href="styling">styling</Link> for more information.</span>
+      <span className={style({font: 'ui'})}>Select a typography style to preview and copy its code snippet. See <Link href="styling">styling</Link> for more information.</span>
     </div>
   );
 }

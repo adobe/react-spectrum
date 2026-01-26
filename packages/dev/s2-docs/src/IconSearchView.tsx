@@ -4,7 +4,7 @@
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import Close from '@react-spectrum/s2/icons/Close';
-import {Content, Heading, IllustratedMessage, pressScale, SearchField, Skeleton, Text, ToastQueue} from '@react-spectrum/s2';
+import {Content, Heading, IllustratedMessage, Link, pressScale, SearchField, Skeleton, Text, ToastQueue} from '@react-spectrum/s2';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
@@ -59,9 +59,14 @@ export function useCopyImport() {
 
 function CopyInfoMessage() {
   return (
-    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
+    <div
+      className={style({
+        display: 'flex',
+        gap: 4,
+        padding: 8
+      })}>
       <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
+      <span className={style({font: 'ui'})}>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</span>
     </div>
   );
 }
@@ -80,7 +85,7 @@ function IconListBox({items, copiedId, onAction, listBoxClassName}: IconListBoxP
         onAction={(item) => onAction(item.toString())}
         items={items}
         layout="grid"
-        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, overflow: 'auto'})}
+        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, padding: 8})}
         dependencies={[copiedId]}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
@@ -132,10 +137,10 @@ export function IconSearchView({filteredItems, listBoxClassName}: IconSearchView
   let {copiedId, handleCopyImport} = useCopyImport();
 
   return (
-    <>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, height: 'full', paddingX: 16})}>
       <CopyInfoMessage />
       <IconListBox items={filteredItems} copiedId={copiedId} onAction={handleCopyImport} listBoxClassName={listBoxClassName} />
-    </>
+    </div>
   );
 }
 
