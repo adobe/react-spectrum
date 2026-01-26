@@ -20,6 +20,7 @@ import {SearchTagGroups} from './SearchTagGroups';
 import {style} from '@react-spectrum/s2/style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from './Tabs';
 import {TextFieldRef} from '@react-types/textfield';
+import {TypographySearchView} from './TypographySearchView';
 import {useRouter} from './Router';
 import './SearchMenu.css';
 import {preloadComponentImages} from './ComponentCard';
@@ -201,7 +202,12 @@ export function SearchMenu(props: SearchMenuProps) {
                       </Suspense>
                     </div>
                   )}
-                  {selectedTagId !== 'icons' && selectedTagId !== 'colors' && (
+                  {selectedTagId === 'typography' && (
+                    <div className={style({flexGrow: 1, overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
+                      <TypographySearchView searchValue={searchValue} />
+                    </div>
+                  )}
+                  {selectedTagId !== 'icons' && selectedTagId !== 'colors' && selectedTagId !== 'typography' && (
                     <ComponentCardView
                       key={selectedLibrary + selectedTagId}
                       currentUrl={currentUrl}

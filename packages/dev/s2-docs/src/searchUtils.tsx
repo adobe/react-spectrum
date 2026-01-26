@@ -451,6 +451,7 @@ export function getResourceTags(library: Library): Tag[] {
     return [
       {id: 'icons', name: 'Icons'},
       {id: 'colors', name: 'Colors'},
+      {id: 'typography', name: 'Typography'},
       {id: 'v3', name: 'React Spectrum v3', href: getBaseUrl('s2') + '/v3/getting-started.html'}
     ];
   }
@@ -838,6 +839,9 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
     const selectedResourceTag = resourceTags.find(tag => tag.id === selectedTagId);
     if (selectedTagId === 'colors') {
       return 'Search color names or hex values';
+    }
+    if (selectedTagId === 'typography') {
+      return 'Preview typography styles';
     }
     return selectedResourceTag
       ? `Search ${selectedResourceTag.name}`
