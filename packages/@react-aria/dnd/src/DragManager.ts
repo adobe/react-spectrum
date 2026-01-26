@@ -583,6 +583,9 @@ class DragSession {
       this.dragTarget.element.focus();
     }
 
+    // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+    document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
+
     announce(this.stringFormatter.format('dropCanceled'));
   }
 
