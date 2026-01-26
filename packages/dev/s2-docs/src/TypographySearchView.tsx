@@ -269,19 +269,21 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
         </ListBox>
       </div>
 
-      <ToggleButtonGroup
-        aria-label="Element type"
-        density="compact"
-        selectionMode="single"
-        disallowEmptySelection
-        selectedKeys={[selectedElement]}
-        onSelectionChange={handleElementChange as (keys: Set<Key>) => void}>
-        {htmlElements.map(option => (
-          <ToggleButton key={option.id} id={option.id}>
-            <Text>{option.name}</Text>
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
+      <div className={style({overflowX: 'auto', overflowY: 'visible', width: 'full', flexShrink: 0})}>
+        <ToggleButtonGroup
+          aria-label="Element type"
+          density="compact"
+          selectionMode="single"
+          disallowEmptySelection
+          selectedKeys={[selectedElement]}
+          onSelectionChange={handleElementChange as (keys: Set<Key>) => void}>
+          {htmlElements.map(option => (
+            <ToggleButton key={option.id} id={option.id}>
+              <Text>{option.name}</Text>
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </div>
       
       <div
         className={style({
@@ -293,7 +295,8 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
           gap: 16,
           borderWidth: 1,
           borderColor: 'gray-200',
-          borderStyle: 'solid'
+          borderStyle: 'solid',
+          flexShrink: 0
         })}>
         <div
           className={style({
