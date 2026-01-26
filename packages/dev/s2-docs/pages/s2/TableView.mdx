@@ -405,7 +405,7 @@ Render an `<EditableCell>` instead of a `<Cell>` to allow users to edit the valu
 
 ```tsx render type="s2"
 "use client";
-import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key, type ColumnProps} from '@react-spectrum/s2';
+import {TableView, TableHeader, Column, TableBody, Row, Cell, EditableCell, TextField, ActionButton, Picker, PickerItem, Text, type Key, type ColumnProps, type TableViewProps} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import User from '@react-spectrum/s2/icons/User';
 import Edit from '@react-spectrum/s2/icons/Edit';
@@ -435,7 +435,7 @@ let editableColumns: Array<Omit<ColumnProps, 'children'> & {name: string}> = [
 ];
 ///- end collapse -///
 
-export default function EditableTable(props) {
+export default function EditableTable(props: TableViewProps) {
   let columns = editableColumns;
   let data = useListData({initialItems: defaultItems});
 
@@ -477,7 +477,7 @@ export default function EditableTable(props) {
                         autoFocus
                         validate={value => value.length > 0 ? null : 'Fruit name is required'}
                         styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
-                        defaultValue={item[column.id!]}
+                        defaultValue={item[column.id! as 'fruits']}
                         name={column.id! as string} />
                     )}>
                     <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
@@ -508,7 +508,7 @@ export default function EditableTable(props) {
                         aria-label="Edit farmer"
                         autoFocus
                         styles={style({flexGrow: 1, flexShrink: 1, minWidth: 0})}
-                        defaultValue={item[column.id!]}
+                        defaultValue={item[column.id! as 'farmer']}
                         name={column.id! as string}
                         items={defaultItems}>
                         {item => (
@@ -526,7 +526,7 @@ export default function EditableTable(props) {
                   </EditableCell>
                 );
               }
-              return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id!]}</Cell>;
+              return <Cell align={column.align} showDivider={column.showDivider}>{item[column.id! as 'task']}</Cell>;
             }}
           </Row>
         )}
