@@ -1,10 +1,12 @@
 'use client';
 
-import {ActionButton, DialogTrigger, Link, Popover, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {ActionButton, Content, DialogTrigger, Heading, IllustratedMessage, Link, Popover, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, Key, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+// eslint-disable-next-line monorepo/no-internal-import
+import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useMemo, useState} from 'react';
 
 const listBoxStyle = style({
@@ -181,7 +183,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
   const [selectedFont, setSelectedFont] = useState<string>('heading');
   const [selectedElement, setSelectedElement] = useState<Key>('h1');
 
-  const previewText = searchValue.trim() || 'Sample Text';
+  const previewText = 'Sample Text';
 
   const selectedElementTag = String(selectedElement || 'span');
   const codeSnippet = `<${selectedElementTag} className={style({font: '${selectedFont}'})}>${previewText}</${selectedElementTag}>`;
@@ -189,15 +191,21 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
     ? `${fontStyles[selectedFont as FontStyleKey]} ${previewTextStyle}`
     : previewTextStyle;
 
-  const sections = useMemo(() => typographySections.map(section => ({
-    id: section.id,
-    name: section.name,
-    description: section.description,
-    items: section.items.map(name => ({
-      id: `${section.id}-${name}`,
-      name
-    }))
-  })), []);
+  const sections = useMemo(() => {
+    const searchLower = searchValue.toLowerCase();
+    
+    return typographySections.map(section => ({
+      id: section.id,
+      name: section.name,
+      description: section.description,
+      items: section.items
+        .filter(name => name.toLowerCase().includes(searchLower))
+        .map(name => ({
+          id: `${section.id}-${name}`,
+          name
+        }))
+    })).filter(section => section.items.length > 0);
+  }, [searchValue]);
 
   const handleSelectionChange = (keys: Set<Key>) => {
     const selectedKey = Array.from(keys)[0];
@@ -227,6 +235,19 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
     }
     return new Set<Key>();
   }, [selectedFont, sections]);
+
+  if (searchValue.trim() && sections.length === 0) {
+    return (
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 8, height: 'full'})}>
+        <InfoMessage />
+        <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+          <NoSearchResults />
+          <Heading>No results</Heading>
+          <Content>Try a different search term.</Content>
+        </IllustratedMessage>
+      </div>
+    );
+  }
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16, height: 'full'})}>
