@@ -68,6 +68,7 @@ standalone.add('Label');
 standalone.add('OverlayArrow');
 standalone.add('SelectionIndicator');
 standalone.add('SharedElementTransition');
+standalone.add('pressScale');
 
 // Documented but not in the monopackage.
 standalone.delete('useAutocomplete');
@@ -596,7 +597,7 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
   let isPrivate = privateNames.has(importedName);
   if (
     (monopackage === 'react-aria' && name === 'Virtualizer') ||
-    (monopackage === '@adobe/react-spectrum' && (name === 'CardView' || name === 'Card' || name === 'Overlay' || name === 'Popover' || name === 'Modal' || name === 'StepList' || name === 'SearchAutocomplete'))
+    (monopackage === '@adobe/react-spectrum' && (name === 'CardView' || name === 'Card' || name === 'Overlay' || name === 'Popover' || name === 'Modal' || name === 'StepList' || name === 'SearchAutocomplete' || name === 'Label'))
   ) {
     isPrivate = true;
   }

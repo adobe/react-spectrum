@@ -69,15 +69,14 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGrou
 export {Text, TextContext} from './Text';
 export {TextArea, TextAreaContext} from './TextArea';
 export {TextField, TextFieldContext} from './TextField';
-export {Toast as UNSTABLE_Toast, ToastList as UNSTABLE_ToastList, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent, ToastStateContext as UNSTABLE_ToastStateContext} from './Toast';
+export {UNSTABLE_Toast, UNSTABLE_ToastList, UNSTABLE_ToastRegion, UNSTABLE_ToastContent, UNSTABLE_ToastStateContext} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from './ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 export {TreeLoadMoreItem, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
 export {useDrag, useDrop} from '@react-aria/dnd';
-export {useDragAndDrop} from './useDragAndDrop';
-export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
+export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {Virtualizer} from './Virtualizer';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, isRTL, useLocale, useFilter, Pressable, Focusable, VisuallyHidden} from 'react-aria';
 export {FormValidationContext, parseColor, getColorChannels, ToastQueue as UNSTABLE_ToastQueue, useListData, useTreeData, useAsyncList} from 'react-stately';
@@ -142,8 +141,7 @@ export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps, TreeLoadMoreItemProps, TreeLoadMoreItemRenderProps} from './Tree';
 export type {DragOptions, DragResult} from '@react-aria/dnd';
-export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
-export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
+export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps, DropIndicatorRenderProps} from './useDragAndDrop';
 export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from './utils';
 export type {VirtualizerProps} from './Virtualizer';
 

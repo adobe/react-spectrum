@@ -18,7 +18,7 @@ import {
   Heading,
   Link,
   Text
-} from '../src/';
+} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof ColorField> = {

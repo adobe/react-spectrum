@@ -43,6 +43,9 @@ import {
 import {isVirtualDragging} from '@react-aria/dnd';
 import {JSX, useMemo} from 'react';
 
+export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
+export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
+
 interface DraggableCollectionStateOpts<T = object> extends Omit<DraggableCollectionStateOptions<T>, 'getItems'> {}
 
 interface DragHooks<T = object> {

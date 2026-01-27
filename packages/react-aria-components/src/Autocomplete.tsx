@@ -11,10 +11,10 @@
  */
 
 import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaLabelingProps, DOMProps, FocusableElement, FocusEvents, KeyboardEvents, Node, ValueBase} from '@react-types/shared';
 import {AriaTextFieldProps} from 'react-aria';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {ContextValue, Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import {DOMProps, FocusableElement, FocusEvents, KeyboardEvents, ValueBase} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {createContext, JSX, useRef} from 'react';
 
