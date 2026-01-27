@@ -1,13 +1,13 @@
 import {AriaColorAreaProps, useColorArea} from 'react-aria';
 import {
   ClassNameOrFunction,
+  ContextValue,
   Provider,
   RenderProps,
   SlotProps,
   useContextProps,
   useRenderProps
 } from './utils';
-import {ColorAreaContext} from './RSPContexts';
 import {ColorAreaState, useColorAreaState} from 'react-stately';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
@@ -34,6 +34,7 @@ export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAre
   className?: ClassNameOrFunction<ColorAreaRenderProps>
 }
 
+export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, HTMLDivElement>>(null);
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 
 /**

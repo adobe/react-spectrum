@@ -33,7 +33,7 @@ import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, 
 import {FocusEvents, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
-import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SeparatorContext} from './Separator';
 import {SharedElementTransition} from './SharedElementTransition';

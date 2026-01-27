@@ -2,7 +2,7 @@ import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, 
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, FilterableNode, LoaderNode, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
-import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {CheckboxContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -22,6 +22,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore

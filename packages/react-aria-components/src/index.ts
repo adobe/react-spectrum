@@ -14,21 +14,19 @@
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
-export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext, SelectableCollectionContext, FieldInputContext} from './RSPContexts';
-
-export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from './Autocomplete';
+export {Autocomplete, AutocompleteContext, AutocompleteStateContext, SelectableCollectionContext, FieldInputContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
-export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxGroupStateContext} from './Checkbox';
-export {ColorArea, ColorAreaStateContext} from './ColorArea';
-export {ColorField, ColorFieldStateContext} from './ColorField';
+export {Checkbox, CheckboxGroup, CheckboxContext, CheckboxGroupContext, CheckboxGroupStateContext} from './Checkbox';
+export {ColorArea, ColorAreaContext, ColorAreaStateContext} from './ColorArea';
+export {ColorField, ColorFieldContext, ColorFieldStateContext} from './ColorField';
 export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from './ColorPicker';
-export {ColorSlider, ColorSliderStateContext} from './ColorSlider';
+export {ColorSlider, ColorSliderContext, ColorSliderStateContext} from './ColorSlider';
 export {ColorSwatch, ColorSwatchContext} from './ColorSwatch';
 export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from './ColorSwatchPicker';
 export {ColorThumb} from './ColorThumb';
-export {ColorWheel, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
+export {ColorWheel, ColorWheelContext, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
 export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useRenderProps, useSlottedContext} from './utils';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
@@ -42,7 +40,7 @@ export {Form, FormContext} from './Form';
 export {GridListLoadMoreItem, GridList, GridListItem, GridListContext, GridListHeader, GridListHeaderContext, GridListSection} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
-export {Heading} from './Heading';
+export {Heading, HeadingContext} from './Heading';
 export {Input, InputContext} from './Input';
 export {Section, CollectionRendererContext, DefaultCollectionRenderer} from './Collection';
 export {Collection, createLeafComponent, createBranchComponent, CollectionBuilder} from '@react-aria/collections';
@@ -87,7 +85,7 @@ export {FormValidationContext, parseColor, getColorChannels, ToastQueue as UNSTA
 export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';
 
-export type {AutocompleteProps} from './Autocomplete';
+export type {AutocompleteProps, SelectableCollectionContextValue} from './Autocomplete';
 export type {BreadcrumbsProps, BreadcrumbProps, BreadcrumbRenderProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
 export type {CalendarCellProps, CalendarProps, CalendarRenderProps, CalendarGridProps, CalendarGridHeaderProps, CalendarGridBodyProps, CalendarHeaderCellProps, CalendarCellRenderProps, RangeCalendarProps, RangeCalendarRenderProps} from './Calendar';
@@ -156,4 +154,3 @@ export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFiel
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
 export type {RangeValue, ValidationResult, RouterConfig} from '@react-types/shared';
-export type {SelectableCollectionContextValue} from './RSPContexts';

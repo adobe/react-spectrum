@@ -13,6 +13,7 @@
 import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
 import {
   ClassNameOrFunction,
+  ContextValue,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -23,7 +24,6 @@ import {
   useSlot
 } from './utils';
 import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, useColorFieldState} from 'react-stately';
-import {ColorFieldContext} from './RSPContexts';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes, InputDOMProps, ValidationResult} from '@react-types/shared';
@@ -83,6 +83,7 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'pl
   colorSpace?: ColorSpace
 }
 
+export const ColorFieldContext = createContext<ContextValue<ColorFieldProps, HTMLDivElement>>(null);
 export const ColorFieldStateContext = createContext<ColorFieldState | null>(null);
 
 /**

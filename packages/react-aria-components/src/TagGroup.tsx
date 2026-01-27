@@ -32,7 +32,7 @@ import {LabelContext} from './Label';
 import {ListState, Node, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
-import {SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TextContext} from './Text';

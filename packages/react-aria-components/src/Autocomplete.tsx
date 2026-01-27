@@ -11,15 +11,33 @@
  */
 
 import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaTextFieldProps} from 'react-aria';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {FieldInputContext, SelectableCollectionContext} from './RSPContexts';
+import {ContextValue, Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
+import {DOMProps, FocusableElement, FocusEvents, KeyboardEvents, ValueBase} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, JSX, useRef} from 'react';
 
 export interface AutocompleteProps<T = object> extends AriaAutocompleteProps<T>, SlotProps {}
 export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps<any>>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+
+export interface SelectableCollectionContextValue<T> extends DOMProps, AriaLabelingProps {
+  filter?: (nodeTextValue: string, node: Node<T>) => boolean,
+  /** Whether the collection items should use virtual focus instead of being focused directly. */
+  shouldUseVirtualFocus?: boolean,
+  /** Whether typeahead is disabled. */
+  disallowTypeAhead?: boolean
+}
+interface FieldInputContextValue<T = FocusableElement> extends
+  DOMProps,
+  FocusEvents<T>,
+  KeyboardEvents,
+  Pick<ValueBase<string>, 'onChange' | 'value'>,
+  Pick<AriaTextFieldProps, 'enterKeyHint' | 'aria-controls' | 'aria-autocomplete' | 'aria-activedescendant' | 'spellCheck' | 'autoCorrect' | 'autoComplete'> {}
+
+export const SelectableCollectionContext = createContext<ContextValue<SelectableCollectionContextValue<any>, HTMLElement>>(null);
+export const FieldInputContext = createContext<ContextValue<FieldInputContextValue, FocusableElement>>(null);
 
 /**
  * An autocomplete allows users to search or filter a list of suggestions.

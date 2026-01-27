@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
-import {CheckboxContext} from './RSPContexts';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {
   ClassNameOrFunction,
@@ -132,6 +131,7 @@ export interface CheckboxRenderProps {
   isRequired: boolean
 }
 
+export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
 export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
 

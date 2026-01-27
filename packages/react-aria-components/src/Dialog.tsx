@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
-import {HeadingContext} from './RSPContexts';
+import {HeadingContext} from './Heading';
 import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';

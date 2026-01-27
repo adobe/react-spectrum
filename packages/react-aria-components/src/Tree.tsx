@@ -12,7 +12,7 @@
 
 import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useId, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CheckboxContext} from './RSPContexts';
+import {CheckboxContext} from './Checkbox';
 import {
   ChildrenOrFunction,
   ClassNameOrFunction,

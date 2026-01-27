@@ -9,7 +9,6 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {ColorWheelContext} from './RSPContexts';
 import {ColorWheelState, useColorWheelState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
@@ -36,6 +35,7 @@ export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<Colo
   className?: ClassNameOrFunction<ColorWheelRenderProps>
 }
 
+export const ColorWheelContext = createContext<ContextValue<Partial<ColorWheelProps>, HTMLDivElement>>(null);
 export const ColorWheelStateContext = createContext<ColorWheelState | null>(null);
 
 /**

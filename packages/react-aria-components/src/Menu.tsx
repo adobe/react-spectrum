@@ -27,7 +27,7 @@ import {
   useSlottedContext
 } from './utils';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';

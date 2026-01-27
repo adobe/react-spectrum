@@ -27,7 +27,7 @@ import {
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {FieldInputContext} from './RSPContexts';
+import {FieldInputContext} from './Autocomplete';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GlobalDOMAttributes} from '@react-types/shared';

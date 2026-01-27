@@ -40,7 +40,7 @@ import {
 } from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, GlobalDOMAttributes, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HeadingContext} from './RSPContexts';
+import {HeadingContext} from './Heading';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 

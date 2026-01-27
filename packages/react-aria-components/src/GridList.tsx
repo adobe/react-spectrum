@@ -11,7 +11,7 @@
  */
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSection, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CheckboxContext, FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
+import {CheckboxContext} from './Checkbox';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -29,6 +29,7 @@ import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, I
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
+import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './Autocomplete';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, PressEvents, RefObject} from '@react-types/shared';
 import {ListStateContext} from './ListBox';

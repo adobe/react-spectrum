@@ -1,6 +1,7 @@
 import {AriaColorSliderProps, Orientation, useColorSlider, useLocale} from 'react-aria';
 import {
   ClassNameOrFunction,
+  ContextValue,
   Provider,
   RenderProps,
   SlotProps,
@@ -8,7 +9,6 @@ import {
   useRenderProps,
   useSlot
 } from './utils';
-import {ColorSliderContext} from './RSPContexts';
 import {ColorSliderState, useColorSliderState} from 'react-stately';
 import {filterDOMProps} from '@react-aria/utils';
 import {GlobalDOMAttributes} from '@react-types/shared';
@@ -42,6 +42,7 @@ export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, R
   className?: ClassNameOrFunction<ColorSliderRenderProps>
 }
 
+export const ColorSliderContext = createContext<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>>(null);
 export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);
 
 /**
