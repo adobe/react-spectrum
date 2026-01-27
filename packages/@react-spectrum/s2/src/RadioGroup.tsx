@@ -26,7 +26,7 @@ import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
-import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {useDOMRef, useFocusableRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps {

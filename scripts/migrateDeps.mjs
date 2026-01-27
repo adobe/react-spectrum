@@ -69,6 +69,9 @@ standalone.add('OverlayArrow');
 standalone.add('SelectionIndicator');
 standalone.add('SharedElementTransition');
 standalone.add('pressScale');
+standalone.add('theme-default');
+standalone.add('theme-light');
+standalone.add('theme-dark');
 
 // Documented but not in the monopackage.
 standalone.delete('useAutocomplete');

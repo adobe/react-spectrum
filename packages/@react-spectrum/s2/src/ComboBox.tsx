@@ -50,7 +50,7 @@ import {
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';

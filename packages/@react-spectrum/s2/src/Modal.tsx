@@ -16,7 +16,7 @@ import {DOMRef, GlobalDOMAttributes} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | keyof GlobalDOMAttributes> {
   /**

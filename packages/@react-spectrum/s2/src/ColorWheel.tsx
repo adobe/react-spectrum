@@ -21,7 +21,7 @@ import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils';
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius' | keyof GlobalDOMAttributes>, StyleProps {

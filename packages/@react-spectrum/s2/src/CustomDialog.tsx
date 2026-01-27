@@ -16,7 +16,7 @@ import {forwardRef} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 
 export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
   /**

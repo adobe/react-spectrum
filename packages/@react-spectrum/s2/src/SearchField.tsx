@@ -21,7 +21,7 @@ import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
-import {createFocusableRef} from '@react-spectrum/utils';
+import {createFocusableRef} from './useDOMRef';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';

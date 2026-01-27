@@ -20,7 +20,7 @@ import DashIcon from '../ui-icons/Dash';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface CheckboxStyleProps {

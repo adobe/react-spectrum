@@ -21,7 +21,7 @@ import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 
 import {DOMRef, DOMRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from './useDOMRef';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {

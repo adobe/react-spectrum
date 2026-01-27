@@ -16,7 +16,7 @@ import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {StyleString} from '../style/types';
-import {useMediaQuery} from '@react-spectrum/utils';
+import {useMediaQuery} from './useMediaQuery';
 
 export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement | null) => void {
   let animationRef = useRef<Animation | null>(null);

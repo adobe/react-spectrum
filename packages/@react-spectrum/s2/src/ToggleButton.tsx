@@ -22,7 +22,7 @@ import {SkeletonContext} from './Skeleton';
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';
 import {ToggleButtonGroupContext} from './ToggleButtonGroup';
-import {useFocusableRef} from '@react-spectrum/utils';
+import {useFocusableRef} from './useDOMRef';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
