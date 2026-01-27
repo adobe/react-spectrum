@@ -310,7 +310,9 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // Also generate a variable for each overridable property that overlaps with the style definition. If those are defined,
     // the defaults from the style definition are omitted.
     let allowedOverridesSet = new Set<string>();
-    let js = 'let rules = " ", currentRules = {};\n';
+    let js = process.env.NODE_ENV !== 'production'
+      ? 'let rules = " ", currentRules = {};\n'
+      : 'let rules = " ";\n';
     if (allowedOverrides?.length) {
       for (let property of allowedOverrides) {
         let shorthand = theme.shorthands[property];
@@ -351,7 +353,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
       }
 
-      let regex = `/(?:^|\\s)(${[...allowedOverridesSet].map(p => classNamePrefix(p, p)).join('|')}|-macro\\$)[^\\s]+/g`;
+      let macroPart = process.env.NODE_ENV !== 'production' ? '|-macro\\$' : '';
+      let regex = `/(?:^|\\s)(${[...allowedOverridesSet].map(p => classNamePrefix(p, p)).join('|')}${macroPart})[^\\s]+/g`;
       if (loop) {
         js += `let matches = String(overrides || '').matchAll(${regex});\n`;
         js += 'for (let p of matches) {\n';
@@ -682,7 +685,7 @@ class StyleRule implements Rule {
     this.pseudos = '';
     this.property = property;
     this.value = value;
-    if (isCompilingDependencies !== null) {
+    if (process.env.NODE_ENV !== 'production' && isCompilingDependencies !== null) {
       this.themeProperty = themeProperty;
       this.themeValue = themeValue;
     }
@@ -732,7 +735,7 @@ class StyleRule implements Rule {
       res += `${indent}if (!${this.property.replace('--', '__')}) `;
     }
     res +=  `${indent}rules += ' ${this.className}';`;
-    if (this.themeProperty) {
+    if (process.env.NODE_ENV !== 'production' && this.themeProperty) {
       let name = this.themeProperty;
       if (this.pseudos) {
         conditionStack.push(this.pseudos);
