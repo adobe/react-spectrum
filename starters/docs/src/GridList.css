@@ -266,7 +266,7 @@
 .react-aria-GridListHeader {
   position: sticky;
   z-index: 2;
-  top: calc(var(--spacing-4) * -1);
+  top: calc(var(--spacing-2) * -1);
   font-size: var(--font-size-lg);
   font-weight: 500;
   background: var(--gray-100);
