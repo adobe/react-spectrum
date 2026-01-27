@@ -29,14 +29,14 @@ import {CollectionBuilder} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 type SelectionMode = 'single' | 'multiple';
@@ -206,6 +206,18 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
+  let inputs: ReactElement[] = [];
+  if (name && formValue === 'key') {
+    let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
+    if (values.length === 0) {
+      values = [null];
+    }
+
+    inputs = values.map((value, i) => (
+      <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
+    ));
+  }
+
   return (
     <Provider
       values={[
@@ -245,7 +257,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+      {inputs}
     </Provider>
   );
 }
