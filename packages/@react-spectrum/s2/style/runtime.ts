@@ -49,11 +49,6 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
   }
 
   let map = new Map<string, string>();
-  let macroClasses: string[] | undefined;
-
-  if (process.env.NODE_ENV !== 'production') {
-    macroClasses = [];
-  }
 
   for (let style of definedStyles) {
     // must call toString here for the static macro
