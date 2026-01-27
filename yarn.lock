@@ -6179,6 +6179,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
+    "@react-aria/utils": "npm:^3.32.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     "@testing-library/react": ^16.0.0

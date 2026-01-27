@@ -92,6 +92,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let domProps = filterDOMProps(item.props);
   let linkProps = useSyntheticLinkProps(item.props);
   let {focusableProps} = useFocusable({
+    ...item.props,
     isDisabled
   }, ref);
 

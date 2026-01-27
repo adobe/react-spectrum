@@ -1,4 +1,5 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
+/* eslint-disable rsp-rules/no-non-shadow-contains */
 
 import {isShadowRoot} from '../domHelpers';
 import {shadowDOM} from '@react-stately/flags';
