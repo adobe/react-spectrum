@@ -9,9 +9,10 @@ import {
   TreeViewItemContent
 } from '../src';
 import {AriaTreeTests} from '../../../react-aria-components/test/AriaTree.test-util';
+import {DisabledBehavior} from '@react-types/shared';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import React from 'react';
+import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 AriaTreeTests({
@@ -492,5 +493,91 @@ describe('TreeView', () => {
     await user.click(button);
     let menu = queryByRole('menu');
     expect(menu).not.toBeInTheDocument();
+  });
+
+  it.only('if the previously focused item is disabled, the focus should move to the first item when coming back to the collection', async () => {
+    function Example() {
+      let [disabledBehavior, setDisabledBehavior] = useState<DisabledBehavior>('selection');
+      return (
+        <>
+          <button>Before</button>
+          <TreeView aria-label="Test tree" disabledBehavior={disabledBehavior} disabledKeys={['school']}>
+            <TreeViewItem id="projects" textValue="Projects">
+              <TreeViewItemContent>
+                <Text>Projects</Text>o
+                <Folder />
+                <ActionMenu>
+                  <MenuItem id="edit">
+                    <Text>Edit</Text>
+                  </MenuItem>
+                  <MenuItem id="delete">
+                    <Text>Delete</Text>
+                  </MenuItem>
+                </ActionMenu>
+              </TreeViewItemContent>
+              <TreeViewItem id="projects-1" textValue="Projects-1" isDisabled>
+                <TreeViewItemContent>
+                  <Text>Projects-1</Text>
+                  <Folder />
+                  <ActionMenu>
+                    <MenuItem id="edit">
+                      <Text>Edit</Text>
+                    </MenuItem>
+                    <MenuItem id="delete">
+                      <Text>Delete</Text>
+                    </MenuItem>
+                  </ActionMenu>
+                </TreeViewItemContent>
+              </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem id="school" textValue="School">
+              <TreeViewItemContent>
+                <Text>School</Text>o
+                <Folder />
+                <ActionMenu>
+                  <MenuItem id="edit">
+                    <Text>Edit</Text>
+                  </MenuItem>
+                  <MenuItem id="delete">
+                    <Text>Delete</Text>
+                  </MenuItem>
+                </ActionMenu>
+              </TreeViewItemContent>
+              <TreeViewItem id="homework-1" textValue="Homework-1" isDisabled>
+                <TreeViewItemContent>
+                  <Text>Homework-1</Text>
+                  <Folder />
+                  <ActionMenu>
+                    <MenuItem id="edit">
+                      <Text>Edit</Text>
+                    </MenuItem>
+                    <MenuItem id="delete">
+                      <Text>Delete</Text>
+                    </MenuItem>
+                  </ActionMenu>
+                </TreeViewItemContent>
+              </TreeViewItem>
+            </TreeViewItem>
+          </TreeView>
+          <button onClick={() => setDisabledBehavior('all')}>After</button>
+        </>
+      );
+    }
+
+    let {getAllByRole, getByRole} = render(<Example />);
+    await user.click(document.body);
+    await act(async () => Promise.resolve());
+    act(() => {jest.runAllTimers();});
+
+    let rows = getAllByRole('row');
+    let afterButton = getByRole('button', {name: 'After'});
+    await user.click(rows[1]);
+    expect(document.activeElement).toBe(rows[1]);
+
+    await user.click(afterButton);
+    await user.tab({shift: true});
+    await user.tab({shift: true});
+    await user.tab();
+    expect(document.activeElement).toBe(rows[0]);
   });
 });
