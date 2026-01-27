@@ -66,6 +66,8 @@ const classTableCache = new Map();
 const propTableCache = new Map();
 const descriptionCache = new Map();
 let tsFileIndex = null;
+let styleMacroDataCache = null;
+const styleMacroTableCache = new Map();
 
 function getTsFileIndex() {
   if (tsFileIndex) {
@@ -130,6 +132,358 @@ function cleanTypeText(t) {
   // Remove duplicate type parameters.
   cleaned = cleaned.replace(/<\s*([A-Za-z0-9_$.]+)\s*,\s*\1\s*>/g, '<$1>');
   return cleaned;
+}
+
+function evaluateStylePropertiesNode(node, scope) {
+  if (!node) {
+    return undefined;
+  }
+
+  switch (node.type) {
+    case 'StringLiteral':
+      return node.value;
+
+    case 'NumericLiteral':
+      return node.value;
+
+    case 'BooleanLiteral':
+      return node.value;
+
+    case 'NullLiteral':
+      return null;
+
+    case 'Identifier':
+      return scope.get(node.name);
+
+    case 'UnaryExpression': {
+      const value = evaluateStylePropertiesNode(node.argument, scope);
+      if (typeof value === 'number') {
+        return node.operator === '-' ? -value : value;
+      }
+      return undefined;
+    }
+
+    case 'ArrayExpression': {
+      const values = [];
+      for (const element of node.elements || []) {
+        if (!element) {
+          continue;
+        }
+        if (element.type === 'SpreadElement') {
+          const spreadValue = evaluateStylePropertiesNode(element.argument, scope);
+          if (Array.isArray(spreadValue)) {
+            values.push(...spreadValue);
+          }
+          continue;
+        }
+        const value = evaluateStylePropertiesNode(element, scope);
+        if (value !== undefined) {
+          values.push(value);
+        }
+      }
+      return values;
+    }
+
+    case 'ObjectExpression': {
+      const obj = {};
+      for (const prop of node.properties || []) {
+        if (!prop) {
+          continue;
+        }
+        if (prop.type === 'SpreadElement') {
+          const spreadValue = evaluateStylePropertiesNode(prop.argument, scope);
+          if (spreadValue && typeof spreadValue === 'object') {
+            Object.assign(obj, spreadValue);
+          }
+          continue;
+        }
+        if (prop.type !== 'ObjectProperty') {
+          continue;
+        }
+        const key = prop.key.type === 'Identifier' ? prop.key.name : prop.key.value;
+        const value = evaluateStylePropertiesNode(prop.value, scope);
+        if (key !== undefined) {
+          obj[key] = value;
+        }
+      }
+      return obj;
+    }
+
+    case 'TemplateLiteral': {
+      let output = '';
+      node.quasis.forEach((quasi, idx) => {
+        output += quasi.value.cooked || '';
+        const expr = node.expressions?.[idx];
+        if (expr) {
+          if (expr.type === 'Identifier') {
+            output += `\${${expr.name}}`;
+          } else {
+            const exprValue = evaluateStylePropertiesNode(expr, scope);
+            if (exprValue !== undefined) {
+              output += String(exprValue);
+            }
+          }
+        }
+      });
+      return output;
+    }
+
+    case 'NewExpression': {
+      const calleeName = node.callee?.type === 'Identifier' ? node.callee.name : '';
+      if (calleeName === 'Set') {
+        const argValue = evaluateStylePropertiesNode(node.arguments?.[0], scope);
+        return new Set(Array.isArray(argValue) ? argValue : []);
+      }
+      return undefined;
+    }
+
+    case 'TSAsExpression':
+    case 'TSTypeAssertion':
+    case 'TSNonNullExpression':
+      return evaluateStylePropertiesNode(node.expression, scope);
+
+    case 'ParenthesizedExpression':
+      return evaluateStylePropertiesNode(node.expression, scope);
+
+    default:
+      return undefined;
+  }
+}
+
+function loadStyleMacroData() {
+  if (styleMacroDataCache !== null) {
+    return styleMacroDataCache;
+  }
+
+  const stylePropertiesPath = path.join(REPO_ROOT, 'packages/dev/s2-docs/src/styleProperties.ts');
+  if (!fs.existsSync(stylePropertiesPath)) {
+    styleMacroDataCache = null;
+    return null;
+  }
+
+  try {
+    const content = fs.readFileSync(stylePropertiesPath, 'utf8');
+    const ast = babel.parse(content, {
+      sourceType: 'module',
+      plugins: ['typescript']
+    });
+
+    const scope = new Map();
+
+    const registerDeclaration = (decl) => {
+      if (!decl || decl.type !== 'VariableDeclarator') {
+        return;
+      }
+      const id = decl.id;
+      if (!id || id.type !== 'Identifier' || !decl.init) {
+        return;
+      }
+      const value = evaluateStylePropertiesNode(decl.init, scope);
+      scope.set(id.name, value);
+    };
+
+    for (const node of ast.program.body || []) {
+      if (node.type === 'VariableDeclaration') {
+        node.declarations.forEach(registerDeclaration);
+        continue;
+      }
+      if (node.type === 'ExportNamedDeclaration' && node.declaration?.type === 'VariableDeclaration') {
+        node.declaration.declarations.forEach(registerDeclaration);
+      }
+    }
+
+    styleMacroDataCache = {
+      properties: scope.get('properties') || {},
+      shorthandMapping: scope.get('shorthandMapping') || {},
+      mdnTypeLinks: scope.get('mdnTypeLinks') || {},
+      mdnPropertyLinks: scope.get('mdnPropertyLinks') || {},
+      propertyDescriptions: scope.get('propertyDescriptions') || {},
+      baseSpacingProperties: scope.get('baseSpacingProperties'),
+      negativeSpacingProperties: scope.get('negativeSpacingProperties'),
+      sizingProperties: scope.get('sizingProperties'),
+      percentageProperties: scope.get('percentageProperties'),
+      spacingTypeValues: scope.get('spacingTypeValues') || {}
+    };
+  } catch {
+    styleMacroDataCache = null;
+  }
+
+  return styleMacroDataCache;
+}
+
+function getStyleMacroPropertyDefinitions(category) {
+  const data = loadStyleMacroData();
+  if (!data?.properties?.[category]) {
+    return null;
+  }
+
+  const getAdditionalTypes = (propertyName) => {
+    const types = [];
+    if (data.baseSpacingProperties?.has?.(propertyName)) {
+      types.push('baseSpacing');
+    }
+    if (data.negativeSpacingProperties?.has?.(propertyName)) {
+      types.push('negativeSpacing');
+    }
+    if (data.sizingProperties?.has?.(propertyName)) {
+      types.push('number', 'lengthPercentage');
+    }
+    if (data.percentageProperties?.has?.(propertyName)) {
+      types.push('lengthPercentage');
+    }
+    return Array.from(new Set(types));
+  };
+
+  const result = {};
+  for (const [name, rawValues] of Object.entries(data.properties[category])) {
+    let values = Array.isArray(rawValues) ? [...rawValues] : [];
+    const links = {};
+
+    if (data.mdnPropertyLinks?.[name]) {
+      for (const [key, href] of Object.entries(data.mdnPropertyLinks[name])) {
+        links[key] = {href};
+      }
+    }
+
+    if (values.length === 0 && Object.keys(links).length > 0) {
+      values = Object.keys(links);
+    }
+
+    for (const value of values) {
+      if (links[value]) {
+        continue;
+      }
+      if ((value === 'number' && data.sizingProperties?.has?.(name)) || (value === 'pill' && category !== 'dimensions')) {
+        continue;
+      }
+      if (data.mdnTypeLinks?.[value]) {
+        links[value] = {href: data.mdnTypeLinks[value]};
+      }
+    }
+
+    result[name] = {
+      values,
+      additionalTypes: getAdditionalTypes(name),
+      links,
+      description: data.propertyDescriptions?.[name]
+    };
+  }
+
+  for (const [shorthandName, shorthandDef] of Object.entries(data.shorthandMapping || {})) {
+    if (shorthandDef.category !== category) {
+      continue;
+    }
+    let values = Array.isArray(shorthandDef.values) ? [...shorthandDef.values] : [];
+    const links = {};
+    for (const value of values) {
+      if (value === 'pill' && shorthandName.includes('border')) {
+        continue;
+      }
+      if (data.mdnTypeLinks?.[value]) {
+        links[value] = {href: data.mdnTypeLinks[value]};
+      }
+    }
+
+    result[shorthandName] = {
+      values,
+      additionalTypes: getAdditionalTypes(shorthandDef.mapping?.[0]),
+      links,
+      mapping: shorthandDef.mapping,
+      description: data.propertyDescriptions?.[`${shorthandName}Shorthand`]
+    };
+  }
+
+  return result;
+}
+
+function generateStyleMacroTable(category, {sort = true} = {}) {
+  const cacheKey = `${category}:${sort ? 'sorted' : 'original'}`;
+  if (styleMacroTableCache.has(cacheKey)) {
+    return styleMacroTableCache.get(cacheKey);
+  }
+
+  const definitions = getStyleMacroPropertyDefinitions(category);
+  if (!definitions) {
+    styleMacroTableCache.set(cacheKey, null);
+    return null;
+  }
+
+  let propertyNames = Object.keys(definitions);
+  if (sort) {
+    propertyNames.sort((a, b) => a.localeCompare(b));
+  }
+
+  const data = loadStyleMacroData();
+  const rows = propertyNames.map((propertyName) => {
+    const def = definitions[propertyName] || {};
+    const links = def.links || {};
+    const values = Array.isArray(def.values) ? def.values : [];
+    const additionalTypes = Array.isArray(def.additionalTypes) ? def.additionalTypes : [];
+    const tokens = [];
+    const seen = new Set();
+
+    const addToken = (token) => {
+      if (!token || seen.has(token)) {
+        return;
+      }
+      seen.add(token);
+      tokens.push(token);
+    };
+
+    const formatValue = (value) => {
+      const display = String(value);
+      const href = links[display]?.href;
+      if (href) {
+        return `[\`${display}\`](${href})`;
+      }
+      return `\`${display}\``;
+    };
+
+    values.forEach((value) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+      addToken(formatValue(value));
+    });
+
+    additionalTypes.forEach((typeName) => {
+      if (!typeName) {
+        return;
+      }
+      if (typeName === 'baseSpacing' && Array.isArray(data?.spacingTypeValues?.baseSpacing)) {
+        const list = data.spacingTypeValues.baseSpacing.map(String).join(', ');
+        addToken(`\`${typeName} (${list})\``);
+        return;
+      }
+      if (typeName === 'negativeSpacing' && Array.isArray(data?.spacingTypeValues?.negativeSpacing)) {
+        const list = data.spacingTypeValues.negativeSpacing.map(String).join(', ');
+        addToken(`\`${typeName} (${list})\``);
+        return;
+      }
+      addToken(formatValue(typeName));
+    });
+
+    const valueText = (tokens.length ? tokens.join(', ') : '—').replace(/\|/g, '\\|');
+    return {
+      name: propertyName,
+      values: valueText
+    };
+  });
+
+  if (!rows.length) {
+    styleMacroTableCache.set(cacheKey, null);
+    return null;
+  }
+
+  const header = '| Property | Values |';
+  const separator = '|---------|--------|';
+  const body = rows
+    .map((row) => `| \`${row.name}\` | ${row.values || '—'} |`)
+    .join('\n');
+
+  const table = `${header}\n${separator}\n${body}`;
+  styleMacroTableCache.set(cacheKey, table);
+  return table;
 }
 
 /**
@@ -1608,6 +1962,48 @@ function remarkDocsComponentsToMarkdown() {
           // If no properties found, remove the node
           parent.children.splice(index, 1);
         }
+        return index;
+      }
+
+      // Render a table of style macro properties and values.
+      if (name === 'StyleMacroProperties') {
+        const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
+        let category = null;
+
+        if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+          const expr = propertiesAttr.value.value.trim();
+          const match = expr.match(/getPropertyDefinitions\(\s*['"`]([^'"`]+)['"`]\s*\)/);
+          if (match) {
+            category = match[1];
+          }
+        }
+
+        let sort = true;
+        const sortAttr = node.attributes?.find(a => a.name === 'sort');
+        if (sortAttr) {
+          if (sortAttr.value?.type === 'mdxJsxAttributeValueExpression') {
+            const sortValue = sortAttr.value.value.trim();
+            if (sortValue === 'false') {
+              sort = false;
+            }
+          } else if (typeof sortAttr.value === 'string') {
+            sort = sortAttr.value !== 'false';
+          }
+        }
+
+        if (!category) {
+          parent.children.splice(index, 1);
+          return index;
+        }
+
+        const table = generateStyleMacroTable(category, {sort});
+        if (table) {
+          const tableTree = unified().use(remarkParse).parse(table);
+          parent.children.splice(index, 1, ...tableTree.children);
+          return index + tableTree.children.length;
+        }
+
+        parent.children.splice(index, 1);
         return index;
       }
 
