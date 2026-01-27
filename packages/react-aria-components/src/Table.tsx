@@ -32,6 +32,8 @@ import ReactDOM from 'react-dom';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 
+export {TableLayout} from './TableLayout';
+
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
   headerRows: GridNode<T>[] = [];
   columns: GridNode<T>[] = [];
