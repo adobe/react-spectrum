@@ -416,7 +416,6 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
   const data = loadStyleMacroData();
   const rows = propertyNames.map((propertyName) => {
     const def = definitions[propertyName] || {};
-    const links = def.links || {};
     const values = Array.isArray(def.values) ? def.values : [];
     const additionalTypes = Array.isArray(def.additionalTypes) ? def.additionalTypes : [];
     const tokens = [];
