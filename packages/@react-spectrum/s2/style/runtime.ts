@@ -59,16 +59,6 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
     // must call toString here for the static macro
     let str = style.toString();
 
-    // Extract and preserve macro debug classes (dev only)
-    if (process.env.NODE_ENV !== 'production') {
-      let macroMatches = str.matchAll(/-macro-(static|dynamic)-[^\s]+/g);
-      for (let match of macroMatches) {
-        if (!macroClasses!.includes(match[0])) {
-          macroClasses!.push(match[0]);
-        }
-      }
-    }
-
     for (let [k, v] of parse(str)) {
       map.set(k, v);
     }
@@ -77,11 +67,6 @@ export function mergeStyles(...styles: (StyleString | null | undefined)[]): Styl
   let res = '';
   for (let value of map.values()) {
     res += value;
-  }
-
-  // Append all macro debug classes (dev only)
-  if (process.env.NODE_ENV !== 'production' && macroClasses && macroClasses.length > 0) {
-    res += ' ' + macroClasses.join(' ');
   }
 
   return res as StyleString;
@@ -105,6 +90,11 @@ function parse(s: string) {
     }
 
     let property = s.slice(start, condition);
+    if (process.env.NODE_ENV !== 'production' && property.startsWith('-macro-')) {
+      let value = s.slice(start, i);
+      properties.set(value, value);
+    }
+
     properties.set(property, (properties.get(property) || '') + ' ' + s.slice(start, i));
   }
 
