@@ -87,7 +87,7 @@ function parse(s: string) {
     let property = s.slice(start, condition);
     if (process.env.NODE_ENV !== 'production' && property.startsWith('-macro-')) {
       let value = s.slice(start, i);
-      properties.set(value, value);
+      properties.set(value, ' ' + value);
     }
 
     properties.set(property, (properties.get(property) || '') + ' ' + s.slice(start, i));
