@@ -11,7 +11,7 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
+import {Button, ComboBox, ComboBoxContext, FieldError, Form, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {useState} from 'react';
 import {User} from '@react-aria/test-utils';
@@ -629,5 +629,53 @@ describe('ComboBox', () => {
     // Verify the combobox is closed and the value is updated
     expect(tree.queryByRole('listbox')).toBeNull();
     expect(comboboxTester.combobox).toHaveValue('Apple');
+  });
+
+  it('should support multiple selection', async () => {
+    let onChange = jest.fn();
+    let {container, getByTestId} = render(
+      <Form data-testid="form">
+        <TestComboBox name="select" selectionMode="multiple" defaultInputValue="" onChange={onChange} />
+      </Form>
+    );
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+
+    expect(comboboxTester.combobox).toHaveValue('');
+    await comboboxTester.open();
+
+    let listbox = comboboxTester.listbox;
+    expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
+
+    let options = comboboxTester.options();
+    expect(options).toHaveLength(3);
+
+    await user.click(options[0]);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(comboboxTester.combobox).toHaveValue('');
+    expect(comboboxTester.listbox).toBeInTheDocument();
+    await user.click(options[1]);
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(comboboxTester.combobox).toHaveValue('');
+    expect(comboboxTester.listbox).toBeInTheDocument();
+    await comboboxTester.close();
+
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenLastCalledWith(['1', '2']);
+
+    let formData = new FormData(getByTestId('form'));
+    expect(formData.getAll('select')).toEqual(['1', '2']);
+  });
+
+  it('should support controlled multi-selection', async () => {
+    let {container} = render(<TestComboBox selectionMode="multiple" defaultInputValue={undefined} value={['2', '3']} />);
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    expect(comboboxTester.combobox).toHaveValue('');
+    await comboboxTester.open();
+
+    let options = comboboxTester.options();
+    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
 });
