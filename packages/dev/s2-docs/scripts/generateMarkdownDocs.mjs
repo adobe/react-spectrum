@@ -430,14 +430,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       tokens.push(token);
     };
 
-    const formatValue = (value) => {
-      const display = String(value);
-      const href = links[display]?.href;
-      if (href) {
-        return `[\`${display}\`](${href})`;
-      }
-      return `\`${display}\``;
-    };
+    const formatValue = (value) => `\`${String(value)}\``;
 
     values.forEach((value) => {
       if (value === undefined || value === null) {
