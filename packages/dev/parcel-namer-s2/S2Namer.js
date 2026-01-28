@@ -17,36 +17,54 @@ module.exports = new Namer({
   name({bundle}) {
     let mainAsset = bundle.getMainEntry();
 
-    if (mainAsset?.filePath.includes('@react-spectrum/s2') || !mainAsset?.filePath.includes('react-spectrum/packages')) {
-      if (bundle.needsStableName && bundle.target.distEntry) {
-        return bundle.target.distEntry;
-      }
-      let ext = '.' + bundle.type;
-      if (bundle.type === 'js') {
-        ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
-      }
-      let originalExt = path.extname(mainAsset.filePath);
-      let name = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
-      let m = mainAsset.filePath.match(/spectrum-illustrations\/(linear|gradient\/generic\d)/);
-      if (m) {
-        if (originalExt === '.svg') {
-          return m[1] + '/internal/' + name + ext;
-        }
-        return m[1] + '/' + name + ext;
-      } else if (mainAsset.filePath.includes('/exports/')) {
-        name = 'exports/' + name;
-      } else if (bundle.target.distDir.endsWith('/dist')) {
-        name = 'private/' + name;
-      }
-
-      return name
-        .replace(/^S2_Icon_(.*?)(Size\d+)?_\d+(?:x\d+)?_N$/, '$1')
-        .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
-          name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
-          return 'gradient/' + style + '/' + name;
-        })
-        .replace(/\.module$/, '_module')
-        + ext;
+    // if (mainAsset?.filePath.includes('@react-spectrum/s2') || !mainAsset?.filePath.includes('react-spectrum/packages')) {
+    if (bundle.needsStableName && bundle.target.distEntry) {
+      return bundle.target.distEntry;
     }
+    let ext = '.' + bundle.type;
+    if (bundle.type === 'js') {
+      ext = bundle.env.outputFormat === 'esmodule' ? '.mjs' : '.cjs';
+    }
+    let originalExt = path.extname(mainAsset.filePath);
+    let name = path.basename(mainAsset.filePath, originalExt).replace(/\*/g, 'intlStrings');
+    let m = mainAsset.filePath.match(/spectrum-illustrations\/(linear|gradient\/generic\d)/);
+    if (m) {
+      if (originalExt === '.svg') {
+        return m[1] + '/internal/' + name + ext;
+      }
+      return m[1] + '/' + name + ext;
+    } else if (mainAsset.filePath.includes('/exports/')) {
+      name = 'exports/' + name;
+    } else if (bundle.target.distDir.endsWith('/dist')) {
+      let index = mainAsset.filePath.indexOf('/src/');
+      if (index >= 0) {
+        name = 'private/' + path.dirname(mainAsset.filePath.slice(index + 5)) + '/' + name;
+      } else {
+        index = mainAsset.filePath.indexOf('/intl/');
+        if (index >= 0) {
+          name = 'private/' + path.dirname(mainAsset.filePath.slice(index)) + '/' + name;
+        } else {
+          name = 'private/' + name;
+        }
+      }
+    }
+
+    if (mainAsset.filePath.includes('@adobe/spectrum-css-temp')) {
+      name = mainAsset.filePath.split(path.sep).at(-2) + '_' + name;
+    }
+    if (path.extname(mainAsset.filePath) === '.css' && mainAsset.type === 'js') {
+      // CSS module
+      name += '_css';
+    }
+
+    return name
+      .replace(/^S2_Icon_(.*?)(Size\d+)?_\d+(?:x\d+)?_N$/, '$1')
+      .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
+        name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
+        return 'gradient/' + style + '/' + name;
+      })
+      .replace(/\.module$/, '_module')
+      + ext;
+    // }
   }
 });

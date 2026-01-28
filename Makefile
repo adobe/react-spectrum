@@ -98,15 +98,20 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir types --rootDir packages
+	yarn tsgo --project tsconfig.build.json --declaration --emitDeclarationOnly --outDir types --rootDir packages
 	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum} --no-optimize --config .parcelrc-build
-	yarn workspaces foreach --all -pt run prepublishOnly
-	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
+	# yarn workspaces foreach --all -pt run prepublishOnly
+	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/; \
 		do node scripts/buildEsm.js $$pkg; \
 	done
 	node scripts/buildI18n.js
 	node scripts/generateIconDts.js
-	node scripts/fixUseClient.js
+	# node scripts/fixUseClient.js
+	for pkg in types/@react-{spectrum,aria,stately}/*/ types/@internationalized/{message,string,date,number}/ types/{react-aria,react-stately,react-aria-components,@adobe/react-spectrum}; do \
+		mkdir -p packages/$${pkg#types/}/dist; \
+		mv $$pkg packages/$${pkg#types/}/dist/types; \
+	done
+	rm -rf types
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

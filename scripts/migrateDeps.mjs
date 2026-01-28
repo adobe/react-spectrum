@@ -17,10 +17,33 @@ for (let pkg of fs.globSync(['packages/@react-aria/*', 'packages/@react-spectrum
   if (fs.statSync(pkg).isDirectory()) {
     let name = pkg.split('/').slice(1).join('/');
     if (skipped.includes(path.basename(pkg))) {
+      let pkgJSON = JSON.parse(fs.readFileSync(`${pkg}/package.json`, 'utf8'));
+      if (pkgJSON.types) {
+        pkgJSON.types = './dist/types/src/index.d.ts';
+        if (pkgJSON.exports) {
+          pkgJSON.exports.types = pkgJSON.types;
+        }
+        pkgJSON.targets = {
+          types: false
+        };
+        fs.writeFileSync(`${pkg}/package.json`, JSON.stringify(pkgJSON, false, 2) + '\n');
+      }
       continue;
     }
 
     importMap[name] = buildImportMap(`${pkg}/src/index.ts`);
+  }
+}
+
+for (let pkg of fs.globSync('packages/@internationalized/{message,string,date,number}')) {
+  let pkgJSON = JSON.parse(fs.readFileSync(`${pkg}/package.json`, 'utf8'));
+  if (pkgJSON.types) {
+    pkgJSON.types = './dist/types/src/index.d.ts';
+    pkgJSON.exports.types = pkgJSON.types;
+    pkgJSON.targets = {
+      types: false
+    };
+    fs.writeFileSync(`${pkg}/package.json`, JSON.stringify(pkgJSON, false, 2) + '\n');
   }
 }
 
@@ -143,7 +166,9 @@ let parentFile = {
   // 'Rect': 'useVirtualizerState',
   // 'Size': 'useVirtualizerState',
   'DateSegmentType': 'useDateFieldState',
-  'DragAndDrop': 'useDragAndDrop'
+  'DragAndDrop': 'useDragAndDrop',
+  parseColor: 'Color',
+  useLocale: 'I18nProvider'
 };
 
 // Names that are included in public files but not exported by monopackages.
@@ -215,18 +240,18 @@ function migrateScope(scope, monopackage) {
 
 function prepareMonopackage(monopackage) {
   let monopackageJSON = JSON.parse(fs.readFileSync(`packages/${monopackage}/package.json`, 'utf8'));
-  monopackageJSON.source = 'exports/*.ts';
+  monopackageJSON.source = 'exports/index.ts';
   if (!monopackageJSON.exports['.']) {
     monopackageJSON.exports = {
       '.': {
         source: './exports/index.ts',
-        types: './dist/exports/index.d.ts',
+        types: './dist/types/exports/index.d.ts',
         import: './dist/exports/index.mjs',
         require: './dist/exports/index.js'
       },
       './private/*': {
         source: ['./src/*.ts', './src/*.tsx'],
-        types: ['./dist/private/*.d.ts'],
+        types: ['./dist/types/src/*.d.ts'],
         import: './dist/private/*.mjs',
         require: './dist/private/*.js'
       },
@@ -238,27 +263,26 @@ function prepareMonopackage(monopackage) {
       }
     };
   } else {
-    // TODO
-    monopackageJSON.exports = {
+    Object.assign(monopackageJSON.exports, {
       '.': {
         source: './exports/index.ts',
-        types: './dist/exports/index.d.ts',
+        types: './dist/types/exports/index.d.ts',
         import: './dist/exports/index.mjs',
         require: './dist/exports/index.js'
       },
       './private/*': {
         source: ['./src/*.ts', './src/*.tsx'],
-        types: ['./dist/private/*.d.ts'],
+        types: ['./dist/types/src/*.d.ts'],
         import: './dist/private/*.mjs',
         require: './dist/private/*.js'
       },
       './*': {
         source: ['./exports/*.ts'],
-        types: './dist/exports/*.d.ts',
+        types: './dist/types/exports/*.d.ts',
         import: './dist/exports/*.mjs',
         require: './dist/exports/*.js'
       }
-    };
+    });
   }
 
   monopackageJSON.targets = {
@@ -266,14 +290,14 @@ function prepareMonopackage(monopackage) {
     module: false,
     types: false,
     "exports-module": {
-      "source": "exports/*.ts",
+      "source": ["exports/*.ts", "src/**/*.{ts,tsx}"],
       "distDir": "dist",
       "isLibrary": true,
       "outputFormat": "esmodule",
       "includeNodeModules": false
     },
     "exports-main": {
-      "source": "exports/*.ts",
+      "source": ["exports/*.ts", "src/**/*.{ts,tsx}"],
       "distDir": "dist",
       "isLibrary": true,
       "outputFormat": "commonjs",
@@ -310,13 +334,6 @@ function migratePackage(scope, name, monopackage) {
   moveTree(scope, name, 'docs', monopackage);
   moveTree(scope, name, 'intl', monopackage);
   
-  let exports = packageJSON.exports || {source: './' + packageJSON.source};
-  if (exports['.']) {
-    exports = exports['.'];
-    // TODO: add others
-  }
-
-  // monopackageJSON.exports[`./${name}`] = remapExports(exports, name);
   for (let dep in packageJSON.dependencies || {}) {
     let depScope = dep.match(/@(react-aria|react-spectrum|react-stately)/);
     if (!depScope && !monopackageJSON.dependencies[dep]) {
@@ -329,12 +346,6 @@ function migratePackage(scope, name, monopackage) {
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
 
   packageJSON.source = 'src/index.ts';
-  packageJSON.types = './src/index.ts';
-  packageJSON.exports = {
-    source: './src/index.ts',
-    types: './src/index.ts',
-    // TODO
-  };
   packageJSON.dependencies = {
     [monopackage]: '^' + monopackageJSON.version
   };
@@ -388,19 +399,29 @@ function migrateToMonopackage(pkg) {
 
   packageJSON.source = 'exports/index.ts';
   packageJSON.exports['.'].source = './exports/index.ts';
-  if (Array.isArray(packageJSON.exports['.'].types)) {
-    packageJSON.exports['.'].types[1] = './exports/index.ts';
-  }
+
+  packageJSON.types = './dist/types/exports/index.ts';
+  packageJSON.exports['.'].types = './dist/types/exports/index.ts';
+
+  packageJSON.main = './dist/exports/index.cjs';
+  packageJSON.exports['.'].require = './dist/exports/index.cjs';
+
+  packageJSON.module = './dist/exports/index.mjs';
+  packageJSON.exports['.'].import = './dist/exports/index.mjs';
 
   packageJSON.exports['./*'] = {
     source: './exports/*.ts',
-    types: './dist/*.d.ts',
-    import: './dist/*.mjs',
-    require: './dist/*.cjs'
+    types: './dist/types/exports/*.d.ts',
+    import: './dist/exports/*.mjs',
+    require: './dist/exports/*.cjs'
   };
 
   packageJSON.exports['./private/*'] = null;
 
+  delete packageJSON['style-types'];
+  if (packageJSON.targets) {
+    delete packageJSON.targets['style-types'];
+  }
   Object.assign(packageJSON.targets ??= {}, {
     main: false,
     module: false,
