@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, isFocusVisible} from '@react-aria/interactions';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
+import {getScrollParent, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
@@ -75,7 +75,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
+        if (nodeContains(ref.current, document.activeElement) && ref.current !== document.activeElement) {
           return;
         }
 
@@ -90,7 +90,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
       if (
         (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !ref.current.contains(document.activeElement)
+        !nodeContains(ref.current, document.activeElement)
       ) {
         focusSafely(ref.current);
       }
@@ -109,7 +109,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
       return;
     }
 
@@ -213,7 +213,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as Element)) {
+        if (!e.altKey && nodeContains(ref.current, e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement?.dispatchEvent(

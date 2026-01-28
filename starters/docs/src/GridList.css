@@ -16,6 +16,10 @@
   box-sizing: border-box;
   --grid-item-size: 200px;
 
+  &:has(.react-aria-GridListSection) {
+    scroll-padding: 50px;
+  }
+
   &[data-layout=grid]:not(:has(.react-aria-GridListSection)) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, var(--grid-item-size)));
@@ -262,11 +266,11 @@
 .react-aria-GridListHeader {
   position: sticky;
   z-index: 2;
-  top: -8px;
+  top: calc(var(--spacing-2) * -1);
   font-size: var(--font-size-lg);
   font-weight: 500;
   background: var(--gray-100);
-  border-block: 0.5px solid var(--gray-400);
+  border: 0.5px solid var(--gray-400);
   cursor: default;
   user-select: none;
   box-shadow: inset 0px 1px 0px white, inset 0px -4px 8px var(--gray-200);

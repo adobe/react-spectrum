@@ -154,16 +154,19 @@ s2-docs:
 	DOCS_ENV=stage PUBLIC_URL=/$(BRANCH_TYPE)/$(HASH) $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/$(BRANCH_TYPE)/$(HASH)/robots.txt
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/$(BRANCH_TYPE)/$(HASH)/robots.txt
+	yarn check:s2-docs-build dist/s2-docs
 
 s2-docs-stage:
 	DOCS_ENV=stage PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/disallow-robots.txt dist/s2-docs/s2/robots.txt
+	yarn check:s2-docs-build dist/s2-docs
 
 s2-docs-production:
 	DOCS_ENV=prod PUBLIC_URL=/ $(MAKE) build-s2-docs
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/react-aria/robots.txt
 	cp packages/dev/docs/pages/robots.txt dist/s2-docs/s2/robots.txt
+	yarn check:s2-docs-build dist/s2-docs
 	cd starters/docs && yarn install --no-immutable && yarn up react-aria-components
 	cd starters/tailwind && yarn install --no-immutable && yarn up react-aria-components tailwindcss-react-aria-components
 	$(MAKE) build-starters

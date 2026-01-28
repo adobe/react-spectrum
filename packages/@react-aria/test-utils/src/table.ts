@@ -13,6 +13,7 @@
 import {act, waitFor, within} from '@testing-library/react';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {nodeContains} from '@react-aria/utils';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleSortOpts {
@@ -65,7 +66,7 @@ export class TableTester {
     }
 
     // Move focus into the table
-    if (document.activeElement !== this._table && !this._table.contains(document.activeElement)) {
+    if (document.activeElement !== this._table && !nodeContains(this._table, document.activeElement)) {
       act(() => this._table.focus());
     }
 
@@ -74,14 +75,14 @@ export class TableTester {
     }
 
     // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
-    if (this.rowGroups[0].contains(document.activeElement)) {
+    if (nodeContains(this.rowGroups[0], document.activeElement)) {
       do {
         await this.user.keyboard('[ArrowDown]');
-      } while (!this.rowGroups[1].contains(document.activeElement));
+      } while (!nodeContains(this.rowGroups[1], document.activeElement));
     }
 
     // Move focus onto the row itself
-    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    if (nodeContains(this.rowGroups[1], document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -222,7 +223,7 @@ export class TableTester {
           }
 
           await waitFor(() => {
-            if (document.contains(menu)) {
+            if (nodeContains(document, menu)) {
               throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
             } else {
               return true;
@@ -308,7 +309,7 @@ export class TableTester {
           await pressElement(this.user, within(menu).getAllByRole('menuitem')[action], interactionType);
 
           await waitFor(() => {
-            if (document.contains(menu)) {
+            if (nodeContains(document, menu)) {
               throw new Error('Expected table column menu listbox to not be in the document after selecting an option');
             } else {
               return true;
