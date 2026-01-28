@@ -58,7 +58,7 @@ If you are looking for place to start, consider the following options:
 
 ## Developing
 When you are ready to start developing you can clone the repo and start storybook.
-Make sure you have the following requirements installed: [node](https://nodejs.org/) (v14.15.0+) and [yarn](https://yarnpkg.com/en/) (v1.22.0+)
+Make sure you have the following requirements installed: [node](https://nodejs.org/) (v24.13.0+) and [yarn](https://yarnpkg.com/en/) (v1.22.0+)
 
 Fork the repo first using [this guide](https://help.github.com/articles/fork-a-repo), then clone it locally.
 ```
@@ -176,7 +176,7 @@ parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationali
 make: *** [build] Segmentation fault: 11
 ```
 
-It's likely that you are using a different version of Node.js. Please use Node.js 18. When changing the node version, delete `node_modules` and re-run `yarn install`
+It's likely that you are using a different version of Node.js. Please use Node.js 24. When changing the node version, delete `node_modules` and re-run `yarn install`
 
 > `yarn start` fails.
 
