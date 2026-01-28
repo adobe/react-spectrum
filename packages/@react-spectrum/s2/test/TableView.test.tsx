@@ -24,10 +24,10 @@ import {
   TableView,
   Text
 } from '../src';
+import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
-import React, { useState } from 'react';
 import {pointerMap, User} from '@react-aria/test-utils';
-import { DisabledBehavior } from '@react-types/shared';
+import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
