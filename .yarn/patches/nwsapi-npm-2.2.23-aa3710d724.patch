@@ -1,18 +1,24 @@
 diff --git a/src/nwsapi.js b/src/nwsapi.js
-index 872026b4ab3462f3c2411bc564dd428bd3165323..f71ae753743c9d6155e2f522c1ac3c7fdbb05c32 100644
+index 872026b4ab3462f3c2411bc564dd428bd3165323..748f32f16595e62ddf40446e361df6555cfb5495 100644
 --- a/src/nwsapi.js
 +++ b/src/nwsapi.js
-@@ -1241,9 +1241,10 @@
+@@ -1241,9 +1241,16 @@
                      'if((e===n||e.autofocus)){' + source + '}';
                    break;
                  case 'focus-within':
 -                  source = 'if(n=s.isFocusable(e)){' +
 -                    'if(n!==e){while(n){n=n.parentElement;if(n===e)break;}}}' +
 -                    'if((n===e||n.autofocus)){' + source + '}';
-+                  // Check if e contains the activeElement by walking up from activeElement
++                  // Shadow DOM safe: drill down through shadowRoot.activeElement, then walk up including shadow boundaries
 +                  source = 'if(s.doc.hasFocus()){' +
 +                    'n=s.doc.activeElement;' +
-+                    'while(n){if(n===e){' + source + 'break;}n=n.parentElement;}}';
++                    // Drill down through shadow roots to find the actual focused element
++                    'while(n&&n.shadowRoot&&n.shadowRoot.activeElement){n=n.shadowRoot.activeElement;}' +
++                    // Walk up the tree, crossing shadow boundaries via getRootNode().host
++                    'while(n){' +
++                      'if(n===e){' + source + 'break;}' +
++                      'n=n.parentElement||(n.getRootNode&&n.getRootNode().host);' +
++                    '}}';
                    break;
                  default:
                    emit('\'' + expression + '\'' + qsInvalid);
