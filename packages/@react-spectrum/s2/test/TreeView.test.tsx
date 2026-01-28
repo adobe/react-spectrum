@@ -495,7 +495,7 @@ describe('TreeView', () => {
     expect(menu).not.toBeInTheDocument();
   });
 
-  it.only('if the previously focused item is disabled, the focus should move to the first item when coming back to the collection', async () => {
+  it('if the previously focused item is disabled, the focus should move to the first item when coming back to the collection', async () => {
     function Example() {
       let [disabledBehavior, setDisabledBehavior] = useState<DisabledBehavior>('selection');
       return (
@@ -515,20 +515,6 @@ describe('TreeView', () => {
                   </MenuItem>
                 </ActionMenu>
               </TreeViewItemContent>
-              <TreeViewItem id="projects-1" textValue="Projects-1" isDisabled>
-                <TreeViewItemContent>
-                  <Text>Projects-1</Text>
-                  <Folder />
-                  <ActionMenu>
-                    <MenuItem id="edit">
-                      <Text>Edit</Text>
-                    </MenuItem>
-                    <MenuItem id="delete">
-                      <Text>Delete</Text>
-                    </MenuItem>
-                  </ActionMenu>
-                </TreeViewItemContent>
-              </TreeViewItem>
             </TreeViewItem>
             <TreeViewItem id="school" textValue="School">
               <TreeViewItemContent>

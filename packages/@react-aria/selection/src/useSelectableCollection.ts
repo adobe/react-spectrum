@@ -351,9 +351,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     manager.setFocused(true);
     let focusedKey = manager.focusedKey;
-    console.log(manager.disabledKeys, manager.focusedKey);
+    let focusedElement;
+    if (focusedKey != null) {
+      focusedElement = getItemElement(ref, focusedKey);
+    }
 
-    if (focusedKey == null || (focusedKey != null && manager.disabledKeys.has(focusedKey))) {
+    // T only way to check if the focused item is disabled is to check the aria-disabled attribute
+    // this is because the isDisabled prop won't show up in the disabledKeys set.
+    // In selectionBehavior 'all', aria-disabled is the same as disabled.
+    // In selectionBehavior 'selection', we can still navigate to disabled items.
+    if (focusedKey == null ||
+      (!!focusedElement && focusedElement.getAttribute('aria-disabled') === 'true' && manager.disabledBehavior === 'all')) {
       let navigateToKey = (key: Key | undefined | null) => {
         if (key != null) {
           manager.setFocusedKey(key);
