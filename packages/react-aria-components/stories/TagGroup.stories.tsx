@@ -121,32 +121,36 @@ export const EmptyTagGroup: Story = {
   )
 };
 
-export const RestoreFocusExample: Story = {
-  render: (props: TagGroupProps) => {
-    const list = useListData<{id: number, label: string}>({
-      initialItems: [],
+const RestoreFocus = (props: TagGroupProps) => {
+  const list = useListData<{id: number, label: string}>({
+    initialItems: []
+  });
+
+  const nextIdRef = useRef(0);
+
+  const insertItem = () => {
+    const id = nextIdRef.current++;
+    list.insert(0, {
+      id,
+      label: `Item ${id + 1}`
     });
+  };
 
-    const nextIdRef = useRef(0);
+  return (
+    <div>
+      <TagGroup {...props} onRemove={keys => list.remove(...keys)}>
+        <Label>Categories</Label>
+        <Button onClick={insertItem}>Insert item</Button>
+        <TagList style={{display: 'flex', gap: 4}} items={list.items} renderEmptyState={() => 'No categories.'}>
+          {item => <MyTag>{item.label}<Button slot="remove">X</Button></MyTag>}
+        </TagList>
+      </TagGroup>
+    </div>
+  );
+};
 
-    const insertItem = () => {
-      const id = nextIdRef.current++;
-      list.insert(0, {
-        id,
-        label: `Item ${id + 1}`,
-      });
-    };
-
-    return (
-      <div>
-        <TagGroup {...props} onRemove={keys => list.remove(...keys)}>
-          <Label>Categories</Label>
-          <Button onClick={insertItem}>Insert item</Button>
-          <TagList style={{display: 'flex', gap: 4}} items={list.items} renderEmptyState={() => 'No categories.'}>
-            {item => <MyTag>{item.label}<Button slot="remove">X</Button></MyTag>}
-          </TagList>
-        </TagGroup>
-      </div>
-    );
-  },
+export const RestoreFocusExample: Story = {
+  render: (props: TagGroupProps) => (
+    <RestoreFocus {...props} />
+  )
 };
