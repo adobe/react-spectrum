@@ -107,7 +107,8 @@ export {
   heightProperties
 } from './style-utils';
 
-export {focusRing, iconStyle} from '../style';
+export {focusRing, iconStyle, linearGradient, edgeToText, raw, keyframes} from '../style';
+export {mergeStyles} from '../style/runtime';
 
 export {Autocomplete, Collection, FileTrigger, parseColor, useLocale} from 'react-aria-components';
 export {useListData, useTreeData, useAsyncList} from 'react-stately';
