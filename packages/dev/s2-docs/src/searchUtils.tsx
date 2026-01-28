@@ -869,7 +869,7 @@ export function useSearchMenuState(options: SearchMenuStateOptions): SearchMenuS
       return 'Search color names or hex values';
     }
     if (selectedTagId === 'typography') {
-      return 'Preview typography styles';
+      return 'Search typography styles';
     }
     return selectedResourceTag
       ? `Search ${selectedResourceTag.name}`
