@@ -90,25 +90,35 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
   useEffect(() => {
     if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
       const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
-      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
-        key => {
-          const itemNode = cachedCollection.current!.getItem(key);
-          return itemNode?.type === 'item' ? itemNode : null;
+
+      // Helper to get all item nodes from a collection (flattening sections)
+      const getAllItemNodes = (coll: Collection<Node<T>>): Node<T>[] => {
+        const items: Node<T>[] = [];
+        for (let node of coll) {
+          if (node.type === 'item') {
+            items.push(node);
+          } else if (node.type === 'section' && coll.getChildren?.(node.key)) {
+            for (let child of coll.getChildren(node.key)) {
+              if (child.type === 'item') {
+                items.push(child);
+              }
+            }
+          }
         }
-      ).filter(node => node !== null);
-      const itemNodes = [...collection.getKeys()].map(
-        key => {
-          const itemNode = collection.getItem(key);
-          return itemNode?.type === 'item' ? itemNode : null;
-        }
-      ).filter(node => node !== null);
-      const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
+        return items;
+      };
+
+      const cachedItemNodes = getAllItemNodes(cachedCollection.current);
+      const itemNodes = getAllItemNodes(collection);
+
+      // Count how many items were removed before the focused item's original index
+      const itemNodesKeys = new Set(itemNodes.map(node => node.key));
+      const removedBeforeCount = cachedItemNodes.filter((node, idx) =>
+        idx < (startItem?.index ?? 0) && !itemNodesKeys.has(node.key)
+      ).length;
+
       let index = Math.min(
-        (
-          diff > 1 ?
-          Math.max((startItem?.index ?? 0) - diff + 1, 0) :
-          startItem?.index ?? 0
-        ),
+        Math.max((startItem?.index ?? 0) - removedBeforeCount, 0),
         (itemNodes?.length ?? 0) - 1);
       let newNode: Node<T> | null = null;
       let isReverseSearching = false;

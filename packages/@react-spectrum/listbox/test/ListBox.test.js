@@ -1042,54 +1042,67 @@ describe('ListBox', function () {
       act(() => jest.runAllTimers());
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
-      act(() => {options[2].focus();});
+      expect(options.length).toBe(6);
+      // Go to *Snake* and select it
+      await user.tab();
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowDown}');
       expect(options[2]).toHaveAttribute('aria-posinset', '3');
       expect(options[2]).toHaveAttribute('aria-setsize', '6');
       expect(document.activeElement).toBe(options[2]);
-      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      await user.keyboard('{Enter}');
       expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+
+      // Remove *Snake*
       let removeButton = tree.getByRole('button');
       expect(removeButton).toBeInTheDocument();
-      act(() => {removeButton.focus();});
-      expect(document.activeElement).toBe(removeButton);
       await user.click(removeButton);
       act(() => jest.runAllTimers());
       let confirmationDialog = tree.getByRole('alertdialog');
       expect(document.activeElement).toBe(confirmationDialog);
       let confirmationDialogButton = within(confirmationDialog).getByRole('button');
-      expect(confirmationDialogButton).toBeInTheDocument();
       await user.click(confirmationDialogButton);
       act(() => jest.runAllTimers());
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
       act(() => jest.runAllTimers());
       expect(confirmationDialog).not.toBeInTheDocument();
+
+      // Dialog returns focus to the ListBox which forwards it to the options
       expect(document.activeElement).toBe(options[2]);
       expect(options[2]).toHaveAttribute('aria-posinset', '3');
       expect(options[2]).toHaveAttribute('aria-setsize', '5');
-      act(() => {options[1].focus();});
-      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+
+      // Select option
+      await user.keyboard('{Enter}');
       expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
-      act(() => {options[0].focus();});
-      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+
+      // Go to option 0, *Aardvark* and select it too
+      await user.keyboard('{ArrowUp}');
+      await user.keyboard('{ArrowUp}');
+      await user.keyboard('{ArrowUp}');
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{Enter}');
       expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
-      act(() => {options[0].focus();});
+
+      // Remove the two selected items
       removeButton = tree.getByRole('button');
-      expect(removeButton).toBeInTheDocument();
-      act(() => {removeButton.focus();});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(removeButton);
       await user.click(removeButton);
       act(() => jest.runAllTimers());
       confirmationDialog = tree.getByRole('alertdialog');
       expect(document.activeElement).toBe(confirmationDialog);
       confirmationDialogButton = within(confirmationDialog).getByRole('button');
-      expect(confirmationDialogButton).toBeInTheDocument();
       await user.click(confirmationDialogButton);
       act(() => jest.runAllTimers());
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(3);
       act(() => jest.runAllTimers());
       expect(confirmationDialog).not.toBeInTheDocument();
+
+      // Dialog returns focus to the ListBox which forwards it to the options
       expect(document.activeElement).toBe(options[0]);
       expect(options[0]).toHaveAttribute('aria-posinset', '1');
       expect(options[0]).toHaveAttribute('aria-setsize', '3');

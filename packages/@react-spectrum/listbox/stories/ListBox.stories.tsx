@@ -22,7 +22,7 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {FocusScope} from '@react-aria/focus';
 import {Item, ListBox, Section} from '../';
-import {Key} from '@react-types/shared';
+import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -946,7 +946,7 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
   });
 
   let [dialog, setDialog] = useState<{action: Key} | null>(null);
-  let ref = useRef(null);
+  let ref = useRef<DOMRefValue<HTMLDivElement>>(null);
 
   return (
     <FocusScope>
@@ -989,7 +989,13 @@ export let FocusExample = (args: Omit<SpectrumListBoxProps<any>, 'children'> = {
               title="Delete"
               variant="destructive"
               primaryActionLabel="Delete"
-              onPrimaryAction={() => tree.removeSelectedItems()}>
+              onPrimaryAction={() => {
+                tree.removeSelectedItems();
+                // wait for inert to clear before focusing
+                requestAnimationFrame(() => {
+                  ref.current?.UNSAFE_getDOMNode()?.focus();
+                });
+              }}>
               Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
             </AlertDialog>
           }
