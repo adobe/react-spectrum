@@ -52,7 +52,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     let target = e.target as Element;
     if (
       ref.current &&
-      nodeContains(ref.current, document.activeElement) &&
+      ref.current.matches(':focus-within') &&
       (!nodeContains(ref.current, target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();

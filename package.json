@@ -239,7 +239,8 @@
     "lightningcss": "1.30.1",
     "react-server-dom-parcel": "canary",
     "react-test-renderer": "19.1.0",
-    "@parcel/packager-react-static": "^2.16.3"
+    "@parcel/packager-react-static": "^2.16.3",
+    "nwsapi@npm:^2.2.2": "patch:nwsapi@npm%3A2.2.23#~/.yarn/patches/nwsapi-npm-2.2.23-aa3710d724.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {

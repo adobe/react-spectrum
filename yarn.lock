@@ -22926,10 +22926,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nwsapi@npm:^2.2.2":
-  version: 2.2.4
-  resolution: "nwsapi@npm:2.2.4"
-  checksum: 10c0/d6d297feed79e0fc984e7a9588fe20255a493c0645f35a3419b04662535311cc38126fa12d8e1a5ae8f18cc0de0ec0d36680e03fab44050f7117e0503ecc9c38
+"nwsapi@npm:2.2.23":
+  version: 2.2.23
+  resolution: "nwsapi@npm:2.2.23"
+  checksum: 10c0/e44bfc9246baf659581206ed716d291a1905185247795fb8a302cb09315c943a31023b4ac4d026a5eaf32b2def51d77b3d0f9ebf4f3d35f70e105fcb6447c76e
+  languageName: node
+  linkType: hard
+
+"nwsapi@patch:nwsapi@npm%3A2.2.23#~/.yarn/patches/nwsapi-npm-2.2.23-aa3710d724.patch":
+  version: 2.2.23
+  resolution: "nwsapi@patch:nwsapi@npm%3A2.2.23#~/.yarn/patches/nwsapi-npm-2.2.23-aa3710d724.patch::version=2.2.23&hash=6459c2"
+  checksum: 10c0/aa7549179845c18b5c76ea873ca71d62e47d51bdc9a55f52f987a5bc0aed2fa45b87c4108d5b38fe9ab997c5c23e4fd01fcba8a2db908cb2c4942199620ae5b6
   languageName: node
   linkType: hard
 

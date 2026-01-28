@@ -99,7 +99,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
     setTimeout(() => {
       submenuTriggerState.close();
-      if (parentMenuRef.current && !nodeContains(parentMenuRef.current, document.activeElement)) {
+      if (parentMenuRef.current && !parentMenuRef.current.matches(':focus-within')) {
         parentMenuRef.current.focus();
       }
     }, 220); // Matches transition duration

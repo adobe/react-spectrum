@@ -12,7 +12,6 @@
 
 import {act, waitFor, within} from '@testing-library/react';
 import {ComboBoxTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 
 interface ComboBoxOpenOpts {
   /**
@@ -177,7 +176,7 @@ export class ComboBoxTester {
 
       if (option.getAttribute('href') == null) {
         await waitFor(() => {
-          if (nodeContains(document, listbox)) {
+          if (listbox.isConnected) {
             throw new Error('Expected listbox element to not be in the document after selecting an option');
           } else {
             return true;
@@ -199,7 +198,7 @@ export class ComboBoxTester {
       await this.user.keyboard('[Escape]');
 
       await waitFor(() => {
-        if (nodeContains(document, listbox)) {
+        if (listbox.isConnected) {
           throw new Error('Expected listbox element to not be in the document after selecting an option');
         } else {
           return true;

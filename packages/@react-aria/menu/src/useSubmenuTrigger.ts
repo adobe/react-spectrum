@@ -100,7 +100,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   let submenuKeyDown = (e: KeyboardEvent) => {
     // If focus is not within the menu, assume virtual focus is being used.
     // This means some other input element is also within the popover, so we shouldn't close the menu.
-    if (!nodeContains(e.currentTarget, document.activeElement)) {
+    if (!e.currentTarget.matches(':focus-within')) {
       return;
     }
 
