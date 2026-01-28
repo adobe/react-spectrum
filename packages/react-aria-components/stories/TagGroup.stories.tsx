@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
+import {Button, Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger, useListData} from 'react-aria-components';
 import {Meta, StoryObj} from '@storybook/react';
-import React from 'react';
+import React, {useRef} from 'react';
 import './styles.css';
 
 const meta: Meta<typeof TagGroup> = {
@@ -119,4 +119,34 @@ export const EmptyTagGroup: Story = {
       </TagList>
     </TagGroup>
   )
+};
+
+export const RestoreFocusExample: Story = {
+  render: (props: TagGroupProps) => {
+    const list = useListData<{id: number, label: string}>({
+      initialItems: [],
+    });
+
+    const nextIdRef = useRef(0);
+
+    const insertItem = () => {
+      const id = nextIdRef.current++;
+      list.insert(0, {
+        id,
+        label: `Item ${id + 1}`,
+      });
+    };
+
+    return (
+      <div>
+        <TagGroup {...props} onRemove={keys => list.remove(...keys)}>
+          <Label>Categories</Label>
+          <Button onClick={insertItem}>Insert item</Button>
+          <TagList style={{display: 'flex', gap: 4}} items={list.items} renderEmptyState={() => 'No categories.'}>
+            {item => <MyTag>{item.label}<Button slot="remove">X</Button></MyTag>}
+          </TagList>
+        </TagGroup>
+      </div>
+    );
+  },
 };
