@@ -88,9 +88,9 @@ function parse(s: string) {
     if (process.env.NODE_ENV !== 'production' && property.startsWith('-macro-')) {
       let value = s.slice(start, i);
       properties.set(value, ' ' + value);
+    } else {
+      properties.set(property, (properties.get(property) || '') + ' ' + s.slice(start, i));
     }
-
-    properties.set(property, (properties.get(property) || '') + ' ' + s.slice(start, i));
   }
 
   function readValue() {
