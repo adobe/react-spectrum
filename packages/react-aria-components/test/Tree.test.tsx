@@ -840,7 +840,7 @@ describe('Tree', () => {
         expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
       });
 
-      it.only('should support collapse key to navigate to parent', async () => {
+      it('should support collapse key to navigate to parent', async () => {
         let {getAllByRole} = render(<DynamicTree treeProps={{shouldNavigateToCollapsibleParent: true}} />);
         await user.tab();
         let rows = getAllByRole('row');
