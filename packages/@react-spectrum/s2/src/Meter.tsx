@@ -48,7 +48,7 @@ interface MeterStyleProps {
   labelPosition?: LabelPosition
 }
 
-export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, MeterStyleProps, StyleProps {
+export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, MeterStyleProps, StyleProps {
   /** The content to display as the label. */
   label?: ReactNode
 }

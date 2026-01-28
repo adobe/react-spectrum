@@ -98,6 +98,12 @@ describe('DatePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestDatePicker render={props => <div {...props} data-custom="true" />} />);
+    let group = getByRole('group').closest('.react-aria-DatePicker');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDatePicker />);
     let button = getByRole('button');

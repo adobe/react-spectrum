@@ -91,6 +91,14 @@ describe('Tooltip', () => {
     expect(tooltip).toHaveTextContent('Content at bottom');
   });
 
+  it('should support custom render function', async () => {
+    let {getByRole} = renderTooltip({render: props => <div {...props} data-custom="true" />});
+    await user.tab();
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveAttribute('data-custom', 'true');
+  });
+
   it('supports isEntering and isExiting props', async () => {
     let {getByRole, rerender} = render(<TestTooltip isEntering />);
 
