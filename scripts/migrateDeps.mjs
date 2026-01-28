@@ -329,6 +329,7 @@ function migratePackage(scope, name, monopackage) {
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
 
   packageJSON.source = 'src/index.ts';
+  packageJSON.types = './src/index.ts';
   packageJSON.exports = {
     source: './src/index.ts',
     types: './src/index.ts',
@@ -337,6 +338,10 @@ function migratePackage(scope, name, monopackage) {
   packageJSON.dependencies = {
     [monopackage]: '^' + monopackageJSON.version
   };
+  packageJSON.targets = {
+    types: false // TODO: i18n package
+  };
+  
   fs.writeFileSync(`packages/${scope}/${name}/package.json`, JSON.stringify(packageJSON, false, 2) + '\n');
   fs.rmSync(`packages/${scope}/${name}/index.ts`);
 
@@ -381,6 +386,7 @@ function migrateToMonopackage(pkg) {
     };
   }
 
+  packageJSON.source = 'exports/index.ts';
   packageJSON.exports['.'].source = './exports/index.ts';
   if (Array.isArray(packageJSON.exports['.'].types)) {
     packageJSON.exports['.'].types[1] = './exports/index.ts';
