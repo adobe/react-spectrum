@@ -100,6 +100,12 @@ describe('ComboBox', () => {
     expect(combobox).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestComboBox render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('combobox').closest('.react-aria-ComboBox');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');

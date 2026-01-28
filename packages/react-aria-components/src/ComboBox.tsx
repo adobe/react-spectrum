@@ -14,6 +14,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -233,7 +234,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}

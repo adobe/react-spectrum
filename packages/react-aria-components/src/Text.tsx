@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, useContextProps} from './utils';
+import {ContextValue, dom, DOMRenderProps, useContextProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-export interface TextProps extends HTMLAttributes<HTMLElement> {
+export interface TextProps extends HTMLAttributes<HTMLElement>, DOMRenderProps<any, any> {
   elementType?: string
 }
 
@@ -21,7 +21,8 @@ export const TextContext = createContext<ContextValue<TextProps, HTMLElement>>({
 
 export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, TextContext);
-  let {elementType: ElementType = 'span', ...domProps} = props;
+  let {elementType = 'span', ...domProps} = props;
+  let ElementType = dom[elementType];
   // @ts-ignore
   return <ElementType className="react-aria-Text" {...domProps} ref={ref} />;
 });

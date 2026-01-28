@@ -34,6 +34,12 @@ describe('Separator', () => {
     expect(separator).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<Separator render={props => <hr {...props} data-custom="true" />} />);
+    let separator = getByRole('separator');
+    expect(separator).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <SeparatorContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
