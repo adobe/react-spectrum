@@ -90,7 +90,7 @@ function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager
   useEffect(() => {
     if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
       const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
-      const cachedItemNodes = Array.from(collection).filter(itemNode => itemNode.type === 'item');
+      const cachedItemNodes = Array.from(cachedCollection.current).filter(itemNode => itemNode.type === 'item');
       const itemNodes = Array.from(collection).filter(itemNode => itemNode.type === 'item');
       const diff: number = (cachedItemNodes?.length ?? 0) - (itemNodes?.length ?? 0);
       let index = Math.min(
