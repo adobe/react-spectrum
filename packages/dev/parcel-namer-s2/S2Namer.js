@@ -33,7 +33,12 @@ module.exports = new Namer({
           return m[1] + '/internal/' + name + ext;
         }
         return m[1] + '/' + name + ext;
+      } else if (mainAsset.filePath.includes('/exports/')) {
+        name = 'exports/' + name;
+      } else if (bundle.target.distDir.endsWith('/dist')) {
+        name = 'private/' + name;
       }
+
       return name
         .replace(/^S2_Icon_(.*?)(Size\d+)?_\d+(?:x\d+)?_N$/, '$1')
         .replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {

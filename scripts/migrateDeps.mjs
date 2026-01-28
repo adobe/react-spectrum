@@ -220,21 +220,21 @@ function prepareMonopackage(monopackage) {
     monopackageJSON.exports = {
       '.': {
         source: './exports/index.ts',
-        types: './exports/index.ts',
-        import: './dist/import.mjs',
-        require: './dist/module.js'
+        types: './dist/exports/index.d.ts',
+        import: './dist/exports/index.mjs',
+        require: './dist/exports/index.js'
       },
       './private/*': {
-        source: ['./src/*.ts', './src/*.tsx', './src/*/index.ts'],
-        types: ['./dist/*.d.ts', './src/*.ts', './src/*.tsx'],
-        import: './dist/*.mjs',
-        require: './dist/*.js'
+        source: ['./src/*.ts', './src/*.tsx'],
+        types: ['./dist/private/*.d.ts'],
+        import: './dist/private/*.mjs',
+        require: './dist/private/*.js'
       },
       './*': {
         source: ['./exports/*.ts'],
-        types: ['./dist/*.d.ts', './exports/*.ts', './exports/*.tsx'],
-        import: './dist/*.mjs',
-        require: './dist/*.js'
+        types: './dist/exports/*.d.ts',
+        import: './dist/exports/*.mjs',
+        require: './dist/exports/*.js'
       }
     };
   } else {
@@ -242,24 +242,44 @@ function prepareMonopackage(monopackage) {
     monopackageJSON.exports = {
       '.': {
         source: './exports/index.ts',
-        types: './exports/index.ts',
-        import: './dist/import.mjs',
-        require: './dist/module.js'
+        types: './dist/exports/index.d.ts',
+        import: './dist/exports/index.mjs',
+        require: './dist/exports/index.js'
       },
       './private/*': {
-        source: ['./src/*.ts', './src/*.tsx', './src/*/index.ts'],
-        types: ['./dist/*.d.ts', './src/*.ts', './src/*.tsx'],
-        import: './dist/*.mjs',
-        require: './dist/*.js'
+        source: ['./src/*.ts', './src/*.tsx'],
+        types: ['./dist/private/*.d.ts'],
+        import: './dist/private/*.mjs',
+        require: './dist/private/*.js'
       },
       './*': {
         source: ['./exports/*.ts'],
-        types: ['./dist/*.d.ts', './exports/*.ts', './exports/*.tsx'],
-        import: './dist/*.mjs',
-        require: './dist/*.js'
+        types: './dist/exports/*.d.ts',
+        import: './dist/exports/*.mjs',
+        require: './dist/exports/*.js'
       }
     };
   }
+
+  monopackageJSON.targets = {
+    main: false,
+    module: false,
+    types: false,
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    }
+  };
 
   for (let dep in monopackageJSON.dependencies || {}) {
     let depScope = dep.match(/@(react-aria|react-spectrum|react-stately)/);
@@ -309,7 +329,6 @@ function migratePackage(scope, name, monopackage) {
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
 
   packageJSON.source = 'src/index.ts';
-  // delete packageJSON.exports; // TODO
   packageJSON.exports = {
     source: './src/index.ts',
     types: './src/index.ts',
@@ -369,8 +388,32 @@ function migrateToMonopackage(pkg) {
 
   packageJSON.exports['./*'] = {
     source: './exports/*.ts',
-    types: './exports/*.ts'
+    types: './dist/*.d.ts',
+    import: './dist/*.mjs',
+    require: './dist/*.cjs'
   };
+
+  packageJSON.exports['./private/*'] = null;
+
+  Object.assign(packageJSON.targets ??= {}, {
+    main: false,
+    module: false,
+    types: false,
+    "exports-module": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "includeNodeModules": false
+    },
+    "exports-main": {
+      "source": "exports/*.ts",
+      "distDir": "dist",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "includeNodeModules": false
+    }
+  });
 
   fs.writeFileSync(`packages/${pkg}/package.json`, JSON.stringify(packageJSON, false, 2) + '\n');
 
