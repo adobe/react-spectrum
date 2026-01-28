@@ -3,11 +3,14 @@
 import {ActionButton, SearchField} from '@react-spectrum/s2';
 import {Autocomplete, Dialog, Key, OverlayTriggerStateContext, Provider} from 'react-aria-components';
 import Close from '@react-spectrum/s2/icons/Close';
+import {ColorSearchSkeleton} from './colorSearchData';
 import {ComponentCardView} from './ComponentCardView';
 import {
   getResourceTags,
+  LazyColorSearchView,
   LazyIconSearchView,
   SearchEmptyState,
+  useFilteredColors,
   useSearchMenuState
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
@@ -87,6 +90,8 @@ export function SearchMenu(props: SearchMenuProps) {
     initialTag: props.initialTag,
     isOpen: isSearchOpen
   });
+
+  const filteredColors = useFilteredColors(searchValue);
 
   // Auto-focus search field when menu opens
   useEffect(() => {
@@ -188,7 +193,15 @@ export function SearchMenu(props: SearchMenuProps) {
                           listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
                       </Suspense>
                     </div>
-                  ) : (
+                  ) : null}
+                  {selectedTagId === 'colors' && (
+                    <div className={style({flexGrow: 1, overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
+                      <Suspense fallback={<ColorSearchSkeleton />}>
+                        <LazyColorSearchView filteredItems={filteredColors.sections} exactMatches={filteredColors.exactMatches} closestMatches={filteredColors.closestMatches} />
+                      </Suspense>
+                    </div>
+                  )}
+                  {selectedTagId !== 'icons' && selectedTagId !== 'colors' && (
                     <ComponentCardView
                       key={selectedLibrary + selectedTagId}
                       currentUrl={currentUrl}

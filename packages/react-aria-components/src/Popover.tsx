@@ -15,12 +15,13 @@ import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, 
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
   useRenderProps
 } from './utils';
-import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, nodeContains, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
@@ -198,7 +199,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   // Focus the popover itself on mount, unless a child element is already focused.
   // Skip this for submenus since hovering a submenutrigger should keep focus on the trigger
   useEffect(() => {
-    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !ref.current.contains(document.activeElement)) {
+    if (isDialog && props.trigger !== 'SubmenuTrigger' && ref.current && !nodeContains(ref.current, document.activeElement)) {
       focusSafely(ref.current);
     }
   }, [isDialog, ref, props.trigger]);
@@ -220,7 +221,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   };
 
   let overlay = (
-    <div
+    <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
       role={isDialog ? 'dialog' : undefined}
@@ -240,7 +241,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
         {children}
       </OverlayArrowContext.Provider>
       <DismissButton onDismiss={state.close} />
-    </div>
+    </dom.div>
   );
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.

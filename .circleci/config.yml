@@ -77,11 +77,25 @@ commands:
               --cache-control "public,max-age=31536000,immutable" \
               --exclude "*.html" --exclude "*.rsc" --exclude "*.txt" --exclude "*.json" --exclude "*.md" --exclude "*.xml"
       - run:
-          name: Copy HTML and text files to S3
+          name: Copy HTML and data files to S3
           command: |
             aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
               --cache-control "public,max-age=300,stale-while-revalidate=300" \
-              --exclude "*" --include "*.html" --include "*.txt" --include "*.json" --include "*.md" --include "*.xml"
+              --exclude "*" --include "*.html" --include "*.json" --include "*.xml"
+      - run:
+          name: Copy Markdown files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/markdown;charset=utf-8" \
+              --exclude "*" --include "*.md"
+      - run:
+          name: Copy text files to S3
+          command: |
+            aws s3 cp /tmp/dist/s2-docs/<< parameters.dir >> << parameters.bucket >> --recursive \
+              --cache-control "public,max-age=300,stale-while-revalidate=300" \
+              --content-type "text/plain;charset=utf-8" \
+              --exclude "*" --include "*.txt"
       - run:
           name: Copy RSC files to S3
           command: |
@@ -883,7 +897,6 @@ workflows:
       - install-16
       - install-17
       - install-18
-      - install-canary
       - test-ssr:
           requires:
             - install
@@ -908,12 +921,6 @@ workflows:
       - test-ssr-18:
           requires:
             - install-18
-      - test-canary:
-          requires:
-            - install-canary
-      - test-ssr-canary:
-          requires:
-            - install-canary
       - test-esm:
           requires:
             - install

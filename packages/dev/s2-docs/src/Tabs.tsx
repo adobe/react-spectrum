@@ -22,22 +22,22 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'> {
+export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'render' | 'children'> {
   /** The content to display in the tabs. */
   children: ReactNode
 }
 
-export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'> {
+export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className' | 'render'> {
   /** The content to display in the tab. */
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'> {
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'render' | 'aria-label' | 'aria-labelledby'> {
   /** The content to display in the tablist. */
   children: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'> {
+export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className' | 'render'> {
   /** The content to display in the tab panels. */
   children: ReactNode
 }

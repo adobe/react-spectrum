@@ -16,7 +16,7 @@ import {createContext, ForwardedRef, forwardRef} from 'react';
 import {DOMProps, GlobalDOMAttributes} from '@react-types/shared';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, DOMProps {
+export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RACToggleButtonGroupProps, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, DOMProps {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }

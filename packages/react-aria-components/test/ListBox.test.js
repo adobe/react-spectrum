@@ -28,6 +28,7 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import {ListBoxLoadMoreItem} from '../src/ListBox';
 import React, {useEffect, useState} from 'react';
 import {User} from '@react-aria/test-utils';
@@ -137,6 +138,34 @@ describe('ListBox', () => {
 
     for (let option of getAllByRole('option')) {
       expect(option).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderListbox(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-custom', 'true');
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderListbox(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+    );
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-custom', 'true');
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('href');
+      expect(option).toHaveAttribute('data-custom', 'true');
     }
   });
 
@@ -1162,6 +1191,64 @@ describe('ListBox', () => {
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onRootDrop).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support dropping into an empty ListBox with a ListBoxLoadMoreItem', () => {
+      let onRootDrop = jest.fn();
+      let onLoadMore = jest.fn();
+      
+      let EmptyListBoxWithLoader = (props) => {
+        let {dragAndDropHooks} = useDragAndDrop({
+          getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+          ...props
+        });
+
+        return (
+          <ListBox aria-label="Empty ListBox" dragAndDropHooks={dragAndDropHooks} {...props}>
+            <Collection items={[]}>
+              {(item) => <ListBoxItem id={item.id}>{item.name}</ListBoxItem>}
+            </Collection> 
+            <ListBoxLoadMoreItem isLoading onLoadMore={onLoadMore} />
+          </ListBox>
+        );
+      };
+
+      let {getAllByRole} = render(<>
+        <DraggableListBox />
+        <EmptyListBoxWithLoader onRootDrop={onRootDrop} />
+      </>);
+
+      // Mock getBoundingClientRect for getDropTargetFromPoint
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+        if (this.getAttribute('role') === 'listbox') {
+          return {top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100};
+        }
+        // Item in first listbox
+        if (this.getAttribute('data-key') === 'cat') {
+          return {top: 0, left: 0, bottom: 30, right: 100, width: 100, height: 30};
+        }
+        return {top: 0, left: 0, bottom: 0, right: 0, width: 0, height: 0};
+      });
+
+      let listboxes = getAllByRole('listbox');
+      let options = getAllByRole('option');
+      
+      // Start dragging from first listbox
+      let dataTransfer = new DataTransfer();
+      fireEvent(options[0], new DragEvent('dragstart', {dataTransfer, clientX: 5, clientY: 5}));
+      act(() => jest.runAllTimers());
+
+      // Drag over the empty listbox (which only has a loader)
+      fireEvent(listboxes[1], new DragEvent('dragenter', {dataTransfer, clientX: 50, clientY: 50}));
+      fireEvent(listboxes[1], new DragEvent('dragover', {dataTransfer, clientX: 50, clientY: 50}));
+      
+      expect(listboxes[1]).toHaveAttribute('data-drop-target', 'true');
+
+      // Drop on the empty listbox
+      fireEvent(listboxes[1], new DragEvent('drop', {dataTransfer, clientX: 50, clientY: 50}));
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);

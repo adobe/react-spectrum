@@ -87,6 +87,22 @@ describe('TagGroup', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByTestId, getByRole, getAllByRole} = renderTagGroup(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let group = getByTestId('group');
+    let grid = getByRole('grid');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support refs', () => {
     let tagGroupRef = React.createRef();
     let tagListRef = React.createRef();
@@ -161,7 +177,10 @@ describe('TagGroup', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
+    let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : '', onFocus, onFocusChange, onBlur});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-focus-visible');
@@ -171,11 +190,20 @@ describe('TagGroup', () => {
     expect(document.activeElement).toBe(row);
     expect(row).toHaveAttribute('data-focus-visible', 'true');
     expect(row).toHaveClass('focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
 
     fireEvent.keyDown(row, {key: 'ArrowDown'});
     fireEvent.keyUp(row, {key: 'ArrowDown'});
     expect(row).not.toHaveAttribute('data-focus-visible');
     expect(row).not.toHaveClass('focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2); // once for each tag
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state', async () => {

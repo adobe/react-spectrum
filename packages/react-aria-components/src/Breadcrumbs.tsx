@@ -14,6 +14,8 @@ import {AriaLabelingProps, forwardRefType, GlobalDOMAttributes, Key} from '@reac
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
+  DOMRenderProps,
   RenderProps,
   SlotProps,
   StyleProps,
@@ -28,7 +30,7 @@ import {LinkContext} from './Link';
 import {Node} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 
-export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, AriaLabelingProps, GlobalDOMAttributes<HTMLOListElement> {
+export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps, AriaLabelingProps, DOMRenderProps<'ol', undefined>, GlobalDOMAttributes<HTMLOListElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Breadcrumbs'
@@ -54,7 +56,8 @@ export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => (
-        <ol
+        <dom.ol
+          render={props.render}
           ref={ref}
           {...mergeProps(DOMProps, navProps)}
           slot={props.slot || undefined}
@@ -63,7 +66,7 @@ export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function
           <BreadcrumbsContext.Provider value={props}>
             <CollectionRoot collection={collection} />
           </BreadcrumbsContext.Provider>
-        </ol>
+        </dom.ol>
       )}
     </CollectionBuilder>
   );
@@ -82,7 +85,7 @@ export interface BreadcrumbRenderProps {
   isDisabled: boolean
 }
 
-export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>, AriaLabelingProps, GlobalDOMAttributes<HTMLLIElement>  {
+export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps, 'li'>, AriaLabelingProps, GlobalDOMAttributes<HTMLLIElement>  {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Breadcrumb'
@@ -120,7 +123,7 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent(BreadcrumbNode, func
   delete DOMProps.id;
 
   return (
-    <li
+    <dom.li
       {...DOMProps}
       {...renderProps}
       ref={ref}
@@ -129,6 +132,6 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent(BreadcrumbNode, func
       <LinkContext.Provider value={linkProps}>
         {renderProps.children}
       </LinkContext.Provider>
-    </li>
+    </dom.li>
   );
 });

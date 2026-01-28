@@ -120,6 +120,12 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestDateRangePicker render={props => <div {...props} data-custom="true" />} />);
+    let group = getByRole('group').closest('.react-aria-DateRangePicker');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');
@@ -127,6 +133,15 @@ describe('DateRangePicker', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+    
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestDateRangePicker isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   it('should support data-open state', async () => {

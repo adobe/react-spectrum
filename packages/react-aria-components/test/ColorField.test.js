@@ -75,6 +75,12 @@ describe('ColorField', () => {
     expect(label).toHaveTextContent('Color (disabled)');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestColorField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('textbox').closest('.react-aria-ColorField');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support form value', () => {
     let {rerender} = render(<TestColorField name="test" value="#f00" />);
     let input = document.querySelector('input[name=test]');

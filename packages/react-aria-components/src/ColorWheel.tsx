@@ -2,6 +2,7 @@ import {AriaColorWheelOptions, useColorWheel} from 'react-aria';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -63,7 +64,7 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       {...DOMProps}
       {...renderProps}
       ref={ref}
@@ -77,7 +78,7 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 });
 
@@ -112,7 +113,7 @@ export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorW
   });
 
   return (
-    <div
+    <dom.div
       {...rest}
       {...renderProps}
       ref={ref}

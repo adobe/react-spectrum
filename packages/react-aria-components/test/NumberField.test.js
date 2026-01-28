@@ -72,6 +72,12 @@ describe('NumberField', () => {
     expect(textbox).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = render(<TestNumberField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('textbox').closest('.react-aria-NumberField');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support hover state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
     let group = getByRole('group');
@@ -190,6 +196,23 @@ describe('NumberField', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(numberfield).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should trigger onChange via programmatic click() on stepper buttons', () => {
+    const onChange = jest.fn();
+    const {container} = render(
+      <TestNumberField defaultValue={1024} onChange={onChange} />
+    );
+    act(() => {
+      container.querySelector('[slot=increment]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(1025);
+    act(() => {
+      container.querySelector('[slot=decrement]').click();
+    });
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenCalledWith(1024);
   });
 
   it('supports onChange', async () => {

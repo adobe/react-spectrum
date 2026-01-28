@@ -11,7 +11,7 @@
  */
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, dom, DOMRenderProps, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
@@ -22,6 +22,8 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallb
 import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -29,7 +31,7 @@ export interface DialogRenderProps {
   close: () => void
 }
 
-export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps, GlobalDOMAttributes<HTMLElement> {
+export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps, DOMRenderProps<'section', undefined>, GlobalDOMAttributes<HTMLElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Dialog'
@@ -86,7 +88,7 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>
@@ -130,8 +132,9 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <section
+    <dom.section
       {...mergeProps(DOMProps, renderProps, dialogProps)}
+      render={props.render}
       ref={ref}
       slot={props.slot || undefined}>
       <Provider
@@ -153,6 +156,6 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
         ]}>
         {renderProps.children}
       </Provider>
-    </section>
+    </dom.section>
   );
 });

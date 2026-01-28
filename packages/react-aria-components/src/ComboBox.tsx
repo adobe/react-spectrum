@@ -14,6 +14,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -77,7 +78,9 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
    */
   formValue?: 'text' | 'key',
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean
+  allowsEmptyCollection?: boolean,
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
@@ -207,7 +210,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
@@ -231,7 +234,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
