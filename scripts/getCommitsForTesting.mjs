@@ -8,7 +8,7 @@ import {unified} from 'unified';
 /**
  * Instructions:
  * 
- * 1. Run the following script: node scripts/getCommitsForTesting.mjs 2025-10-07 2025-10-18
+ * 1. Run the following script: node scripts/getCommitsForTesting.mjs 2026-10-07 2026-10-18
  * 2. Go to output.csv, copy it to Google sheets, highlight the rows, go to "Data" in the toolbar -> split text to columns -> separator: comma
  */
 
@@ -87,7 +87,7 @@ async function writeTestingCSV() {
       row.push(removePRNumber(title));
 
       // Categorize commit into V3, RAC, S2, or other (utilizes labels on PR's to categorize)
-      if (labels.size === 0) {
+      if (!labels.has('S2') && !labels.has('RAC') && !labels.has('v3')) {
         otherPRs.push(row);
       } else {
         if (labels.has('S2')) {
