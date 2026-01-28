@@ -677,7 +677,7 @@ export default function transformStyleProps(path: NodePath<t.JSXElement>, elemen
     if (isDOMElement) {
       let index = path.node.openingElement.attributes?.findIndex(a => a.type === 'JSXAttribute' && a.name.name === 'className');
       if (index != null && index >= 0) {
-        classNameAttribute = path.get('openingElement').get('attributes').at(index);
+        classNameAttribute = path.get('openingElement').get('attributes')[index];
       }
     }
 
