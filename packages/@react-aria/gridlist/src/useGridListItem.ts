@@ -143,10 +143,22 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         state.toggleKey(node.key);
         e.stopPropagation();
         return;
-      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys.has(node.key)) {
-        state.toggleKey(node.key);
-        e.stopPropagation();
-        return;
+      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key) {
+        // If item is collapsible, collapse it; else move to parent
+        if (hasChildRows && state.expandedKeys.has(node.key)) {
+          state.toggleKey(node.key);
+          e.stopPropagation();
+          return;
+        } else if (
+          state.shouldNavigateToCollapsibleParent &&
+          !state.expandedKeys.has(node.key) &&
+          node.parentKey
+        ) {
+          // Item is a leaf or already collapsed, move focus to parent
+          state.selectionManager.setFocusedKey(node.parentKey);
+          e.stopPropagation();
+          return;
+        }
       }
     }
 

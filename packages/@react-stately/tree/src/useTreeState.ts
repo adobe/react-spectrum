@@ -10,16 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, DisabledBehavior, Expandable, Key, MultipleSelection, Node} from '@react-types/shared';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {
+  Collection,
+  CollectionStateBase,
+  DisabledBehavior,
+  Expandable,
+  Key,
+  MultipleSelection,
+  Node
+} from '@react-types/shared';
+import {
+  SelectionManager,
+  useMultipleSelectionState
+} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
 import {useCallback, useEffect, useMemo} from 'react';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
-export interface TreeProps<T> extends CollectionStateBase<T>, Expandable, MultipleSelection {
+export interface TreeProps<T>
+  extends CollectionStateBase<T>,
+    Expandable,
+    MultipleSelection {
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior,
+
+  /** Whether collapsing a non-collapsing item should navigate to its collapsible parent. */
+  shouldNavigateToCollapsibleParent?: boolean
 }
 export interface TreeState<T> {
   /** A collection of items in the tree. */
@@ -38,7 +55,13 @@ export interface TreeState<T> {
   setExpandedKeys(keys: Set<Key>): void,
 
   /** A selection manager to read and update multiple selection state. */
-  readonly selectionManager: SelectionManager
+  readonly selectionManager: SelectionManager,
+
+  /**
+   * Whether collapsing a non-collapsing item should navigate to its collapsible parent.
+   * @default false
+   */
+  shouldNavigateToCollapsibleParent?: boolean
 }
 
 /**
@@ -47,7 +70,8 @@ export interface TreeState<T> {
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
   let {
-    onExpandedChange
+    onExpandedChange,
+    shouldNavigateToCollapsibleParent = false
   } = props;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
@@ -81,7 +105,8 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     disabledKeys,
     toggleKey: onToggle,
     setExpandedKeys,
-    selectionManager: new SelectionManager(tree, selectionState)
+    selectionManager: new SelectionManager(tree, selectionState),
+    shouldNavigateToCollapsibleParent
   };
 }
 
