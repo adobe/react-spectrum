@@ -30,6 +30,7 @@ import {
   Provider,
   SectionProps,
   SelectValue,
+  SelectValueProps,
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
@@ -123,7 +124,12 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     /** The current loading state of the Picker. */
-    loadingState?: LoadingState
+    loadingState?: LoadingState,
+    /**
+     * Custom renderer for the selected value shown in the button.
+     * Matches the `SelectValue` children render type.
+     */
+    renderValue?: SelectValueProps<T>['children']
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
@@ -483,7 +489,7 @@ const avatarSize = {
   XL: 26
 } as const;
 
-interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState'> {
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'loadingState' | 'renderValue'> {
   loadingCircle: ReactNode,
   buttonRef: RefObject<HTMLButtonElement | null>
 }
