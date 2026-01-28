@@ -9,10 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ActionButton, ActionMenu, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+
+import {AccountMenu, AutocompletePopover, CustomTrigger, HelpCenter, MenuTrigger} from '../stories/Popover.stories';
 import type {Meta, StoryObj} from '@storybook/react';
-import {userEvent, waitFor, within} from '@storybook/test';
-import {HelpCenter, AccountMenu, AutocompletePopover, CustomTrigger, MenuTrigger} from '../stories/Popover.stories';
+import {Popover} from '../src';
+import {userEvent} from '@storybook/test';
 
 const meta: Meta<typeof Popover> = {
   component: Popover,
