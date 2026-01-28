@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
