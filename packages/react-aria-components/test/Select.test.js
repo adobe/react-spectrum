@@ -93,6 +93,12 @@ describe('Select', () => {
     expect(trigger).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByTestId} =  render(<TestSelect render={props => <div {...props} data-custom="true" />} />);
+    let field = getByTestId('select');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('supports items with render props', () => {
     let MyItem = (props) => (
       <ListBoxItem {...props}>
@@ -391,6 +397,15 @@ describe('Select', () => {
 
     await selectTester.selectOption({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
+  });
+
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestSelect isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   describe('typeahead', () => {

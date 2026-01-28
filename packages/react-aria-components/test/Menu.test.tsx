@@ -122,6 +122,34 @@ describe('Menu', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('href');
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <MenuContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -334,13 +362,16 @@ describe('Menu', () => {
   });
 
   it('should support section-level selection', async () => {
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
     function Example() {
       let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
       let [protein, setProtein] = useState<Selection>(new Set(['ham']));
       return (
         <Menu aria-label="Sandwich contents" selectionMode="multiple">
           <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
-            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur} id="lettuce">Lettuce</MenuItem>
             <MenuItem id="tomato">Tomato</MenuItem>
             <MenuItem id="onion">Onion</MenuItem>
           </MenuSection>
@@ -378,12 +409,28 @@ describe('Menu', () => {
     expect(radios[1]).toHaveAttribute('aria-checked', 'true');
     expect(radios[2]).toHaveAttribute('aria-checked', 'false');
 
-    act(() => checkboxes[0].focus());
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    await user.keyboard('{ArrowUp}');
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
     let sequence = checkboxes.slice(1).concat(radios);
     for (let item of sequence) {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
+    expect(onFocus).toHaveBeenCalledTimes(0);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
@@ -487,6 +534,25 @@ describe('Menu', () => {
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');
+  });
+
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(
+      <MenuTrigger isTriggerUpWhenOpen>
+        <Button aria-label="Menu">☰</Button>
+        <Popover>
+          <Menu>
+            <MenuItem id="open">Open</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   it('should support onScroll', () => {

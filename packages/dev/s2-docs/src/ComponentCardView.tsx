@@ -25,7 +25,7 @@ interface ComponentCardGridProps {
 
 export function ComponentCardView({items, ariaLabel = 'Items', size = 'S', currentUrl, onAction, renderEmptyState}: ComponentCardGridProps) {
   return (
-    <InternalCardViewContext.Provider value={{ElementType: ListBoxItem, layout: 'grid'}}>
+    <InternalCardViewContext.Provider value={{ElementType: ListBoxItem as any, layout: 'grid'}}>
       <ImageCoordinator>
         <ListBox
           aria-label={ariaLabel}

@@ -99,6 +99,25 @@ describe('DateField', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole, getAllByRole} =  render(
+      <DateField render={props => <div {...props} data-custom="true" />}>
+        <Label render={props => <span {...props} data-custom="true" />}>Birth date</Label>
+        <DateInput className="date-input" render={props => <div {...props} data-custom="true" />}>
+          {segment => <DateSegment segment={segment} render={props => <span {...props} data-custom="true" />} />}
+        </DateInput>
+      </DateField>
+    );
+    let input = getByRole('group');
+    expect(input).toHaveAttribute('data-custom', 'true');
+    expect(input.closest('.react-aria-DateField')).toHaveAttribute('data-custom', 'true');
+    expect(input.previousElementSibling).toHaveAttribute('data-custom', 'true');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support hover state', async () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();

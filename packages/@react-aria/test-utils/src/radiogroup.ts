@@ -12,6 +12,7 @@
 
 import {act, within} from '@testing-library/react';
 import {Direction, Orientation, RadioGroupTesterOpts, UserOpts} from './types';
+import {nodeContains} from '@react-aria/utils';
 import {pressElement} from './events';
 
 interface TriggerRadioOptions {
@@ -94,7 +95,7 @@ export class RadioGroupTester {
       throw new Error('Radio provided is not in the radio group.');
     }
 
-    if (!this.radiogroup.contains(document.activeElement)) {
+    if (!nodeContains(this.radiogroup, document.activeElement)) {
       let selectedRadio = this.selectedRadio;
       if (selectedRadio != null) {
         act(() => selectedRadio.focus());

@@ -27,10 +27,14 @@ import {
   Popover,
   TextField
 } from '../';
+import {composeStories} from '@storybook/react';
 import React, {useRef} from 'react';
+import * as stories from '../stories/Modal.stories';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
+
+let {DateRangePickerInsideModalStory: DateRangePickerInsideModal} = composeStories(stories);
 
 describe('Dialog', () => {
   let user;
@@ -50,6 +54,23 @@ describe('Dialog', () => {
     let dialog = getByRole('dialog');
     expect(dialog).toHaveClass('react-aria-Dialog');
     expect(dialog).toHaveAttribute('data-rac');
+  });
+
+  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(
+      <DialogTrigger isTriggerUpWhenOpen>
+        <Button>Delete…</Button>
+        <Dialog>
+          <Heading slot="title">Title</Heading>
+        </Dialog>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   it('works with modal', async () => {
@@ -443,5 +464,27 @@ describe('Dialog', () => {
 
     const input = getByTestId('email');
     expect(document.activeElement).toBe(input);
+  });
+
+  it('should not close Modal when DateRangePicker is dismissed by outside click', async () => {
+    let {getAllByRole, getByRole} = render(<DateRangePickerInsideModal />);
+    await user.click(getByRole('button'));
+
+    let modal = getByRole('dialog').closest('.react-aria-ModalOverlay');
+    expect(modal).toBeInTheDocument();
+
+    let button = getByRole('group').querySelector('.react-aria-Button');
+    expect(button).toHaveAttribute('aria-label', 'Calendar');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'DateRangePicker');
+
+    let cells = getAllByRole('gridcell');
+    await user.click(cells[5].children[0]);
+    await user.click(document.body);
+    expect(popover).not.toBeInTheDocument();
+    expect(modal).toBeInTheDocument();
   });
 });

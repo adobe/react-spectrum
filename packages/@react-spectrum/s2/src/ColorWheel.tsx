@@ -24,7 +24,7 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'outerRadius' | 'innerRadius' | keyof GlobalDOMAttributes>, StyleProps {
+export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 'className' | 'style' | 'render' | 'outerRadius' | 'innerRadius' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * @default 192
    */

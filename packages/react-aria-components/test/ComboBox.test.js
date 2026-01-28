@@ -100,6 +100,12 @@ describe('ComboBox', () => {
     expect(combobox).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} =  render(<TestComboBox render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('combobox').closest('.react-aria-ComboBox');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');
@@ -107,6 +113,15 @@ describe('ComboBox', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestComboBox isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   it('should support filtering sections', async () => {
