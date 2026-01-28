@@ -200,6 +200,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
+  useEffect(() => {
+    if (isDisabled && manager.focusedKey === key) {
+      manager.setFocusedKey(null);
+    }
+  }, [manager, isDisabled, key]);
+
   // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
