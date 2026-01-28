@@ -110,6 +110,7 @@ export const box = style<RenderProps>({
 });
 
 export const iconStyles = style({
+  pointerEvents: 'none',
   '--iconPrimary': {
     type: 'fill',
     value: {
