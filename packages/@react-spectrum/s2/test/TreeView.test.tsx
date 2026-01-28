@@ -552,8 +552,6 @@ describe('TreeView', () => {
 
     let {getAllByRole, getByRole} = render(<Example />);
     await user.click(document.body);
-    await act(async () => Promise.resolve());
-    act(() => {jest.runAllTimers();});
 
     let rows = getAllByRole('row');
     let afterButton = getByRole('button', {name: 'After'});

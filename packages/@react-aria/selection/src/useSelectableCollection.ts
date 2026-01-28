@@ -350,7 +350,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     manager.setFocused(true);
-
     if (manager.focusedKey == null) {
       let navigateToKey = (key: Key | undefined | null) => {
         if (key != null) {
