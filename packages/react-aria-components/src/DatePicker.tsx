@@ -15,6 +15,7 @@ import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -198,7 +199,7 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
@@ -313,7 +314,7 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}

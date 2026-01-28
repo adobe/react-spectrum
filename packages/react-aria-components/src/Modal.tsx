@@ -14,6 +14,7 @@ import {AriaModalOverlayProps, DismissButton, Overlay, useIsSSR, useModalOverlay
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -200,7 +201,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
 
   return (
     <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
-      <div
+      <dom.div
         {...mergeProps(filterDOMProps(props, {global: true}), underlayProps)}
         {...renderProps}
         style={style}
@@ -214,7 +215,7 @@ function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInn
           ]}>
           {renderProps.children}
         </Provider>
-      </div>
+      </dom.div>
     </Overlay>
   );
 }
@@ -246,7 +247,7 @@ function ModalContent(props: ModalContentProps) {
   });
 
   return (
-    <div
+    <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), modalProps)}
       {...renderProps}
       ref={ref}
@@ -256,6 +257,6 @@ function ModalContent(props: ModalContentProps) {
         <DismissButton onDismiss={state.close} />
       }
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 }
