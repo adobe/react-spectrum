@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerWindow, isFocusable, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, getOwnerWindow, isFocusable, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, SyntheticEvent, useCallback, useRef} from 'react';
 
 // Turn a native event into a React synthetic event.
@@ -54,15 +54,16 @@ export function useSyntheticBlurEvent<Target extends Element = Element>(onBlur: 
     // Most browsers fire a native focusout event in this case, except for Firefox. In that case, we use a
     // MutationObserver to watch for the disabled attribute, and dispatch these events ourselves.
     // For browsers that do, focusout fires before the MutationObserver, so onBlur should not fire twice.
+    let eventTarget = getEventTarget(e);
     if (
-      e.target instanceof HTMLButtonElement ||
-      e.target instanceof HTMLInputElement ||
-      e.target instanceof HTMLTextAreaElement ||
-      e.target instanceof HTMLSelectElement
+      eventTarget instanceof HTMLButtonElement ||
+      eventTarget instanceof HTMLInputElement ||
+      eventTarget instanceof HTMLTextAreaElement ||
+      eventTarget instanceof HTMLSelectElement
     ) {
       stateRef.current.isFocused = true;
 
-      let target = e.target;
+      let target = eventTarget;
       let onBlurHandler: EventListenerOrEventListenerObject | null = (e) => {
         stateRef.current.isFocused = false;
 
@@ -117,13 +118,13 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
   ignoreFocusEvent = true;
   let isRefocusing = false;
   let onBlur = (e: FocusEvent) => {
-    if (e.target === activeElement || isRefocusing) {
+    if (getEventTarget(e) === activeElement || isRefocusing) {
       e.stopImmediatePropagation();
     }
   };
 
   let onFocusOut = (e: FocusEvent) => {
-    if (e.target === activeElement || isRefocusing) {
+    if (getEventTarget(e) === activeElement || isRefocusing) {
       e.stopImmediatePropagation();
 
       // If there was no focusable ancestor, we don't expect a focus event.
@@ -137,13 +138,13 @@ export function preventFocus(target: FocusableElement | null): (() => void) | un
   };
 
   let onFocus = (e: FocusEvent) => {
-    if (e.target === target || isRefocusing) {
+    if (getEventTarget(e) === target || isRefocusing) {
       e.stopImmediatePropagation();
     }
   };
 
   let onFocusIn = (e: FocusEvent) => {
-    if (e.target === target || isRefocusing) {
+    if (getEventTarget(e) === target || isRefocusing) {
       e.stopImmediatePropagation();
 
       if (!isRefocusing) {
