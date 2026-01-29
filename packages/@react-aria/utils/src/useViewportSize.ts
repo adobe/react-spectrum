@@ -87,10 +87,20 @@ export function useViewportSize(): ViewportSize {
   return size;
 }
 
+/**
+ * Get the viewport size without the scrollbar.
+ */
 function getViewportSize(): ViewportSize {
   return {
     // Multiply by the visualViewport scale to get the "natural" size, unaffected by pinch zooming.
-    width: visualViewport ? visualViewport.width * visualViewport.scale : window.innerWidth,
-    height: visualViewport ? visualViewport.height * visualViewport.scale : window.innerHeight
+    width: visualViewport
+      // The visual viewport width may include the scrollbar gutter. We should use the minimum width between
+      // the visual viewport and the document element to ensure that the scrollbar width is always excluded.
+      // See: https://github.com/w3c/csswg-drafts/issues/8099
+      ? Math.min(visualViewport.width * visualViewport.scale, document.documentElement.clientWidth)
+      : document.documentElement.clientWidth,
+    height: visualViewport
+      ? visualViewport.height * visualViewport.scale
+      : document.documentElement.clientHeight
   };
 }
