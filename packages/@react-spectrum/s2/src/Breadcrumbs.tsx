@@ -63,7 +63,7 @@ interface BreadcrumbsStyleProps {
   // TODO: showRoot?: boolean,
 }
 
-export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
+export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
   children: ReactNode | ((item: T) => ReactNode)
 }
@@ -296,7 +296,7 @@ const heading = style({
   fontWeight: 'extra-bold'
 });
 
-export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus' | 'onClick' | keyof GlobalDOMAttributes>, LinkDOMProps {
+export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'render' | 'autoFocus' | 'onClick' | keyof GlobalDOMAttributes>, LinkDOMProps {
   /** The children of the breadcrumb item. */
   children: ReactNode
 }

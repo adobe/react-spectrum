@@ -15,6 +15,7 @@ import {clamp} from '@react-stately/utils';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -83,10 +84,10 @@ export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div {...mergeProps(DOMProps, renderProps, meterProps)} ref={ref} slot={props.slot || undefined}>
+    <dom.div {...mergeProps(DOMProps, renderProps, meterProps)} ref={ref} slot={props.slot || undefined}>
       <LabelContext.Provider value={{...labelProps, ref: labelRef, elementType: 'span'}}>
         {renderProps.children}
       </LabelContext.Provider>
-    </div>
+    </dom.div>
   );
 });

@@ -74,7 +74,7 @@ export interface MenuTriggerProps extends Omit<AriaMenuTriggerProps, 'isTriggerU
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'render' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -421,7 +421,7 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes> {}
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
 
 export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
@@ -438,7 +438,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>): React
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */
@@ -581,11 +581,13 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
         shouldFlip: props.shouldFlip
       }}>
       <PopoverContext.Provider value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
-        <AriaMenuTrigger {...props}>
-          <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-            {props.children}
-          </PressResponder>
-        </AriaMenuTrigger>
+        <InPopoverContext.Provider value={false}>
+          <AriaMenuTrigger {...props}>
+            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+              {props.children}
+            </PressResponder>
+          </AriaMenuTrigger>
+        </InPopoverContext.Provider>
       </PopoverContext.Provider>
     </InternalMenuTriggerContext.Provider>
   );

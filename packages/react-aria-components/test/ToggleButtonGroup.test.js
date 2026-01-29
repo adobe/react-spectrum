@@ -49,6 +49,12 @@ describe('ToggleButtonGroup', () => {
     expect(group).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderGroup({render: props => <div {...props} data-custom="true" />});
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support disabled state', () => {
     let {getByRole, getAllByRole} = renderGroup({isDisabled: true, className: ({isDisabled}) => isDisabled ? 'disabled' : 'enabled'});
     let group = getByRole('radiogroup');
