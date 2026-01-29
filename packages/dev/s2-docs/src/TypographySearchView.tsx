@@ -2,8 +2,8 @@
 
 import {ActionButton, Content, DialogTrigger, Heading, IllustratedMessage, Link, Popover, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
+import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, TextField} from 'react-aria-components';
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {Header, Key, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
@@ -171,8 +171,12 @@ const fontStyles = {
 
 type FontStyleKey = keyof typeof fontStyles;
 
-const previewTextStyle = style({
-  marginY: 'auto'
+const defaultPreviewInputStyle = style({
+  ...focusRing(),
+  backgroundColor: 'transparent',
+  borderStyle: 'hidden',
+  borderRadius: 'lg',
+  textAlign: 'center'
 });
 
 interface TypographySearchViewProps {
@@ -182,14 +186,12 @@ interface TypographySearchViewProps {
 export function TypographySearchView({searchValue = ''}: TypographySearchViewProps) {
   const [selectedFont, setSelectedFont] = useState<string>('heading');
   const [selectedElement, setSelectedElement] = useState<Key>('h1');
-
-  const previewText = 'Sample Text';
+  const [previewText, setPreviewText] = useState<string>('Sample Text');
 
   const selectedElementTag = String(selectedElement || 'span');
   const codeSnippet = `<${selectedElementTag} className={style({font: '${selectedFont}'})}>${previewText}</${selectedElementTag}>`;
-  const previewTextClassName = selectedFont in fontStyles
-    ? `${fontStyles[selectedFont as FontStyleKey]} ${previewTextStyle}`
-    : previewTextStyle;
+  const fontStyleClass = selectedFont in fontStyles ? fontStyles[selectedFont as FontStyleKey] : undefined;
+  const previewInputStyle = (renderProps: InputRenderProps) => `${defaultPreviewInputStyle(renderProps)} ${fontStyleClass || ''}`;
 
   const sections = useMemo(() => {
     const searchLower = searchValue.toLowerCase();
@@ -329,7 +331,11 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
             justifyContent: 'center',
             minHeight: 80
           })}>
-          {React.createElement(selectedElementTag, {className: previewTextClassName}, previewText)}
+          <FieldInputContext.Provider value={null}>
+            <TextField value={previewText} onChange={setPreviewText} className={style({marginY: 'auto'})}>
+              <Input className={previewInputStyle} />
+            </TextField>
+          </FieldInputContext.Provider>
         </div>
         
         <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
