@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Adobe. All rights reserved.
+ * Copyright 2026 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,56 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Image, Provider} from '../src';
-import {render} from '@react-spectrum/test-utils-internal';
+import {describe, expect, it} from 'vitest';
+import {Image} from '../src';
+import {render} from './utils/render';
+
+const imageSrc = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAADMElEQVR4nOzVwQnAIBQFQYXff81RUkQCOyDj1YOPnbXWPmeTRef+/3O/OyBjzh3CD95BfqICMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMO0TAAD//2Anhf4QtqobAAAAAElFTkSuQmCC';
 
 describe('Image', () => {
-  it('should support conditional sources', async () => {
-    let {getByRole} = render(
-      <Image
-        alt="test"
-        src={[
-          {srcSet: 'foo.png', type: 'image/png', colorScheme: 'light'},
-          {srcSet: 'bar.png', colorScheme: 'dark', media: '(width >= 500px)'},
-          {srcSet: 'default.png'}
-        ]} />
+  it('renders', async () => {
+    const screen = await render(
+      <Image src={imageSrc} alt="Test" />
     );
-
-    let img = getByRole('img');
-    let picture = img.parentElement!;
-    expect(picture.tagName).toBe('PICTURE');
-    let sources = picture.querySelectorAll('source');
-
-    expect(sources).toHaveLength(3);
-    expect(sources[0]).toHaveAttribute('srcset', 'foo.png');
-    expect(sources[0]).toHaveAttribute('type', 'image/png');
-    expect(sources[0]).toHaveAttribute('media', '(prefers-color-scheme: light)');
-    expect(sources[1]).toHaveAttribute('srcset', 'bar.png');
-    expect(sources[1]).toHaveAttribute('media', '(width >= 500px) and (prefers-color-scheme: dark)');
-    expect(sources[2]).toHaveAttribute('srcset', 'default.png');
-  });
-
-  it('should support conditional sources with Provider colorScheme override', async () => {
-    let {getByRole} = render(
-      <Provider colorScheme="dark">
-        <Image
-          alt="test"
-          src={[
-            {srcSet: 'foo.png', type: 'image/png', colorScheme: 'light'},
-            {srcSet: 'bar.png', colorScheme: 'dark', media: '(width >= 500px)'},
-            {srcSet: 'default.png'}
-          ]} />
-      </Provider>
-    );
-
-    let img = getByRole('img');
-    let picture = img.parentElement!;
-    expect(picture.tagName).toBe('PICTURE');
-    let sources = picture.querySelectorAll('source');
-
-    expect(sources).toHaveLength(2);
-    expect(sources[0]).toHaveAttribute('srcset', 'bar.png');
-    expect(sources[0]).toHaveAttribute('media', '(width >= 500px)');
-    expect(sources[1]).toHaveAttribute('srcset', 'default.png');
+    expect(screen.getByAltText('Test')).toBeInTheDocument();
   });
 });

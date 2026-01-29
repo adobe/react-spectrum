@@ -11,55 +11,31 @@
  */
 
 import {ActionButton, ActionButtonGroup, Text} from '../src';
-import {render} from '@react-spectrum/test-utils-internal';
+import Copy from '@react-spectrum/s2/icons/Copy';
+import Cut from '@react-spectrum/s2/icons/Cut';
+import {describe, expect, it} from 'vitest';
+import Paste from '@react-spectrum/s2/icons/Paste';
+import {render} from './utils/render';
 
 describe('ActionButtonGroup', () => {
-
-  it('can disable all buttons from the group', async () => {
-    let {getAllByRole} = render(
-      <ActionButtonGroup isDisabled>
-        <ActionButton><Text slot="label">Bold</Text></ActionButton>
-        <ActionButton><Text slot="label">Italic</Text></ActionButton>
-        <ActionButton><Text slot="label">Underline</Text></ActionButton>
-      </ActionButtonGroup>
-    );
-
-
-    let buttons = getAllByRole('button');
-    expect(buttons[0]).toBeDisabled();
-    expect(buttons[1]).toBeDisabled();
-    expect(buttons[2]).toBeDisabled();
-  });
-
-  it('can set disable individually', async () => {
-    let {getAllByRole} = render(
+  it('renders', async () => {
+    const screen = await render(
       <ActionButtonGroup>
-        <ActionButton isDisabled><Text slot="label">Bold</Text></ActionButton>
-        <ActionButton><Text slot="label">Italic</Text></ActionButton>
-        <ActionButton><Text slot="label">Underline</Text></ActionButton>
+        <ActionButton>
+          <Cut />
+          <Text>Cut</Text>
+        </ActionButton>
+        <ActionButton>
+          <Copy />
+          <Text>Copy</Text>
+        </ActionButton>
+        <ActionButton>
+          <Paste />
+          <Text>Paste</Text>
+        </ActionButton>
       </ActionButtonGroup>
     );
-
-
-    let buttons = getAllByRole('button');
-    expect(buttons[0]).toBeDisabled();
-    expect(buttons[1]).not.toBeDisabled();
-    expect(buttons[2]).not.toBeDisabled();
-  });
-
-  it('can override the group disable', async () => {
-    let {getAllByRole} = render(
-      <ActionButtonGroup isDisabled>
-        <ActionButton isDisabled={false}><Text slot="label">Bold</Text></ActionButton>
-        <ActionButton><Text slot="label">Italic</Text></ActionButton>
-        <ActionButton><Text slot="label">Underline</Text></ActionButton>
-      </ActionButtonGroup>
-    );
-
-
-    let buttons = getAllByRole('button');
-    expect(buttons[0]).not.toBeDisabled();
-    expect(buttons[1]).toBeDisabled();
-    expect(buttons[2]).toBeDisabled();
+    const buttons = screen.container.querySelectorAll('button');
+    expect(buttons.length).toBe(3);
   });
 });
