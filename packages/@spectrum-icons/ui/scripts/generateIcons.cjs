@@ -37,7 +37,7 @@ function template(iconName) {
 
     return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
-import {UIIcon, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
+import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
 import {useProvider} from '@react-spectrum/provider';
 import React, {JSX} from 'react';
 
@@ -60,7 +60,7 @@ export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Elem
 
   return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
-import {UIIcon, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
+import {UIIcon, UIIconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/UIIcon';
 import React, {JSX} from 'react';
 
 export default function ${iconName}(props: UIIconPropsWithoutChildren): JSX.Element {

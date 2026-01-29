@@ -29,7 +29,7 @@ for (let file of fs.readdirSync(dir)) {
   }
 
   let jsx = compileSVG(path.join(dir, file));
-  let wrapper = `import {Icon, IconPropsWithoutChildren} from '@react-spectrum/icon';
+  let wrapper = `import {Icon, IconPropsWithoutChildren} from '@adobe/react-spectrum/private/icon/Icon';
 import React, {JSX} from 'react';
 
 ${jsx}
