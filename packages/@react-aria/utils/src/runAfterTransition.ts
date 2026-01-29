@@ -16,7 +16,7 @@
 // bugs, e.g. Chrome sometimes fires both transitionend and transitioncancel rather
 // than one or the other. So we need to track what's actually transitioning so that
 // we can ignore these duplicate events.
-import {getEventTarget} from '@react-aria/utils';
+import {getEventTarget} from './shadowdom/DOMFunctions';
 let transitionsByElement = new Map<EventTarget, Set<string>>();
 
 // A list of callbacks to call once there are no transitioning elements.
