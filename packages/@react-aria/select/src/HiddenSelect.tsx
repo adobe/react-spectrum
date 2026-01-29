@@ -145,6 +145,8 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
   let inputRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef: state.collection.size <= 300 ? selectRef : inputRef}, state, triggerRef);
 
+  let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
+
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
   // autofill will work. Otherwise, use an <input type="hidden">.
@@ -167,6 +169,10 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
                 );
               }
             })}
+            {/* The collection may be empty during the initial render. */}
+            {/* Rendering options for the current values ensures the select has a value immediately, */}
+            {/* making FormData reads consistent. */}
+            {state.collection.size === 0 && name && values.map((value, i) => <option key={i} value={value ?? ''} />)}
           </select>
         </label>
       </div>
@@ -176,11 +182,10 @@ export function HiddenSelect<T, M extends SelectionMode = 'single'>(props: Hidde
     let {validationBehavior} = data;
 
     // Always render at least one hidden input to ensure required form submission.
-    let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
     if (values.length === 0) {
       values = [null];
     }
-    
+
     let res = values.map((value, i) => {
       let inputProps: InputHTMLAttributes<HTMLInputElement> = {
         type: 'hidden',
