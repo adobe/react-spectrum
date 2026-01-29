@@ -27,6 +27,9 @@ import {
   PickerItem,
   Row,
   StatusLight,
+  Tabs,
+  TabList,
+  Tab,
   TableBody,
   TableHeader,
   TableView,
@@ -41,7 +44,7 @@ import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
-import {SortDescriptor} from 'react-aria-components';
+import {CollectionRendererContext, DefaultCollectionRenderer, SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useEffectEvent} from '@react-aria/utils';
@@ -1714,3 +1717,69 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
     );
   }
 };
+
+export const TableViewCollectionError: StoryObj<typeof DynamicTable> = {
+  render: function DynamicColumnsExample(args) {
+    const columns: Array<{
+      key: string;
+      label: string;
+      align?: 'start' | 'center' | 'end';
+    }> = [
+      { key: 'name', label: 'Name'},
+      { key: 'count', label: 'Count', align: 'end' },
+    ];
+
+    interface DemoItem {
+      id: string;
+      name: string;
+      count: number;
+    }
+
+    const tabs = [
+      { id: 'general', label: 'General' },
+      { id: 'advanced', label: 'Advanced' },
+      { id: 'about', label: 'About' },
+    ];
+    const renderEmptyState = () => (
+      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+        {/* <Button>Sanity Check</Button> */}
+        <Tabs aria-label="Settings sections">
+          <TabList>
+            {tabs.map((tab) => (
+              <Tab key={tab.id} id={tab.id}>
+                {tab.label}
+              </Tab>
+            ))}
+          </TabList>
+        </Tabs>
+      </CollectionRendererContext.Provider>
+    );
+
+    return (
+      <Content>
+        <TableView aria-label="Demo table" selectionMode="none" styles={style({ height: 320, minHeight: 240, minWidth: 320 })}>
+          <TableHeader>
+            {columns.map((column) => (
+              <Column
+                key={column.key}
+                align={column.align}
+              >
+                {column.label}
+              </Column>
+            ))}
+          </TableHeader>
+          <TableBody<DemoItem>
+            items={[]}
+            renderEmptyState={renderEmptyState}>
+          </TableBody>
+        </TableView>
+      </Content>
+    );
+  },
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+}
