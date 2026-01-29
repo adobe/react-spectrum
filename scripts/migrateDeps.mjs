@@ -306,6 +306,7 @@ function prepareMonopackage(monopackage) {
 
   if (monopackage === '@adobe/react-spectrum') {
     monopackageJSON.devDependencies['@adobe/spectrum-css-temp'] = '3.0.0-alpha.1';
+    monopackageJSON.sideEffects = ['*.css'];
   }
 
   fs.mkdirSync(`packages/${monopackage}/exports`, {recursive: true});
@@ -350,6 +351,13 @@ function migratePackage(scope, name, monopackage) {
   packageJSON.targets = {
     types: false // TODO: i18n package
   };
+
+  Object.assign(packageJSON.peerDependencies ??= {}, {
+    react: '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1',
+    'react-dom': '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1'
+  });
+
+  delete packageJSON.peerDependencies['@react-spectrum/provider'];
   
   fs.writeFileSync(`packages/${scope}/${name}/package.json`, JSON.stringify(packageJSON, false, 2) + '\n');
   fs.rmSync(`packages/${scope}/${name}/index.ts`);
