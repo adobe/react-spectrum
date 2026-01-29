@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Emoji_L from 'illustration:./S2_fill_emoji_generic2_160.svg';
 import Emoji_M from 'illustration:./S2_fill_emoji_generic2_96.svg';
 import Emoji_S from 'illustration:./S2_fill_emoji_generic2_48.svg';

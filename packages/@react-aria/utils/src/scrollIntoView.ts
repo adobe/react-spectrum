@@ -11,7 +11,7 @@
  */
 
 import {getScrollParents} from './getScrollParents';
-import {isChrome} from './platform';
+import {nodeContains} from './shadowdom/DOMFunctions';
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
@@ -41,64 +41,32 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement): v
     scrollPaddingLeft
   } = getComputedStyle(scrollView);
 
-  // Account for scroll margin of the element
-  let {
-    scrollMarginTop,
-    scrollMarginRight,
-    scrollMarginBottom,
-    scrollMarginLeft
-  } = getComputedStyle(element);
-
   let borderAdjustedX = x + parseInt(borderLeftWidth, 10);
   let borderAdjustedY = y + parseInt(borderTopWidth, 10);
   // Ignore end/bottom border via clientHeight/Width instead of offsetHeight/Width
   let maxX = borderAdjustedX + scrollView.clientWidth;
   let maxY = borderAdjustedY + scrollView.clientHeight;
 
-  // Get scroll padding / margin values as pixels - defaults to 0 if no scroll padding / margin
+  // Get scroll padding values as pixels - defaults to 0 if no scroll padding
   // is used.
   let scrollPaddingTopNumber = parseInt(scrollPaddingTop, 10) || 0;
   let scrollPaddingBottomNumber = parseInt(scrollPaddingBottom, 10) || 0;
   let scrollPaddingRightNumber = parseInt(scrollPaddingRight, 10) || 0;
   let scrollPaddingLeftNumber = parseInt(scrollPaddingLeft, 10) || 0;
-  let scrollMarginTopNumber = parseInt(scrollMarginTop, 10) || 0;
-  let scrollMarginBottomNumber = parseInt(scrollMarginBottom, 10) || 0;
-  let scrollMarginRightNumber = parseInt(scrollMarginRight, 10) || 0;
-  let scrollMarginLeftNumber = parseInt(scrollMarginLeft, 10) || 0;
 
-  let targetLeft = offsetX - scrollMarginLeftNumber;
-  let targetRight = offsetX + width + scrollMarginRightNumber;
-  let targetTop = offsetY - scrollMarginTopNumber;
-  let targetBottom = offsetY + height + scrollMarginBottomNumber;
-
-  let scrollPortLeft = x + parseInt(borderLeftWidth, 10) + scrollPaddingLeftNumber;
-  let scrollPortRight = maxX - scrollPaddingRightNumber;
-  let scrollPortTop = y + parseInt(borderTopWidth, 10) + scrollPaddingTopNumber;
-  let scrollPortBottom = maxY - scrollPaddingBottomNumber;
-
-  if (targetLeft > scrollPortLeft || targetRight < scrollPortRight) {
-    if (targetLeft <= x + scrollPaddingLeftNumber) {
-      x = targetLeft - parseInt(borderLeftWidth, 10) - scrollPaddingLeftNumber;
-    } else if (targetRight > maxX - scrollPaddingRightNumber) {
-      x += targetRight - maxX + scrollPaddingRightNumber;
-    }
+  if (offsetX <= x + scrollPaddingLeftNumber) {
+    x = offsetX - parseInt(borderLeftWidth, 10) - scrollPaddingLeftNumber;
+  } else if (offsetX + width > maxX - scrollPaddingRightNumber) {
+    x += offsetX + width - maxX + scrollPaddingRightNumber;
+  }
+  if (offsetY <= borderAdjustedY + scrollPaddingTopNumber) {
+    y = offsetY - parseInt(borderTopWidth, 10) - scrollPaddingTopNumber;
+  } else if (offsetY + height > maxY - scrollPaddingBottomNumber) {
+    y += offsetY + height - maxY + scrollPaddingBottomNumber;
   }
 
-  if (targetTop > scrollPortTop || targetBottom < scrollPortBottom) {
-    if (targetTop <= borderAdjustedY + scrollPaddingTopNumber) {
-      y = targetTop - parseInt(borderTopWidth, 10) - scrollPaddingTopNumber;
-    } else if (targetBottom > maxY - scrollPaddingBottomNumber) {
-      y += targetBottom - maxY + scrollPaddingBottomNumber;
-    }
-  }
-
-  if (process.env.NODE_ENV === 'test') {
-    scrollView.scrollLeft = x;
-    scrollView.scrollTop = y;
-    return;
-  }
-
-  scrollView.scrollTo({left: x, top: y});
+  scrollView.scrollLeft = x;
+  scrollView.scrollTop = y;
 }
 
 /**
@@ -106,23 +74,18 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement): v
  * offsetLeft or offsetTop through intervening offsetParents.
  */
 function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|'top') {
-  const prop = axis === 'left' ? 'offsetLeft' : 'offsetTop';
-  let sum = 0;
-  while (child.offsetParent) {
-    sum += child[prop];
-    if (child.offsetParent === ancestor) {
-      // Stop once we have found the ancestor we are interested in.
-      break;
-    } else if (child.offsetParent.contains(ancestor)) {
-      // If the ancestor is not `position:relative`, then we stop at
-      // _its_ offset parent, and we subtract off _its_ offset, so that
-      // we end up with the proper offset from child to ancestor.
-      sum -= ancestor[prop];
-      break;
-    }
-    child = child.offsetParent as HTMLElement;
-  }
-  return sum;
+  let childRect = child.getBoundingClientRect();
+  let ancestorRect = ancestor.getBoundingClientRect();
+  
+  let viewportOffset = axis === 'left' 
+      ? childRect.left - ancestorRect.left 
+      : childRect.top - ancestorRect.top;
+
+  let scrollAdjustment = axis === 'left' 
+      ? ancestor.scrollLeft 
+      : ancestor.scrollTop;
+
+  return viewportOffset + scrollAdjustment;
 }
 
 /**
@@ -131,12 +94,11 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
 export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollIntoViewportOpts): void {
-  if (targetElement && document.contains(targetElement)) {
+  if (targetElement && nodeContains(document, targetElement)) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
-    // If scrolling is not currently prevented then we aren't in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
-    // Also ignore in chrome because of this bug: https://issues.chromium.org/issues/40074749
-    if (!isScrollPrevented && !isChrome()) {
+    // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view
+    if (!isScrollPrevented) {
       let {left: originalLeft, top: originalTop} = targetElement.getBoundingClientRect();
 
       // use scrollIntoView({block: 'nearest'}) instead of .focus to check if the element is fully in view or not since .focus()

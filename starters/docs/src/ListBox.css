@@ -12,6 +12,10 @@
   font: var(--font-size) system-ui;
   color: var(--text-color);
 
+  &:has(.react-aria-ListBoxSection){
+    scroll-padding: 24px;
+  }
+
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -1px;
@@ -256,6 +260,27 @@
   justify-content: center;
   height: 24px;
   width: 100%;
+}
+
+.dropdown-listbox {
+  display: block;
+  max-height: inherit;
+  overflow: auto;
+  border-radius: inherit;
+  forced-color-adjust: none;
+  outline: none;
+  box-sizing: border-box;
+  font: var(--font-size) system-ui;
+  color: var(--text-color);
+
+  &[data-empty] {
+    min-height: var(--spacing-8);
+    padding: var(--spacing-2);
+  }
+
+  .react-aria-Header {
+    padding-left: var(--spacing-7);
+  }
 }
 
 .dropdown-item {

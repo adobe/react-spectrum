@@ -12,6 +12,7 @@
 
 import {act, within} from '@testing-library/react';
 import {Direction, Orientation, TabsTesterOpts, UserOpts} from './types';
+import {nodeContains} from '@react-aria/utils';
 import {pressElement} from './events';
 
 interface TriggerTabOptions {
@@ -79,21 +80,26 @@ export class TabsTester {
   private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation}) {
     let {tab, orientation = 'vertical'} = opts;
     let tabs = this.tabs;
+    tabs = tabs.filter(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'));
+    if (tabs.length === 0) {
+      throw new Error('Tablist doesnt have any non-disabled tabs. Please double check your tabs implementation.');
+    }
+
     let targetIndex = tabs.indexOf(tab);
     if (targetIndex === -1) {
       throw new Error('Tab provided is not in the tablist');
     }
 
-    if (!this._tablist.contains(document.activeElement)) {
+    if (!nodeContains(this._tablist, document.activeElement)) {
       let selectedTab = this.selectedTab;
       if (selectedTab != null) {
         act(() => selectedTab.focus());
       } else {
-        act(() => tabs.find(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'))?.focus());
+        act(() => tabs[0]?.focus());
       }
     }
 
-    let currIndex = this.tabs.indexOf(document.activeElement as HTMLElement);
+    let currIndex = tabs.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the tablist');
     }
@@ -137,7 +143,7 @@ export class TabsTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._tablist && !this._tablist.contains(document.activeElement)) {
+      if (document.activeElement !== this._tablist && !nodeContains(this._tablist, document.activeElement)) {
         act(() => this._tablist.focus());
       }
 

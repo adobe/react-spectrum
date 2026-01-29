@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/toast",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,10 +26,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.13",
-    "@react-aria/interactions": "^3.25.6",
-    "@react-aria/landmark": "^3.0.7",
-    "@react-aria/utils": "^3.31.0",
+    "@react-aria/i18n": "^3.12.14",
+    "@react-aria/interactions": "^3.26.0",
+    "@react-aria/landmark": "^3.0.8",
+    "@react-aria/utils": "^3.32.0",
     "@react-stately/toast": "^3.1.2",
     "@react-types/button": "^3.14.1",
     "@react-types/shared": "^3.32.1",

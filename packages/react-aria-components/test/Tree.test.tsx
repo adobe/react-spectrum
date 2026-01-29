@@ -285,6 +285,16 @@ describe('Tree', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{render: props => <div {...props} data-custom="true" />}} rowProps={{render: props => <div {...props} data-custom="true" />}} />);
+    let tree = getByRole('treegrid');
+    expect(tree).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support style', () => {
     let {getByRole} = render(<StaticTree treeProps={{style: {width: 200}}} />);
 

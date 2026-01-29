@@ -1,14 +1,14 @@
 .animated-ListBoxItem {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 28px;
-  padding: 4px 4px 4px 12px;
-  border-radius: 6px;
+  gap: var(--spacing-2);
+  min-height: var(--spacing-7);
+  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius);
   outline: none;
   cursor: default;
   color: var(--text-color);
-  font-size: 14px;
+  font-size: var(--font-size);
   position: relative;
 
   &[data-focus-visible] {
@@ -22,9 +22,9 @@
 
   .react-aria-SelectionIndicator {
     position: absolute;
-    left: 4px;
+    left: var(--spacing-1);
     width: 3px;
-    height: 20px;
+    height: var(--spacing-5);
     border-radius: 4px;
     background: var(--highlight-background);
     transition-property: translate, opacity;

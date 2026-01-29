@@ -9,7 +9,11 @@
   },
   "packageManager": "yarn@4.2.2",
   "scripts": {
-    "check-types": "tsc",
+    "tsgo": "tsgo",
+    "check-types": "tsgo --noEmit",
+    "check-types:tsc": "tsc",
+    "clean": "make clean",
+    "clean:all": "make clean_all",
     "install-16": "node scripts/react-16-install-prep.mjs && yarn add react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-17": "node scripts/react-17-install-prep.mjs && yarn add react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-18": "node scripts/react-18-install-prep.mjs && yarn add react@^18 react-dom@^18 react-test-renderer@^18.3.1 && node scripts/oldReactSupport.mjs",
@@ -23,12 +27,13 @@
     "start:s2": "NODE_ENV=storybook storybook dev -p 6006 --ci -c '.storybook-s2'",
     "build:storybook-s2": "NODE_ENV=storybook storybook build -c .storybook-s2 -o dist/$(git rev-parse HEAD)/storybook-s2",
     "build:s2-storybook-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
-    "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
-    "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+    "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx'",
+    "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/{react-spectrum,releases}/**/*.mdx'",
     "start:s2-docs": "yarn workspace @react-spectrum/s2-docs start",
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
-    "build:mcp": "yarn workspace @react-spectrum/mcp build",
-    "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn workspace @react-spectrum/mcp build && node packages/dev/mcp/dist/index.js",
+    "check:s2-docs-build": "node packages/dev/s2-docs/scripts/validateS2DocsBuild.mjs",
+    "build:mcp": "yarn workspace @react-spectrum/mcp build && yarn workspace @react-aria/mcp build",
+    "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn build:mcp && node packages/dev/mcp/s2/dist/index.js && node packages/dev/mcp/react-aria/dist/index.js",
     "test:mcp": "yarn build:s2-docs && yarn build:mcp && node packages/dev/mcp/scripts/smoke-list-pages.mjs",
     "test": "cross-env STRICT_MODE=1 VIRT_ON=1 yarn jest",
     "test:lint": "node packages/**/*.test-lint.js",
@@ -66,6 +71,8 @@
     "packages/react-aria",
     "packages/react-aria-components",
     "packages/tailwindcss-react-aria-components",
+    "packages/dev/mcp/s2",
+    "packages/dev/mcp/react-aria",
     "packages/*/*"
   ],
   "devDependencies": {
@@ -87,22 +94,23 @@
     "@faker-js/faker": "^8.4.1",
     "@jdb8/eslint-plugin-monorepo": "^1.0.1",
     "@octokit/rest": "*",
-    "@parcel/bundler-library": "^2.16.0",
-    "@parcel/config-default": "^2.16.0",
-    "@parcel/config-storybook": ">=0.0.2",
-    "@parcel/core": "^2.16.0",
-    "@parcel/optimizer-data-url": "^2.16.0",
-    "@parcel/optimizer-terser": "^2.16.0",
-    "@parcel/packager-react-static": "^2.16.0",
-    "@parcel/packager-ts": "^2.16.0",
-    "@parcel/reporter-bundle-analyzer": "^2.16.0",
-    "@parcel/reporter-cli": "^2.16.0",
-    "@parcel/resolver-glob": "^2.16.0",
-    "@parcel/transformer-inline": "^2.16.0",
-    "@parcel/transformer-inline-string": "^2.16.0",
-    "@parcel/transformer-react-static": "^2.16.0",
-    "@parcel/transformer-svg-react": "^2.16.0",
-    "@parcel/transformer-typescript-types": "^2.16.0",
+    "@parcel/bundler-library": "^2.16.3",
+    "@parcel/config-default": "^2.16.3",
+    "@parcel/config-storybook": "^0.0.2",
+    "@parcel/core": "^2.16.3",
+    "@parcel/optimizer-data-url": "^2.16.3",
+    "@parcel/optimizer-terser": "^2.16.3",
+    "@parcel/packager-react-static": "^2.16.3",
+    "@parcel/packager-ts": "^2.16.3",
+    "@parcel/reporter-bundle-analyzer": "^2.16.3",
+    "@parcel/reporter-cli": "^2.16.3",
+    "@parcel/resolver-glob": "^2.16.3",
+    "@parcel/rust": "^2.16.3",
+    "@parcel/transformer-inline": "^2.16.3",
+    "@parcel/transformer-inline-string": "^2.16.3",
+    "@parcel/transformer-react-static": "^2.16.3",
+    "@parcel/transformer-svg-react": "^2.16.3",
+    "@parcel/transformer-typescript-types": "^2.16.3",
     "@react-spectrum/parcel-namer-s2": "^0.3.0",
     "@react-spectrum/s2-icon-builder": "^0.3.0",
     "@spectrum-css/component-builder": "workspace:^",
@@ -130,6 +138,7 @@
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@typescript/native-preview": "^7.0.0-dev.20251223.1",
     "@yarnpkg/types": "^4.0.0",
     "autoprefixer": "^9.6.0",
     "axe-playwright": "^1.1.11",
@@ -151,7 +160,7 @@
     "eslint-plugin-jsdoc": "^50.4.1",
     "eslint-plugin-jsx-a11y": "^6.10.0",
     "eslint-plugin-react": "^7.37.1",
-    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-hooks": "^7.0.0",
     "eslint-plugin-rulesdir": "^0.2.2",
     "fast-check": "^2.19.0",
     "fast-glob": "^3.1.0",
@@ -164,12 +173,13 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-junit": "^15.0.0",
     "jest-matchmedia-mock": "^1.1.0",
+    "json5": "^2.2.3",
     "lerna": "^3.13.2",
     "lucide-react": "^0.517.0",
     "md5": "^2.2.1",
     "motion": "^12.23.6",
     "npm-cli-login": "^1.0.0",
-    "parcel": "^2.16.0",
+    "parcel": "^2.16.3",
     "parcel-optimizer-strict-mode": "workspace:^",
     "patch-package": "^6.2.0",
     "playwright": "^1.45.3",
@@ -183,6 +193,7 @@
     "recast": "^0.23",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
+    "rehype-stringify": "^9.0.4",
     "rimraf": "^6.0.1",
     "sharp": "^0.33.5",
     "storybook": "^8.6.14",
@@ -229,7 +240,8 @@
     "remark-parse": "patch:remark-parse@npm%3A10.0.1#~/.yarn/patches/remark-parse-npm-10.0.1-e654d7df78.patch",
     "lightningcss": "1.30.1",
     "react-server-dom-parcel": "canary",
-    "react-test-renderer": "19.1.0"
+    "react-test-renderer": "19.1.0",
+    "@parcel/packager-react-static": "^2.16.3"
   },
   "@parcel/transformer-css": {
     "cssModules": {
@@ -265,15 +277,13 @@
         "name": "s2-styles",
         "assets": [
           "packages/@react-spectrum/s2/**",
-          "packages/dev/s2-docs/src/**"
+          "packages/dev/s2-docs/src/**",
+          "packages/dev/s2-docs/pages/s2/**/*.{mdx,tsx,ts,js}"
         ],
         "types": [
           "css"
         ]
       }
     ]
-  },
-  "locales": [
-    "en-US"
-  ]
+  }
 }

@@ -23,7 +23,7 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
+export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * Whether the Dialog is dismissible.
    */
@@ -48,11 +48,11 @@ const image = style({
 const heading = style({
   flexGrow: 1,
   marginY: 0,
-  font: 'heading'
+  font: 'title-2xl'
 });
 
 const header = style({
-  font: 'body-lg'
+  font: 'body'
 });
 
 const content =  style({
@@ -181,7 +181,7 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                   {children}
                 </Provider>
               </div>
-              {props.isDismissible && 
+              {props.isDismissible &&
                 <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>

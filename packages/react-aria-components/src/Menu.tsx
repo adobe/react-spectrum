@@ -17,6 +17,9 @@ import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
+  dom,
+  DOMRenderProps,
+  PossibleLinkDOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -29,7 +32,7 @@ import {
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
 import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
+import {FocusEvents, FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
@@ -61,6 +64,8 @@ export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | 
 const SelectionManagerContext = createContext<SelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
+  /** Whether the trigger is up when the overlay is open. */
+  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -100,7 +105,7 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
           'aria-labelledby': menuProps['aria-labelledby']
         }]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
+      <PressResponder {...menuTriggerProps} ref={ref} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>
@@ -194,7 +199,9 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, Collec
    */
   className?: ClassNameOrFunction<MenuRenderProps>,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  /** Whether the menu should close when the menu item is selected. */
+  shouldCloseOnSelect?: boolean
 }
 
 /**
@@ -232,9 +239,9 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
   let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
+    ...props,
+    children: undefined,
     defaultClassName: 'react-aria-Menu',
-    className: props.className,
-    style: props.style,
     values: {
       isEmpty: state.collection.size === 0
     }
@@ -255,7 +262,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 
   return (
     <FocusScope>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, menuProps)}
         ref={ref as RefObject<HTMLDivElement>}
         slot={props.slot || undefined}
@@ -267,7 +274,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
-            [MenuItemContext, null],
+            [MenuItemContext, {shouldCloseOnSelect: props.shouldCloseOnSelect}],
             [SelectableCollectionContext, null],
             [FieldInputContext, null],
             [SelectionManagerContext, state.selectionManager],
@@ -284,17 +291,19 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           </SharedElementTransition>
         </Provider>
         {emptyState}
-      </div>
+      </dom.div>
     </FocusScope>
   );
 }
 
-export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {
+export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection, DOMRenderProps<'section', undefined> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-MenuSection'
    */
-  className?: string
+  className?: string,
+  /** Whether the menu should close when the menu item is selected. */
+  shouldCloseOnSelect?: boolean
 }
 
 // A subclass of SelectionManager that forwards focus-related properties to the parent,
@@ -337,31 +346,37 @@ function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: For
     'aria-label': section.props['aria-label'] ?? undefined
   });
   let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
     defaultClassName: className,
     className: section.props?.className,
     style: section.props?.style,
-    values: {}
+    values: undefined
   });
 
   let parent = useContext(SelectionManagerContext)!;
   let selectionState = useMultipleSelectionState(props);
   let manager = props.selectionMode != null ? new GroupSelectionManager(parent, selectionState) : parent;
 
+  let closeOnSelect = useSlottedContext(MenuItemContext)?.shouldCloseOnSelect;
+
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
 
   return (
-    <section
+    <dom.section
       {...mergeProps(DOMProps, renderProps, groupProps)}
       ref={ref}>
       <Provider
         values={[
           [HeaderContext, {...headingProps, ref: headingRef}],
-          [SelectionManagerContext, manager]
+          [SelectionManagerContext, manager],
+          [MenuItemContext, {shouldCloseOnSelect: props.shouldCloseOnSelect ?? closeOnSelect}]
         ]}>
         <CollectionBranch collection={state.collection} parent={section} />
       </Provider>
-    </section>
+    </dom.section>
   );
 }
 
@@ -385,7 +400,7 @@ export interface MenuItemRenderProps extends ItemRenderProps {
   isOpen: boolean
 }
 
-export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps, HoverEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
+export interface MenuItemProps<T = object> extends Omit<RenderProps<MenuItemRenderProps>, 'render'>, PossibleLinkDOMRenderProps<'div', MenuItemRenderProps>, LinkDOMProps, HoverEvents, FocusEvents, PressEvents, Omit<GlobalDOMAttributes<HTMLDivElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-MenuItem'
@@ -402,7 +417,9 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** Whether the item is disabled. */
   isDisabled?: boolean,
   /** Handler that is called when the item is selected. */
-  onAction?: () => void
+  onAction?: () => void,
+  /** Whether the menu should close when the menu item is selected. */
+  shouldCloseOnSelect?: boolean
 }
 
 const MenuItemContext = createContext<ContextValue<MenuItemProps, HTMLDivElement>>(null);
@@ -427,7 +444,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
   let {hoverProps, isHovered} = useHover({
     isDisabled: states.isDisabled
   });
-  let renderProps = useRenderProps({
+  let renderProps = useRenderProps<MenuItemRenderProps, any>({
     ...props,
     id: undefined,
     children: item.rendered,
@@ -443,7 +460,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
     }
   });
 
-  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  let ElementType = props.href ? dom.a : dom.div;
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
   delete DOMProps.onClick;

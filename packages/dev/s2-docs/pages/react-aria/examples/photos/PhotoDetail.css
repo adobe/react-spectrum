@@ -1,0 +1,35 @@
+.photo-detail {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: clip;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+
+  img {
+    display: block;
+    view-transition-name: photo;
+    /* scaling similar to object-fit: contain, but preserving aspect ratio of image for view transition */
+    --scale: min(100cqw / var(--width), 100cqh / var(--height));
+    width: calc(var(--width) * var(--scale));
+    height: calc(var(--height) * var(--scale));
+  }
+}
+
+.photo-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  align-items: center;
+  contain: inline-size;
+
+  span {
+    white-space: nowrap;
+    overflow: clip;
+    text-overflow: ellipsis;
+    max-width: min(100%, 800px);
+  }
+}

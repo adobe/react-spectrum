@@ -13,6 +13,7 @@
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, FieldError, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestRadioGroup = ({groupProps, radioProps}) => (
@@ -28,6 +29,7 @@ let renderGroup = (groupProps, radioProps) => render(<TestRadioGroup {...{groupP
 
 describe('RadioGroup', () => {
   let user;
+  let testUtilUser = new User();
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
@@ -63,6 +65,19 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('data-foo', 'bar');
     for (let radio of getAllByRole('radio')) {
       expect(radio.closest('label')).toHaveAttribute('data-test', 'test');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderGroup(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/label-has-associated-control
+      {render: props => <label {...props} data-custom="true" />}
+    );
+    let group = getByRole('radiogroup');
+    expect(group).toHaveAttribute('data-custom', 'true');
+    for (let radio of getAllByRole('radio')) {
+      expect(radio.closest('label')).toHaveAttribute('data-custom', 'true');
     }
   });
 
@@ -238,23 +253,25 @@ describe('RadioGroup', () => {
 
   it('should support selected state', async () => {
     let onChange = jest.fn();
-    let {getAllByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
-    let radios = getAllByRole('radio');
+    let {getByRole} = renderGroup({onChange}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
+    let radios = radioGroupTester.radios;
     let label = radios[0].closest('label');
 
-    expect(radios[0]).not.toBeChecked();
+    expect(radioGroupTester.selectedRadio).toBeFalsy();
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
-    await user.click(radios[0]);
+    await radioGroupTester.triggerRadio({radio: radios[0]});
     expect(onChange).toHaveBeenLastCalledWith('a');
-    expect(radios[0]).toBeChecked();
+    expect(radioGroupTester.selectedRadio).toBe(radios[0]);
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
-    await user.click(radios[1]);
+    await radioGroupTester.triggerRadio({radio: radios[1]});
     expect(onChange).toHaveBeenLastCalledWith('b');
     expect(radios[0]).not.toBeChecked();
+    expect(radioGroupTester.selectedRadio).toBe(radios[1]);
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
   });
@@ -300,12 +317,19 @@ describe('RadioGroup', () => {
     expect(label).toHaveClass('required');
   });
 
-  it('should support orientation', () => {
-    let {getByRole} = renderGroup({orientation: 'horizontal', className: ({orientation}) => orientation});
-    let group = getByRole('radiogroup');
+  it('should support orientation', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = renderGroup({onChange, orientation: 'horizontal', className: ({orientation}) => orientation});
+    let radioGroupTester = testUtilUser.createTester('RadioGroup', {root: getByRole('radiogroup')});
 
-    expect(group).toHaveAttribute('aria-orientation', 'horizontal');
-    expect(group).toHaveClass('horizontal');
+    expect(radioGroupTester.radiogroup).toHaveAttribute('aria-orientation', 'horizontal');
+    expect(radioGroupTester.radiogroup).toHaveClass('horizontal');
+    let radios = radioGroupTester.radios;
+    await radioGroupTester.triggerRadio({radio: radios[0]});
+    expect(radios[0]).toBeChecked();
+
+    await radioGroupTester.triggerRadio({radio: 2, interactionType: 'keyboard'});
+    expect(radios[2]).toBeChecked();
   });
 
   it('supports help text', () => {

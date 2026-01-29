@@ -19,6 +19,7 @@ import {
   isChrome,
   isFocusable,
   isTabbable,
+  nodeContains,
   ShadowTreeWalker,
   useLayoutEffect
 } from '@react-aria/utils';
@@ -440,7 +441,7 @@ function isElementInScope(element?: Element | null, scope?: Element[] | null) {
   if (!scope) {
     return false;
   }
-  return scope.some(node => node.contains(element));
+  return scope.some(node => nodeContains(node, element));
 }
 
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
@@ -771,7 +772,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
     {
       acceptNode(node) {
         // Skip nodes inside the starting node.
-        if (opts?.from?.contains(node)) {
+        if (nodeContains(opts?.from, node)) {
           return NodeFilter.FILTER_REJECT;
         }
 
@@ -822,7 +823,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || getActiveElement(getOwnerDocument(root));
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
-      if (root.contains(node)) {
+      if (nodeContains(root, node)) {
         walker.currentNode = node!;
       }
       let nextNode = walker.nextNode() as FocusableElement;
@@ -843,7 +844,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || getActiveElement(getOwnerDocument(root));
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
-      if (root.contains(node)) {
+      if (nodeContains(root, node)) {
         walker.currentNode = node!;
       } else {
         let next = last(walker);

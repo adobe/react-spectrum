@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isTabbable, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -118,7 +118,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
     allowsTabNavigation = false,
-    isVirtualized,
     // If no scrollRef is provided, assume the collection ref is the scrollable region
     scrollRef = ref,
     linkBehavior = 'action'
@@ -134,7 +133,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!ref.current?.contains(e.target as Element)) {
+    if (!ref.current || !nodeContains(ref.current, e.target as Element)) {
       return;
     }
 
@@ -315,7 +314,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             // If the active element is NOT tabbable but is contained by an element that IS tabbable (aka the cell), the browser will actually move focus to
             // the containing element. We need to special case this so that tab will move focus out of the grid instead of looping between
             // focusing the containing cell and back to the non-tabbable child element
-            if (next && (!next.contains(document.activeElement) || (document.activeElement && !isTabbable(document.activeElement)))) {
+            if (next && (!nodeContains(next, document.activeElement) || (document.activeElement && !isTabbable(document.activeElement)))) {
               focusWithoutScrolling(next);
             }
           }
@@ -328,7 +327,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
   let scrollPos = useRef({top: 0, left: 0});
-  useEvent(scrollRef, 'scroll', isVirtualized ? undefined : () => {
+  useEvent(scrollRef, 'scroll', () => {
     scrollPos.current = {
       top: scrollRef.current?.scrollTop ?? 0,
       left: scrollRef.current?.scrollLeft ?? 0
@@ -338,7 +337,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let onFocus = (e: FocusEvent) => {
     if (manager.isFocused) {
       // If a focus event bubbled through a portal, reset focus state.
-      if (!e.currentTarget.contains(e.target)) {
+      if (!nodeContains(e.currentTarget, e.target)) {
         manager.setFocused(false);
       }
 
@@ -346,7 +345,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     // Focus events can bubble through portals. Ignore these events.
-    if (!e.currentTarget.contains(e.target)) {
+    if (!nodeContains(e.currentTarget, e.target)) {
       return;
     }
 
@@ -369,7 +368,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       } else {
         navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
-    } else if (!isVirtualized && scrollRef.current) {
+    } else if (scrollRef.current) {
       // Restore the scroll position to what it was before.
       scrollRef.current.scrollTop = scrollPos.current.top;
       scrollRef.current.scrollLeft = scrollPos.current.left;
@@ -380,7 +379,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = getItemElement(ref, manager.focusedKey);
       if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!element.contains(document.activeElement) && !shouldUseVirtualFocus) {
+        if (!nodeContains(element, document.activeElement) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 
@@ -394,7 +393,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   let onBlur = (e) => {
     // Don't set blurred and then focused again if moving focus within the collection.
-    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+    if (!nodeContains(e.currentTarget, e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
     }
   };
@@ -416,49 +415,42 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   });
 
-  let updateActiveDescendant = useEffectEvent(() => {
-    let keyToFocus = delegate.getFirstKey?.() ?? null;
-
-    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
-    // the original active element (e.g. the autocomplete input)
-    if (keyToFocus == null) {
-      let previousActiveElement = getActiveElement();
-      moveVirtualFocus(ref.current);
-      dispatchVirtualFocus(previousActiveElement!, null);
-
-      // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
-      // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
-      if (manager.collection.size > 0) {
-        shouldVirtualFocusFirst.current = false;
-      }
-    } else {
-      manager.setFocusedKey(keyToFocus);
-      // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
-      // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
-      // after the collection updates after load
-      shouldVirtualFocusFirst.current = false;
-    }
-  });
-
+  // update active descendant
   useUpdateLayoutEffect(() => {
     if (shouldVirtualFocusFirst.current) {
-      updateActiveDescendant();
+      let keyToFocus = delegate.getFirstKey?.() ?? null;
+
+      // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist and move focus back to
+      // the original active element (e.g. the autocomplete input)
+      if (keyToFocus == null) {
+        let previousActiveElement = getActiveElement();
+        moveVirtualFocus(ref.current);
+        dispatchVirtualFocus(previousActiveElement!, null);
+
+        // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
+        // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
+        if (manager.collection.size > 0) {
+          shouldVirtualFocusFirst.current = false;
+        }
+      } else {
+        manager.setFocusedKey(keyToFocus);
+        // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
+        // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
+        // after the collection updates after load
+        shouldVirtualFocusFirst.current = false;
+      }
     }
+  }, [manager.collection]);
 
-  }, [manager.collection, updateActiveDescendant]);
-
-  let resetFocusFirstFlag = useEffectEvent(() => {
+  // reset focus first flag
+  useUpdateLayoutEffect(() => {
     // If user causes the focused key to change in any other way, clear shouldVirtualFocusFirst so we don't
     // accidentally move focus from under them. Skip this if the collection was empty because we might be in a load
     // state and will still want to focus the first item after load
     if (manager.collection.size > 0) {
       shouldVirtualFocusFirst.current = false;
     }
-  });
-
-  useUpdateLayoutEffect(() => {
-    resetFocusFirstFlag();
-  }, [manager.focusedKey, resetFocusFirstFlag]);
+  }, [manager.focusedKey]);
 
   useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e: any) => {
     e.stopPropagation();
@@ -588,7 +580,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // This will be marshalled to either the first or last item depending on where focus came from.
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
-    tabIndex = manager.focusedKey == null ? 0 : -1;
+    tabIndex = manager.isFocused ? -1 : 0;
   }
 
   let collectionId = useCollectionId(manager.collection);

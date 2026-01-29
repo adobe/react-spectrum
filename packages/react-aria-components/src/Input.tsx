@@ -13,6 +13,7 @@
 import {
  ClassNameOrFunction,
  ContextValue,
+ dom,
  StyleRenderProps,
  useContextProps,
  useRenderProps
@@ -49,7 +50,7 @@ export interface InputRenderProps {
   isInvalid: boolean
 }
 
-export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps> {
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style'>, HoverEvents, StyleRenderProps<InputRenderProps, 'input'> {
  /**
   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
   * @default 'react-aria-Input'
@@ -76,7 +77,10 @@ let filterHoverProps = (props: InputProps) => {
 export const Input = /*#__PURE__*/ createHideableComponent(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
 
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled: props.disabled
+  });
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     isTextInput: true,
     autoFocus: props.autoFocus
@@ -96,7 +100,7 @@ export const Input = /*#__PURE__*/ createHideableComponent(function Input(props:
   });
 
   return (
-    <input
+    <dom.input
       {...mergeProps(filterHoverProps(props), focusProps, hoverProps)}
       {...renderProps}
       ref={ref}

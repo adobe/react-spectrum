@@ -93,6 +93,12 @@ describe('Select', () => {
     expect(trigger).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByTestId} =  render(<TestSelect render={props => <div {...props} data-custom="true" />} />);
+    let field = getByTestId('select');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('supports items with render props', () => {
     let MyItem = (props) => (
       <ListBoxItem {...props}>
@@ -160,6 +166,30 @@ describe('Select', () => {
     let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Select an animal');
+  });
+
+  it('should support empty state', async () => {
+    let {getByTestId, getByRole} = render(
+      <Select data-testid="select" allowsEmptyCollection>
+        <Label>Favorite Animal</Label>
+        <Button>
+          <SelectValue />
+        </Button>
+        <Popover>
+          <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
+            {[]}
+          </ListBox>
+        </Popover>
+      </Select>
+    );
+    let selectTester = testUtilUser.createTester('Select', {root: getByTestId('select')});
+    await selectTester.open();
+
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-empty', 'true');
+
+    let option = getByRole('option');
+    expect(option).toHaveTextContent('No results');
   });
 
   it('should support render props', async () => {
@@ -367,6 +397,15 @@ describe('Select', () => {
 
     await selectTester.selectOption({option: 'Kangaroo'});
     expect(trigger).toHaveTextContent('Kangaroo');
+  });
+
+  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
+    let {getByRole} = render(<TestSelect isTriggerUpWhenOpen />);
+    let button = getByRole('button');
+
+    expect(button).not.toHaveAttribute('data-pressed');
+    await user.click(button);
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   describe('typeahead', () => {
@@ -644,7 +683,7 @@ describe('Select', () => {
 
     let wrapper = getByTestId('select');
     let selectTester = testUtilUser.createTester('Select', {root: wrapper});
-    
+
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Dog and Kangaroo');
 

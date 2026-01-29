@@ -15,7 +15,7 @@ import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
 import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
-import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
+import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Link, Provider} from 'react-aria-components';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
@@ -36,7 +36,7 @@ interface CardRenderProps {
   size: 'XS' | 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface CardProps extends Omit<GridListItemProps, 'className' | 'style' | 'render' | 'children' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /** The children of the Card. */
   children: ReactNode | ((renderProps: CardRenderProps) => ReactNode),
   /**
@@ -91,15 +91,15 @@ let card = style({
     isHovered: 'elevated',
     isFocusVisible: 'elevated',
     isSelected: 'elevated',
-    forcedColors: '[0 0 0 1px ButtonBorder]',
+    forcedColors: '[0 0 0 1px var(--hcm-buttonborder, ButtonBorder)]',
     variant: {
       tertiary: {
         // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 1px ${color('gray-100')}]`,
-        isHovered: `[0 0 0 1px ${color('gray-200')}]`,
-        isFocusVisible: `[0 0 0 1px ${color('gray-200')}]`,
+        default: `[0 0 0 2px ${color('gray-100')}]`,
+        isHovered: `[0 0 0 2px ${color('gray-200')}]`,
+        isFocusVisible: `[0 0 0 2px ${color('gray-200')}]`,
         isSelected: 'none',
-        forcedColors: '[0 0 0 1px ButtonBorder]'
+        forcedColors: '[0 0 0 2px var(--hcm-buttonborder, ButtonBorder)]'
       },
       quiet: 'none'
     }
@@ -107,6 +107,7 @@ let card = style({
   forcedColorAdjust: 'none',
   transition: 'default',
   fontFamily: 'sans',
+  textDecoration: 'none',
   overflow: {
     default: 'clip',
     variant: {
@@ -424,6 +425,28 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     </Provider>
   );
 
+  let press = pressScale(domRef, UNSAFE_style);
+  if (ElementType === 'div' && !isSkeleton && props.href) {
+    // Standalone Card that has an href should be rendered as a Link.
+    // NOTE: In this case, the card must not contain interactive elements.
+    return (
+      <Link
+        {...filterDOMProps(otherProps, {isLink: true})}
+        ref={domRef as any}
+        className={renderProps => UNSAFE_className + card({...renderProps, size, density, variant, isCardView: false, isLink: true}, styles)}
+        style={renderProps =>
+          // Only the preview in quiet cards scales down on press
+          variant === 'quiet' ? UNSAFE_style : press(renderProps)
+        }>
+        {(renderProps) => (
+          <InternalCardContext.Provider value={{size, isQuiet, isCheckboxSelection: false, isSelected: false, ...renderProps}}>
+            {children}
+          </InternalCardContext.Provider>
+        )}
+      </Link>
+    );
+  }
+
   if (ElementType === 'div' || isSkeleton) {
     return (
       <div
@@ -441,7 +464,6 @@ export const Card = forwardRef(function Card(props: CardProps, ref: DOMRef<HTMLD
     );
   }
 
-  let press = pressScale(domRef, UNSAFE_style);
   return (
     <ElementType
       {...props}
@@ -632,6 +654,7 @@ const avatarSize = {
 
 export interface UserCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and avatar.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 
@@ -684,6 +707,7 @@ const buttonSize = {
 
 export interface ProductCardProps extends Omit<CardProps, 'density' | 'variant'> {
   // Quiet is not supported due to lack of indent between preview and thumbnail.
+  /** The visual style of the Card. */
   variant?: 'primary' | 'secondary' | 'tertiary'
 }
 

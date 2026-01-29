@@ -178,4 +178,14 @@ describe('Form', () => {
     expect(input).toHaveAttribute('required');
     expect(input).not.toHaveAttribute('aria-required');
   });
+
+  it('should support custom render function', () => {
+    let {getByTestId} = render(
+      <Form data-testid="form" render={props => <form {...props} data-custom="true" />}>
+        Test
+      </Form>
+    );
+    let form = getByTestId('form');
+    expect(form).toHaveAttribute('data-custom', 'true');
+  });
 });

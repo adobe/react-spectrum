@@ -5,6 +5,7 @@ import {ButtonGroup, Button} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = [];
+export const description = 'A grouping of buttons whose actions are related to each other.';
 
 # ButtonGroup
 
@@ -32,7 +33,9 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 <div
   className={style({
     width: 300,
+    maxWidth: 'full',
     padding: 16,
+    boxSizing: 'border-box',
     borderWidth: 1,
     borderStyle: 'solid', 
     borderColor: 'gray-300',
@@ -52,11 +55,13 @@ import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 ## API
 
-```tsx links={{ButtonGroup: '#buttongroup', Button: 'Button.html', LinkButton: 'LinkButton.html'}}
+```tsx links={{ButtonGroup: '#buttongroup', Button: 'Button', LinkButton: 'LinkButton'}}
 <ButtonGroup>
   <Button />
   <LinkButton />
 </ButtonGroup>
 ```
+
+### ButtonGroup
 
 <PropTable component={docs.exports.ButtonGroup} links={docs.links} />

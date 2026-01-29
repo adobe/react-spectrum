@@ -33,13 +33,13 @@ export function DateField<T extends DateValue>(
 }
 
 const segmentStyles = tv({
-  base: 'inline p-0.5 type-literal:px-0 rounded-xs outline outline-0 forced-color-adjust-none caret-transparent text-gray-800 dark:text-zinc-200 forced-colors:text-[ButtonText]',
+  base: 'inline p-0.5 whitespace-nowrap type-literal:p-0 rounded-xs outline outline-0 forced-color-adjust-none caret-transparent text-neutral-800 dark:text-neutral-200 forced-colors:text-[ButtonText] [-webkit-tap-highlight-color:transparent]',
   variants: {
     isPlaceholder: {
-      true: 'text-gray-600 dark:text-zinc-400 italic'
+      true: 'text-neutral-600 dark:text-neutral-400'
     },
     isDisabled: {
-      true: 'text-gray-200 dark:text-zinc-600 forced-colors:text-[GrayText]'
+      true: 'text-neutral-200 dark:text-neutral-600 forced-colors:text-[GrayText]'
     },
     isFocused: {
       true: 'bg-blue-600 text-white dark:text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
@@ -49,7 +49,7 @@ const segmentStyles = tv({
 
 export function DateInput(props: Omit<DateInputProps, 'children'>) {
   return (
-    <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'block min-w-[150px] px-2 py-1.5 text-sm font-sans'})} {...props}>
+    <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'inline min-w-[150px] px-3 h-9 text-sm leading-8.5 font-sans cursor-text disabled:cursor-default whitespace-nowrap overflow-x-auto [scrollbar-width:none]'})} {...props}>
       {(segment) => <DateSegment segment={segment} className={segmentStyles} />}
     </AriaDateInput>
   );

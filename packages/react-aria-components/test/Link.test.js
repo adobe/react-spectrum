@@ -40,12 +40,31 @@ describe('Link', () => {
     expect(link).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support id prop', () => {
+    let {getByRole} = render(<Link id="my-link-id">Test</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('id', 'my-link-id');
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
     let link = getByRole('link');
     expect(link).toHaveTextContent('Test');
     await user.hover(link);
     expect(link).toHaveTextContent('Hovered');
+  });
+
+  it('should support custom render function', () => {
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
+    let {getByRole} =  render(<Link href="#foo" render={props => <a {...props} data-custom="true" />} />);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support custom render function without href', () => {
+    let {getByRole} =  render(<Link render={props => <span {...props} data-custom="true" />} />);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-custom', 'true');
   });
 
   it('should support slot', () => {

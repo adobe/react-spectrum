@@ -2,7 +2,9 @@
 
 .react-aria-Tabs {
   display: flex;
+  gap: var(--spacing-2);
   color: var(--text-color);
+  max-width: 100%;
 
   &[data-orientation=horizontal] {
     flex-direction: column;
@@ -10,6 +12,10 @@
 
   &[data-orientation=vertical] {
     flex-direction: row;
+    width: 100%;
+    .react-aria-TabPanels {
+      flex: 1;
+    }
   }
 }
 
@@ -22,13 +28,17 @@
 
   &[data-orientation=horizontal] {
     border-bottom: 0.5px solid var(--border-color);
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: clip;
+    scrollbar-width: none;
 
     .react-aria-SelectionIndicator {
       left: 0;
-      bottom: -1.5px;
+      bottom: 0px;
       width: 100%;
       height: 3px;
-      border-radius: 3px;
+      transition-property: translate, width;
     }
   }
 
@@ -38,9 +48,10 @@
 
     .react-aria-SelectionIndicator {
       top: 0;
-      right: -1.5px;
+      right: 0px;
       height: 100%;
       width: 3px;
+      transition-property: translate, height;
     }
   }
 }
@@ -64,8 +75,8 @@
 
   .react-aria-SelectionIndicator {
     position: absolute;
-    transition-property: translate, width, height;
     transition-duration: 200ms;
+    border-radius: 3px;
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
@@ -96,13 +107,38 @@
   }
 }
 
+.react-aria-TabPanels {
+  position: relative;
+  height: var(--tab-panel-height);
+  width: var(--tab-panel-width);
+  transition: height 400ms;
+  overflow: clip;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
 .react-aria-TabPanel {
-  margin-top: 4px;
-  padding: 10px;
-  border-radius: 4px;
+  padding: var(--spacing-3);
+  border-radius: var(--radius);
   outline: none;
+  box-sizing: border-box;
+  transition: opacity 400ms;
 
   &[data-focus-visible] {
     outline: 2px solid var(--focus-ring-color);
+  }
+
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+  }
+
+  &[data-exiting] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
   }
 }

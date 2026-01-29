@@ -28,7 +28,7 @@ import {
   Separator,
   SeparatorProps
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -37,6 +37,7 @@ import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
 import {DOMRef, DOMRefValue, GlobalDOMAttributes, PressEvent} from '@react-types/shared';
+import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
@@ -52,7 +53,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 
-export interface MenuTriggerProps extends AriaMenuTriggerProps {
+export interface MenuTriggerProps extends Omit<AriaMenuTriggerProps, 'isTriggerUpWhenOpen'> {
   /**
    * Alignment of the menu relative to the trigger.
    *
@@ -73,7 +74,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'render' | 'dependencies' | 'renderEmptyState' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -156,11 +157,18 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
       default: 'transparent',
-      isFocused: baseColor('gray-100').isFocusVisible
+      isFocused: {
+        default: baseColor('gray-100').isFocusVisible,
+        forcedColors: 'Highlight'
+      }
     }
   },
   color: {
     default: baseColor('neutral'),
+    forcedColors: {
+      default: 'ButtonText',
+      isFocused: 'HighlightText'
+    },
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -190,10 +198,11 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     default: 'default',
     isLink: 'pointer'
   },
-  transition: 'default'
+  transition: 'default',
+  forcedColorAdjust: 'none'
 }, getAllowedOverrides());
 
-export let checkmark = style({
+export let checkmark = style<{isSelected: boolean, isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   visibility: {
     default: 'hidden',
     isSelected: 'visible'
@@ -204,7 +213,10 @@ export let checkmark = style({
     type: 'fill',
     value: {
       default: 'currentColor',
-      forcedColors: 'Highlight'
+      forcedColors: {
+        default: 'Highlight',
+        isFocused: 'HighlightText'
+      }
     }
   },
   marginEnd: 'text-to-control',
@@ -409,7 +421,8 @@ export function Divider(props: SeparatorProps): ReactNode {
   );
 }
 
-export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, keyof GlobalDOMAttributes> {}
+export interface MenuSectionProps<T extends object> extends Omit<AriaMenuSectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes> {}
+
 export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
@@ -425,7 +438,7 @@ export function MenuSection<T extends object>(props: MenuSectionProps<T>): React
   );
 }
 
-export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * The contents of the item.
    */
@@ -530,8 +543,6 @@ export function MenuItem(props: MenuItemProps): ReactNode {
  * linking the Menu's open state with the trigger's press state.
  */
 function MenuTrigger(props: MenuTriggerProps): ReactNode {
-  // RAC sets isPressed via PressResponder when the menu is open.
-  // We don't want press scaling to appear to get "stuck", so override this.
   // For mouse interactions, menus open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
   // to occur. We override this by listening for pointerup on the document ourselves.
@@ -570,11 +581,13 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
         shouldFlip: props.shouldFlip
       }}>
       <PopoverContext.Provider value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
-        <AriaMenuTrigger {...props}>
-          <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-            {props.children}
-          </PressResponder>
-        </AriaMenuTrigger>
+        <InPopoverContext.Provider value={false}>
+          <AriaMenuTrigger {...props}>
+            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+              {props.children}
+            </PressResponder>
+          </AriaMenuTrigger>
+        </InPopoverContext.Provider>
       </PopoverContext.Provider>
     </InternalMenuTriggerContext.Provider>
   );

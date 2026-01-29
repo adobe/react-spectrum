@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {Collection, DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {CollectionNode} from '@react-aria/collections';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
@@ -80,7 +80,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current?.contains(document.activeElement))
+      !nodeContains(ref.current, document.activeElement))
     ) {
       focusSafely(ref.current);
     }
@@ -132,7 +132,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
@@ -217,7 +217,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as Element)) {
+        if (!e.altKey && nodeContains(ref.current, e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement?.dispatchEvent(
@@ -245,7 +245,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onKeyDown = (e) => {
-    if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
       return;
     }
 
@@ -284,10 +284,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
-    'aria-label': node.textValue || undefined,
+    'aria-label': node['aria-label'] || node.textValue || undefined,
     'aria-selected': state.selectionManager.canSelectItem(node.key) ? state.selectionManager.isSelected(node.key) : undefined,
     'aria-disabled': state.selectionManager.isDisabled(node.key) || undefined,
-    'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
+    'aria-labelledby': descriptionId && (node['aria-label'] || node.textValue) ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
     id: getRowId(state, node.key)
   });
 

@@ -22,7 +22,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps {
+export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'render' | 'children' | 'isDisabled' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | keyof GlobalDOMAttributes>, UnsafeStyles, DOMProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the drop zone. */
@@ -65,7 +65,8 @@ const dropzone = style<DropZoneRenderProps>({
     isFocusVisible: 'blue-800'
   },
   borderRadius: 'lg',
-  padding: 24
+  padding: 24,
+  boxSizing: 'border-box'
 }, getAllowedOverrides({height: true}));
 
 const banner = style({

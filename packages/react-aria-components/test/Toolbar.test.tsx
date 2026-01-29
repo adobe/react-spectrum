@@ -74,6 +74,16 @@ describe('Toolbar', () => {
     expect(toolbar).toHaveAttribute('data-testid', 'foo');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = render(
+      <Toolbar render={props => <div {...props} data-custom="true" />}>
+        <Button>Test</Button>
+      </Toolbar>
+    );
+    let toolbar = getByRole('toolbar');
+    expect(toolbar).toHaveAttribute('data-custom', 'true');
+  });
+
   it('supports slots', async () => {
     render(
       <ToolbarContext.Provider value={{slots: {test: {'aria-label': 'test label'}}}}>

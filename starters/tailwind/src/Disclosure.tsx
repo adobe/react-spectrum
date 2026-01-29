@@ -2,51 +2,30 @@
 import React, { useContext } from "react";
 import {
   Disclosure as AriaDisclosure,
-  DisclosureGroup as AriaDisclosureGroup,
   DisclosureProps as AriaDisclosureProps,
-  DisclosureGroupProps as AriaDisclosureGroupProps,
   DisclosurePanel as AriaDisclosurePanel,
   DisclosurePanelProps as AriaDisclosurePanelProps,
   composeRenderProps,
   Heading,
-  Button,
   DisclosureStateContext,
 } from "react-aria-components";
+import { Button } from './Button';
 import { tv } from "tailwind-variants";
 import { ChevronRight } from "lucide-react";
-import { composeTailwindRenderProps, focusRing } from "./utils";
-import { DisclosureGroupStateContext } from "react-aria-components";
+import { composeTailwindRenderProps } from "./utils";
 
 const disclosure = tv({
-  base: "group min-w-64 bg-white font-sans dark:bg-gray-900 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-900 dark:text-zinc-200",
-  variants: {
-    isInGroup: {
-      true: "border-0 border-b last:border-b-0 rounded-b-none last:rounded-b-lg",
-    }
-  }
-});
-
-const disclosureButton = tv({
-  extend: focusRing,
-  base: "bg-transparent border-0 rounded-lg flex gap-2 items-center w-full text-start p-2 cursor-default",
-  variants: {
-    isDisabled: {
-      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
-    },
-    isInGroup: {
-      true: "-outline-offset-2 rounded-none group-first:rounded-t-lg group-last:rounded-b-lg",
-    }
-  }
+  base: "group min-w-50 font-sans rounded-lg text-neutral-900 dark:text-neutral-200"
 });
 
 const chevron = tv({
-  base: "w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ease-in-out",
+  base: "w-4 h-4 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ease-in-out",
   variants: {
     isExpanded: {
       true: "transform rotate-90",
     },
     isDisabled: {
-      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
     }
   }
 });
@@ -56,11 +35,10 @@ export interface DisclosureProps extends AriaDisclosureProps {
 }
 
 export function Disclosure({ children, ...props }: DisclosureProps) {
-  let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
     <AriaDisclosure
       {...props}
-      className={composeRenderProps(props.className, (className, renderProps) => disclosure({ ...renderProps, isInGroup, className }))}
+      className={composeRenderProps(props.className, (className, renderProps) => disclosure({ ...renderProps, className }))}
     >
       {children}
     </AriaDisclosure>
@@ -73,17 +51,16 @@ export interface DisclosureHeaderProps {
 
 export function DisclosureHeader({ children }: DisclosureHeaderProps) {
   let { isExpanded } = useContext(DisclosureStateContext)!;
-  let isInGroup = useContext(DisclosureGroupStateContext) !== null;
   return (
     <Heading className="text-lg font-semibold m-0">
       <Button
         slot="trigger"
-        className={(renderProps) => disclosureButton({ ...renderProps, isInGroup })}
-      >
+        variant="quiet"
+        className="w-full justify-start font-medium">
         {({isDisabled}) => (
           <>
             <ChevronRight aria-hidden className={chevron({ isExpanded, isDisabled })} />
-            {children}
+            <span>{children}</span>
           </>
         )}
       </Button>
@@ -100,17 +77,5 @@ export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
     <AriaDisclosurePanel {...props} className={composeTailwindRenderProps(props.className, 'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip')}>
       <div className="px-4 py-2">{children}</div>
     </AriaDisclosurePanel>
-  );
-}
-
-export interface DisclosureGroupProps extends AriaDisclosureGroupProps {
-  children: React.ReactNode;
-}
-
-export function DisclosureGroup({ children, ...props }: DisclosureGroupProps) {
-  return (
-    <AriaDisclosureGroup {...props} className={composeTailwindRenderProps(props.className, 'border border-gray-300 dark:border-zinc-600 rounded-lg')}>
-      {children}
-    </AriaDisclosureGroup>
   );
 }
