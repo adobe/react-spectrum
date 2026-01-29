@@ -840,6 +840,44 @@ describe('Tree', () => {
         expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
       });
 
+      it('should support collapse key to navigate to parent', async () => {
+        let {getAllByRole} = render(<DynamicTree treeProps={{shouldNavigateToCollapsibleParent: true}} />);
+        await user.tab();
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        await user.keyboard('{ArrowLeft}');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+
+
+        // Navigate down to a leaf node (Project 1 has no children)
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(rows[1]).toHaveAttribute('aria-label', 'Project 1');
+        expect(rows[1]).not.toHaveAttribute('data-expanded');
+
+        // Collapse key on leaf node should move focus to parent (Projects)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+
+        // Collapse key on expanded parent should collapse it
+        await user.keyboard('{ArrowLeft}');
+        rows = getAllByRole('row');
+        // Projects should now be collapsed, so fewer rows visible
+        expect(rows.length).toBeLessThan(20);
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+
+        // Collapse key again on now-collapsed parent should move to its parent
+        await user.keyboard('{ArrowLeft}');
+        rows = getAllByRole('row');
+        // Should still be at first row since Projects is now the root visible item
+        expect(document.activeElement).toBe(rows[0]);
+      });
+
       it('should navigate between visible rows when using Arrow Up/Down', async () => {
         let {getAllByRole} = render(<DynamicTree />);
         await user.tab();
