@@ -134,12 +134,25 @@ function cleanTypeText(t) {
   return cleaned;
 }
 
+/**
+ * Recursively evaluates a Babel AST node to extract its runtime value.
+ * This function statically evaluates TS/JS expressions from the AST.
+ * 
+ * Example: Given the AST for `const colors = ['red', ...baseColors]`,
+ * this function would return ['red', 'green', 'blue'] if `baseColors` was 
+ * defined in scope as ['green', 'blue'].
+ * 
+ * @param {object} node - A Babel AST node (StringLiteral, ArrayExpression, etc.)
+ * @param {Map} scope - A Map of variable names to their evaluated values
+ * @returns {*} The evaluated value (string, number, array, object, Set, etc.) or undefined
+ */
 function evaluateStylePropertiesNode(node, scope) {
   if (!node) {
     return undefined;
   }
 
   switch (node.type) {
+    // Primitive literals - return their direct values
     case 'StringLiteral':
       return node.value;
 
@@ -152,9 +165,12 @@ function evaluateStylePropertiesNode(node, scope) {
     case 'NullLiteral':
       return null;
 
+    // Variable references - look up the value in our scope Map
+    // Example: if scope has {baseColors: ['green', 'blue']}, evaluating `baseColors` returns ['green', 'blue']
     case 'Identifier':
       return scope.get(node.name);
 
+    // Unary expressions like -5 or +10
     case 'UnaryExpression': {
       const value = evaluateStylePropertiesNode(node.argument, scope);
       if (typeof value === 'number') {
@@ -163,12 +179,15 @@ function evaluateStylePropertiesNode(node, scope) {
       return undefined;
     }
 
+    // Array expressions like ['red', 'blue', ...otherColors]
+    // Handles both regular elements and spread elements
     case 'ArrayExpression': {
       const values = [];
       for (const element of node.elements || []) {
         if (!element) {
           continue;
         }
+        // Handle spread syntax: ...otherArray
         if (element.type === 'SpreadElement') {
           const spreadValue = evaluateStylePropertiesNode(element.argument, scope);
           if (Array.isArray(spreadValue)) {
@@ -184,12 +203,15 @@ function evaluateStylePropertiesNode(node, scope) {
       return values;
     }
 
+    // Object expressions like {margin: ['0', '4', '8'], ...otherProps}
+    // Handles both regular properties and spread properties
     case 'ObjectExpression': {
       const obj = {};
       for (const prop of node.properties || []) {
         if (!prop) {
           continue;
         }
+        // Handle spread syntax: ...otherObject
         if (prop.type === 'SpreadElement') {
           const spreadValue = evaluateStylePropertiesNode(prop.argument, scope);
           if (spreadValue && typeof spreadValue === 'object') {
@@ -209,15 +231,19 @@ function evaluateStylePropertiesNode(node, scope) {
       return obj;
     }
 
+    // Template literals like `color-${name}`
+    // Preserves ${identifier} syntax for identifiers, evaluates other expressions
     case 'TemplateLiteral': {
       let output = '';
       node.quasis.forEach((quasi, idx) => {
         output += quasi.value.cooked || '';
         const expr = node.expressions?.[idx];
         if (expr) {
+          // Keep identifier placeholders as-is: ${varName}
           if (expr.type === 'Identifier') {
             output += `\${${expr.name}}`;
           } else {
+            // Evaluate other expressions inline
             const exprValue = evaluateStylePropertiesNode(expr, scope);
             if (exprValue !== undefined) {
               output += String(exprValue);
@@ -228,6 +254,8 @@ function evaluateStylePropertiesNode(node, scope) {
       return output;
     }
 
+    // Constructor calls like `new Set(['a', 'b', 'c'])`
+    // Currently only handles Set constructor
     case 'NewExpression': {
       const calleeName = node.callee?.type === 'Identifier' ? node.callee.name : '';
       if (calleeName === 'Set') {
@@ -237,11 +265,14 @@ function evaluateStylePropertiesNode(node, scope) {
       return undefined;
     }
 
+    // TypeScript type assertions - unwrap and evaluate the inner expression
+    // Examples: `value as string`, `<string>value`, `value!`
     case 'TSAsExpression':
     case 'TSTypeAssertion':
     case 'TSNonNullExpression':
       return evaluateStylePropertiesNode(node.expression, scope);
 
+    // Parenthesized expressions - unwrap and evaluate
     case 'ParenthesizedExpression':
       return evaluateStylePropertiesNode(node.expression, scope);
 
@@ -250,6 +281,25 @@ function evaluateStylePropertiesNode(node, scope) {
   }
 }
 
+/**
+ * Loads and parses the style macro configuration from styleProperties.ts.
+ * This function reads the TypeScript source file, parses it into an AST using Babel,
+ * and evaluates all variable declarations to extract style property metadata.
+ * 
+ * The styleProperties.ts file contains definitions like:
+ *   const properties = {
+ *     spacing: { margin: ['0', '4', '8', '12'], padding: [...] },
+ *     layout: { display: ['flex', 'grid', 'block'] }
+ *   }
+ * 
+ * This function evaluates these declarations and returns a structured object with:
+ * - properties: categorized style properties and their allowed values
+ * - shorthandMapping: mappings from shorthand names to full property names
+ * - mdnTypeLinks/mdnPropertyLinks: documentation URLs
+ * - various Sets for property categorization (spacing, sizing, etc.)
+ * 
+ * @returns {object|null} Parsed style macro data or null if file doesn't exist/parse fails
+ */
 function loadStyleMacroData() {
   if (styleMacroDataCache !== null) {
     return styleMacroDataCache;
@@ -262,14 +312,19 @@ function loadStyleMacroData() {
   }
 
   try {
+    // Parse the TypeScript file into a Babel AST
     const content = fs.readFileSync(stylePropertiesPath, 'utf8');
     const ast = babel.parse(content, {
       sourceType: 'module',
       plugins: ['typescript']
     });
 
+    // Build a scope Map to store evaluated variable values
+    // This allows later declarations to reference earlier ones
     const scope = new Map();
 
+    // Helper to evaluate and register a variable declaration
+    // Example: const colors = ['red', 'blue'] => scope.set('colors', ['red', 'blue'])
     const registerDeclaration = (decl) => {
       if (!decl || decl.type !== 'VariableDeclarator') {
         return;
@@ -282,6 +337,8 @@ function loadStyleMacroData() {
       scope.set(id.name, value);
     };
 
+    // Walk through all top-level declarations and evaluate them
+    // Handles both: const x = ... and export const x = ...
     for (const node of ast.program.body || []) {
       if (node.type === 'VariableDeclaration') {
         node.declarations.forEach(registerDeclaration);
@@ -292,6 +349,7 @@ function loadStyleMacroData() {
       }
     }
 
+    // Extract the specific variables we need for style macro documentation
     styleMacroDataCache = {
       properties: scope.get('properties') || {},
       shorthandMapping: scope.get('shorthandMapping') || {},
@@ -311,12 +369,37 @@ function loadStyleMacroData() {
   return styleMacroDataCache;
 }
 
+/**
+ * Extracts property definitions for a specific category from the loaded style macro data.
+ * 
+ * Example: For category 'spacing', this returns an object like:
+ * {
+ *   margin: {
+ *     values: ['0', '4', '8', '12', '16'],
+ *     additionalTypes: ['baseSpacing', 'number'],
+ *     links: { '0': {href: 'https://...'} },
+ *     description: 'Sets the margin on all sides'
+ *   },
+ *   marginX: {
+ *     values: [...],
+ *     additionalTypes: [...],
+ *     links: {...},
+ *     mapping: ['marginLeft', 'marginRight'],  // for shorthands
+ *     description: 'Sets horizontal margins'
+ *   }
+ * }
+ * 
+ * @param {string} category - The property category (e.g., 'spacing', 'layout', 'colors')
+ * @returns {object|null} Property definitions or null if category doesn't exist
+ */
 function getStyleMacroPropertyDefinitions(category) {
   const data = loadStyleMacroData();
   if (!data?.properties?.[category]) {
     return null;
   }
 
+  // Determine what additional type values a property accepts based on its classification
+  // Example: spacing properties accept baseSpacing values like 0, 4, 8, 12, 16, etc.
   const getAdditionalTypes = (propertyName) => {
     const types = [];
     if (data.baseSpacingProperties?.has?.(propertyName)) {
@@ -335,24 +418,30 @@ function getStyleMacroPropertyDefinitions(category) {
   };
 
   const result = {};
+  
+  // Process regular properties (e.g., margin, padding, display)
   for (const [name, rawValues] of Object.entries(data.properties[category])) {
     let values = Array.isArray(rawValues) ? [...rawValues] : [];
     const links = {};
 
+    // Add MDN documentation links for specific property values
     if (data.mdnPropertyLinks?.[name]) {
       for (const [key, href] of Object.entries(data.mdnPropertyLinks[name])) {
         links[key] = {href};
       }
     }
 
+    // If no explicit values but we have links, use link keys as values
     if (values.length === 0 && Object.keys(links).length > 0) {
       values = Object.keys(links);
     }
 
+    // Add MDN type documentation links for generic type values (e.g., 'length', 'color')
     for (const value of values) {
       if (links[value]) {
-        continue;
+        continue;  // Already has a link
       }
+      // Skip 'number' for sizing properties and 'pill' for non-dimension categories
       if ((value === 'number' && data.sizingProperties?.has?.(name)) || (value === 'pill' && category !== 'dimensions')) {
         continue;
       }
@@ -369,12 +458,16 @@ function getStyleMacroPropertyDefinitions(category) {
     };
   }
 
+  // Process shorthand properties (e.g., marginX, marginY)
+  // Shorthands map to multiple full properties: marginX -> [marginLeft, marginRight]
   for (const [shorthandName, shorthandDef] of Object.entries(data.shorthandMapping || {})) {
     if (shorthandDef.category !== category) {
       continue;
     }
     let values = Array.isArray(shorthandDef.values) ? [...shorthandDef.values] : [];
     const links = {};
+    
+    // Add MDN links for shorthand values
     for (const value of values) {
       if (value === 'pill' && shorthandName.includes('border')) {
         continue;
@@ -388,7 +481,7 @@ function getStyleMacroPropertyDefinitions(category) {
       values,
       additionalTypes: getAdditionalTypes(shorthandDef.mapping?.[0]),
       links,
-      mapping: shorthandDef.mapping,
+      mapping: shorthandDef.mapping,  // Which full properties this shorthand controls
       description: data.propertyDescriptions?.[`${shorthandName}Shorthand`]
     };
   }
@@ -396,6 +489,26 @@ function getStyleMacroPropertyDefinitions(category) {
   return result;
 }
 
+/**
+ * Generates a markdown table documenting style macro properties and their allowed values.
+ * 
+ * Example output for category 'spacing':
+ * | Property | Values |
+ * |---------|--------|
+ * | margin | `0`, `4`, `8`, `12`, `baseSpacing (0, 4, 8, 12, 16, 20, 24, 28, 32)`, `number`, `lengthPercentage` |
+ * | marginX | `0`, `4`, `8`, `baseSpacing (...)`, `number` |
+ * | padding | `0`, `4`, `8`, `12`, `baseSpacing (...)` |
+ * 
+ * The table includes:
+ * - Explicit allowed values (e.g., '0', '4', '8')
+ * - Type categories with their full value sets (e.g., 'baseSpacing (0, 4, 8, ...)')
+ * - Generic types (e.g., 'number', 'lengthPercentage')
+ * 
+ * @param {string} category - Property category to generate table for (e.g., 'spacing', 'layout', 'colors')
+ * @param {object} options - Configuration options (e.g., {sort: true})
+ * @param {boolean} options.sort - Whether to sort properties alphabetically (default: true)
+ * @returns {string|null} Markdown table string or null if no properties found
+ */
 function generateStyleMacroTable(category, {sort = true} = {}) {
   const cacheKey = `${category}:${sort ? 'sorted' : 'original'}`;
   if (styleMacroTableCache.has(cacheKey)) {
@@ -414,6 +527,8 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
   }
 
   const data = loadStyleMacroData();
+  
+  // Build a row for each property, combining explicit values and type categories
   const rows = propertyNames.map((propertyName) => {
     const def = definitions[propertyName] || {};
     const values = Array.isArray(def.values) ? def.values : [];
@@ -431,6 +546,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
 
     const formatValue = (value) => `\`${String(value)}\``;
 
+    // Add explicit allowed values (e.g., '0', '4', '8', 'flex', 'grid')
     values.forEach((value) => {
       if (value === undefined || value === null) {
         return;
@@ -438,6 +554,8 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       addToken(formatValue(value));
     });
 
+    // Add type categories with their full value sets
+    // Example: baseSpacing becomes `baseSpacing (0, 4, 8, 12, 16, 20, 24, 28, 32)`
     additionalTypes.forEach((typeName) => {
       if (!typeName) {
         return;
@@ -455,6 +573,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
       addToken(formatValue(typeName));
     });
 
+    // Escape pipe characters for markdown table compatibility
     const valueText = (tokens.length ? tokens.join(', ') : '—').replace(/\|/g, '\\|');
     return {
       name: propertyName,
@@ -467,6 +586,7 @@ function generateStyleMacroTable(category, {sort = true} = {}) {
     return null;
   }
 
+  // Build the markdown table
   const header = '| Property | Values |';
   const separator = '|---------|--------|';
   const body = rows
@@ -1958,18 +2078,24 @@ function remarkDocsComponentsToMarkdown() {
       }
 
       // Render a table of style macro properties and values.
+      // This handles MDX components from style-macro.mdx like:
+      //   <StyleMacroProperties properties={getPropertyDefinitions('spacing')} />
+      //   <StyleMacroProperties properties={getPropertyDefinitions('layout')} sort={false} />
+      // And converts them to markdown tables documenting the available properties and values.
       if (name === 'StyleMacroProperties') {
         const propertiesAttr = node.attributes?.find(a => a.name === 'properties');
         let category = null;
 
+        // Extract the category name from expressions like getPropertyDefinitions('spacing')
         if (propertiesAttr && propertiesAttr.value?.type === 'mdxJsxAttributeValueExpression') {
           const expr = propertiesAttr.value.value.trim();
           const match = expr.match(/getPropertyDefinitions\(\s*['"`]([^'"`]+)['"`]\s*\)/);
           if (match) {
-            category = match[1];
+            category = match[1];  // e.g., 'spacing', 'layout', 'colors'
           }
         }
 
+        // Check if sorting should be disabled (default is true)
         let sort = true;
         const sortAttr = node.attributes?.find(a => a.name === 'sort');
         if (sortAttr) {
@@ -1988,6 +2114,7 @@ function remarkDocsComponentsToMarkdown() {
           return index;
         }
 
+        // Generate and insert the markdown table
         const table = generateStyleMacroTable(category, {sort});
         if (table) {
           const tableTree = unified().use(remarkParse).parse(table);
