@@ -1,3 +1,16 @@
 needs translations:
 - changed-files:
   - any-glob-to-any-file: ['**/intl/*.json']
+
+S2:
+- changed-files:
+  - any-glob-to-any-file: ['**/s2/**']
+
+RAC:
+- changed-files:
+  - any-glob-to-any-file: ['**/react-aria-components/**']
+
+V3:
+- changed-files:
+  - any-glob-to-any-file: ['**/@react-spectrum/**']
+
