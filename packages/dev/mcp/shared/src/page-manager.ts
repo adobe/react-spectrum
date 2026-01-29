@@ -1,5 +1,5 @@
-import {DEFAULT_CDN_BASE, fetchText} from './utils.js';
 import {extractNameAndDescription, parseSectionsFromMarkdown} from './parser.js';
+import {fetchText, getLibraryBaseUrl} from './utils.js';
 import type {Library, PageInfo} from './types.js';
 import path from 'path';
 
@@ -8,10 +8,6 @@ const pageCache = new Map<string, PageInfo>();
 
 // Whether we've loaded the page index for a library yet.
 const pageIndexLoaded = new Set<Library>();
-
-function libBaseUrl(library: Library) {
-  return `${DEFAULT_CDN_BASE}/${library}`;
-}
 
 // Build an index of pages for the given library from the CDN's llms.txt.
 export async function buildPageIndex(library: Library): Promise<PageInfo[]> {
@@ -22,7 +18,8 @@ export async function buildPageIndex(library: Library): Promise<PageInfo[]> {
   const pages: PageInfo[] = [];
 
   // Read llms.txt to enumerate available pages without downloading them all.
-  const llmsUrl = `${libBaseUrl(library)}/llms.txt`;
+  const baseUrl = getLibraryBaseUrl(library);
+  const llmsUrl = `${baseUrl}/llms.txt`;
   const txt = await fetchText(llmsUrl);
   const re = /^\s*-\s*\[([^\]]+)\]\(([^)]+)\)(?:\s*:\s*(.*))?\s*$/;
   for (const line of txt.split(/\r?\n/)) {
@@ -34,7 +31,7 @@ export async function buildPageIndex(library: Library): Promise<PageInfo[]> {
     if (!href || !/\.md$/i.test(href)) {continue;}
     const key = href.replace(/\.md$/i, '').replace(/\\/g, '/');
     const name = display || path.basename(key);
-    const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
+    const filePath = `${baseUrl}/${key}.md`;
     const info: PageInfo = {key, name, description, filePath, sections: []};
     pages.push(info);
     pageCache.set(info.key, info);
@@ -65,6 +62,8 @@ export async function resolvePageRef(library: Library, pageName: string): Promis
     return pageCache.get(pageName)!;
   }
 
+  const baseUrl = getLibraryBaseUrl(library);
+
   if (pageName.includes('/')) {
     const normalized = pageName.replace(/\\/g, '/');
     const prefix = normalized.split('/', 1)[0];
@@ -73,7 +72,7 @@ export async function resolvePageRef(library: Library, pageName: string): Promis
     }
     const maybe = pageCache.get(normalized);
     if (maybe) {return maybe;}
-    const filePath = `${DEFAULT_CDN_BASE}/${normalized}.md`;
+    const filePath = `${baseUrl}/${normalized}.md`;
     const stub: PageInfo = {key: normalized, name: path.basename(normalized), description: undefined, filePath, sections: []};
     pageCache.set(stub.key, stub);
     return stub;
@@ -82,7 +81,7 @@ export async function resolvePageRef(library: Library, pageName: string): Promis
   const key = `${library}/${pageName}`;
   const maybe = pageCache.get(key);
   if (maybe) {return maybe;}
-  const filePath = `${DEFAULT_CDN_BASE}/${key}.md`;
+  const filePath = `${baseUrl}/${key}.md`;
   const stub: PageInfo = {key, name: pageName, description: undefined, filePath, sections: []};
   pageCache.set(stub.key, stub);
   return stub;
