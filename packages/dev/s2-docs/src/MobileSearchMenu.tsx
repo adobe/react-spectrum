@@ -17,6 +17,7 @@ import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
 import React, {cloneElement, CSSProperties, ReactElement, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
+import {TypographySearchView} from './TypographySearchView';
 import {useId} from '@react-aria/utils';
 import {useRouter} from './Router';
 
@@ -242,6 +243,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
 
   const filteredColors = useFilteredColors(searchValue);
   const isColorsSelected = selectedSection === 'colors';
+  const isTypographySelected = selectedSection === 'typography';
 
   let handleSearchFocus = () => {
     setSearchFocused(true);
@@ -370,7 +372,17 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         </Suspense>
                       </div>
                     )}
-                    {!showIcons && (!isColorsSelected || library.id !== 'react-spectrum') && (
+                    {!showIcons && isTypographySelected && library.id === 'react-spectrum' && (
+                      <div
+                        className={style({
+                          flexGrow: 1,
+                          overflow: 'auto',
+                          paddingBottom: 16
+                        })}>
+                        <TypographySearchView searchValue={searchValue} />
+                      </div>
+                    )}
+                    {!showIcons && !isColorsSelected && !isTypographySelected && (
                       <ComponentCardView
                         currentUrl={currentUrl}
                         onAction={key => {
