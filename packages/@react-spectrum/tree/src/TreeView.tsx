@@ -34,7 +34,7 @@ import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
 
-export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
+export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children' | 'render'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
   renderEmptyState?: () => JSX.Element,
   /**
@@ -48,7 +48,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'childr
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'> {
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'render' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode
 }

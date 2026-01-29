@@ -15,6 +15,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -224,7 +225,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         }],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
@@ -238,7 +239,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         <HiddenSelect
           {...hiddenSelectProps}
           autoComplete={props.autoComplete} />
-      </div>
+      </dom.div>
     </Provider>
   );
 }
@@ -262,7 +263,7 @@ export interface SelectValueRenderProps<T> {
   state: SelectState<T, 'single' | 'multiple'>
 }
 
-export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {
+export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>, 'span'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-SelectValue'
@@ -347,11 +348,11 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
+    <dom.span ref={ref} {...DOMProps} {...renderProps} data-placeholder={state.selectedItems.length === 0 || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}
       </TextContext.Provider>
-    </span>
+    </dom.span>
   );
 });
