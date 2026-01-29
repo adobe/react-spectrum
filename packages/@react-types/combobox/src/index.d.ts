@@ -23,6 +23,7 @@ import {
   Key,
   LabelableProps,
   LoadingState,
+  SingleSelection,
   SpectrumFieldValidation,
   SpectrumLabelableProps,
   SpectrumTextInputBase,
@@ -83,7 +84,7 @@ export interface ComboBoxProps<T, M extends SelectionMode = 'single'> extends Co
   /** Handler that is called when the ComboBox input value changes. */
   onInputChange?: (value: string) => void,
   /** Whether the ComboBox allows a non-item matching input value to be set. */
-  allowsCustomValue?: boolean,
+allowsCustomValue?: boolean,
   // /**
   //  * Whether the Combobox should only suggest matching options or autocomplete the field with the nearest matching option.
   //  * @default 'suggest'
@@ -101,7 +102,7 @@ export interface AriaComboBoxProps<T, M extends SelectionMode = 'single'> extend
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<ComboBoxValidationValue>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange'>, Omit<SingleSelection, 'disallowEmptySelection'>, SpectrumFieldValidation<ComboBoxValidationValue>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'
