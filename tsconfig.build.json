@@ -19,8 +19,6 @@
     "moduleResolution": "bundler",
     "customConditions": ["source"],
     "module": "esnext",
-    // Process & infer types from .js files.
-    "allowJs": true,
     // Disallow features that require cross-file information for emit.
     "isolatedModules": true,
     // Import non-ES modules as default imports.
@@ -51,6 +49,7 @@
     "packages/dev/optimize-locales-plugin",
     "packages/@react-spectrum/s2/s2wf-icons",
     "packages/@react-spectrum/s2/icon.d.ts",
-    "packages/dev/s2-docs/pages/**"
+    "packages/dev/s2-docs/pages/**",
+    "lib/*.js"
   ]
 }

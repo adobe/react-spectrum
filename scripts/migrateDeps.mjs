@@ -1,8 +1,8 @@
 import fs from 'fs';
+import {parse} from '@babel/parser';
 import path from 'path';
 import * as recast from 'recast';
 import * as t from '@babel/types';
-import {parse} from '@babel/parser';
 
 const skipped = ['example-theme', 'test-utils', 'story-utils', 'style-macro-s1'];
 const importMap = {
@@ -241,67 +241,55 @@ function migrateScope(scope, monopackage) {
 function prepareMonopackage(monopackage) {
   let monopackageJSON = JSON.parse(fs.readFileSync(`packages/${monopackage}/package.json`, 'utf8'));
   monopackageJSON.source = 'exports/index.ts';
-  if (!monopackageJSON.exports['.']) {
+  if (monopackageJSON.exports && !monopackageJSON.exports['.']) {
     monopackageJSON.exports = {
-      '.': {
-        source: './exports/index.ts',
-        types: './dist/types/exports/index.d.ts',
-        import: './dist/exports/index.mjs',
-        require: './dist/exports/index.js'
-      },
-      './private/*': {
-        source: ['./src/*.ts', './src/*.tsx'],
-        types: ['./dist/types/src/*.d.ts'],
-        import: './dist/private/*.mjs',
-        require: './dist/private/*.js'
-      },
-      './*': {
-        source: ['./exports/*.ts'],
-        types: './dist/exports/*.d.ts',
-        import: './dist/exports/*.mjs',
-        require: './dist/exports/*.js'
-      }
+      '.': monopackageJSON.exports
     };
-  } else {
-    Object.assign(monopackageJSON.exports, {
-      '.': {
-        source: './exports/index.ts',
-        types: './dist/types/exports/index.d.ts',
-        import: './dist/exports/index.mjs',
-        require: './dist/exports/index.js'
-      },
-      './private/*': {
-        source: ['./src/*.ts', './src/*.tsx'],
-        types: ['./dist/types/src/*.d.ts'],
-        import: './dist/private/*.mjs',
-        require: './dist/private/*.js'
-      },
-      './*': {
-        source: ['./exports/*.ts'],
-        types: './dist/types/exports/*.d.ts',
-        import: './dist/exports/*.mjs',
-        require: './dist/exports/*.js'
-      }
-    });
+  }
+
+  Object.assign(monopackageJSON.exports ??= {}, {
+    '.': {
+      source: './exports/index.ts',
+      types: './dist/types/exports/index.d.ts',
+      import: './dist/exports/index.mjs',
+      require: './dist/exports/index.cjs'
+    },
+    './private/*': {
+      source: ['./src/*.ts', './src/*.tsx'],
+      types: ['./dist/types/src/*.d.ts'],
+      import: './dist/private/*.mjs',
+      require: './dist/private/*.cjs'
+    },
+    './*': {
+      source: ['./exports/*.ts'],
+      types: './dist/types/exports/*.d.ts',
+      import: './dist/exports/*.mjs',
+      require: './dist/exports/*.cjs'
+    }
+  });
+
+  let includeNodeModules = false;
+  if (monopackage === '@adobe/react-spectrum') {
+    includeNodeModules = ['@adobe/spectrum-css-temp'];
   }
 
   monopackageJSON.targets = {
     main: false,
     module: false,
     types: false,
-    "exports-module": {
-      "source": ["exports/*.ts", "src/**/*.{ts,tsx}"],
-      "distDir": "dist",
-      "isLibrary": true,
-      "outputFormat": "esmodule",
-      "includeNodeModules": false
+    'exports-module': {
+      'source': ['exports/*.ts', 'src/**/*.{ts,tsx}'],
+      'distDir': 'dist',
+      'isLibrary': true,
+      'outputFormat': 'esmodule',
+      'includeNodeModules': includeNodeModules
     },
-    "exports-main": {
-      "source": ["exports/*.ts", "src/**/*.{ts,tsx}"],
-      "distDir": "dist",
-      "isLibrary": true,
-      "outputFormat": "commonjs",
-      "includeNodeModules": false
+    'exports-main': {
+      'source': ['exports/*.ts', 'src/**/*.{ts,tsx}'],
+      'distDir': 'dist',
+      'isLibrary': true,
+      'outputFormat': 'commonjs',
+      'includeNodeModules': includeNodeModules
     }
   };
 
@@ -314,6 +302,10 @@ function prepareMonopackage(monopackage) {
       }
       delete monopackageJSON.dependencies[dep];
     }
+  }
+
+  if (monopackage === '@adobe/react-spectrum') {
+    monopackageJSON.devDependencies['@adobe/spectrum-css-temp'] = '3.0.0-alpha.1';
   }
 
   fs.mkdirSync(`packages/${monopackage}/exports`, {recursive: true});
@@ -341,14 +333,20 @@ function migratePackage(scope, name, monopackage) {
     } else if (depScope && depScope[0] !== scope && !monopackageJSON.dependencies[depScope[1]]) {
       monopackageJSON.dependencies[depScope[1]] = JSON.parse(fs.readFileSync(`packages/${depScope[1]}/package.json`, 'utf8')).version;
     }
+
+    if (depScope) {
+      let p = depScope[1] === 'react-spectrum' ? '@adobe/react-spectrum' : depScope[1];
+      if (!packageJSON.dependencies[p]) {
+        packageJSON.dependencies[p] = '^' + JSON.parse(fs.readFileSync(`packages/${p}/package.json`, 'utf8')).version;
+      }
+      delete packageJSON.dependencies[dep];
+    }
   }
 
   fs.writeFileSync(`packages/${monopackage}/package.json`, JSON.stringify(monopackageJSON, false, 2) + '\n');
 
   packageJSON.source = 'src/index.ts';
-  packageJSON.dependencies = {
-    [monopackage]: '^' + monopackageJSON.version
-  };
+  packageJSON.dependencies[monopackage] = '^' + monopackageJSON.version;
   packageJSON.targets = {
     types: false // TODO: i18n package
   };
@@ -426,19 +424,19 @@ function migrateToMonopackage(pkg) {
     main: false,
     module: false,
     types: false,
-    "exports-module": {
-      "source": "exports/*.ts",
-      "distDir": "dist",
-      "isLibrary": true,
-      "outputFormat": "esmodule",
-      "includeNodeModules": false
+    'exports-module': {
+      'source': 'exports/*.ts',
+      'distDir': 'dist',
+      'isLibrary': true,
+      'outputFormat': 'esmodule',
+      'includeNodeModules': false
     },
-    "exports-main": {
-      "source": "exports/*.ts",
-      "distDir": "dist",
-      "isLibrary": true,
-      "outputFormat": "commonjs",
-      "includeNodeModules": false
+    'exports-main': {
+      'source': 'exports/*.ts',
+      'distDir': 'dist',
+      'isLibrary': true,
+      'outputFormat': 'commonjs',
+      'includeNodeModules': false
     }
   });
 
@@ -586,7 +584,7 @@ function getImportStatements(node, file, relative = true) {
     }
     let importSource = source;
     let [src, imported] = importMap[source][importedName];
-    if (importMap[src] && importMap[src][imported]) {
+    while (importMap[src] && importMap[src][imported]) {
       importSource = src;
       [src, imported] = importMap[src][imported];
     }
