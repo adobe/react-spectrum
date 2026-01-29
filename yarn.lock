@@ -8133,6 +8133,7 @@ __metadata:
   resolution: "@react-stately/datepicker@workspace:packages/@react-stately/datepicker"
   dependencies:
     "@internationalized/date": "npm:^3.10.1"
+    "@internationalized/number": "npm:^3.6.5"
     "@internationalized/string": "npm:^3.2.7"
     "@react-stately/form": "npm:^3.2.2"
     "@react-stately/overlays": "npm:^3.6.21"

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.10.1",
+    "@internationalized/number": "^3.6.5",
     "@internationalized/string": "^3.2.7",
     "@react-stately/form": "^3.2.2",
     "@react-stately/overlays": "^3.6.21",
