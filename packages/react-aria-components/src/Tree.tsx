@@ -19,6 +19,7 @@ import {
   ContextValue,
   DEFAULT_SLOT,
   dom,
+  DOMRenderProps,
   Provider,
   RenderProps,
   SlotProps,
@@ -33,7 +34,7 @@ import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRender
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {GridListHeader, GridListHeaderContext, GridListHeaderInnerContext} from './GridList';
+import {GridListHeader, GridListHeaderContext, GridListHeaderProps, GridListHeaderInnerContext} from './GridList';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
@@ -1213,7 +1214,7 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListSectionProps<T> extends SectionProps<T> {}
+export interface GridListSectionProps<T> extends SectionProps<T>, DOMRenderProps<'section', undefined>  {}
 
 /**
  * A TreeSection represents a section within a Tree.
@@ -1227,17 +1228,18 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T e
     'aria-label': props['aria-label'] ?? undefined
   }, state, ref);
   let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: undefined,
     defaultClassName: 'react-aria-TreeSection',
-    className: props.className,
-    style: props.style,
-    values: {}
+    values: undefined
   });
 
   let DOMProps = filterDOMProps(props as any, {global: true});
   delete DOMProps.id;
 
   return (
-    <section
+    <dom.section
       {...mergeProps(DOMProps, renderProps, rowGroupProps)}
       ref={ref}>
       <Provider
@@ -1249,11 +1251,11 @@ export const TreeSection = /*#__PURE__*/ createBranchComponent(SectionNode, <T e
           collection={state.collection}
           parent={item} />
       </Provider>
-    </section>
+    </dom.section>
   );
 });
 
-export const TreeHeader = (props: HTMLAttributes<HTMLElement>): ReactNode => {
+export const TreeHeader = (props: GridListHeaderProps): ReactNode => {
   return (
     <GridListHeader className="react-aria-TreeHeader" {...props}>
       {props.children}
