@@ -27,7 +27,7 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
+import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
@@ -41,7 +41,7 @@ import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
-class TreeCollection<T> implements ICollection<Node<T>> {
+class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>> {
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
   private firstKey;
@@ -49,11 +49,12 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   private expandedKeys;
 
   constructor(opts) {
+    super();
     let {collection, lastExpandedKeys, expandedKeys} = opts;
-    let {keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
+    // let {keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
-    this.keyMap = keyMap;
-    this.itemCount = itemCount;
+    // this.keyMap = keyMap;
+    // this.itemCount = itemCount;
     this.firstKey = [...this.keyMap.keys()][0];
     this.lastKey = [...this.keyMap.keys()][this.keyMap.size - 1];
     this.expandedKeys = expandedKeys;
@@ -94,39 +95,26 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   *[Symbol.iterator]() {
-    function* traverseDepthFirst(node: CollectionNode<T> | null, expandedKeys: Set<Key>) {
-      if (!node) {
-        return;
-      }
-      
-      // Always yield the current node first
-      yield node;
-  
-      // If node is expanded, traverse its children
-      if (expandedKeys.has(node.key) && node.firstChildKey) {
-        let firstChild = keyMap.get(node.firstChildKey);
-        // Skip content nodes
-        while (firstChild && firstChild.type === 'content') {
-          firstChild = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : undefined;
-        }
-        if (firstChild) {
-          yield* traverseDepthFirst(firstChild, expandedKeys);
-        }
-      }
-  
-      // Then traverse to next sibling
-      let nextNode = node && node.nextKey ? keyMap.get(node.nextKey) : null;
-      if (nextNode) {
-        yield* traverseDepthFirst(nextNode, expandedKeys);
+    let keyMap = this.keyMap;
+    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
+    
+    while (node) {
+      yield node as Node<T>;
+      if (node.type === 'section') {
+        node = node.nextKey ? this.getItem(node.nextKey) : undefined;
+      } else {
+        let key = this.getKeyAfter(node.key);
+        // Skip over content nodes
+        // if (key) {
+        //   let temp = keyMap.get(key) as Node<T>;
+        //   if (temp.type === 'content' && temp.nextKey) {
+        //     key = temp.nextKey;
+        //   }
+        // }
+        node = key ? this.getItem(key) : undefined;
       }
     }
-
-    let keyMap = this.keyMap;
-    let expandedKeys = this.expandedKeys;
-    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
-    yield* traverseDepthFirst(node as CollectionNode<T>, expandedKeys);
   }
-
 
   get size() {
     return this.itemCount;
@@ -136,52 +124,12 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     return this.keyMap.keys();
   }
 
-  getItem(key: Key): Node<T> | null {
-    return this.keyMap.get(key) || null;
-  }
+  // getItem(key: Key): Node<T> | null {
+  //   return this.keyMap.get(key) || null;
+  // }
 
   at(idx: number) {
-    let keyMap = this.keyMap;
-    let expandedKeys = this.expandedKeys;
-
-    function getKeyAfter(key: Key) {
-      let node = keyMap.get(key);
-      if (!node) {
-        return null;
-      }
-  
-      if ((expandedKeys.has(node.key) || node.type !== 'item') && node.firstChildKey != null) {
-        node = keyMap.get(node.firstChildKey);
-        while (node && node.type === 'content' && node.nextKey != null) {
-          node = keyMap.get(node.nextKey);
-        }
-        return node ? node.key : null;
-      }
-  
-      while (node) {
-        if (node.nextKey != null) {
-          return node.nextKey;
-        }
-  
-        if (node.parentKey != null) {
-          node = keyMap.get(node.parentKey);
-        } else {
-          return null;
-        }
-      }
-  
-      return null;
-    }
-
-    let firstKey = this.getFirstKey();
-    let node = firstKey ? keyMap.get(firstKey) : null;
-    for (let i = 0; i < idx; i++) {
-      if (node) {
-        let keyAfter = getKeyAfter(node.key);
-        node = keyAfter ? keyMap.get(keyAfter) : null;
-      }
-    }
-    return node as Node<T>;
+    throw new Error('Not implemented');
   }
 
   getFirstKey() {
@@ -275,40 +223,26 @@ class TreeCollection<T> implements ICollection<Node<T>> {
 
   getChildren(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
-    let expandedKeys = this.expandedKeys;
+    let self = this;
     return {
       *[Symbol.iterator]() {
-        function* traverseDepthFirst(node: CollectionNode<T> | null, expandedKeys: Set<Key>) {
-          if (!node) {
-            return;
-          }
-
-          // Always yield the current node first
-          yield node;
-      
-          // If node is expanded, traverse its children
-          if (expandedKeys.has(node.key) && node.firstChildKey) {
-            let firstChild = keyMap.get(node.firstChildKey);
-            // Skip content nodes
-            while (firstChild && firstChild.type === 'content') {
-              firstChild = firstChild && firstChild.nextKey ? keyMap.get(firstChild.nextKey) : undefined;
-            }
-            if (firstChild) {
-              yield* traverseDepthFirst(firstChild, expandedKeys);
-            }
-          }
-      
-          // Then traverse to next sibling
-          let nextNode = node && node.nextKey ? keyMap.get(node.nextKey) : null;
-          if (nextNode) {
-            yield* traverseDepthFirst(nextNode, expandedKeys);
-          }
-        }
-
         let parent = keyMap.get(key);
         let node = parent?.firstChildKey ? keyMap.get(parent.firstChildKey) : null;
         if (parent && parent.type === 'section' && node) {
-          yield* traverseDepthFirst(node, expandedKeys);
+          // Stop once either the node is null or the node is the parent's sibling
+          while (node && node.key !== parent.nextKey) {
+            yield keyMap.get(node.key) as Node<T>;
+            let key = self.getKeyAfter(node.key);
+
+            // Skip over content nodes
+            if (key) {
+              let temp = keyMap.get(key) as Node<T>;
+              if (temp.type === 'content' && temp.nextKey) {
+                key = temp.nextKey;
+              }
+            }
+            node = key ? keyMap.get(key) : undefined;
+          }
         } else {
           while (node) {
             yield node as Node<T>;

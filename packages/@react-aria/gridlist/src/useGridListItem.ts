@@ -105,6 +105,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
+        // console.log([...state.collection.getChildren(parent.key)])
         let siblings = getDirectChildren(parent as CollectionNode<T>, state.collection as Collection<CollectionNode<T>>);
         setSize = [...siblings].filter(row => row.type === 'item').length;
       }
