@@ -1,0 +1,473 @@
+# use
+
+Drop
+
+Handles drop interactions for an element, with support for traditional mouse and touch
+based drag and drop, in addition to full parity for keyboard and screen reader users.
+
+## Introduction
+
+React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop.
+
+See the [drag and drop guide](dnd.md) to learn more.
+
+## Example
+
+This example shows how to make a simple drop target that accepts plain text data. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While a drag is hovered over it, a blue outline is rendered by applying an additional CSS class.
+
+```tsx
+'use client';
+import React from 'react';
+import type {TextDropItem} from 'react-aria';
+import {useDrop} from 'react-aria';
+import {Draggable} from './Draggable';
+import './useDragExample.css';
+import 'vanilla-starter/theme.css';
+
+function DropTarget() {
+  let [dropped, setDropped] = React.useState<string | null>(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    async onDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter((item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain'))
+          .map((item) => item.getText('text/plain'))
+      );
+      setDropped(items.join('\n'));
+    }
+  });
+
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+      {dropped || 'Drop here'}
+    </div>
+  );
+}
+
+<div>
+  <Draggable />
+  <DropTarget />
+</div>
+```
+
+## Drop data
+
+`useDrop` allows users to drop one or more **drag items**, each of which contains data to be transferred from the drag source to drop target. There are three kinds of drag items:
+
+* `text` – represents data inline as a string in one or more formats
+* `file` – references a file on the user's device
+* `directory` – references the contents of a directory
+
+### Text
+
+A `TextDropItem` represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+
+The example below finds the first available item that includes a custom app-specific type. The same draggable component as used in the above example is used here, but rather than displaying the plain text representation, the custom format is used instead.
+
+```tsx
+'use client';
+import React from 'react';
+import type {TextDropItem} from 'react-aria';
+import {useDrop} from 'react-aria';
+import {Draggable} from './Draggable';
+
+function DropTarget() {
+  let [dropped, setDropped] = React.useState<string | null>(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    /*- begin highlight -*/
+    async onDrop(e) {
+      let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-custom-type')) as TextDropItem;
+      if (item) {
+        setDropped(await item.getText('my-app-custom-type'));
+      }
+    }
+    /*- end highlight -*/
+  });
+  // ...
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+      {dropped || 'Drop here'}
+    </div>
+  );
+}
+<div>
+  <Draggable />
+  <DropTarget />
+</div>
+```
+
+### Files
+
+A `FileDropItem` references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
+
+This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
+
+```tsx
+'use client';
+import React from 'react';
+import type {FileDropItem} from 'react-aria';
+import {useDrop} from 'react-aria';
+function DropTarget() {
+  let [file, setFile] = React.useState<string | null>(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    /*- begin highlight -*/
+    async onDrop(e) {
+      let item = e.items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) as FileDropItem;
+      if (item) {
+        setFile(URL.createObjectURL(await item.getFile()));
+      }
+    }
+    /*- end highlight -*/
+  });
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+      {file ? <img src={file} style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Drop image here'}
+    </div>
+  );
+}
+```
+
+### Directories
+
+A `DirectoryDropItem` references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
+The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a `FileDropItem` or `DirectoryDropItem`, and you can access the contents of each file as discussed above.
+
+This example renders the file names within a dropped directory in a grid.
+
+```tsx
+'use client';
+import React from 'react';
+import type {DirectoryDropItem} from 'react-aria';
+import File from '@react-spectrum/s2/icons/File';
+import Folder from '@react-spectrum/s2/icons/Folder';
+import {useDrop} from 'react-aria';
+import './useClipboardGrid.css';
+
+function DropTarget() {
+  let [files, setFiles] = React.useState<Array<{name: string, kind: 'file' | 'directory'}> | null>(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    /*- begin highlight -*/
+    async onDrop(e) {
+      // Find the first dropped item that is a directory.
+      let dir = e.items.find(item => item.kind === 'directory') as DirectoryDropItem;
+      if (dir) {
+        // Read entries in directory and update state with relevant info.
+        let files: Array<{name: string, kind: 'file' | 'directory'}> = [];
+        for await (let entry of dir.getEntries()) {
+          files.push({
+            name: entry.name,
+            kind: entry.kind
+          });
+        }
+        setFiles(files);
+      }
+    }
+    /*- end highlight -*/
+  });
+  let contents = <>Drop directory here</>;
+  if (files) {
+    contents = (
+      <ul>
+        {files.map(f => (
+          <li key={f.name}>
+            {f.kind === 'directory' ? <Folder /> : <File />}
+            <span>{f.name}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable grid ${isDropTarget ? 'target' : ''}`} style={{overflow: 'auto'}}>
+      {contents}
+    </div>
+  );
+}
+```
+
+## Drop operations
+
+A `DropOperation` is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
+
+* `move` – indicates that the dragged data will be moved from its source location to the target location.
+* `copy` – indicates that the dragged data will be copied to the target destination.
+* `link` – indicates that there will be a relationship established between the source and target locations.
+* `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
+Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
+The drag source can specify which drop operations are allowed for the dragged data (see the [useDrag docs](useDrag.md) for how to customize this). By default, the first allowed operation is allowed by drop targets, meaning that the drop target accepts data of any type and operation.
+
+### get
+
+DropOperation
+
+The `getDropOperation` function passed to `useDrop` can be used to provide appropriate feedback to the user when a drag hovers over the drop target. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement `getDropOperation` and return `'cancel'` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true.
+When the data is supported, either return one of the drop operations in `allowedOperation` or a specific drop operation if only that drop operation is supported. If the returned operation is not in `allowedOperations`, then the drop target will act as if `'cancel'` was returned.
+
+In the below example, the drop target only supports dropping PNG images. If a PNG is dragged over the target, it will be highlighted and the operating system displays a copy cursor. If another type is dragged over the target, then there is no visual feedback, indicating that a drop is not accepted there. If the user holds a modifier key such as <Keyboard>Control</Keyboard> while dragging over the drop target in order to change the drop operation, then the drop target does not accept the drop.
+
+```tsx
+'use client';
+import React from 'react';
+import {useDrop} from 'react-aria';
+import type {FileDropItem} from 'react-aria';
+function DropTarget() {
+  let [file, setFile] = React.useState<string | null>(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    /*- begin highlight -*/
+    getDropOperation(types, allowedOperations) {
+      return types.has('image/png') ? 'copy' : 'cancel';
+    },
+    /*- end highlight -*/
+    async onDrop(e) {
+      let item = e.items.find(item => item.kind === 'file' && item.type === 'image/png') as FileDropItem;
+      if (item) {
+        setFile(URL.createObjectURL(await item.getFile()));
+      }
+    }
+  });
+  // ...
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+      {file ? <img src={file} style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Drop image here'}
+    </div>
+  );
+}
+```
+
+### on
+
+Drop
+
+The `onDrop` event also includes the `dropOperation`. This can be used to perform different actions accordingly, for example, when communicating with a backend API.
+
+```tsx
+function DropTarget(props) {
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    async onDrop(e) {
+      let item = e.items.find(item => item.kind === 'text' && item.types.has('my-app-file')) as TextDropItem;
+      if (!item) {
+        return;
+      }
+      let data = JSON.parse(await item.getText('my-app-file'));
+      /*- begin highlight -*/
+      switch (e.dropOperation) {
+        case 'move':
+          MyAppFileService.move(data.filePath, props.filePath);
+          break;
+        case 'copy':
+          MyAppFileService.copy(data.filePath, props.filePath);
+          break;
+        case 'link':
+          MyAppFileService.link(data.filePath, props.filePath);
+          break;
+      }
+      /*- end highlight -*/
+    }
+  });
+  // ...
+}
+```
+
+## Events
+
+Drop targets receive a number of events during a drag session. These are:
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` \* | `"drop"` | The event type. |
+| `dropOperation` \* | `DropOperation` | The drop operation that should occur. |
+| `items` \* | `DropItem[]` | The dropped items. |
+| `x` \* | `number` | The x coordinate of the event, relative to the target element. |
+| `y` \* | `number` | The y coordinate of the event, relative to the target element. |
+
+This example logs all events that occur within the drop target:
+
+```tsx
+'use client';
+import React from 'react';
+import {useDrop} from 'react-aria';
+import {Draggable} from './Draggable';
+
+function DropTarget() {
+  let [events, setEvents] = React.useState<string[]>([]);
+  let onEvent = e => setEvents(events => [JSON.stringify(e), ...events]);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    onDropEnter: onEvent,
+    onDropMove: onEvent,
+    onDropExit: onEvent,
+    onDrop: onEvent
+  });
+  return (
+    <ul {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`} style={{display: 'block', width: 'auto', overflow: 'auto'}} aria-label="Drop events">
+      {events.map((e, i) => <li key={i}>{e}</li>)}
+    </ul>
+  );
+}
+<div>
+  <Draggable />
+  <DropTarget />
+</div>
+```
+
+## Disabling dropping
+
+If you need to temporarily disable dropping, you can pass the `isDisabled` option to `useDrop`. This will prevent the drop target from accepting any drops until it is re-enabled.
+
+```tsx
+'use client';
+import React from 'react';
+import type {TextDropItem} from 'react-aria';
+import {useDrop} from 'react-aria';
+import {Draggable} from './Draggable';
+
+function DropTarget() {
+  let [dropped, setDropped] = React.useState<string | null>(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    async onDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter((item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain'))
+          .map((item) => item.getText('text/plain'))
+      );
+      setDropped(items.join('\n'));
+    },
+    /*- begin highlight -*/
+    isDisabled: true
+    /*- end highlight -*/
+  });
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+      {dropped || 'Drop here'}
+    </div>
+  );
+}
+<div>
+  <Draggable />
+  <DropTarget />
+</div>
+```
+
+## A
+
+PI
+
+<FunctionAPI
+  function={docs.exports.useDrop}
+  links={docs.links}
+/>
+
+### Drop
+
+Options
+
+| Name | Type | Description |
+|------|------|-------------|
+| `ref` \* | `RefObject<FocusableElement | null>` | A ref for the droppable element. |
+| `getDropOperation` | `((types: IDragTypes, allowedOperations: DropOperation[]) => DropOperation) | undefined` | A function returning the drop operation to be performed when items matching the given types are dropped on the drop target. |
+| `getDropOperationForPoint` | `((types: IDragTypes, allowedOperations: DropOperation[], x: number, y: number) => DropOperation) | undefined` | A function that returns the drop operation for a specific point within the target. |
+| `onDropEnter` | `((e: DropEnterEvent) => void) | undefined` | Handler that is called when a valid drag enters the drop target. |
+| `onDropMove` | `((e: DropMoveEvent) => void) | undefined` | Handler that is called when a valid drag is moved within the drop target. |
+| `onDropActivate` | `((e: DropActivateEvent) => void) | undefined` | Handler that is called after a valid drag is held over the drop target for a period of time. This typically opens the item so that the user can drop within it. |
+| `onDropExit` | `((e: DropExitEvent) => void) | undefined` | Handler that is called when a valid drag exits the drop target. |
+| `onDrop` | `((e: DropEvent) => void) | undefined` | Handler that is called when a valid drag is dropped on the drop target. |
+| `hasDropButton` | `boolean | undefined` | Whether the item has an explicit focusable drop affordance to initiate accessible drag and drop mode. If true, the dropProps will omit these event handlers, and they will be applied to dropButtonProps instead. |
+| `isDisabled` | `boolean | undefined` | Whether the drop target is disabled. If true, the drop target will not accept any drops. |
+
+### Drop
+
+Result
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dropProps` \* | `DOMAttributes<FocusableElement>` | Props for the droppable element. |
+| `isDropTarget` \* | `boolean` | Whether the drop target is currently focused or hovered. |
+| `dropButtonProps` | `AriaButtonProps<"button"> | undefined` | Props for the explicit drop button affordance, if any. |
+
+## Related 
+
+Types
+
+### Text
+
+DropItem
+
+### Properties
+
+| Name | Type | Description |
+|------|------|-------------|
+| `kind` \* | `"text"` | The item kind. |
+| `types` \* | `Set<string>` | The drag types available for this item. These are often mime types, but may be custom app-specific types. |
+
+### Methods
+
+#### `get
+
+Text(type: string): Promise<string>`
+
+Returns the data for the given type as a string.
+
+### File
+
+DropItem
+
+### Properties
+
+| Name | Type | Description |
+|------|------|-------------|
+| `kind` \* | `"file"` | The item kind. |
+| `type` \* | `string` | The file type (usually a mime type). |
+| `name` \* | `string` | The file name. |
+
+### Methods
+
+#### `get
+
+File(): Promise<File>`
+
+Returns the contents of the file as a blob.
+
+#### `get
+
+Text(): Promise<string>`
+
+Returns the contents of the file as a string.
+
+### Directory
+
+DropItem
+
+### Properties
+
+| Name | Type | Description |
+|------|------|-------------|
+| `kind` \* | `"directory"` | The item kind. |
+| `name` \* | `string` | The directory name. |
+
+### Methods
+
+#### `get
+
+Entries(): AsyncIterable<FileDropItem | DirectoryDropItem>`
+
+Returns the entries contained within the directory.
+
+### Drop
+
+Operation

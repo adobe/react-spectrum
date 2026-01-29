@@ -1,0 +1,108 @@
+# React Spectrum (S2) Documentation
+
+> Plain-text markdown documentation for React Spectrum S2 components.
+
+## Documentation
+- [Accordion](Accordion.md): An accordion is a container for multiple accordion items.
+- [Action](ActionBar.md): Bar
+- [Action](ActionButton.md): Button
+- [Action](ActionButtonGroup.md): ButtonGroup
+- [Action](ActionMenu.md): Menu
+- [Avatar](Avatar.md): An avatar is a thumbnail representation of an entity, such as a user or an organization.
+- [Avatar](AvatarGroup.md): Group
+- [Badge](Badge.md): Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+- [Breadcrumbs](Breadcrumbs.md): Breadcrumbs show hierarchy and navigational context for a user's location within an application.
+- [Button](Button.md): Buttons allow users to perform an action.
+- [Button](ButtonGroup.md): Group
+- [Calendar](Calendar.md): Calendars display a grid of days in one or more months and allow users to select a single date.
+- [Card](Card.md): A Card summarizes an object that a user can select or navigate to.
+- [Card](CardView.md): View
+- [Checkbox](Checkbox.md): Checkboxes allow users to select multiple items from a list of individual items,
+- [Checkbox](CheckboxGroup.md): Group
+- [Collections](collections.md): Many components display a collection of items, and provide functionality such as keyboard navigation, and selection. Learn how to load and render collections using React Spectrum's compositional API.
+- [Color](ColorArea.md): Area
+- [Color](ColorField.md): Field
+- [Color](ColorSlider.md): Slider
+- [Color](ColorSwatch.md): Swatch
+- [Color](ColorSwatchPicker.md): SwatchPicker
+- [Color](ColorWheel.md): Wheel
+- [Combo](ComboBox.md): Box
+- [Contextual](ContextualHelp.md): Help
+- [Date](DateField.md): Field
+- [Date](DatePicker.md): Picker
+- [Date](DateRangePicker.md): RangePicker
+- [Dialog](Dialog.md): Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
+- [Disclosure](Disclosure.md): A disclosure is a collapsible section of content. It is composed of a header with a heading and trigger button, and a panel that contains the content.
+- [Divider](Divider.md): Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+- [Drop](DropZone.md): Zone
+- [error](error.md)
+- [Form](Form.md): Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+- [Forms](forms.md): Learn how to integrate with HTML forms, validate and submit data, and use React Spectrum with form libraries.
+- [Getting started](getting-started.md): ## Installation
+- [Icons](icons.md): React Spectrum offers a set of open source icons that can be imported from .
+- [Illustrated](IllustratedMessage.md): Message
+- [Illustrations](illustrations.md): React Spectrum offers a collection of illustrations that can be imported from .
+- [Image](Image.md): An image with support for skeleton loading and custom error states.
+- [index](index.md)
+- [Inline](InlineAlert.md): Alert
+- [Link](Link.md): Links allow users to navigate to a different location.
+- [Link](LinkButton.md): Button
+- [M](mcp.md): CP Server
+- [Menu](Menu.md): Menus display a list of actions or options that a user can choose.
+- [Meter](Meter.md): Meters are visual representations of a quantity or an achievement.
+- [Migrating to](migrating.md): Spectrum 2
+- [Number](NumberField.md): Field
+- [Picker](Picker.md): Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+- [Popover](Popover.md): A popover is an overlay element positioned relative to a trigger.
+- [Progress](ProgressBar.md): Bar
+- [Progress](ProgressCircle.md): Circle
+- [Provider](Provider.md): Provider is the container for all React Spectrum components.
+- [Radio](RadioGroup.md): Group
+- [Range](RangeCalendar.md): Calendar
+- [Range](RangeSlider.md): Slider
+- [Releases](releases/index.md): <PostList
+- [Search](SearchField.md): Field
+- [Segmented](SegmentedControl.md): Control
+- [Select](SelectBoxGroup.md): BoxGroup
+- [Selection](selection.md): Many collection components support selecting items by clicking or tapping them, or by using the keyboard. Learn how to handle selection events, how to control selection programmatically, and the data structures used to represent a selection.
+- [Skeleton](Skeleton.md): A Skeleton wraps around content to render it as a placeholder.
+- [Slider](Slider.md): Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+- [Status](StatusLight.md): Light
+- [Style](style-macro.md): Macro
+- [Styling](styling.md): Learn how to use the  macro to apply Spectrum tokens directly in your components with type-safe autocompletion.
+- [Switch](Switch.md): Switches allow users to turn an individual option on or off.
+- [Table](TableView.md): View
+- [Tabs](Tabs.md): Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+- [Tag](TagGroup.md): Group
+- [Testing](testing.md): Learn how to test an application built with React Spectrum using test utilities to simulate common user interactions.## Testing semanticsThe recommended way to query for React Spectrum components and their internals is by semantics. React Spectrum
+- [Testing](CheckboxGroup/testing.md): CheckboxGroup
+- [Testing](ComboBox/testing.md): ComboBox
+- [Testing](Dialog/testing.md): Dialog
+- [Testing](Menu/testing.md): Menu
+- [Testing](Picker/testing.md): Picker
+- [Testing](RadioGroup/testing.md): RadioGroup
+- [Testing](TableView/testing.md): TableView
+- [Testing](Tabs/testing.md): Tabs
+- [Testing](TreeView/testing.md): TreeView
+- [Text](TextArea.md): Area
+- [Text](TextField.md): Field
+- [Time](TimeField.md): Field
+- [Toast](Toast.md): A ToastContainer renders the queued toasts in an application. It should be placed
+- [Toggle](ToggleButton.md): Button
+- [Toggle](ToggleButtonGroup.md): ButtonGroup
+- [Tooltip](Tooltip.md): Display container for Tooltip content. Has a directional arrow dependent on its placement.
+- [Tree](TreeView.md): View
+- [v0.1.0](releases/v0-1-0.md): Version 0.1.0 introduces the first version of Spectrum 2, including new Badge, ComboBox, Meter, and Picker components.
+- [v0.10.0](releases/v0-10-0.md): Version 0.10.0 introduces a new font for Spectrum 2: Adobe Clean Spectrum VF, along with new date and time components including Calendar, DatePicker, DateRangePicker, and TimeField. This release also includes various component improvements and bug fixes.
+- [v0.11.0](releases/v0-11-0.md): Version 0.11.0 introduces the new SelectBoxGroup component (alpha), fixes ComboBox empty state rendering, improves Picker dropdown styling, and adds support for custom tab layouts with collapse behavior.
+- [v0.12.0](releases/v0-12-0.md): Version 0.12.0 adds pending states to ActionButton, avatar support in ComboBox and Picker, Dialog XL size, and Popover styling improvements. This release also includes RTL fixes, placeholder support across components, and various component enhancements.
+- [v0.2.0](releases/v0-2-0.md): Version 0.2.0 introduces new color and range components, adds ESBuild starter, updates InlineAlert iconography, and includes CSS processing updates.
+- [v0.3.0](releases/v0-3-0.md): Version 0.3.0 introduces NumberField, AlertDialog, and Tabs components, along with new linear and gradient illustrations. This release includes TagGroup enhancements, updated workflow icons with name changes, and comprehensive translations for all components.
+- [v0.4.0](releases/v0-4-0.md): Version 0.4.0 introduces six new components including Accordion, Card, CardView, and TableView. This release includes ProgressBar and Badge enhancements, Button pending state support, and various component improvements.
+- [v0.5.0](releases/v0-5-0.md): Version 0.5.0 includes major updates to Dialog and DialogTrigger APIs with four new dialog components: Dialog, FullscreenDialog, CustomDialog, and Popover. This release also improves style macro documentation and adds support for arbitrary pixel sizing.
+- [v0.6.0](releases/v0-6-0.md): Version 0.6.0 introduces the ActionBar component and adds staticColor="auto" support to multiple components. This release includes Button gradient variants, Menu improvements, and various component fixes.
+- [v0.7.0](releases/v0-7-0.md): Version 0.7.0 introduces the TreeView component and includes important CSS updates to fix Safari issues. This release removes all: revert-layer from the style macro and includes Badge improvements, Tabs collapse behavior, and updated codemods.
+- [v0.8.0](releases/v0-8-0.md): Version 0.8.0 introduces NotificationBadge and Toast (alpha) components, along with updates to Disclosure design sizing. This release also includes various component improvements and new exports.
+- [v0.9.0](releases/v0-9-0.md): Version 0.9.0 adds virtualization and async loading support to ComboBox and Picker, updates Dialog sizes, and introduces important TypeScript changes for UNSAFE\_className. This release also includes significant style macro updates.
+- [v0.9.1](releases/v0-9-1.md): Version 0.9.1 is a patch release that fixes focus visible styles in Button and TagGroup, updates ContextualHelp width, and improves Tabs selection indicator behavior.
+- [v1.0.0](releases/v1-0-0.md): Welcome to Spectrum 2 v1.0! This milestone marks the first stable version of our implementation of the updated [Adobe design system](https://s2.spectrum.adobe.com/). Spectrum 2 delivers modern, refined components with better accessibility, performance, and styling flexibility using [style macros](../styling.md). Use our updated search to browse the new components, or visit our [migration guide](../migrating.md) to learn how to upgrade.

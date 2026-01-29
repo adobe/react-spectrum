@@ -1,0 +1,1577 @@
+# Selection
+
+Many collection components support selecting items by clicking or tapping them, or by using the keyboard. Learn how to handle selection events, how to control selection programmatically, and the data structures used to represent a selection.
+
+## Multiple selection
+
+Most collection components support item selection, which is handled by the `onSelectionChange` event. Use the `selectedKeys` prop to control the selected items programmatically, or `defaultSelectedKeys` for uncontrolled behavior.
+
+Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) containing the `id` of each selected item. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props, but the `onSelectionChange` event will always pass back a Set.
+
+## Card
+
+View example
+
+```tsx
+import {CardView, AssetCard, CardPreview, Image, Content, Text, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['lion']));
+
+  return (
+    <>
+      <CardView
+        aria-label="Nature photos"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({width: 360, maxWidth: 'full', height: 520})}
+      >
+        <AssetCard id="desert" textValue="Desert Sunset">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Desert Sunset</Text>
+            <Text slot="description">PNG • 2/3/2024</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id="hiking" textValue="Hiking Trail">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Hiking Trail</Text>
+            <Text slot="description">JPEG • 1/10/2022</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id="lion" textValue="Lion">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Lion</Text>
+            <Text slot="description">JPEG • 8/28/2021</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id="mountain" textValue="Mountain Sunrise">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Mountain Sunrise</Text>
+            <Text slot="description">PNG • 3/15/2015</Text>
+          </Content>
+        </AssetCard>
+      </CardView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Menu example
+
+```tsx
+import {Menu, MenuTrigger, MenuItem, ActionButton, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['rulers']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>View</ActionButton>
+        <Menu
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+        >
+          <MenuItem id="grid">Pixel grid</MenuItem>
+          <MenuItem id="rulers">Rulers</MenuItem>
+          <MenuItem id="layout">Layout guides</MenuItem>
+          <MenuItem id="toolbar">Toolbar</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Select
+
+BoxGroup example
+
+```tsx
+import {SelectBoxGroup, SelectBox, Text, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['aws']));
+
+  return (
+    <>
+      <SelectBoxGroup
+        aria-label="Cloud providers"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({width: 'full'})}
+      >
+        <SelectBox id="aws" textValue="AWS">
+          <Server />
+          <Text slot="label">Amazon Web Services</Text>
+        </SelectBox>
+        <SelectBox id="azure" textValue="Azure">
+          <AlertNotice />
+          <Text slot="label">Microsoft Azure</Text>
+        </SelectBox>
+        <SelectBox id="gcp" textValue="GCP">
+          <StarFilled />
+          <Text slot="label">Google Cloud Platform</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Table
+
+View example
+
+```tsx
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+const rows = [
+  {id: 'lettuce', name: 'Lettuce', type: 'Vegetable', calories: 4},
+  {id: 'tomato', name: 'Tomato', type: 'Vegetable', calories: 5},
+  {id: 'cheese', name: 'Cheddar', type: 'Cheese', calories: 113},
+  {id: 'tuna', name: 'Tuna salad', type: 'Salad', calories: 187},
+  {id: 'egg', name: 'Egg salad', type: 'Salad', calories: 200},
+  {id: 'ham', name: 'Ham', type: 'Meat', calories: 205}
+];
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <>
+      <TableView
+        aria-label="Sandwich contents"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({width: 'full'})}
+      >
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Calories</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.calories}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Tag
+
+Group example
+
+```tsx
+import {TagGroup, Tag, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <>
+      <TagGroup
+        label="Sandwich contents"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+      >
+        <Tag id="lettuce">Lettuce</Tag>
+        <Tag id="tomato">Tomato</Tag>
+        <Tag id="cheese">Cheese</Tag>
+        <Tag id="tuna">Tuna Salad</Tag>
+        <Tag id="egg">Egg Salad</Tag>
+        <Tag id="ham">Ham</Tag>
+      </TagGroup>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Toggle
+
+ButtonGroup example
+
+```tsx
+import {ToggleButtonGroup, ToggleButton, Text, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+import TextBold from '@react-spectrum/s2/icons/TextBold';
+import TextItalic from '@react-spectrum/s2/icons/TextItalic';
+import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['bold']));
+
+  return (
+    <>
+      <ToggleButtonGroup
+        aria-label="Text style"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+      >
+        <ToggleButton id="bold">
+          <TextBold />
+          <Text>Bold</Text>
+        </ToggleButton>
+        <ToggleButton id="italic">
+          <TextItalic />
+          <Text>Italic</Text>
+        </ToggleButton>
+        <ToggleButton id="underline">
+          <TextUnderline />
+          <Text>Underline</Text>
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Tree
+
+View example
+
+```tsx
+import {TreeView, TreeViewItem, TreeViewItemContent, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['project']));
+
+  return (
+    <>
+      <TreeView
+        aria-label="Files"
+        defaultExpandedKeys={['documents', 'photos', 'project']}
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({height: 250, width: 360, maxWidth: 'full'})}
+      >
+        <TreeViewItem id="documents" textValue="Documents">
+          <TreeViewItemContent>Documents</TreeViewItemContent>
+          <TreeViewItem id="project" textValue="Project">
+            <TreeViewItemContent>Project</TreeViewItemContent>
+            <TreeViewItem id="weekly-report" textValue="Weekly Report">
+              <TreeViewItemContent>Weekly Report</TreeViewItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem id="photos" textValue="Photos">
+          <TreeViewItemContent>Photos</TreeViewItemContent>
+          <TreeViewItem id="image-1" textValue="Image 1">
+            <TreeViewItemContent>Image 1</TreeViewItemContent>
+          </TreeViewItem>
+          <TreeViewItem id="image-2" textValue="Image 2">
+            <TreeViewItemContent>Image 2</TreeViewItemContent>
+          </TreeViewItem>
+        </TreeViewItem>
+      </TreeView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+### Select all
+
+Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <Keyboard>⌘ Cmd</Keyboard> + <Keyboard>A</Keyboard>. This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network. For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded. For this reason, it makes sense for select all to represent all items, not just the loaded ones.
+
+When a select all event occurs, `onSelectionChange` is called with the string `"all"` rather than a set of selected keys. `selectedKeys`
+and `defaultSelectedKeys` can also be set to `"all"` to programmatically select all items. The application must adjust its handling of bulk actions in this case to apply to the entire collection rather than only the keys available to it locally.
+
+```tsx
+import {TableView, TableHeader, Column, TableBody, Row, Cell, ActionBar, ActionButton, Text, type Selection, type Key} from '@react-spectrum/s2';
+import Delete from '@react-spectrum/s2/icons/Delete';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+const rows = [
+  {name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {name: 'Program Files', date: '4/7/2021', type: 'File folder'},
+  {name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+  {name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
+];
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set<Key>());
+
+  function performBulkAction(selectedKeys: Selection) {
+    if (selectedKeys === 'all') {
+      alert('Performing action on all items');
+    } else {
+      alert(`Performing action on selected items: ${[...selectedKeys].join(', ')}`);
+    }
+  }
+
+  return (
+    <div>
+      <TableView
+        aria-label="Files"
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        renderActionBar={(selectedKeys) => (
+          <ActionBar>
+            <ActionButton onPress={() => performBulkAction(selectedKeys)}>
+              <Delete />
+              <Text>Delete</Text>
+            </ActionButton>
+          </ActionBar>
+        )}
+        styles={style({width: 'full', height: 200})}>
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+          <Column>Date Modified</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row id={item.name}>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+              <Cell>{item.date}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </div>
+  );
+}
+```
+
+## Single selection
+
+In components which support multiple selection, you can limit the selection to a single item using the
+`selectionMode` prop. This continues to accept `selectedKeys` and `defaultSelectedKeys` as a `Set`, but it will
+only contain a single id at a time.
+
+ComboBox, SegmentedControl, and Tabs only support single selection and use the `selectedKey` prop (singular) rather than `selectedKeys`.
+
+## Card
+
+View example
+
+```tsx
+import {CardView, AssetCard, CardPreview, Image, Content, Text, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['lion']));
+
+  return (
+    <>
+      <CardView
+        aria-label="Nature photos"
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({width: 360, maxWidth: 'full', height: 320})}
+      >
+        <AssetCard id="desert" textValue="Desert Sunset">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Desert Sunset</Text>
+            <Text slot="description">PNG • 2/3/2024</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id="hiking" textValue="Hiking Trail">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Hiking Trail</Text>
+            <Text slot="description">JPEG • 1/10/2022</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id="lion" textValue="Lion">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Lion</Text>
+            <Text slot="description">JPEG • 8/28/2021</Text>
+          </Content>
+        </AssetCard>
+        <AssetCard id="mountain" textValue="Mountain Sunrise">
+          <CardPreview>
+            <Image src="https://images.unsplash.com/photo-1722172118908-1a97c312ce8c?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+          </CardPreview>
+          <Content>
+            <Text slot="title">Mountain Sunrise</Text>
+            <Text slot="description">PNG • 3/15/2015</Text>
+          </Content>
+        </AssetCard>
+      </CardView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Combo
+
+Box example
+
+```tsx
+import {ComboBox, ComboBoxItem, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKey, setSelectedKey] = useState<Key | null>('kangaroo');
+
+  return (
+    <>
+      <ComboBox
+        label="Favorite Animal"
+        placeholder="Select an animal"
+        selectedKey={selectedKey}
+        onSelectionChange={setSelectedKey}
+      >
+        <ComboBoxItem id="koala">Koala</ComboBoxItem>
+        <ComboBoxItem id="kangaroo">Kangaroo</ComboBoxItem>
+        <ComboBoxItem id="platypus">Platypus</ComboBoxItem>
+        <ComboBoxItem id="eagle">Bald Eagle</ComboBoxItem>
+        <ComboBoxItem id="bison">Bison</ComboBoxItem>
+        <ComboBoxItem id="skunk">Skunk</ComboBoxItem>
+      </ComboBox>
+      <p className={style({font: 'body'})}>selectedKey: {selectedKey}</p>
+    </>
+  );
+}
+```
+
+## Menu example
+
+```tsx
+import {Menu, MenuTrigger, MenuItem, ActionButton, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['grid']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>View</ActionButton>
+        <Menu
+          selectionMode="single"
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+        >
+          <MenuItem id="grid">Pixel grid</MenuItem>
+          <MenuItem id="rulers">Rulers</MenuItem>
+          <MenuItem id="layout">Layout guides</MenuItem>
+          <MenuItem id="toolbar">Toolbar</MenuItem>
+        </Menu>
+      </MenuTrigger>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Segmented
+
+Control example
+
+```tsx
+import {SegmentedControl, SegmentedControlItem, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKey, setSelectedKey] = useState<Key>('month');
+
+  return (
+    <>
+      <SegmentedControl
+        aria-label="Time granularity"
+        selectedKey={selectedKey}
+        onSelectionChange={setSelectedKey}
+      >
+        <SegmentedControlItem id="day">Day</SegmentedControlItem>
+        <SegmentedControlItem id="week">Week</SegmentedControlItem>
+        <SegmentedControlItem id="month">Month</SegmentedControlItem>
+        <SegmentedControlItem id="year">Year</SegmentedControlItem>
+      </SegmentedControl>
+      <p className={style({font: 'body'})}>selectedKey: {selectedKey}</p>
+    </>
+  );
+}
+```
+
+## Select
+
+BoxGroup example
+
+```tsx
+import {SelectBoxGroup, SelectBox, Text, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['aws']));
+
+  return (
+    <>
+      <SelectBoxGroup
+        aria-label="Cloud provider"
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({width: 'full'})}
+      >
+        <SelectBox id="aws" textValue="AWS">
+          <Server />
+          <Text slot="label">Amazon Web Services</Text>
+        </SelectBox>
+        <SelectBox id="azure" textValue="Azure">
+          <AlertNotice />
+          <Text slot="label">Microsoft Azure</Text>
+        </SelectBox>
+        <SelectBox id="gcp" textValue="GCP">
+          <StarFilled />
+          <Text slot="label">Google Cloud Platform</Text>
+        </SelectBox>
+      </SelectBoxGroup>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Table
+
+View example
+
+```tsx
+import {TableView, TableHeader, Column, TableBody, Row, Cell, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+const rows = [
+  {id: 'lettuce', name: 'Lettuce', type: 'Vegetable'},
+  {id: 'tomato', name: 'Tomato', type: 'Vegetable'},
+  {id: 'cheese', name: 'Cheddar', type: 'Cheese'},
+  {id: 'tuna', name: 'Tuna salad', type: 'Salad'}
+];
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <>
+      <TableView
+        aria-label="Sandwich contents"
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({width: 'full'})}
+      >
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Type</Column>
+        </TableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <Row>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+            </Row>
+          )}
+        </TableBody>
+      </TableView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Tabs example
+
+```tsx
+import {Tabs, TabList, Tab, TabPanel, type Key} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKey, setSelectedKey] = useState<Key>('files');
+
+  return (
+    <>
+      <Tabs
+        aria-label="Tabs"
+        selectedKey={selectedKey}
+        onSelectionChange={setSelectedKey}
+      >
+        <TabList>
+          <Tab id="home">Home</Tab>
+          <Tab id="files">Files</Tab>
+          <Tab id="settings">Settings</Tab>
+        </TabList>
+        <TabPanel id="home">Home content</TabPanel>
+        <TabPanel id="files">Files content</TabPanel>
+        <TabPanel id="settings">Settings content</TabPanel>
+      </Tabs>
+      <p className={style({font: 'body'})}>selectedKey: {selectedKey}</p>
+    </>
+  );
+}
+```
+
+## Tag
+
+Group example
+
+```tsx
+import {TagGroup, Tag, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['cheese']));
+
+  return (
+    <>
+      <TagGroup
+        label="Sandwich contents"
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+      >
+        <Tag id="lettuce">Lettuce</Tag>
+        <Tag id="tomato">Tomato</Tag>
+        <Tag id="cheese">Cheese</Tag>
+        <Tag id="tuna">Tuna Salad</Tag>
+      </TagGroup>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Toggle
+
+ButtonGroup example
+
+```tsx
+import {ToggleButtonGroup, ToggleButton, Text, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+import AlignLeft from '@react-spectrum/s2/icons/AlignLeft';
+import AlignCenter from '@react-spectrum/s2/icons/AlignCenter';
+import AlignRight from '@react-spectrum/s2/icons/AlignRight';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['left']));
+
+  return (
+    <>
+      <ToggleButtonGroup
+        aria-label="Text alignment"
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+      >
+        <ToggleButton id="left">
+          <AlignLeft />
+          <Text>Left</Text>
+        </ToggleButton>
+        <ToggleButton id="center">
+          <AlignCenter />
+          <Text>Center</Text>
+        </ToggleButton>
+        <ToggleButton id="right">
+          <AlignRight />
+          <Text>Right</Text>
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Tree
+
+View example
+
+```tsx
+import {TreeView, TreeViewItem, TreeViewItemContent, type Selection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(['documents']));
+
+  return (
+    <>
+      <TreeView
+        aria-label="Files"
+        defaultExpandedKeys={['documents', 'photos']}
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        styles={style({height: 250, width: 360, maxWidth: 'full'})}
+      >
+        <TreeViewItem id="documents" textValue="Documents">
+          <TreeViewItemContent>Documents</TreeViewItemContent>
+          <TreeViewItem id="project" textValue="Project">
+            <TreeViewItemContent>Project</TreeViewItemContent>
+          </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem id="photos" textValue="Photos">
+          <TreeViewItemContent>Photos</TreeViewItemContent>
+          <TreeViewItem id="image1" textValue="Image 1">
+            <TreeViewItemContent>Image 1</TreeViewItemContent>
+          </TreeViewItem>
+        </TreeViewItem>
+      </TreeView>
+      <p className={style({font: 'body'})}>selectedKeys: {selectedKeys === 'all' ? 'all' : [...selectedKeys].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Item actions
+
+In addition to selection, some collection components support item actions via the `onAction` prop. When nothing is selected, clicking, tapping, or pressing the <Keyboard>Enter</Keyboard> key triggers the item action. Items may be selected using the checkbox, or by pressing the <Keyboard>Space</Keyboard> key. When at least one item is selected, clicking or tapping a row toggles the selection.
+
+On touch devices, actions are the primary tap interaction. Long pressing enters selection mode, which temporarily swaps the selection behavior to where tapping toggles the selection. Deselecting all items exits selection mode and reverts the selection behavior back to where tapping triggers the action. Keyboard behaviors are unaffected.
+
+## Card
+
+View example
+
+```tsx
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<CardView
+  aria-label="Nature photos"
+  selectionMode="multiple"
+  styles={style({width: 'full', height: 320})}
+>
+  <AssetCard
+    id="desert"
+    textValue="Desert Sunset"
+    /*- begin highlight -*/
+    onAction={() => alert('Opening Desert Sunset')}>
+    {/*- end highlight -*/}
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={400} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Desert Sunset</Text>
+      <Text slot="description">PNG • 2/3/2024</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard
+    id="hiking"
+    textValue="Hiking Trail"
+    onAction={() => alert('Opening Hiking Trail')}>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={900} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Hiking Trail</Text>
+      <Text slot="description">JPEG • 1/10/2022</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard
+    id="lion"
+    textValue="Lion"
+    onAction={() => alert('Opening Lion')}>
+    <CardPreview>
+      <Image src="https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" width={600} height={899} />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Lion</Text>
+      <Text slot="description">JPEG • 8/28/2021</Text>
+    </Content>
+  </AssetCard>
+</CardView>
+```
+
+## Table
+
+View example
+
+```tsx
+import {TableView, TableHeader, Column, Row, TableBody, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TableView
+  aria-label="Table"
+  selectionMode="multiple"
+  styles={style({width: 'full'})}>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <Row onAction={() => alert('Opening Games')}>
+    {/*- end highlight -*/}
+      <Cell>Games</Cell>
+      <Cell>File folder</Cell>
+      <Cell>6/7/2020</Cell>
+    </Row>
+    <Row onAction={() => alert('Opening Documents')}>
+      <Cell>Documents</Cell>
+      <Cell>File folder</Cell>
+      <Cell>4/7/2021</Cell>
+    </Row>
+    <Row onAction={() => alert('Opening Photos')}>
+      <Cell>Photos</Cell>
+      <Cell>File folder</Cell>
+      <Cell>11/20/2010</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+## Tree
+
+View example
+
+```tsx
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TreeView
+  aria-label="Files"
+  selectionMode="multiple"
+  defaultExpandedKeys={['computer']}
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}>
+  <TreeViewItem id="computer" textValue="My Computer">
+    <TreeViewItemContent>My Computer</TreeViewItemContent>
+    <TreeViewItem
+      textValue="Games"
+      /*- begin highlight -*/
+      onAction={() => alert('Opening Games')} >
+      {/*- end highlight -*/}
+      <TreeViewItemContent>Games</TreeViewItemContent>
+    </TreeViewItem>
+    <TreeViewItem
+      textValue="Documents"
+      onAction={() => alert('Opening Documents')} >
+      <TreeViewItemContent>Documents</TreeViewItemContent>
+    </TreeViewItem>
+    <TreeViewItem
+      textValue="Photos"
+      onAction={() => alert('Opening Photos')} >
+      <TreeViewItemContent>Photos</TreeViewItemContent>
+    </TreeViewItem>
+  </TreeViewItem>
+</TreeView>
+```
+
+In dynamic collections, it may be more convenient to use the `onAction` prop at the collection level instead of on individual items. This receives the id of the pressed item.
+
+## Card
+
+View example
+
+```tsx
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const photos = [
+  {id: 'desert', title: 'Desert Sunset', description: 'PNG • 2/3/2024', image: 'https://images.unsplash.com/photo-1705034598432-1694e203cdf3?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', width: 600, height: 400},
+  {id: 'hiking', title: 'Hiking Trail', description: 'JPEG • 1/10/2022', image: 'https://images.unsplash.com/photo-1722233987129-61dc344db8b6?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', width: 600, height: 900},
+  {id: 'lion', title: 'Lion', description: 'JPEG • 8/28/2021', image: 'https://images.unsplash.com/photo-1629812456605-4a044aa38fbc?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', width: 600, height: 899}
+];
+
+<CardView
+  aria-label="Nature photos"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  onAction={id => alert(`Opening ${id}`)}
+  /*- end highlight -*/
+  styles={style({width: 'full', height: 320})}
+  items={photos}>
+  {photo => (
+    <AssetCard id={photo.id} textValue={photo.title}>
+      <CardPreview>
+        <Image src={photo.image} width={photo.width} height={photo.height} />
+      </CardPreview>
+      <Content>
+        <Text slot="title">{photo.title}</Text>
+        <Text slot="description">{photo.description}</Text>
+      </Content>
+    </AssetCard>
+  )}
+</CardView>
+```
+
+## Table
+
+View example
+
+```tsx
+import {TableView, TableHeader, Column, Row, TableBody, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const files = [
+  {id: 'games', name: 'Games', type: 'Folder', date: '6/7/2020'},
+  {id: 'documents', name: 'Documents', type: 'Folder', date: '4/7/2021'},
+  {id: 'photos', name: 'Photos', type: 'Folder', date: '11/20/2010'}
+];
+
+<TableView
+  aria-label="Table"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  onAction={id => alert(`Opening ${id}`)}
+  /*- end highlight -*/
+  styles={style({width: 'full'})}>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Date Modified</Column>
+  </TableHeader>
+  <TableBody items={files}>
+    {item => (
+      <Row>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.date}</Cell>
+      </Row>
+    )}
+  </TableBody>
+</TableView>
+```
+
+## Tree
+
+View example
+
+```tsx
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const files = [
+  {id: 'games', name: 'Games'},
+  {id: 'documents', name: 'Documents'},
+  {id: 'photos', name: 'Photos'}
+];
+
+<TreeView
+  aria-label="Files"
+  selectionMode="multiple"
+  defaultExpandedKeys={['computer']}
+  /*- begin highlight -*/
+  onAction={id => alert(`Opening ${id}`)}
+  /*- end highlight -*/
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}>
+  <TreeViewItem id="computer" textValue="My Computer">
+    <TreeViewItemContent>My Computer</TreeViewItemContent>
+    <Collection items={files}>
+      {item => (
+        <TreeViewItem textValue={item.name}>
+          <TreeViewItemContent>{item.name}</TreeViewItemContent>
+        </TreeViewItem>
+      )}
+    </Collection>
+  </TreeViewItem>
+</TreeView>
+```
+
+## Disabled items
+
+An item can be disabled with the `isDisabled` prop. By default, disabled items are not focusable, selectable, or actionable. When `disabledBehavior="selection"`, only selection is disabled.
+
+## Card
+
+View example
+
+```tsx
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<CardView
+  aria-label="Pokemon"
+  selectionMode="multiple"
+  styles={style({width: 'full', height: 320})}
+>
+  <AssetCard id="charizard" textValue="Charizard">
+    <CardPreview>
+      <Image src="https://img.pokemondb.net/sprites/home/normal/2x/avif/charizard.avif" />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Charizard</Text>
+      <Text slot="description">Fire, Flying • Level 67</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard id="blastoise" textValue="Blastoise">
+    <CardPreview>
+      <Image src="https://img.pokemondb.net/sprites/home/normal/2x/avif/blastoise.avif" />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Blastoise</Text>
+      <Text slot="description">Water • Level 56</Text>
+    </Content>
+  </AssetCard>
+  {/*- begin highlight -*/}
+  <AssetCard id="venusaur" textValue="Venusaur" isDisabled>
+  {/*- end highlight -*/}
+    <CardPreview>
+      <Image src="https://img.pokemondb.net/sprites/home/normal/2x/avif/venusaur.avif" />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Venusaur</Text>
+      <Text slot="description">Grass, Poison • Level 83</Text>
+    </Content>
+  </AssetCard>
+  <AssetCard id="pikachu" textValue="Pikachu">
+    <CardPreview>
+      <Image src="https://img.pokemondb.net/sprites/home/normal/2x/avif/pikachu.avif" />
+    </CardPreview>
+    <Content>
+      <Text slot="title">Pikachu</Text>
+      <Text slot="description">Electric • Level 100</Text>
+    </Content>
+  </AssetCard>
+</CardView>
+```
+
+## Combo
+
+Box example
+
+```tsx
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+
+<ComboBox
+  label="Pokemon"
+  placeholder="Select a Pokemon"
+  defaultSelectedKey="pikachu"
+>
+  <ComboBoxItem id="charizard">Charizard</ComboBoxItem>
+  <ComboBoxItem id="blastoise">Blastoise</ComboBoxItem>
+  {/*- begin highlight -*/}
+  <ComboBoxItem id="venusaur" isDisabled>Venusaur</ComboBoxItem>
+  {/*- end highlight -*/}
+  <ComboBoxItem id="pikachu">Pikachu</ComboBoxItem>
+</ComboBox>
+```
+
+## Menu example
+
+```tsx
+import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+
+<MenuTrigger>
+  <ActionButton>Pokemon</ActionButton>
+  <Menu selectionMode="multiple" defaultSelectedKeys={['pikachu']}>
+    <MenuItem id="charizard">Charizard</MenuItem>
+    <MenuItem id="blastoise">Blastoise</MenuItem>
+    {/*- begin highlight -*/}
+    <MenuItem id="venusaur" isDisabled>Venusaur</MenuItem>
+    {/*- end highlight -*/}
+    <MenuItem id="pikachu">Pikachu</MenuItem>
+  </Menu>
+</MenuTrigger>
+```
+
+## Segmented
+
+Control example
+
+```tsx
+import {SegmentedControl, SegmentedControlItem} from '@react-spectrum/s2';
+
+<SegmentedControl aria-label="Time granularity" defaultSelectedKey="month">
+  <SegmentedControlItem id="day">Day</SegmentedControlItem>
+  {/*- begin highlight -*/}
+  <SegmentedControlItem id="week" isDisabled>Week</SegmentedControlItem>
+  {/*- end highlight -*/}
+  <SegmentedControlItem id="month">Month</SegmentedControlItem>
+  <SegmentedControlItem id="year">Year</SegmentedControlItem>
+</SegmentedControl>
+```
+
+## Select
+
+BoxGroup example
+
+```tsx
+import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+
+<SelectBoxGroup
+  aria-label="Cloud providers"
+  selectionMode="multiple"
+  defaultSelectedKeys={['aws']}
+  styles={style({width: 'full'})}
+>
+  <SelectBox id="aws" textValue="AWS">
+    <Server />
+    <Text slot="label">Amazon Web Services</Text>
+  </SelectBox>
+  <SelectBox id="azure" textValue="Azure">
+    <AlertNotice />
+    <Text slot="label">Microsoft Azure</Text>
+  </SelectBox>
+  {/*- begin highlight -*/}
+  <SelectBox id="gcp" textValue="GCP" isDisabled>
+  {/*- end highlight -*/}
+    <StarFilled />
+    <Text slot="label">Google Cloud Platform</Text>
+  </SelectBox>
+</SelectBoxGroup>
+```
+
+## Table
+
+View example
+
+```tsx
+import {TableView, TableHeader, Column, Row, TableBody, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TableView
+  aria-label="Pokemon"
+  selectionMode="multiple"
+  styles={style({width: 'full'})}>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody>
+    <Row id="charizard">
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </Row>
+    <Row id="blastoise">
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </Row>
+    {/*- begin highlight -*/}
+    <Row id="venusaur" isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </Row>
+    <Row id="pikachu">
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+## Tabs example
+
+```tsx
+import {Tabs, TabList, Tab, TabPanel} from '@react-spectrum/s2';
+
+<Tabs aria-label="Tabs" defaultSelectedKey="files">
+  <TabList>
+    <Tab id="home">Home</Tab>
+    <Tab id="files">Files</Tab>
+    {/*- begin highlight -*/}
+    <Tab id="search" isDisabled>Search</Tab>
+    {/*- end highlight -*/}
+    <Tab id="settings">Settings</Tab>
+  </TabList>
+  <TabPanel id="home">Home content</TabPanel>
+  <TabPanel id="files">Files content</TabPanel>
+  <TabPanel id="search">Search content</TabPanel>
+  <TabPanel id="settings">Settings content</TabPanel>
+</Tabs>
+```
+
+## Tag
+
+Group example
+
+```tsx
+import {TagGroup, Tag} from '@react-spectrum/s2';
+
+<TagGroup
+  label="Pokemon"
+  selectionMode="multiple">
+  <Tag>Charizard</Tag>
+  <Tag>Blastoise</Tag>
+  {/*- begin highlight -*/}
+  <Tag isDisabled>Venusaur</Tag>
+  {/*- end highlight -*/}
+  <Tag>Pikachu</Tag>
+</TagGroup>
+```
+
+## Toggle
+
+ButtonGroup example
+
+```tsx
+import {ToggleButtonGroup, ToggleButton, Text} from '@react-spectrum/s2';
+import TextBold from '@react-spectrum/s2/icons/TextBold';
+import TextItalic from '@react-spectrum/s2/icons/TextItalic';
+import TextUnderline from '@react-spectrum/s2/icons/TextUnderline';
+
+<ToggleButtonGroup
+  aria-label="Text style"
+  selectionMode="multiple"
+  defaultSelectedKeys={['bold']}
+>
+  <ToggleButton id="bold">
+    <TextBold />
+    <Text>Bold</Text>
+  </ToggleButton>
+  {/*- begin highlight -*/}
+  <ToggleButton id="italic" isDisabled>
+  {/*- end highlight -*/}
+    <TextItalic />
+    <Text>Italic</Text>
+  </ToggleButton>
+  <ToggleButton id="underline">
+    <TextUnderline />
+    <Text>Underline</Text>
+  </ToggleButton>
+</ToggleButtonGroup>
+```
+
+## Tree
+
+View example
+
+```tsx
+import {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+<TreeView
+  aria-label="Pokemon evolution"
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}
+  defaultExpandedKeys={['bulbasaur', 'ivysaur']}
+  selectionMode="multiple">
+  <TreeViewItem id="bulbasaur" textValue="Bulbasaur">
+    <TreeViewItemContent>Bulbasaur</TreeViewItemContent>
+    <TreeViewItem id="ivysaur" textValue="Ivysaur">
+      <TreeViewItemContent>Ivysaur</TreeViewItemContent>
+      {/*- begin highlight -*/}
+      <TreeViewItem id="venusaur" textValue="Venusaur" isDisabled>
+        <TreeViewItemContent>Venusaur</TreeViewItemContent>
+      </TreeViewItem>
+      {/*- end highlight -*/}
+    </TreeViewItem>
+  </TreeViewItem>
+  <TreeViewItem id="charmander" textValue="Charmander">
+    <TreeViewItemContent>Charmander</TreeViewItemContent>
+    <TreeViewItem id="charmeleon" textValue="Charmeleon">
+      <TreeViewItemContent>Charmeleon</TreeViewItemContent>
+      <TreeViewItem id="charizard" textValue="Charizard">
+        <TreeViewItemContent>Charizard</TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeViewItem>
+  <TreeViewItem id="squirtle" textValue="Squirtle">
+    <TreeViewItemContent>Squirtle</TreeViewItemContent>
+    <TreeViewItem id="wartortle" textValue="Wartortle">
+      <TreeViewItemContent>Wartortle</TreeViewItemContent>
+      <TreeViewItem id="blastoise" textValue="Blastoise">
+        <TreeViewItemContent>Blastoise</TreeViewItemContent>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeViewItem>
+</TreeView>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the collection level instead of `isDisabled` on individual items. This accepts a list of item ids that are disabled.
+
+## Card
+
+View example
+
+```tsx
+import {CardView, AssetCard, CardPreview, Image, Content, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+const items = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+
+<CardView
+  aria-label="Pokemon"
+  selectionMode="multiple"
+  disabledKeys={[3]}
+  styles={style({width: 'full', height: 320})}
+  items={items}>
+  {item => (
+    <AssetCard id={item.id} textValue={item.name}>
+      <CardPreview>
+        <Image src={`https://img.pokemondb.net/sprites/home/normal/2x/avif/${item.name.toLowerCase()}.avif`} />
+      </CardPreview>
+      <Content>
+        <Text slot="title">{item.name}</Text>
+        <Text slot="description">{item.type} • Level {item.level}</Text>
+      </Content>
+    </AssetCard>
+  )}
+</CardView>
+```
+
+## Combo
+
+Box example
+
+```tsx
+import {ComboBox, ComboBoxItem} from '@react-spectrum/s2';
+
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+
+<ComboBox
+  label="Pokemon"
+  placeholder="Select a Pokemon"
+  defaultSelectedKey={4}
+  disabledKeys={[3]}
+  items={items}>
+  {item => <ComboBoxItem>{item.name}</ComboBoxItem>}
+</ComboBox>
+```
+
+## Menu example
+
+```tsx
+import {Menu, MenuTrigger, MenuItem, ActionButton} from '@react-spectrum/s2';
+
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+
+<MenuTrigger>
+  <ActionButton>Pokemon</ActionButton>
+  <Menu
+    selectionMode="multiple"
+    defaultSelectedKeys={[4]}
+    disabledKeys={[3]}
+    items={items}>
+    {item => <MenuItem>{item.name}</MenuItem>}
+  </Menu>
+</MenuTrigger>
+```
+
+## Select
+
+BoxGroup example
+
+```tsx
+import {SelectBoxGroup, SelectBox, Text} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import Server from '@react-spectrum/s2/illustrations/linear/Server';
+import StarFilled from '@react-spectrum/s2/illustrations/linear/Star';
+import AlertNotice from '@react-spectrum/s2/illustrations/linear/AlertNotice';
+
+const items = [
+  {id: 1, name: 'AWS', illustration: <Server />},
+  {id: 2, name: 'Azure', illustration: <AlertNotice />},
+  {id: 3, name: 'GCP', illustration: <StarFilled />}
+];
+
+<SelectBoxGroup
+  aria-label="Cloud providers"
+  selectionMode="multiple"
+  defaultSelectedKeys={[1]}
+  disabledKeys={[3]}
+  styles={style({width: 'full'})}
+  items={items}>
+  {((item) => (
+    <SelectBox textValue={item.name}>
+      {item.illustration}
+      <Text slot="label">{item.name}</Text>
+    </SelectBox>
+  ))}
+</SelectBoxGroup>
+```
+
+## Table
+
+View example
+
+```tsx
+import {TableView, TableHeader, Column, Row, TableBody, Cell} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+let items = [
+  {id: 1, name: 'Charizard', type: 'Fire, Flying', level: 67},
+  {id: 2, name: 'Blastoise', type: 'Water', level: 56},
+  {id: 3, name: 'Venusaur', type: 'Grass, Poison', level: 83},
+  {id: 4, name: 'Pikachu', type: 'Electric', level: 100}
+];
+
+<TableView
+  aria-label="Pokemon"
+  disabledKeys={[3]}
+  selectionMode="multiple"
+  styles={style({width: 'full'})}>
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </TableHeader>
+  <TableBody items={items}>
+    {item => (
+      <Row>
+        <Cell>{item.name}</Cell>
+        <Cell>{item.type}</Cell>
+        <Cell>{item.level}</Cell>
+      </Row>
+    )}
+  </TableBody>
+</TableView>
+```
+
+## Tag
+
+Group example
+
+```tsx
+import {TagGroup, Tag} from '@react-spectrum/s2';
+
+const items = [
+  {id: 1, name: 'Charizard'},
+  {id: 2, name: 'Blastoise'},
+  {id: 3, name: 'Venusaur'},
+  {id: 4, name: 'Pikachu'}
+];
+
+<TagGroup
+  label="Pokemon"
+  selectionMode="multiple"
+  disabledKeys={[3]}
+  items={items}>
+  {item => <Tag>{item.name}</Tag>}
+</TagGroup>
+```
+
+## Tree
+
+View example
+
+```tsx
+import {TreeView, TreeViewItem, TreeViewItemContent, Collection} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+
+type PokemonItem = {
+  id: number;
+  name: string;
+  type: string;
+  level: number;
+  children?: PokemonItem[];
+};
+
+let items: PokemonItem[] = [
+  {id: 1, name: 'Bulbasaur', type: 'Grass', level: 14, children: [
+    {id: 2, name: 'Ivysaur', type: 'Grass', level: 30, children: [
+      {id: 3, name: 'Venusaur', type: 'Grass', level: 83}
+    ]}
+  ]},
+  {id: 4, name: 'Charmander', type: 'Fire', level: 16, children: [
+    {id: 5, name: 'Charmeleon', type: 'Fire', level: 32, children: [
+      {id: 6, name: 'Charizard', type: 'Fire, Flying', level: 67}
+    ]}
+  ]},
+  {id: 7, name: 'Squirtle', type: 'Water', level: 8, children: [
+    {id: 8, name: 'Wartortle', type: 'Water', level: 34, children: [
+      {id: 9, name: 'Blastoise', type: 'Water', level: 56}
+    ]}
+  ]}
+];
+
+<TreeView
+  aria-label="Pokemon evolution"
+  styles={style({height: 250, width: 360, maxWidth: 'full'})}
+  defaultExpandedKeys={[1, 2]}
+  selectionMode="multiple"
+  disabledKeys={[3]}
+  items={items}>
+  {function renderItem(item) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>{item.name}</TreeViewItemContent>
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
+</TreeView>
+```
