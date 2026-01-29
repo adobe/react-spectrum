@@ -314,7 +314,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             // If the active element is NOT tabbable but is contained by an element that IS tabbable (aka the cell), the browser will actually move focus to
             // the containing element. We need to special case this so that tab will move focus out of the grid instead of looping between
             // focusing the containing cell and back to the non-tabbable child element
-            if (next && (!nodeContains(next, document.activeElement) || (document.activeElement && !isTabbable(document.activeElement)))) {
+            if (next && (!next.matches(':focus-within') || (document.activeElement && !isTabbable(document.activeElement)))) {
               focusWithoutScrolling(next);
             }
           }
@@ -379,7 +379,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = getItemElement(ref, manager.focusedKey);
       if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!nodeContains(element, document.activeElement) && !shouldUseVirtualFocus) {
+        if (!element.matches(':focus-within') && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 

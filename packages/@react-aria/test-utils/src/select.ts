@@ -11,7 +11,6 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {nodeContains} from '@react-aria/utils';
 import {SelectTesterOpts, UserOpts} from './types';
 
 interface SelectOpenOpts {
@@ -111,7 +110,7 @@ export class SelectTester {
       }
     });
 
-    if (listbox && nodeContains(document, listbox)) {
+    if (listbox && listbox.isConnected) {
       throw new Error('Expected the select element listbox to not be in the document after closing the dropdown.');
     }
   }
@@ -192,7 +191,7 @@ export class SelectTester {
           return;
         }
 
-        if (document.activeElement !== listbox && !nodeContains(listbox, document.activeElement)) {
+        if (document.activeElement !== listbox && !listbox.matches(':focus-within')) {
           act(() => listbox.focus());
         }
         await this.keyboardNavigateToOption({option});
@@ -215,7 +214,7 @@ export class SelectTester {
           }
         });
 
-        if (nodeContains(document, listbox)) {
+        if (listbox.isConnected) {
           throw new Error('Expected select element listbox to not be in the document after selecting an option');
         }
       }

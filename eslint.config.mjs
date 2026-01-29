@@ -250,6 +250,7 @@ export default [{
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
         "rsp-rules/no-non-shadow-contains": [ERROR],
+        "rsp-rules/faster-node-contains": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
