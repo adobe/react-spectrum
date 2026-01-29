@@ -217,6 +217,7 @@ const states = [
     <Input className="react-aria-Input inset" placeholder="Select a state" />
     <FieldButton><ChevronDown /></FieldButton>
   </div>
+  {/*- begin highlight -*/}
   <ComboBoxStateContext.Consumer>
     {state => state && (
       <TagGroup
@@ -225,7 +226,7 @@ const states = [
         items={state.selectedItems}
         renderEmptyState={() => 'No selected items'}
         onRemove={(keys) => {
-          // Remove keys from Select state.
+          // Remove keys from ComboBox state.
           if (Array.isArray(state.value)) {
             state.setValue(state.value.filter(k => !keys.has(k)));
           }
@@ -234,6 +235,7 @@ const states = [
       </TagGroup>
     )}
   </ComboBoxStateContext.Consumer>
+  {/*- end highlight -*/}
   <Popover hideArrow className="combobox-popover">
     <ComboBoxListBox items={states}>
       {state => <ComboBoxItem>{state.name}</ComboBoxItem>}

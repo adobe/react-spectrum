@@ -158,7 +158,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
         break;
       case 'Escape':
         if (
-          state.selectedKey !== null ||
+          !state.selectionManager.isEmpty ||
           state.inputValue === '' ||
           props.allowsCustomValue
         ) {
@@ -220,7 +220,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     [privateValidationStateProp]: state
   }, inputRef);
 
-  useFormReset(inputRef, state.defaultSelectedKey, state.setSelectedKey);
+  useFormReset(inputRef, state.defaultValue, state.setValue);
   
   // Press handlers for the ComboBox button
   let onPress = (e: PressEvent) => {
@@ -332,6 +332,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
   });
 
   // Announce when a selection occurs for VoiceOver. Other screen readers typically do this automatically.
+  // TODO: do we need to do this for multi-select?
   let lastSelectedKey = useRef(state.selectedKey);
   useEffect(() => {
     if (isAppleDevice() && state.isFocused && state.selectedItem && state.selectedKey !== lastSelectedKey.current) {

@@ -313,13 +313,13 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
 
       // Set value to null when the user clears the input.
       // If controlled, this is the application developer's responsibility.
-      if (inputValue === '' && (props.inputValue === undefined || value === undefined)) {
+      if (selectionMode === 'single' && inputValue === '' && (props.inputValue === undefined || value === undefined)) {
         setValue(null);
       }
     }
 
-    // If the selectedKey changed, update the input value.
-    // Do nothing if both inputValue and selectedKey are controlled.
+    // If the value changed, update the input value.
+    // Do nothing if both inputValue and value are controlled.
     // In this case, it's the user's responsibility to update inputValue in onSelectionChange.
     if (
       displayValue !== lastValueRef.current &&
@@ -371,6 +371,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     // If multiple things are controlled, call onSelectionChange
     if (value !== undefined && props.inputValue !== undefined) {
       props.onSelectionChange?.(selectedKey);
+      props.onChange?.(displayValue);
 
       // Stop menu from reopening from useEffect
       let itemText = selectedKey != null ? collection.getItem(selectedKey)?.textValue ?? '' : '';
@@ -397,7 +398,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
-      if (selectedKey === selectionManager.focusedKey) {
+      if (selectionManager.isSelected(selectionManager.focusedKey)) {
         commitSelection();
       } else {
         selectionManager.select(selectionManager.focusedKey);
@@ -439,7 +440,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     }
   }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
 
-  let defaultSelectedKey = props.defaultSelectedKey ?? (props.selectionMode === 'single' ? initialValue as Key : null);
+  let defaultSelectedKey = props.defaultSelectedKey ?? (selectionMode === 'single' ? initialValue as Key : null);
 
   return {
     ...validation,
