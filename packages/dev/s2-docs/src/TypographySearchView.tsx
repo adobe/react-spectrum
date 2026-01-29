@@ -169,6 +169,13 @@ const fontStyles = {
   'code-xl': style({font: 'code-xl', color: 'inherit'})
 } as const;
 
+// We hard-code these since the code is dynamic and we can't run our highlighter in the browser.
+const syntaxStyles = {
+  tag: style({color: 'red-1000'}),
+  attribute: style({color: 'indigo-1000'}),
+  string: style({color: 'green-1000'})
+};
+
 type FontStyleKey = keyof typeof fontStyles;
 
 const defaultPreviewInputStyle = style({
@@ -351,7 +358,27 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
               font: 'code-sm'
             })}>
             <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
-              {codeSnippet}
+              &lt;
+              <span className={syntaxStyles.tag}>{selectedElementTag}</span>
+              {' '}
+              <span className={syntaxStyles.attribute}>className</span>
+              =
+              {'{'}
+              <span className={syntaxStyles.tag}>style</span>
+              {'('}
+              {'{'}
+              <span className={syntaxStyles.attribute}>font</span>
+              :
+              {' '}
+              <span className={syntaxStyles.string}>'{selectedFont}'</span>
+              {'}'}
+              {')'}
+              {'}'}
+              &gt;
+              {previewText}
+              &lt;/
+              <span className={syntaxStyles.tag}>{selectedElementTag}</span>
+              &gt;
             </code>
             <CopyButton text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
           </div>
