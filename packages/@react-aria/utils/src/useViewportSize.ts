@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {getEventTarget} from './shadowdom/DOMFunctions';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
-import {getEventTarget} from './shadowdom/DOMFunctions';
 import {willOpenKeyboard} from './keyboard';
 
 interface ViewportSize {
