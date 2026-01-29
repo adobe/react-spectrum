@@ -30,15 +30,17 @@ import {CollectionBuilder} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType, GlobalDOMAttributes, RefObject} from '@react-types/shared';
+import {forwardRefType, GlobalDOMAttributes, Key, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
+
+type SelectionMode = 'single' | 'multiple';
 
 export interface ComboBoxRenderProps {
   /**
@@ -63,7 +65,7 @@ export interface ComboBoxRenderProps {
   isRequired: boolean
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface ComboBoxProps<T extends object, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-ComboBox'
@@ -83,13 +85,13 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   isTriggerUpWhenOpen?: boolean
 }
 
-export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
-export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
+export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any, SelectionMode>, HTMLDivElement>>(null);
+export const ComboBoxStateContext = createContext<ComboBoxState<any, SelectionMode> | null>(null);
 
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object, M extends SelectionMode = 'single'>(props: ComboBoxProps<T, M>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (
@@ -117,7 +119,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
 const CLEAR_CONTEXTS = [LabelContext, ButtonContext, InputContext, GroupContext, TextContext];
 
 interface ComboBoxInnerProps<T extends object> {
-  props: ComboBoxProps<T>,
+  props: ComboBoxProps<T, SelectionMode>,
   collection: Collection<Node<T>>,
   comboBoxRef: RefObject<HTMLDivElement | null>
 }
@@ -205,6 +207,18 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let DOMProps = filterDOMProps(props, {global: true});
   delete DOMProps.id;
 
+  let inputs: ReactElement[] = [];
+  if (name && formValue === 'key') {
+    let values: (Key | null)[] = Array.isArray(state.value) ? state.value : [state.value];
+    if (values.length === 0) {
+      values = [null];
+    }
+
+    inputs = values.map((value, i) => (
+      <input key={i} type="hidden" name={name} form={props.form} value={value ?? ''} />
+    ));
+  }
+
   return (
     <Provider
       values={[
@@ -244,7 +258,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+      {inputs}
     </Provider>
   );
 }

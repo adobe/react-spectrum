@@ -12,7 +12,7 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {AriaComboBoxProps} from '@react-types/combobox';
+import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
@@ -29,7 +29,7 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
+export interface AriaComboBoxOptions<T, M extends SelectionMode = 'single'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the list box popover. */
@@ -69,7 +69,7 @@ export interface ComboBoxAria<T> extends ValidationResult {
  * @param props - Props for the combo box.
  * @param state - State for the select, as returned by `useComboBoxState`.
  */
-export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxState<T>): ComboBoxAria<T> {
+export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaComboBoxOptions<T, M>, state: ComboBoxState<T, M>): ComboBoxAria<T> {
   let {
     buttonRef,
     popoverRef,
