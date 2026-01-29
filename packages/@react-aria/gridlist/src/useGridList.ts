@@ -96,7 +96,12 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * - 'override': links override all other interactions (link items are not selectable).
    * @default 'action'
    */
-  linkBehavior?: 'action' | 'selection' | 'override'
+  linkBehavior?: 'action' | 'selection' | 'override',
+  /**
+   * Whether selection should occur automatically on focus.
+   * @default true (when selectionBehavior is 'replace')
+   */
+  selectOnFocus?: boolean
 }
 
 export interface GridListAria {
@@ -121,7 +126,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow',
     escapeKeyBehavior = 'clearSelection',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    selectOnFocus
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -136,7 +142,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     keyboardDelegate,
     layoutDelegate,
     isVirtualized,
-    selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
+    selectOnFocus: selectOnFocus ?? state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
     disallowTypeAhead,
