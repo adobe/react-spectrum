@@ -581,11 +581,13 @@ function MenuTrigger(props: MenuTriggerProps): ReactNode {
         shouldFlip: props.shouldFlip
       }}>
       <PopoverContext.Provider value={{hideArrow: true, offset: 8, crossOffset: 0, placement, shouldFlip}}>
-        <AriaMenuTrigger {...props}>
-          <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-            {props.children}
-          </PressResponder>
-        </AriaMenuTrigger>
+        <InPopoverContext.Provider value={false}>
+          <AriaMenuTrigger {...props}>
+            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+              {props.children}
+            </PressResponder>
+          </AriaMenuTrigger>
+        </InPopoverContext.Provider>
       </PopoverContext.Provider>
     </InternalMenuTriggerContext.Provider>
   );

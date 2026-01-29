@@ -4858,7 +4858,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/rust@npm:2.16.3":
+"@parcel/rust@npm:2.16.3, @parcel/rust@npm:^2.16.3":
   version: 2.16.3
   resolution: "@parcel/rust@npm:2.16.3"
   dependencies:
@@ -8133,6 +8133,7 @@ __metadata:
   resolution: "@react-stately/datepicker@workspace:packages/@react-stately/datepicker"
   dependencies:
     "@internationalized/date": "npm:^3.10.1"
+    "@internationalized/number": "npm:^3.6.5"
     "@internationalized/string": "npm:^3.2.7"
     "@react-stately/form": "npm:^3.2.2"
     "@react-stately/overlays": "npm:^3.6.21"
@@ -24866,6 +24867,7 @@ __metadata:
     "@parcel/reporter-bundle-analyzer": "npm:^2.16.3"
     "@parcel/reporter-cli": "npm:^2.16.3"
     "@parcel/resolver-glob": "npm:^2.16.3"
+    "@parcel/rust": "npm:^2.16.3"
     "@parcel/transformer-inline": "npm:^2.16.3"
     "@parcel/transformer-inline-string": "npm:^2.16.3"
     "@parcel/transformer-react-static": "npm:^2.16.3"
@@ -24933,6 +24935,7 @@ __metadata:
     jest-environment-jsdom: "npm:^29.5.0"
     jest-junit: "npm:^15.0.0"
     jest-matchmedia-mock: "npm:^1.1.0"
+    json5: "npm:^2.2.3"
     lerna: "npm:^3.13.2"
     lucide-react: "npm:^0.517.0"
     md5: "npm:^2.2.1"
