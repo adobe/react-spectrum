@@ -21,9 +21,38 @@ interface ViewportSize {
 
 let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
+// Lazy import to avoid circular dependency issues
+// useUNSAFE_PortalContext is only used if available
+let portalContextModule: typeof import('@react-aria/overlays') | null = null;
+function getPortalContext() {
+  if (!portalContextModule) {
+    try {
+      portalContextModule = require('@react-aria/overlays');
+    } catch {
+      return null;
+    }
+  }
+  return portalContextModule;
+}
+
 export function useViewportSize(): ViewportSize {
   let isSSR = useIsSSR();
-  let [size, setSize] = useState(() => isSSR ? {width: 0, height: 0} : getViewportSize());
+  let portalModule = getPortalContext();
+  let getContainerBounds = portalModule?.useUNSAFE_PortalContext?.()?.getContainerBounds;
+  let containerBounds = getContainerBounds?.() || null;
+  
+  let [size, setSize] = useState(() => {
+    if (isSSR) {
+      return {width: 0, height: 0};
+    }
+    
+    // If container bounds are provided, use those; otherwise use window viewport
+    if (containerBounds) {
+      return {width: containerBounds.width, height: containerBounds.height};
+    }
+    
+    return getViewportSize();
+  });
 
   useEffect(() => {
     let updateSize = (newSize: ViewportSize) => {
@@ -42,7 +71,22 @@ export function useViewportSize(): ViewportSize {
         return;
       }
 
-      updateSize(getViewportSize());
+      setSize(size => {
+        // Re-measure container bounds if available, otherwise use window viewport
+        let newBounds = getContainerBounds?.();
+        let newSize: ViewportSize;
+        
+        if (newBounds) {
+          newSize = {width: newBounds.width, height: newBounds.height};
+        } else {
+          newSize = getViewportSize();
+        }
+        
+        if (newSize.width === size.width && newSize.height === size.height) {
+          return size;
+        }
+        return newSize;
+      });
     };
 
     // When closing the keyboard, iOS does not fire the visual viewport resize event until the animation is complete.
@@ -57,7 +101,21 @@ export function useViewportSize(): ViewportSize {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
           if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
-            updateSize({width: window.innerWidth, height: window.innerHeight});
+            setSize(size => {
+              let newSize: ViewportSize;
+              let newBounds = getContainerBounds?.();
+              
+              if (newBounds) {
+                newSize = {width: newBounds.width, height: newBounds.height};
+              } else {
+                newSize = {width: window.innerWidth, height: window.innerHeight};
+              }
+              
+              if (newSize.width === size.width && newSize.height === size.height) {
+                return size;
+              }
+              return newSize;
+            });
           }
         });
       }
@@ -82,7 +140,7 @@ export function useViewportSize(): ViewportSize {
         visualViewport.removeEventListener('resize', onResize);
       }
     };
-  }, []);
+  }, [getContainerBounds]);
 
   return size;
 }

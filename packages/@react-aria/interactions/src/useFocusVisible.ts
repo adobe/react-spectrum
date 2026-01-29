@@ -71,6 +71,24 @@ function isValidKey(e: KeyboardEvent) {
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
   if (!(openLink as any).isOpening && isValidKey(e)) {
+    // In Shadow DOM, e.target may be retargeted to the shadow host (e.g., a DIV).
+    // Use composedPath() to get the actual element inside the shadow root.
+    let actualTarget = e.composedPath?.()?.[0] as Element | undefined || e.target as Element;
+    
+    // Check if the actual target is a text input element
+    let isTextInputTarget = actualTarget instanceof HTMLInputElement && !nonTextInputTypes.has(actualTarget.type) ||
+      actualTarget instanceof HTMLTextAreaElement ||
+      (actualTarget instanceof HTMLElement && actualTarget.isContentEditable);
+    
+    // For text inputs, only Tab/Escape should trigger keyboard modality (focus visible)
+    // Other keys (typing content) should not show focus ring
+    let isFocusVisibleKey = FOCUS_VISIBLE_INPUT_KEYS[e.key];
+    
+    // Skip setting keyboard modality for content keys in text inputs
+    if (isTextInputTarget && !isFocusVisibleKey) {
+      return;
+    }
+    
     currentModality = 'keyboard';
     currentPointerType = 'keyboard';
     triggerChangeHandlers('keyboard', e);
@@ -310,11 +328,25 @@ function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: Handl
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
-  isTextInput = isTextInput ||
-    (document.activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(document.activeElement.type)) ||
-    document.activeElement instanceof IHTMLTextAreaElement ||
-    (document.activeElement instanceof IHTMLElement && document.activeElement.isContentEditable);
-  return !(isTextInput && modality === 'keyboard' && e instanceof IKeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+  // 
+  // In Shadow DOM, document.activeElement returns the shadow host, not the actual focused element.
+  // So we also check e.target (the actual event target) which correctly reflects the focused element
+  // even inside shadow roots.
+  let activeElement = document.activeElement;
+  let eventTarget = e?.target as Element | null;
+  
+  // Check both document.activeElement and event target for text input detection
+  // This handles Shadow DOM where activeElement is the host but target is the actual input
+  let activeIsTextInput = activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type) ||
+    activeElement instanceof IHTMLTextAreaElement ||
+    (activeElement instanceof IHTMLElement && activeElement.isContentEditable);
+  
+  let targetIsTextInput = eventTarget instanceof IHTMLInputElement && !nonTextInputTypes.has(eventTarget.type) ||
+    eventTarget instanceof IHTMLTextAreaElement ||
+    (eventTarget instanceof IHTMLElement && eventTarget.isContentEditable);
+  
+  isTextInput = isTextInput || activeIsTextInput || targetIsTextInput;
+  return !(isTextInput && modality === 'keyboard' && e instanceof IKeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[(e as KeyboardEvent).key]);
 }
 
 /**
