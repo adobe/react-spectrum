@@ -30,7 +30,6 @@ import {
   Provider,
   SectionProps,
   SelectValue,
-  SelectValueProps,
   Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, GlobalDOMAttributes, HelpTextProps, LoadingState, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
@@ -126,10 +125,11 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
     /** The current loading state of the Picker. */
     loadingState?: LoadingState,
     /**
-     * Custom renderer for the selected value shown in the button.
-     * Matches the `SelectValue` children render type.
+     * Custom renderer for the selected value shown in the button. Allows one to provide a custom element to render for selected items.
+     *
+     * @warning The returned ReactNode should not have interactable elements as it will break accessibility.
      */
-    renderValue?: SelectValueProps<T>['children']
+    renderValue?: (selectedItems: T[]) => ReactNode
 }
 
 interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
@@ -304,6 +304,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
     loadingState,
+    renderValue,
     onLoadMore,
     ...pickerProps
   } = props;
@@ -383,6 +384,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
             </FieldLabel>
             <PickerButton
               loadingState={loadingState}
+              renderValue={renderValue}
               isOpen={isOpen}
               isQuiet={isQuiet}
               isFocusVisible={isFocusVisible}
@@ -505,7 +507,8 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
     isDisabled,
     loadingState,
     loadingCircle,
-    buttonRef
+    buttonRef,
+    renderValue
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
@@ -539,6 +542,14 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
           <>
             <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
               {({selectedItems, defaultChildren}) => {
+                const selectedValues = selectedItems.filter((item): item is T => item != null);
+                const defaultRenderedValue = selectedItems.length <= 1
+                  ? defaultChildren
+                  : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>;
+                const renderedValue = selectedItems.length > 0 && renderValue
+                  ? renderValue(selectedValues)
+                  : defaultRenderedValue;
+
                 return (
                   <Provider
                     values={[
@@ -583,10 +594,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
                       }],
                       [InsideSelectValueContext, true]
                     ]}>
-                    {selectedItems.length <= 1
-                      ? defaultChildren
-                      : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
-                    }
+                    {renderedValue}
                   </Provider>
                 );
               }}
