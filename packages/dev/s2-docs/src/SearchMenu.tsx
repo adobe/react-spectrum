@@ -175,16 +175,17 @@ export function SearchMenu(props: SearchMenuProps) {
                   </div>
 
                   <CloseButton onClose={onClose} />
-
-                  <SearchTagGroups
-                    sectionTags={sectionTagsForDisplay}
-                    resourceTags={tabResourceTags}
-                    selectedTagId={selectedTagId}
-                    onSectionSelectionChange={handleTagSelectionChange}
-                    onResourceSelectionChange={handleTagSelectionChange}
-                    onHover={tag => {
-                      preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
-                    }} />
+                  <div className={style({overflow: 'auto', flexShrink: 0, paddingBottom: 8})}>
+                    <SearchTagGroups
+                      sectionTags={sectionTagsForDisplay}
+                      resourceTags={tabResourceTags}
+                      selectedTagId={selectedTagId}
+                      onSectionSelectionChange={handleTagSelectionChange}
+                      onResourceSelectionChange={handleTagSelectionChange}
+                      onHover={tag => {
+                        preloadComponentImages(sections.find(s => s.id === tag)?.children?.map(c => c.name) || []);
+                      }} />
+                  </div>
                   {isIconsSelected ? (
                     <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<IconSearchSkeleton />}>

@@ -18,7 +18,6 @@ interface SearchTagGroupsProps {
   selectedTagId: string | undefined,
   onSectionSelectionChange: (keys: Iterable<Key>) => void,
   onResourceSelectionChange?: (keys: Iterable<Key>) => void,
-  isMobile?: boolean,
   wrapperClassName?: string,
   contentClassName?: string,
   onHover?: (id: Key) => void
@@ -30,7 +29,6 @@ export function SearchTagGroups({
   selectedTagId,
   onSectionSelectionChange,
   onResourceSelectionChange,
-  isMobile = false,
   wrapperClassName,
   contentClassName,
   onHover
@@ -58,7 +56,7 @@ export function SearchTagGroups({
                 onSelectionChange={onSectionSelectionChange}
                 aria-label="Sections"
                 items={sectionTags}
-                UNSAFE_style={isMobile ? {whiteSpace: 'nowrap'} : undefined}>
+                UNSAFE_style={{whiteSpace: 'nowrap'}}>
                 {(tag) => (
                   <Tag key={tag.id} id={tag.id} onHoverStart={() => onHover?.(tag.id)} onPressStart={() => onHover?.(tag.id)}>
                     {tag.name}
@@ -79,7 +77,7 @@ export function SearchTagGroups({
                 onSelectionChange={onResourceSelectionChange}
                 aria-label="Resources"
                 items={resourceTags}
-                UNSAFE_style={isMobile ? {whiteSpace: 'nowrap'} : undefined}>
+                UNSAFE_style={{whiteSpace: 'nowrap'}}>
                 {(tag) => (
                   <Tag key={tag.id} id={tag.id} href={tag.href} target="_blank">
                     {tag.name}
