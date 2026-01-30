@@ -685,7 +685,6 @@ describe('Tabs', () => {
     expect(tabPanels).toHaveStyle({width: '100px'});
   });
 
-
   it('supports tooltips', async function () {
     let {getByRole, getAllByRole} = render(
       <Tabs>
