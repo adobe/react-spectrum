@@ -200,9 +200,13 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   ) : null}
                   {selectedTagId === 'colors' && (
-                    <div className={style({flexGrow: 1, overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
+                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <Suspense fallback={<ColorSearchSkeleton />}>
-                        <LazyColorSearchView filteredItems={filteredColors.sections} exactMatches={filteredColors.exactMatches} closestMatches={filteredColors.closestMatches} />
+                        <LazyColorSearchView 
+                          filteredItems={filteredColors.sections} 
+                          exactMatches={filteredColors.exactMatches} 
+                          closestMatches={filteredColors.closestMatches}
+                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
                       </Suspense>
                     </div>
                   )}

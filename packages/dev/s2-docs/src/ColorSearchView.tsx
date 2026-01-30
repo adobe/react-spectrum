@@ -19,7 +19,7 @@ const itemStyle = style({
   justifyContent: 'center',
   alignItems: 'center',
   gap: 8,
-  padding: 8,
+  paddingY: 8,
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
@@ -222,10 +222,11 @@ interface ColorSearchViewProps {
   /** Names of colors that exactly match the searched hex value. */
   exactMatches?: Set<string>,
   /** Names of the closest matching colors when no exact matches exist. */
-  closestMatches?: Set<string>
+  closestMatches?: Set<string>,
+  listBoxClassName?: string
 }
 
-export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set()}: ColorSearchViewProps) {
+export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set(), listBoxClassName}: ColorSearchViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -268,40 +269,38 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
   }
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8, height: 'full'})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, height: 'full', paddingX: 16})}>
       <CopyInfoMessage />
-      <div className={style({flexGrow: 1, overflow: 'auto'})}>
-        <ListBox
-          aria-label="Colors"
-          onAction={(key) => {
-            for (const section of sections) {
-              const item = section.items.find(item => item.id === key.toString());
-              if (item) {
-                handleCopyColor(item.name, item.id);
-                break;
-              }
+      <ListBox
+        aria-label="Colors"
+        onAction={(key) => {
+          for (const section of sections) {
+            const item = section.items.find(item => item.id === key.toString());
+            if (item) {
+              handleCopyColor(item.name, item.id);
+              break;
             }
-          }}
-          layout="grid"
-          className={listBoxStyle}
-          dependencies={[copiedId, exactMatches, closestMatches]}
-          items={sections}>
-          {section => (
-            <ListBoxSection id={section.id} className={sectionStyle}>
-              <Header className={headerStyle}>{section.name}</Header>
-              {section.items.map(item => (
-                <ColorItem 
-                  key={item.id}
-                  item={item} 
-                  sectionId={section.id}
-                  isCopied={copiedId === item.id}
-                  isBestMatch={exactMatches.has(item.name) || closestMatches.has(item.name)}
-                  isExactMatch={exactMatches.has(item.name)} />
-              ))}
-            </ListBoxSection>
-          )}
-        </ListBox>
-      </div>
+          }
+        }}
+        layout="grid"
+        className={listBoxClassName || listBoxStyle}
+        dependencies={[copiedId, exactMatches, closestMatches]}
+        items={sections}>
+        {section => (
+          <ListBoxSection id={section.id} className={sectionStyle}>
+            <Header className={headerStyle}>{section.name}</Header>
+            {section.items.map(item => (
+              <ColorItem 
+                key={item.id}
+                item={item} 
+                sectionId={section.id}
+                isCopied={copiedId === item.id}
+                isBestMatch={exactMatches.has(item.name) || closestMatches.has(item.name)}
+                isExactMatch={exactMatches.has(item.name)} />
+            ))}
+          </ListBoxSection>
+        )}
+      </ListBox>
     </div>
   );
 }
