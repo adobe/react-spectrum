@@ -649,6 +649,43 @@ describe('Tabs', () => {
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('should support tabpanels with aria-labels', () => {
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels aria-label="test" data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabPanels = getByTestId('tabpanels');
+    expect(tabPanels).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support tabpanels with custom styles', () => {
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels style={{width: '100px'}} data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabPanels = getByTestId('tabpanels');
+    expect(tabPanels).toHaveStyle({width: '100px'});
+  });
+
+
   it('supports tooltips', async function () {
     let {getByRole, getAllByRole} = render(
       <Tabs>
