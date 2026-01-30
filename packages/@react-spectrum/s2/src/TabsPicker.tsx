@@ -41,19 +41,17 @@ import {edgeToText} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
-import {FocusableRef, FocusableRefValue, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
 import {Placement, useLocale} from 'react-aria';
 import {Popover} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
-import {useGlobalListeners} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
@@ -184,85 +182,70 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   let {direction: dir} = useLocale();
   let RTLFlipOffset = dir === 'rtl' ? -1 : 1;
 
-  // For mouse interactions, pickers open on press start. When the popover underlay appears
-  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
-  // to occur. We override this by listening for pointerup on the document ourselves.
-  let [isPressed, setPressed] = useState(false);
-  let {addGlobalListener} = useGlobalListeners();
-  let onPressStart = (e: PressEvent) => {
-    if (e.pointerType !== 'mouse') {
-      return;
-    }
-    setPressed(true);
-    addGlobalListener(document, 'pointerup', () => {
-      setPressed(false);
-    }, {once: true, capture: true});
-  };
-
   return (
     <div>
       <AriaSelect
         {...pickerProps}
-        isTriggerUpWhenOpen
         className=""
         aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>
             <FieldLabel isQuiet={isQuiet} />
-            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-              <Button
-                ref={domRef}
-                style={renderProps => pressScale(domRef)(renderProps)}
-                className={renderProps => inputButton({
-                  ...renderProps,
-                  size: 'M',
-                  isOpen,
-                  isQuiet,
-                  density
-                })}>
-                <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
-                  {({defaultChildren}) => {
-                    return (
-                      <Provider
-                        values={[
-                          [IconContext, {
-                            slots: {
-                              icon: {
-                                render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
-                                styles: icon
-                              }
+            <Button
+              ref={domRef}
+              style={renderProps => pressScale(domRef)(renderProps)}
+              // Prevent press scale from sticking while Picker is open.
+              // @ts-ignore
+              isPressed={false}
+              className={renderProps => inputButton({
+                ...renderProps,
+                size: 'M',
+                isOpen,
+                isQuiet,
+                density
+              })}>
+              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                {({defaultChildren}) => {
+                  return (
+                    <Provider
+                      values={[
+                        [IconContext, {
+                          slots: {
+                            icon: {
+                              render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
+                              styles: icon
                             }
-                          }],
-                          [TextContext, {
-                            slots: {
-                              // Default slot is useful when converting other collections to PickerItems.
-                              [DEFAULT_SLOT]: {
-                                id: valueId,
-                                styles: style({
-                                  display: {
-                                    default: 'block',
-                                    labelBehavior: {
-                                      hide: 'none'
-                                    }
-                                  },
-                                  flexGrow: 1,
-                                  truncate: true
-                                })({labelBehavior})
-                              }
+                          }
+                        }],
+                        [TextContext, {
+                          slots: {
+                            // Default slot is useful when converting other collections to PickerItems.
+                            [DEFAULT_SLOT]: {
+                              id: valueId,
+                              styles: style({
+                                display: {
+                                  default: 'block',
+                                  labelBehavior: {
+                                    hide: 'none'
+                                  }
+                                },
+                                flexGrow: 1,
+                                truncate: true
+                              })({labelBehavior})
                             }
-                          }],
-                          [InsideSelectValueContext, true]
-                        ]}>
-                        {defaultChildren}
-                      </Provider>
-                    );
-                  }}
-                </SelectValue>
-                <ChevronIcon
-                  size={size}
-                  className={iconStyles} />
-              </Button>
-            </PressResponder>
+                          }
+                        }],
+                        [InsideSelectValueContext, true]
+                      ]}>
+                      {defaultChildren}
+                    </Provider>
+                  );
+                }}
+              </SelectValue>
+              <ChevronIcon
+                size={size}
+                className={iconStyles} />
+            </Button>
             <Popover
               hideArrow
               offset={menuOffset}

@@ -65,7 +65,12 @@ export interface ButtonRenderProps {
    * Whether the button is currently in a pending state.
    * @selector [data-pending]
    */
-  isPending: boolean
+  isPending: boolean,
+  /**
+   * Whether an overlay triggered by the button is currently open.
+   * @selector [data-expanded]
+   */
+  isExpanded: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
@@ -82,7 +87,8 @@ export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' |
 }
 
 interface ButtonContextValue extends ButtonProps {
-  isPressed?: boolean
+  isPressed?: boolean,
+  isExpanded?: boolean
 }
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
@@ -107,7 +113,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     isFocused,
     isFocusVisible,
     isDisabled: props.isDisabled || false,
-    isPending: isPending ?? false
+    isPending: isPending ?? false,
+    isExpanded: ctx.isExpanded || false
   };
 
   let renderProps = useRenderProps({
@@ -160,7 +167,8 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-pending={isPending || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
+      data-focus-visible={isFocusVisible || undefined}
+      data-expanded={renderValues.isExpanded || undefined}>
       <ProgressBarContext.Provider value={{id: progressId}}>
         {renderProps.children}
       </ProgressBarContext.Provider>

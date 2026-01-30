@@ -536,9 +536,9 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 
-  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
+  it('should set data-expanded on button when menu is open', async () => {
     let {getByRole} = render(
-      <MenuTrigger isTriggerUpWhenOpen>
+      <MenuTrigger>
         <Button aria-label="Menu">☰</Button>
         <Popover>
           <Menu>
@@ -549,10 +549,10 @@ describe('Menu', () => {
     );
 
     let button = getByRole('button');
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
 
     await user.click(button);
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded', 'true');
   });
 
   it('should support onScroll', () => {

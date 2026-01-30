@@ -399,13 +399,13 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Kangaroo');
   });
 
-  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
-    let {getByRole} = render(<TestSelect isTriggerUpWhenOpen />);
+  it('should set data-expanded on button when popover is open', async () => {
+    let {getByRole} = render(<TestSelect />);
     let button = getByRole('button');
 
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
     await user.click(button);
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded', 'true');
   });
 
   describe('typeahead', () => {

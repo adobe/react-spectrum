@@ -98,7 +98,7 @@ export interface PickerStyleProps {
 
 type SelectionMode = 'single' | 'multiple';
 export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
-  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'render' | 'allowsEmptyCollection' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'render' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -351,7 +351,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   return (
     <AriaSelect
       {...pickerProps}
-      isTriggerUpWhenOpen
       aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}

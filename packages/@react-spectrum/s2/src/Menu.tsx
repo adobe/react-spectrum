@@ -53,7 +53,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 
-export interface MenuTriggerProps extends Omit<AriaMenuTriggerProps, 'isTriggerUpWhenOpen'> {
+export interface MenuTriggerProps extends AriaMenuTriggerProps {
   /**
    * Alignment of the menu relative to the trigger.
    *
