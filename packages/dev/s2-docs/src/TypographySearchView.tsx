@@ -299,7 +299,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
         </ListBox>
       </div>
 
-      <div className={style({overflowX: 'auto', overflowY: 'visible', width: 'full', flexShrink: 0})}>
+      <div className={style({overflowX: 'auto', overflowY: 'visible', width: 'full', flexShrink: 0, padding: 8})}>
         <ToggleButtonGroup
           aria-label="Element type"
           density="compact"
