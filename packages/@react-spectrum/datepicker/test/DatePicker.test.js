@@ -1243,35 +1243,74 @@ describe('DatePicker', function () {
           );
           let segment = getByLabelText('hour,');
           act(() => {segment.focus();});
-          await user.keyboard('[ArrowUp]');
+          await user.keyboard('{ArrowUp}');
           expect(onChange).toHaveBeenCalledTimes(1);
           expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
 
-          await user.keyboard('[ArrowUp]');
+          await user.keyboard('{ArrowUp}');
           expect(onChange).toHaveBeenCalledTimes(2);
           expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
 
-          await user.keyboard('[ArrowUp]');
+          await user.keyboard('{ArrowUp}');
           expect(onChange).toHaveBeenCalledTimes(3);
           expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]'));
 
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(4);
           expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
 
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(5);
           expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
 
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(6);
           expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]'));
           // check that the hour is set to 12 and not 0
           expect(segment.textContent).toBe('12');
 
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('{ArrowDown}');
           expect(onChange).toHaveBeenCalledTimes(7);
           expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T11:45:00-08:00[America/Los_Angeles]'));
+        });
+
+        it('should support cycling through DST fall back transitions even if the minutes are undefined', async function () {
+          let {getByLabelText} = render(
+            <Provider theme={theme}>
+              <DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')} />
+            </Provider>
+          );
+
+          let minute = getByLabelText('minute,');
+          act(() => minute.focus());
+          await user.keyboard('{Backspace}');
+          expect(minute).toHaveAttribute('aria-valuetext', '04');
+
+          await user.keyboard('{Backspace}');
+          expect(minute).toHaveAttribute('aria-valuetext', 'Empty');
+
+          let hour = getByLabelText('hour,');
+          await user.keyboard('{ArrowLeft}');
+          await user.keyboard('[ArrowUp]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowUp]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowUp]');
+          expect(hour.textContent).toBe('2');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('12');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('11');
         });
       });
 
