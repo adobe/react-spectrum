@@ -56,7 +56,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder' | 'isTriggerUpWhenOpen'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -194,9 +194,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
             <Button
               ref={domRef}
               style={renderProps => pressScale(domRef)(renderProps)}
-              // Prevent press scale from sticking while Picker is open.
-              // @ts-ignore
-              isPressed={false}
               className={renderProps => inputButton({
                 ...renderProps,
                 size: 'M',

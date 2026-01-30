@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps, HiddenSelect, useFocusRing, useListFormatter, useLocalizedStringFormatter, useSelect} from 'react-aria';
+import {AriaSelectProps, HiddenSelect, PressEvent, useFocusRing, useListFormatter, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -29,7 +29,7 @@ import {
 import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useGlobalListeners, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 // @ts-ignore
@@ -174,6 +174,21 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     onResize: onResize
   });
 
+  // For mouse interactions, pickers open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
   // Only expose a subset of state to renderProps function to avoid infinite render loop
   let renderPropsState = useMemo(() => ({
     isOpen: state.isOpen,
@@ -202,7 +217,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         [SelectStateContext, state],
         [SelectValueContext, valueProps],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isExpanded: state.isOpen, autoFocus: props.autoFocus}],
+        [ButtonContext, {...mergeProps(triggerProps, {onPressStart}), ref: buttonRef, isExpanded: state.isOpen, autoFocus: props.autoFocus, isPressed}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'Select',
@@ -303,8 +318,8 @@ export const SelectValue = /*#__PURE__*/ createHideableComponent(function Select
   let textValue = useMemo(() => state.selectedItems.map(item => item?.textValue), [state.selectedItems]);
   let selectionMode = state.selectionManager.selectionMode;
   let selectedText = useMemo(() => (
-    selectionMode === 'single' 
-      ? textValue[0] ?? '' 
+    selectionMode === 'single'
+      ? textValue[0] ?? ''
       : formatter.format(textValue)
   ), [selectionMode, formatter, textValue]);
 
