@@ -243,8 +243,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+      </dom.div>
     </Provider>
   );
 }
