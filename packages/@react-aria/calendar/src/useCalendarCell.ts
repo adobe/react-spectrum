@@ -13,7 +13,7 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getEventTarget, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
@@ -333,17 +333,18 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           state.highlightDate(date);
         }
       },
-      onPointerDown(e) {
+      onPointerDown(e: PointerEvent) {
         // This is necessary on touch devices to allow dragging
         // outside the original pressed element.
         // (JSDOM does not support this)
-        if ('releasePointerCapture' in e.target) {
-          if ('hasPointerCapture' in e.target) {
-            if (e.target.hasPointerCapture(e.pointerId)) {
-              e.target.releasePointerCapture(e.pointerId);
+        let target = getEventTarget(e);
+        if (target instanceof HTMLElement && 'releasePointerCapture' in target) {
+          if ('hasPointerCapture' in target) {
+            if (target.hasPointerCapture(e.pointerId)) {
+              target.releasePointerCapture(e.pointerId);
             }
           } else {
-            e.target.releasePointerCapture(e.pointerId);
+            (target as HTMLElement).releasePointerCapture(e.pointerId);
           }
         }
       },

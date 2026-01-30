@@ -16,6 +16,7 @@
 // bugs, e.g. Chrome sometimes fires both transitionend and transitioncancel rather
 // than one or the other. So we need to track what's actually transitioning so that
 // we can ignore these duplicate events.
+import {getEventTarget} from './shadowdom/DOMFunctions';
 let transitionsByElement = new Map<EventTarget, Set<string>>();
 
 // A list of callbacks to call once there are no transitioning elements.
@@ -31,19 +32,19 @@ function setupGlobalEvents() {
   }
 
   let onTransitionStart = (e: Event) => {
-    if (!isTransitionEvent(e) || !e.target) {
+    if (!isTransitionEvent(e) || !getEventTarget(e)) {
       return;
     }
     // Add the transitioning property to the list for this element.
-    let transitions = transitionsByElement.get(e.target);
+    let transitions = transitionsByElement.get(getEventTarget(e));
     if (!transitions) {
       transitions = new Set();
-      transitionsByElement.set(e.target, transitions);
+      transitionsByElement.set(getEventTarget(e), transitions);
 
       // The transitioncancel event must be registered on the element itself, rather than as a global
       // event. This enables us to handle when the node is deleted from the document while it is transitioning.
       // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
-      e.target.addEventListener('transitioncancel', onTransitionEnd, {
+      getEventTarget(e).addEventListener('transitioncancel', onTransitionEnd, {
         once: true
       });
     }
@@ -52,11 +53,11 @@ function setupGlobalEvents() {
   };
 
   let onTransitionEnd = (e: Event) => {
-    if (!isTransitionEvent(e) || !e.target) {
+    if (!isTransitionEvent(e) || !getEventTarget(e)) {
       return;
     }
     // Remove property from list of transitioning properties.
-    let properties = transitionsByElement.get(e.target);
+    let properties = transitionsByElement.get(getEventTarget(e));
     if (!properties) {
       return;
     }
@@ -65,8 +66,8 @@ function setupGlobalEvents() {
 
     // If empty, remove transitioncancel event, and remove the element from the list of transitioning elements.
     if (properties.size === 0) {
-      e.target.removeEventListener('transitioncancel', onTransitionEnd);
-      transitionsByElement.delete(e.target);
+      getEventTarget(e).removeEventListener('transitioncancel', onTransitionEnd);
+      transitionsByElement.delete(getEventTarget(e));
     }
 
     // If no transitioning elements, call all of the queued callbacks.
