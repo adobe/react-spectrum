@@ -189,11 +189,11 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
 
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
     await dialogTester.open();
-    expect(button).toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded');
 
     let dialog = dialogTester.dialog;
     let heading = getByRole('heading');

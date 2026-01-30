@@ -70,7 +70,7 @@ export interface ButtonRenderProps {
    * Whether an overlay triggered by the button is currently open.
    * @selector [data-expanded]
    */
-  isExpanded: boolean
+  isExpanded?: boolean
 }
 
 export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {

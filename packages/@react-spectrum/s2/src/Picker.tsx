@@ -75,11 +75,11 @@ import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useMemo, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useSlotId} from '@react-aria/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
+import {useSlotId} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface PickerStyleProps {
@@ -502,83 +502,83 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
 
   return (
     <Button
-        ref={buttonRef}
-        style={renderProps => pressScale(buttonRef)(renderProps)}
-        className={renderProps => inputButton({
-          ...renderProps,
-          size: size,
-          isOpen,
-          isQuiet
-        })}>
-        {(renderProps) => (
-          <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
-              {({selectedItems, defaultChildren}) => {
-                return (
-                  <Provider
-                    values={[
-                      [IconContext, {
-                        slots: {
-                          icon: {
-                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                            styles: icon
-                          }
+      ref={buttonRef}
+      style={renderProps => pressScale(buttonRef)(renderProps)}
+      className={renderProps => inputButton({
+        ...renderProps,
+        size: size,
+        isOpen,
+        isQuiet
+      })}>
+      {(renderProps) => (
+        <>
+          <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
+            {({selectedItems, defaultChildren}) => {
+              return (
+                <Provider
+                  values={[
+                    [IconContext, {
+                      slots: {
+                        icon: {
+                          render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                          styles: icon
                         }
-                      }],
-                      [AvatarContext, {
-                        slots: {
-                          avatar: {
-                            size: avatarSize[size ?? 'M'],
-                            styles: avatar
-                          }
+                      }
+                    }],
+                    [AvatarContext, {
+                      slots: {
+                        avatar: {
+                          size: avatarSize[size ?? 'M'],
+                          styles: avatar
                         }
-                      }],
-                      [TextContext, {
-                        slots: {
-                          description: {},
-                          [DEFAULT_SLOT]: {
-                            styles: style({
-                              display: 'block',
-                              flexGrow: 1,
-                              truncate: true
-                            }),
-                            // @ts-ignore
-                            'data-slot': 'label'
-                          },
-                          label: {
-                            styles: style({
-                              display: 'block',
-                              flexGrow: 1,
-                              truncate: true
-                            }),
-                            // @ts-ignore not technically necessary, but good for consistency
-                            'data-slot': 'label'
-                          }
+                      }
+                    }],
+                    [TextContext, {
+                      slots: {
+                        description: {},
+                        [DEFAULT_SLOT]: {
+                          styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          }),
+                          // @ts-ignore
+                          'data-slot': 'label'
+                        },
+                        label: {
+                          styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          }),
+                          // @ts-ignore not technically necessary, but good for consistency
+                          'data-slot': 'label'
                         }
-                      }],
-                      [InsideSelectValueContext, true]
-                    ]}>
-                    {selectedItems.length <= 1
-                      ? defaultChildren
-                      : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
-                    }
-                  </Provider>
-                );
-              }}
-            </SelectValue>
-            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-            {loadingState === 'loading' && !isOpen && loadingCircle}
-            <ChevronIcon
-              size={size}
-              className={iconStyles({isLoading: loadingState === 'loading'})} />
-            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-            {isInvalid && !isDisabled && !isQuiet &&
-              // @ts-ignore known limitation detecting functions from the theme
-              <div className={invalidBorder({...renderProps, size})} />
-            }
-          </>
-        )}
-      </Button>
+                      }
+                    }],
+                    [InsideSelectValueContext, true]
+                  ]}>
+                  {selectedItems.length <= 1
+                    ? defaultChildren
+                    : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>
+                  }
+                </Provider>
+              );
+            }}
+          </SelectValue>
+          {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+          {loadingState === 'loading' && !isOpen && loadingCircle}
+          <ChevronIcon
+            size={size}
+            className={iconStyles({isLoading: loadingState === 'loading'})} />
+          {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+          {isInvalid && !isDisabled && !isQuiet &&
+            // @ts-ignore known limitation detecting functions from the theme
+            <div className={invalidBorder({...renderProps, size})} />
+          }
+        </>
+      )}
+    </Button>
   );
 });
 

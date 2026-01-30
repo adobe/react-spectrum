@@ -106,13 +106,13 @@ describe('ComboBox', () => {
     expect(field).toHaveAttribute('data-custom', 'true');
   });
 
-  it('should apply isPressed state to button when expanded', async () => {
+  it('should apply isExpanded state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');
 
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
     await user.click(button);
-    expect(button).toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded');
   });
 
   it('should set data-expanded on button when popover is open', async () => {
@@ -290,17 +290,17 @@ describe('ComboBox', () => {
         <input type="reset" />
       </form>
     );
-  
+
     const comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     const combobox = comboboxTester.combobox;
-  
+
     expect(combobox).toHaveValue('Dog');
     await comboboxTester.open();
-  
+
     const options = comboboxTester.options();
     await user.click(options[0]);
     expect(combobox).toHaveValue('Cat');
-  
+
     await user.click(document.querySelector('input[type="reset"]'));
     expect(combobox).toHaveValue('Dog');
     expect(document.querySelector('input[name=combobox]')).toHaveValue('2');
@@ -596,7 +596,7 @@ describe('ComboBox', () => {
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     let button = tree.getByRole('button');
-    
+
     // Open the combobox
     await user.click(button);
     act(() => {
@@ -611,7 +611,7 @@ describe('ComboBox', () => {
     // Find and click on a section header
     let fruitHeader = tree.getByText('Fruit');
     expect(fruitHeader).toBeInTheDocument();
-    
+
     await user.click(fruitHeader);
     act(() => {
       jest.runAllTimers();
@@ -625,13 +625,13 @@ describe('ComboBox', () => {
     // Verify we can still interact with options
     let options = comboboxTester.options();
     expect(options.length).toBeGreaterThan(0);
-    
+
     // Click an option
     await user.click(options[0]);
     act(() => {
       jest.runAllTimers();
     });
-    
+
     // Verify the combobox is closed and the value is updated
     expect(tree.queryByRole('listbox')).toBeNull();
     expect(comboboxTester.combobox).toHaveValue('Apple');

@@ -126,15 +126,15 @@ describe('DateRangePicker', () => {
     expect(group).toHaveAttribute('data-custom', 'true');
   });
 
-  it('should apply isPressed state to button when expanded', async () => {
+  it('should apply isExpanded state to button when expanded', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');
 
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
     await user.click(button);
-    expect(button).toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded');
   });
-    
+
   it('should set data-expanded on button when popover is open', async () => {
     let {getByRole} = render(<TestDateRangePicker />);
     let button = getByRole('button');

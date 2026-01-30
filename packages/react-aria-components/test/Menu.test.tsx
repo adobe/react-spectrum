@@ -520,10 +520,10 @@ describe('Menu', () => {
     );
 
     let button = getByRole('button');
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
 
     await user.click(button);
-    expect(button).toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded');
 
     let menu = getByRole('menu');
     expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -757,10 +757,10 @@ describe('Menu', () => {
       );
 
       let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      expect(button).not.toHaveAttribute('data-expanded');
 
       await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      expect(button).toHaveAttribute('data-expanded');
 
       let menu = getAllByRole('menu')[0];
       expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -830,10 +830,10 @@ describe('Menu', () => {
       );
 
       let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      expect(button).not.toHaveAttribute('data-expanded');
 
       await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      expect(button).toHaveAttribute('data-expanded');
 
       let menu = getAllByRole('menu')[0];
       expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -923,10 +923,10 @@ describe('Menu', () => {
       );
 
       let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      expect(button).not.toHaveAttribute('data-expanded');
 
       await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      expect(button).toHaveAttribute('data-expanded');
 
       let menu = getAllByRole('menu')[0];
       expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -1010,10 +1010,10 @@ describe('Menu', () => {
       );
 
       let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      expect(button).not.toHaveAttribute('data-expanded');
 
       await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      expect(button).toHaveAttribute('data-expanded');
 
       let menu = getAllByRole('menu')[0];
       expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -1088,9 +1088,9 @@ describe('Menu', () => {
 
       let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
 
-      expect(menuTester.trigger).not.toHaveAttribute('data-pressed');
+      expect(menuTester.trigger).not.toHaveAttribute('data-expanded');
       await menuTester.open();
-      expect(menuTester.trigger).toHaveAttribute('data-pressed');
+      expect(menuTester.trigger).toHaveAttribute('data-expanded');
 
       expect(menuTester.options()).toHaveLength(5);
       expect(menuTester.menu).toBeInTheDocument();
@@ -1165,10 +1165,10 @@ describe('Menu', () => {
       );
 
       let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      expect(button).not.toHaveAttribute('data-expanded');
 
       await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      expect(button).toHaveAttribute('data-expanded');
 
       let menu = getAllByRole('menu')[0];
       expect(getAllByRole('menuitem')).toHaveLength(5);
@@ -1244,10 +1244,10 @@ describe('Menu', () => {
       );
 
       let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      expect(button).not.toHaveAttribute('data-expanded');
       let menuTester = testUtilUser.createTester('Menu', {user, root: button});
       await menuTester.open();
-      expect(button).toHaveAttribute('data-pressed');
+      expect(button).toHaveAttribute('data-expanded');
 
       let groups = menuTester.sections;
       expect(groups).toHaveLength(2);
@@ -1335,10 +1335,10 @@ describe('Menu', () => {
       );
 
       let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
-      expect(menuTester.trigger).not.toHaveAttribute('data-pressed');
+      expect(menuTester.trigger).not.toHaveAttribute('data-expanded');
 
       await menuTester.open();
-      expect(menuTester.trigger).toHaveAttribute('data-pressed');
+      expect(menuTester.trigger).toHaveAttribute('data-expanded');
       expect(menuTester.options()).toHaveLength(5);
 
       let popover = menuTester.menu?.closest('.react-aria-Popover');
