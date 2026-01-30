@@ -339,7 +339,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
             minHeight: 80
           })}>
           <FieldInputContext.Provider value={null}>
-            <TextField value={previewText} onChange={setPreviewText} className={style({marginY: 'auto'})}>
+            <TextField aria-label="Editable preview text" value={previewText} onChange={setPreviewText} className={style({marginY: 'auto'})}>
               <Input className={previewInputStyle} />
             </TextField>
           </FieldInputContext.Provider>
