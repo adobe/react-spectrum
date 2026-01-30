@@ -12,12 +12,13 @@
 
 import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
 import {
- ClassNameOrFunction,
- ContextValue,
- RenderProps,
- SlotProps,
- useContextProps,
- useRenderProps
+  ClassNameOrFunction,
+  ContextValue,
+  dom,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps
 } from './utils';
 import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
@@ -50,7 +51,7 @@ export interface GroupRenderProps {
   isInvalid: boolean
 }
 
-export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
+export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'render' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
  /**
   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
   * @default 'react-aria-Group'
@@ -95,7 +96,7 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
   });
 
   return (
-    <div
+    <dom.div
       {...mergeProps(otherProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
@@ -108,6 +109,6 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
       data-invalid={isInvalid || undefined}
       data-readonly={isReadOnly || undefined}>
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 });

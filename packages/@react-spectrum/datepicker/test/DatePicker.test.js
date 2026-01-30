@@ -91,7 +91,7 @@ describe('DatePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, ');
@@ -124,7 +124,7 @@ describe('DatePicker', function () {
       expect(segments[1].getAttribute('aria-valuenow')).toBe('3');
       expect(segments[1].getAttribute('aria-valuetext')).toBe('3');
       expect(segments[1].getAttribute('aria-valuemin')).toBe('1');
-      expect(segments[1].getAttribute('aria-valuemax')).toBe('28');
+      expect(segments[1].getAttribute('aria-valuemax')).toBe('31');
 
       expect(getTextValue(segments[2])).toBe('2019');
       expect(segments[2].getAttribute('aria-label')).toBe('year, ');
@@ -135,10 +135,10 @@ describe('DatePicker', function () {
 
       expect(getTextValue(segments[3])).toBe('12');
       expect(segments[3].getAttribute('aria-label')).toBe('hour, ');
-      expect(segments[3].getAttribute('aria-valuenow')).toBe('0');
+      expect(segments[3].getAttribute('aria-valuenow')).toBe('12');
       expect(segments[3].getAttribute('aria-valuetext')).toBe('12 AM');
-      expect(segments[3].getAttribute('aria-valuemin')).toBe('0');
-      expect(segments[3].getAttribute('aria-valuemax')).toBe('11');
+      expect(segments[3].getAttribute('aria-valuemin')).toBe('1');
+      expect(segments[3].getAttribute('aria-valuemax')).toBe('12');
 
       expect(getTextValue(segments[4])).toBe('00');
       expect(segments[4].getAttribute('aria-label')).toBe('minute, ');
@@ -516,7 +516,7 @@ describe('DatePicker', function () {
       expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
 
       await user.keyboard('{Backspace}');
-      expect(hour).toHaveAttribute('aria-valuetext', '1 AM');
+      expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
@@ -1175,16 +1175,16 @@ describe('DatePicker', function () {
         });
 
         it('should wrap around when incrementing and decrementing the day', async function () {
-          await testArrows('day,', new CalendarDate(2019, 2, 28), new CalendarDate(2019, 2, 1), new CalendarDate(2019, 2, 27));
-          await testArrows('day,', new CalendarDate(2019, 2, 1), new CalendarDate(2019, 2, 2), new CalendarDate(2019, 2, 28));
+          await testArrows('day,', new CalendarDate(2019, 8, 31), new CalendarDate(2019, 8, 1), new CalendarDate(2019, 8, 30));
+          await testArrows('day,', new CalendarDate(2019, 8, 1), new CalendarDate(2019, 8, 2), new CalendarDate(2019, 8, 31));
         });
 
         it('should support using the page up and down keys to increment and decrement the day by 7', async function () {
-          await testArrows('day,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 24), {upKey: 'PageUp', downKey: 'PageDown'});
+          await testArrows('day,', new CalendarDate(2019, 2, 3), new CalendarDate(2019, 2, 10), new CalendarDate(2019, 2, 27), {upKey: 'PageUp', downKey: 'PageDown'});
         });
 
         it('should support using the home and end keys to jump to the min and max day', async function () {
-          await testArrows('day,', new CalendarDate(2019, 2, 5), new CalendarDate(2019, 2, 28), new CalendarDate(2019, 2, 1), {upKey: 'End', downKey: 'Home'});
+          await testArrows('day,', new CalendarDate(2019, 8, 5), new CalendarDate(2019, 8, 31), new CalendarDate(2019, 8, 1), {upKey: 'End', downKey: 'Home'});
         });
       });
 
@@ -1302,6 +1302,29 @@ describe('DatePicker', function () {
           expect(queryByTestId('era')).toBeNull();
         });
       });
+
+      it('should allow entering invalid dates, and constrain on blur', async function () {
+        let onChange = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <DatePicker label="Date" defaultValue={new CalendarDate(2026, 2, 28)} onChange={onChange} />
+          </Provider>
+        );
+
+        let group = getAllByRole('group')[0];
+        await user.tab();
+        await user.tab();
+        await user.keyboard('{ArrowUp}');
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).not.toHaveBeenCalled();
+        expectPlaceholder(group, '2/30/2026');
+
+        await user.tab();
+        await user.tab();
+        await user.tab();
+        expect(onChange).not.toHaveBeenCalled();
+        expectPlaceholder(group, '2/28/2026');
+      });
     });
 
     describe('text input', function () {
@@ -1323,10 +1346,14 @@ describe('DatePicker', function () {
         for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          if (key !== '0' || (moved && i === keys.length - 1) || allowsZero) {
+          if (key !== '0' || (moved && i === keys.length - 1 && keys !== '00') || (i < keys.length - 1 && allowsZero)) {
             expect(onChange).toHaveBeenCalledTimes(++count);
           }
-          expect(segment.textContent).toBe(textContent);
+          if (key === '0' && !allowsZero && label !== 'era,') {
+            expect(segment.textContent).toBe('0');
+          } else {
+            expect(segment.textContent).toBe(textContent);
+          }
 
           if (i < keys.length - 1) {
             expect(segment).toHaveFocus();
@@ -1360,7 +1387,7 @@ describe('DatePicker', function () {
         for (let [i, key] of [...keys].entries()) {
           beforeInput(segment, key);
 
-          if (key !== '0' || (moved && i === keys.length - 1) || allowsZero) {
+          if (key !== '0' || (moved && i === keys.length - 1 && keys !== '00') || (i < keys.length - 1 && allowsZero)) {
             expect(onChange).toHaveBeenCalledTimes(++count);
             expect(segment.textContent).not.toBe(textContent);
           }
@@ -1406,12 +1433,11 @@ describe('DatePicker', function () {
         unmount();
       }
 
-      function testIgnored(label, value, keys, props) {
+      function testIgnored(label, value, keys, expected) {
         let onChange = jest.fn();
-        let {getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} {...props} />);
+        let {getByLabelText, unmount} = render(<DatePicker label="Date" defaultValue={value} onChange={onChange} />);
 
         let segment = getByLabelText(label);
-        let textContent = segment.textContent;
         act(() => {segment.focus();});
 
         for (let key of keys) {
@@ -1419,8 +1445,9 @@ describe('DatePicker', function () {
         }
 
         expect(onChange).not.toHaveBeenCalled();
-        expect(segment.textContent).toBe(textContent);
-        expect(segment).toHaveFocus();
+        expect(segment.textContent).toBe('0');
+        act(() => document.activeElement.blur());
+        expect(segment.textContent).toBe(expected);
         unmount();
       }
 
@@ -1429,8 +1456,8 @@ describe('DatePicker', function () {
         testInput('month,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 1, 3), true);
         testInput('month,', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 12, 3), true);
         testInput('month,', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 4, 3), true);
-        testIgnored('month,', new CalendarDate(2019, 2, 3), '0');
-        testIgnored('month,', new CalendarDate(2019, 2, 3), '00');
+        testIgnored('month,', new CalendarDate(2019, 2, 3), '0', '1');
+        testIgnored('month,', new CalendarDate(2019, 2, 3), '00', '1');
       });
 
       it('should support typing into the day segment', function () {
@@ -1438,14 +1465,14 @@ describe('DatePicker', function () {
         testInput('day,', new CalendarDate(2019, 2, 3), '01', new CalendarDate(2019, 2, 1), true);
         testInput('day,', new CalendarDate(2019, 2, 3), '12', new CalendarDate(2019, 2, 12), true);
         testInput('day,', new CalendarDate(2019, 2, 3), '4', new CalendarDate(2019, 2, 4), true);
-        testIgnored('day,', new CalendarDate(2019, 2, 3), '0');
-        testIgnored('day,', new CalendarDate(2019, 2, 3), '00');
+        testIgnored('day,', new CalendarDate(2019, 2, 3), '0', '1');
+        testIgnored('day,', new CalendarDate(2019, 2, 3), '00', '1');
       });
 
       it('should support typing into the year segment', function () {
         testInput('year,', new CalendarDate(2019, 2, 3), '1993', new CalendarDate(1993, 2, 3), false);
         testInput('year,', new CalendarDateTime(2019, 2, 3, 8), '1993', new CalendarDateTime(1993, 2, 3, 8), true);
-        testIgnored('year,', new CalendarDate(2019, 2, 3), '0');
+        testIgnored('year,', new CalendarDate(2019, 2, 3), '0', '1');
       });
 
       it('should support typing into the hour segment in 12 hour time', function () {
@@ -1455,7 +1482,7 @@ describe('DatePicker', function () {
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '11', new CalendarDateTime(2019, 2, 3, 11), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '12', new CalendarDateTime(2019, 2, 3, 0), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 8), '4', new CalendarDateTime(2019, 2, 3, 4), true);
-        testIgnored('hour,', new CalendarDateTime(2019, 2, 3, 8), '0');
+        testIgnored('hour,', new CalendarDateTime(2019, 2, 3, 8), '0', '12');
 
         // PM
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '1', new CalendarDateTime(2019, 2, 3, 13), false);
@@ -1463,7 +1490,7 @@ describe('DatePicker', function () {
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '11', new CalendarDateTime(2019, 2, 3, 23), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '12', new CalendarDateTime(2019, 2, 3, 12), true);
         testInput('hour,', new CalendarDateTime(2019, 2, 3, 20), '4', new CalendarDateTime(2019, 2, 3, 16), true);
-        testIgnored('hour,', new CalendarDateTime(2019, 2, 3, 20), '0');
+        testIgnored('hour,', new CalendarDateTime(2019, 2, 3, 20), '0', '12');
       });
 
       it('should support typing into the hour segment in 24 hour time', function () {
@@ -1514,6 +1541,53 @@ describe('DatePicker', function () {
         testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), '0', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
         testInput('era,', new CalendarDate(new EthiopicCalendar(), 'AA', 2012, 2, 3), '1', new CalendarDate(new EthiopicCalendar(), 'AM', 2012, 2, 3), false, {locale: 'en-US-u-ca-ethiopic'});
       });
+
+      it('should allow entering invalid dates, and constrain on blur', async function () {
+        let onChange = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <DatePicker label="Date" onChange={onChange} />
+          </Provider>
+        );
+
+        let group = getAllByRole('group')[0];
+        await user.tab();
+        await user.keyboard('02');
+        await user.keyboard('31');
+        await user.keyboard('2026');
+        expect(onChange).not.toHaveBeenCalled();
+        expectPlaceholder(group, '2/31/2026');
+
+        await user.tab();
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(new CalendarDate(2026, 2, 28));
+        expectPlaceholder(group, '2/28/2026');
+      });
+
+      it('should allow entering invalid times, and constrain on blur', async function () {
+        let onChange = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <DatePicker label="Date" placeholderValue={parseZonedDateTime('2024-09-21T00:00:00[America/Los_Angeles]')} onChange={onChange} />
+          </Provider>
+        );
+
+        let group = getAllByRole('group')[0];
+        await user.tab();
+        await user.keyboard('3');
+        await user.keyboard('8');
+        await user.keyboard('2026');
+        await user.keyboard('02');
+        await user.keyboard('45');
+        expect(onChange).not.toHaveBeenCalled();
+        expectPlaceholder(group, '3/8/2026, 2:45 AM PDT'); // this time does not exist (during DST transition)
+
+        await user.tab();
+        await user.tab();
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2026-03-08T03:45:00[America/Los_Angeles]'));
+        expectPlaceholder(group, '3/8/2026, 3:45 AM PDT');
+      });
     });
 
     describe('backspace', function () {
@@ -1527,9 +1601,13 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard('{Backspace}');
-        expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith(newValue);
-        expect(segment.textContent).toBe(textContent);
+        if (newValue != null) {
+          expect(onChange).toHaveBeenCalledTimes(1);
+          expect(onChange).toHaveBeenCalledWith(newValue);
+          expect(segment.textContent).toBe(textContent);
+        } else if (label !== 'AM/PM,') {
+          expect(segment).toHaveAttribute('aria-valuetext', 'Empty');
+        }
         unmount();
 
         // Test uncontrolled mode
@@ -1540,13 +1618,15 @@ describe('DatePicker', function () {
         act(() => {segment.focus();});
 
         await user.keyboard('{Backspace}');
-        expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith(newValue);
-        if (label === 'AM/PM,') {
-          expect(segment).toHaveAttribute('data-placeholder', 'true');
-          expect(segment).toHaveAttribute('aria-valuetext', 'Empty');
-        } else {
-          expect(segment.textContent).not.toBe(textContent);
+        if (newValue != null) {
+          expect(onChange).toHaveBeenCalledTimes(1);
+          expect(onChange).toHaveBeenCalledWith(newValue);
+          if (label === 'AM/PM,') {
+            expect(segment).toHaveAttribute('data-placeholder', 'true');
+            expect(segment).toHaveAttribute('aria-valuetext', 'Empty');
+          } else {
+            expect(segment.textContent).not.toBe(textContent);
+          }
         }
         unmount();
       }
@@ -1616,6 +1696,30 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(new CalendarDate(201, 2, 3));
         expect(segment).toHaveTextContent('٢٠١');
+      });
+
+      it('should trigger onChange with null when all segments are cleared', async function () {
+        let onChange = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <DatePicker label="Date" defaultValue={new CalendarDate(2019, 2, 3)} onChange={onChange} />
+          </Provider>
+        );
+
+        let group = getAllByRole('group')[0];
+        await user.tab({shift: true});
+        await user.tab({shift: true});
+        await user.keyboard('{Backspace}{Backspace}{Backspace}{Backspace}{Backspace}');
+        expect(onChange).toHaveBeenCalledTimes(3);
+        onChange.mockReset();
+        expectPlaceholder(group, '2/3/yyyy');
+        await user.keyboard('{Backspace}{Backspace}');
+        expect(onChange).not.toHaveBeenCalled();
+        expectPlaceholder(group, '2/dd/yyyy');
+        await user.keyboard('{Backspace}{Backspace}');
+        expectPlaceholder(group, 'mm/dd/yyyy');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(null);
       });
     });
   });
@@ -1972,9 +2076,7 @@ describe('DatePicker', function () {
         await user.keyboard('{Backspace}');
       }
       await user.tab();
-      for (i = 0; i < 2; i++) {
-        await user.keyboard('{Backspace}');
-      }
+      await user.keyboard('{Backspace}');
       await user.tab();
       await user.keyboard('{Backspace}');
 

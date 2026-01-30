@@ -24,7 +24,7 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
 
 export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
 

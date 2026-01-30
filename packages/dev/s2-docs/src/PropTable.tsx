@@ -42,7 +42,7 @@ const GROUPS = {
     'autoFocus', 'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
   ],
   Advanced: [
-    'UNSAFE_className', 'UNSAFE_style', 'slot'
+    'UNSAFE_className', 'UNSAFE_style', 'slot', 'render'
   ]
 };
 

@@ -151,6 +151,19 @@ describe('GridList', () => {
     expect(itemRef.current).toBeInstanceOf(HTMLElement);
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderGridList(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row')) {
+      expect(row).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support autoFocus', () => {
     let {getByRole} = renderGridList({autoFocus: true});
     let gridList = getByRole('grid');

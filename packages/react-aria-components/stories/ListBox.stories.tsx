@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
+import {Collection, DragAndDropHooks, DropIndicator, GridLayout, Header, isTextDropItem, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {ListBoxLoadMoreItem} from '../';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
@@ -808,3 +808,87 @@ export let VirtualizedListBoxDndOnAction: ListBoxStory = () => {
   );
 };
 
+interface AlbumListBoxProps {
+  items?: Album[],
+  dragAndDropHooks?: DragAndDropHooks<Album>
+}
+
+function AlbumListBox(props: AlbumListBoxProps) {
+  const {dragAndDropHooks, items} = props;
+
+  return (
+    <ListBox
+      aria-label="Albums"
+      dragAndDropHooks={dragAndDropHooks}
+      items={items}
+      renderEmptyState={() => 'Drop items here'}
+      selectionMode="multiple">
+      <Collection items={items}>
+        {(item) => (
+          <ListBoxItem textValue={item.title}>
+            <img alt="" src={item.image} />
+            <Text slot="label">{item.title}</Text>
+            <Text slot="description">{item.artist}</Text>
+          </ListBoxItem>
+        )}
+      </Collection>
+      <ListBoxLoadMoreItem />
+    </ListBox>
+  );
+}
+
+function DraggableListBox() {
+  const list = useListData({
+    initialItems: albums
+  });
+
+  const {dragAndDropHooks} = useDragAndDrop<Album>({
+    getItems(keys, items) {
+      return items.map((item) => {
+        return {
+          album: JSON.stringify(item)
+        };
+      });
+    },
+    onDragEnd(e) {
+      const {dropOperation, isInternal, keys} = e;
+      if (dropOperation === 'move' && !isInternal) {
+        list.remove(...keys);
+      }
+    }
+  });
+
+  return <AlbumListBox dragAndDropHooks={dragAndDropHooks} items={list.items} />;
+}
+
+function DroppableListBox() {
+  const list = useListData<Album>({});
+
+  const {dragAndDropHooks} = useDragAndDrop({
+    acceptedDragTypes: ['album'],
+    async onRootDrop(e) {
+      const items = await Promise.all(
+        e.items
+          .filter(isTextDropItem)
+          .map(async (item) => JSON.parse(await item.getText('album')))
+      );
+      list.append(...items);
+    }
+  });
+
+  return <AlbumListBox dragAndDropHooks={dragAndDropHooks} items={list.items} />;
+}
+
+export const DropOntoRoot = () => (
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 12,
+      justifyContent: 'center',
+      width: '100%'
+    }}>
+    <DraggableListBox />
+    <DroppableListBox />
+  </div>
+);

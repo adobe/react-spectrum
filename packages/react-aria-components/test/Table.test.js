@@ -334,6 +334,40 @@ describe('Table', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getByRole, getAllByRole} = renderTable({
+      tableProps: {render: props => <table {...props} data-custom="true" />},
+      tableHeaderProps: {render: props => <thead {...props} data-custom="true" />},
+      columnProps: {render: props => <th {...props} data-custom="true" />},
+      tableBodyProps: {render: props => <tbody {...props} data-custom="true" />},
+      rowProps: {render: props => <tr {...props} data-custom="true" />},
+      cellProps: {render: props => <td {...props} data-custom="true" />}
+    });
+    let table = getByRole('grid');
+    expect(table).toHaveAttribute('data-custom', 'true');
+
+    for (let row of getAllByRole('row').slice(1)) {
+      expect(row).toHaveAttribute('data-custom', 'true');
+    }
+
+    let rowGroups = getAllByRole('rowgroup');
+    expect(rowGroups).toHaveLength(2);
+    expect(rowGroups[0]).toHaveAttribute('data-custom', 'true');
+    expect(rowGroups[1]).toHaveAttribute('data-custom', 'true');
+
+    for (let cell of getAllByRole('columnheader')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+
+    for (let cell of getAllByRole('rowheader')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+
+    for (let cell of getAllByRole('gridcell')) {
+      expect(cell).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should render checkboxes for selection', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'}
