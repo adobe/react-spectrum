@@ -79,7 +79,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !nodeContains(ref.current, document.activeElement))
+      !ref.current.matches(':focus-within'))
     ) {
       focusSafely(ref.current);
     }

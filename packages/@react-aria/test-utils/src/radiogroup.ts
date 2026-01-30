@@ -12,7 +12,6 @@
 
 import {act, within} from '@testing-library/react';
 import {Direction, Orientation, RadioGroupTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 import {pressElement} from './events';
 
 interface TriggerRadioOptions {
@@ -95,7 +94,7 @@ export class RadioGroupTester {
       throw new Error('Radio provided is not in the radio group.');
     }
 
-    if (!nodeContains(this.radiogroup, document.activeElement)) {
+    if (!this.radiogroup.matches(':focus-within')) {
       let selectedRadio = this.selectedRadio;
       if (selectedRadio != null) {
         act(() => selectedRadio.focus());
