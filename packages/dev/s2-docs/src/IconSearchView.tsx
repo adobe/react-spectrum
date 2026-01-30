@@ -59,9 +59,9 @@ export function useCopyImport() {
 
 function CopyInfoMessage() {
   return (
-    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
+    <div className={style({display: 'flex', gap: 4, padding: 8})}>
       <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
+      <span className={style({font: 'ui'})}>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</span>
     </div>
   );
 }

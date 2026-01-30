@@ -201,14 +201,9 @@ const scaleSwatches: Record<string, string> = {
 
 export function CopyInfoMessage() {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 8})}>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
-        <InfoCircle styles={iconStyle({size: 'XS'})} />
-        <span className={style({font: 'ui'})}>Press a color to copy its name.</span>
-      </div>
-      <span>
-        See <Link href="styling">styling</Link> for more information.
-      </span>
+    <div className={style({display: 'flex', gap: 4, padding: 8})}>
+      <InfoCircle styles={iconStyle({size: 'XS'})} />
+      <span className={style({font: 'ui'})}>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</span>
     </div>
   );
 }
