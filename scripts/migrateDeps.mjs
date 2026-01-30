@@ -220,6 +220,9 @@ migrateScope('@react-spectrum', '@adobe/react-spectrum');
 migrateToMonopackage('react-aria-components');
 migrateToMonopackage('@react-spectrum/s2');
 
+// Special case
+rewriteMonopackageImports('packages/@internationalized/number/test/NumberParser.test.js');
+
 function migrateScope(scope, monopackage) {
   prepareMonopackage(monopackage);
 
@@ -255,13 +258,14 @@ function prepareMonopackage(monopackage) {
       require: './dist/exports/index.cjs'
     },
     './private/*': {
-      source: ['./src/*.ts', './src/*.tsx'],
-      types: ['./dist/types/src/*.d.ts'],
+      // extensionless works in parcel, typescript requires an extension and supports fallbacks.
+      source: ['./src/*', './src/*.ts', './src/*.tsx'],
+      types: './dist/types/src/*.d.ts',
       import: './dist/private/*.mjs',
       require: './dist/private/*.cjs'
     },
     './*': {
-      source: ['./exports/*.ts'],
+      source: './exports/*.ts',
       types: './dist/types/exports/*.d.ts',
       import: './dist/exports/*.mjs',
       require: './dist/exports/*.cjs'
@@ -569,9 +573,62 @@ function rewriteMonopackageImports(file, pkg, subpath) {
       }
 
       node.source = t.stringLiteral(source);
+    } else {
+      switch (source) {
+        case '@react-aria/table/test/tableResizingTests.tsx':
+          node.source.value = 'react-aria/test/table/tableResizingTests.tsx';
+          hadImports = true;
+          break;
+        case '@react-aria/dnd/test/mocks':
+          node.source.value = 'react-aria/test/dnd/mocks';
+          hadImports = true;
+          break;
+        case '@react-aria/dnd/src/constants':
+          node.source.value = 'react-aria/private/dnd/constants';
+          hadImports = true;
+          break;
+        case '@react-aria/dnd/test/examples':
+          node.source.value = 'react-aria/test/dnd/examples';
+          hadImports = true;
+          break;
+        case '@react-aria/dnd/src/utils':
+          node.source.value = 'react-aria/private/dnd/utils';
+          hadImports = true;
+          break;
+        case '@react-aria/numberfield/intl/*.json':
+          node.source.value = 'react-aria/intl/numberfield/*.json';
+          hadImports = true;
+          break;
+      }
     }
 
     return [node];
+  });
+
+  t.traverseFast(ast.program, node => {
+    if (
+      node.type === 'CallExpression' && 
+      node.callee.type === 'MemberExpression' &&
+      node.callee.object.type === 'Identifier' &&
+      node.callee.object.name === 'jest' &&
+      (node.callee.property.name === 'mock' || node.callee.property.name === 'requireActual') &&
+      node.arguments[0]?.type === 'StringLiteral'
+    ) {
+      // Hard coding special cases here
+      switch (node.arguments[0].value) {
+        case '@react-aria/live-announcer':
+          node.arguments[0].value = 'react-aria/private/live-announcer/LiveAnnouncer';
+          break;
+        case '@react-aria/utils/src/scrollIntoView':
+          node.arguments[0].value = 'react-aria/private/utils/scrollIntoView';
+          break;
+        case '@react-aria/utils':
+          node.arguments[0].value = '../../src/utils/focusWithoutScrolling';
+          break;
+        default:
+          console.log(node.arguments[0].value);
+      }
+    }
   });
 
   if (!hadImports) {
@@ -673,7 +730,7 @@ function getRenamedSpecifier(specifier, from, importedName, relative = true) {
     return `${monopackage}/${name}`;
   }
 
-  let isPrivate = privateNames.has(importedName);
+  let isPrivate = importedName == null || privateNames.has(importedName);
   if (
     (monopackage === 'react-aria' && name === 'Virtualizer') ||
     (monopackage === '@adobe/react-spectrum' && (name === 'CardView' || name === 'Card' || name === 'Overlay' || name === 'Popover' || name === 'Modal' || name === 'StepList' || name === 'SearchAutocomplete' || name === 'Label'))

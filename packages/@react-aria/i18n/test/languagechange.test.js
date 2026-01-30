@@ -11,7 +11,7 @@
  */
 
 import {act, render} from '@react-spectrum/test-utils-internal';
-import {I18nProvider, useLocale} from '../src/context';
+import {I18nProvider, useLocale} from '../src/I18nProvider';
 import React from 'react';
 
 function TestComponent() {
