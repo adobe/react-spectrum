@@ -33,7 +33,7 @@
     "build:s2-docs": "yarn workspace @react-spectrum/s2-docs build",
     "check:s2-docs-build": "node packages/dev/s2-docs/scripts/validateS2DocsBuild.mjs",
     "build:mcp": "yarn workspace @react-spectrum/mcp build && yarn workspace @react-aria/mcp build",
-    "generate:skills": "node scripts/generateAgentSkills.mjs",
+    "generate:skills": "node packages/dev/s2-docs/scripts/generateAgentSkills.mjs",
     "start:mcp": "yarn workspace @react-spectrum/s2-docs generate:md && yarn build:mcp && node packages/dev/mcp/s2/dist/index.js && node packages/dev/mcp/react-aria/dist/index.js",
     "test:mcp": "yarn build:s2-docs && yarn build:mcp && node packages/dev/mcp/scripts/smoke-list-pages.mjs",
     "test": "cross-env STRICT_MODE=1 VIRT_ON=1 yarn jest",
