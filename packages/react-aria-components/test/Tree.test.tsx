@@ -840,6 +840,44 @@ describe('Tree', () => {
         expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
       });
 
+      it('should support collapse key to navigate to parent', async () => {
+        let {getAllByRole} = render(<DynamicTree treeProps={{shouldNavigateToCollapsibleParent: true}} />);
+        await user.tab();
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+        expect(document.activeElement).toBe(rows[0]);
+        expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
+
+        // Navigate down to Project 2B
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[4]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2B');
+
+        // Collapse key on leaf node should move focus to parent (Projects)
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
+        expect(document.activeElement).toHaveAttribute('data-expanded', 'true');
+
+        // Collapse key on expanded parent should collapse it
+        await user.keyboard('{ArrowLeft}');
+        // Projects should now be collapsed, so fewer rows visible
+        rows = getAllByRole('row');
+        expect(rows.length).toBeLessThan(20);
+        expect(document.activeElement).toBe(rows[2]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Project 2');
+        expect(document.activeElement).not.toHaveAttribute('data-expanded');
+
+        // Collapse key again on now-collapsed parent should move to its parent
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(document.activeElement).toHaveAttribute('aria-label', 'Projects');
+      });
+
       it('should navigate between visible rows when using Arrow Up/Down', async () => {
         let {getAllByRole} = render(<DynamicTree />);
         await user.tab();
@@ -1884,7 +1922,7 @@ describe('Tree', () => {
       let {getByRole} = render(<StaticTree rowProps={{onAction, onPressStart, onPressEnd, onPress, onClick}} />);
       let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('treegrid')});
       await gridListTester.triggerRowAction({row: 1, interactionType});
-  
+
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);

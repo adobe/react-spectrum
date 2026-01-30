@@ -701,6 +701,26 @@ Tree items may also be links to another page or website. This can be achieved by
 
 The `<TreeItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
+## Keyboard navigation
+
+By default, pressing the collapse key (<Keyboard>←</Keyboard> in LTR, <Keyboard>→</Keyboard> in RTL) on an expanded item will collapse it. The key will do nothing on non-collapsible items. The same key is used to navigate between the actions within tree items.
+
+The `shouldNavigateToCollapsibleParent` prop enables a faster navigation behavior: when the collapse key is pressed on a leaf item or an already collapsed parent, focus moves to that item's parent. This helps users quickly navigate up the tree without needing to manually navigate to each parent item. But it has a trade-off: users can no longer use that key to cycle through actions on the current item.
+
+```tsx example
+<FileTree
+  shouldNavigateToCollapsibleParent
+  selectionMode="single"
+  defaultExpandedKeys={['1', '2']}
+  defaultSelectedKeys={['5']}
+/>
+```
+
+With this prop enabled:
+- Pressing collapse on a leaf item moves focus to its parent
+- Pressing collapse on an expanded item collapses it
+- Pressing collapse again on a collapsed item moves focus to its parent
+
 ## Disabled items
 
 A `TreeItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the item

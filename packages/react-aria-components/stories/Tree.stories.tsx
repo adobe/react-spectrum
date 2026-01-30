@@ -457,6 +457,15 @@ export const WithActions: StoryObj<typeof TreeExampleDynamicRender> = {
   name: 'Tree with actions'
 };
 
+export const NavToNearestCollapsibleParent: StoryObj<typeof TreeExampleDynamicRender> = {
+  ...TreeExampleDynamic,
+  args: {
+    onAction: action('onAction'),
+    shouldNavigateToCollapsibleParent: true,
+    ...TreeExampleDynamic.args
+  }
+};
+
 const WithLinksRender = <T extends object>(args: TreeProps<T>): JSX.Element => {
   let treeData = useTreeData<any>({
     initialItems: rows,

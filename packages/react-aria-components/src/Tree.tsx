@@ -167,7 +167,12 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    */
   disabledBehavior?: DisabledBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
-  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>
+  dragAndDropHooks?: DragAndDropHooks<NoInfer<T>>,
+  /**
+   * Whether pressing the collapse key should navigate to the nearest collapsible parent.
+   * @default false
+   */
+  shouldNavigateToCollapsibleParent?: boolean
 }
 
 
