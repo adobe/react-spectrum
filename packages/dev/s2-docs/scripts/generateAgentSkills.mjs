@@ -19,6 +19,8 @@ import {execSync} from 'child_process';
 import {fileURLToPath} from 'url';
 import fs from 'fs';
 import path from 'path';
+import remarkParse from 'remark-parse';
+import {unified} from 'unified';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../');
@@ -37,7 +39,7 @@ const SKILLS = {
     license: 'Apache-2.0',
     sourceDir: 's2',
     compatibility:
-      'Requires Node.js and a React project with @react-spectrum/s2 installed.',
+      'Requires a React project with @react-spectrum/s2 installed.',
     metadata: {
       author: 'Adobe',
       website: 'https://react-spectrum.adobe.com/'
@@ -50,7 +52,7 @@ const SKILLS = {
     license: 'Apache-2.0',
     sourceDir: 'react-aria',
     compatibility:
-      'Requires Node.js and a React project with react-aria-components installed.',
+      'Requires React project with react-aria-components installed.',
     metadata: {
       author: 'Adobe',
       website: 'https://react-aria.adobe.com/'
@@ -89,19 +91,73 @@ function getWellKnownRootForLibrary(sourceDir) {
 function parseLlmsTxt(llmsTxtPath) {
   const content = fs.readFileSync(llmsTxtPath, 'utf8');
   const entries = [];
+  const tree = unified().use(remarkParse).parse(content);
 
-  // Parse the markdown list items
-  const listRegex = /^- \[([^\]]+)\]\(([^)]+)\)(?::\s*(.*))?$/gm;
-  let match;
+  const toText = (node) => {
+    if (!node) {
+      return '';
+    }
+    if (node.type === 'text') {
+      return node.value;
+    }
+    if (Array.isArray(node.children)) {
+      return node.children.map(toText).join('');
+    }
+    return '';
+  };
 
-  while ((match = listRegex.exec(content)) !== null) {
-    entries.push({
-      title: match[1],
-      path: match[2],
-      description: match[3] || ''
-    });
-  }
+  const extractEntry = (listItem) => {
+    const paragraph = listItem.children?.find((child) => child.type === 'paragraph');
+    if (!paragraph || !Array.isArray(paragraph.children)) {
+      return null;
+    }
 
+    const linkIndex = paragraph.children.findIndex((child) => child.type === 'link');
+    if (linkIndex === -1) {
+      return null;
+    }
+
+    const link = paragraph.children[linkIndex];
+    const title = toText(link).trim();
+    const entryPath = link.url;
+    if (!title || !entryPath) {
+      return null;
+    }
+
+    let description = paragraph.children
+      .slice(linkIndex + 1)
+      .map(toText)
+      .join('')
+      .trim();
+
+    if (description.startsWith(':')) {
+      description = description.slice(1).trim();
+    }
+
+    return {
+      title,
+      path: entryPath,
+      description
+    };
+  };
+
+  const walk = (node) => {
+    if (!node || !Array.isArray(node.children)) {
+      return;
+    }
+
+    for (const child of node.children) {
+      if (child.type === 'listItem') {
+        const entry = extractEntry(child);
+        if (entry) {
+          entries.push(entry);
+        }
+      }
+      walk(child);
+    }
+  };
+
+  walk(tree);
   return entries;
 }
 
