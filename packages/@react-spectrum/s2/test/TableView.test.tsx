@@ -24,6 +24,7 @@ import {
   TableView,
   Text
 } from '../src';
+import {CollectionRendererContext, DefaultCollectionRenderer, Tab, TabList, Tabs} from 'react-aria-components';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
@@ -107,5 +108,45 @@ describe('TableView', () => {
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
     await tableTester.triggerColumnHeaderAction({column: 1, action: 0, interactionType: 'keyboard'});
     expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render empty state + nested collection without crashing', async () => {
+    const tabs = [
+      {id: 'general', label: 'General'},
+      {id: 'advanced', label: 'Advanced'}
+    ];
+    const renderEmptyState = () => (
+      <Tabs aria-label="Settings">
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          <TabList>
+              {tabs.map((tab) => (
+                <Tab key={tab.id} id={tab.id}>
+                  {tab.label}
+                </Tab>
+              ))}
+          </TabList>
+        </CollectionRendererContext.Provider>
+      </Tabs>
+    );
+
+    let renderResult: ReturnType<typeof render>;
+    await act(async () => {
+      renderResult = render(
+        <TableView aria-label="Debug table" selectionMode="none">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+          <TableBody items={[]} renderEmptyState={renderEmptyState} />
+        </TableView>
+      );
+      await Promise.resolve();
+    });
+    let {getAllByRole} = renderResult!;
+
+    expect(getAllByRole('tab')).toHaveLength(tabs.length);
   });
 });
