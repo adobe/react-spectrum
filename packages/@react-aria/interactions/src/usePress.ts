@@ -99,7 +99,7 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
-    let {register, ...contextProps} = context;
+    let {register, ref, ...contextProps} = context;
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
   }
