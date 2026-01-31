@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyDateTime, Calendar, CalendarDate} from '@internationalized/date';
+import {AnyDateTime, Calendar, CalendarDate, CalendarDateTime, toZoned, ZonedDateTime} from '@internationalized/date';
 import {DateValue} from '@react-types/datepicker';
 import {SegmentType} from './useDateFieldState';
 
@@ -34,6 +34,7 @@ export class IncompleteDate {
   minute: number | null;
   second: number | null;
   millisecond: number | null;
+  offset: number | null;
 
   constructor(calendar: Calendar, hourCycle: HourCycle, dateValue?: Partial<Omit<AnyDateTime, 'copy'>> | null) {
     this.era = dateValue?.era ?? null;
@@ -47,6 +48,7 @@ export class IncompleteDate {
     this.minute = dateValue?.minute ?? null;
     this.second = dateValue?.second ?? null;
     this.millisecond = dateValue?.millisecond ?? null;
+    this.offset = 'offset' in (dateValue ?? {}) ? (dateValue as any).offset : null;
 
     // Convert the hour from 24 hour time to the given hour cycle.
     if (this.hour != null) {
@@ -67,6 +69,7 @@ export class IncompleteDate {
     res.minute = this.minute;
     res.second = this.second;
     res.millisecond = this.millisecond;
+    res.offset = this.offset;
     return res;
   }
 
@@ -101,6 +104,11 @@ export class IncompleteDate {
     if (field === 'year' && result.era == null) {
       result.era = placeholder.era;
     }
+
+    // clear offset when a date/time field changes since it may no longer be valid
+    if (field !== 'second' && field !== 'literal' && field !== 'timeZoneName') {
+      result.offset = null;
+    }
     return result;
   }
 
@@ -112,6 +120,9 @@ export class IncompleteDate {
     if (field === 'year') {
       result.era = null;
     }
+
+    // clear offset when a field is cleared since it may no longer be valid
+    result.offset = null;
     return result;
   }
 
@@ -145,7 +156,7 @@ export class IncompleteDate {
       }
       case 'year': {
         // Use CalendarDate to cycle so that we update the era when going between 1 AD and 1 BC.
-        let date = new CalendarDate(this.calendar, this.era ?? placeholder.era, this.year ?? placeholder.year, 1, 1);
+        let date = new CalendarDate(this.calendar, this.era ?? placeholder.era, this.year ?? placeholder.year, this.month ?? 1, this.day ?? 1);
         date = date.cycle(field, amount, {round: field === 'year'});
         res.era = date.era;
         res.year = date.year;
@@ -159,14 +170,40 @@ export class IncompleteDate {
         res.day = cycleValue(res.day ?? 1, amount, 1, this.calendar.getMaximumDaysInMonth());
         break;
       case 'hour': {
-        // TODO: in the case of a "fall back" DST transition, the 1am hour repeats twice.
-        // With this logic, it's no longer possible to select the second instance.
-        // Using cycle from ZonedDateTime works as expected, but requires the date already be complete.
-        let hours = res.hour ?? 0;
-        let limits = this.getSegmentLimits('hour')!;
-        res.hour = cycleValue(hours, amount, limits.minValue, limits.maxValue);
-        if (res.dayPeriod == null && 'hour' in placeholder) {
-          res.dayPeriod = toHourCycle(placeholder.hour, this.hourCycle)[0];
+        // if date is fully defined and we have a time zone, use ZonedDateTime to cycle so DST fallback is properly handled
+        if ('timeZone' in placeholder && res.year != null && res.month != null && res.day != null) {
+          let hour = res.hour ?? 0;
+          hour = fromHourCycle(hour, res.dayPeriod ?? 0, this.hourCycle);
+          // get the offset of the current date time in case we don't have a offset stored already (can't just use placeholder offset since that is a different datetime).
+          if (res.offset == null) {
+            let calendarDateTime = new CalendarDateTime(
+              this.calendar,
+              res.era ?? placeholder.era,
+              res.year,
+              res.month,
+              res.day,
+              hour,
+              res.minute ?? placeholder.minute,
+              res.second ?? placeholder.second,
+              res.millisecond ?? placeholder.millisecond
+            );
+
+            res.offset = toZoned(calendarDateTime, placeholder.timeZone).offset;
+          }
+
+          let date = new ZonedDateTime(this.calendar, res.era ?? placeholder.era, res.year, res.month, res.day, placeholder.timeZone, res.offset, hour, res.minute ?? placeholder.minute, res.second ?? placeholder.second ?? 0, res.millisecond ?? placeholder.millisecond ?? 0);
+          date = date.cycle('hour', amount, {hourCycle: this.hourCycle === 'h12' ? 12 : 24, round: false});
+          let [dayPeriod, adjustedHour] = toHourCycle(date.hour, this.hourCycle);
+          res.hour = adjustedHour;
+          res.dayPeriod = dayPeriod;
+          res.offset = date.offset;
+        } else {
+          let hours = res.hour ?? 0;
+          let limits = this.getSegmentLimits('hour')!;
+          res.hour = cycleValue(hours, amount, limits.minValue, limits.maxValue);
+          if (res.dayPeriod == null && 'hour' in placeholder) {
+            res.dayPeriod = toHourCycle(placeholder.hour, this.hourCycle)[0];
+          }
         }
         break;
       }
@@ -192,6 +229,12 @@ export class IncompleteDate {
         hour = fromHourCycle(hour, this.dayPeriod ?? 0, this.hourCycle);
       } else if (this.hourCycle === 'h12' || this.hourCycle === 'h11') {
         hour = this.dayPeriod === 1 ? 12 : 0;
+      }
+
+      // if we have a time zone, return the zoned date time with the new offset if any
+      if ('timeZone' in value && this.offset != null && this.year != null && this.month != null && this.day != null && hour != null && this.minute != null) {
+        let date = new ZonedDateTime(this.calendar, this.era ?? value.era, this.year, this.month, this.day, value.timeZone, this.offset, hour, this.minute, this.second ?? 0, this.millisecond ?? 0);
+        return date;
       }
 
       return value.set({

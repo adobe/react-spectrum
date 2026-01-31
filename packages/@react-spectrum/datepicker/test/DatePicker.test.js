@@ -1233,6 +1233,85 @@ describe('DatePicker', function () {
         it('should support using the home and end keys to jump to the min and max hour in 24 hour time', async function () {
           await testArrows('hour,', new CalendarDateTime(2019, 2, 3, 8), new CalendarDateTime(2019, 2, 3, 23), new CalendarDateTime(2019, 2, 3, 0), {upKey: 'End', downKey: 'Home', props: {hourCycle: 24}});
         });
+
+        it('should support cycling through DST fall back transitions', async function () {
+          let onChange = jest.fn();
+          let {getByLabelText} = render(
+            <Provider theme={theme}>
+              <DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')} onChange={onChange} />
+            </Provider>
+          );
+          let segment = getByLabelText('hour,');
+          act(() => {segment.focus();});
+          await user.keyboard('{ArrowUp}');
+          expect(onChange).toHaveBeenCalledTimes(1);
+          expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
+
+          await user.keyboard('{ArrowUp}');
+          expect(onChange).toHaveBeenCalledTimes(2);
+          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+
+          await user.keyboard('{ArrowUp}');
+          expect(onChange).toHaveBeenCalledTimes(3);
+          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]'));
+
+          await user.keyboard('{ArrowDown}');
+          expect(onChange).toHaveBeenCalledTimes(4);
+          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+
+          await user.keyboard('{ArrowDown}');
+          expect(onChange).toHaveBeenCalledTimes(5);
+          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
+
+          await user.keyboard('{ArrowDown}');
+          expect(onChange).toHaveBeenCalledTimes(6);
+          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]'));
+          // check that the hour is set to 12 and not 0
+          expect(segment.textContent).toBe('12');
+
+          await user.keyboard('{ArrowDown}');
+          expect(onChange).toHaveBeenCalledTimes(7);
+          expect(onChange).toHaveBeenLastCalledWith(parseZonedDateTime('2021-11-07T11:45:00-08:00[America/Los_Angeles]'));
+        });
+
+        it('should support cycling through DST fall back transitions even if the minutes are undefined', async function () {
+          let {getByLabelText} = render(
+            <Provider theme={theme}>
+              <DatePicker label="Date" defaultValue={parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]')} />
+            </Provider>
+          );
+
+          let minute = getByLabelText('minute,');
+          act(() => minute.focus());
+          await user.keyboard('{Backspace}');
+          expect(minute).toHaveAttribute('aria-valuetext', '04');
+
+          await user.keyboard('{Backspace}');
+          expect(minute).toHaveAttribute('aria-valuetext', 'Empty');
+
+          let hour = getByLabelText('hour,');
+          await user.keyboard('{ArrowLeft}');
+          await user.keyboard('[ArrowUp]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowUp]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowUp]');
+          expect(hour.textContent).toBe('2');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('1');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('12');
+
+          await user.keyboard('[ArrowDown]');
+          expect(hour.textContent).toBe('11');
+        });
       });
 
       describe('minute', function () {
@@ -1283,6 +1362,10 @@ describe('DatePicker', function () {
       describe('era', function () {
         it('should support using the arrow keys to increment and decrement the era', async function () {
           await testArrows('era,', new CalendarDate(new JapaneseCalendar(), 'heisei', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'reiwa', 5, 2, 3), new CalendarDate(new JapaneseCalendar(), 'showa', 5, 2, 3), {locale: 'en-US-u-ca-japanese'});
+        });
+
+        it('should support cycling year across era boundaries', async function () {
+          await testArrows('year,', new CalendarDate(new JapaneseCalendar(), 'reiwa', 1, 12, 28), new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 12, 28), new CalendarDate(new JapaneseCalendar(), 'heisei', 30, 12, 28), {locale: 'en-US-u-ca-japanese'});
         });
 
         it('should show and hide the era field as needed', async function () {
@@ -2148,7 +2231,7 @@ describe('DatePicker', function () {
       it('resets to defaultValue when submitting form action', async () => {
         function Test() {
           const [value, formAction] = React.useActionState(() => new CalendarDate(2025, 2, 3), new CalendarDate(2020, 2, 3));
-          
+
           return (
             <form action={formAction}>
               <DatePicker label="Value" name="date" defaultValue={value} />
@@ -2156,11 +2239,11 @@ describe('DatePicker', function () {
             </form>
           );
         }
-  
+
         let {getByTestId} = render(<Test />);
         let input = document.querySelector('input[name=date]');
         expect(input).toHaveValue('2020-02-03');
-  
+
         let button = getByTestId('submit');
         await user.click(button);
         expect(input).toHaveValue('2025-02-03');
