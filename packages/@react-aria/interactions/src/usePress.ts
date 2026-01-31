@@ -99,7 +99,9 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
-    let {register, ...contextProps} = context;
+    // Prevent mergeProps from merging ref.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {register, ref, ...contextProps} = context;
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
   }
