@@ -1,0 +1,79 @@
+{/* Copyright 2026 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '../../../src/Layout';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/s2';
+
+export const hideNav = true;
+export const section = 'Releases';
+export const tags = ['release', 'React Aria'];
+export const date = 'February 4, 2026';
+export const title = 'v1.15.0';
+export const description = ""
+export const isSubpage = true;
+
+# v1.15.0
+
+## To Be Categorized
+* [usePress]: check `hasPointerCapture` before `releasePointerCapture` - [@plesiecki](https://github.com/plesiecki) - [PR](https://github.com/adobe/react-spectrum/pull/9123)
+* add `useFilter` support for `@typescript-eslint/unbound-method` - [@quisido](https://github.com/quisido) - [PR](https://github.com/adobe/react-spectrum/pull/9454)
+* Expose focus events' types on Collection Items - [@damianstasik](https://github.com/damianstasik) - [PR](https://github.com/adobe/react-spectrum/pull/8231)
+* chore: use `typeof globalThis` to reference global object - [@quisido](https://github.com/quisido) - [PR](https://github.com/adobe/react-spectrum/pull/9402)
+
+## Enhancements
+* feat: expose closeOnSelect on React Aria Menu - [@sfc-gh-alisowski](https://github.com/sfc-gh-alisowski) - [PR](https://github.com/adobe/react-spectrum/pull/8315)
+* feat: support modern useEffectEvent - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/9095)
+* feat: accept readonly array for multiple select value - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9221)
+* feat: allow customizing behavior of pressed state - [@rothsandro](https://github.com/rothsandro) - [PR](https://github.com/adobe/react-spectrum/pull/8971)
+* feat(RAC): Expose cell's column index in its render props - [@sebald](https://github.com/sebald) - [PR](https://github.com/adobe/react-spectrum/pull/9459)
+* feat: string-compiler ESM support - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/9465)
+* feat: Add `render` prop to allow customizing DOM element - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9499)
+* feat: Support entering invalid dates in DateField and constrain on blur - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9510)
+* add key to PressEvent - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9491)
+
+## Fixes
+* fix(ListBox): prevent closing Combobox when a section header is clicked - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9223)
+* fix: Update locale plugin doc import to match plugin referenced in the bundler config object - [@leiske](https://github.com/leiske) - [PR](https://github.com/adobe/react-spectrum/pull/9388)
+* fix(react-aria-components): add id prop to Link component - [@AryanBagade](https://github.com/AryanBagade) - [PR](https://github.com/adobe/react-spectrum/pull/9349)
+* fix: ensure contains is used as default filter in ComboBox - [@alexdametto](https://github.com/alexdametto) - [PR](https://github.com/adobe/react-spectrum/pull/9234)
+* fix: add missing data attributes to ColorField - [@mehdibha](https://github.com/mehdibha) - [PR](https://github.com/adobe/react-spectrum/pull/9105)
+* fix: exclude disabledKeys prop from TabPanels component - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9238)
+* fix: exclude null type from RadioGroup validate value - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9240)
+* fix: ComboBox correctly resets to `defaultSelectedKey` - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9129)
+* fix: correctly pass through disallowTypeAhead in RAC GridList - [@rilescode](https://github.com/rilescode) - [PR](https://github.com/adobe/react-spectrum/pull/9124)
+* fix: correctly format date conversion to a string for native date input - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9076)
+* fix: filter DOM props on TabPanels - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9432)
+* fix: update `CoachMarkContext` and `SlottedContextValue` types - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/9423)
+* fix(useViewportSize): update size after hydration - [@ali-idrizi](https://github.com/ali-idrizi) - [PR](https://github.com/adobe/react-spectrum/pull/8966)
+* fix: store scroll pos when virtualized - [@BRobin55](https://github.com/BRobin55) - [PR](https://github.com/adobe/react-spectrum/pull/8767)
+* fix(overlays): fix an edge case in hiding outside elements - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/9365)
+* fix: prevent hover state from showing when ToggleButtonGroup is disabled - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9449)
+* fix useFocusRing perf - [@sfc-gh-tkojima](https://github.com/sfc-gh-tkojima) - [PR](https://github.com/adobe/react-spectrum/pull/9456)
+* fix: NumberField increment/decrement via Android TalkBack - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9416)
+* fix 'ResizeObserver loop completed with undelivered notifications' error when overlays get resized - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7742)
+* fix: offset calculation to handle transformed elements with translateY or translateX in scrollIntoView - [@piecyk](https://github.com/piecyk) - [PR](https://github.com/adobe/react-spectrum/pull/7717)
+* fix: allow passing function as formAction button prop - [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/9501)
+* fix: Support range sliders in usePreventScroll on iOS - [@mattvague](https://github.com/mattvague) - [PR](https://github.com/adobe/react-spectrum/pull/9506)
+* fix(dnd): dispatch focusin on cancel to fix keyboard nav with no drop targets - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9502)
+* fix: Fix crash when dragging into an empty ListBox with ListBoxLoadMoreItem - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9520)
+* fix: prevent Modal from closing when dismissing DateRangePicker via outside click - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9505)
+* fix: tree focus management - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9531)
+* fix(HiddenSelect): initial form value - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/9466)
+* fix(RAC): use ICB size as the fallback value for visual viewport - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9384)
+* fix: pass style and labels to TabPanels - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9562)
+
+## Documentation
+* docs: fix Table onAction to onRowAction  - [@yihuiliao](https://github.com/yihuiliao) - [PR]https://github.com/adobe/react-spectrum/pull/9378
+* docs: Combobox docs placeholder string - [@snowystinger](https://github.com/snowystinger) - https://github.com/adobe/react-spectrum/pull/9390
+
+## Under Construction
+* feat: Style macro devtool - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/8305)
+* fix: all node.contains for shadow dom usage - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9485)
