@@ -13,6 +13,7 @@
 import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
+import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
@@ -64,8 +65,6 @@ export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | 
 const SelectionManagerContext = createContext<SelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -103,9 +102,10 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
           placement: 'bottom start',
           style: {'--trigger-width': buttonWidth} as React.CSSProperties,
           'aria-labelledby': menuProps['aria-labelledby']
-        }]
+        }],
+        [ButtonContext, {isExpanded: state.isOpen}]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
+      <PressResponder {...menuTriggerProps} ref={ref}>
         {props.children}
       </PressResponder>
     </Provider>

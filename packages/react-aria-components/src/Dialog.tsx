@@ -22,8 +22,6 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallb
 import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -86,9 +84,10 @@ export function DialogTrigger(props: DialogTriggerProps): JSX.Element {
           triggerRef: buttonRef,
           'aria-labelledby': overlayProps['aria-labelledby'],
           style: {'--trigger-width': buttonWidth} as React.CSSProperties
-        }]
+        }],
+        [ButtonContext, {isExpanded: state.isOpen}]
       ]}>
-      <PressResponder {...triggerProps} ref={buttonRef} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
+      <PressResponder {...triggerProps} ref={buttonRef}>
         {props.children}
       </PressResponder>
     </Provider>
