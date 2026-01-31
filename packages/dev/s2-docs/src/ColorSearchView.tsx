@@ -19,7 +19,7 @@ const itemStyle = style({
   justifyContent: 'center',
   alignItems: 'center',
   gap: 8,
-  padding: 8,
+  paddingY: 8,
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
@@ -201,14 +201,14 @@ const scaleSwatches: Record<string, string> = {
 
 export function CopyInfoMessage() {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 8})}>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
-        <InfoCircle styles={iconStyle({size: 'XS'})} />
-        <span className={style({font: 'ui'})}>Press a color to copy its name.</span>
-      </div>
-      <span>
-        See <Link href="styling">styling</Link> for more information.
-      </span>
+    <div
+      className={style({
+        display: 'flex',
+        gap: 4,
+        padding: 8
+      })}>
+      <InfoCircle styles={iconStyle({size: 'XS'})} />
+      <span className={style({font: 'ui'})}>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</span>
     </div>
   );
 }
@@ -222,10 +222,11 @@ interface ColorSearchViewProps {
   /** Names of colors that exactly match the searched hex value. */
   exactMatches?: Set<string>,
   /** Names of the closest matching colors when no exact matches exist. */
-  closestMatches?: Set<string>
+  closestMatches?: Set<string>,
+  listBoxClassName?: string
 }
 
-export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set()}: ColorSearchViewProps) {
+export function ColorSearchView({filteredItems, exactMatches = new Set(), closestMatches = new Set(), listBoxClassName}: ColorSearchViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -268,7 +269,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
   }
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, height: 'full', paddingX: 16})}>
       <CopyInfoMessage />
       <ListBox
         aria-label="Colors"
@@ -282,7 +283,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           }
         }}
         layout="grid"
-        className={listBoxStyle}
+        className={listBoxClassName || listBoxStyle}
         dependencies={[copiedId, exactMatches, closestMatches]}
         items={sections}>
         {section => (
