@@ -3,7 +3,9 @@ const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 const Octokit = require('@octokit/rest');
 
-const octokit = new Octokit();
+const octokit = new Octokit({
+  auth: `token ${process.env.GITHUB_TOKEN}`
+});
 
 run();
 
