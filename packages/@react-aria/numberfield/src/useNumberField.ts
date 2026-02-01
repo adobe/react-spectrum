@@ -101,9 +101,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     flushSync(() => {
       commit();
     });
-    // Note: this announcement will be skipped if the user is keyboard navigating to a new
-    // focusable element because that target will be announced instead, even though this is
-    // assertive. This is expected VO behaviour.
+
     if (inputRef.current?.value !== oldValue) {
       announce(inputRef.current?.value ?? '', 'assertive');
     }
