@@ -33,7 +33,7 @@ import {
   SectionProps,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, GlobalDOMAttributes, HelpTextProps, LoadingState, SingleSelection, SpectrumLabelableProps} from '@react-types/shared';
 import {AvatarContext} from './Avatar';
 import {BaseCollection, CollectionNode, createLeafComponent} from '@react-aria/collections';
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
@@ -79,7 +79,8 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'isTriggerUpWhenOpen' | 'selectionMode' | 'selectedKey' | 'defaultSelectedKey' | 'onSelectionChange' | 'value' | 'defaultValue' | 'onChange' | keyof GlobalDOMAttributes>,
+  Omit<SingleSelection, 'disallowEmptySelection'>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
