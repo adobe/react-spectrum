@@ -306,14 +306,12 @@ class NumberParserImpl {
       let [firstChar, secondChar] = [...nonDigits];
       if (value.indexOf(firstChar) < value.indexOf(secondChar)) {
         value = replaceAll(value, firstChar, '__GROUP__');
-        value = replaceAll(value, secondChar, '__DECIMAL__');
+        value = replaceAll(value, secondChar, this.symbols.decimal!);
         value = replaceAll(value, '__GROUP__', this.symbols.group!);
-        value = replaceAll(value, '__DECIMAL__', this.symbols.decimal!);
       } else {
         value = replaceAll(value, secondChar, '__GROUP__');
-        value = replaceAll(value, firstChar, '__DECIMAL__');
+        value = replaceAll(value, firstChar, this.symbols.decimal!);
         value = replaceAll(value, '__GROUP__', this.symbols.group!);
-        value = replaceAll(value, '__DECIMAL__', this.symbols.decimal!);
       }
     }
 
