@@ -283,7 +283,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   );
 
   let adjustSegment = (type: SegmentType, amount: number) => {
-    setValue(displayValue.cycle(type, amount, placeholder));
+    setValue(displayValue.cycle(type, amount, placeholder, displaySegments));
   };
 
   let builtinValidation = useMemo(() => getValidationResult(
