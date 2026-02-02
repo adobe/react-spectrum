@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyDateTime, Calendar, CalendarDate, CalendarDateTime, toZoned, ZonedDateTime} from '@internationalized/date';
+import {AnyDateTime, Calendar, CalendarDate, ZonedDateTime} from '@internationalized/date';
 import {DateValue} from '@react-types/datepicker';
 import {SegmentType} from './useDateFieldState';
 
@@ -127,7 +127,7 @@ export class IncompleteDate {
   }
 
   /** Increments or decrements the given field. If it is null, then it is set to the placeholder value. */
-  cycle(field: SegmentType, amount: number, placeholder: DateValue): IncompleteDate {
+  cycle(field: SegmentType, amount: number, placeholder: DateValue, displaySegments: SegmentType[]): IncompleteDate {
     let res = this.copy();
 
     // If field is null, default to placeholder.
@@ -170,28 +170,11 @@ export class IncompleteDate {
         res.day = cycleValue(res.day ?? 1, amount, 1, this.calendar.getMaximumDaysInMonth());
         break;
       case 'hour': {
-        // if date is fully defined and we have a time zone, use ZonedDateTime to cycle so DST fallback is properly handled
-        if ('timeZone' in placeholder && res.year != null && res.month != null && res.day != null) {
-          let hour = res.hour ?? 0;
-          hour = fromHourCycle(hour, res.dayPeriod ?? 0, this.hourCycle);
-          // get the offset of the current date time in case we don't have a offset stored already (can't just use placeholder offset since that is a different datetime).
-          if (res.offset == null) {
-            let calendarDateTime = new CalendarDateTime(
-              this.calendar,
-              res.era ?? placeholder.era,
-              res.year,
-              res.month,
-              res.day,
-              hour,
-              res.minute ?? placeholder.minute,
-              res.second ?? placeholder.second,
-              res.millisecond ?? placeholder.millisecond
-            );
-
-            res.offset = toZoned(calendarDateTime, placeholder.timeZone).offset;
-          }
-
-          let date = new ZonedDateTime(this.calendar, res.era ?? placeholder.era, res.year, res.month, res.day, placeholder.timeZone, res.offset, hour, res.minute ?? placeholder.minute, res.second ?? placeholder.second ?? 0, res.millisecond ?? placeholder.millisecond ?? 0);
+        // if date is fully defined or it is just a time field, and we have a time zone, use toValue to get a ZonedDateTime to cycle
+        // so DST fallback is properly handled
+        let hasDateSegements = displaySegments.some(s => ['year', 'month', 'day'].includes(s));
+        if ('timeZone' in placeholder && (!hasDateSegements || (res.year != null && res.month != null && res.day != null))) {
+          let date = this.toValue(placeholder) as ZonedDateTime;
           date = date.cycle('hour', amount, {hourCycle: this.hourCycle === 'h12' ? 12 : 24, round: false});
           let [dayPeriod, adjustedHour] = toHourCycle(date.hour, this.hourCycle);
           res.hour = adjustedHour;
@@ -231,13 +214,7 @@ export class IncompleteDate {
         hour = this.dayPeriod === 1 ? 12 : 0;
       }
 
-      // if we have a time zone, return the zoned date time with the new offset if any
-      if ('timeZone' in value && this.offset != null && this.year != null && this.month != null && this.day != null && hour != null && this.minute != null) {
-        let date = new ZonedDateTime(this.calendar, this.era ?? value.era, this.year, this.month, this.day, value.timeZone, this.offset, hour, this.minute, this.second ?? 0, this.millisecond ?? 0);
-        return date;
-      }
-
-      return value.set({
+      let res = value.set({
         era: this.era ?? value.era,
         year: this.year ?? value.year,
         month: this.month ?? value.month,
@@ -247,6 +224,12 @@ export class IncompleteDate {
         second: this.second ?? value.second,
         millisecond: this.millisecond ?? value.millisecond
       });
+
+      if ('offset' in res && this.offset != null && res.offset !== this.offset) {
+        res = res.add({milliseconds: res.offset - this.offset});
+      }
+
+      return res;
     } else {
       return value.set({
         era: this.era ?? value.era,
