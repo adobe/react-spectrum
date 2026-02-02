@@ -1328,7 +1328,7 @@ export interface CellRenderProps {
   /**
    * The index of the column that this cell belongs to. Respects col spanning.
    */
-  colIndex?: number | null
+  columnIndex?: number | null
 }
 
 export interface CellProps extends RenderProps<CellRenderProps, 'td' | 'div'>, GlobalDOMAttributes<HTMLTableCellElement> {
@@ -1377,7 +1377,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
   let {hoverProps, isHovered} = useHover({});
   let isSelected = cell.parentKey != null ? state.selectionManager.isSelected(cell.parentKey) : false;
   // colIndex is null, when there is so span, falling back to using the index
-  let colIndex = cell.colIndex || cell.index;
+  let columnIndex = cell.colIndex || cell.index;
 
   let renderProps = useRenderProps({
     ...props,
@@ -1390,7 +1390,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       isHovered,
       isSelected,
       id: cell.key,
-      colIndex
+      columnIndex
     }
   });
 
@@ -1405,7 +1405,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-selected={isSelected || undefined}
-      data-column-index={colIndex}>
+      data-column-index={columnIndex}>
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
         {renderProps.children}
       </CollectionRendererContext.Provider>

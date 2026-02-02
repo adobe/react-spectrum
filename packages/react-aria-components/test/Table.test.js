@@ -904,16 +904,16 @@ describe('Table', () => {
         <TableBody>
           <Row>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
           </Row>
         </TableBody>
@@ -943,27 +943,27 @@ describe('Table', () => {
         <TableBody>
           <Row>
             <Cell colSpan={2}>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
           </Row>
           <Row>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
           </Row>
         </TableBody>
