@@ -354,7 +354,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
               className={gradient({
                 ...renderProps,
                 // Retain hover styles when an overlay is open.
-                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                isHovered: renderProps.isHovered || renderProps?.isExpanded || false,
                 isDisabled: renderProps.isDisabled || isProgressVisible,
                 variant
               })} />
