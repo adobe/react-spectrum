@@ -12,8 +12,25 @@
 
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
+
+// CloseWatcher is a newer browser API that handles close requests (Escape key, Android back button, etc.)
+// Type declaration since TypeScript may not include this in lib.dom yet
+interface CloseWatcherInstance extends EventTarget {
+  close(): void,
+  destroy(): void,
+  oncancel: ((this: CloseWatcherInstance, ev: Event) => any) | null,
+  onclose: ((this: CloseWatcherInstance, ev: Event) => any) | null
+}
+
+interface CloseWatcherConstructor {
+  prototype: CloseWatcherInstance,
+  new(options?: {signal?: AbortSignal}): CloseWatcherInstance
+}
+
+// Feature detection for CloseWatcher support
+const supportsCloseWatcher = typeof window !== 'undefined' && 'CloseWatcher' in window;
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
@@ -71,6 +88,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   } = props;
 
   let lastVisibleOverlay = useRef<RefObject<Element | null>>(undefined);
+  let closeWatcherRef = useRef<CloseWatcherInstance | null>(null);
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
@@ -85,12 +103,35 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     }
   }, [isOpen, ref]);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack
-  let onHide = () => {
+  // Only hide the overlay when it is the topmost visible overlay in the stack.
+  // Wrapped in useCallback for stable reference in CloseWatcher effect.
+  let onHide = useCallback(() => {
     if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
       onClose();
     }
-  };
+  }, [ref, onClose]);
+
+  // Use CloseWatcher API when supported for handling close requests (Escape key, Android back button, etc.).
+  // CloseWatcher provides a unified way to handle close signals across different devices and input methods.
+  // Falls back to keyboard event handling in browsers that don't support CloseWatcher.
+  useEffect(() => {
+    if (!isOpen || isKeyboardDismissDisabled || !supportsCloseWatcher) {
+      return;
+    }
+
+    closeWatcherRef.current = new ((window as any).CloseWatcher as CloseWatcherConstructor)();
+    closeWatcherRef.current.onclose = () => {
+      onHide();
+    };
+
+    return () => {
+      // CloseWatcher is automatically destroyed after its close event fires,
+      // but we still call destroy() for cases where the overlay closes without
+      // the watcher firing (e.g., clicking outside, programmatic close).
+      closeWatcherRef.current?.destroy();
+      closeWatcherRef.current = null;
+    };
+  }, [isOpen, isKeyboardDismissDisabled, onHide]);
 
   let onInteractOutsideStart = (e: PointerEvent) => {
     const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
@@ -116,9 +157,15 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     lastVisibleOverlay.current = undefined;
   };
 
-  // Handle the escape key
+  // Handle the escape key as a fallback when CloseWatcher is not supported.
+  // When CloseWatcher is active, it handles Escape key at the browser level,
+  // so we skip the keyboard handler to avoid duplicate close attempts.
   let onKeyDown = (e) => {
     if (e.key === 'Escape' && !isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
+      // Skip if CloseWatcher is handling close requests
+      if (closeWatcherRef.current) {
+        return;
+      }
       e.stopPropagation();
       e.preventDefault();
       onHide();
