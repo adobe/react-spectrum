@@ -282,7 +282,6 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {isPending = false} = props;
   let domRef = useFocusableRef(ref);
-  let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let ctx = useSlottedContext(ActionButtonGroupContext);
   let isInGroup = !!ctx;
   let {
@@ -306,7 +305,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         // Retain hover styles when an overlay is open.
-        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+        isHovered: renderProps.isHovered || renderProps.isExpanded || false,
         isDisabled: renderProps.isDisabled || isProgressVisible,
         staticColor,
         isStaticColor: !!staticColor,

@@ -63,7 +63,7 @@
   }
 
   &[data-open],
-  &[data-pressed] {
+  &[data-expanded] {
     background: var(--highlight-hover);
   }
 

@@ -328,7 +328,6 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
     staticColor
   } = props;
   let domRef = useFocusableRef(ref);
-  let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
   let {isProgressVisible} = usePendingState(isPending);
 
@@ -340,7 +339,7 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
       className={renderProps => (props.UNSAFE_className || '') + button({
         ...renderProps,
         // Retain hover styles when an overlay is open.
-        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+        isHovered: renderProps.isHovered || renderProps.isExpanded || false,
         isDisabled: renderProps.isDisabled || isProgressVisible,
         variant,
         fillStyle,

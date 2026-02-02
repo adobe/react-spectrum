@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
+import {AriaMenuProps, FocusScope, mergeProps, PressEvent, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, ItemNode, SectionNode} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {ButtonContext} from './Button';
@@ -32,7 +32,7 @@ import {
 } from './utils';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {FieldInputContext, SelectableCollectionContext, SelectableCollectionContextValue} from './RSPContexts';
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useGlobalListeners, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusEvents, FocusStrategy, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -75,6 +75,22 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
     ...props,
     type: 'menu'
   }, state, ref);
+
+  // For mouse interactions, menus open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
   // Allows menu width to match button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
@@ -105,7 +121,7 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
         }],
         [ButtonContext, {isExpanded: state.isOpen}]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref}>
+      <PressResponder {...mergeProps(menuTriggerProps, {onPressStart})} isPressed={isPressed} ref={ref}>
         {props.children}
       </PressResponder>
     </Provider>
