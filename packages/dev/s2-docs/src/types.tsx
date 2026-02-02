@@ -479,9 +479,16 @@ export function TypeLink({type}: {type: Extract<TType, {id: string, name: string
   return res;
 }
 
+const mdComponents = {
+  a: {component: SpectrumLink},
+  code: {component: Code},
+  p: {component: (props) => <p {...props} className={style({marginTop: {':first-child': 0}, marginBottom: {':last-child': 0}})} />},
+  ul: {component: (props) => <ul {...props} className={style({paddingStart: 12, marginTop: {':first-child': 0}, marginBottom: {':last-child': 0}})} />},
+};
+
 export function renderHTMLfromMarkdown(description: string | null | undefined, opts: object): ReactNode {
   if (description) {
-    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}, code: {component: Code}}, disableParsingRawHTML: true, ...opts};
+    const options = {forceInline: true, overrides: mdComponents, disableParsingRawHTML: true, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
   }
   return null;
