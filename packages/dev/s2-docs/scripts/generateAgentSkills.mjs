@@ -327,7 +327,7 @@ The \`references/\` directory contains detailed documentation organized as follo
   if (categories.guides.length > 0) {
     content += `### Guides
 `;
-    for (const entry of categories.guides.slice(0, 10)) {
+    for (const entry of categories.guides) {
       content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description.slice(0, 100)}` : ''}\n`;
     }
     content += '\n';
@@ -336,13 +336,8 @@ The \`references/\` directory contains detailed documentation organized as follo
   if (categories.components.length > 0) {
     content += `### Components
 `;
-    // List a subset of key components
-    const keyComponents = categories.components.slice(0, 15);
-    for (const entry of keyComponents) {
+    for (const entry of categories.components) {
       content += `- [${entry.title}](references/components/${entry.path})${entry.description ? `: ${entry.description.slice(0, 80)}` : ''}\n`;
-    }
-    if (categories.components.length > 15) {
-      content += `- ...and ${categories.components.length - 15} more components in \`references/components/\`\n`;
     }
     content += '\n';
   }
@@ -350,11 +345,8 @@ The \`references/\` directory contains detailed documentation organized as follo
   if (categories.interactions.length > 0) {
     content += `### Interactions
 `;
-    for (const entry of categories.interactions.slice(0, 10)) {
+    for (const entry of categories.interactions) {
       content += `- [${entry.title}](references/interactions/${entry.path})${entry.description ? `: ${entry.description.slice(0, 80)}` : ''}\n`;
-    }
-    if (categories.interactions.length > 10) {
-      content += `- ...and ${categories.interactions.length - 10} more in \`references/interactions/\`\n`;
     }
     content += '\n';
   }
@@ -362,11 +354,8 @@ The \`references/\` directory contains detailed documentation organized as follo
   if (categories.utilities.length > 0) {
     content += `### Utilities
 `;
-    for (const entry of categories.utilities.slice(0, 10)) {
+    for (const entry of categories.utilities) {
       content += `- [${entry.title}](references/utilities/${entry.path})${entry.description ? `: ${entry.description.slice(0, 80)}` : ''}\n`;
-    }
-    if (categories.utilities.length > 10) {
-      content += `- ...and ${categories.utilities.length - 10} more in \`references/utilities/\`\n`;
     }
     content += '\n';
   }
@@ -388,7 +377,7 @@ The \`references/\` directory contains detailed documentation organized as follo
   if (categories.testing.length > 0) {
     content += `### Testing
 `;
-    for (const entry of categories.testing.slice(0, 5)) {
+    for (const entry of categories.testing) {
       content += `- [${entry.title}](references/testing/${entry.path})\n`;
     }
     content += '\n';
