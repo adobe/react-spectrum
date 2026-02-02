@@ -483,7 +483,7 @@ const mdComponents = {
   a: {component: SpectrumLink},
   code: {component: Code},
   p: {component: (props) => <p {...props} className={style({marginTop: {':first-child': 0}, marginBottom: {':last-child': 0}})} />},
-  ul: {component: (props) => <ul {...props} className={style({paddingStart: 12, marginTop: {':first-child': 0}, marginBottom: {':last-child': 0}})} />},
+  ul: {component: (props) => <ul {...props} className={style({paddingStart: 12, marginTop: {':first-child': 0}, marginBottom: {':last-child': 0}})} />}
 };
 
 export function renderHTMLfromMarkdown(description: string | null | undefined, opts: object): ReactNode {
