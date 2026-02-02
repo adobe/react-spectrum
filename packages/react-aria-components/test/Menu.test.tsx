@@ -521,9 +521,11 @@ describe('Menu', () => {
 
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-expanded');
+    expect(button).not.toHaveAttribute('data-pressed');
 
     await user.click(button);
     expect(button).toHaveAttribute('data-expanded');
+    expect(button).not.toHaveAttribute('data-pressed');
 
     let menu = getByRole('menu');
     expect(getAllByRole('menuitem')).toHaveLength(5);

@@ -50,6 +50,7 @@ describe('Select', () => {
     let trigger = selectTester.trigger;
     expect(trigger).toHaveTextContent('Select an item');
     expect(trigger).not.toHaveAttribute('data-expanded');
+    expect(trigger).not.toHaveAttribute('data-pressed');
 
     expect(wrapper).toHaveAttribute('data-foo', 'bar');
 
@@ -68,6 +69,7 @@ describe('Select', () => {
     await selectTester.open();
 
     expect(trigger).toHaveAttribute('data-expanded', 'true');
+    expect(trigger).not.toHaveAttribute('data-pressed');
     let listbox = selectTester.listbox;
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();

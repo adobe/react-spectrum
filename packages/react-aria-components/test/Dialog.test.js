@@ -68,9 +68,11 @@ describe('Dialog', () => {
 
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-expanded');
+    expect(button).not.toHaveAttribute('data-pressed');
 
     await user.click(button);
     expect(button).toHaveAttribute('data-expanded', 'true');
+    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   it('works with modal', async () => {
