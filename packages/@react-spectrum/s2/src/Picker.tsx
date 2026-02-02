@@ -127,7 +127,7 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
     /**
      * Custom renderer for the selected value shown in the button. Allows one to provide a custom element to render for selected items.
      *
-     * @warning The returned ReactNode should not have interactable elements as it will break accessibility.
+     * @note The returned ReactNode should not have interactable elements as it will break accessibility.
      */
     renderValue?: (selectedItems: T[]) => ReactNode
 }
@@ -540,7 +540,12 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
         })}>
         {(renderProps) => (
           <>
-            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}')}>
+            <SelectValue
+              className={
+                valueStyles({isQuiet}) +
+                // Might be ok?
+                (renderValue ? '' : ' ' + raw('&> :not([slot=icon], [slot=avatar], [slot=label], [data-slot=label]) {display: none;}'))
+              }>
               {({selectedItems, defaultChildren}) => {
                 const selectedValues = selectedItems.filter((item): item is T => item != null);
                 const defaultRenderedValue = selectedItems.length <= 1

@@ -331,3 +331,40 @@ return (
     }
   }
 };
+
+
+type ExampleIconItem = IExampleItem & { icon: string };
+const exampleIconItems: ExampleIconItem[] = [
+  {id: 'chocolate', label: 'Chocolate', icon: SRC_URL_1},
+  {id: 'strawberry', label: 'Strawberry', icon: SRC_URL_2},
+  {id: 'vanilla', label: 'Vanilla', icon: SRC_URL_1},
+  {id: 'mint', label: 'Mint', icon: SRC_URL_2},
+  {id: 'cookie-dough', label: 'Chocolate Chip Cookie Dough', icon: SRC_URL_1}
+];
+
+const CustomRenderValuePicker = (args: PickerProps<ExampleIconItem, 'multiple'>): ReactElement => (
+  <Picker {...args}>
+    {(item: ExampleIconItem) => (
+      <PickerItem id={item.id} textValue={item.label}>
+        <Avatar slot="avatar" src={item.icon} />
+        <Text slot="label">{item.label}</Text>
+      </PickerItem>
+    )}
+  </Picker>
+);
+
+export type CustomRenderValuePickerStoryType = typeof CustomRenderValuePicker;
+export const CustomRenderValue: StoryObj<CustomRenderValuePickerStoryType> = {
+  render: CustomRenderValuePicker,
+  args: {
+    selectionMode: 'multiple',
+    items: exampleIconItems,
+    renderValue: (selectedItems) => (
+      <div style={{display: 'flex', gap: 4}}>
+        {selectedItems.map(item => (
+          <Avatar slot="avatar" key={item.id} src={item.icon} />
+        ))}
+      </div>
+    )
+  }
+};
