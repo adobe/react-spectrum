@@ -360,9 +360,9 @@ export const CustomRenderValue: StoryObj<CustomRenderValuePickerStoryType> = {
     selectionMode: 'multiple',
     items: exampleIconItems,
     renderValue: (selectedItems) => (
-      <div style={{display: 'flex', gap: 4}}>
+      <div style={{display: 'flex', gap: 4, height: '80%'}}>
         {selectedItems.map(item => (
-          <Avatar slot="avatar" key={item.id} src={item.icon} />
+          <img key={item.id} src={item.icon} alt={item.label} />
         ))}
       </div>
     )
