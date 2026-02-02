@@ -322,4 +322,16 @@ describe('NumberField', () => {
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenCalledWith(1024);
   });
+
+  it('should allow you to delete the first digit in a number if it is followed by a group separator', async () => {
+    let {getByRole} = render(<TestNumberField defaultValue={1024} formatOptions={{useGrouping: true}} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.keyboard('{ArrowLeft}');
+    await user.keyboard('{ArrowRight}');
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue(',024');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('24');
+  });
 });
