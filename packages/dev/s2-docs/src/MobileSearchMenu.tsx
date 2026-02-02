@@ -328,7 +328,6 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         selectedTagId={selectedSection}
                         onSectionSelectionChange={handleTagSelectionChange}
                         onResourceSelectionChange={handleTagSelectionChange}
-                        isMobile
                         wrapperClassName={style({paddingTop: 0})}
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
