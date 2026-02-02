@@ -1405,7 +1405,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent(TableCellNode, (props: Cel
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-selected={isSelected || undefined}
-      data-column-index={colIndex}>
+      data-col-index={colIndex}>
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
         {renderProps.children}
       </CollectionRendererContext.Provider>
