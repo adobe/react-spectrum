@@ -81,7 +81,7 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
     if (child.offsetParent === ancestor) {
       // Stop once we have found the ancestor we are interested in.
       break;
-    } else if (child.offsetParent.contains(ancestor)) {
+    } else if (nodeContains(child.offsetParent, ancestor)) {
       // If the ancestor is not `position:relative`, then we stop at
       // _its_ offset parent, and we subtract off _its_ offset, so that
       // we end up with the proper offset from child to ancestor.
