@@ -36,7 +36,6 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {AriaCalendarGridProps} from '@react-aria/calendar';
-import {baseColor, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {
   CalendarDate,
   getDayOfWeek,
@@ -44,6 +43,7 @@ import {
 } from '@internationalized/date';
 import ChevronLeftIcon from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronRightIcon from '../s2wf-icons/S2_Icon_ChevronRight_20_N.svg';
+import {focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {forwardRefType, GlobalDOMAttributes} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {helpTextStyles} from './Field';
