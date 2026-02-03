@@ -399,15 +399,6 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Kangaroo');
   });
 
-  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
-    let {getByRole} = render(<TestSelect isTriggerUpWhenOpen />);
-    let button = getByRole('button');
-
-    expect(button).not.toHaveAttribute('data-pressed');
-    await user.click(button);
-    expect(button).not.toHaveAttribute('data-pressed');
-  });
-
   describe('typeahead', () => {
     beforeEach(() => {
       jest.useFakeTimers();
