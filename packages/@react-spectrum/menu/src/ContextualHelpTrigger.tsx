@@ -16,7 +16,7 @@ import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {nodeContains} from '@react-aria/utils';
-import {Popover} from '@react-spectrum/overlays';
+import {Popover} from './Popover';
 import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
