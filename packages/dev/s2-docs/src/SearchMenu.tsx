@@ -161,7 +161,10 @@ export function SearchMenu(props: SearchMenuProps) {
           const placeholderText = getPlaceholderText(tab.label);
           return (
             <TabPanel key={tab.id} id={tab.id}>
-              <Autocomplete filter={isIconsSelected ? iconFilter : undefined}>
+              <Autocomplete
+                key={selectedTagId === 'typography' ? 'typography' : 'default'}
+                filter={isIconsSelected ? iconFilter : undefined}
+                disableVirtualFocus={selectedTagId === 'typography'}>
                 <div className={style({display: 'flex', flexDirection: 'column', height: 'full'})}>
                   <div className={style({flexShrink: 0, marginStart: 16, marginEnd: 64})}>
                     <SearchField

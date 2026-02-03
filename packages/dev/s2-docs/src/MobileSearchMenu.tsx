@@ -313,7 +313,10 @@ function MobileNav({initialTag}: {initialTag?: string}) {
             const showIcons = isIconsSelected && library.id === 'react-spectrum';
             return (
               <MobileTabPanel key={library.id} id={library.id}>
-                <Autocomplete filter={showIcons ? iconFilter : undefined}>
+                <Autocomplete
+                  key={isTypographySelected ? 'typography' : 'default'}
+                  filter={showIcons ? iconFilter : undefined}
+                  disableVirtualFocus={isTypographySelected}>
                   <div className={stickySearchContainer}>
                     <SearchField
                       aria-label="Search"
