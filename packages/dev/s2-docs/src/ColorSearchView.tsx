@@ -6,7 +6,7 @@ import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
@@ -199,15 +199,6 @@ const scaleSwatches: Record<string, string> = {
 };
 
 
-export function CopyInfoMessage() {
-  return (
-    <div className={style({display: 'flex', gap: 4, padding: 8})}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</span>
-    </div>
-  );
-}
-
 interface ColorSearchViewProps {
   filteredItems: Array<{
     id: string,
@@ -264,7 +255,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
 
   return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-      <CopyInfoMessage />
+      <InfoMessage>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</InfoMessage>
       <ListBox
         aria-label="Colors"
         onAction={(key) => {

@@ -9,7 +9,7 @@ import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type:
 import {iconAliases} from './iconAliases.js';
 // @ts-ignore
 import icons from '/packages/@react-spectrum/s2/s2wf-icons/*.svg';
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -55,15 +55,6 @@ export function useCopyImport() {
   }, []);
 
   return {copiedId, handleCopyImport};
-}
-
-function CopyInfoMessage() {
-  return (
-    <div className={style({display: 'flex', gap: 4, padding: 8})}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</span>
-    </div>
-  );
 }
 
 interface IconListBoxProps {
@@ -133,7 +124,7 @@ export function IconSearchView({filteredItems, listBoxClassName}: IconSearchView
 
   return (
     <>
-      <CopyInfoMessage />
+      <InfoMessage>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</InfoMessage>
       <IconListBox items={filteredItems} copiedId={copiedId} onAction={handleCopyImport} listBoxClassName={listBoxClassName} />
     </>
   );
@@ -236,7 +227,7 @@ export function IconsPageSearch() {
       <Autocomplete filter={filter}>
         <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
           <SearchField size="L" aria-label="Search icons" placeholder="Search icons" />
-          <CopyInfoMessage />
+          <InfoMessage>Press an item to copy its import statement. See <Link href="icons">Icons</Link> for more information.</InfoMessage>
           <IconListBox
             items={iconList}
             copiedId={copiedId}

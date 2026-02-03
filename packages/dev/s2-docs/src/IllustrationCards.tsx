@@ -3,12 +3,12 @@
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 // eslint-disable-next-line monorepo/no-internal-import
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
-import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
-import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Content, Heading, IllustratedMessage, Link, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
-import {illustrationAliases} from './illustrationAliases.js';
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {illustrationAliases} from './illustrationAliases.js'; 
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
@@ -80,7 +80,7 @@ export function IllustrationCards() {
             <Radio value="generic2">Generic 2</Radio>
           </RadioGroup>
         )}
-        <CopyInfoMessage />
+        <InfoMessage>Press an item to copy its import statement. See <Link href="illustrations">Illustrations</Link> for more information.</InfoMessage>
         <Suspense fallback={<Loading />}>
           <IllustrationList variant={variant} gradientStyle={gradientStyle} />
         </Suspense>
@@ -97,14 +97,6 @@ function Loading() {
   );
 }
 
-function CopyInfoMessage() {
-  return (
-    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
-    </div>
-  );
-}
 
 function useCopyImport(variant: string, gradientStyle: string) {
   let [copiedId, setCopiedId] = useState<string | null>(null);
