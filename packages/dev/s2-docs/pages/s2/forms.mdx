@@ -131,6 +131,7 @@ Well-designed form validation assists the user with specific, helpful error mess
 All React Spectrum form components integrate with native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation). This allows you to define constraints on each field such as required, minimum and maximum values, text formats such as email addresses, and even custom regular expression patterns. These constraints are checked by the browser when the user commits changes to the value (e.g. on blur) or submits the form.
 
 ```tsx render
+'use client';
 import {Form, TextField, ButtonGroup, Button} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
