@@ -314,7 +314,7 @@ function getRadiosInGroup(element: HTMLInputElement): HTMLInputElement[] {
       (el): el is HTMLInputElement => el instanceof ownerWindow.HTMLInputElement
     );
   }
-  if (radioList instanceof HTMLInputElement) {
+  if (radioList instanceof ownerWindow.HTMLInputElement) {
     return [radioList];
   }
   return [];
