@@ -394,7 +394,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
     prevSize.current = ref.current.getBoundingClientRect();
   }
 
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {labelable: true, global: true});
   delete DOMProps.id;
 
   return (
@@ -402,6 +402,7 @@ export const TabPanels = /*#__PURE__*/ createHideableComponent(function TabPanel
       render={props.render}
       {...DOMProps}
       ref={ref}
+      style={props.style}
       className={props.className || 'react-aria-TabPanels'}>
       <Collection {...props} />
     </dom.div>

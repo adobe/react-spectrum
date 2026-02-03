@@ -187,7 +187,7 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<TreeItem>` to create a link. See the [framework setup guide](frameworks) to learn how to integrate with your framework. Link interactions vary depending on the selection behavior. See the [selection guide](selection?component=Tree#selection-behavior) for more details.
+Use the `href` prop on a `<TreeItem>` to create a link. Link interactions vary depending on the selection behavior. See the [selection guide](selection?component=Tree#selection-behavior) for more details.
 
 ```tsx render docs={docs.exports.Tree} links={docs.links} props={['selectionBehavior']} initialProps={{selectionMode: 'multiple'}} wide
 "use client";
@@ -218,6 +218,11 @@ import {Tree, TreeItem} from 'vanilla-starter/Tree';
   </TreeItem>
 </Tree>
 ```
+
+<InlineAlert variant="notice">
+  <Heading>Client-side routing</Heading>
+  <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), TreeItems cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
+</InlineAlert>
 
 ### Empty state
 

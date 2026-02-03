@@ -904,16 +904,16 @@ describe('Table', () => {
         <TableBody>
           <Row>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
           </Row>
         </TableBody>
@@ -925,10 +925,10 @@ describe('Table', () => {
     expect(cells[1]).toHaveTextContent('cell index: 1');
     expect(cells[2]).toHaveTextContent('cell index: 2');
     expect(cells[3]).toHaveTextContent('cell index: 3');
-    expect(cells[0]).toHaveAttribute('data-col-index', '0');
-    expect(cells[1]).toHaveAttribute('data-col-index', '1');
-    expect(cells[2]).toHaveAttribute('data-col-index', '2');
-    expect(cells[3]).toHaveAttribute('data-col-index', '3');
+    expect(cells[0]).toHaveAttribute('data-column-index', '0');
+    expect(cells[1]).toHaveAttribute('data-column-index', '1');
+    expect(cells[2]).toHaveAttribute('data-column-index', '2');
+    expect(cells[3]).toHaveAttribute('data-column-index', '3');
   });
 
   it('should support colspan with cell index', () => {
@@ -943,27 +943,27 @@ describe('Table', () => {
         <TableBody>
           <Row>
             <Cell colSpan={2}>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
           </Row>
           <Row>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
             <Cell>
-              {({colIndex}) => `cell index: ${colIndex}`}
+              {({columnIndex}) => `cell index: ${columnIndex}`}
             </Cell>
           </Row>
         </TableBody>
@@ -975,19 +975,19 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('cell index: 0');
     expect(cells[1]).toHaveTextContent('cell index: 2');
     expect(cells[2]).toHaveTextContent('cell index: 3');
-    expect(cells[0]).toHaveAttribute('data-col-index', '0');
-    expect(cells[1]).toHaveAttribute('data-col-index', '2');
-    expect(cells[2]).toHaveAttribute('data-col-index', '3');
+    expect(cells[0]).toHaveAttribute('data-column-index', '0');
+    expect(cells[1]).toHaveAttribute('data-column-index', '2');
+    expect(cells[2]).toHaveAttribute('data-column-index', '3');
 
     // second row
     expect(cells[3]).toHaveTextContent('cell index: 0');
     expect(cells[4]).toHaveTextContent('cell index: 1');
     expect(cells[5]).toHaveTextContent('cell index: 2');
     expect(cells[6]).toHaveTextContent('cell index: 3');
-    expect(cells[3]).toHaveAttribute('data-col-index', '0');
-    expect(cells[4]).toHaveAttribute('data-col-index', '1');
-    expect(cells[5]).toHaveAttribute('data-col-index', '2');
-    expect(cells[6]).toHaveAttribute('data-col-index', '3');
+    expect(cells[3]).toHaveAttribute('data-column-index', '0');
+    expect(cells[4]).toHaveAttribute('data-column-index', '1');
+    expect(cells[5]).toHaveAttribute('data-column-index', '2');
+    expect(cells[6]).toHaveAttribute('data-column-index', '3');
   });
 
   it('should support columnHeader typeahead', async () => {
