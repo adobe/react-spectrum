@@ -520,7 +520,7 @@ let images = [
 </GridList>
 ```
 
-<InlineAlert variant="notice">
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}>
   <Heading>Client-side routing</Heading>
   <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), GridListItems cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
 </InlineAlert>
