@@ -308,9 +308,10 @@ function getRadiosInGroup(element: HTMLInputElement): HTMLInputElement[] {
   // namedItem returns RadioNodeList (iterable) for 2+ elements, but a single Element for exactly 1.
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormControlsCollection/namedItem
   const radioList = element.form.elements.namedItem(element.name);
-  if (radioList instanceof RadioNodeList) {
+  let ownerWindow = getOwnerWindow(element);
+  if (radioList instanceof ownerWindow.RadioNodeList) {
     return Array.from(radioList).filter(
-      (el): el is HTMLInputElement => el instanceof HTMLInputElement
+      (el): el is HTMLInputElement => el instanceof ownerWindow.HTMLInputElement
     );
   }
   if (radioList instanceof HTMLInputElement) {
