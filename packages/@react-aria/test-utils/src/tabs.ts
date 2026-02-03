@@ -12,7 +12,6 @@
 
 import {act, within} from '@testing-library/react';
 import {Direction, Orientation, TabsTesterOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 import {pressElement} from './events';
 
 interface TriggerTabOptions {
@@ -90,7 +89,7 @@ export class TabsTester {
       throw new Error('Tab provided is not in the tablist');
     }
 
-    if (!nodeContains(this._tablist, document.activeElement)) {
+    if (!this._tablist.contains(document.activeElement)) {
       let selectedTab = this.selectedTab;
       if (selectedTab != null) {
         act(() => selectedTab.focus());
@@ -143,7 +142,7 @@ export class TabsTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._tablist && !nodeContains(this._tablist, document.activeElement)) {
+      if (document.activeElement !== this._tablist && !this._tablist.contains(document.activeElement)) {
         act(() => this._tablist.focus());
       }
 

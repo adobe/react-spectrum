@@ -643,6 +643,9 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           )}
           <Button
             ref={buttonRef}
+            // Prevent press scale from sticking while ComboBox is open.
+            // @ts-ignore
+            isPressed={false}
             style={renderProps => pressScale(buttonRef)(renderProps)}
             className={renderProps => inputButton({
               ...renderProps,

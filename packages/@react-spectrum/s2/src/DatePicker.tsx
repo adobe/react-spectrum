@@ -277,6 +277,9 @@ export function CalendarButton(props: {isOpen: boolean, size: 'S' | 'M' | 'L' | 
   return (
     <Button
       ref={buttonRef}
+      // Prevent press scale from sticking while DatePicker is open.
+      // @ts-ignore
+      isPressed={false}
       onFocusChange={setButtonHasFocus}
       style={pressScale(buttonRef)}
       className={renderProps => inputButton({
