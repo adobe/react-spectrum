@@ -213,7 +213,7 @@ export function SearchMenu(props: SearchMenuProps) {
                     </div>
                   )}
                   {selectedTagId === 'typography' && (
-                    <div className={style({flexGrow: 1, overflow: 'auto', paddingX: 16, paddingBottom: 16})}>
+                    <div className={style({flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column'})}>
                       <TypographySearchView searchValue={searchValue} />
                     </div>
                   )}

@@ -374,14 +374,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                       </Suspense>
                     )}
                     {!showIcons && isTypographySelected && library.id === 'react-spectrum' && (
-                      <div
-                        className={style({
-                          flexGrow: 1,
-                          overflow: 'auto',
-                          paddingBottom: 16
-                        })}>
-                        <TypographySearchView searchValue={searchValue} />
-                      </div>
+                      <TypographySearchView searchValue={searchValue} />
                     )}
                     {!showIcons && !isColorsSelected && !isTypographySelected && (
                       <ComponentCardView

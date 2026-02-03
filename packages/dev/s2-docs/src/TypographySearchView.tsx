@@ -3,8 +3,9 @@
 import {ActionButton, Content, DialogTrigger, Heading, IllustratedMessage, Link, Popover, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, TextField} from 'react-aria-components';
-import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useMemo, useState} from 'react';
@@ -32,20 +33,6 @@ const headerStyle = style({
   alignItems: 'center',
   gap: 4
 });
-
-function InfoMessage() {
-  return (
-    <div
-      className={style({
-        display: 'flex',
-        gap: 4,
-        padding: 8
-      })}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Select a typography style to preview and copy its code snippet. See <Link href="styling">styling</Link> for more information.</span>
-    </div>
-  );
-}
 
 const typographySections = [
   {
@@ -245,23 +232,9 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
     return new Set<Key>();
   }, [selectedFont, sections]);
 
-  if (searchValue.trim() && sections.length === 0) {
-    return (
-      <div className={style({display: 'flex', flexDirection: 'column', gap: 8, height: 'full'})}>
-        <InfoMessage />
-        <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
-          <NoSearchResults />
-          <Heading>No results</Heading>
-          <Content>Try a different search term.</Content>
-        </IllustratedMessage>
-      </div>
-    );
-  }
-
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16, height: 'full'})}>
-      <InfoMessage />
-
+    <>
+      <InfoMessage>Select a typography style and customize the sample text to preview its rendered output and code snippet. See <Link href="styling">styling</Link> for more information.</InfoMessage>
       <div className={style({flexGrow: 1, overflow: 'auto', padding: 8})}>
         <ListBox
           aria-label="Typography styles"
@@ -269,7 +242,14 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
           selectedKeys={selectedKeys}
           onSelectionChange={handleSelectionChange as (keys: 'all' | Set<Key>) => void}
           className={listBoxStyle}
-          items={sections}>
+          items={sections}
+          renderEmptyState={() => (
+            <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
+              <NoSearchResults />
+              <Heading>No results</Heading>
+              <Content>Try a different search term.</Content>
+            </IllustratedMessage>
+          )}>
           {section => (
             <ListBoxSection id={section.id} className={sectionStyle}>
               <Header className={headerStyle}>
@@ -299,91 +279,92 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
         </ListBox>
       </div>
 
-      <div className={style({overflowX: 'auto', overflowY: 'visible', width: 'full', flexShrink: 0, padding: 8})}>
-        <ToggleButtonGroup
-          aria-label="Element type"
-          density="compact"
-          selectionMode="single"
-          disallowEmptySelection
-          selectedKeys={[selectedElement]}
-          onSelectionChange={handleElementChange as (keys: Set<Key>) => void}>
-          {htmlElements.map(option => (
-            <ToggleButton key={option.id} id={option.id}>
-              <Text>{option.name}</Text>
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </div>
-      
-      <div
-        className={style({
-          backgroundColor: 'layer-1',
-          borderRadius: 'lg',
-          padding: 16,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-          borderWidth: 1,
-          borderColor: 'gray-200',
-          borderStyle: 'solid',
-          flexShrink: 0
-        })}>
-        <div
-          className={style({
-            backgroundColor: 'layer-2',
-            borderRadius: 'default',
-            padding: 16,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: 80
-          })}>
-          <FieldInputContext.Provider value={null}>
-            <TextField aria-label="Editable preview text" value={previewText} onChange={setPreviewText} className={style({marginY: 'auto'})}>
-              <Input className={previewInputStyle} />
-            </TextField>
-          </FieldInputContext.Provider>
+      <div className={style({flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8, paddingX: 8, paddingBottom: 8})}>
+        <div className={style({overflowX: 'auto', overflowY: 'visible', width: 'full', paddingY: 8})}>
+          <ToggleButtonGroup
+            aria-label="Element type"
+            density="compact"
+            selectionMode="single"
+            disallowEmptySelection
+            selectedKeys={[selectedElement]}
+            onSelectionChange={handleElementChange as (keys: Set<Key>) => void}>
+            {htmlElements.map(option => (
+              <ToggleButton key={option.id} id={option.id}>
+                <Text>{option.name}</Text>
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
         </div>
         
-        <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
+        <div
+          className={style({
+            backgroundColor: 'layer-1',
+            borderRadius: 'lg',
+            padding: 16,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16,
+            borderWidth: 1,
+            borderColor: 'gray-200',
+            borderStyle: 'solid'
+          })}>
           <div
             className={style({
+              backgroundColor: 'layer-2',
+              borderRadius: 'default',
+              padding: 16,
               display: 'flex',
               alignItems: 'center',
-              gap: 8,
-              backgroundColor: 'gray-100',
-              borderRadius: 'default',
-              paddingX: 12,
-              paddingY: 8,
-              font: 'code-sm'
+              justifyContent: 'center',
+              minHeight: 80
             })}>
-            <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
-              &lt;
-              <span className={syntaxStyles.tag}>{selectedElementTag}</span>
-              {' '}
-              <span className={syntaxStyles.attribute}>className</span>
-              =
-              {'{'}
-              <span className={syntaxStyles.tag}>style</span>
-              {'('}
-              {'{'}
-              <span className={syntaxStyles.attribute}>font</span>
-              :
-              {' '}
-              <span className={syntaxStyles.string}>'{selectedFont}'</span>
-              {'}'}
-              {')'}
-              {'}'}
-              &gt;
-              {previewText}
-              &lt;/
-              <span className={syntaxStyles.tag}>{selectedElementTag}</span>
-              &gt;
-            </code>
-            <CopyButton text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
+            <FieldInputContext.Provider value={null}>
+              <TextField aria-label="Editable preview text" value={previewText} onChange={setPreviewText} className={style({marginY: 'auto'})}>
+                <Input className={previewInputStyle} />
+              </TextField>
+            </FieldInputContext.Provider>
+          </div>
+          
+          <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
+            <div
+              className={style({
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                backgroundColor: 'gray-100',
+                borderRadius: 'default',
+                paddingX: 12,
+                paddingY: 8,
+                font: 'code-sm'
+              })}>
+              <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
+                &lt;
+                <span className={syntaxStyles.tag}>{selectedElementTag}</span>
+                {' '}
+                <span className={syntaxStyles.attribute}>className</span>
+                =
+                {'{'}
+                <span className={syntaxStyles.tag}>style</span>
+                {'('}
+                {'{'}
+                <span className={syntaxStyles.attribute}>font</span>
+                :
+                {' '}
+                <span className={syntaxStyles.string}>'{selectedFont}'</span>
+                {'}'}
+                {')'}
+                {'}'}
+                &gt;
+                {previewText}
+                &lt;/
+                <span className={syntaxStyles.tag}>{selectedElementTag}</span>
+                &gt;
+              </code>
+              <CopyButton text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
