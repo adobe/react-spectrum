@@ -81,7 +81,7 @@
     height: var(--spacing-4);
   }
 
-  &:where([data-hovered], [data-pressed]) {
+  &:where([data-hovered], [data-pressed], [data-expanded]) {
     background: var(--tint-300);
     color: var(--tint-1200);
   }
@@ -91,7 +91,8 @@
     color: HighlightText;
   }
 
-  &[data-pressed] {
+  &[data-pressed],
+  &[data-expanded] {
     scale: 0.9;
   }
 

@@ -11,7 +11,7 @@
     width: 100%;
     min-width: 0;
 
-    &[data-expanded] {
+    &[data-pressed] {
       scale: 1;
     }
   }
