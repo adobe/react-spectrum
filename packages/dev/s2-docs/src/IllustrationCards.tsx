@@ -44,14 +44,19 @@ export function IllustrationCards() {
 
   let {contains} = useFilter({sensitivity: 'base'});
   let filter = useCallback((textValue: string, inputValue: string) => {
+    const trimmedInput = inputValue.trim();
+    // If input is empty after trimming, show all items
+    if (!trimmedInput) {
+      return true;
+    }
     // Check if input matches an alias that maps to this illustration name
     for (const alias of Object.keys(illustrationAliases)) {
-      if (contains(alias, inputValue) && illustrationAliases[alias].includes(textValue)) {
+      if (contains(alias, trimmedInput) && illustrationAliases[alias].includes(textValue)) {
         return true;
       }
     }
     // Also compare for substrings in the illustration's actual name
-    return textValue != null && contains(textValue, inputValue);
+    return textValue != null && contains(textValue, trimmedInput);
   }, [contains]);
 
   return (

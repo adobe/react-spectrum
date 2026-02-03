@@ -19,14 +19,19 @@ export const iconList = Object.keys(icons).map(name => ({id: name.replace(/^S2_I
 export function useIconFilter() {
   let {contains} = useFilter({sensitivity: 'base'});
   return useCallback((textValue: string, inputValue: string) => {
+    const trimmedInput = inputValue.trim();
+    // If input is empty after trimming, show all items
+    if (!trimmedInput) {
+      return true;
+    }
     // Check for alias matches
     for (const alias of Object.keys(iconAliases)) {
-      if (contains(alias, inputValue) && iconAliases[alias].includes(textValue)) {
+      if (contains(alias, trimmedInput) && iconAliases[alias].includes(textValue)) {
         return true;
       }
     }
     // Also compare for substrings in the icon's actual name
-    return textValue != null && contains(textValue, inputValue);
+    return textValue != null && contains(textValue, trimmedInput);
   }, [contains]);
 }
 
