@@ -64,8 +64,14 @@ import {Step, Counter} from './Step';
         <Provider
           background="base"
           router={{
-            navigate: (href, opts) => router.navigate({...href, ...opts}),
-            useHref: href => router.buildLocation(href).href
+            navigate: (href, opts) => {
+              if (typeof href === "string") return;
+              return router.navigate({ ...href, ...opts });
+            },
+            useHref: (href) => {
+              if (typeof href === "string") return href;
+              return router.buildLocation(href).href;
+            }
           }}>
           {/*- end highlight -*/}
           {/* Your app here... */}

@@ -1,13 +1,87 @@
 'use client';
 
 import {CSSProperties, useId, useRef, useState} from 'react';
+import {Button} from 'react-aria-components';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
+import {Divider, pressScale} from '@react-spectrum/s2';
 import SearchMenuTrigger, {preloadSearchMenu} from '@react-spectrum/s2-docs/src/SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
+import {useSettings} from '@react-spectrum/s2-docs/src/SettingsContext';
 import { HeaderLink, Link } from '@react-spectrum/s2-docs/src/Link';
-import { space, style } from '@react-spectrum/s2/style' with {type: 'macro'};
+import { focusRing, iconStyle, space, style } from '@react-spectrum/s2/style' with {type: 'macro'};
 import { getBaseUrl } from '@react-spectrum/s2-docs/src/pageUtils';
 import GithubLogo from '@react-spectrum/s2-docs/src/icons/GithubLogo';
 import { NpmLogo } from '@react-spectrum/s2-docs/src/icons/NpmLogo';
+
+const colorSchemeToggleStyles = style({
+  ...focusRing(),
+  outlineColor: 'white',
+  font: 'ui',
+  color: {
+    default: 'white'
+  },
+  textDecoration: 'none',
+  transition: 'default',
+  backgroundColor: {
+    default: 'transparent',
+    isHovered: 'white/15',
+    isFocusVisible: 'white/15'
+  },
+  size: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 'lg',
+  borderWidth: 0
+});
+
+const whiteIconStyle = iconStyle({color: 'white'});
+
+const iconContainerStyles = style({
+  position: 'relative',
+  size: 20
+});
+
+function ColorSchemeToggle() {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
+  let isOverriding = colorScheme !== systemColorScheme;
+  let label = isOverriding
+    ? `Using ${colorScheme} mode (press to follow system)`
+    : `Using system ${systemColorScheme} mode (press to switch)`;
+  let ref = useRef<HTMLButtonElement>(null);
+  let isDark = colorScheme === 'dark';
+
+  return (
+    <Button
+      ref={ref}
+      aria-label={label}
+      onPress={toggleColorScheme}
+      className={renderProps => colorSchemeToggleStyles(renderProps)}
+      style={pressScale(ref)}>
+      <span className={iconContainerStyles}>
+        <Contrast
+          styles={whiteIconStyle}
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+        <Lighten
+          styles={whiteIconStyle}
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+      </span>
+    </Button>
+  );
+}
 
 export default function HomeHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -150,6 +224,8 @@ export default function HomeHeader() {
         <HeaderLink staticColor="white" href={getBaseUrl('react-aria') + '/blog/'} rel="noopener noreferrer" styles={style({display: {default: 'none', sm: 'flex'}})}>Blog</HeaderLink>
         <HeaderLink staticColor="white" aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer"><GithubLogo /></HeaderLink>
         <HeaderLink staticColor="white" aria-label="npm" href="https://npmjs.com/@react-spectrum/s2" target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+        <Divider orientation="vertical" staticColor="white" UNSAFE_style={{marginBlock: 4}} />
+        <ColorSchemeToggle />
       </div>
     </nav>
   );

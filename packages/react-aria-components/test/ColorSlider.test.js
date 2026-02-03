@@ -59,6 +59,20 @@ describe('ColorSlider', () => {
     expect(slider.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = renderSlider(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <output {...props} data-custom="true" />}
+    );
+    let group = getByRole('group').parentElement;
+    expect(group).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-ColorThumb')).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-custom', 'true');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByTestId} = render(
       <ColorSlider orientation="vertical" defaultValue="rgb(255, 0, 0)" channel="red">

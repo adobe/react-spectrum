@@ -338,7 +338,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         // outside the original pressed element.
         // (JSDOM does not support this)
         if ('releasePointerCapture' in e.target) {
-          e.target.releasePointerCapture(e.pointerId);
+          if ('hasPointerCapture' in e.target) {
+            if (e.target.hasPointerCapture(e.pointerId)) {
+              e.target.releasePointerCapture(e.pointerId);
+            }
+          } else {
+            e.target.releasePointerCapture(e.pointerId);
+          }
         }
       },
       onContextMenu(e) {

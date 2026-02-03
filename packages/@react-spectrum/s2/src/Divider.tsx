@@ -38,7 +38,7 @@ interface DividerSpectrumProps {
 }
 
 // TODO: allow overriding height (only when orientation is vertical)??
-export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'render' | 'elementType' | keyof GlobalDOMAttributes>, StyleProps {}
 
 export const DividerContext = createContext<ContextValue<Partial<DividerProps>, DOMRefValue>>(null);
 

@@ -3,6 +3,7 @@ import React from 'react';
 import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
+  GridListHeader as AriaGridListHeader,
   Button,
   composeRenderProps,
   GridListItemProps,
@@ -11,6 +12,8 @@ import {
 import { tv } from 'tailwind-variants';
 import { Checkbox } from './Checkbox';
 import { composeTailwindRenderProps, focusRing } from './utils';
+import {HTMLAttributes} from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>
@@ -52,4 +55,10 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
       ))}
     </AriaGridListItem>
   );
+}
+
+export function GridListHeader({children, ...props}: HTMLAttributes<HTMLElement>) {
+  return (
+    <AriaGridListHeader {...props} className={twMerge("text-sm font-semibold text-neutral-500 dark:text-neutral-300 px-4 py-1 -mt-px z-10 bg-neutral-100/60 dark:bg-neutral-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-neutral-100 border-y border-y-neutral-200 dark:border-y-neutral-700", props.className)}>{children}</AriaGridListHeader>
+  )
 }

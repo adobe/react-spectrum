@@ -3,6 +3,7 @@ import {Home} from './home/Home';
 import {Provider} from '@react-spectrum/s2';
 import rspFavicon from 'url:../../assets/rsp-favicon.svg';
 import {RouterWrapperServer} from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
+import {SettingsContextProvider} from '../../src/SettingsProvider';
 import {getBaseUrl} from '../../src/pageUtils';
 
 export const section = 'Overview';
@@ -49,6 +50,8 @@ export const hideFromSearch = true;
           }
         )}} />
     </head>
-    <Home currentPage={props.currentPage} />
+    <SettingsContextProvider>
+      <Home currentPage={props.currentPage} />
+    </SettingsContextProvider>
   </Provider>
 </RouterWrapperServer>

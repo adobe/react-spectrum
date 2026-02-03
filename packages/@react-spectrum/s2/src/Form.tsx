@@ -30,7 +30,7 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
   isEmphasized?: boolean
 }
 
-export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
+export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'render' | 'children' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 

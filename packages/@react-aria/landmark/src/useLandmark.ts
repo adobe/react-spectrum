@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {nodeContains, useLayoutEffect} from '@react-aria/utils';
 import {useCallback, useEffect, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export type AriaLandmarkRole = 'main' | 'region' | 'search' | 'navigation' | 'form' | 'banner' | 'contentinfo' | 'complementary';
@@ -325,7 +325,7 @@ class LandmarkManager implements LandmarkManagerApi {
 
   private focusMain() {
     let main = this.getLandmarkByRole('main');
-    if (main && main.ref.current && document.contains(main.ref.current)) {
+    if (main && main.ref.current && nodeContains(document, main.ref.current)) {
       this.focusLandmark(main.ref.current, 'forward');
       return true;
     }
@@ -345,14 +345,14 @@ class LandmarkManager implements LandmarkManagerApi {
     // If something was previously focused in the next landmark, then return focus to it
     if (nextLandmark.lastFocused) {
       let lastFocused = nextLandmark.lastFocused;
-      if (document.body.contains(lastFocused)) {
+      if (nodeContains(document.body, lastFocused)) {
         lastFocused.focus();
         return true;
       }
     }
 
     // Otherwise, focus the landmark itself
-    if (nextLandmark.ref.current && document.contains(nextLandmark.ref.current)) {
+    if (nextLandmark.ref.current && nodeContains(document, nextLandmark.ref.current)) {
       this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
       return true;
     }
