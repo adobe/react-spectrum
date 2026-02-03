@@ -36,7 +36,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   // Forward messages from content script to DevTools
-  if (message.action === 'stylemacro-update-macros' || message.action === 'stylemacro-class-changed') {
+  if (message.action === 'stylemacro-class-changed') {
     console.log(`[Background] Forwarding ${message.action} from content script to DevTools, tabId: ${tabId}`);
     const devtoolsPort = devtoolsConnections.get(tabId);
     if (devtoolsPort) {

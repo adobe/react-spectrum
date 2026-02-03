@@ -223,7 +223,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // We also check if this is globalThis, which happens in non-strict mode bundles.
     // Also allow style to be called as a normal function in tests.
     // @ts-ignore
-     
+
     if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
       throw new Error('The style macro must be imported with {type: "macro"}.');
     }
@@ -407,8 +407,34 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (process.env.NODE_ENV !== 'production') {
       js += `let targetRules = rules + ${JSON.stringify(loc)};\n`;
       js += 'let hash = 5381;for (let i = 0; i < targetRules.length; i++) { hash = ((hash << 5) + hash) + targetRules.charCodeAt(i) >>> 0; }\n';
-      js += 'rules += " -macro-dynamic-" + hash.toString(36);\n';
-      js += `typeof window !== 'undefined' && window?.postMessage?.({action: 'stylemacro-update-macros', hash: hash.toString(36), loc: ${JSON.stringify(loc)}, style: currentRules}, "*");\n`;
+      js += 'let hashStr = hash.toString(36);\n';
+      js += 'rules += " -macro-dynamic-" + hashStr;\n';
+      js += 'if (typeof window !== "undefined") {\n';
+      js += '  let styleTag = document.getElementById("__style-macro-data__");\n';
+      js += '  if (!styleTag) {\n';
+      js += '    styleTag = document.createElement("style");\n';
+      js += '    styleTag.id = "__style-macro-data__";\n';
+      js += '    document.head.appendChild(styleTag);\n';
+      js += '  }\n';
+      js += '  let sheet = styleTag.sheet;\n';
+      js += '  if (sheet) {\n';
+      js += '    let ruleIndex = -1;\n';
+      js += '    for (let i = 0; i < sheet.cssRules.length; i++) {\n';
+      js += '      if (sheet.cssRules[i].selectorText === ".-macro-dynamic-" + hashStr) {\n';
+      js += '        ruleIndex = i;\n';
+      js += '        break;\n';
+      js += '      }\n';
+      js += '    }\n';
+      js += `    let macroMetadata = {style: currentRules, loc: ${JSON.stringify(loc)}};\n`;
+      js += '    let cssRule = ".-macro-dynamic-" + hashStr + " { --macro-data-" + hashStr + ": " + JSON.stringify(macroMetadata) + "; }";\n';
+      js += '    if (ruleIndex >= 0) {\n';
+      js += '      sheet.deleteRule(ruleIndex);\n';
+      js += '      sheet.insertRule(cssRule, ruleIndex);\n';
+      js += '    } else {\n';
+      js += '      sheet.insertRule(cssRule, sheet.cssRules.length);\n';
+      js += '    }\n';
+      js += '  }\n';
+      js += '}\n';
     }
     js += 'return rules;';
     if (allowedOverrides) {
@@ -868,7 +894,7 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a'): stri
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
-   
+
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
     throw new Error('The raw macro must be imported with {type: "macro"}.');
   }
@@ -898,7 +924,7 @@ export function keyframes(this: MacroContext | void, css: string): string {
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
   // @ts-ignore
-   
+
   if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
     throw new Error('The keyframes macro must be imported with {type: "macro"}.');
   }

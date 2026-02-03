@@ -19,25 +19,7 @@ window.addEventListener('message', function (event) {
   // Only accept messages that we know are ours. Note that this is not foolproof
   // and the page can easily spoof messages if it wants to.
   if (message && typeof message === 'object') {
-    if (message.action === 'stylemacro-update-macros') {
-      debugLog('Forwarding stylemacro-update-macros for hash:', message.hash);
-
-      // if this script is run multiple times on the page, then only handle it once
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-
-      // Forward message directly to background script (which forwards to DevTools)
-      try {
-        chrome.runtime.sendMessage({
-          action: 'stylemacro-update-macros',
-          hash: message.hash,
-          loc: message.loc,
-          style: message.style
-        });
-      } catch (err) {
-        debugLog('Failed to send stylemacro-update-macros message:', err);
-      }
-    } else if (message.action === 'stylemacro-class-changed') {
+    if (message.action === 'stylemacro-class-changed') {
       // Forward class-changed messages from page context to background script
       debugLog('Forwarding stylemacro-class-changed for element:', message.elementId);
 
