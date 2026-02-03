@@ -19,7 +19,7 @@ const itemStyle = style({
   justifyContent: 'center',
   alignItems: 'center',
   gap: 8,
-  padding: 8,
+  paddingY: 8,
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
