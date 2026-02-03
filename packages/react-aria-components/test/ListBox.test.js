@@ -141,6 +141,34 @@ describe('ListBox', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderListbox(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-custom', 'true');
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderListbox(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+    );
+    let listbox = getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-custom', 'true');
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('href');
+      expect(option).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support aria-label on the listbox items', () => {
     let {getAllByRole} = renderListbox({}, {'aria-label': 'test'});
 

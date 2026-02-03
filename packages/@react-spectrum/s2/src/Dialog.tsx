@@ -23,7 +23,7 @@ import {StyleProps} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps {
+export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps {
   /**
    * Whether the Dialog is dismissible.
    */

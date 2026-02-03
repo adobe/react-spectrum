@@ -176,7 +176,6 @@ export function SearchMenu(props: SearchMenuProps) {
                   </div>
 
                   <CloseButton onClose={onClose} />
-
                   <div className={style({overflow: 'auto', flexShrink: 0, paddingBottom: 8})}>
                     <SearchTagGroups
                       sectionTags={sectionTagsForDisplay}

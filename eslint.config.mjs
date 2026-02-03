@@ -502,9 +502,26 @@ export default [{
         }],
     },
 }, {
+    files: [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx",
+    ],
+
+    rules: {
+        "rsp-rules/no-non-shadow-contains": OFF,
+    },
+}, {
     files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
+}, {
+    files: ["packages/dev/style-macro-chrome-plugin/**"],
+    languageOptions: {
+        globals: {
+            ...globals.webextensions,
+            ...globals.browser
+        }
+    }
 }];

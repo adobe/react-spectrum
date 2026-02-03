@@ -40,6 +40,13 @@ describe('Checkbox', () => {
     expect(getByRole('checkbox')).not.toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    let {getByRole} = render(<Checkbox render={props => <label {...props} data-custom="bar" />}>Test</Checkbox>);
+    let checkbox = getByRole('checkbox').closest('label');
+    expect(checkbox).toHaveAttribute('data-custom', 'bar');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <CheckboxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

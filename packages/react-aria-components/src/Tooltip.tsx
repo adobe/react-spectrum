@@ -15,6 +15,7 @@ import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxi
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RenderProps,
   useContextProps,
@@ -167,7 +168,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
   let DOMProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, tooltipProps)}
       ref={props.tooltipRef}
       style={{
@@ -181,6 +182,6 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
-    </div>
+    </dom.div>
   );
 }

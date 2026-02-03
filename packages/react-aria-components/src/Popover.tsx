@@ -15,6 +15,7 @@ import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, 
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -220,7 +221,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
   };
 
   let overlay = (
-    <div
+    <dom.div
       {...mergeProps(filterDOMProps(props, {global: true}), popoverProps)}
       {...renderProps}
       role={isDialog ? 'dialog' : undefined}
@@ -240,7 +241,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, clearContexts
         {children}
       </OverlayArrowContext.Provider>
       <DismissButton onDismiss={state.close} />
-    </div>
+    </dom.div>
   );
 
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.

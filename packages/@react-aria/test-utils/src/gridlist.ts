@@ -13,7 +13,6 @@
 import {act, within} from '@testing-library/react';
 import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {nodeContains} from '@react-aria/utils';
 
 interface GridListToggleRowOpts extends ToggleGridRowOpts {}
 interface GridListRowActionOpts extends GridRowActionOpts {}
@@ -67,13 +66,13 @@ export class GridListTester {
       throw new Error('Option provided is not in the gridlist');
     }
 
-    if (document.activeElement !== this._gridlist && !nodeContains(this._gridlist, document.activeElement)) {
+    if (document.activeElement !== this._gridlist && !this._gridlist.contains(document.activeElement)) {
       act(() => this._gridlist.focus());
     }
 
     if (document.activeElement === this._gridlist) {
       await this.user.keyboard(`${selectionOnNav === 'none' ? `[${altKey}>]` : ''}[ArrowDown]${selectionOnNav === 'none' ? `[/${altKey}]` : ''}`);
-    } else if (nodeContains(this._gridlist, document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');

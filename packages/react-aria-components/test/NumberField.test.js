@@ -70,6 +70,12 @@ describe('NumberField', () => {
     expect(textbox).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = render(<TestNumberField render={props => <div {...props} data-custom="true" />} />);
+    let field = getByRole('textbox').closest('.react-aria-NumberField');
+    expect(field).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support hover state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
     let group = getByRole('group');

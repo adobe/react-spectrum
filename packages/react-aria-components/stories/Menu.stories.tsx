@@ -11,12 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField} from 'react-aria-components';
+import {Button, Header, Heading, Input, Keyboard, Label, Menu, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
 import React, {JSX} from 'react';
 import styles from '../example/index.css';
 import './styles.css';
+import {mergeProps} from 'react-aria';
 
 export default {
   title: 'React Aria Components/Menu',
@@ -422,3 +423,33 @@ export const SubdialogExample: SubmenuExampleStory = {
     }
   }
 };
+
+export const MenuCustomRender: MenuStory = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MenuItemWithCustomElement href="https://google.com">Google</MenuItemWithCustomElement>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+function MenuItemWithCustomElement(props: MenuItemProps) {
+  // NOTE: href still gets passed through the RAC component, not directly to the RouterLink, so that
+  // RAC knows what element type to expect (<a> or <div>). This is necessary because we change the props and
+  // behaviors of the component. However, this means that the href still gets passed through the RouterProvider as well.
+  // If the href is a different type than string (common in some routers), this won't make it through.
+  // Could hack it by passing through a "dummy" href to RAC to force it to be a link, and then pass the real href directly.
+  // Otherwise we'd need another way to set the expected element type.
+  return (
+    <MyMenuItem
+      {...props} 
+      render={domProps => 'href' in domProps ? <RouterLink {...domProps} /> : <div {...domProps} />} />
+  );
+}
+
+function RouterLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  // eslint-disable-next-line jsx-a11y/anchor-has-content
+  return <a {...mergeProps(props, {onClick: e => {e.preventDefault(); console.log('click');}})} />;
+}

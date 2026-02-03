@@ -14,6 +14,7 @@ import {AriaLabelingProps, GlobalDOMAttributes, HoverEvents} from '@react-types/
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -110,8 +111,7 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
       values={[
         [TextContext, {id: textId, slot: 'label'}]
       ]}>
-      {/* eslint-disable-next-line */}
-      <div
+      <dom.div
         {...mergeProps(DOMProps, renderProps, dropProps, hoverProps)}
         slot={props.slot || undefined}
         ref={dropzoneRef}
@@ -139,7 +139,7 @@ export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: 
             ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}
-      </div>
+      </dom.div>
     </Provider>
   );
 });

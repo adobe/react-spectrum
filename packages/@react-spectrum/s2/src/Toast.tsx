@@ -34,7 +34,7 @@ import {useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayTriggerState} from 'react-stately';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
-export interface ToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children' | 'style' | 'className'> {
+export interface ToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children' | 'style' | 'className' | 'render'> {
   /**
    * Placement of the toast container on the page.
    * @default "bottom"

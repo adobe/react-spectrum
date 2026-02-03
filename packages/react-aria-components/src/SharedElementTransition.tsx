@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {dom, RenderProps, useRenderProps} from './utils';
 import {flushSync} from 'react-dom';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useRef, useState} from 'react';
-import {RenderProps, useRenderProps} from './utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useObjectRef} from 'react-aria';
 
@@ -63,7 +63,7 @@ export interface SharedElementProps extends SharedElementPropsBase {
  * An element that animates between its old and new position when moving between parents.
  */
 export const SharedElement = forwardRef(function SharedElement(props: SharedElementProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {name, isVisible = true, children, className, style, ...divProps} = props;
+  let {name, isVisible = true, children, className, style, render, ...divProps} = props;
   let [state, setState] = useState(isVisible ? 'visible' : 'hidden');
   let scopeRef = useContext(SharedElementContext);
   if (!scopeRef) {
@@ -164,6 +164,7 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
     children,
     className,
     style,
+    render,
     values: {
       isEntering: state === 'entering',
       isExiting: state === 'exiting'
@@ -175,7 +176,7 @@ export const SharedElement = forwardRef(function SharedElement(props: SharedElem
   }
 
   return (
-    <div
+    <dom.div
       {...divProps}
       {...renderProps}
       ref={ref}

@@ -161,3 +161,11 @@ export const ButtonPerformance: ButtonStory = {
     }
   }
 };
+
+export const ButtonRender: ButtonStory = {
+  render: (args) => <Button {...args} render={props => <CustomButton {...props} />}>Testing</Button>
+};
+
+function CustomButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button {...props} style={{background: 'red'}} />;
+}

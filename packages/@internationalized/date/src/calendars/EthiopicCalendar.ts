@@ -100,6 +100,14 @@ export class EthiopicCalendar implements Calendar {
     return 365 + getLeapDay(date.year);
   }
 
+  getMaximumMonthsInYear(): number {
+    return 13;
+  }
+
+  getMaximumDaysInMonth(): number {
+    return 30;
+  }
+
   getYearsInEra(date: AnyCalendarDate): number {
     // 9999-12-31 gregorian is 9992-20-02 ethiopic.
     // Round down to 9991 for the last full year.

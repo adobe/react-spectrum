@@ -52,12 +52,12 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'render' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'render' | 'children' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children: ReactNode
 }
