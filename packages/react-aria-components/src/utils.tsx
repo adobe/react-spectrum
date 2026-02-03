@@ -274,9 +274,10 @@ export interface DOMRenderProps<E extends keyof React.JSX.IntrinsicElements, T> 
    * such as router links, animation libraries, and pre-styled components.
    * 
    * Requirements:
-   * - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`).
-   * - Only a single root DOM element can be rendered (no fragments).
-   * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   * 
+   * * You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`).
+   * * Only a single root DOM element can be rendered (no fragments).
+   * * You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
    */
   render?: DOMRenderFunction<E, T>
 }
@@ -294,9 +295,10 @@ export interface PossibleLinkDOMRenderProps<Fallback extends keyof React.JSX.Int
    * Note: You can check if `'href' in props` in order to tell whether to render an `<a>` element.
    * 
    * Requirements:
-   * - You must render the expected element type (e.g. if `<a>` is expected, you cannot render a `<button>`).
-   * - Only a single root DOM element can be rendered (no fragments).
-   * - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
+   * 
+   * * You must render the expected element type (e.g. if `<a>` is expected, you cannot render a `<button>`).
+   * * Only a single root DOM element can be rendered (no fragments).
+   * * You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate.
    */
   render?: (props: DetailedHTMLProps<LinkWithRequiredHref, HTMLAnchorElement> | React.JSX.IntrinsicElements[Fallback], renderProps: T) => ReactElement
 }

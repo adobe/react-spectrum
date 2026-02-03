@@ -29,9 +29,10 @@ export async function buildPageIndex(library: Library): Promise<PageInfo[]> {
     const href = (m[2] || '').trim();
     const description = (m[3] || '').trim() || undefined;
     if (!href || !/\.md$/i.test(href)) {continue;}
-    const key = href.replace(/\.md$/i, '').replace(/\\/g, '/');
-    const name = display || path.basename(key);
-    const filePath = `${baseUrl}/${key}.md`;
+    const hrefWithoutExt = href.replace(/\.md$/i, '').replace(/\\/g, '/');
+    const key = `${library}/${hrefWithoutExt}`;
+    const name = display || path.basename(hrefWithoutExt);
+    const filePath = `${baseUrl}/${hrefWithoutExt}.md`;
     const info: PageInfo = {key, name, description, filePath, sections: []};
     pages.push(info);
     pageCache.set(info.key, info);
