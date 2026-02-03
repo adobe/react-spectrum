@@ -47,13 +47,6 @@ const swatchStyle = style({
   forcedColorAdjust: 'none'
 });
 
-const listBoxStyle = style({
-  width: 'full',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 24
-});
-
 const sectionStyle = style({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
@@ -254,7 +247,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
   }
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+    <>
       <InfoMessage>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</InfoMessage>
       <ListBox
         aria-label="Colors"
@@ -268,7 +261,15 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           }
         }}
         layout="grid"
-        className={listBoxStyle}
+        className={style({
+          width: 'full',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+          flexGrow: 1,
+          overflow: 'auto',
+          scrollPaddingY: 4
+        })}
         dependencies={[copiedId, exactMatches, closestMatches]}
         items={sections}>
         {section => (
@@ -286,7 +287,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           </ListBoxSection>
         )}
       </ListBox>
-    </div>
+    </>
   );
 }
 
