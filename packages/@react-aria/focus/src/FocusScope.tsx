@@ -15,6 +15,7 @@ import {
   getActiveElement,
   getEventTarget,
   getOwnerDocument,
+  getOwnerWindow,
   isAndroid,
   isChrome,
   isFocusable,
