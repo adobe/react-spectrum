@@ -170,7 +170,8 @@ const defaultPreviewInputStyle = style({
   backgroundColor: 'transparent',
   borderStyle: 'hidden',
   borderRadius: 'lg',
-  textAlign: 'center'
+  textAlign: 'center',
+  width: 'full'
 });
 
 interface TypographySearchViewProps {
@@ -319,7 +320,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
               minHeight: 80
             })}>
             <FieldInputContext.Provider value={null}>
-              <TextField aria-label="Editable preview text" value={previewText} onChange={setPreviewText} className={style({marginY: 'auto'})}>
+              <TextField aria-label="Editable preview text" value={previewText} onChange={setPreviewText} className={style({width: 'full'})}>
                 <Input className={previewInputStyle} />
               </TextField>
             </FieldInputContext.Provider>
