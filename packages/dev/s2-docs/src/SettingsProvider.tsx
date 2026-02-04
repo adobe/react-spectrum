@@ -2,11 +2,13 @@
 
 import {type ColorScheme, SettingsContext} from './SettingsContext';
 import {Provider} from '@react-spectrum/s2';
-import React, {ReactNode, useCallback, useSyncExternalStore} from 'react';
+import React, {JSX, ReactNode, useCallback, useSyncExternalStore} from 'react';
 import {useLocalStorage} from './useLocalStorage';
 
 interface SettingsProviderProps {
-  children: ReactNode
+  children: ReactNode,
+  elementType?: keyof JSX.IntrinsicElements,
+  style?: React.CSSProperties
 }
 
 function subscribeToColorScheme(callback: () => void) {
@@ -53,7 +55,7 @@ export function useSettingsState() {
   };
 }
 
-export function SettingsContextProvider({children}: SettingsProviderProps) {
+export function SettingsContextProvider({children, elementType, style}: SettingsProviderProps) {
   let {colorScheme, toggleColorScheme, systemColorScheme, providerColorScheme} = useSettingsState();
 
   return (
@@ -63,7 +65,7 @@ export function SettingsContextProvider({children}: SettingsProviderProps) {
         toggleColorScheme,
         systemColorScheme
       }}>
-      <Provider colorScheme={providerColorScheme}>
+      <Provider colorScheme={providerColorScheme} elementType={elementType} UNSAFE_style={style}>
         {children}
       </Provider>
     </SettingsContext.Provider>
