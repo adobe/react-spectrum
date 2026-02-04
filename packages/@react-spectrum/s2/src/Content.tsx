@@ -40,7 +40,7 @@ interface HeadingProps extends Omit<ContentProps, 'children'> {
 function useWarnIfNoStyles(componentName: string, props: {styles?: string, UNSAFE_className?: string, isHidden?: boolean}) {
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (!hasWarned.current && !props.isHidden && !props.styles && !props.UNSAFE_className) {
+    if (process.env.NODE_ENV !== 'production' && !hasWarned.current && !props.isHidden && !props.styles && !props.UNSAFE_className) {
       console.warn(
         `${componentName} is being used outside of a component that provides automatic styling. ` +
         'Consider using a standard HTML element instead (e.g., <h1>, <div>, <p>, etc.), ' +
