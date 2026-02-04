@@ -164,7 +164,7 @@ const swapRow = style({
 export function Home({currentPage}: {currentPage: Page}) {
   let headingId = useId();
   return (
-    <div
+    <body
       className={style({
         margin: 0
       })}
@@ -474,7 +474,7 @@ const buttonStyle = style({
           <li><Link isQuiet staticColor="white" href="//www.adobe.com/privacy/ca-rights.html" target="_blank">Do not sell my personal information</Link></li>
         </ul>
       </footer>
-    </div>
+    </body>
   );
 }
 

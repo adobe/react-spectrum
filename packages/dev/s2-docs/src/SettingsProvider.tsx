@@ -8,7 +8,8 @@ import {useLocalStorage} from './useLocalStorage';
 interface SettingsProviderProps {
   children: ReactNode,
   elementType?: keyof JSX.IntrinsicElements,
-  style?: React.CSSProperties
+  style?: React.CSSProperties,
+  locale?: string
 }
 
 function subscribeToColorScheme(callback: () => void) {
@@ -72,7 +73,7 @@ export function SettingsContextProvider({children, elementType, style}: Settings
   );
 }
 
-export function SettingsProvider({children}: SettingsProviderProps) {
+export function SettingsProvider({children, locale, elementType}: SettingsProviderProps) {
   let {colorScheme, toggleColorScheme, systemColorScheme, providerColorScheme} = useSettingsState();
 
   return (
@@ -82,7 +83,7 @@ export function SettingsProvider({children}: SettingsProviderProps) {
         toggleColorScheme,
         systemColorScheme
       }}>
-      <Provider colorScheme={providerColorScheme} background="layer-1">
+      <Provider colorScheme={providerColorScheme} background="layer-1" locale={locale} elementType={elementType}>
         {children}
       </Provider>
     </SettingsContext.Provider>
