@@ -17,33 +17,18 @@ export const section = 'Releases';
 export const tags = ['release', 'React Aria'];
 export const date = 'February 4, 2026';
 export const title = 'v1.15.0';
-export const description = 'New year, new release, and the shine hasn’t worn off from our new documentation website! This month’s release includes expanded customization options via a new render prop, support for inputting incomplete or invalid dates in datefields, and much more!'
+export const description = 'New year, new release, and the shine hasn’t worn off from our new documentation website! This month’s release includes expanded customization options via a new render prop, greater input flexibility in our datefields, and much more!'
 export const isSubpage = true;
 
 # v1.15.0
 
-###  General Changes
-  * Add ESM support for `@internationalized/string-compiler` - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/9465)
+New year, new release, and the shine hasn’t worn off from our new documentation website: we’ve already added new [Agent Skills](../ai#agent-skills) and improved the search experience 😍. This month’s release includes a big update to our compatibility, with DOM customization options via a [new `render` prop](../customization#dom-elements) for React Aria Components. This feature will help with cases such as rendering Router Link components, or for use with animation libraries. We have also fixed our most upvoted issue: we now constrain dates on blur instead of as you type, allowing more input flexibility and greatly improving the user experience of our date fields.
+
+Thank you to all of our contributors for your bug fixes, features, and feedback. We look forward to another great year ahead! 
+
+### General Changes
   * Add `render` prop to allow customizing DOM element - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9499), [PR](https://github.com/adobe/react-spectrum/pull/9564)
-  * Add `useFilter` support for `@typescript-eslint/unbound-method` - [@quisido](https://github.com/quisido) - [PR](https://github.com/adobe/react-spectrum/pull/9454)
-  * Add `key` to `PressEvent` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9491)
-  * Add focus event types to collection items - [@damianstasik](https://github.com/damianstasik) - [PR](https://github.com/adobe/react-spectrum/pull/8231)
-  * Add Portuguese to supported locales in docs - [@armandabric](https://github.com/armandabric) - [PR]https://github.com/adobe/react-spectrum/pull/9513
-  * Add subheadings as keywords for searching in docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9492)
-  * Add Node.js prerequisite in MCP docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9474)
   * Add Agent skills - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9515)
-  * Fix `useViewportSize` to update after hydration - [@ali-idrizi](https://github.com/ali-idrizi) - [PR](https://github.com/adobe/react-spectrum/pull/8966)
-  * Fix `useFocusRing` performance - [@sfc-gh-tkojima](https://github.com/sfc-gh-tkojima) - [PR](https://github.com/adobe/react-spectrum/pull/9456)
-  * Fix `ts-config` for StackBlitz examples - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9526)
-  * Fix shadcn registry docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9401)
-  * Fix import in locale plugin doc to match plugin referenced in bundler config object - [@leiske](https://github.com/leiske) - [PR](https://github.com/adobe/react-spectrum/pull/9388)
-  * Fix link to Cursor MCP docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9588)
-  * Fix search menu styles in docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9575)
-  * Use ICB size as fallback value for visual viewport - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9384)
-  * Use `typeof globalThis` to reference global object - [@quisido](https://github.com/quisido) - [PR](https://github.com/adobe/react-spectrum/pull/9402)
-  * Check `hasPointerCapture` before `releasePointerCapture` in `usePress` - [@plesiecki](https://github.com/plesiecki) - [PR](https://github.com/adobe/react-spectrum/pull/9123)
-  * Store scroll position when virtualized - [@BRobin55](https://github.com/BRobin55) - [PR](https://github.com/adobe/react-spectrum/pull/8767), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9582)
-  * Update arrays for multiple select values to be readonly - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9221)
 ### Button
   * Support passing function via `formAction` prop - [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/9501)
 ### CoachMark
@@ -59,30 +44,42 @@ export const isSubpage = true;
   * Support entering invalid dates and constrain on blur - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/9510)
   * Fix date conversion format for native date input - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9076)
   * Fix Modal from closing when dismissing DateRangePicker via outside click - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9505)
+### Documentation
+  * Add subheadings as keywords for searching in docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9492)
+  * Fix `ts-config` for StackBlitz examples - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9526)
+  * Add Portuguese to supported locales in docs - [@armandabric](https://github.com/armandabric) - [PR]https://github.com/adobe/react-spectrum/pull/9513
+  * Fix import in locale plugin doc to match plugin referenced in bundler config object - [@leiske](https://github.com/leiske) - [PR](https://github.com/adobe/react-spectrum/pull/9388)
 ### Drag and Drop
   * Dispatch `focusing` on cancel to fix keyboard navigation when there are no valid drop targets - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9502)
 ### GridList
   * Support `disallowTypeAhead` behavior - [@rilescode](https://github.com/rilescode) - [PR](https://github.com/adobe/react-spectrum/pull/9124)
   * Add section docs [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9447), [PR](https://github.com/adobe/react-spectrum/pull/9475), [PR](https://github.com/adobe/react-spectrum/pull/9528)
+### Internationalization
+  * Add ESM support for `@internationalized/string-compiler` - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/9465)
 ### Link
   * Add `id` prop to Link component - [@AryanBagade](https://github.com/AryanBagade) - [PR](https://github.com/adobe/react-spectrum/pull/9349)
 ### ListBox
   * Fix crash when dragging into an empty ListBoxc containing a ListBoxLoadMoreItem - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9520)
 ### Menu
   * Add `shouldCloseOnSelect` - [@sfc-gh-alisowski](https://github.com/sfc-gh-alisowski) - [PR](https://github.com/adobe/react-spectrum/pull/8315)
+  * Add focus event types to collection items - [@damianstasik](https://github.com/damianstasik) - [PR](https://github.com/adobe/react-spectrum/pull/8231)
 ### NumberField
   * Fix increment/decrementing buttons via Android TalkBack - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9416)
 ### Overlays
   * Fix hiding elements inside of opened Modal overlay - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/9365)
+  * Fix `useViewportSize` to update after hydration - [@ali-idrizi](https://github.com/ali-idrizi) - [PR](https://github.com/adobe/react-spectrum/pull/8966)
+  * Use ICB size as fallback value for visual viewport - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9384)
 ### RadioGroup
   * Exclude null type from `validate` value - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9240)
 ### RangeSlider
   * Allow dragging regardless of `usePreventScroll` on iOS - [@mattvague](https://github.com/mattvague) - [PR](https://github.com/adobe/react-spectrum/pull/9506)
 ### Select
   * Fix `HiddenSelect` initial form value - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/9466)
+  * Update arrays for multiple select values to be readonly - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9221)
 ### Table
   * Add cell column index in render props - [@sebald](https://github.com/sebald) - [PR](https://github.com/adobe/react-spectrum/pull/9459)
   * Change `onAction` to `onRowAction` in docs - [@yihuiliao](https://github.com/yihuiliao) - [PR]https://github.com/adobe/react-spectrum/pull/9378
+  * Restore scroll position when non-virtualized - [@BRobin55](https://github.com/BRobin55) - [PR](https://github.com/adobe/react-spectrum/pull/8767), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9582)
 ### Tabs
   * Exclude `disabledKeys` prop from TabPanel - [@lixiaoyan](https://github.com/lixiaoyan) - [PR](https://github.com/adobe/react-spectrum/pull/9238)
   * Filter DOM props on TabPanels - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9432), [PR](https://github.com/adobe/react-spectrum/pull/9562)
@@ -90,6 +87,15 @@ export const isSubpage = true;
   * Fix hover state from showing when disabled - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/9449)
 ### Tree
   * Focus first available item when the previously focused item becomes disabled - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/9531)
+### useFilter
+  * Add support for `@typescript-eslint/unbound-method` - [@quisido](https://github.com/quisido) - [PR](https://github.com/adobe/react-spectrum/pull/9454)
+### useFocusRing
+  * Improve performance - [@sfc-gh-tkojima](https://github.com/sfc-gh-tkojima) - [PR](https://github.com/adobe/react-spectrum/pull/9456)
+### usePress
+  * Add `key` to `PressEvent` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/9491)
+  * Check `hasPointerCapture` before `releasePointerCapture` in `usePress` - [@plesiecki](https://github.com/plesiecki) - [PR](https://github.com/adobe/react-spectrum/pull/9123)
+### Utilities
+  * Use `typeof globalThis` to reference global object - [@quisido](https://github.com/quisido) - [PR](https://github.com/adobe/react-spectrum/pull/9402)
 ### Virtualizer
   * Add warning to users to set width and height if using Virtualizer - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/9492)
   
