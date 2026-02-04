@@ -711,6 +711,7 @@ describe('ComboBox', () => {
   });
 
   it('should support multi-select with custom value', async () => {
+    // allowsCustomValue doesn't really make sense to use with multi-selection, but test it anyway.
     let {container} = render(<TestComboBox selectionMode="multiple" allowsCustomValue />);
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
 
