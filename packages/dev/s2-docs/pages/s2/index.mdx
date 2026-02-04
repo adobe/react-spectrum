@@ -13,7 +13,7 @@ export const omitFromNav = true;
 export const hideFromSearch = true;
 
 <RouterWrapperServer currentPage={props.currentPage}>
-  <Provider elementType="html" locale="en">
+  <SettingsContextProvider elementType="html" locale="en">
     <head>
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,8 +50,6 @@ export const hideFromSearch = true;
           }
         )}} />
     </head>
-    <SettingsContextProvider elementType="body" style={{margin: '0px'}}>
-      <Home currentPage={props.currentPage} />
-    </SettingsContextProvider>
-  </Provider>
+    <Home currentPage={props.currentPage} />
+  </SettingsContextProvider>
 </RouterWrapperServer>
