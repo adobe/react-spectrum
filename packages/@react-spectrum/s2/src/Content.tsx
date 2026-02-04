@@ -11,7 +11,7 @@
  */
 
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {inertValue} from '@react-aria/utils';
 import {StyleString} from '../style/types';
@@ -37,11 +37,26 @@ interface HeadingProps extends Omit<ContentProps, 'children'> {
   level?: number
 }
 
+function useWarnIfNoStyles(componentName: string, props: {styles?: string, UNSAFE_className?: string, isHidden?: boolean}) {
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (!hasWarned.current && !props.isHidden && !props.styles && !props.UNSAFE_className) {
+      console.warn(
+        `${componentName} is being used outside of a component that provides automatic styling. ` +
+        'Consider using a standard HTML element instead (e.g., <h1>, <div>, <p>, etc.), ' +
+        'and use the \'styles\' prop from the style macro to provide custom styles: https://react-spectrum.adobe.com/styling'
+      );
+      hasWarned.current = true;
+    }
+  }, [componentName, props.styles, props.UNSAFE_className, props.isHidden]);
+}
+
 export const HeadingContext = createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
 
 export const Heading = forwardRef(// Wrapper around RAC Heading to unmount when hidden.
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, HeadingContext);
+  useWarnIfNoStyles('Heading', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -62,6 +77,7 @@ export const HeaderContext = createContext<ContextValue<Partial<ContentProps>, D
 
 export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, HeaderContext);
+  useWarnIfNoStyles('Header', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -82,6 +98,7 @@ export const ContentContext = createContext<ContextValue<Partial<ContentProps>, 
 
 export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ContentContext);
+  useWarnIfNoStyles('Content', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -101,6 +118,7 @@ export const TextContext = createContext<ContextValue<Partial<ContentProps>, DOM
 
 export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
+  useWarnIfNoStyles('Text', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, children, ...otherProps} = props;
   let racContext = useContext(RACTextContext);
@@ -135,6 +153,7 @@ export const KeyboardContext = createContext<ContextValue<Partial<ContentProps>,
 
 export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, KeyboardContext);
+  useWarnIfNoStyles('Keyboard', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -154,6 +173,7 @@ export const FooterContext = createContext<ContextValue<Partial<ContentProps>, D
 
 export const Footer = forwardRef(function Footer(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, FooterContext);
+  useWarnIfNoStyles('Footer', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
