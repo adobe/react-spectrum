@@ -8,7 +8,6 @@ import {useLocalStorage} from './useLocalStorage';
 interface SettingsProviderProps {
   children: ReactNode,
   elementType?: keyof JSX.IntrinsicElements,
-  style?: React.CSSProperties,
   locale?: string
 }
 
@@ -56,7 +55,7 @@ export function useSettingsState() {
   };
 }
 
-export function SettingsContextProvider({children, elementType, style}: SettingsProviderProps) {
+export function SettingsContextProvider({children, elementType, locale}: SettingsProviderProps) {
   let {colorScheme, toggleColorScheme, systemColorScheme, providerColorScheme} = useSettingsState();
 
   return (
@@ -66,14 +65,14 @@ export function SettingsContextProvider({children, elementType, style}: Settings
         toggleColorScheme,
         systemColorScheme
       }}>
-      <Provider colorScheme={providerColorScheme} elementType={elementType} UNSAFE_style={style}>
+      <Provider colorScheme={providerColorScheme} elementType={elementType} locale={locale}>
         {children}
       </Provider>
     </SettingsContext.Provider>
   );
 }
 
-export function SettingsProvider({children, locale, elementType}: SettingsProviderProps) {
+export function SettingsProvider({children}: SettingsProviderProps) {
   let {colorScheme, toggleColorScheme, systemColorScheme, providerColorScheme} = useSettingsState();
 
   return (
@@ -83,7 +82,7 @@ export function SettingsProvider({children, locale, elementType}: SettingsProvid
         toggleColorScheme,
         systemColorScheme
       }}>
-      <Provider colorScheme={providerColorScheme} background="layer-1" locale={locale} elementType={elementType}>
+      <Provider colorScheme={providerColorScheme} background="layer-1">
         {children}
       </Provider>
     </SettingsContext.Provider>
