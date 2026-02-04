@@ -25,10 +25,8 @@ export const PressResponder:
 React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
   let isRegistered = useRef(false);
   let prevContext = useContext(PressResponderContext);
-  ref = useObjectRef(ref || prevContext?.ref);
-  let context = mergeProps(prevContext || {}, {
+  let context: any = mergeProps(prevContext || {}, {
     ...props,
-    ref,
     register() {
       isRegistered.current = true;
       if (prevContext) {
@@ -37,7 +35,8 @@ React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<F
     }
   });
 
-  useSyncRef(prevContext, ref);
+  context.ref = useObjectRef(ref || prevContext?.ref);
+  useSyncRef(prevContext, context.ref);
 
   useEffect(() => {
     if (!isRegistered.current) {

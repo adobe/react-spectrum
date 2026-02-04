@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Form, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -399,15 +399,6 @@ describe('Select', () => {
     expect(trigger).toHaveTextContent('Kangaroo');
   });
 
-  it('should not apply isPressed state to button when expanded and isTriggerUpWhenOpen is true', async () => {
-    let {getByRole} = render(<TestSelect isTriggerUpWhenOpen />);
-    let button = getByRole('button');
-
-    expect(button).not.toHaveAttribute('data-pressed');
-    await user.click(button);
-    expect(button).not.toHaveAttribute('data-pressed');
-  });
-
   describe('typeahead', () => {
     beforeEach(() => {
       jest.useFakeTimers();
@@ -725,5 +716,44 @@ describe('Select', () => {
 
     await selectTester.selectOption({option: 'Dog'});
     expect(trigger).toHaveTextContent('2 selected items');
+  });
+
+  it('has a value immediately after rendering', async () => {
+    function Example() {
+      const ref = useRef(null);
+      const [formData, setFormData] = useState(() => new FormData());
+
+      useEffect(() => {
+        if (ref.current) {
+          setFormData(new FormData(ref.current));
+        }
+      }, []);
+
+      const selectValue = formData.get('select');
+
+      if (selectValue instanceof File) {
+        throw new Error('');
+      }
+
+      return (
+        <form ref={ref}>
+          <Select name="select" defaultValue="1" aria-label="Select">
+            <Button>
+              <SelectValue />
+              <span aria-hidden="true">▼</span>
+            </Button>
+            <Popover>
+              <ListBox>
+                <ListBoxItem id="1">value</ListBoxItem>
+              </ListBox>
+            </Popover>
+          </Select>
+          <div data-testid="select-value">select value: {selectValue}</div>
+        </form>
+      );
+    }
+    let {getByTestId} = render(<Example />);
+    let selectValue = getByTestId('select-value');
+    expect(selectValue).toHaveTextContent('select value: 1');
   });
 });

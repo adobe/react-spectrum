@@ -80,9 +80,7 @@ export interface ComboBoxProps<T extends object, M extends SelectionMode = 'sing
    */
   formValue?: 'text' | 'key',
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean,
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean
+  allowsEmptyCollection?: boolean
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any, SelectionMode>, HTMLDivElement>>(null);
@@ -224,7 +222,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
