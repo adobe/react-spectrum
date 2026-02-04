@@ -27,7 +27,6 @@ import {
   TableHeader,
   TableView,
   TableViewProps,
-  Text,
   TextField
 } from '../src';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
@@ -210,16 +209,16 @@ describe('TableView', () => {
                             autoFocus
                             defaultValue={item[column.id!]}
                             name={column.id! as string}>
-                            <PickerItem textValue="Eva" id="Eva"><Text>Eva</Text></PickerItem>
-                            <PickerItem textValue="Steven" id="Steven"><Text>Steven</Text></PickerItem>
-                            <PickerItem textValue="Michael" id="Michael"><Text>Michael</Text></PickerItem>
-                            <PickerItem textValue="Sara" id="Sara"><Text>Sara</Text></PickerItem>
-                            <PickerItem textValue="Karina" id="Karina"><Text>Karina</Text></PickerItem>
-                            <PickerItem textValue="Otto" id="Otto"><Text>Otto</Text></PickerItem>
-                            <PickerItem textValue="Matt" id="Matt"><Text>Matt</Text></PickerItem>
-                            <PickerItem textValue="Emily" id="Emily"><Text>Emily</Text></PickerItem>
-                            <PickerItem textValue="Amelia" id="Amelia"><Text>Amelia</Text></PickerItem>
-                            <PickerItem textValue="Isla" id="Isla"><Text>Isla</Text></PickerItem>
+                            <PickerItem textValue="Eva" id="Eva">Eva</PickerItem>
+                            <PickerItem textValue="Steven" id="Steven">Steven</PickerItem>
+                            <PickerItem textValue="Michael" id="Michael">Michael</PickerItem>
+                            <PickerItem textValue="Sara" id="Sara">Sara</PickerItem>
+                            <PickerItem textValue="Karina" id="Karina">Karina</PickerItem>
+                            <PickerItem textValue="Otto" id="Otto">Otto</PickerItem>
+                            <PickerItem textValue="Matt" id="Matt">Matt</PickerItem>
+                            <PickerItem textValue="Emily" id="Emily">Emily</PickerItem>
+                            <PickerItem textValue="Amelia" id="Amelia">Amelia</PickerItem>
+                            <PickerItem textValue="Isla" id="Isla">Isla</PickerItem>
                           </Picker>
                         )}>
                         <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>
@@ -582,16 +581,16 @@ describe('TableView', () => {
                                 autoFocus
                                 defaultValue={item[column.id!]}
                                 name={column.id! as string}>
-                                <PickerItem textValue="Eva" id="Eva"><Text>Eva</Text></PickerItem>
-                                <PickerItem textValue="Steven" id="Steven"><Text>Steven</Text></PickerItem>
-                                <PickerItem textValue="Michael" id="Michael"><Text>Michael</Text></PickerItem>
-                                <PickerItem textValue="Sara" id="Sara"><Text>Sara</Text></PickerItem>
-                                <PickerItem textValue="Karina" id="Karina"><Text>Karina</Text></PickerItem>
-                                <PickerItem textValue="Otto" id="Otto"><Text>Otto</Text></PickerItem>
-                                <PickerItem textValue="Matt" id="Matt"><Text>Matt</Text></PickerItem>
-                                <PickerItem textValue="Emily" id="Emily"><Text>Emily</Text></PickerItem>
-                                <PickerItem textValue="Amelia" id="Amelia"><Text>Amelia</Text></PickerItem>
-                                <PickerItem textValue="Isla" id="Isla"><Text>Isla</Text></PickerItem>
+                                <PickerItem textValue="Eva" id="Eva">Eva</PickerItem>
+                                <PickerItem textValue="Steven" id="Steven">Steven</PickerItem>
+                                <PickerItem textValue="Michael" id="Michael">Michael</PickerItem>
+                                <PickerItem textValue="Sara" id="Sara">Sara</PickerItem>
+                                <PickerItem textValue="Karina" id="Karina">Karina</PickerItem>
+                                <PickerItem textValue="Otto" id="Otto">Otto</PickerItem>
+                                <PickerItem textValue="Matt" id="Matt">Matt</PickerItem>
+                                <PickerItem textValue="Emily" id="Emily">Emily</PickerItem>
+                                <PickerItem textValue="Amelia" id="Amelia">Amelia</PickerItem>
+                                <PickerItem textValue="Isla" id="Isla">Isla</PickerItem>
                               </Picker>
                             )}>
                             <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>
