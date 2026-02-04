@@ -328,7 +328,7 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += `### Guides
 `;
     for (const entry of categories.guides) {
-      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description.slice(0, 100)}` : ''}\n`;
+      content += `- [${entry.title}](references/guides/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     content += '\n';
   }
@@ -337,7 +337,7 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += `### Components
 `;
     for (const entry of categories.components) {
-      content += `- [${entry.title}](references/components/${entry.path})${entry.description ? `: ${entry.description.slice(0, 80)}` : ''}\n`;
+      content += `- [${entry.title}](references/components/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     content += '\n';
   }
@@ -346,7 +346,7 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += `### Interactions
 `;
     for (const entry of categories.interactions) {
-      content += `- [${entry.title}](references/interactions/${entry.path})${entry.description ? `: ${entry.description.slice(0, 80)}` : ''}\n`;
+      content += `- [${entry.title}](references/interactions/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     content += '\n';
   }
@@ -355,7 +355,7 @@ The \`references/\` directory contains detailed documentation organized as follo
     content += `### Utilities
 `;
     for (const entry of categories.utilities) {
-      content += `- [${entry.title}](references/utilities/${entry.path})${entry.description ? `: ${entry.description.slice(0, 80)}` : ''}\n`;
+      content += `- [${entry.title}](references/utilities/${entry.path})${entry.description ? `: ${entry.description}` : ''}\n`;
     }
     content += '\n';
   }
