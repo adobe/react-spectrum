@@ -74,11 +74,31 @@ export function VisualExampleClient({component, name, importSource, controls, ch
   useEffect(() => {
     // Find previous heading element.
     let node: Element | null = ref.current;
-    while (node && node.parentElement?.tagName !== 'ARTICLE') {
+    
+    // Search for the nearest heading by walking up the tree and checking previous siblings
+    while (node && node.tagName !== 'ARTICLE') {
+      // Check previous siblings
+      let sibling = node.previousElementSibling;
+      while (sibling) {
+        if (sibling instanceof HTMLHeadingElement) {
+          node = sibling;
+          break;
+        }
+        // Also check inside the sibling for headings
+        let headingInSibling = sibling.querySelector('h1, h2, h3, h4, h5, h6');
+        if (headingInSibling instanceof HTMLHeadingElement) {
+          node = headingInSibling;
+          break;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+      
+      if (node instanceof HTMLHeadingElement) {
+        break;
+      }
+      
+      // Move up to parent
       node = node.parentElement;
-    }
-    while (node && !(node instanceof HTMLHeadingElement)) {
-      node = node.previousElementSibling;
     }
 
     let id = node instanceof HTMLHeadingElement ? node.id : null;
