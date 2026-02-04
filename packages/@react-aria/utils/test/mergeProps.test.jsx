@@ -14,6 +14,7 @@ import clsx from 'clsx';
 import { mergeIds, useId } from '../src/useId';
 import { mergeProps } from '../src/mergeProps';
 import { render } from '@react-spectrum/test-utils-internal';
+import { createRef } from 'react';
 
 describe('mergeProps', function () {
   it('handles one argument', function () {
@@ -121,5 +122,14 @@ describe('mergeProps', function () {
     let id2 = 'id2';
     let mergedProps = mergeProps({ data: id1 }, { data: id2 });
     expect(mergedProps.data).toBe(id2);
+  });
+
+  it('merges refs', function () {
+    let ref = createRef();
+    let ref1 = createRef();
+    let merged = mergeProps({ref}, {ref: ref1});
+    merged.ref(2);
+    expect(ref.current).toBe(2);
+    expect(ref1.current).toBe(2);
   });
 });
