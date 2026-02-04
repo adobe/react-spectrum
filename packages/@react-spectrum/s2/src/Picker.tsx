@@ -125,7 +125,7 @@ export interface PickerProps<T extends object, M extends SelectionMode = 'single
     /** The current loading state of the Picker. */
     loadingState?: LoadingState,
     /**
-     * Custom renderer for the selected value shown in the button. Allows one to provide a custom element to render for selected items.
+     * Custom renderer for the picker value. Allows one to provide a custom element to render selected items.
      *
      * @note The returned ReactNode should not have interactable elements as it will break accessibility.
      */

@@ -242,6 +242,43 @@ function Example(props) {
 }
 ```
 
+### Custom Render Value
+
+Use the `renderValue` prop to provide a custom element to display selected items. The callback is given an array of the selected user-defined objects.
+
+```tsx render docs={docs.exports.Picker} links={docs.links} props={['selectionMode']} wide
+"use client";
+import {Picker, PickerItem} from '@react-spectrum/s2';
+import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {useState} from 'react';
+
+function Example(props) {
+  let [animal, setAnimal] = useState("bison");
+
+  return (
+    <div>
+      <Picker
+        {...props}
+        label="Pick an animal"
+        ///- begin highlight -///
+        /* PROPS */
+        value={animal}
+        onChange={setAnimal}
+        ///- end highlight -///
+      >
+        <PickerItem id="koala">Koala</PickerItem>
+        <PickerItem id="kangaroo">Kangaroo</PickerItem>
+        <PickerItem id="platypus" isDisabled>Platypus</PickerItem>
+        <PickerItem id="eagle">Bald Eagle</PickerItem>
+        <PickerItem id="bison">Bison</PickerItem>
+        <PickerItem id="skunk">Skunk</PickerItem>
+      </Picker>
+      <pre className={style({font: 'body'})}>Current selection: {JSON.stringify(animal)}</pre>
+    </div>
+  );
+}
+```
+
 ## Forms
 
 Use the `name` prop to submit the `id` of the selected item to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
