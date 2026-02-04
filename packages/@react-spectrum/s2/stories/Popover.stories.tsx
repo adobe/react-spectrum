@@ -10,18 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton, ActionMenu, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
+import Comment from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
+import CommentText from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
 import Help from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import Org from '../s2wf-icons/S2_Icon_Buildings_20_N.svg';
+import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components';
 import {ReactElement, useRef, useState} from 'react';
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import ThumbUp from '../s2wf-icons/S2_Icon_ThumbUp_20_N.svg';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
@@ -226,4 +231,37 @@ const CustomTriggerRender = (): ReactElement => {
 
 export const CustomTrigger: StoryObj<typeof CustomTriggerRender> = {
   render: () => <CustomTriggerRender />
+};
+
+export const MenuTrigger: Story = {
+  render: (args) => (
+    <DialogTrigger {...args}>
+      <ActionButton aria-label="Account" styles={style({marginX: 'auto'})}>
+        <Comment />
+      </ActionButton>
+      <Popover {...args} hideArrow placement="bottom end" styles={style({width: 400})}>
+        <div className={style({paddingTop: 4, paddingX: 8, display: 'flex', flexDirection: 'column', gap: 12})}>
+          <div className={style({display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'})}>
+            <div className={style({display: 'flex', gap: 8})}>
+              <Avatar src="https://i.imgur.com/xIe7Wlb.png" size={56} />
+              <h2 className={style({font: 'heading'})}>Author Name</h2>
+            </div>
+            <ActionMenu>
+              <MenuItem><Copy /><Text>Copy body text</Text></MenuItem>
+              <MenuItem><Paste /><Text>Paste</Text></MenuItem>
+            </ActionMenu>
+          </div>
+          <p className={style({font: 'body', margin: 0})}>The experience is smooth and well thought out, though there’s room to refine some details for clarity and efficiency.</p>
+          <div className={style({display: 'flex', flexDirection: 'row', gap: 12})}>
+            <ActionButton isQuiet><ThumbUp /><Text>Like</Text></ActionButton>
+            <ActionButton isQuiet><CommentText /><Text>Reply</Text></ActionButton>
+          </div>
+        </div>
+      </Popover>
+    </DialogTrigger>
+  ),
+  argTypes: {
+    hideArrow: {table: {disable: true}},
+    placement: {table: {disable: true}}
+  }
 };

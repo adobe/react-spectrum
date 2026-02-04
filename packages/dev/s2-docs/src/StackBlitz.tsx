@@ -111,6 +111,7 @@ createRoot(document.getElementById('root')!).render(${type === 's2' ? `\n  <Prov
 `,
     'tsconfig.json': JSON.stringify({
       compilerOptions: {
+        'noImplicitAny': false,
         'target': 'ES2022',
         'useDefineForClassFields': true,
         'lib': ['ES2022', 'DOM', 'DOM.Iterable'],

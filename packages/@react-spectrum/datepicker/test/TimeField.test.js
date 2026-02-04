@@ -260,6 +260,66 @@ describe('TimeField', function () {
         expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
         expect(within(timezone).getByText('PDT')).toBeInTheDocument();
       });
+
+      it('should support cycling through DST fall back transitions with ZonedDateTime placeholder', async function () {
+        let {getByLabelText} = render(
+          <TimeField label="Time" placeholderValue={parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')} />
+        );
+        let minute = getByLabelText('minute,');
+        expect(minute).toHaveAttribute('aria-valuetext', 'Empty');
+        let hour = getByLabelText('hour,');
+        expect(hour).toHaveAttribute('aria-valuetext', 'Empty');
+
+        let segment = getByLabelText('hour,');
+        act(() => {segment.focus();});
+        // first arrow up sets value to the placeholder hour
+        await user.keyboard('{ArrowUp}');
+        expect(hour.textContent).toBe('1');
+
+        await user.keyboard('{ArrowUp}');
+        expect(hour.textContent).toBe('1');
+
+        await user.keyboard('{ArrowUp}');
+        expect(hour.textContent).toBe('2');
+
+        await user.keyboard('{ArrowDown}');
+        expect(hour.textContent).toBe('1');
+
+        await user.keyboard('{ArrowDown}');
+        expect(hour.textContent).toBe('1');
+
+        await user.keyboard('{ArrowDown}');
+        expect(hour.textContent).toBe('12');
+      });
+
+      it('should support cycling through DST fall back transitions with ZonedDateTime defaultValue', async function () {
+        let onChange = jest.fn();
+        let {getAllByRole} = render(
+          <TimeField label="Time" defaultValue={parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]')} onChange={onChange} />
+        );
+        let segments = getAllByRole('spinbutton');
+
+        act(() => {segments[0].focus();});
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+
+        await user.keyboard('{ArrowUp}');
+        expect(onChange).toHaveBeenCalledTimes(2);
+        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T02:45:00-08:00[America/Los_Angeles]'));
+
+        await user.keyboard('{ArrowDown}');
+        expect(onChange).toHaveBeenCalledTimes(3);
+        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-08:00[America/Los_Angeles]'));
+
+        await user.keyboard('{ArrowDown}');
+        expect(onChange).toHaveBeenCalledTimes(4);
+        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T01:45:00-07:00[America/Los_Angeles]'));
+
+        await user.keyboard('{ArrowDown}');
+        expect(onChange).toHaveBeenCalledTimes(5);
+        expect(onChange).toHaveBeenCalledWith(parseZonedDateTime('2021-11-07T00:45:00-07:00[America/Los_Angeles]'));
+      });
     });
   });
 
@@ -300,7 +360,7 @@ describe('TimeField', function () {
       it('resets to defaultValue when submitting form action', async () => {
         function Test() {
           const [value, formAction] = React.useActionState(() => new Time(10, 30), new Time(8, 30));
-          
+
           return (
             <form action={formAction}>
               <TimeField label="Value" name="time" defaultValue={value} />
@@ -308,11 +368,11 @@ describe('TimeField', function () {
             </form>
           );
         }
-  
+
         let {getByTestId} = render(<Test />);
         let input = document.querySelector('input[name=time]');
         expect(input).toHaveValue('08:30:00');
-  
+
         let button = getByTestId('submit');
         await user.click(button);
         expect(input).toHaveValue('10:30:00');

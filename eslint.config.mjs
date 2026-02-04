@@ -502,6 +502,15 @@ export default [{
         }],
     },
 }, {
+    files: [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx",
+    ],
+
+    rules: {
+        "rsp-rules/no-non-shadow-contains": OFF,
+    },
+}, {
     files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
