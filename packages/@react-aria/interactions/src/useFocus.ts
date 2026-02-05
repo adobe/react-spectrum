@@ -63,9 +63,10 @@ export function useFocus<Target extends FocusableElement = FocusableElement>(pro
     // Double check that document.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
 
-    const ownerDocument = getOwnerDocument(getEventTarget(e));
+    let eventTarget = getEventTarget(e);
+    const ownerDocument = getOwnerDocument(eventTarget);
     const activeElement = ownerDocument ? getActiveElement(ownerDocument) : getActiveElement();
-    if (getEventTarget(e) === e.currentTarget && activeElement === getEventTarget(e)) {
+    if (eventTarget === e.currentTarget && eventTarget === activeElement) {
       if (onFocusProp) {
         onFocusProp(e);
       }

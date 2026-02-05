@@ -92,9 +92,10 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(props: Ar
 
   let setValue = state.setValue;
   let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (getEventTarget(e).multiple) {
+    let eventTarget = getEventTarget(e);
+    if (eventTarget.multiple) {
       setValue(Array.from(
-        getEventTarget(e).selectedOptions,
+        eventTarget.selectedOptions,
         (option) => option.value
       ) as any);
     } else {
