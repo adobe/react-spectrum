@@ -208,8 +208,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : '';
 
     // Restore scroll position relative to anchor element.
-    if (anchor && getActiveElement() && scrollRef.current) {
-      let anchorRect = getActiveElement().getBoundingClientRect();
+    let activeElement = getActiveElement();
+    if (anchor && activeElement && scrollRef.current) {
+      let anchorRect = activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
       scrollRef.current.scrollTop += newOffset - anchor.offset;
