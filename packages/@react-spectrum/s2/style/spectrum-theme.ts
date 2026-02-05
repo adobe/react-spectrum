@@ -687,15 +687,19 @@ export const style = createTheme({
     containIntrinsicWidth: createSpectrumSizingProperty('containIntrinsicWidth', width),
     containIntrinsicHeight: createSpectrumSizingProperty('containIntrinsicHeight', height),
     minHeight: createSpectrumSizingProperty('minHeight', height),
-    maxHeight: createSpectrumSizingProperty('maxHeight', {
-      ...height,
-      none: 'none'
-    }),
+    maxHeight: createSpectrumSizingProperty('maxHeight', (() => {
+      // auto is not a valid value for maxHeight
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {auto, ...rest} = height;
+      return {...rest, none: 'none'};
+    })()),
     minWidth: createSpectrumSizingProperty('minWidth', width),
-    maxWidth: createSpectrumSizingProperty('maxWidth', {
-      ...width,
-      none: 'none'
-    }),
+    maxWidth: createSpectrumSizingProperty('maxWidth', (() => {
+      // auto is not a valid value for maxWidth
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {auto, ...rest} = width;
+      return {...rest, none: 'none'};
+    })()),
     borderStartWidth: new MappedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: new MappedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,

@@ -23,6 +23,7 @@ import {
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -67,7 +68,7 @@ export interface ButtonRenderProps {
   isPending: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps, 'button'>, Omit<GlobalDOMAttributes<HTMLButtonElement>, 'onClick'> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-Button'
@@ -144,7 +145,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   delete DOMProps.onClick;
 
   return (
-    <button
+    <dom.button
       {...mergeProps(DOMProps, renderProps, buttonProps, focusProps, hoverProps)}
       // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
       // We do this by changing the button's type to button.
@@ -163,7 +164,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
       <ProgressBarContext.Provider value={{id: progressId}}>
         {renderProps.children}
       </ProgressBarContext.Provider>
-    </button>
+    </dom.button>
   );
 });
 

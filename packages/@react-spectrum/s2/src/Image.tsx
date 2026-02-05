@@ -310,7 +310,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
 
     if (Array.isArray(srcProp)) {
       img = (
-        <picture>
+        <picture className={style({objectFit: 'inherit', objectPosition: 'inherit'})}>
           {srcProp.map((source, i) => {
             let {colorScheme: sourceColorScheme, ...sourceProps} = source;
             if (sourceColorScheme) {

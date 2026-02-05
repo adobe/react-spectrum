@@ -38,7 +38,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'render' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange' | keyof GlobalDOMAttributes>, DOMProps, UnsafeStyles {
   /** The content of the tooltip. */
   children: ReactNode
 }
@@ -68,7 +68,6 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   borderRadius: 'default',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
-  margin: 8,
   transition: 'default',
   transitionDuration: 200,
   transitionTimingFunction: {
@@ -165,7 +164,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
       arrowBoundaryOffset={borderRadius}
       containerPadding={containerPadding}
       crossOffset={crossOffset}
-      offset={4}
+      offset={4 + 5} // 4px offset + 5px arrow height
       placement={placement}
       shouldFlip={shouldFlip}
       ref={tooltipRef}

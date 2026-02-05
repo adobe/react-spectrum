@@ -42,7 +42,7 @@ const GROUPS = {
     'autoFocus', 'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
   ],
   Advanced: [
-    'UNSAFE_className', 'UNSAFE_style', 'slot'
+    'UNSAFE_className', 'UNSAFE_style', 'slot', 'render'
   ]
 };
 
@@ -196,7 +196,7 @@ function Rows({props, showDefault, showRequired}: {props: TInterface['properties
         }
       </TableRow>
       {prop.description && <TableRow>
-        <TableCell colSpan={3}>{renderHTMLfromMarkdown(prop.description, {forceInline: true})}</TableCell>
+        <TableCell colSpan={3}>{renderHTMLfromMarkdown(prop.description, {forceInline: false, forceBlock: true})}</TableCell>
       </TableRow>}
     </React.Fragment>
   ));

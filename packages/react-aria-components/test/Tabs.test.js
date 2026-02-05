@@ -98,6 +98,46 @@ describe('Tabs', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderTabs(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-custom', 'true');
+    expect(tablist).toHaveAttribute('data-custom', 'true');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('data-custom', 'true');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderTabs(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-custom', 'true');
+    expect(tablist).toHaveAttribute('data-custom', 'true');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('href');
+      expect(tab).toHaveAttribute('data-custom', 'true');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
@@ -164,7 +204,10 @@ describe('Tabs', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let onBlur = jest.fn();
+    let {getAllByRole} = renderTabs({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : '', onFocus, onFocusChange, onBlur});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-focus-visible');
@@ -175,10 +218,19 @@ describe('Tabs', () => {
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
     expect(tab).toHaveAttribute('data-focused', 'true');
     expect(tab).toHaveClass('focus');
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).not.toHaveBeenCalled();
+    onFocus.mockClear();
+    onFocusChange.mockClear();
+    onBlur.mockClear();
 
     await user.tab();
     expect(tab).not.toHaveAttribute('data-focus-visible');
     expect(tab).not.toHaveClass('focus');
+    expect(onFocus).not.toHaveBeenCalled();
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
   it('should support press state', async () => {
@@ -597,6 +649,42 @@ describe('Tabs', () => {
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('should support tabpanels with aria-labels', () => {
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels aria-label="test" data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabPanels = getByTestId('tabpanels');
+    expect(tabPanels).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support tabpanels with custom styles', () => {
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels style={{width: '100px'}} data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabPanels = getByTestId('tabpanels');
+    expect(tabPanels).toHaveStyle({width: '100px'});
+  });
+
   it('supports tooltips', async function () {
     let {getByRole, getAllByRole} = render(
       <Tabs>
@@ -634,7 +722,7 @@ describe('Tabs', () => {
       let {getByRole} = renderTabs({keyboardActivation: 'manual'}, {}, {onPressStart, onPressEnd, onPress, onClick});
       let tester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
       await tester.triggerTab({tab: 1, interactionType, manualActivation: true});
-  
+
       expect(onPressStart).toHaveBeenCalledTimes(1);
       expect(onPressEnd).toHaveBeenCalledTimes(1);
       expect(onPress).toHaveBeenCalledTimes(1);

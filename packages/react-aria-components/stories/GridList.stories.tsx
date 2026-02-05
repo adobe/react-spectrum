@@ -68,15 +68,15 @@ export const GridListExample: GridListStory = (args) => (
       gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
       gridAutoFlow: 'row'
     }}>
-    <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,1">1,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,2">1,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="1,3">1,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,1">2,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,2">2,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="2,3">2,3 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,1">3,1 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,2">3,2 <Button>Actions</Button></MyGridListItem>
+    <MyGridListItem textValue="3,3">3,3 <Button>Actions</Button></MyGridListItem>
   </GridList>
 );
 
@@ -103,7 +103,8 @@ GridListExample.story = {
   args: {
     layout: 'stack',
     escapeKeyBehavior: 'clearSelection',
-    shouldSelectOnPressUp: false
+    shouldSelectOnPressUp: false,
+    disallowTypeAhead: false
   },
   argTypes: {
     layout: {
@@ -634,3 +635,4 @@ export let GridListInModalPicker: StoryObj<typeof GridListInModalPickerRender> =
     }
   }
 };
+

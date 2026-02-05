@@ -167,7 +167,7 @@ export default function App(): React.ReactNode {
         {/* Columns */}
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="!h-9 shrink-0 hidden sm:flex">
+            <Button aria-label="Columns" variant="secondary" className="!w-9 !h-9 shrink-0 hidden sm:flex">
               <SlidersIcon aria-hidden className="block w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
@@ -181,7 +181,7 @@ export default function App(): React.ReactNode {
         </MenuTrigger>
 
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="!h-9 shrink-0 col-start-5">
+          <Button aria-label="Add plant" variant="secondary" className="!w-9 !h-9 shrink-0 col-start-5">
             <PlusIcon aria-hidden className="block w-5 h-5" />
           </Button>
           <Modal>

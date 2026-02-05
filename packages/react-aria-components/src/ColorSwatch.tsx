@@ -2,6 +2,7 @@ import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   SlotProps,
   StyleRenderProps,
   useContextProps,
@@ -45,7 +46,7 @@ export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchPro
   let DOMProps = filterDOMProps(props, {global: true});
   
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, colorSwatchProps, renderProps)}
       slot={props.slot || undefined}
       ref={ref} />

@@ -13,7 +13,7 @@
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, handleLinkClick, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useFocusable, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './utils';
 import {MouseEvent, useRef} from 'react';
 import {SelectionManager} from '@react-stately/selection';
@@ -72,9 +72,12 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
 
   /**
    * Whether the menu should close when the menu item is selected.
-   * @default true
+   * @deprecated - use shouldCloseOnSelect instead.
    */
   closeOnSelect?: boolean,
+
+  /** Whether the menu should close when the menu item is selected. */
+  shouldCloseOnSelect?: boolean,
 
   /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
@@ -109,6 +112,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     id,
     key,
     closeOnSelect,
+    shouldCloseOnSelect,
     isVirtualized,
     'aria-haspopup': hasPopup,
     onPressStart,
@@ -221,8 +225,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ? interaction.current?.key === 'Enter' || selectionManager.selectionMode === 'none' || selectionManager.isLink(key)
       // Close except if multi-select is enabled.
       : selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key);
-    
-    shouldClose = closeOnSelect ?? shouldClose;
+
+
+    shouldClose = shouldCloseOnSelect ?? closeOnSelect ?? shouldClose;
+
     if (onClose && !isTrigger && shouldClose) {
       onClose();
     }
@@ -301,7 +307,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onKeyUp
   });
 
-  let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
+  let {focusableProps} = useFocusable({onBlur, onFocus, onFocusChange}, ref);
   let domProps = filterDOMProps(item?.props);
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
@@ -312,13 +318,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       ...mergeProps(
         domProps,
         linkProps,
-        isTrigger 
-          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']} 
+        isTrigger
+          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']}
           : itemProps,
         pressProps,
         hoverProps,
         keyboardProps,
-        focusProps,
+        focusableProps,
         // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
         data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined,
         isDisabled ? undefined : {onClick}

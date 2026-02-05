@@ -15,6 +15,7 @@ export const description = 'Displays data in rows and columns, with row selectio
 <PageDescription>{docs.exports.TableView.description}</PageDescription>
 
 ```tsx render docs={docs.exports.TableView} links={docs.links} props={['selectionMode', 'overflowMode', 'density', 'isQuiet']} initialProps={{'aria-label': 'Files', selectionMode: 'multiple'}} type="s2"
+"use client";
 import {TableView, TableHeader, Column, TableBody, Row, Cell} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
@@ -481,7 +482,9 @@ export default function EditableTable(props) {
                         name={column.id! as string} />
                     )}>
                     <div className={style({display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between'})}>
-                      {item[column.id]}
+                      <span className={style({minWidth: 0, truncate: true})}>
+                        {item[column.id]}
+                      </span>
                       <ActionButton slot="edit" aria-label="Edit fruit">
                         <Edit />
                       </ActionButton>

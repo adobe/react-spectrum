@@ -192,8 +192,8 @@ export const InvalidRangeBothUnavailable: Story = {
 // Invalid range with Tuesday as first day of week
 export const InvalidRangeTuesdayFirstDay: Story = {
   args: {
-    defaultFocusedValue: new CalendarDate(2025, 12, 20),
-    value: {start: new CalendarDate(2025, 12, 18), end: new CalendarDate(2025, 12, 31)},
+    defaultFocusedValue: new CalendarDate(2024, 12, 20),
+    value: {start: new CalendarDate(2024, 12, 18), end: new CalendarDate(2024, 12, 31)},
     isDateUnavailable: (date: DateValue) => {
       return date.day >= 23 && date.day <= 29;
     },

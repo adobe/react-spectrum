@@ -67,7 +67,7 @@ export function getBaseUrl(library) {
     url.pathname = publicUrl.replace(/\/$/, '') + url.pathname.replace(/\/$/, '');
     base = url.href;
   }
-  return base;
+  return base.replace(/\/$/, '');
 }
 
 export function getAnchorProps(href) {

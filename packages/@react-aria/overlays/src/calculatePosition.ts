@@ -11,7 +11,7 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
-import {clamp, isWebKit} from '@react-aria/utils';
+import {clamp, isWebKit, nodeContains} from '@react-aria/utils';
 
 interface Position {
   top?: number,
@@ -585,7 +585,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     containerOffsetWithBoundary = getPosition(boundaryElement, container, false);
   }
 
-  let isContainerDescendentOfBoundary = boundaryElement.contains(container);
+  let isContainerDescendentOfBoundary = nodeContains(boundaryElement, container);
   return calculatePositionInternal(
     placement,
     childOffset,

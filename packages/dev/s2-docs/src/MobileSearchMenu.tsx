@@ -3,16 +3,19 @@
 import {Autocomplete, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps, Tab as RACTab, TabList as RACTabList, TabPanel as RACTabPanel, TabPanelProps as RACTabPanelProps, TabProps as RACTabProps, Tabs as RACTabs, SelectionIndicator, TabRenderProps} from 'react-aria-components';
 import {baseColor, focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {CloseButton, SearchField, TextContext} from '@react-spectrum/s2';
+import {ColorSearchSkeleton} from './colorSearchData';
 import {ComponentCardView} from './ComponentCardView';
 import {
   getResourceTags,
+  LazyColorSearchView,
   LazyIconSearchView,
   SearchEmptyState,
+  useFilteredColors,
   useSearchMenuState
 } from './searchUtils';
 import {IconSearchSkeleton, useIconFilter} from './IconSearchView';
 import {type Library} from './constants';
-import React, {CSSProperties, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
+import React, {cloneElement, CSSProperties, ReactElement, ReactNode, Suspense, useContext, useEffect, useRef, useState} from 'react';
 import {SearchTagGroups} from './SearchTagGroups';
 import {useId} from '@react-aria/utils';
 import {useRouter} from './Router';
@@ -90,7 +93,7 @@ const mobileTab = style<TabRenderProps>({
     }
   },
   borderRadius: 'sm',
-  paddingX: 12,
+  paddingX: 8,
   paddingY: 8,
   alignItems: 'center',
   position: 'relative',
@@ -100,10 +103,7 @@ const mobileTab = style<TabRenderProps>({
   disableTapHighlight: true,
   whiteSpace: 'nowrap',
   fontSize: 'body',
-  fontWeight: {
-    default: 'normal',
-    isSelected: 'medium'
-  }
+  fontWeight: 'bold'
 });
 
 const mobileSelectionIndicator = style({
@@ -240,6 +240,9 @@ function MobileNav({initialTag}: {initialTag?: string}) {
     isOpen
   });
 
+  const filteredColors = useFilteredColors(searchValue);
+  const isColorsSelected = selectedSection === 'colors';
+
   let handleSearchFocus = () => {
     setSearchFocused(true);
   };
@@ -293,7 +296,7 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                   <div
                     className={style({display: 'flex', alignItems: 'center', gap: 8})}
                     style={{viewTransitionName: (i === 0 && isOpen) ? 'search-menu-icon' : 'none'} as CSSProperties}>
-                    {library.icon}
+                    {cloneElement(library.icon as ReactElement<any>, {styles: style({size: 20})})}
                   </div>
                   <span style={{viewTransitionName: (i === 0 && isOpen && window.scrollY === 0) ? 'search-menu-label' : 'none'} as CSSProperties}>
                     {library.label}
@@ -325,22 +328,44 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         selectedTagId={selectedSection}
                         onSectionSelectionChange={handleTagSelectionChange}
                         onResourceSelectionChange={handleTagSelectionChange}
-                        isMobile
                         wrapperClassName={style({paddingTop: 0})}
                         contentClassName={style({display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginX: 0})} />
                     </div>
                   </div>
-                  <div key={selectedLibrary + selectedSection} className={style({paddingX: 12, minHeight: 0, flexGrow: 1, overflow: 'clip', display: 'flex', flexDirection: 'column'})}>
-                    {showIcons ? (
+                  <div
+                    key={selectedLibrary + selectedSection}
+                    className={style({
+                      paddingX: 12,
+                      minHeight: 0,
+                      flexGrow: 1,
+                      overflow: 'clip',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    })}>
+                    {showIcons && (
                       <Suspense fallback={<IconSearchSkeleton />}>
-                        <LazyIconSearchView 
-                          filteredItems={filteredIcons} 
-                          listBoxClassName={style({flexGrow: 1, overflow: 'auto', width: '100%', scrollPaddingY: 4})} />
+                        <LazyIconSearchView
+                          filteredItems={filteredIcons}
+                          listBoxClassName={style({
+                            flexGrow: 1,
+                            overflow: 'auto',
+                            width: '100%',
+                            scrollPaddingY: 4
+                          })} />
                       </Suspense>
-                    ) : (
+                    )}
+                    {!showIcons && isColorsSelected && library.id === 'react-spectrum' && (
+                      <Suspense fallback={<ColorSearchSkeleton />}>
+                        <LazyColorSearchView
+                          filteredItems={filteredColors.sections}
+                          exactMatches={filteredColors.exactMatches}
+                          closestMatches={filteredColors.closestMatches} />
+                      </Suspense>
+                    )}
+                    {!showIcons && (!isColorsSelected || library.id !== 'react-spectrum') && (
                       <ComponentCardView
                         currentUrl={currentUrl}
-                        onAction={(key) => {
+                        onAction={key => {
                           if (key === currentPage.url) {
                             overlayTriggerState?.close();
                           }
@@ -348,7 +373,11 @@ function MobileNav({initialTag}: {initialTag?: string}) {
                         items={library.id === selectedLibrary ? selectedItems : []}
                         ariaLabel="Pages"
                         size="S"
-                        renderEmptyState={() => <SearchEmptyState searchValue={searchValue} libraryLabel={library.label} />} />
+                        renderEmptyState={() => (
+                          <SearchEmptyState
+                            searchValue={searchValue}
+                            libraryLabel={library.label} />
+                        )} />
                     )}
                   </div>
                 </Autocomplete>

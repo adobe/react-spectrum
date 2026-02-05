@@ -32,10 +32,11 @@ import {
 } from '@react-types/shared';
 
 export type SelectionMode = 'single' | 'multiple';
-export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
+export type ValueType<M extends SelectionMode> = M extends 'single' ? Key | null : readonly Key[];
+export type ChangeValueType<M extends SelectionMode> = M extends 'single' ? Key | null : Key[];
 type ValidationType<M extends SelectionMode> = M extends 'single' ? Key : Key[];
 
-export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
+export interface SelectProps<T, M extends SelectionMode = 'single'> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, ValueBase<ValueType<M>, ChangeValueType<M>>, Validation<ValidationType<M>>, HelpTextProps, LabelableProps, TextInputBase, FocusableProps {
   /**
    * Whether single or multiple selection is enabled.
    * @default 'single'

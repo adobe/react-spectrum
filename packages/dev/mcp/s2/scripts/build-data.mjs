@@ -77,7 +77,7 @@ function buildIllustrationNames() {
 }
 
 async function loadAliases(modPath, exportName) {
-  if (!fs.existsSync(modPath)) {return {};} 
+  if (!fs.existsSync(modPath)) {return {};}
   const mod = await import(pathToFileURL(modPath).href);
   return mod[exportName] ?? {};
 }
@@ -201,7 +201,6 @@ async function main() {
   for (const category of propertyCategories) {
     Object.assign(styleProperties, stylePropsMod.getPropertyDefinitions(category));
   }
-  Object.assign(styleProperties, stylePropsMod.getShorthandDefinitions());
   writeJson(path.join(OUT_DIR, 'styleProperties.json'), styleProperties);
 
   const require = createRequire(import.meta.url);

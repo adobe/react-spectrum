@@ -1,11 +1,12 @@
-import { size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
+import { lightDark, size, style } from "@react-spectrum/s2/style" with {type: 'macro'};
 import { getColorScale } from "@react-spectrum/s2-docs/src//color.macro" with {type: 'macro'};
 import { Code } from "@react-spectrum/s2-docs/src//Code";
 import { Pre } from "@react-spectrum/s2-docs/src/CodePlatter";
 import { ObjectStyles } from "./ObjectStyles";
 import { DarkMode } from "./DarkMode";
 import { AppFrame, ExampleApp } from "./ExampleApp";
-import { Button, Divider, Link, LinkButton, Provider } from "@react-spectrum/s2";
+import { Button, Divider, Provider } from "@react-spectrum/s2";
+import {Link, LinkButton} from '@react-spectrum/s2-docs/src/Link';
 import { Mobile } from "./Mobile";
 import { Rems } from "./Rems";
 // import { PressAnimation } from "./Press";
@@ -43,13 +44,14 @@ import bg from 'data-url:./bg.svg';
 // import { SubmenuAnimation } from "./SubmenuAnimation";
 // @ts-ignore
 import { keyframes } from "../../../../../@react-spectrum/s2/style/style-macro" with {type: 'macro'};
-import { getBaseUrl } from "@react-spectrum/s2-docs/src/pageUtils";
 import SearchMenuWrapperServer from "@react-spectrum/s2-docs/src/SearchMenuWrapperServer";
 import type {Page} from "@parcel/rsc";
 // @ts-ignore
 import { fontSizeToken } from "../../../../../@react-spectrum/s2/style/tokens" with {type: 'macro'};
 // @ts-ignore
 import { letters } from "../../../src/textWidth";
+import HomeHeader from "./Header";
+import {ReleaseLink} from "./ReleaseLink";
 
 const container = style({
   backgroundColor: 'layer-2/80',
@@ -63,7 +65,10 @@ const container = style({
   overflow: 'clip',
   display: 'flex',
   flexDirection: 'column',
-  rowGap: 12
+  rowGap: 12,
+  outlineStyle: 'solid',
+  outlineColor: lightDark('transparent', 'transparent-white-100'),
+  outlineWidth: 1
 });
 
 // Animated heading sliding in from the top.
@@ -168,50 +173,9 @@ export function Home({currentPage}: {currentPage: Page}) {
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100%'
       }}>
-      <nav
-        className={style({
-          marginX: 'auto',
-          paddingY: 16,
-          paddingX: {default: 16, sm: 40},
-          maxWidth: 1600,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        })}>
-        <Link href="." staticColor="white">
-          <span className={style({font: 'title', color: 'white', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none'})}>
-            <svg viewBox="0 0 30 26" fill="white" aria-label="Adobe" height="22">
-              <polygon points="19,0 30,0 30,26" />
-              <polygon points="11.1,0 0,0 0,26" />
-              <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
-            </svg>
-            <span>React Spectrum</span>
-          </span>
-        </Link>
-        <div className={style({display: 'flex', alignItems: 'center', columnGap: 16})}>
-          <div className={style({display: {default: 'none', sm: 'contents'}})}>
-            <Link staticColor="white" isQuiet isStandalone href={getBaseUrl('react-aria') + '/blog/'}>Blog</Link>
-            <Link staticColor="white" isQuiet isStandalone href="../releases/">Releases</Link>
-            <Link staticColor="white" isQuiet isStandalone href={getBaseUrl('react-aria') + '/'}>React Aria</Link>
-            <Link staticColor="white" isQuiet isStandalone href={getBaseUrl('react-aria') + '/internationalized/date/'}>Internationalized</Link>
-          </div>
-          <Link staticColor="white" isQuiet isStandalone href="https://github.com/adobe/react-spectrum" target="_blank" aria-label="GitHub">
-            <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
-              <path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-          </Link>
-          <Link staticColor="white" isQuiet isStandalone href="https://npmjs.com/@react-spectrum/s2" target="_blank" aria-label="NPM">
-            <svg viewBox="0 0 27.23 27.23" aria-hidden="true" height="22" fill="currentColor">
-              <rect width="27.23" height="27.23" rx="2" mask="url(#npm-mask)" />
-              <mask id="npm-mask">
-                <rect width="27.23" height="27.23" rx="2" fill="white" />
-                <polygon fill="black" points="5.8 21.75 13.66 21.75 13.67 9.98 17.59 9.98 17.58 21.76 21.51 21.76 21.52 6.06 5.82 6.04 5.8 21.75" />
-              </mask>
-            </svg>
-          </Link>
-        </div>
-      </nav>
-      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024})}>
+      <HomeHeader />
+      <header aria-labelledby={headingId} className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, paddingY: 96, maxWidth: 1024, isolation: 'isolate'})}>
+        <ReleaseLink />
         <HomeH1 id={headingId}>
           <span className={swapWrapper}>Build apps with&nbsp;</span>
           <span className={swapWrapper}>
@@ -238,7 +202,7 @@ export function Home({currentPage}: {currentPage: Page}) {
           <ExampleApp showArrows />
         </section>
       </header>
-      <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600})}>
+      <main className={style({marginX: 'auto', paddingX: {default: 16, sm: 40}, maxWidth: 1600, isolation: 'isolate'})}>
         <Section
           title="Build Once. Adapt Everywhere."
           description="React Spectrum makes interfaces more accessible, flexible, and maintainable, giving users a seamless experience no matter where they are.">

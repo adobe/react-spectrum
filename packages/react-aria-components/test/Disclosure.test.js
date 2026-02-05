@@ -77,6 +77,23 @@ describe('Disclosure', () => {
     expect(disclosure).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    const {getByTestId} = render(
+      <Disclosure data-testid="disclosure" render={props => <div {...props} data-custom="true" />}>
+        <Heading level={3}>
+          <Button slot="trigger">Trigger</Button>
+        </Heading>
+        <DisclosurePanel render={props => <div {...props} data-custom="true" />}>
+          <p>Content</p>
+        </DisclosurePanel>
+      </Disclosure>
+    );
+    const disclosure = getByTestId('disclosure');
+    expect(disclosure).toHaveAttribute('data-custom', 'true');
+    const panel = disclosure.querySelector('.react-aria-DisclosurePanel');
+    expect(panel).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support aria label', () => {
     const {container, getByRole} = render(
       <Disclosure>

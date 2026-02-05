@@ -60,6 +60,15 @@ describe('Breadcrumbs', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderBreadcrumbs({render: props => <ol {...props} data-custom="bar" />}, {render: props => <li {...props} data-custom="true" />});
+    let list = getByRole('list');
+    expect(list).toHaveAttribute('data-custom', 'bar');
+    for (let item of getAllByRole('listitem')) {
+      expect(item).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <BreadcrumbsContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

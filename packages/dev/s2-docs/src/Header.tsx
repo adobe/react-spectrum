@@ -1,16 +1,20 @@
 'use client';
 
 import {baseColor, focusRing, space, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {Button, Link} from 'react-aria-components';
+import Contrast from '@react-spectrum/s2/icons/Contrast';
+import {Divider, pressScale} from '@react-spectrum/s2';
 import {getBaseUrl} from './pageUtils';
 import {getLibraryFromPage, getLibraryIcon, getLibraryLabel} from './library';
 import GithubLogo from './icons/GithubLogo';
-import {Link} from 'react-aria-components';
-// @ts-ignore
-import {pressScale} from '@react-spectrum/s2';
-import React, {CSSProperties, useId, useRef, useState} from 'react';
+import {HeaderLink} from './Link';
+import Lighten from '@react-spectrum/s2/icons/Lighten';
+import {NpmLogo} from './icons/NpmLogo';
+import React, {useId, useRef, useState} from 'react';
 import SearchMenuTrigger, {preloadSearchMenu} from './SearchMenuTrigger';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useRouter} from './Router';
+import {useSettings} from './SettingsContext';
 
 function getButtonText(currentPage) {
   return getLibraryLabel(getLibraryFromPage(currentPage));
@@ -24,6 +28,11 @@ const libraryStyles = style({
   ...focusRing(),
   paddingX: 12, 
   display: 'flex',
+  alignItems: 'center',
+  columnGap: {
+    default: 12,
+    lg: space(10)
+  },
   textDecoration: 'none',
   minHeight: 48,
   borderRadius: 'lg',
@@ -37,9 +46,10 @@ const libraryStyles = style({
   marginStart: space(26)
 });
 
-const linkStyle = {
+const colorSchemeToggleStyles = style({
   ...focusRing(),
   font: 'ui',
+  color: 'neutral',
   textDecoration: 'none',
   transition: 'default',
   backgroundColor: {
@@ -48,30 +58,65 @@ const linkStyle = {
       default: 'transparent'
     }
   },
-  height: 32,
-  paddingX: 'edge-to-text',
+  size: 32,
   display: 'flex',
   alignItems: 'center',
-  borderRadius: 'lg'
-} as const;
-
-const linkStyles = style({
-  ...linkStyle
+  justifyContent: 'center',
+  borderRadius: 'lg',
+  borderWidth: 0
 });
 
-const iconStyles = style({
-  ...linkStyle,
-  paddingX: space(6)
+const iconContainerStyles = style({
+  position: 'relative',
+  size: 20
 });
+
+function ColorSchemeToggle() {
+  let {colorScheme, toggleColorScheme, systemColorScheme} = useSettings();
+  let isOverriding = colorScheme !== systemColorScheme;
+  let label = isOverriding
+    ? `Using ${colorScheme} mode (press to use system)`
+    : `Using system ${systemColorScheme} mode (press to switch)`;
+  let ref = useRef(null);
+  let isDark = colorScheme === 'dark';
+
+  return (
+    <Button
+      ref={ref}
+      aria-label={label}
+      onPress={toggleColorScheme}
+      className={renderProps => colorSchemeToggleStyles(renderProps)}
+      style={pressScale(ref)}>
+      <span className={iconContainerStyles}>
+        <Contrast
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? 'rotate(-90deg) scale(0.5)' : 'rotate(0deg) scale(1)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+        <Lighten
+          UNSAFE_style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.5)',
+            transition: 'opacity 200ms ease-out, transform 200ms ease-out'
+          }} />
+      </span>
+    </Button>
+  );
+}
 
 export default function Header() {
   const {currentPage} = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const searchMenuId = useId();
   let ref = useRef(null);
-  let docsRef = useRef(null);
-  let releasesRef = useRef(null);
-  let blogRef = useRef(null);
+  let iconRef = useRef<HTMLDivElement | null>(null);
+  let labelRef = useRef<HTMLDivElement | null>(null);
+  let searchRef = useRef<HTMLDivElement | null>(null);
   let renderCallback = useRef<(() => void) | null>(null);
 
   let openSearchMenu = async () => {
@@ -85,9 +130,15 @@ export default function Header() {
 
     // Don't transition the entire page.
     document.documentElement.style.viewTransitionName = 'none';
+    iconRef.current!.style.viewTransitionName = 'search-menu-icon';
+    labelRef.current!.style.viewTransitionName = 'search-menu-label';
+    searchRef.current!.style.viewTransitionName = 'search-menu-search-field';
     let viewTransition = document.startViewTransition(() => {
       // Wait until next render. Using flushSync causes flickering.
       return new Promise<void>(resolve => {
+        iconRef.current!.style.viewTransitionName = '';
+        labelRef.current!.style.viewTransitionName = '';
+        searchRef.current!.style.viewTransitionName = '';
         renderCallback.current = resolve;
         setSearchOpen((prev) => !prev);
       });
@@ -109,11 +160,17 @@ export default function Header() {
       return new Promise<void>(resolve => {
         renderCallback.current = resolve;
         setSearchOpen(false);
+        iconRef.current!.style.viewTransitionName = 'search-menu-icon';
+        labelRef.current!.style.viewTransitionName = 'search-menu-label';
+        searchRef.current!.style.viewTransitionName = 'search-menu-search-field';
       });
     });
 
     viewTransition.finished.then(() => {
       document.documentElement.style.viewTransitionName = '';
+      iconRef.current!.style.viewTransitionName = '';
+      labelRef.current!.style.viewTransitionName = '';
+      searchRef.current!.style.viewTransitionName = '';
     });
   };
 
@@ -124,7 +181,7 @@ export default function Header() {
 
   let library = getLibraryFromPage(currentPage);
   let subdirectory: 's2' | 'react-aria' = 's2';
-  if (library === 'internationalized' || library === 'react-aria') {
+  if (library === 'react-aria') {
     // the internationalized library has no homepage so i've chosen to route it to the react aria homepage
     subdirectory = 'react-aria';
   }
@@ -134,6 +191,7 @@ export default function Header() {
   let docs = `${baseUrl}/getting-started`;
   let release = `${baseUrl}/releases/`;
   let blog = `${getBaseUrl('react-aria')}/blog/`;
+  let npm = subdirectory === 's2' ? '@react-spectrum/s2' : 'react-aria-components';
 
   return (
     <>
@@ -152,26 +210,33 @@ export default function Header() {
               ref={ref}
               style={pressScale(ref, {visibility: searchOpen ? 'hidden' : 'visible'})}
               className={renderProps => libraryStyles({...renderProps})}>
-              <div className={style({display: 'flex', alignItems: 'center'})}>
-                <div className={style({marginTop: 4})} style={{viewTransitionName: !searchOpen ? 'search-menu-icon' : 'none'} as CSSProperties}>
-                  {getButtonIcon(currentPage)}
-                </div>
-                <span className={style({font: 'ui-2xl', marginStart: 8})} style={{viewTransitionName: !searchOpen ? 'search-menu-label' : 'none'} as CSSProperties}>
-                  {getButtonText(currentPage)}
-                </span>
+              <div ref={iconRef}>
+                {getButtonIcon(currentPage)}
               </div>
+              <span className={style({font: 'heading-sm', fontWeight: 'extra-bold'})} ref={labelRef}>
+                {getButtonText(currentPage)}
+              </span>
             </Link>
           </div>
-          <SearchMenuTrigger
-            onOpen={openSearchMenu}
-            onClose={closeSearchMenu}
-            isSearchOpen={searchOpen}
-            overlayId={searchMenuId} />
+          <div ref={searchRef}>
+            <SearchMenuTrigger
+              onOpen={openSearchMenu}
+              onClose={closeSearchMenu}
+              isSearchOpen={searchOpen}
+              overlayId={searchMenuId} />
+          </div>
           <div className={style({display: 'flex', alignItems: 'center', gap: 4, justifySelf: 'end'})}>
-            <Link className={renderProps => linkStyles({...renderProps})} href={docs} ref={docsRef} style={pressScale(docsRef)} >Docs</Link>
-            <Link className={renderProps => linkStyles({...renderProps})} href={release} ref={releasesRef} style={pressScale(releasesRef)} >Releases</Link>
-            <Link className={renderProps => linkStyles({...renderProps})} href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer" ref={blogRef} style={pressScale(blogRef)} >Blog</Link>
-            <Link aria-label="React Spectrum GitHub repo" className={renderProps => iconStyles({...renderProps})} href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></Link>
+            <HeaderLink href={docs}>Docs</HeaderLink>
+            <HeaderLink href={release}>Releases</HeaderLink>
+            <HeaderLink href={blog} target={subdirectory === 's2' ? '_blank' : ''} rel="noopener noreferrer">Blog</HeaderLink>
+            <HeaderLink aria-label="GitHub" href="https://github.com/adobe/react-spectrum" target="_blank" rel="noopener noreferrer" ><GithubLogo /></HeaderLink>
+            <HeaderLink aria-label="npm" href={`https://npmjs.com/${npm}`} target="_blank" rel="noopener noreferrer"><NpmLogo /></HeaderLink>
+            {library !== 'react-aria' && (
+              <>
+                <Divider orientation="vertical" UNSAFE_style={{marginBlock: 4}} />
+                <ColorSchemeToggle />
+              </>
+            )}
           </div>
         </div>
       </header>

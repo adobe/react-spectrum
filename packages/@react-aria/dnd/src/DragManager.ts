@@ -14,7 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
 import {getDragModality, getTypes} from './utils';
-import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
+import {isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {RefObject, useEffect, useState} from 'react';
 
@@ -114,7 +114,7 @@ function endDragging() {
 
 export function isValidDropTarget(element: Element): boolean {
   for (let target of dropTargets.keys()) {
-    if (target.contains(element)) {
+    if (nodeContains(target, element)) {
       return true;
     }
   }
@@ -243,7 +243,7 @@ class DragSession {
     this.cancelEvent(e);
 
     if (e.key === 'Enter') {
-      if (e.altKey || this.getCurrentActivateButton()?.contains(e.target as Node)) {
+      if (e.altKey || nodeContains(this.getCurrentActivateButton(), e.target as Node)) {
         this.activate(this.currentDropTarget, this.currentDropItem);
       } else {
         this.drop();
@@ -275,7 +275,7 @@ class DragSession {
 
     let dropTarget =
       this.validDropTargets.find(target => target.element === e.target as HTMLElement) ||
-      this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      this.validDropTargets.find(target => nodeContains(target.element, e.target as HTMLElement));
 
     if (!dropTarget) {
       // if (e.target === activateButton) {
@@ -321,10 +321,10 @@ class DragSession {
     this.cancelEvent(e);
     if (isVirtualClick(e) || this.isVirtualClick) {
       let dropElements = dropItems.values();
-      let item = [...dropElements].find(item => item.element === e.target as HTMLElement || item.activateButtonRef?.current?.contains(e.target as HTMLElement));
-      let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+      let item = [...dropElements].find(item => item.element === e.target as HTMLElement || nodeContains(item.activateButtonRef?.current, e.target as HTMLElement));
+      let dropTarget = this.validDropTargets.find(target => nodeContains(target.element, e.target as HTMLElement));
       let activateButton = item?.activateButtonRef?.current ?? dropTarget?.activateButtonRef?.current;
-      if (activateButton?.contains(e.target as HTMLElement) && dropTarget) {
+      if (nodeContains(activateButton, e.target as HTMLElement) && dropTarget) {
         this.activate(dropTarget, item);
         return;
       }
@@ -401,7 +401,7 @@ class DragSession {
     // Filter out drop targets that contain valid items. We don't want to stop hiding elements
     // other than the drop items that exist inside the collection.
     let visibleDropTargets = this.validDropTargets.filter(target =>
-      !validDropItems.some(item => target.element.contains(item.element))
+      !validDropItems.some(item => nodeContains(target.element, item.element))
     );
 
     this.restoreAriaHidden = ariaHideOutside([
@@ -582,6 +582,9 @@ class DragSession {
     if (!this.dragTarget.element.closest('[aria-hidden="true"], [inert]')) {
       this.dragTarget.element.focus();
     }
+
+    // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+    document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
 
     announce(this.stringFormatter.format('dropCanceled'));
   }

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/mcp",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "MCP server for React Aria documentation",
   "type": "module",
   "bin": "dist/react-aria/src/index.js",

@@ -17,6 +17,7 @@ import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Image} from './Image';
+import {isDocsEnv} from './macros' with {type: 'macro'};
 import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -77,7 +78,7 @@ export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef
   const domProps = filterDOMProps(otherProps);
 
   // In the docs build, we need to be able to simulate font scaling.
-  let remSize = process.env.DOCS_ENV ? `calc(${size / 16} * var(--rem, 1rem))` : `${size / 16}rem`;
+  let remSize = isDocsEnv() ? `calc(${size / 16} * var(--rem, 1rem))` : `${size / 16}rem`;
   let isLarge = size >= 64;
   return (
     <Image

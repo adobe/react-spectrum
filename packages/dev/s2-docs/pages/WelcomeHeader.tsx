@@ -56,17 +56,6 @@ export function LibraryCards() {
           <LinkButton href="react-aria/" variant="accent">Explore</LinkButton>
         </Footer>
       </ProductCard>
-
-      <ProductCard size="L">
-        {TAB_DEFS['internationalized'].icon}
-        <Content>
-          <Text slot="title">{TAB_DEFS['internationalized'].label}</Text>
-          <Text slot="description">{TAB_DEFS['internationalized'].description}</Text>
-        </Content>
-        <Footer>
-          <LinkButton href="internationalized/date/" variant="accent">Show Packages</LinkButton>
-        </Footer>
-      </ProductCard>
     </div>
   );
 }

@@ -115,7 +115,7 @@ export function SemanticColorsDisclosure() {
 
 export function GlobalColorsDisclosure() {
   return (
-    <Disclosure isQuiet styles={style({marginBottom: 16})}>
+    <Disclosure isQuiet>
       <DisclosureTitle>Global colors</DisclosureTitle>
       <DisclosurePanel>
         <p>The following values are available across all color properties.</p>
@@ -145,13 +145,89 @@ export function GlobalColorsDisclosure() {
   );
 }
 
+export function TransparentColorsDisclosure() {
+  return (
+    <Disclosure isQuiet>
+      <DisclosureTitle>Transparent colors</DisclosureTitle>
+      <DisclosurePanel>
+        <p>These colors are useful for overlays or transparent effects.</p>
+        <div className="sb-unstyled" style={{columnWidth: 150}}>
+          <Color name="transparent" className={colorSwatch('transparent')} />
+          <Color name="transparent-white-25" className={colorSwatch('transparent-white-25')} />
+          <Color name="transparent-white-50" className={colorSwatch('transparent-white-50')} />
+          <Color name="transparent-white-75" className={colorSwatch('transparent-white-75')} />
+          <Color name="transparent-white-100" className={colorSwatch('transparent-white-100')} />
+          <Color name="transparent-white-200" className={colorSwatch('transparent-white-200')} />
+          <Color name="transparent-white-300" className={colorSwatch('transparent-white-300')} />
+          <Color name="transparent-white-400" className={colorSwatch('transparent-white-400')} />
+          <Color name="transparent-white-500" className={colorSwatch('transparent-white-500')} />
+          <Color name="transparent-white-600" className={colorSwatch('transparent-white-600')} />
+          <Color name="transparent-white-700" className={colorSwatch('transparent-white-700')} />
+          <Color name="transparent-white-800" className={colorSwatch('transparent-white-800')} />
+          <Color name="transparent-white-900" className={colorSwatch('transparent-white-900')} />
+          <Color name="transparent-white-1000" className={colorSwatch('transparent-white-1000')} />
+          <Color name="transparent-black-25" className={colorSwatch('transparent-black-25')} />
+          <Color name="transparent-black-50" className={colorSwatch('transparent-black-50')} />
+          <Color name="transparent-black-75" className={colorSwatch('transparent-black-75')} />
+          <Color name="transparent-black-100" className={colorSwatch('transparent-black-100')} />
+          <Color name="transparent-black-200" className={colorSwatch('transparent-black-200')} />
+          <Color name="transparent-black-300" className={colorSwatch('transparent-black-300')} />
+          <Color name="transparent-black-400" className={colorSwatch('transparent-black-400')} />
+          <Color name="transparent-black-500" className={colorSwatch('transparent-black-500')} />
+          <Color name="transparent-black-600" className={colorSwatch('transparent-black-600')} />
+          <Color name="transparent-black-700" className={colorSwatch('transparent-black-700')} />
+          <Color name="transparent-black-800" className={colorSwatch('transparent-black-800')} />
+          <Color name="transparent-black-900" className={colorSwatch('transparent-black-900')} />
+          <Color name="transparent-black-1000" className={colorSwatch('transparent-black-1000')} />
+          <Color name="transparent-overlay-25" className={colorSwatch('transparent-overlay-25')} />
+          <Color name="transparent-overlay-50" className={colorSwatch('transparent-overlay-50')} />
+          <Color name="transparent-overlay-75" className={colorSwatch('transparent-overlay-75')} />
+          <Color name="transparent-overlay-100" className={colorSwatch('transparent-overlay-100')} />
+          <Color name="transparent-overlay-200" className={colorSwatch('transparent-overlay-200')} />
+          <Color name="transparent-overlay-300" className={colorSwatch('transparent-overlay-300')} />
+          <Color name="transparent-overlay-400" className={colorSwatch('transparent-overlay-400')} />
+          <Color name="transparent-overlay-500" className={colorSwatch('transparent-overlay-500')} />
+          <Color name="transparent-overlay-600" className={colorSwatch('transparent-overlay-600')} />
+          <Color name="transparent-overlay-700" className={colorSwatch('transparent-overlay-700')} />
+          <Color name="transparent-overlay-800" className={colorSwatch('transparent-overlay-800')} />
+          <Color name="transparent-overlay-900" className={colorSwatch('transparent-overlay-900')} />
+          <Color name="transparent-overlay-1000" className={colorSwatch('transparent-overlay-1000')} />
+        </div>
+      </DisclosurePanel>
+    </Disclosure>
+  );
+}
+
+export function HCMColorsDisclosure() {
+  return (
+    <Disclosure isQuiet styles={style({marginBottom: 16})}>
+      <DisclosureTitle>High contrast mode colors</DisclosureTitle>
+      <DisclosurePanel>
+        <p>These colors map to system colors when forced colors mode is active.</p>
+        <ul className={style({marginStart: 24, marginTop: 8, display: 'flex', flexDirection: 'column', gap: 12, paddingStart: 0})}>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Background</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonBorder</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonFace</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>ButtonText</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Field</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Highlight</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>HighlightText</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>GrayText</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>Mark</code></li>
+          <li className={style({font: 'body'})}><code className={style({font: {default: 'code-xs', lg: 'code-sm'}})}>LinkText</code></li>
+        </ul>
+      </DisclosurePanel>
+    </Disclosure>
+  );
+}
+
 function ColorScale({scale}) {
   return scale.map(([name, className]) => (
     <Color key={name} name={name} className={className} />
   ));
 }
 
-function Color({name, className}) {
+export function Color({name, className}) {
   return (
     <div className={style({display: 'flex', gap: 8, marginBottom: 4, font: 'ui', alignItems: 'center', breakInside: 'avoid'})}>
       <div className={typeof className === 'function' ? className({}) : className} />

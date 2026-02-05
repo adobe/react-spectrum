@@ -77,7 +77,7 @@ export function OptimisticToc() {
       </ScrollableToc>
       <div className={style({flexShrink: 0})}>
         <Divider size="S" styles={style({marginY: 12})} />
-        <MarkdownMenu url={currentPage.url} />
+        <MarkdownMenu name={currentPage.name} url={currentPage.url} />
       </div>
     </aside>
   );

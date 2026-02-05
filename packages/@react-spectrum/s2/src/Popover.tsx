@@ -40,6 +40,7 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
   'shouldUpdatePosition' |
   'style' |
   'className' |
+  'render' |
   keyof GlobalDOMAttributes
 > {
   /**
@@ -156,8 +157,8 @@ let arrow = style({
   },
   translateX: {
     placement: {
-      left: -4,
-      right: 4
+      left: '-25%',
+      right: '25%'
     }
   },
   strokeWidth: 1,
@@ -255,7 +256,7 @@ export interface PopoverDialogProps extends Pick<PopoverProps,
 'triggerRef' |
 'isOpen' |
 'onOpenChange'
->, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+>, Omit<DialogProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The children of the popover.
    */

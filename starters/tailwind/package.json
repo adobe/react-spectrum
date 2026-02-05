@@ -32,7 +32,7 @@
   "dependencies": {
     "lucide-react": "^0.517.0",
     "postcss": "^8.4.31",
-    "react-aria-components": "^1.13.0",
+    "react-aria-components": "^1.14.0",
     "tailwind-variants": "^0.3.1"
   },
   "resolutions": {

@@ -200,6 +200,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
+  useEffect(() => {
+    if (isDisabled && manager.focusedKey === key) {
+      manager.setFocusedKey(null);
+    }
+  }, [manager, isDisabled, key]);
+
   // With checkbox selection, onAction (i.e. navigation) becomes primary, and occurs on a single click of the row.
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
@@ -246,7 +252,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemPressProps.onPressStart = (e) => {
       modality.current = e.pointerType;
       longPressEnabledOnPressStart.current = longPressEnabled;
-      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey())) {
+      if (e.pointerType === 'keyboard' && (!hasAction || isSelectionKey(e.key))) {
         onSelect(e);
       }
     };
@@ -256,7 +262,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
         if (hasPrimaryAction || (hasSecondaryAction && e.pointerType !== 'mouse')) {
-          if (e.pointerType === 'keyboard' && !isActionKey()) {
+          if (e.pointerType === 'keyboard' && !isActionKey(e.key)) {
             return;
           }
 
@@ -290,7 +296,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (
         allowsSelection && (
           (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey()))
+          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey(e.key)))
         )
       ) {
         onSelect(e);
@@ -305,7 +311,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         e.pointerType === 'touch' ||
         e.pointerType === 'pen' ||
         e.pointerType === 'virtual' ||
-        (e.pointerType === 'keyboard' && hasAction && isActionKey()) ||
+        (e.pointerType === 'keyboard' && hasAction && isActionKey(e.key)) ||
         (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
       ) {
         if (hasAction) {
@@ -407,12 +413,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   };
 }
 
-function isActionKey() {
-  let event = window.event as KeyboardEvent;
-  return event?.key === 'Enter';
+function isActionKey(key: string | undefined) {
+  return key === 'Enter';
 }
 
-function isSelectionKey() {
-  let event = window.event as KeyboardEvent;
-  return event?.key === ' ' || event?.code === 'Space';
+function isSelectionKey(key: string | undefined) {
+  return key === ' ';
 }

@@ -56,7 +56,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'render' | 'placeholder'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -318,7 +318,7 @@ function TabLine(props: {isDisabled?: boolean}) {
 }
 
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render'>, StyleProps {
   children: ReactNode
 }
 export function PickerItem(props: PickerItemProps): ReactNode {

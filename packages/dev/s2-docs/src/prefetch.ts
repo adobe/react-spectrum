@@ -44,11 +44,23 @@ export function getPrefetchedPromise(rscPath: string): Promise<ReactElement> | u
   return prefetchPromises.get(rscPath);
 }
 
+function waitForIdle(fn) {
+  // Wait for view transition to finish before pre-fetching.
+  // Otherwise try to wait for idle time so we don't interrupt interactions/animations.
+  if ('activeViewTransition' in document && document.activeViewTransition) {
+    (document.activeViewTransition as ViewTransition).finished.then(() => fn());
+  } else if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(fn);
+  } else {
+    setTimeout(fn, 0);
+  }
+}
+
 let observer = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver(entries => {
   for (let entry of entries) {
     if (entry.isIntersecting && entry.target instanceof HTMLAnchorElement) {
       let link = entry.target;
-      prefetchRoute(link.pathname + link.search + link.hash);
+      waitForIdle(() => prefetchRoute(link.pathname + link.search + link.hash));
     }
   }
 }) : null;

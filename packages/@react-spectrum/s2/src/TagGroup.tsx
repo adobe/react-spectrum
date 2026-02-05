@@ -52,12 +52,12 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
-export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, LabelableProps {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, LabelableProps {
   /** The children of the tag. */
   children: ReactNode
 }
 
-export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className' | keyof GlobalDOMAttributes>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
+export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
   /** A description for the tag group. */
   description?: ReactNode,
   /**
