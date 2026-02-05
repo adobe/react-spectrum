@@ -6,7 +6,7 @@ import CheckmarkCircle from '@react-spectrum/s2/icons/CheckmarkCircle';
 import {colorSwatch, getColorScale} from './color.macro' with {type: 'macro'};
 import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {Header, ListBox, ListBoxItem, ListBoxSection} from 'react-aria-components';
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
@@ -19,7 +19,7 @@ const itemStyle = style({
   justifyContent: 'center',
   alignItems: 'center',
   gap: 8,
-  padding: 8,
+  paddingY: 8,
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
@@ -45,13 +45,6 @@ const swatchStyle = style({
   borderStyle: 'solid',
   flexShrink: 0,
   forcedColorAdjust: 'none'
-});
-
-const listBoxStyle = style({
-  width: 'full',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 24
 });
 
 const sectionStyle = style({
@@ -199,20 +192,6 @@ const scaleSwatches: Record<string, string> = {
 };
 
 
-export function CopyInfoMessage() {
-  return (
-    <div className={style({display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 8})}>
-      <div className={style({display: 'flex', alignItems: 'center', gap: 4})}>
-        <InfoCircle styles={iconStyle({size: 'XS'})} />
-        <span className={style({font: 'ui'})}>Press a color to copy its name.</span>
-      </div>
-      <span>
-        See <Link href="styling">styling</Link> for more information.
-      </span>
-    </div>
-  );
-}
-
 interface ColorSearchViewProps {
   filteredItems: Array<{
     id: string,
@@ -268,8 +247,8 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
   }
 
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
-      <CopyInfoMessage />
+    <>
+      <InfoMessage>Press a color to copy its name. See <Link href="styling">styling</Link> for more information.</InfoMessage>
       <ListBox
         aria-label="Colors"
         onAction={(key) => {
@@ -282,7 +261,15 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           }
         }}
         layout="grid"
-        className={listBoxStyle}
+        className={style({
+          width: 'full',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+          flexGrow: 1,
+          overflow: 'auto',
+          scrollPaddingY: 4
+        })}
         dependencies={[copiedId, exactMatches, closestMatches]}
         items={sections}>
         {section => (
@@ -300,7 +287,7 @@ export function ColorSearchView({filteredItems, exactMatches = new Set(), closes
           </ListBoxSection>
         )}
       </ListBox>
-    </div>
+    </>
   );
 }
 

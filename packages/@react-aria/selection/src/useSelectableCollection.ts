@@ -580,7 +580,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // This will be marshalled to either the first or last item depending on where focus came from.
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
-    tabIndex = manager.isFocused ? -1 : 0;
+    tabIndex = manager.focusedKey == null ? 0 : -1;
   }
 
   let collectionId = useCollectionId(manager.collection);

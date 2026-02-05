@@ -53,7 +53,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
 
-export interface MenuTriggerProps extends Omit<AriaMenuTriggerProps, 'isTriggerUpWhenOpen'> {
+export interface MenuTriggerProps extends AriaMenuTriggerProps {
   /**
    * Alignment of the menu relative to the trigger.
    *
@@ -543,6 +543,8 @@ export function MenuItem(props: MenuItemProps): ReactNode {
  * linking the Menu's open state with the trigger's press state.
  */
 function MenuTrigger(props: MenuTriggerProps): ReactNode {
+  // RAC sets isPressed via PressResponder when the menu is open.
+  // We don't want press scaling to appear to get "stuck", so override this.
   // For mouse interactions, menus open on press start. When the popover underlay appears
   // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
   // to occur. We override this by listening for pointerup on the document ourselves.
