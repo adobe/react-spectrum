@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow, nodeContains} from '@react-aria/utils';
+import {createShadowTreeWalker, getOwnerDocument, getOwnerWindow, nodeContains} from '@react-aria/utils';
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
@@ -93,7 +93,8 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       return NodeFilter.FILTER_ACCEPT;
     };
 
-    let walker = document.createTreeWalker(
+    let walker = createShadowTreeWalker(
+      getOwnerDocument(root),
       root,
       NodeFilter.SHOW_ELEMENT,
       {acceptNode}

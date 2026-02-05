@@ -10,9 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {act, createShadowRoot, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ariaHideOutside} from '../src';
+import {enableShadowDOM} from '@react-stately/flags';
 import React, {useRef, useState} from 'react';
+import ReactDOM from 'react-dom';
+import {screen} from 'shadow-dom-testing-library';
 
 describe('ariaHideOutside', function () {
   it('should hide everything except the provided element [button]', function () {
@@ -504,5 +507,36 @@ describe('ariaHideOutside', function () {
     await Promise.resolve();
     revert();
     expect(row.parentElement).not.toHaveAttribute('aria-hidden', 'true');
+  });
+});
+
+describe('ariaHideOutside with shadow DOM', function () {
+  beforeAll(() => {
+    enableShadowDOM();
+  });
+
+  it('should hide everything except the provided element [button]', function () {
+    const {shadowRoot, shadowHost, cleanup} = createShadowRoot();
+    let Wrapper = () => ReactDOM.createPortal(
+      <div>
+        <input type="checkbox" />
+        <button>Button</button>
+        <input type="checkbox" />
+      </div>,
+      shadowRoot
+    );
+    render(<Wrapper />);
+
+    let button = screen.getByShadowRole('button');
+    let checkboxes = screen.getAllByShadowRole('checkbox');
+    let revert = ariaHideOutside([button]);
+
+    expect(checkboxes[0]).toHaveAttribute('aria-hidden', 'true');
+    expect(checkboxes[1]).toHaveAttribute('aria-hidden', 'true');
+    expect(button).not.toHaveAttribute('aria-hidden');
+    expect(shadowHost).not.toHaveAttribute('aria-hidden');
+
+    revert();
+    cleanup();
   });
 });
