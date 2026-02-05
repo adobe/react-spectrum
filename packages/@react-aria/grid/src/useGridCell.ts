@@ -109,12 +109,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !getActiveElement()) {
+    let activeElement = getActiveElement();
+    if (!nodeContains(e.currentTarget, e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !activeElement) {
       return;
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = getActiveElement();
+    walker.currentNode = activeElement;
 
     switch (e.key) {
       case 'ArrowLeft': {
