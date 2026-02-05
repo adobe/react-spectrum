@@ -27,24 +27,24 @@ import {
   PickerItem,
   Row,
   StatusLight,
-  Tabs,
-  TabList,
   Tab,
   TableBody,
   TableHeader,
   TableView,
   TableViewProps,
+  TabList,
+  Tabs,
   Text,
   TextField
 } from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
+import {CollectionRendererContext, DefaultCollectionRenderer, SortDescriptor} from 'react-aria-components';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import {Key} from '@react-types/shared';
 import type {Meta, StoryObj} from '@storybook/react';
 import React, {ReactElement, useCallback, useEffect, useRef, useState} from 'react';
-import {CollectionRendererContext, DefaultCollectionRenderer, SortDescriptor} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useAsyncList, useListData} from '@react-stately/data';
 import {useEffectEvent} from '@react-aria/utils';
@@ -1719,26 +1719,20 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
 };
 
 export const TableViewCollectionError: StoryObj<typeof DynamicTable> = {
-  render: function DynamicColumnsExample(args) {
+  render: function DynamicColumnsExample() {
     const columns: Array<{
-      key: string;
-      label: string;
-      align?: 'start' | 'center' | 'end';
+      key: string,
+      label: string,
+      align?: 'start' | 'center' | 'end'
     }> = [
-      { key: 'name', label: 'Name'},
-      { key: 'count', label: 'Count', align: 'end' },
+      {key: 'name', label: 'Name'},
+      {key: 'count', label: 'Count', align: 'end'}
     ];
 
-    interface DemoItem {
-      id: string;
-      name: string;
-      count: number;
-    }
-
     const tabs = [
-      { id: 'general', label: 'General' },
-      { id: 'advanced', label: 'Advanced' },
-      { id: 'about', label: 'About' },
+      {id: 'general', label: 'General'},
+      {id: 'advanced', label: 'Advanced'},
+      {id: 'about', label: 'About'}
     ];
     const renderEmptyState = () => (
       <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
@@ -1757,21 +1751,15 @@ export const TableViewCollectionError: StoryObj<typeof DynamicTable> = {
 
     return (
       <Content>
-        <TableView aria-label="Demo table" selectionMode="none" styles={style({ height: 320, minHeight: 240, minWidth: 320 })}>
+        <TableView aria-label="Demo table" selectionMode="none" styles={style({height: 320, minHeight: 240, minWidth: 320})}>
           <TableHeader>
             {columns.map((column) => (
-              <Column
-                key={column.key}
-                align={column.align}
-              >
+              <Column key={column.key} align={column.align}>
                 {column.label}
               </Column>
             ))}
           </TableHeader>
-          <TableBody<DemoItem>
-            items={[]}
-            renderEmptyState={renderEmptyState}>
-          </TableBody>
+          <TableBody items={[]} renderEmptyState={renderEmptyState} />
         </TableView>
       </Content>
     );
@@ -1782,4 +1770,4 @@ export const TableViewCollectionError: StoryObj<typeof DynamicTable> = {
       disable: true
     }
   }
-}
+};

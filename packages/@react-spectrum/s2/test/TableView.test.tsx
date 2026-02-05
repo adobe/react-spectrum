@@ -159,11 +159,11 @@ describe('TableView', () => {
       <Tabs aria-label="Settings">
         <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
           <TabList>
-              {tabs.map((tab) => (
-                <Tab key={tab.id} id={tab.id}>
-                  {tab.label}
-                </Tab>
-              ))}
+            {tabs.map((tab) => (
+              <Tab key={tab.id} id={tab.id}>
+                {tab.label}
+              </Tab>
+            ))}
           </TabList>
         </CollectionRendererContext.Provider>
       </Tabs>
@@ -173,13 +173,13 @@ describe('TableView', () => {
     await act(async () => {
       renderResult = render(
         <TableView aria-label="Debug table" selectionMode="none">
-        <TableHeader columns={columns}>
-          {(column) => (
-            <Column>
-              {column.name}
-            </Column>
-          )}
-        </TableHeader>
+          <TableHeader columns={columns}>
+            {(column) => (
+              <Column>
+                {column.name}
+              </Column>
+            )}
+          </TableHeader>
           <TableBody items={[]} renderEmptyState={renderEmptyState} />
         </TableView>
       );
