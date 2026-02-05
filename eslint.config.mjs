@@ -511,6 +511,7 @@ export default [{
 
     rules: {
         "rsp-rules/faster-node-contains": OFF,
+        "rsp-rules/no-non-shadow-contains": OFF,
     },
 }, {
     files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],

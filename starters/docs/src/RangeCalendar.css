@@ -35,6 +35,7 @@
     padding: 0 calc(var(--gap) / 2);
     position: relative;
     z-index: 1;
+    outline: none;
 
     span {
       display: flex;
