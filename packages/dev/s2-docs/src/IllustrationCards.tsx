@@ -3,12 +3,12 @@
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
 // eslint-disable-next-line monorepo/no-internal-import
 import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
-import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
-import {focusRing, iconStyle, style} from '@react-spectrum/s2/style' with {type: 'macro'};
+import {Content, Heading, IllustratedMessage, Link, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
+import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
-import {illustrationAliases} from './illustrationAliases.js';
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
+import {illustrationAliases} from './illustrationAliases.js'; 
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
@@ -44,14 +44,19 @@ export function IllustrationCards() {
 
   let {contains} = useFilter({sensitivity: 'base'});
   let filter = useCallback((textValue: string, inputValue: string) => {
+    const trimmedInput = inputValue.trim();
+    // If input is empty after trimming, show all items
+    if (!trimmedInput) {
+      return true;
+    }
     // Check if input matches an alias that maps to this illustration name
     for (const alias of Object.keys(illustrationAliases)) {
-      if (contains(alias, inputValue) && illustrationAliases[alias].includes(textValue)) {
+      if (contains(alias, trimmedInput) && illustrationAliases[alias].includes(textValue)) {
         return true;
       }
     }
     // Also compare for substrings in the illustration's actual name
-    return textValue != null && contains(textValue, inputValue);
+    return textValue != null && contains(textValue, trimmedInput);
   }, [contains]);
 
   return (
@@ -80,7 +85,7 @@ export function IllustrationCards() {
             <Radio value="generic2">Generic 2</Radio>
           </RadioGroup>
         )}
-        <CopyInfoMessage />
+        <InfoMessage>Press an item to copy its import statement. See <Link href="illustrations">Illustrations</Link> for more information.</InfoMessage>
         <Suspense fallback={<Loading />}>
           <IllustrationList variant={variant} gradientStyle={gradientStyle} />
         </Suspense>
@@ -97,14 +102,6 @@ function Loading() {
   );
 }
 
-function CopyInfoMessage() {
-  return (
-    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4})}>
-      <InfoCircle styles={iconStyle({size: 'XS'})} />
-      <span className={style({font: 'ui'})}>Press an item to copy its import statement</span>
-    </div>
-  );
-}
 
 function useCopyImport(variant: string, gradientStyle: string) {
   let [copiedId, setCopiedId] = useState<string | null>(null);

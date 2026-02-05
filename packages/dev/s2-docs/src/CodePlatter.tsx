@@ -110,12 +110,33 @@ export function CodePlatter({children, type, showCoachMark}: CodePlatterProps) {
                     // Find previous heading element to get hash.
                     let url = new URL(shareUrl, location.href);
                     let node: Element | null = codeRef.current;
-                    while (node && node.parentElement?.tagName !== 'ARTICLE') {
+                    
+                    // Search for the nearest heading by walking up the tree and checking previous siblings
+                    while (node && node.tagName !== 'ARTICLE') {
+                      // Check previous siblings
+                      let sibling = node.previousElementSibling;
+                      while (sibling) {
+                        if (sibling instanceof HTMLHeadingElement) {
+                          node = sibling;
+                          break;
+                        }
+                        // Also check inside the sibling for headings
+                        let headingInSibling = sibling.querySelector('h1, h2, h3, h4, h5, h6');
+                        if (headingInSibling instanceof HTMLHeadingElement) {
+                          node = headingInSibling;
+                          break;
+                        }
+                        sibling = sibling.previousElementSibling;
+                      }
+                      
+                      if (node instanceof HTMLHeadingElement) {
+                        break;
+                      }
+                      
+                      // Move up to parent
                       node = node.parentElement;
                     }
-                    while (node && !(node instanceof HTMLHeadingElement)) {
-                      node = node.previousElementSibling;
-                    }
+                    
                     if (node instanceof HTMLHeadingElement && node.id) {
                       url.hash = '#' + node.id;
                     }
