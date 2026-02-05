@@ -431,6 +431,7 @@ export default [{
         "rsp-rules/act-events-test": ERROR,
         "rsp-rules/no-getByRole-toThrow": ERROR,
         "rsp-rules/no-non-shadow-contains": OFF,
+        "rsp-rules/faster-node-contains": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
         "jsdoc/require-jsdoc": OFF
@@ -501,6 +502,15 @@ export default [{
             name: "document",
             message: "Use getOwnerDocument from @react-aria/utils instead.",
         }],
+    },
+}, {
+    files: [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx",
+    ],
+
+    rules: {
+        "rsp-rules/faster-node-contains": OFF,
     },
 }, {
     files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],

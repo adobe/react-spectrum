@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>isConnected Performance Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .test-container {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .controls {
+      background: #f5f5f5;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    .results {
+      background: #e8f4f8;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+    .winner {
+      color: #0a8a0a;
+      font-weight: bold;
+    }
+    .loser {
+      color: #c00;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+      border-radius: 4px;
+      border: 1px solid #007bff;
+      background: #007bff;
+      color: white;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    input {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .nested {
+      margin-left: 20px;
+      padding-left: 10px;
+      border-left: 2px solid #ddd;
+    }
+    .config {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .connected {
+      background-color: #e8f5e9;
+    }
+    .disconnected {
+      background-color: #ffebee;
+    }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin: 15px 0;
+    }
+    .stat-box {
+      padding: 10px 15px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>isConnected Performance Test</h1>
+  <p>
+    This test compares the performance of <code>document.contains(node)</code>
+    vs <code>node.isConnected</code> for checking if a node is in the document.
+  </p>
+
+  <div class="controls">
+    <h2>Configuration</h2>
+    <div class="config">
+      <label>Total nodes to create:</label>
+      <input type="number" id="totalNodes" value="1000" min="10" max="10000">
+    </div>
+    <div class="config">
+      <label>Percentage disconnected:</label>
+      <input type="number" id="disconnectedPercent" value="30" min="0" max="100">
+    </div>
+    <div class="config">
+      <label>Max depth for connected nodes:</label>
+      <input type="number" id="depth" value="10" min="1" max="20">
+    </div>
+    <div class="config">
+      <label>Test iterations:</label>
+      <input type="number" id="iterations" value="10000" min="100" max="1000000">
+    </div>
+    <div class="config">
+      <label>Warmup runs:</label>
+      <input type="number" id="warmup" value="1000" min="0" max="10000">
+    </div>
+    <button onclick="buildStructure()">Build Test Structure</button>
+    <button onclick="runPerformanceTest()">Run Performance Test</button>
+  </div>
+
+  <div id="structure-stats" style="display: none;" class="stats">
+    <div class="stat-box connected">
+      <strong>Connected Nodes:</strong> <span id="connectedCount">0</span>
+    </div>
+    <div class="stat-box disconnected">
+      <strong>Disconnected Nodes:</strong> <span id="disconnectedCount">0</span>
+    </div>
+    <div class="stat-box">
+      <strong>Total Nodes:</strong> <span id="totalCount">0</span>
+    </div>
+  </div>
+
+  <div id="test-structure"></div>
+
+  <div class="results" id="results" style="display: none;">
+    <h2>Results</h2>
+    <div id="results-content"></div>
+  </div>
+
+  <script>
+    let testNodes = [];
+    let connectedNodes = [];
+    let disconnectedNodes = [];
+
+    function buildStructure() {
+      const totalNodes = parseInt(document.getElementById('totalNodes').value);
+      const disconnectedPercent = parseInt(document.getElementById('disconnectedPercent').value);
+      const maxDepth = parseInt(document.getElementById('depth').value);
+      const container = document.getElementById('test-structure');
+
+      container.innerHTML = '';
+      testNodes = [];
+      connectedNodes = [];
+      disconnectedNodes = [];
+
+      const numDisconnected = Math.floor(totalNodes * disconnectedPercent / 100);
+      const numConnected = totalNodes - numDisconnected;
+
+      // Create connected nodes in a nested structure
+      const root = document.createElement('div');
+      root.id = 'root-container';
+      root.className = 'test-container';
+      root.innerHTML = '<h3>Test Structure (Connected Nodes)</h3>';
+      container.appendChild(root);
+
+      let currentParent = root;
+      let currentDepth = 0;
+      let nodesAtCurrentLevel = 0;
+      const nodesPerLevel = Math.ceil(numConnected / maxDepth);
+
+      for (let i = 0; i < numConnected; i++) {
+        const div = document.createElement('div');
+        div.className = 'test-container nested connected';
+        div.dataset.index = i;
+        div.dataset.connected = 'true';
+        div.innerHTML = `<small>Connected node ${i + 1} (depth: ${currentDepth})</small>`;
+
+        currentParent.appendChild(div);
+        testNodes.push(div);
+        connectedNodes.push(div);
+
+        nodesAtCurrentLevel++;
+
+        // Move to next level after reaching nodesPerLevel
+        if (nodesAtCurrentLevel >= nodesPerLevel && currentDepth < maxDepth - 1) {
+          currentParent = div;
+          currentDepth++;
+          nodesAtCurrentLevel = 0;
+        }
+      }
+
+      // Create disconnected nodes (not in the document)
+      const disconnectedContainer = document.createElement('div');
+      disconnectedContainer.innerHTML = '<h3>Disconnected Nodes Preview (not in document)</h3><p style="color: #666; font-size: 14px;">These are shown for reference but are not actually in the DOM tree.</p>';
+
+      for (let i = 0; i < numDisconnected; i++) {
+        const div = document.createElement('div');
+        div.className = 'test-container disconnected';
+        div.dataset.index = numConnected + i;
+        div.dataset.connected = 'false';
+        div.innerHTML = `<small>Disconnected node ${i + 1}</small>`;
+
+        // Don't append to document - keep disconnected
+        testNodes.push(div);
+        disconnectedNodes.push(div);
+
+        // Only show first few for reference
+        if (i < 5) {
+          disconnectedContainer.appendChild(div.cloneNode(true));
+        }
+      }
+
+      if (numDisconnected > 5) {
+        disconnectedContainer.innerHTML += `<p style="color: #999; font-size: 12px;">... and ${numDisconnected - 5} more disconnected nodes (not shown)</p>`;
+      }
+
+      container.appendChild(disconnectedContainer);
+
+      // Update stats
+      document.getElementById('connectedCount').textContent = connectedNodes.length.toLocaleString();
+      document.getElementById('disconnectedCount').textContent = disconnectedNodes.length.toLocaleString();
+      document.getElementById('totalCount').textContent = testNodes.length.toLocaleString();
+      document.getElementById('structure-stats').style.display = 'flex';
+      document.getElementById('results').style.display = 'none';
+
+      console.log(`Built structure:`);
+      console.log(`- Connected nodes: ${connectedNodes.length}`);
+      console.log(`- Disconnected nodes: ${disconnectedNodes.length}`);
+      console.log(`- Total test nodes: ${testNodes.length}`);
+    }
+
+    function runPerformanceTest() {
+      if (testNodes.length === 0) {
+        alert('Please build the test structure first!');
+        return;
+      }
+
+      const iterations = parseInt(document.getElementById('iterations').value);
+      const warmupRuns = parseInt(document.getElementById('warmup').value);
+
+      console.log(`Running performance test with ${iterations} iterations...`);
+
+      // Warmup runs
+      if (warmupRuns > 0) {
+        console.log(`Running ${warmupRuns} warmup iterations...`);
+        for (let i = 0; i < warmupRuns; i++) {
+          testNodes.forEach(node => {
+            document.contains(node);
+            node.isConnected;
+          });
+        }
+      }
+
+      // Test 1: document.contains(node)
+      const containsStart = performance.now();
+      let containsConnected = 0;
+      for (let i = 0; i < iterations; i++) {
+        testNodes.forEach(node => {
+          if (document.contains(node)) {
+            containsConnected++;
+          }
+        });
+      }
+      const containsEnd = performance.now();
+      const containsTime = containsEnd - containsStart;
+
+      // Test 2: node.isConnected
+      const isConnectedStart = performance.now();
+      let isConnectedTrue = 0;
+      for (let i = 0; i < iterations; i++) {
+        testNodes.forEach(node => {
+          if (node.isConnected) {
+            isConnectedTrue++;
+          }
+        });
+      }
+      const isConnectedEnd = performance.now();
+      const isConnectedTime = isConnectedEnd - isConnectedStart;
+
+      // Calculate stats
+      const totalChecks = iterations * testNodes.length;
+      const containsPerOp = containsTime / totalChecks;
+      const isConnectedPerOp = isConnectedTime / totalChecks;
+      const speedup = containsTime / isConnectedTime;
+      const slower = isConnectedTime / containsTime;
+
+      // Verify consistency
+      const containsPerIteration = containsConnected / iterations;
+      const isConnectedPerIteration = isConnectedTrue / iterations;
+      const resultsMatch = containsPerIteration === isConnectedPerIteration;
+
+      // Display results
+      const resultsDiv = document.getElementById('results-content');
+      const faster = containsTime < isConnectedTime ? 'contains' : 'isConnected';
+
+      resultsDiv.innerHTML = `
+        <h3>Test Configuration</h3>
+        <p>
+          • Total checks per method: ${totalChecks.toLocaleString()}<br>
+          • Nodes tested: ${testNodes.length.toLocaleString()}<br>
+          • Connected nodes: ${connectedNodes.length.toLocaleString()}<br>
+          • Disconnected nodes: ${disconnectedNodes.length.toLocaleString()}<br>
+          • Iterations: ${iterations.toLocaleString()}
+        </p>
+
+        <h3>Correctness Verification</h3>
+        <p style="color: ${resultsMatch ? '#0a8a0a' : '#c00'}; font-weight: bold;">
+          ${resultsMatch
+            ? `✓ Both methods returned same results: ${containsPerIteration} connected nodes per iteration`
+            : `✗ Methods returned different results! contains: ${containsPerIteration}, isConnected: ${isConnectedPerIteration}`
+          }
+        </p>
+
+        <h3>Performance Results</h3>
+        <table style="width: 100%; margin: 20px 0;">
+          <tr style="border-bottom: 2px solid #333;">
+            <th style="text-align: left; padding: 8px;">Method</th>
+            <th style="text-align: right; padding: 8px;">Total Time</th>
+            <th style="text-align: right; padding: 8px;">Per Check</th>
+            <th style="text-align: right; padding: 8px;">Checks/sec</th>
+          </tr>
+          <tr class="${faster === 'contains' ? 'winner' : 'loser'}">
+            <td style="padding: 8px;"><code>document.contains(node)</code></td>
+            <td style="text-align: right; padding: 8px;">${containsTime.toFixed(2)} ms</td>
+            <td style="text-align: right; padding: 8px;">${(containsPerOp * 1000).toFixed(3)} μs</td>
+            <td style="text-align: right; padding: 8px;">${(1000 / containsPerOp).toFixed(0).toLocaleString()}</td>
+          </tr>
+          <tr class="${faster === 'isConnected' ? 'winner' : 'loser'}">
+            <td style="padding: 8px;"><code>node.isConnected</code></td>
+            <td style="text-align: right; padding: 8px;">${isConnectedTime.toFixed(2)} ms</td>
+            <td style="text-align: right; padding: 8px;">${(isConnectedPerOp * 1000).toFixed(3)} μs</td>
+            <td style="text-align: right; padding: 8px;">${(1000 / isConnectedPerOp).toFixed(0).toLocaleString()}</td>
+          </tr>
+        </table>
+
+        <h3>Comparison</h3>
+        <p style="font-size: 18px;">
+          ${faster === 'isConnected'
+            ? `<span class="winner">✓ isConnected is ${speedup.toFixed(2)}x faster</span>`
+            : `<span class="winner">✓ contains() is ${slower.toFixed(2)}x faster</span>`
+          }
+        </p>
+        <p>
+          Difference: ${Math.abs(containsTime - isConnectedTime).toFixed(2)} ms
+          (${(Math.abs(containsTime - isConnectedTime) / Math.max(containsTime, isConnectedTime) * 100).toFixed(1)}%)
+        </p>
+
+        <h3>Analysis</h3>
+        <p>
+          ${faster === 'isConnected'
+            ? `The <code>isConnected</code> property is ${speedup > 2 ? 'significantly' : ''} faster because it's a
+               simple boolean property that's maintained by the browser as nodes are added/removed from the document.
+               No traversal or checking is required - it's just a flag lookup.`
+            : `Surprisingly, <code>document.contains()</code> is faster in this browser. This is unusual and may indicate
+               specific optimizations in this browser engine, or the test conditions favor the contains() implementation.`
+          }
+        </p>
+        <p>
+          <strong>Key Advantages of <code>isConnected</code>:</strong>
+          <ul>
+            <li><strong>O(1) complexity:</strong> Just a property lookup, not dependent on tree depth</li>
+            <li><strong>No traversal:</strong> Doesn't need to walk up the DOM tree</li>
+            <li><strong>Cached state:</strong> Browser maintains this as nodes are added/removed</li>
+            <li><strong>Spec-compliant:</strong> Part of the DOM Living Standard</li>
+          </ul>
+        </p>
+        <p>
+          <strong>Note:</strong> Performance can vary based on:
+          <ul>
+            <li>Browser implementation and version</li>
+            <li>Mix of connected vs disconnected nodes</li>
+            <li>DOM tree depth (affects contains() but not isConnected)</li>
+            <li>CPU and system load</li>
+          </ul>
+        </p>
+
+        <h3>Recommendation</h3>
+        <p style="background: #ffffcc; padding: 15px; border-left: 4px solid #ffa500; border-radius: 4px;">
+          <strong>Use <code>node.isConnected</code></strong> instead of <code>document.contains(node)</code>
+          <br><br>
+          Even if the performance difference is small in some browsers, <code>isConnected</code> is:
+          <ul>
+            <li>More semantically clear (property vs method call)</li>
+            <li>More consistent performance (O(1) regardless of depth)</li>
+            <li>The modern standard approach</li>
+            <li>Often significantly faster (${speedup > 1 ? `${speedup.toFixed(1)}x in this test` : 'in most browsers'})</li>
+          </ul>
+        </p>
+      `;
+
+      document.getElementById('results').style.display = 'block';
+
+      console.log('Performance test complete!');
+      console.log(`document.contains(): ${containsTime.toFixed(2)}ms`);
+      console.log(`node.isConnected: ${isConnectedTime.toFixed(2)}ms`);
+      console.log(`Winner: ${faster} (${faster === 'isConnected' ? speedup : slower}x faster)`);
+    }
+
+    // Build initial structure on load
+    window.addEventListener('load', () => {
+      buildStructure();
+    });
+  </script>
+</body>
+</html>

@@ -42,7 +42,8 @@ if (nodeContains(element, document.activeElement)) {
   console.log('contained');
 }`,
         output: `
-if (element.matches(':focus-within')) {
+import {isFocusWithin} from '@react-aria/utils';
+if (isFocusWithin(element)) {
   console.log('contained');
 }`,
         errors: 1
@@ -55,6 +56,34 @@ if (nodeContains(document, other)) {
         output: `
 if (other.isConnected) {
   console.log('connected');
+}`,
+        errors: 1
+      },
+      // When @react-aria/utils is already imported, add isFocusWithin to that import
+      {
+        code: `
+import {nodeContains} from '@react-aria/utils';
+if (nodeContains(element, document.activeElement)) {
+  console.log('contained');
+}`,
+        output: `
+import {isFocusWithin, nodeContains} from '@react-aria/utils';
+if (isFocusWithin(element)) {
+  console.log('contained');
+}`,
+        errors: 1
+      },
+      // When isFocusWithin is already imported, only replace the call
+      {
+        code: `
+import {isFocusWithin, nodeContains} from '@react-aria/utils';
+if (nodeContains(element, document.activeElement)) {
+  console.log('contained');
+}`,
+        output: `
+import {isFocusWithin, nodeContains} from '@react-aria/utils';
+if (isFocusWithin(element)) {
+  console.log('contained');
 }`,
         errors: 1
       }

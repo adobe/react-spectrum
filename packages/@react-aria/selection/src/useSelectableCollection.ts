@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, getActiveElement, isCtrlKeyPressed, isFocusWithin, isTabbable, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {dispatchVirtualFocus, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
@@ -314,7 +314,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             // If the active element is NOT tabbable but is contained by an element that IS tabbable (aka the cell), the browser will actually move focus to
             // the containing element. We need to special case this so that tab will move focus out of the grid instead of looping between
             // focusing the containing cell and back to the non-tabbable child element
-            if (next && (!next.matches(':focus-within') || (document.activeElement && !isTabbable(document.activeElement)))) {
+            if (next && (!isFocusWithin(next) || (document.activeElement && !isTabbable(document.activeElement)))) {
               focusWithoutScrolling(next);
             }
           }
@@ -379,7 +379,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = getItemElement(ref, manager.focusedKey);
       if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!element.matches(':focus-within') && !shouldUseVirtualFocus) {
+        if (!isFocusWithin(element) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 

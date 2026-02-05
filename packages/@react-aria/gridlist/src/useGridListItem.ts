@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getScrollParent, isFocusWithin, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -79,7 +79,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current.matches(':focus-within'))
+      !isFocusWithin(ref.current))
     ) {
       focusSafely(ref.current);
     }

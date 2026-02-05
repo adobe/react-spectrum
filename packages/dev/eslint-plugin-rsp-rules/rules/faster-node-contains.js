@@ -19,12 +19,32 @@ const plugin = {
     },
     fixable: 'code',
     messages: {
-      useFocusWithin: 'Use element.matches(\':focus-within\') instead of nodeContains for activeElement checks.',
+      useFocusWithin: 'Use isFocusWithin(element) instead of nodeContains for activeElement checks.',
       useIsConnected: 'Use node.isConnected instead of nodeContains for document contains checks.'
     }
   },
   create: (context) => {
+    let existingReactAriaUtilsImport = null;
+    let hasIsFocusWithinImport = false;
+
     return {
+      // Track imports from @react-aria/utils
+      ImportDeclaration(node) {
+        if (
+          node.source &&
+          node.source.type === 'Literal' &&
+          node.source.value === '@react-aria/utils'
+        ) {
+          existingReactAriaUtilsImport = node;
+          hasIsFocusWithinImport = node.specifiers.some(
+            spec =>
+              spec.type === 'ImportSpecifier' &&
+              spec.imported.type === 'Identifier' &&
+              spec.imported.name === 'isFocusWithin'
+          );
+        }
+      },
+
       // Detect nodeContains() function calls
       CallExpression(node) {
         if (node.callee.type === 'Identifier' && node.callee.name === 'nodeContains') {
@@ -43,7 +63,46 @@ const plugin = {
                 node,
                 messageId: 'useFocusWithin',
                 fix: (fixer) => {
-                  return fixer.replaceText(node, `${elementText}.matches(':focus-within')`);
+                  const fixes = [fixer.replaceText(node, `isFocusWithin(${elementText})`)];
+
+                  // Add import if not present
+                  if (!hasIsFocusWithinImport) {
+                    if (existingReactAriaUtilsImport) {
+                      const specifiers = existingReactAriaUtilsImport.specifiers;
+                      if (specifiers.length > 0) {
+                        const openBrace = sourceCode.getFirstToken(
+                          existingReactAriaUtilsImport,
+                          token => token.value === '{'
+                        );
+                        if (openBrace) {
+                          fixes.push(
+                            fixer.insertTextAfter(openBrace, 'isFocusWithin, ')
+                          );
+                        }
+                      }
+                    } else {
+                      const programNode = context.sourceCode.ast;
+                      const imports = programNode.body.filter(
+                        n => n.type === 'ImportDeclaration'
+                      );
+                      const importStatement =
+                        "\nimport {isFocusWithin} from '@react-aria/utils';";
+
+                      if (imports.length > 0) {
+                        const lastImport = imports[imports.length - 1];
+                        fixes.push(fixer.insertTextAfter(lastImport, importStatement));
+                      } else {
+                        fixes.push(
+                          fixer.insertTextBefore(
+                            programNode.body[0],
+                            "import {isFocusWithin} from '@react-aria/utils';\n"
+                          )
+                        );
+                      }
+                    }
+                  }
+
+                  return fixes;
                 }
               });
             } else if (isDocument(firstArg)) {
