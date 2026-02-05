@@ -28,12 +28,12 @@ import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
+import {getActiveElement, isAndroid, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
-import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
+import {InsertionIndicator} from './InsertionIndicator';
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria/virtualizer';
@@ -606,9 +606,9 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (getInteractionModality() === 'keyboard' && headerRef.current && nodeContains(headerRef.current, document.activeElement) && bodyRef.current) {
-      scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
-      scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
+    if (getInteractionModality() === 'keyboard' && headerRef.current && nodeContains(headerRef.current, getActiveElement()) && bodyRef.current) {
+      scrollIntoView(headerRef.current, getActiveElement() as HTMLElement);
+      scrollIntoViewport(getActiveElement(), {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
     }
   }, [state.contentSize, headerRef, bodyRef, domRef]);

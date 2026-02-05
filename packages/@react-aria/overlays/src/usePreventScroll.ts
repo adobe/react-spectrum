@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
+import {chain, getActiveElement, getScrollParent, isIOS, isScrollable, useLayoutEffect, willOpenKeyboard} from '@react-aria/utils';
 
 interface PreventScrollOptions {
   /** Whether the scroll lock is disabled. */
@@ -183,7 +183,7 @@ function preventScrollMobileSafari() {
   let focus = HTMLElement.prototype.focus;
   HTMLElement.prototype.focus = function (opts) {
     // Track whether the keyboard was already visible before.
-    let wasKeyboardVisible = document.activeElement != null && willOpenKeyboard(document.activeElement);
+    let wasKeyboardVisible = getActiveElement() != null && willOpenKeyboard(getActiveElement());
 
     // Focus the element without scrolling the page.
     focus.call(this, {...opts, preventScroll: true});

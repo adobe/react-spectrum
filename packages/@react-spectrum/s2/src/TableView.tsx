@@ -1301,7 +1301,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!nodeContains(popoverRef.current, document.activeElement)) {
+              if (!nodeContains(popoverRef.current, getActiveElement())) {
                 return false;
               }
               formRef.current?.requestSubmit();

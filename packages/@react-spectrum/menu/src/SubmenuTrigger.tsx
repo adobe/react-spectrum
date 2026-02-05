@@ -11,9 +11,9 @@
  */
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
+import {getActiveElement, mergeProps, nodeContains} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
-import {mergeProps, nodeContains} from '@react-aria/utils';
 import {Popover} from './Popover';
 import React, {type JSX, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
@@ -49,7 +49,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let isMobile = useIsMobileDevice();
   let onBackButtonPress = () => {
     submenuTriggerState.close();
-    if (parentMenuRef.current && !nodeContains(parentMenuRef.current, document.activeElement)) {
+    if (parentMenuRef.current && !nodeContains(parentMenuRef.current, getActiveElement())) {
       parentMenuRef.current.focus();
     }
   };

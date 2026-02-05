@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getActiveElement, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -79,7 +79,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !nodeContains(ref.current, document.activeElement))
+      !nodeContains(ref.current, getActiveElement()))
     ) {
       focusSafely(ref.current);
     }
@@ -131,14 +131,14 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !getActiveElement()) {
       return;
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = getActiveElement();
 
-    if ('expandedKeys' in state && document.activeElement === ref.current) {
+    if ('expandedKeys' in state && getActiveElement() === ref.current) {
       if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
         state.toggleKey(node.key);
         e.stopPropagation();
@@ -244,7 +244,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onKeyDown = (e) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !getActiveElement()) {
       return;
     }
 
@@ -254,7 +254,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
           let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          walker.currentNode = document.activeElement;
+          walker.currentNode = getActiveElement();
           let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
 
           if (next) {
