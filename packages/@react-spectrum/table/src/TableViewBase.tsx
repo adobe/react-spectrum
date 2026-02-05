@@ -31,8 +31,8 @@ import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
 import {getActiveElement, isAndroid, mergeProps, nodeContains, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
-// @ts-ignore
 import {InsertionIndicator} from './InsertionIndicator';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';

@@ -24,8 +24,8 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely, setInteractionModality, useHover} from '@react-aria/interactions';
-// @ts-ignore
 import {getActiveElement, mergeProps, useFormReset, useId, useObjectRef} from '@react-aria/utils';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
