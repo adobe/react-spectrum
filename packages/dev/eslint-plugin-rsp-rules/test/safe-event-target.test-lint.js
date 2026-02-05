@@ -15,7 +15,7 @@ import safeEventTargetRule from '../rules/safe-event-target.js';
 
 const ruleTester = new RuleTester({
   languageOptions: {
-    ecmaVersion: 2015,
+    ecmaVersion: 2020,
     sourceType: 'module'
   }
 });
@@ -166,6 +166,30 @@ function onKeyDown(event) {
 getEventTarget(event.nativeEvent)`,
         output: `import {getEventTarget} from '@react-aria/utils';
 getEventTarget(event)`,
+        errors: 1
+      },
+      {
+        code: 'window.event.target;',
+        output: `import {getEventTarget} from '@react-aria/utils';
+getEventTarget(window.event);`,
+        errors: 1
+      },
+      {
+        code: 'window.event?.target;',
+        output: `import {getEventTarget} from '@react-aria/utils';
+getEventTarget(window.event);`,
+        errors: 1
+      },
+      {
+        code: 'getOwnerWindow(foo).event.target;',
+        output: `import {getEventTarget} from '@react-aria/utils';
+getEventTarget(getOwnerWindow(foo).event);`,
+        errors: 1
+      },
+      {
+        code: 'getOwnerWindow(foo).event?.target;',
+        output: `import {getEventTarget} from '@react-aria/utils';
+getEventTarget(getOwnerWindow(foo).event);`,
         errors: 1
       }
     ]

@@ -107,14 +107,34 @@ const plugin = {
         // Only match common event parameter names
         const commonEventNames = /^(e|event|evt)$/i;
         let isEventTarget = false;
+        let eventExpression = null;
 
         if (node.object.type === 'Identifier') {
           // Check if the identifier matches common event names (e.target, event.target, evt.target)
           isEventTarget = commonEventNames.test(node.object.name);
+          if (isEventTarget) {
+            eventExpression = node.object;
+          }
+        } else if (node.object.type === 'MemberExpression' || node.object.type === 'ChainExpression') {
+          // Handle *.event.target or *.event?.target patterns (e.g., window.event, getOwnerWindow(foo).event)
+          let objectToCheck = node.object;
+          
+          // Unwrap ChainExpression to get the MemberExpression
+          if (objectToCheck.type === 'ChainExpression') {
+            objectToCheck = objectToCheck.expression;
+          }
+          
+          // Check for *.event pattern (any expression followed by .event)
+          if (objectToCheck.type === 'MemberExpression' &&
+              objectToCheck.property.type === 'Identifier' &&
+              objectToCheck.property.name === 'event') {
+            isEventTarget = true;
+            eventExpression = node.object;
+          }
         }
 
         // Skip if this doesn't look like an event target access
-        if (!isEventTarget) {
+        if (!isEventTarget || !eventExpression) {
           return;
         }
 
@@ -159,8 +179,13 @@ const plugin = {
             const fixes = [];
             const sourceCode = context.sourceCode;
 
-            // Get the event object (e.g., 'event' from 'event.target')
-            const eventText = sourceCode.getText(node.object);
+            // Get the event expression text
+            let eventText = sourceCode.getText(eventExpression);
+            
+            // If it's a ChainExpression (window.event?), unwrap it
+            if (eventExpression.type === 'ChainExpression') {
+              eventText = sourceCode.getText(eventExpression.expression);
+            }
 
             // Replace event.target with getEventTarget(event)
             fixes.push(fixer.replaceText(node, `${getEventTargetLocalName}(${eventText})`));

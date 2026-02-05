@@ -68,7 +68,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
       return;
     }
     // Try to find the segment prior to the element that was clicked on.
-    let target = window.event?.target as FocusableElement;
+    let target = window.event ? getEventTarget(window.event) as FocusableElement : null;
     let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
     if (target) {
       walker.currentNode = target;
