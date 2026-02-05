@@ -79,7 +79,7 @@ export interface ComboboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 export interface ComboBoxProps<T extends object> extends
-  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
+  Omit<AriaComboBoxProps<T>, 'children' | 'style' | 'className' | 'render' | 'defaultFilter' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   ComboboxStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -354,7 +354,6 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
   return (
     <AriaComboBox
       {...comboBoxProps}
-      isTriggerUpWhenOpen
       allowsEmptyCollection
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
@@ -644,6 +643,9 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           )}
           <Button
             ref={buttonRef}
+            // Prevent press scale from sticking while ComboBox is open.
+            // @ts-ignore
+            isPressed={false}
             style={renderProps => pressScale(buttonRef)(renderProps)}
             className={renderProps => inputButton({
               ...renderProps,
