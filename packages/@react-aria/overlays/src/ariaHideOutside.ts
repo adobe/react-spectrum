@@ -11,7 +11,8 @@
  */
 
 import {createShadowTreeWalker, getOwnerDocument, getOwnerWindow, nodeContains} from '@react-aria/utils';
-import { shadowDOM } from '@react-stately/flags';
+import {shadowDOM} from '@react-stately/flags';
+
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
