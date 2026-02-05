@@ -14,6 +14,7 @@ import actEventsTest from './rules/act-events-test.js';
 import noGetByRoleToThrow from './rules/no-getByRole-toThrow.js';
 import noNonShadowContains from './rules/no-non-shadow-contains.js';
 import noReactKey from './rules/no-react-key.js';
+import shadowSafeActiveElement from './rules/shadow-safe-active-element.js';
 import sortImports from './rules/sort-imports.js';
 
 const rules = {
@@ -21,7 +22,8 @@ const rules = {
   'no-getByRole-toThrow': noGetByRoleToThrow,
   'no-react-key': noReactKey,
   'sort-imports': sortImports,
-  'no-non-shadow-contains': noNonShadowContains
+  'no-non-shadow-contains': noNonShadowContains,
+  'shadow-safe-active-element': shadowSafeActiveElement
 };
 
 const meta = {

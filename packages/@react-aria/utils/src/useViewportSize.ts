@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getActiveElement} from './shadowdom/DOMFunctions';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
@@ -56,7 +57,8 @@ export function useViewportSize(): ViewportSize {
       if (willOpenKeyboard(e.target as Element)) {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
-          if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
+          let activeElement = getActiveElement();
+          if (!activeElement || !willOpenKeyboard(activeElement)) {
             updateSize({width: document.documentElement.clientWidth, height: document.documentElement.clientHeight});
           }
         });

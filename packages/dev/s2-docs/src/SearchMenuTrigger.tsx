@@ -2,6 +2,7 @@
 
 import {Button, ButtonProps, Modal, ModalOverlay} from 'react-aria-components';
 import {fontRelative, lightDark, style} from '@react-spectrum/s2/style' with { type: 'macro' };
+import {getActiveElement} from '@react-aria/utils';
 import {getLibraryFromPage, getLibraryLabel} from './library';
 import {Provider, Button as S2Button, ButtonProps as S2ButtonProps} from '@react-spectrum/s2';
 import React, {lazy, useCallback, useEffect, useRef, useState} from 'react';
@@ -103,7 +104,7 @@ export default function SearchMenuTrigger({onOpen, onClose, isSearchOpen, overla
       } else if (((e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)))) {
         e.preventDefault();
         open('');
-      } else if (e.key === '/' && !(isTextInputLike(e.target as Element | null) || isTextInputLike(document.activeElement))) {
+      } else if (e.key === '/' && !(isTextInputLike(e.target as Element | null) || isTextInputLike(getActiveElement()))) {
         e.preventDefault();
         open('');
       }
