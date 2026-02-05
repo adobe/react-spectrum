@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getActiveElement} from '@react-aria/utils';
+import {getActiveElement} from './shadowdom/DOMFunctions';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
