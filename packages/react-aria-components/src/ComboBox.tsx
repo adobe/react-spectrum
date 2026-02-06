@@ -159,6 +159,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     labelProps,
     descriptionProps,
     errorMessageProps,
+    valueProps,
     ...validation
   } = useComboBox({
     ...removeDataAttributes(props),
@@ -244,7 +245,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           }
         }],
         [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
-        [FieldErrorContext, validation]
+        [FieldErrorContext, validation],
+        [ComboBoxValueContext, valueProps]
       ]}>
       <dom.div
         {...DOMProps}
@@ -285,11 +287,14 @@ export interface ComboBoxValueProps<T extends object> extends Omit<HTMLAttribute
   placeholder?: ReactNode
 }
 
+export const ComboBoxValueContext = createContext<ContextValue<ComboBoxValueProps<any>, HTMLDivElement>>(null);
+
 /**
  * ComboBoxValue renders the selected values of a ComboBox, or a placeholder if no value is selected.
  * By default, the items are rendered as a comma separated list. Use the render function to customize this.
  */
 export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T extends object>(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, ComboBoxValueContext);
   let state = useContext(ComboBoxStateContext)!;
   let formatter = useListFormatter();
   let selectedText = useMemo(() => formatter.format(state.selectedItems.map(item => item?.textValue || '').filter(v => v !== '')), [formatter, state.selectedItems]);

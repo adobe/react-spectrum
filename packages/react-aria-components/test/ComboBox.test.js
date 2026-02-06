@@ -11,7 +11,7 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, FieldError, Form, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
+import {Button, ComboBox, ComboBoxContext, ComboBoxValue, FieldError, Form, Header, Input, Label, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection, ListLayout, Popover, Text, Virtualizer} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {useState} from 'react';
 import {User} from '@react-aria/test-utils';
@@ -28,6 +28,7 @@ let TestComboBox = (props) => (
     <Label>Favorite Animal</Label>
     <Input />
     <Button />
+    {props.selectionMode === 'multiple' && <ComboBoxValue placeholder="No items selected" />}
     <Text slot="description">Description</Text>
     <Text slot="errorMessage">Error</Text>
     <Popover>
@@ -637,6 +638,10 @@ describe('ComboBox', () => {
       </Form>
     );
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    let value = container.querySelector('.react-aria-ComboBoxValue');
+
+    expect(value).toHaveTextContent('No items selected');
+    expect(comboboxTester.combobox.getAttribute('aria-describedby')).toContain(value.id);
 
     expect(comboboxTester.combobox).toHaveValue('');
     await comboboxTester.open();
@@ -651,10 +656,12 @@ describe('ComboBox', () => {
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(comboboxTester.combobox).toHaveValue('');
     expect(comboboxTester.listbox).toBeInTheDocument();
+    expect(value).toHaveTextContent('Cat');
     await user.click(options[1]);
     expect(options[1]).toHaveAttribute('aria-selected', 'true');
     expect(comboboxTester.combobox).toHaveValue('');
     expect(comboboxTester.listbox).toBeInTheDocument();
+    expect(value).toHaveTextContent('Cat and Dog');
     await comboboxTester.close();
 
     expect(onChange).toHaveBeenCalledTimes(2);

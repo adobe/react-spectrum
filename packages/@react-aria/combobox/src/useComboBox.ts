@@ -16,7 +16,7 @@ import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useLabels, useRouter, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -57,6 +57,8 @@ export interface ComboBoxAria<T> extends ValidationResult {
   listBoxProps: AriaListBoxOptions<T>,
   /** Props for the optional trigger button, to be passed to `useButton`. */
   buttonProps: AriaButtonProps,
+  /** Props for the element representing the selected value. */
+  valueProps: DOMAttributes,
   /** Props for the combo box description element, if any. */
   descriptionProps: DOMAttributes,
   /** Props for the combo box error message element, if any. */
@@ -206,6 +208,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
+  let valueId = useSlotId([state.selectedItems, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
@@ -217,7 +220,8 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     onFocus,
     autoComplete: 'off',
     validate: undefined,
-    [privateValidationStateProp]: state
+    [privateValidationStateProp]: state,
+    'aria-describedby': [valueId, props['aria-describedby']].filter(Boolean).join(' ') || undefined
   }, inputRef);
 
   useFormReset(inputRef, state.defaultValue, state.setValue);
@@ -393,6 +397,9 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
       linkBehavior: 'selection' as const,
       ['UNSTABLE_itemBehavior']: 'action'
     }),
+    valueProps: {
+      id: valueId
+    },
     descriptionProps,
     errorMessageProps,
     isInvalid,
