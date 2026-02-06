@@ -14,3 +14,5 @@ export type {MultipleSelectionStateProps} from './useMultipleSelectionState';
 export type {FocusState, SingleSelectionState, MultipleSelectionState, MultipleSelectionManager} from './types';
 export {useMultipleSelectionState} from './useMultipleSelectionState';
 export {SelectionManager} from './SelectionManager';
+export {TreeSelectionManager} from './TreeSelectionManager';
+export {useTreeSelectionState} from './useTreeSelectionState';

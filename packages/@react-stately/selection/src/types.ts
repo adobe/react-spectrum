@@ -12,7 +12,6 @@
 
 import {Collection, DisabledBehavior, FocusStrategy, Key, LongPressEvent, Node, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 
-
 export interface FocusState {
   /** Whether the collection is currently focused. */
   readonly isFocused: boolean,
@@ -75,6 +74,11 @@ export interface MultipleSelectionManager extends FocusState {
   readonly disabledKeys: Set<Key>,
   /** Whether `disabledKeys` applies to selection, actions, or both. */
   readonly disabledBehavior: DisabledBehavior,
+  /**
+   * The raw selection value for the collection.
+   * Either 'all' for select all, or a set of keys.
+   */
+  readonly rawSelection: Selection,
   /** Returns whether a key is selected. */
   isSelected(key: Key): boolean,
   /** Returns whether the current selection is equal to the given selection. */
@@ -109,5 +113,13 @@ export interface MultipleSelectionManager extends FocusState {
   /** Returns the props for the given item. */
   getItemProps(key: Key): any,
   /** The collection of nodes that the selection manager handles. */
-  collection: Collection<Node<unknown>>
+  collection: Collection<Node<unknown>>,
+  withCollection(collection: Collection<Node<unknown>>): MultipleSelectionManager,
+  /** Returns whether a key is indeterminate. */
+  isIndeterminate?(key: Key): boolean
+}
+
+export interface TreeSelectionState extends MultipleSelectionState {
+  /** The currently indeterminate keys in the collection (controlled). */
+  readonly indeterminateKeys: Set<Key>
 }

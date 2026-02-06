@@ -11,7 +11,7 @@
  */
 
 import {Collection, CollectionStateBase, DisabledBehavior, Expandable, Key, MultipleSelection, Node} from '@react-types/shared';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionManager, TreeSelectionManager, useTreeSelectionState} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
 import {useCallback, useEffect, useMemo} from 'react';
 import {useCollection} from '@react-stately/collections';
@@ -38,7 +38,7 @@ export interface TreeState<T> {
   setExpandedKeys(keys: Set<Key>): void,
 
   /** A selection manager to read and update multiple selection state. */
-  readonly selectionManager: SelectionManager
+  readonly selectionManager: MultipleSelectionManager
 }
 
 /**
@@ -56,7 +56,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     onExpandedChange
   );
 
-  let selectionState = useMultipleSelectionState(props);
+  let selectionState = useTreeSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
@@ -81,7 +81,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     disabledKeys,
     toggleKey: onToggle,
     setExpandedKeys,
-    selectionManager: new SelectionManager(tree, selectionState)
+    selectionManager: new TreeSelectionManager(tree, selectionState)
   };
 }
 

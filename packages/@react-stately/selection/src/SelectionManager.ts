@@ -36,7 +36,7 @@ interface SelectionManagerOptions {
  */
 export class SelectionManager implements MultipleSelectionManager {
   collection: Collection<Node<unknown>>;
-  private state: MultipleSelectionState;
+  protected state: MultipleSelectionState;
   private allowsCellSelection: boolean;
   private _isSelectAll: boolean | null;
   private layoutDelegate: LayoutDelegate | null;
@@ -285,7 +285,7 @@ export class SelectionManager implements MultipleSelectionManager {
     return [];
   }
 
-  private getKey(key: Key) {
+  protected getKey(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
       // ¯\_(ツ)_/¯
