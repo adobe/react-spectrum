@@ -2479,7 +2479,7 @@ describe('SearchAutocomplete', function () {
           expect(input).toHaveValue('test');
     
           let button = getByTestId('submit');
-          await act(async () => await user.click(button));
+          await user.click(button);
           expect(input).toHaveValue('hi');
         });
       }

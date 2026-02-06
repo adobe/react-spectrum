@@ -35,7 +35,7 @@ export interface SelectProps<T extends object, M extends 'single' | 'multiple'> 
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function Select<T extends object, M extends 'single' | 'multiple'>(
+export function Select<T extends object, M extends 'single' | 'multiple' = 'single'>(
   { label, description, errorMessage, children, items, ...props }: SelectProps<T, M>
 ) {
   return (

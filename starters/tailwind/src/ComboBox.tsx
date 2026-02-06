@@ -23,7 +23,7 @@ export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function ComboBox<T extends object, M extends 'single' | 'multiple'>(
+export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'single'>(
   { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T, M>
 ) {
   return (

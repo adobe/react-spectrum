@@ -24,7 +24,7 @@ export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'
   placeholder?: string;
 }
 
-export function ComboBox<T extends object, M extends 'single' | 'multiple'>(
+export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'single'>(
   { label, description, errorMessage, children, placeholder, ...props }: ComboBoxProps<T, M>
 ) {
   return (

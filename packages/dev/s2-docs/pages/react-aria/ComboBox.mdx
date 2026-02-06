@@ -183,12 +183,12 @@ const states = [
     <FieldButton><ChevronDown /></FieldButton>
   </div>
   {/*- begin highlight -*/}
-  <ComboBoxValue>
+  <ComboBoxValue<typeof states[0]>>
     {({selectedItems, state}) => (
       <TagGroup
         aria-label="Selected states"
         style={{marginTop: 8}}
-        items={selectedItems}
+        items={selectedItems.filter(item => item != null)}
         renderEmptyState={() => 'No selected items'}
         onRemove={(keys) => {
           // Remove keys from ComboBox state.
