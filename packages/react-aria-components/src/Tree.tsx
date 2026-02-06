@@ -51,15 +51,21 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
   constructor(opts) {
     super();
     let {collection, lastExpandedKeys, expandedKeys} = opts;
-    // let {keyMap, itemCount} = flattenTree<T>(collection, {expandedKeys});
+    // the issue is that we can't just use the the key map from base collection because we need to adjust the indexes due to the content nodes
+    // we also need to adjust the levels of the nodes within a section as well
+    // this also used to return a flattened list of the tree items which it does not anymore
+    let {keyMap, itemCount} = generateKeyMap<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
-    // this.keyMap = keyMap;
-    // this.itemCount = itemCount;
+    this.keyMap = keyMap;
+    this.itemCount = itemCount;
+    console.log('keyMap', this.keyMap);
+
+    // these technically refer to the first focusable item (so skips over sections and headers)
     this.firstKey = [...this.keyMap.keys()][0];
     this.lastKey = [...this.keyMap.keys()][this.keyMap.size - 1];
     this.expandedKeys = expandedKeys;
 
-     // diff lastExpandedKeys and expandedKeys so we only clone what has changed
+     // diff lastExpandedKeys and expandedKeys so we only clone what has changed (this is for when tree is virtualized)
     for (let key of expandedKeys) {
       if (!lastExpandedKeys.has(key)) {
         // traverse upward until you hit a section, and clone it
@@ -94,24 +100,45 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
     }
   }
 
+  // previously used to return a flatten list of the all the tree item nodes (did not include content nodes)
+  // because we introduced sections, we can't have a "truly" flattened tree anymore since items within a section need to be grouped together
+  // if items are not in a section, they rendered as siblings in the DOM
+  // if items are within a section, they are also rendered as siblings in the DOM but grouped inside a section 
+  // so the structure looks something like this
+  // <div>
+  //   <section>
+  //     <div>Project-1</dvi>
+  //     <div>Project-1A</div>
+  //   </section>
+   //  <div>Project 2</dvi>
+  //   <div>Project-2A</div>
+  // </div>
   *[Symbol.iterator]() {
     let keyMap = this.keyMap;
-    let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
-    
+    let firstKey = this.firstKey;
+    let node: Node<T> | null = firstKey != null ? this.getItem(firstKey) : null;
+
     while (node) {
       yield node as Node<T>;
       if (node.type === 'section') {
-        node = node.nextKey ? this.getItem(node.nextKey) : undefined;
+        node = node.nextKey ? this.getItem(node.nextKey) : null;
       } else {
         let key = this.getKeyAfter(node.key);
         // Skip over content nodes
+
+        // there are two issues here, one is similar to the issue in the getChildren method where ListLayout throws an error when it encounters content nodes (so this only matters in the Virtualized case)
+        // ListLayout will call buildNode on the content node and throw an error
+
+        // the other issue here is that in a non-virtualized case, that the content node get rendered/repeated when you expand a tree item
+        // that's because useCollectionRender will render the content node 
+        // so i can't make it truly 'non-flat' which is unfortunate...at some point we need to skip this content node
         // if (key) {
         //   let temp = keyMap.get(key) as Node<T>;
         //   if (temp.type === 'content' && temp.nextKey) {
         //     key = temp.nextKey;
         //   }
         // }
-        node = key ? this.getItem(key) : undefined;
+        node = key ? this.getItem(key) : null;
       }
     }
   }
@@ -120,20 +147,23 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
     return this.itemCount;
   }
 
-  getKeys() {
-    return this.keyMap.keys();
-  }
+  // getKeys() {
+  //   return this.keyMap.keys();
+  // }
 
   // getItem(key: Key): Node<T> | null {
   //   return this.keyMap.get(key) || null;
   // }
 
-  at(idx: number) {
-    throw new Error('Not implemented');
-  }
+  // at(idx: number) {
+  //   throw new Error('Not implemented');
+  // }
 
+  // should getFirstKey get the true first key? or should it get the firstKey that you can keyboard navigate to? where should that be handled?
+  // right now, getFirstKey will get you the firstKey that can be keyboard focused
   getFirstKey() {
-    let node = this.keyMap.get(this.firstKey);
+    let node = this.getItem(this.firstKey);
+    // let node = this.keyMap.get(this.firstKey);
     if (!node) {
       return null;
     }
@@ -141,7 +171,8 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
     // Skip over any nodes that aren't an item node (e.g. section or header node)
     while (node) {
       if (node.type !== 'item' && node.firstChildKey) {
-        node = this.keyMap.get(node.firstChildKey);
+        node = this.getItem(node.firstChildKey);
+        // node = this.keyMap.get(node.firstChildKey);
       } else {
         break;
       }
@@ -151,7 +182,9 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
   }
 
   getLastKey() {
-    let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
+    // let lastKey = this
+    // let node = lastKey != null ? this.getItem(lastKey) : null;
+    let node = this.getItem(this.lastKey);
 
     if (!node) {
       return null;
@@ -163,17 +196,17 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
     }
 
     // If the node's parent is not expanded, find the top-most non-expanded node since it's possible for them to be nested
-    let parentNode = node.parentKey ? this.keyMap.get(node.parentKey) : null;
+    let parentNode = node.parentKey ? this.getItem(node.parentKey) : null;
     while (parentNode && parentNode.type !== 'section' && node && node.parentKey && !this.expandedKeys.has(parentNode.key)) {
-      node = this.keyMap.get(node.parentKey);
-      parentNode = node && node.parentKey ? this.keyMap.get(node.parentKey) : null;
+      node = this.getItem(node.parentKey);
+      parentNode = node && node.parentKey ? this.getItem(node.parentKey) : null;
     }
 
     return node?.key ?? null;
   }
 
   getKeyAfter(key: Key) {
-    let node = this.keyMap.get(key);
+    let node = this.getItem(key) as CollectionNode<T>;
     if (!node) {
       return null;
     }
@@ -188,7 +221,7 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
       }
 
       if (node.parentKey != null) {
-        node = this.keyMap.get(node.parentKey);
+        node = this.getItem(node.parentKey) as CollectionNode<T>;
       } else {
         return null;
       }
@@ -198,21 +231,21 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
   }
 
   getKeyBefore(key: Key) {
-    let node = this.keyMap.get(key);
+    let node = this.getItem(key);
     if (!node) {
       return null;
     }
 
     if (node.prevKey != null) {
-      node = this.keyMap.get(node.prevKey);
+      node = this.getItem(node.prevKey) as CollectionNode<T>;
 
       while (node && node.type !== 'item' && node.lastChildKey != null) {
-        node = this.keyMap.get(node.lastChildKey);
+        node = this.getItem(node.lastChildKey);
       }
 
       // If the lastChildKey is expanded, check its lastChildKey
       while (node && this.expandedKeys.has(node.key) && node.lastChildKey != null) {
-        node = this.keyMap.get(node.lastChildKey);
+        node = this.getItem(node.lastChildKey);
       }
 
       return node?.key ?? null;
@@ -234,13 +267,15 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
             yield keyMap.get(node.key) as Node<T>;
             let key = self.getKeyAfter(node.key);
 
-            // Skip over content nodes
-            if (key) {
-              let temp = keyMap.get(key) as Node<T>;
-              if (temp.type === 'content' && temp.nextKey) {
-                key = temp.nextKey;
-              }
-            }
+            // really only needed in the virtualized case i believe, but it does deviate slightly from previous behavior when we included ALL content nodes
+            // the issue is that in ListLayout, when we call buildSection, we eventually call buildNode which will throw an error with Content nodes 
+            // so i guess the question is where do we want to put this logic? 
+            // if (key) {
+            //   let temp = keyMap.get(key) as Node<T>;
+            //   if (temp.type === 'content' && temp.nextKey) {
+            //     key = temp.nextKey;
+            //   }
+            // }
             node = key ? keyMap.get(key) : undefined;
           }
         } else {
@@ -780,6 +815,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent(TreeItemNode, <T ext
   // eslint-disable-next-line
   }, []);
 
+  // here is where we render the stuff in the content node
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
@@ -988,7 +1024,7 @@ interface FlattenedTree<T> {
   itemCount: number
 }
 
-function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
+function generateKeyMap<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
   let {
     expandedKeys = new Set()
   } = opts;
