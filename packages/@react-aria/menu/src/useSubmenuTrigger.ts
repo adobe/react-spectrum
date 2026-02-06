@@ -14,7 +14,7 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, nodeContains, useEvent, useId, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, isFocusWithin, nodeContains, useEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -100,7 +100,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   let submenuKeyDown = (e: KeyboardEvent) => {
     // If focus is not within the menu, assume virtual focus is being used.
     // This means some other input element is also within the popover, so we shouldn't close the menu.
-    if (!nodeContains(e.currentTarget, document.activeElement)) {
+    if (!isFocusWithin(e.currentTarget)) {
       return;
     }
 

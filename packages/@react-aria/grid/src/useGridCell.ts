@@ -13,7 +13,7 @@
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, isFocusVisible} from '@react-aria/interactions';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {getScrollParent, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
+import {getScrollParent, isFocusWithin, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
@@ -75,7 +75,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let treeWalker = getFocusableTreeWalker(ref.current);
       if (focusMode === 'child') {
         // If focus is already on a focusable child within the cell, early return so we don't shift focus
-        if (nodeContains(ref.current, document.activeElement) && ref.current !== document.activeElement) {
+        if (isFocusWithin(ref.current) && ref.current !== document.activeElement) {
           return;
         }
 
@@ -90,7 +90,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
       if (
         (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-        !nodeContains(ref.current, document.activeElement)
+        !isFocusWithin(ref.current)
       ) {
         focusSafely(ref.current);
       }
