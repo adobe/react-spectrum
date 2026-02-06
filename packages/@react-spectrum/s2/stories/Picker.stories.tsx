@@ -334,13 +334,11 @@ return (
 
 
 type ExampleIconItem = IExampleItem & { icon: string };
-const exampleIconItems: ExampleIconItem[] = [
-  {id: 'chocolate', label: 'Chocolate', icon: SRC_URL_1},
-  {id: 'strawberry', label: 'Strawberry', icon: SRC_URL_2},
-  {id: 'vanilla', label: 'Vanilla', icon: SRC_URL_1},
-  {id: 'mint', label: 'Mint', icon: SRC_URL_2},
-  {id: 'cookie-dough', label: 'Chocolate Chip Cookie Dough', icon: SRC_URL_1}
-];
+const exampleIconItems: ExampleIconItem[] = Array.from({length: 5}, (_, i) => ({
+  id: `user${i + 1}`,
+  label: `User ${i + 1}`,
+  icon: 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png',
+}));
 
 const CustomRenderValuePicker = (args: PickerProps<ExampleIconItem, 'multiple'>): ReactElement => (
   <Picker {...args}>
@@ -357,6 +355,7 @@ export type CustomRenderValuePickerStoryType = typeof CustomRenderValuePicker;
 export const CustomRenderValue: StoryObj<CustomRenderValuePickerStoryType> = {
   render: CustomRenderValuePicker,
   args: {
+    label: 'Pick users',
     selectionMode: 'multiple',
     items: exampleIconItems,
     renderValue: (selectedItems) => (
