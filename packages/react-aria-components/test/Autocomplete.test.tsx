@@ -1056,6 +1056,54 @@ describe('Autocomplete', () => {
     options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
   });
+
+  it('should preserve select all selection when toggling an item in a filtered collection', async function () {
+    let onSelectionChange = jest.fn();
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" defaultSelectedKeys="all" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 items should be selected initially (Foo, Bar, Baz)
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'true');
+
+    // Filter to show only "Ba" items (Bar, Baz)
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+
+    // Move down and deselect Baz
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Should contain Foo and Bar
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2']));
+
+    // Clear the filter
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    // All items should be visible, with Foo and Bar still selected
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(options[2]).toHaveAttribute('aria-selected', 'false');
+  });
 });
 
 AriaAutocompleteTests({
