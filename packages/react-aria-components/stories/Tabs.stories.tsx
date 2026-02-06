@@ -25,7 +25,7 @@ export default {
 export type TabsStory = StoryFn<typeof Tabs>;
 
 export const TabsExample: TabsStory = () => {
-  let [url, setUrl] = useState('/FoR');
+  let [url, setUrl] = useState<string | null>(null);
 
   return (
     <RouterProvider navigate={setUrl}>
