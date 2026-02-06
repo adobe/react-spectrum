@@ -36,6 +36,12 @@ describe('ColorSwatch', () => {
     expect(img).toHaveAttribute('data-foo', 'bar');
   });
 
+  it('should support custom render function', () => {
+    let {getByRole} = render(<ColorSwatch render={props => <div {...props} data-custom="true" />} />);
+    let img = getByRole('img');
+    expect(img).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByTestId} = render(
       <ColorSwatch color="#f00">

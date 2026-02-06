@@ -14,6 +14,7 @@ import {Button, ComboBox, Dialog, DialogTrigger, Heading, Input, Label, ListBox,
 import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import './styles.css';
+import {DateRangePickerExample} from './DatePicker.stories';
 import {MyListBoxItem} from './utils';
 import styles from '../example/index.css';
 
@@ -145,6 +146,50 @@ export const InertTestStory = {
   parameters: {
     description: {
       data: 'You should be able to click "Combobox Trigger" and then click on the textfield, closing the subdialog. A second click should move focus into the textfield'
+    }
+  }
+};
+
+function DateRangePickerInsideModal() {
+  return (
+    <DialogTrigger>
+      <Button>Open modal</Button>
+      <ModalOverlay
+        isDismissable
+        style={{
+          alignItems: 'center',
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          zIndex: 100
+        }}>
+        <Modal
+          style={{
+            background: 'Canvas',
+            border: '1px solid gray',
+            color: 'CanvasText',
+            padding: 30
+          }}>
+          <Dialog>
+            {/* @ts-ignore */}
+            <DateRangePickerExample />
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </DialogTrigger>
+  );
+}
+
+export const DateRangePickerInsideModalStory = {
+  render: () => <DateRangePickerInsideModal />,
+  parameters: {
+    description: {
+      data: 'Open the Modal, then open the DateRangePicker and select a start date. Clicking outside the Modal should close the picker but keep the Modal open.'
     }
   }
 };

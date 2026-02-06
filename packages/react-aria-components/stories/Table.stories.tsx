@@ -529,6 +529,83 @@ DndTableExample.args = {
   isLoading: false
 };
 
+function DndTableWithNoValidDropTargetsRender(): JSX.Element {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'folder', name: 'Documents'},
+      {id: '4', type: 'file', name: 'Adobe InDesign'},
+      {id: '5', type: 'folder', name: 'Utilities'},
+      {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems(keys) {
+      return [...keys].filter(k => !!list.getItem(k)).map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item!.name
+        };
+      });
+    },
+    onItemDrop() {},
+    shouldAcceptItemDrop() {
+      return false;
+    }
+  });
+
+  return (
+    <Table
+      aria-label="Table (rejects all item drops)"
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>ID</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        <Collection items={list.items}>
+          {item => (
+            <Row>
+              <Cell><Button slot="drag">≡</Button></Cell>
+              <Cell><MyCheckbox slot="selection" /></Cell>
+              <Cell>{item.id}</Cell>
+              <Cell>{item.name}</Cell>
+              <Cell>{item.type}</Cell>
+            </Row>
+            )}
+        </Collection>
+      </TableBody>
+    </Table>
+  );
+}
+
+export const DndTableWithNoValidDropTargets: TableStoryObj = {
+  render: DndTableWithNoValidDropTargetsRender,
+  name: 'Dnd Table with no valid drop targets',
+  parameters: {
+    description: {
+      data: `Tests that arrow keys work after canceling a keyboard drag when shouldAcceptItemDrop rejects all drop targets.
+      Test Instructions:
+      1. Focus on an item's drag button
+      2. Press Enter to start keyboard drag
+      3. Notice there are no valid drop targets (shouldAcceptItemDrop rejects all item drops)
+      4. Press Escape to cancel the drag
+      5. Try pressing arrow keys
+      6. Observe that focus moves (and we've exited virtual drag mode)
+    `
+    }
+  }
+};
+
 export const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   return (
     <Checkbox {...props}>

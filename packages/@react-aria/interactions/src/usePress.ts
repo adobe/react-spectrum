@@ -84,7 +84,8 @@ interface EventBase {
   altKey: boolean,
   clientX?: number,
   clientY?: number,
-  targetTouches?: Array<{clientX?: number, clientY?: number}>
+  targetTouches?: Array<{clientX?: number, clientY?: number}>,
+  key?: string
 }
 
 export interface PressResult {
@@ -98,7 +99,9 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   // Consume context from <PressResponder> and merge with props.
   let context = useContext(PressResponderContext);
   if (context) {
-    let {register, ...contextProps} = context;
+    // Prevent mergeProps from merging ref.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {register, ref, ...contextProps} = context;
     props = mergeProps(contextProps, props) as PressHookProps;
     register();
   }
@@ -117,6 +120,7 @@ class PressEvent implements IPressEvent {
   altKey: boolean;
   x: number;
   y: number;
+  key: string | undefined;
   #shouldStopPropagation = true;
 
   constructor(type: IPressEvent['type'], pointerType: PointerType, originalEvent: EventBase, state?: PressState) {
@@ -146,6 +150,7 @@ class PressEvent implements IPressEvent {
     this.altKey = originalEvent.altKey;
     this.x = x;
     this.y = y;
+    this.key = originalEvent.key;
   }
 
   continuePropagation() {
@@ -450,7 +455,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (state.target && state.target.contains(e.target as Element) && state.pointerType != null) {
+        if (state.target && nodeContains(state.target, e.target as Element) && state.pointerType != null) {
           // Wait for onClick to fire onPress. This avoids browser issues when the DOM
           // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
         } else {
@@ -983,7 +988,8 @@ function createEvent(target: FocusableElement, e: EventBase): EventBase {
     metaKey: e.metaKey,
     altKey: e.altKey,
     clientX,
-    clientY
+    clientY,
+    key: e.key
   };
 }
 

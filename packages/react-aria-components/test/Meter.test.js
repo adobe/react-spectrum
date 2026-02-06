@@ -53,4 +53,10 @@ describe('Meter', () => {
     expect(meter).toHaveAttribute('slot', 'test');
     expect(meter).toHaveAttribute('aria-label', 'test');
   });
+
+  it('should support custom render function', () => {
+    let {getByRole} = render(<TestMeter render={props => <div {...props} data-custom="bar" />} />);
+    let meter = getByRole('meter');
+    expect(meter).toHaveAttribute('data-custom', 'bar');
+  });
 });

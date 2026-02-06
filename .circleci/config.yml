@@ -897,7 +897,6 @@ workflows:
       - install-16
       - install-17
       - install-18
-      - install-canary
       - test-ssr:
           requires:
             - install
@@ -922,12 +921,6 @@ workflows:
       - test-ssr-18:
           requires:
             - install-18
-      - test-canary:
-          requires:
-            - install-canary
-      - test-ssr-canary:
-          requires:
-            - install-canary
       - test-esm:
           requires:
             - install

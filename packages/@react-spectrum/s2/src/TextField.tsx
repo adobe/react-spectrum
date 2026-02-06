@@ -33,7 +33,7 @@ import {StyleString} from '../style/types';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, StyleProps, SpectrumLabelableProps, HelpTextProps, Pick<InputProps, 'placeholder'> {
   /**
    * The size of the text field.
    *

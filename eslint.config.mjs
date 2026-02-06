@@ -249,6 +249,7 @@ export default [{
 
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
+        "rsp-rules/no-non-shadow-contains": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
@@ -428,6 +429,7 @@ export default [{
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/act-events-test": ERROR,
         "rsp-rules/no-getByRole-toThrow": ERROR,
+        "rsp-rules/no-non-shadow-contains": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
         "jsdoc/require-jsdoc": OFF
@@ -500,9 +502,26 @@ export default [{
         }],
     },
 }, {
+    files: [
+        "packages/@react-aria/test-utils/src/**/*.ts",
+        "packages/@react-aria/test-utils/src/**/*.tsx",
+    ],
+
+    rules: {
+        "rsp-rules/no-non-shadow-contains": OFF,
+    },
+}, {
     files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,
     },
+}, {
+    files: ["packages/dev/style-macro-chrome-plugin/**"],
+    languageOptions: {
+        globals: {
+            ...globals.webextensions,
+            ...globals.browser
+        }
+    }
 }];

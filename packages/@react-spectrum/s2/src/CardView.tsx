@@ -34,7 +34,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'render' | 'isLoading' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'

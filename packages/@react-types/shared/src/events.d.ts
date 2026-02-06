@@ -52,6 +52,11 @@ export interface PressEvent {
   /** Y position relative to the target. */
   y: number,
   /**
+   * The key that triggered the press event, if it was triggered by a keyboard interaction.
+   * This is useful for differentiating between Space and Enter key presses.
+   */
+  key?: string,
+  /**
    * By default, press events stop propagation to parent elements.
    * In cases where a handler decides not to handle a specific event,
    * it can call `continuePropagation()` to allow a parent to handle it.

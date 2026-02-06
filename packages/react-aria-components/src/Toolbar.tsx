@@ -14,6 +14,7 @@ import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   RenderProps,
   SlotProps,
   useContextProps,
@@ -57,12 +58,12 @@ export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
   delete DOMProps.id;
 
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, toolbarProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'horizontal'}>
       {renderProps.children}
-    </div>
+    </dom.div>
   );
 });

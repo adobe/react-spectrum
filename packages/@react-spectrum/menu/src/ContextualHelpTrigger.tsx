@@ -15,7 +15,8 @@ import {DOMRefValue, ItemProps, Key} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
-import {Popover} from '@react-spectrum/overlays';
+import {nodeContains} from '@react-aria/utils';
+import {Popover} from './Popover';
 import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -85,7 +86,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let onBlurWithin = (e) => {
-    if (e.relatedTarget && popoverRef.current && (!popoverRef.current.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
+    if (e.relatedTarget && popoverRef.current && (!nodeContains(popoverRef.current.UNSAFE_getDOMNode(), e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (submenuTriggerState.isOpen) {
         submenuTriggerState.close();
       }
@@ -98,7 +99,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
     setTimeout(() => {
       submenuTriggerState.close();
-      if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+      if (parentMenuRef.current && !nodeContains(parentMenuRef.current, document.activeElement)) {
         parentMenuRef.current.focus();
       }
     }, 220); // Matches transition duration
