@@ -542,7 +542,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     // Clone the collection to ensure that React queues a render. It will call getCollection again
     // during render, at which point all the updates will be complete and we can return
     // the new collection.
-    this.collection = this.collection.clone();
+    if (!this.isSSR) {
+      this.collection = this.collection.clone();
+    }
 
     for (let fn of this.subscriptions) {
       fn();
