@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter, useListFormatter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
@@ -26,7 +26,7 @@ import {
   useSlottedContext
 } from './utils';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionBuilder} from '@react-aria/collections';
+import {CollectionBuilder, createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
@@ -37,7 +37,7 @@ import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 type SelectionMode = 'single' | 'multiple';
@@ -260,3 +260,59 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     </Provider>
   );
 }
+
+export interface ComboBoxValueRenderProps<T> {
+  /**
+   * Whether the value is a placeholder.
+   * @selector [data-placeholder]
+   */
+  isPlaceholder: boolean,
+  /** The object values of the currently selected items. */
+  selectedItems: (T | null)[],
+  /** The textValue of the currently selected items. */
+  selectedText: string,
+  /** The state of the ComboBox. */
+  state: ComboBoxState<T, 'single' | 'multiple'>
+}
+
+export interface ComboBoxValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<ComboBoxValueRenderProps<T>, 'div'> {
+  /**
+   * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
+   * @default 'react-aria-ComboBoxValue'
+   */
+  className?: ClassNameOrFunction<ComboBoxValueRenderProps<T>>,
+  /** A value to display when no items are selected. */
+  placeholder?: ReactNode
+}
+
+/**
+ * ComboBoxValue renders the selected values of a ComboBox, or a placeholder if no value is selected.
+ * By default, the items are rendered as a comma separated list. Use the render function to customize this.
+ */
+export const ComboBoxValue = /*#__PURE__*/ createHideableComponent(function ComboBoxValue<T extends object>(props: ComboBoxValueProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+  let state = useContext(ComboBoxStateContext)!;
+  let formatter = useListFormatter();
+  let selectedText = useMemo(() => formatter.format(state.selectedItems.map(item => item?.textValue || '').filter(v => v !== '')), [formatter, state.selectedItems]);
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultChildren: selectedText || props.placeholder,
+    defaultClassName: 'react-aria-ComboBoxValue',
+    values: {
+      selectedItems: useMemo(() => state.selectedItems.map(item => item.value as T ?? null), [state.selectedItems]),
+      selectedText,
+      isPlaceholder: state.selectedItems.length === 0,
+      state
+    }
+  });
+
+  let DOMProps = filterDOMProps(props, {global: true});
+
+  return (
+    <dom.div
+      ref={ref}
+      {...DOMProps}
+      {...renderProps}
+      data-placeholder={state.selectedItems.length === 0 || undefined} />
+  );
+});

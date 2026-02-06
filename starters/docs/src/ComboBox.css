@@ -16,6 +16,11 @@
     width: 100%;
     padding: 0 calc(var(--spacing-3) + var(--spacing-6)) 0 var(--spacing-3);
   }
+
+  .react-aria-ComboBoxValue {
+    margin-top: var(--spacing-1);
+    font: var(--font-size-sm) system-ui;
+  }
 }
 
 .combobox-popover[data-trigger=ComboBox] {

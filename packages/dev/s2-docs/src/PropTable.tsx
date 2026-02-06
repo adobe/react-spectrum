@@ -93,7 +93,7 @@ export function PropTable({component, links, showDescription, hideRenderProps, s
 
   return (
     <>
-      {component.description && showDescription && <div className={style({font: 'body'})}>{renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}</div>}
+      {component.description && showDescription && <div className={style({font: 'body', marginBottom: 16})}>{renderHTMLfromMarkdown(component.description, {forceInline: false, forceBlock: true})}</div>}
       <GroupedPropTable
         properties={properties}
         links={links}

@@ -4,6 +4,7 @@ import React from 'react';
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
+  ComboBoxValue,
   ListBox,
   ListBoxItemProps,
   ValidationResult
@@ -14,7 +15,7 @@ import { Popover } from './Popover';
 import { composeTailwindRenderProps } from './utils';
 import { FieldButton } from './FieldButton';
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
+export interface ComboBoxProps<T extends object, M extends 'single' | 'multiple'> extends Omit<AriaComboBoxProps<T, M>, 'children'> {
   label?: string;
   description?: string | null;
   errorMessage?: string | ((validation: ValidationResult) => string);
@@ -22,8 +23,8 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function ComboBox<T extends object>(
-  { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T>
+export function ComboBox<T extends object, M extends 'single' | 'multiple'>(
+  { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T, M>
 ) {
   return (
     <AriaComboBox {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans')}>
@@ -34,6 +35,7 @@ export function ComboBox<T extends object>(
           <ChevronDown aria-hidden className="w-4 h-4" />
         </FieldButton>
       </FieldGroup>
+      {props.selectionMode === 'multiple' && <ComboBoxValue placeholder="No items selected" className="text-xs text-neutral-600" />}
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className="w-(--trigger-width)">

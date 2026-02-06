@@ -27,7 +27,7 @@ const styles = tv({
   }
 });
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children'> {
+export interface SelectProps<T extends object, M extends 'single' | 'multiple'> extends Omit<AriaSelectProps<T, M>, 'children'> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
@@ -35,8 +35,8 @@ export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 
   children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function Select<T extends object>(
-  { label, description, errorMessage, children, items, ...props }: SelectProps<T>
+export function Select<T extends object, M extends 'single' | 'multiple'>(
+  { label, description, errorMessage, children, items, ...props }: SelectProps<T, M>
 ) {
   return (
     <AriaSelect {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 relative font-sans')}>
