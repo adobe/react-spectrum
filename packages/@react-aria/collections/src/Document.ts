@@ -475,12 +475,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
   getCollection(): C {
-    // If in a subscription update, return a clone of the existing collection.
-    // This ensures React will queue a render. React will call getCollection again
-    // during render, at which point all the updates will be complete and we can return
-    // the new collection.
+    // If in a subscription update, return return the existing collection.
+    // React will call getCollection again during render, at which point all the updates will be complete.
     if (this.inSubscription) {
-      return this.collection.clone();
+      return this.collection;
     }
 
     // Reset queuedRender to false when getCollection is called during render.
@@ -540,9 +538,16 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     // we reset queuedRender back to false.
     this.queuedRender = true;
     this.inSubscription = true;
+
+    // Clone the collection to ensure that React queues a render. It will call getCollection again
+    // during render, at which point all the updates will be complete and we can return
+    // the new collection.
+    this.collection = this.collection.clone();
+
     for (let fn of this.subscriptions) {
       fn();
     }
+
     this.inSubscription = false;
   }
 
