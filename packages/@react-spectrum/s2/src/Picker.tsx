@@ -548,10 +548,10 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
               }>
               {({selectedItems, defaultChildren}) => {
                 const selectedValues = selectedItems.filter((item): item is T => item != null);
-                const defaultRenderedValue = selectedValues.length <= 1
+                const defaultRenderedValue = selectedItems.length <= 1
                   ? defaultChildren
-                  : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedValues.length})}</Text>;
-                const renderedValue = selectedValues.length > 0 && renderValue
+                  : <Text slot="label">{stringFormatter.format('picker.selectedCount', {count: selectedItems.length})}</Text>;
+                const renderedValue = selectedItems.length > 0 && renderValue
                   ? renderValue(selectedValues)
                   : defaultRenderedValue;
 
