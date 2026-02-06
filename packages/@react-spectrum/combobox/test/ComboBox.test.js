@@ -5286,7 +5286,8 @@ describe('ComboBox', function () {
           expect(input).toHaveValue('One');
     
           let button = getByTestId('submit');
-          await user.click(button);
+          // For some reason, user.click() causes act warnings related to suspense...
+          await act(() => button.click());
           expect(input).toHaveValue('Two');
 
           rerender(<Test formValue="key" />);

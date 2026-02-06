@@ -16,10 +16,10 @@ import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useLabels, useRouter, useSlotId, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useId, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
-import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -208,7 +208,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     state.setFocused(true);
   };
 
-  let valueId = useSlotId([state.selectedItems, state.selectionManager.selectionMode]);
+  let valueId = useValueId([state.selectedItems, state.selectionManager.selectionMode]);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
@@ -406,4 +406,30 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
     validationErrors,
     validationDetails
   };
+}
+
+// This is a modified version of useSlotId that uses useEffect instead of useLayoutEffect.
+// Triggering re-renders from useLayoutEffect breaks useComboBoxState's useEffect logic in React 18.
+// These re-renders preempt async state updates in the useEffect, which ends up running multiple times
+// prior to the state being updated. This results in onSelectionChange being called multiple times.
+// TODO: refactor useComboBoxState to avoid this.
+function useValueId(depArray: ReadonlyArray<any> = []): string | undefined {
+  let id = useId();
+  let [exists, setExists] = useState(true);
+  let [lastDeps, setLastDeps] = useState(depArray);
+
+  // If the deps changed, set exists to true so we can test whether the element exists.
+  if (lastDeps.some((v, i) => !Object.is(v, depArray[i]))) {
+    setExists(true);
+    setLastDeps(depArray);
+  }
+
+  useEffect(() => {
+    if (exists && !document.getElementById(id)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setExists(false);
+    }
+  }, [id, exists, lastDeps]);
+
+  return exists ? id : undefined;
 }

@@ -2479,7 +2479,8 @@ describe('SearchAutocomplete', function () {
           expect(input).toHaveValue('test');
     
           let button = getByTestId('submit');
-          await user.click(button);
+          // For some reason, user.click() causes act warnings related to suspense...
+          await act(() => button.click());
           expect(input).toHaveValue('hi');
         });
       }
