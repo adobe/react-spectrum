@@ -6882,8 +6882,8 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
-    react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
     react-lowlight: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7426,7 +7426,8 @@ __metadata:
     "@react-types/shared": "npm:^3.30.0"
     "@react-types/textfield": "npm:^3.12.3"
     axe-playwright: "npm:^2.2.2"
-    emojibase-data: "npm:^16.0.3"
+    emojibase: "npm:^17.0.0"
+    emojibase-data: "npm:^17.0.0"
     fast-glob: "npm:^3.3.3"
     globals-docs: "npm:^2.4.1"
     gray-matter: "npm:^4.0.3"
@@ -15124,12 +15125,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"emojibase-data@npm:^16.0.3":
-  version: 16.0.3
-  resolution: "emojibase-data@npm:16.0.3"
+"emojibase-data@npm:^17.0.0":
+  version: 17.0.0
+  resolution: "emojibase-data@npm:17.0.0"
   peerDependencies:
     emojibase: "*"
-  checksum: 10c0/d82520917c2ec326e737da9c5a57472e41a719777fa4770b52b75f0568791613fc94829898831c7b3fff1528134de01019cdf34e571d214fee19e40950d68b7f
+  checksum: 10c0/c1373438ac52e943a7953ce2315c0da4e29a6552a0ee9ae18a22dbf824a6b428d25655c55e2e48c69900358052408496807cdf7af12a43a0a1b39fb369cbf4a0
+  languageName: node
+  linkType: hard
+
+"emojibase@npm:^17.0.0":
+  version: 17.0.0
+  resolution: "emojibase@npm:17.0.0"
+  checksum: 10c0/d37435b77f12e3c45d06fc09753fd7dd6b44e757cfaa96b64b72257109aa8166773e19c1eb18c21a06e5b8c50462cb279dca83510724673f505a6f0d6e7dc90f
   languageName: node
   linkType: hard
 
@@ -24754,14 +24762,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^19, react-dom@npm:^19.1.0":
-  version: 19.1.0
-  resolution: "react-dom@npm:19.1.0"
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^19, react-dom@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react-dom@npm:19.2.3"
   dependencies:
-    scheduler: "npm:^0.26.0"
+    scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
+    react: ^19.2.3
+  checksum: 10c0/dc43f7ede06f46f3acc16ee83107c925530de9b91d1d0b3824583814746ff4c498ea64fd65cd83aba363205268adff52e2827c582634ae7b15069deaeabc4892
   languageName: node
   linkType: hard
 
@@ -24797,10 +24805,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^19.1.0":
-  version: 19.1.1
-  resolution: "react-is@npm:19.1.1"
-  checksum: 10c0/3dba763fcd69835ae263dcd6727d7ffcc44c1d616f04b7329e67aefdc66a567af4f8dcecdd29454c7a707c968aa1eb85083a83fb616f01675ef25e71cf082f97
+"react-is@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react-is@npm:19.2.3"
+  checksum: 10c0/2b54c422c21b8dbd68a435a1cce21ecd5b6f06f48659531f7d53dd7368365da5a67e946f352fb2010d11ca40658aa67bec90995f0f1ec5556c0f71dbffe54994
   languageName: node
   linkType: hard
 
@@ -24948,10 +24956,10 @@ __metadata:
     postcss: "npm:^8.4.24"
     postcss-custom-properties: "npm:^13.2.0"
     postcss-import: "npm:^15.1.0"
-    react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react: "npm:^19.2.3"
+    react-dom: "npm:^19.2.3"
     react-frame-component: "npm:^5.0.0"
-    react-test-renderer: "npm:^19.1.0"
+    react-test-renderer: "npm:^19.2.3"
     recast: "npm:^0.23"
     recursive-readdir: "npm:^2.2.2"
     regenerator-runtime: "npm:0.13.3"
@@ -25010,15 +25018,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-test-renderer@npm:19.1.0":
-  version: 19.1.0
-  resolution: "react-test-renderer@npm:19.1.0"
+"react-test-renderer@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react-test-renderer@npm:19.2.3"
   dependencies:
-    react-is: "npm:^19.1.0"
-    scheduler: "npm:^0.26.0"
+    react-is: "npm:^19.2.3"
+    scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.1.0
-  checksum: 10c0/34ed4a37ba8b0beb96c048de6ff28574f018a18dd1042c24f8f46142d48eb5b27f82ff7c2823d082932fd3983c5a3529ab8cc8f15191d4306df0082f9f84678f
+    react: ^19.2.3
+  checksum: 10c0/842b82239dbddbc536083a6260c3e1b0507c02a3400bd05879fc19160468fd0f8ab79fec5dceffa6113b131835cc7621212f8415b46ea5156ab66bbfd7e24297
   languageName: node
   linkType: hard
 
@@ -25037,17 +25045,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^19, react@npm:^19.1.0":
-  version: 19.1.0
-  resolution: "react@npm:19.1.0"
-  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
-  languageName: node
-  linkType: hard
-
-"react@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0":
-  version: 19.1.1
-  resolution: "react@npm:19.1.1"
-  checksum: 10c0/8c9769a2dfd02e603af6445058325e6c8a24b47b185d0e461f66a6454765ddcaecb3f0a90184836c68bb509f3c38248359edbc42f0d07c23eb500a5c30c87b4e
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react@npm:^19, react@npm:^19.2.3":
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 
@@ -26025,10 +26026,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "scheduler@npm:0.26.0"
-  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
+"scheduler@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "scheduler@npm:0.27.0"
+  checksum: 10c0/4f03048cb05a3c8fddc45813052251eca00688f413a3cee236d984a161da28db28ba71bd11e7a3dd02f7af84ab28d39fb311431d3b3772fed557945beb00c452
   languageName: node
   linkType: hard
 

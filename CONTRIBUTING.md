@@ -176,7 +176,7 @@ parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationali
 make: *** [build] Segmentation fault: 11
 ```
 
-It's likely that you are using a different version of Node.js. Please use Node.js 18. When changing the node version, delete `node_modules` and re-run `yarn install`
+It's likely that you are using a different version of Node.js. Please use Node.js 22. When changing the node version, delete `node_modules` and re-run `yarn install`
 
 > `yarn start` fails.
 

@@ -42,13 +42,16 @@
     "@react-spectrum/utils": "^3.12.6",
     "@react-types/shared": "^3.30.0",
     "@react-types/textfield": "^3.12.3",
-    "emojibase-data": "^16.0.3",
+    "axe-playwright": "^2.2.2",
+    "emojibase": "^17.0.0",
+    "emojibase-data": "^17.0.0",
     "fast-glob": "^3.3.3",
     "globals-docs": "^2.4.1",
     "gray-matter": "^4.0.3",
     "json5": "^2.2.3",
     "lz-string": "^1.5.0",
     "markdown-to-jsx": "^6.11.0",
+    "playwright": "^1.57.0",
     "react": "^19",
     "react-aria": "^3.40.0",
     "react-aria-components": "^1.7.1",
@@ -67,9 +70,5 @@
   "alias": {
     "tailwind-starter": "../../../starters/tailwind/src",
     "vanilla-starter": "../../../starters/docs/src"
-  },
-  "devDependencies": {
-    "axe-playwright": "^2.2.2",
-    "playwright": "^1.57.0"
   }
 }
