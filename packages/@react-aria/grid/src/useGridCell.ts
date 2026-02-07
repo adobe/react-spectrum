@@ -12,8 +12,8 @@
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, isFocusVisible} from '@react-aria/interactions';
+import {getEventTarget, getScrollParent, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {getScrollParent, mergeProps, nodeContains, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
@@ -109,7 +109,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || state.isKeyboardNavigationDisabled || !ref.current || !document.activeElement) {
       return;
     }
 
@@ -213,7 +213,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && nodeContains(ref.current, e.target as Element)) {
+        if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement?.dispatchEvent(
@@ -228,7 +228,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // be marshalled to that element rather than focusing the cell itself.
   let onFocus = (e) => {
     keyWhenFocused.current = node.key;
-    if (e.target !== ref.current) {
+    if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the gridcell itself. We also want to
       // set the focused key when a child element receives focus.
