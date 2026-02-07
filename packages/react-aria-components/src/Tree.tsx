@@ -27,45 +27,34 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, LoaderNode, SectionNode, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, SectionProps} from './Collection';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, GlobalDOMAttributes, HoverEvents, Key, LinkDOMProps, MultipleSelection, PressEvents, RefObject, SelectionMode} from '@react-types/shared';
 import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, inertValue, LoadMoreSentinelProps, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
-import {GridListHeader, GridListHeaderContext, GridListHeaderProps, GridListHeaderInnerContext} from './GridList';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {GridListHeader, GridListHeaderContext, GridListHeaderInnerContext, GridListHeaderProps} from './GridList';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionIndicatorContext} from './SelectionIndicator';
 import {SharedElementTransition} from './SharedElementTransition';
 import {TreeDropTargetDelegate} from './TreeDropTargetDelegate';
 import {useControlledState} from '@react-stately/utils';
 
-class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>> {
+class TreeCollection<T> implements ICollection<Node<T>> {
   private keyMap: Map<Key, CollectionNode<T>> = new Map();
   private itemCount: number = 0;
-  private firstKey;
-  private lastKey;
   private expandedKeys;
 
   constructor(opts) {
-    super();
     let {collection, lastExpandedKeys, expandedKeys} = opts;
-    // the issue is that we can't just use the the key map from base collection because we need to adjust the indexes due to the content nodes
-    // we also need to adjust the levels of the nodes within a section as well
-    // this also used to return a flattened list of the tree items which it does not anymore
     let {keyMap, itemCount} = generateKeyMap<T>(collection, {expandedKeys});
     // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
     this.keyMap = keyMap;
     this.itemCount = itemCount;
-    console.log('keyMap', this.keyMap);
-
-    // these technically refer to the first focusable item (so skips over sections and headers)
-    this.firstKey = [...this.keyMap.keys()][0];
-    this.lastKey = [...this.keyMap.keys()][this.keyMap.size - 1];
     this.expandedKeys = expandedKeys;
 
-     // diff lastExpandedKeys and expandedKeys so we only clone what has changed (this is for when tree is virtualized)
+     // diff lastExpandedKeys and expandedKeys so we only clone what has changed (this is for when Tree is virtualized)
     for (let key of expandedKeys) {
       if (!lastExpandedKeys.has(key)) {
         // traverse upward until you hit a section, and clone it
@@ -100,22 +89,8 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
     }
   }
 
-  // previously used to return a flatten list of the all the tree item nodes (did not include content nodes)
-  // because we introduced sections, we can't have a "truly" flattened tree anymore since items within a section need to be grouped together
-  // if items are not in a section, they rendered as siblings in the DOM
-  // if items are within a section, they are also rendered as siblings in the DOM but grouped inside a section 
-  // so the structure looks something like this
-  // <div>
-  //   <section>
-  //     <div>Project-1</dvi>
-  //     <div>Project-1A</div>
-  //   </section>
-   //  <div>Project 2</dvi>
-  //   <div>Project-2A</div>
-  // </div>
   *[Symbol.iterator]() {
-    let keyMap = this.keyMap;
-    let firstKey = this.firstKey;
+    let firstKey = this.getFirstKey();
     let node: Node<T> | null = firstKey != null ? this.getItem(firstKey) : null;
 
     while (node) {
@@ -123,21 +98,8 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
       if (node.type === 'section') {
         node = node.nextKey ? this.getItem(node.nextKey) : null;
       } else {
+        // This will include both item and content nodes
         let key = this.getKeyAfter(node.key);
-        // Skip over content nodes
-
-        // there are two issues here, one is similar to the issue in the getChildren method where ListLayout throws an error when it encounters content nodes (so this only matters in the Virtualized case)
-        // ListLayout will call buildNode on the content node and throw an error
-
-        // the other issue here is that in a non-virtualized case, that the content node get rendered/repeated when you expand a tree item
-        // that's because useCollectionRender will render the content node 
-        // so i can't make it truly 'non-flat' which is unfortunate...at some point we need to skip this content node
-        // if (key) {
-        //   let temp = keyMap.get(key) as Node<T>;
-        //   if (temp.type === 'content' && temp.nextKey) {
-        //     key = temp.nextKey;
-        //   }
-        // }
         node = key ? this.getItem(key) : null;
       }
     }
@@ -147,62 +109,24 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
     return this.itemCount;
   }
 
-  // getKeys() {
-  //   return this.keyMap.keys();
-  // }
+  getKeys() {
+    return this.keyMap.keys();
+  }
 
-  // getItem(key: Key): Node<T> | null {
-  //   return this.keyMap.get(key) || null;
-  // }
+  getItem(key: Key): Node<T> | null {
+    return this.keyMap.get(key) || null;
+  }
 
-  // at(idx: number) {
-  //   throw new Error('Not implemented');
-  // }
+  at(): Node<T> {
+    throw new Error('Not implemented');
+  }
 
-  // should getFirstKey get the true first key? or should it get the firstKey that you can keyboard navigate to? where should that be handled?
-  // right now, getFirstKey will get you the firstKey that can be keyboard focused
   getFirstKey() {
-    let node = this.getItem(this.firstKey);
-    // let node = this.keyMap.get(this.firstKey);
-    if (!node) {
-      return null;
-    }
-
-    // Skip over any nodes that aren't an item node (e.g. section or header node)
-    while (node) {
-      if (node.type !== 'item' && node.firstChildKey) {
-        node = this.getItem(node.firstChildKey);
-        // node = this.keyMap.get(node.firstChildKey);
-      } else {
-        break;
-      }
-    }
-
-    return node ? node.key : null;
+    return [...this.keyMap.keys()][0];
   }
 
   getLastKey() {
-    // let lastKey = this
-    // let node = lastKey != null ? this.getItem(lastKey) : null;
-    let node = this.getItem(this.lastKey);
-
-    if (!node) {
-      return null;
-    }
-
-    // If the node's parent is expanded, then we can assume that this is the actual last key
-    if (node.parentKey && this.expandedKeys.has(node.parentKey)) {
-      return node.key;
-    }
-
-    // If the node's parent is not expanded, find the top-most non-expanded node since it's possible for them to be nested
-    let parentNode = node.parentKey ? this.getItem(node.parentKey) : null;
-    while (parentNode && parentNode.type !== 'section' && node && node.parentKey && !this.expandedKeys.has(parentNode.key)) {
-      node = this.getItem(node.parentKey);
-      parentNode = node && node.parentKey ? this.getItem(node.parentKey) : null;
-    }
-
-    return node?.key ?? null;
+    return [...this.keyMap.keys()][this.keyMap.size - 1];
   }
 
   getKeyAfter(key: Key) {
@@ -231,7 +155,7 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
   }
 
   getKeyBefore(key: Key) {
-    let node = this.getItem(key);
+    let node = this.getItem(key) as CollectionNode<T>;
     if (!node) {
       return null;
     }
@@ -240,12 +164,12 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
       node = this.getItem(node.prevKey) as CollectionNode<T>;
 
       while (node && node.type !== 'item' && node.lastChildKey != null) {
-        node = this.getItem(node.lastChildKey);
+        node = this.getItem(node.lastChildKey) as CollectionNode<T>;
       }
 
       // If the lastChildKey is expanded, check its lastChildKey
       while (node && this.expandedKeys.has(node.key) && node.lastChildKey != null) {
-        node = this.getItem(node.lastChildKey);
+        node = this.getItem(node.lastChildKey) as CollectionNode<T>;
       }
 
       return node?.key ?? null;
@@ -265,17 +189,8 @@ class TreeCollection<T> extends BaseCollection<T> implements ICollection<Node<T>
           // Stop once either the node is null or the node is the parent's sibling
           while (node && node.key !== parent.nextKey) {
             yield keyMap.get(node.key) as Node<T>;
+            // This will include content nodes which we skip in ListLayout buildSection method
             let key = self.getKeyAfter(node.key);
-
-            // really only needed in the virtualized case i believe, but it does deviate slightly from previous behavior when we included ALL content nodes
-            // the issue is that in ListLayout, when we call buildSection, we eventually call buildNode which will throw an error with Content nodes 
-            // so i guess the question is where do we want to put this logic? 
-            // if (key) {
-            //   let temp = keyMap.get(key) as Node<T>;
-            //   if (temp.type === 'content' && temp.nextKey) {
-            //     key = temp.nextKey;
-            //   }
-            // }
             node = key ? keyMap.get(key) : undefined;
           }
         } else {
@@ -425,7 +340,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let [flattenedCollection, setFlattenedCollection] = useState(() => new TreeCollection<object>({collection, lastExpandedKeys: new Set(), expandedKeys}));
 
 
-  // if the lastExpandedKeys is not the same as the currentExpandedKeys or the collection has changed, then run this!
+  // if the lastExpandedKeys is not the same as the currentExpandedKeys or the collection has changed, then run this
   if (!areSetsEqual(lastExpandedKeys, expandedKeys) || collection !== lastCollection) {
     setFlattenedCollection(new TreeCollection<object>({collection, lastExpandedKeys, expandedKeys}));
     setLastCollection(collection);
@@ -442,10 +357,26 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     disabledBehavior
   });
 
+  // need to be able to pass expandedKeys to keyboard delegate and did not want to add expandedKeys prop to useSelectableList
+  let keyboardDelegate = useMemo(() =>
+    new ListKeyboardDelegate({
+      collection: state.collection,
+      collator,
+      ref,
+      disabledKeys: state.selectionManager.disabledKeys,
+      disabledBehavior: state.selectionManager.disabledBehavior,
+      direction,
+      layoutDelegate,
+      expandedKeys
+    }),
+    [state.collection, collator, ref, state.selectionManager.disabledKeys, state.selectionManager.disabledBehavior, direction, layoutDelegate, expandedKeys]
+  );
+
   let {gridProps} = useTree({
     ...props,
     isVirtualized,
-    layoutDelegate
+    layoutDelegate,
+    keyboardDelegate
   }, state, ref);
 
   let dragState: DraggableCollectionState | undefined = undefined;
@@ -478,16 +409,17 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
     treeDropTargetDelegate.setup(dropTargetDelegate, state, direction);
 
-    let keyboardDelegate =
-      new ListKeyboardDelegate({
-        collection: state.collection,
-        collator,
-        ref,
-        disabledKeys: state.selectionManager.disabledKeys,
-        disabledBehavior: state.selectionManager.disabledBehavior,
-        direction,
-        layoutDelegate
-      });
+    // let keyboardDelegate =
+    //   new ListKeyboardDelegate({
+    //     collection: state.collection,
+    //     collator,
+    //     ref,
+    //     disabledKeys: state.selectionManager.disabledKeys,
+    //     disabledBehavior: state.selectionManager.disabledBehavior,
+    //     direction,
+    //     layoutDelegate,
+    //     expandedKeys
+    //   });
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,

@@ -23,7 +23,8 @@ interface ListKeyboardDelegateOptions<T> {
   direction?: Direction,
   disabledKeys?: Set<Key>,
   disabledBehavior?: DisabledBehavior,
-  layoutDelegate?: LayoutDelegate
+  layoutDelegate?: LayoutDelegate,
+  expandedKeys?: Set<Key>
 }
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
@@ -36,8 +37,9 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private orientation?: Orientation;
   private direction?: Direction;
   private layoutDelegate: LayoutDelegate;
+  private expandedKeys?: Set<Key>;
 
-  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator);
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement | null>, collator?: Intl.Collator, expandedKeys?: Set<Key>);
   constructor(options: ListKeyboardDelegateOptions<T>);
   constructor(...args: any[]) {
     if (args.length === 1) {
@@ -51,6 +53,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
       this.layoutDelegate = opts.layoutDelegate || new DOMLayoutDelegate(opts.ref);
+      this.expandedKeys = opts.expandedKeys;
     } else {
       this.collection = args[0];
       this.disabledKeys = args[1];
@@ -60,6 +63,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.orientation = 'vertical';
       this.disabledBehavior = 'all';
       this.layoutDelegate = new DOMLayoutDelegate(this.ref);
+      this.expandedKeys = args[4];
     }
 
     // If this is a vertical stack, remove the left/right methods completely
@@ -83,6 +87,53 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       }
 
       nextKey = getNext(nextKey);
+    }
+
+    return null;
+  }
+
+  private findNextVisible(key: Key | null): Key | null {
+    let node = key ? this.collection.getItem(key) : null;
+    if (!node) {
+      return null;
+    }
+
+    // If the node's parent is expanded, then we can assume that this is a visible node
+    if (node.parentKey && this.expandedKeys?.has(node.parentKey)) {
+      return node.key;
+    }
+
+    // If the node's parent is not expanded, find the top-most non-expanded node since it's possible for them to be nested
+    let parentNode = node.parentKey ? this.collection.getItem(node.parentKey) : null;
+    // if the the parent node is not a section, and the parent node is not included in expanded keys
+    while (parentNode && parentNode.type !== 'section' && node && node.parentKey && this.expandedKeys && !this.expandedKeys.has(parentNode.key)) {
+      node = this.collection.getItem(node.parentKey);
+      parentNode = node && node.parentKey ? this.collection.getItem(node.parentKey) : null;
+    }
+
+    return node?.key ?? null;
+  }
+
+  private findNextNonDisabledVisible(key: Key | null, getNext: (key: Key) => Key | null) {
+    let nextKey = key;
+    while (nextKey !== null) {
+      let visibleKey = this.findNextVisible(nextKey);
+      // if visibleKey is null, that means there are no visibleKeys 
+      // (idk how that would happen tho, at least one parentKey has to exist but not bad to check ig)
+      if (visibleKey == null) {
+        return null;
+      }
+
+      let nonDisabledKey = this.findNextNonDisabled(visibleKey, getNext);
+      console.log(visibleKey, nonDisabledKey);
+
+      // if the keys are equal, then we know that it is both visible and non-disabled
+      if (visibleKey === nonDisabledKey) {
+        return visibleKey;
+      }
+
+      // otherwise, keep searching by advancing to the next key
+      nextKey = getNext(visibleKey);
     }
 
     return null;
@@ -201,6 +252,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
   getLastKey(): Key | null {
     let key = this.collection.getLastKey();
+    // we only need to check for visible keys if items can be expanded/collapsed
+    if (this.expandedKeys) {
+      return this.findNextNonDisabledVisible(key, key => this.collection.getKeyBefore(key));
+    }
     return this.findNextNonDisabled(key, key => this.collection.getKeyBefore(key));
   }
 

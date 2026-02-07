@@ -229,7 +229,6 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   }
 
   getItem(key: Key): Node<T> | null {
-    console.log(this.keyMap);
     return this.keyMap.get(key) ?? null;
   }
 

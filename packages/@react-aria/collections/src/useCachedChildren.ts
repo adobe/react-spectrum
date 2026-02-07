@@ -49,7 +49,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
           if (key == null) {
             throw new Error('Could not determine key for item');
           }
-           
+
           if (idScope != null) {
             key = idScope + ':' + key;
           }
