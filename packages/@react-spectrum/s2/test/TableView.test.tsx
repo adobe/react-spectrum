@@ -28,6 +28,7 @@ import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import {pointerMap, User} from '@react-aria/test-utils';
 import React, {useState} from 'react';
+import {Tab, TabList, Tabs} from 'react-aria-components';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
@@ -147,5 +148,43 @@ describe('TableView', () => {
     await user.tab({shift: true});
     await user.tab();
     expect(document.activeElement).toBe(cells[3]);
+  });
+
+  it('should render empty state + nested collection without crashing', async () => {
+    const tabs = [
+      {id: 'general', label: 'General'},
+      {id: 'advanced', label: 'Advanced'}
+    ];
+    const renderEmptyState = () => (
+      <Tabs aria-label="Settings">
+        <TabList>
+          {tabs.map((tab) => (
+            <Tab key={tab.id} id={tab.id}>
+              {tab.label}
+            </Tab>
+          ))}
+        </TabList>
+      </Tabs>
+    );
+
+    let renderResult: ReturnType<typeof render>;
+    await act(async () => {
+      renderResult = render(
+        <TableView aria-label="Debug table" selectionMode="none">
+          <TableHeader columns={columns}>
+            {(column) => (
+              <Column>
+                {column.name}
+              </Column>
+            )}
+          </TableHeader>
+          <TableBody items={[]} renderEmptyState={renderEmptyState} />
+        </TableView>
+      );
+      await Promise.resolve();
+    });
+    let {getAllByRole} = renderResult!;
+
+    expect(getAllByRole('tab')).toHaveLength(tabs.length);
   });
 });
