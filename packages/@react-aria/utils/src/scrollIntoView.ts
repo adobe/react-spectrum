@@ -78,7 +78,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let shouldScrollInline = scrollAreaLeft < scrollPortLeft || scrollAreaRight > scrollPortRight;
 
   if (shouldScrollBlock && block === 'start') {
-    y += scrollAreaLeft - scrollPortLeft;
+    y += scrollAreaTop - scrollPortTop;
   } else if (shouldScrollBlock && block === 'center') {
     y += (scrollAreaTop + scrollAreaBottom) / 2 - (scrollPortTop + scrollPortBottom) / 2;
   } else if (shouldScrollBlock && block === 'end') {
