@@ -17,7 +17,6 @@ import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with 
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {style} from '../style' with {type: 'macro'};
-import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -134,7 +133,7 @@ export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: 
           <circle r="50%" cx="50%" cy="50%" />
         </svg>
       </CenterBaseline>
-      <Text>{children}</Text>
+      <span>{children}</span>
     </div>
   );
 });
