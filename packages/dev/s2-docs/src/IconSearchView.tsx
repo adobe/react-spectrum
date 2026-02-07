@@ -76,7 +76,7 @@ function IconListBox({items, copiedId, onAction, listBoxClassName}: IconListBoxP
         onAction={(item) => onAction(item.toString())}
         items={items}
         layout="grid"
-        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, overflow: 'auto'})}
+        className={listBoxClassName || style({width: '100%', scrollPaddingY: 4, padding: 8})}
         dependencies={[copiedId]}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
