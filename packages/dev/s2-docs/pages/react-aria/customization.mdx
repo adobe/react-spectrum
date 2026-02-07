@@ -2,6 +2,7 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2';
 
 export const section = 'Guides';
 export const description = 'How to build custom component patterns.';
@@ -9,6 +10,39 @@ export const description = 'How to build custom component patterns.';
 # Customization
 
 <PageDescription>React Aria is built using a flexible and composable API. Learn how to use contexts and slots to create custom component patterns, or mix and match with the lower level Hook-based API for even more control over rendering and behavior.</PageDescription>
+
+## DOM elements
+
+Use the `render` prop on any React Aria component to render a custom component in place of the default DOM element. This accepts a function which receives the DOM props to pass through, and states such as `isPressed` and `isSelected`.
+
+For example, you can render a [Motion](https://motion.dev) button and use the state to drive an animation.
+
+```tsx
+import {Button} from 'react-aria-components';
+import {motion} from 'motion/react';
+
+<Button
+  render={(domProps, {isPressed}) => (
+    <motion.button
+      {...domProps}
+      animate={{scale: isPressed ? 0.9 : 1}} />
+  )}>
+  Press me
+</Button>
+```
+
+The `render` prop is also useful for rendering link components from client-side routers, or reusing existing presentational components.
+
+<InlineAlert variant="notice">
+  <Heading>Follow these rules to avoid breaking the behavior and accessibility of the component:</Heading>
+  <Content>
+    <ul style={{paddingLeft: 12}}>
+      <li>Always render the expected element type (e.g. if `<button>` is expected, do not render an `<a>`). You will see a warning in development if a mismatch is detected.</li>
+      <li>Only render a single root DOM element (no fragments).</li>
+      <li>Always pass the provided props the underlying DOM element, merging with your own props via [mergeProps](mergeProps) as needed.</li>
+    </ul>
+  </Content>
+</InlineAlert>
 
 ## Contexts
 
