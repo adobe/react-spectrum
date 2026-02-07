@@ -13,10 +13,10 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, lightDark, style} from '../style' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue, GlobalDOMAttributes} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
@@ -282,7 +282,6 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {isPending = false} = props;
   let domRef = useFocusableRef(ref);
-  let overlayTriggerState = useContext(OverlayTriggerStateContext);
   let ctx = useSlottedContext(ActionButtonGroupContext);
   let isInGroup = !!ctx;
   let {
@@ -306,7 +305,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         // Retain hover styles when an overlay is open.
-        isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+        isHovered: renderProps.isHovered || renderProps.isExpanded || false,
         isDisabled: renderProps.isDisabled || isProgressVisible,
         staticColor,
         isStaticColor: !!staticColor,

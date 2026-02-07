@@ -35,7 +35,7 @@
         inset 0 var(--button-gradient-size) var(--button-gradient-size) -2px var(--button-gradient); /* inner gradient */
     }
 
-    &:where([data-pressed]) {
+    &:where([data-pressed], [data-expanded]) {
       --button-background: oklch(from var(--button-color) var(--lightness-200) var(--chroma-200) h);
     }
 

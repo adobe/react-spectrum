@@ -56,6 +56,25 @@ describe('Dialog', () => {
     expect(dialog).toHaveAttribute('data-rac');
   });
 
+  it('should set data-expanded on button when dialog is open', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Delete…</Button>
+        <Dialog>
+          <Heading slot="title">Title</Heading>
+        </Dialog>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('data-expanded');
+    expect(button).not.toHaveAttribute('data-pressed');
+
+    await user.click(button);
+    expect(button).toHaveAttribute('data-expanded', 'true');
+    expect(button).not.toHaveAttribute('data-pressed');
+  });
+
   it('works with modal', async () => {
     let {getByRole} = render(
       <DialogTrigger>
@@ -172,11 +191,11 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    expect(button).not.toHaveAttribute('data-pressed');
+    expect(button).not.toHaveAttribute('data-expanded');
 
     let dialogTester = testUtilUser.createTester('Dialog', {root: button, overlayType: 'popover'});
     await dialogTester.open();
-    expect(button).toHaveAttribute('data-pressed');
+    expect(button).toHaveAttribute('data-expanded');
 
     let dialog = dialogTester.dialog;
     let heading = getByRole('heading');

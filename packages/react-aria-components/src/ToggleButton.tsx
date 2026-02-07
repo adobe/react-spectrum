@@ -28,7 +28,7 @@ import {SelectionIndicatorContext} from './SelectionIndicator';
 import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
+export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending' | 'isExpanded'> {
   /**
    * Whether the button is currently selected.
    * @selector [data-selected]
