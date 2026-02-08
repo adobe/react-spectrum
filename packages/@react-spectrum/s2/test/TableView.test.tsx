@@ -19,16 +19,18 @@ import {
   MenuItem,
   MenuSection,
   Row,
+  Tab,
   TableBody,
   TableHeader,
   TableView,
+  TabList,
+  Tabs,
   Text
 } from '../src';
 import {DisabledBehavior} from '@react-types/shared';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import {pointerMap, User} from '@react-aria/test-utils';
 import React, {useState} from 'react';
-import {Tab, TabList, Tabs} from 'react-aria-components';
 import userEvent from '@testing-library/user-event';
 
 // @ts-ignore
@@ -42,6 +44,21 @@ describe('TableView', () => {
     user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 400);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 200);
+    window.CSSTransition = jest.fn(({children}) => children);
+
+    // Mock the getAnimations method
+    Element.prototype.getAnimations = jest.fn().mockImplementation(() => {
+      // Return an array of mock Animation objects
+      return [
+        {
+          // Mock the properties and methods you need
+          finished: Promise.resolve(), // Useful for waiting for animations to "finish"
+          play: jest.fn(),
+          pause: jest.fn(),
+          cancel: jest.fn()
+        }
+      ];
+    });
     jest.useFakeTimers();
   });
 
@@ -151,40 +168,42 @@ describe('TableView', () => {
   });
 
   it('should render empty state + nested collection without crashing', async () => {
-    const tabs = [
+    const tabItems = [
       {id: 'general', label: 'General'},
       {id: 'advanced', label: 'Advanced'}
     ];
     const renderEmptyState = () => (
       <Tabs aria-label="Settings">
-        <TabList>
-          {tabs.map((tab) => (
-            <Tab key={tab.id} id={tab.id}>
-              {tab.label}
+        <TabList items={tabItems}>
+          {(item) => (
+            <Tab>
+              {item.label}
             </Tab>
-          ))}
+          )}
         </TabList>
       </Tabs>
     );
 
-    let renderResult: ReturnType<typeof render>;
-    await act(async () => {
-      renderResult = render(
-        <TableView aria-label="Debug table" selectionMode="none">
-          <TableHeader columns={columns}>
-            {(column) => (
-              <Column>
-                {column.name}
-              </Column>
-            )}
-          </TableHeader>
-          <TableBody items={[]} renderEmptyState={renderEmptyState} />
-        </TableView>
-      );
-      await Promise.resolve();
-    });
-    let {getAllByRole} = renderResult!;
+    let {getAllByRole} = render(
+      <TableView aria-label="Debug table" selectionMode="none">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <Column>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[]} renderEmptyState={renderEmptyState} />
+      </TableView>
+    );
+    await act(() => Promise.resolve());
 
-    expect(getAllByRole('tab')).toHaveLength(tabs.length);
+    let tabs = getAllByRole('tab');
+    expect(tabs).toHaveLength(tabs.length);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    await user.click(tabs[1]);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'false');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
   });
 });

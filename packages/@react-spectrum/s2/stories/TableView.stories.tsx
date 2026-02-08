@@ -26,19 +26,16 @@ import {
   Picker,
   PickerItem,
   Row,
+  SortDescriptor,
   StatusLight,
-  Tab,
   TableBody,
   TableHeader,
   TableView,
   TableViewProps,
-  TabList,
-  Tabs,
   Text,
   TextField
 } from '../src';
 import {categorizeArgTypes, getActionArgs} from './utils';
-import {CollectionRendererContext, DefaultCollectionRenderer, SortDescriptor} from 'react-aria-components';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
@@ -1715,59 +1712,5 @@ export const EditableTableWithAsyncSaving: StoryObj<EditableTableProps> = {
         </TableView>
       </div>
     );
-  }
-};
-
-export const TableViewCollectionError: StoryObj<typeof DynamicTable> = {
-  render: function DynamicColumnsExample() {
-    const columns: Array<{
-      key: string,
-      label: string,
-      align?: 'start' | 'center' | 'end'
-    }> = [
-      {key: 'name', label: 'Name'},
-      {key: 'count', label: 'Count', align: 'end'}
-    ];
-
-    const tabs = [
-      {id: 'general', label: 'General'},
-      {id: 'advanced', label: 'Advanced'},
-      {id: 'about', label: 'About'}
-    ];
-    const renderEmptyState = () => (
-      <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
-        {/* <Button>Sanity Check</Button> */}
-        <Tabs aria-label="Settings sections">
-          <TabList>
-            {tabs.map((tab) => (
-              <Tab key={tab.id} id={tab.id}>
-                {tab.label}
-              </Tab>
-            ))}
-          </TabList>
-        </Tabs>
-      </CollectionRendererContext.Provider>
-    );
-
-    return (
-      <Content>
-        <TableView aria-label="Demo table" selectionMode="none" styles={style({height: 320, minHeight: 240, minWidth: 320})}>
-          <TableHeader>
-            {columns.map((column) => (
-              <Column key={column.key} align={column.align}>
-                {column.label}
-              </Column>
-            ))}
-          </TableHeader>
-          <TableBody items={[]} renderEmptyState={renderEmptyState} />
-        </TableView>
-      </Content>
-    );
-  },
-  args: Example.args,
-  parameters: {
-    docs: {
-      disable: true
-    }
   }
 };
