@@ -959,7 +959,8 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
   color: {
     default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral')
+    isSelected: baseColor('neutral'),
+    forcedColors: 'ButtonText'
   },
   paddingY: centerPadding(),
   minHeight: {
