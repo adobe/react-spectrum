@@ -197,6 +197,9 @@ export function fromDate(date: Date, timeZone: string): ZonedDateTime {
   return fromAbsolute(date.getTime(), timeZone);
 }
 
+/**
+ * Takes a `Date` object and converts it to the time zone identifier for the current user
+ */
 export function fromDateToLocal(date: Date): ZonedDateTime {
   return fromDate(date, getLocalTimeZone());
 }
