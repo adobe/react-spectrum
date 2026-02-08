@@ -328,7 +328,10 @@ function last(walker: TreeWalker) {
 }
 
 function getDirectChildren<T>(parent: CollectionNode<T>, collection: Collection<CollectionNode<T>>) {
-  let node = parent?.firstChildKey != null ? collection.getItem(parent.firstChildKey) : null;
+  // We can't assume that we can use firstChildKey because if a person builds a tree using hooks, they would not have access to that property (using type Node vs CollectionNode)
+  // Instead, get all children and start at the first node (rather than just using firstChildKey) and only look at its siblings
+  let children = collection.getChildren?.(parent.key);
+  let node = children && Array.from(children).length > 0 ?  Array.from(children)[0] : null;
   let siblings: CollectionNode<T>[] = [];
   while (node) {
     siblings.push(node);

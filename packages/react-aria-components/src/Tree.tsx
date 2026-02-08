@@ -408,18 +408,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
     treeDropTargetDelegate.setup(dropTargetDelegate, state, direction);
-
-    // let keyboardDelegate =
-    //   new ListKeyboardDelegate({
-    //     collection: state.collection,
-    //     collator,
-    //     ref,
-    //     disabledKeys: state.selectionManager.disabledKeys,
-    //     disabledBehavior: state.selectionManager.disabledBehavior,
-    //     direction,
-    //     layoutDelegate,
-    //     expandedKeys
-    //   });
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
       {
         keyboardDelegate,
