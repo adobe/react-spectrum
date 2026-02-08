@@ -214,6 +214,57 @@ describe('useTooltipTriggerState', function () {
     });
   });
 
+  describe('warmup delay', () => {
+    function TooltipTriggerWithDoubleOpen(props) {
+      let state = useTooltipTriggerState(props);
+      let ref = React.useRef();
+
+      let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+      let onMouseEnter = (e) => {
+        triggerProps.onMouseEnter?.(e);
+        state.open(false);
+      };
+
+      return (
+        <span>
+          <button ref={ref} {...triggerProps} onMouseEnter={onMouseEnter}>{props.children}</button>
+          {state.isOpen &&
+            <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+        </span>
+      );
+    }
+
+    it('does not open immediately when open() is called twice during warmup', () => {
+      let delay = 1000;
+
+      let {queryByRole, getByRole} = render(
+        <TooltipTriggerWithDoubleOpen onOpenChange={onOpenChange} delay={delay} tooltip="Helpful information">
+          Trigger
+        </TooltipTriggerWithDoubleOpen>
+      );
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let button = getByRole('button');
+
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run halfway through the delay timer and confirm that it is still closed
+      act(() => jest.advanceTimersByTime(delay / 2));
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // run through the rest of the delay timer and confirm that it has opened
+      act(() => jest.advanceTimersByTime(delay / 2));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(getByRole('tooltip')).toBeVisible();
+    });
+  });
+
   describe('multiple controlled tooltips', () => {
     it('closes previus tooltip when opening a new one', () => {
       let secondOnOpenChange = jest.fn();
