@@ -257,8 +257,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      {inputs}
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        {inputs}
+      </dom.div>
     </Provider>
   );
 }
