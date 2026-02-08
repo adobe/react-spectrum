@@ -253,7 +253,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
   protected buildCollection(y: number = this.padding): LayoutNode[] {
     let collection = this.virtualizer!.collection;
-    let collectionNodes = [...collection];
+    // filter out content nodes since we don't want them to affect the height
+    // Tree specific for now, if we add content nodes to other collection items, we might need to reconsider this
+    let collectionNodes = [...collection].filter((node) => node.type !== 'content');
     let loaderNodes = collectionNodes.filter(node => node.type === 'loader');
     let nodes: LayoutNode[] = [];
     let isEmptyOrLoading = collection?.size === 0;
@@ -370,6 +372,11 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let skipped = 0;
     let children: LayoutNode[] = [];
     for (let child of getChildNodes(node, collection)) {
+      // skip if it is a content node, Tree specific for now, if we add content nodes to other collection items, we might need to reconsider this
+      if (child.type === 'content') {
+        continue;
+      }
+
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
 
       // Skip rows before the valid rectangle unless they are already cached.

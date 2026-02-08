@@ -11,7 +11,8 @@
  */
 
 import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
+import {Collection, DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
+import {CollectionNode} from '@react-aria/collections';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -100,11 +101,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     let isExpanded = hasChildRows ? state.expandedKeys.has(node.key) : undefined;
     let setSize = 1;
-    if (node.level > 0 && node?.parentKey != null) {
+    if (node.level >= 0 && node?.parentKey != null) {
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
-        let siblings = state.collection.getChildren?.(parent.key)!;
+        // console.log([...state.collection.getChildren(parent.key)])
+        let siblings = getDirectChildren(parent as CollectionNode<T>, state.collection as Collection<CollectionNode<T>>);
         setSize = [...siblings].filter(row => row.type === 'item').length;
       }
     } else {
@@ -323,4 +325,17 @@ function last(walker: TreeWalker) {
     }
   } while (last);
   return next;
+}
+
+function getDirectChildren<T>(parent: CollectionNode<T>, collection: Collection<CollectionNode<T>>) {
+  // We can't assume that we can use firstChildKey because if a person builds a tree using hooks, they would not have access to that property (using type Node vs CollectionNode)
+  // Instead, get all children and start at the first node (rather than just using firstChildKey) and only look at its siblings
+  let children = collection.getChildren?.(parent.key);
+  let node = children && Array.from(children).length > 0 ?  Array.from(children)[0] : null;
+  let siblings: CollectionNode<T>[] = [];
+  while (node) {
+    siblings.push(node);
+    node = node.nextKey != null ? collection.getItem(node.nextKey) : null;
+  }
+  return siblings;
 }
