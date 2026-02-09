@@ -99,7 +99,7 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
 export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollIntoViewportOpts): void {
-  if (targetElement && nodeContains(document, targetElement)) {
+  if (targetElement && targetElement.isConnected) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
     // If scrolling is not currently prevented then we aren’t in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view

@@ -59,7 +59,7 @@ import Close from '../s2wf-icons/S2_Icon_Close_20_N.svg';
 import {ColumnSize} from '@react-types/table';
 import {CustomDialog, DialogContainer} from '..';
 import {DOMProps, DOMRef, DOMRefValue, forwardRefType, GlobalDOMAttributes, LinkDOMProps, LoadingState, Node} from '@react-types/shared';
-import {getActiveElement, getOwnerDocument, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument, isFocusWithin, nodeContains, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -955,7 +955,8 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
   color: {
     default: baseColor('neutral-subdued'),
-    isSelected: baseColor('neutral')
+    isSelected: baseColor('neutral'),
+    forcedColors: 'ButtonText'
   },
   paddingY: centerPadding(),
   minHeight: {
@@ -1301,7 +1302,7 @@ function EditableCellInner(props: EditableCellProps & {isFocusVisible: boolean, 
             onOpenChange={setIsOpen}
             ref={popoverRef}
             shouldCloseOnInteractOutside={() => {
-              if (!nodeContains(popoverRef.current, document.activeElement)) {
+              if (!isFocusWithin(popoverRef.current)) {
                 return false;
               }
               formRef.current?.requestSubmit();
