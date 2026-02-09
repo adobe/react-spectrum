@@ -38,6 +38,11 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('-1,000,000')).toBe(-1000000);
     });
 
+    it('should support accidentally using a group character as a decimal character', function () {
+      expect(new NumberParser('en-US', {style: 'decimal'}).parse('1.000,00')).toBe(1000);
+      expect(new NumberParser('en-US', {style: 'decimal'}).parse('1.000.000,00')).toBe(1000000);
+    });
+
     it('should support signDisplay', function () {
       expect(new NumberParser('en-US', {style: 'decimal'}).parse('+10')).toBe(10);
       expect(new NumberParser('en-US', {style: 'decimal', signDisplay: 'always'}).parse('+10')).toBe(10);
