@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {announce} from '@react-aria/live-announcer';
 import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -211,5 +213,41 @@ describe('NumberField', () => {
     });
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('supports onChange', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.keyboard('1024');
+    await user.keyboard('{Enter}');
+    expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('should support pasting into a format', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = render(<TestNumberField defaultValue={200} onChange={onChange} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.paste('1,024');
+    expect(input).toHaveValue('$1,024.00');
+    expect(announce).toHaveBeenCalledTimes(2);
+    expect(announce).toHaveBeenLastCalledWith('$1,024.00', 'assertive');
+    expect(onChange).toHaveBeenCalledWith(1024);
+  });
+
+  it('should not change the input value if the new value is not accepted', async () => {
+    let {getByRole} = render(<TestNumberField value={200} />);
+    let input = getByRole('textbox');
+    await user.tab();
+    await user.clear(input);
+    await user.paste('1024');
+    expect(input).toHaveValue('200');
+    expect(announce).toHaveBeenLastCalledWith('200', 'assertive');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveValue('200');
   });
 });
