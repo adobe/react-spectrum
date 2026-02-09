@@ -282,17 +282,17 @@ describe('ComboBox', () => {
         <input type="reset" />
       </form>
     );
-  
+
     const comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     const combobox = comboboxTester.combobox;
-  
+
     expect(combobox).toHaveValue('Dog');
     await comboboxTester.open();
-  
+
     const options = comboboxTester.options();
     await user.click(options[0]);
     expect(combobox).toHaveValue('Cat');
-  
+
     await user.click(document.querySelector('input[type="reset"]'));
     expect(combobox).toHaveValue('Dog');
     expect(document.querySelector('input[name=combobox]')).toHaveValue('2');
@@ -588,7 +588,7 @@ describe('ComboBox', () => {
 
     let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container});
     let button = tree.getByRole('button');
-    
+
     // Open the combobox
     await user.click(button);
     act(() => {
@@ -603,7 +603,7 @@ describe('ComboBox', () => {
     // Find and click on a section header
     let fruitHeader = tree.getByText('Fruit');
     expect(fruitHeader).toBeInTheDocument();
-    
+
     await user.click(fruitHeader);
     act(() => {
       jest.runAllTimers();
@@ -617,13 +617,13 @@ describe('ComboBox', () => {
     // Verify we can still interact with options
     let options = comboboxTester.options();
     expect(options.length).toBeGreaterThan(0);
-    
+
     // Click an option
     await user.click(options[0]);
     act(() => {
       jest.runAllTimers();
     });
-    
+
     // Verify the combobox is closed and the value is updated
     expect(tree.queryByRole('listbox')).toBeNull();
     expect(comboboxTester.combobox).toHaveValue('Apple');
@@ -714,7 +714,7 @@ describe('ComboBox', () => {
 
     expect(combobox).toHaveValue('C');
     expect(onChange).toHaveBeenCalledTimes(1);
-    expect(onChange).toHaveBeenCalledWith(['2', '3']);
+    expect(onChange).toHaveBeenCalledWith(['3']);
   });
 
   it('should support multi-select with custom value', async () => {
@@ -728,5 +728,37 @@ describe('ComboBox', () => {
 
     await user.tab();
     expect(comboboxTester.combobox).toHaveValue('Test');
+  });
+
+  it('should allow the user to deselect items with keyboard when multiselect (uncontrolled)', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox defaultValue={['1', '2']} selectionMode="multiple" onChange={onChange} />);
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+
+    await user.keyboard('{Enter}');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith(['2']);
+
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenLastCalledWith([]);
+  });
+
+  it('should allow the user to deselect items with keyboard when multiselect (controlled)', async () => {
+    let onChange = jest.fn();
+    let {container} = render(<TestComboBox value={['1', '2']} selectionMode="multiple" onChange={onChange} />);
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: container});
+    await comboboxTester.open();
+
+    await user.keyboard('{Enter}');
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenLastCalledWith(['2']);
+
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onChange).toHaveBeenCalledTimes(2);
+    expect(onChange).toHaveBeenLastCalledWith(['1']);
   });
 });

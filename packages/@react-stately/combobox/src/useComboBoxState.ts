@@ -400,7 +400,7 @@ export function useComboBoxState<T extends object, M extends SelectionMode = 'si
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
       // fire onSelectionChange to allow the application to control the closing.
-      if (selectionManager.isSelected(selectionManager.focusedKey)) {
+      if (selectionManager.isSelected(selectionManager.focusedKey) && selectionMode === 'single') {
         commitSelection();
       } else {
         selectionManager.select(selectionManager.focusedKey);
