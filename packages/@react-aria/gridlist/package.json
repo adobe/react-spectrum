@@ -26,7 +26,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/collections": "^3.0.2",
     "@react-aria/focus": "^3.21.4",
     "@react-aria/grid": "^3.14.7",
     "@react-aria/i18n": "^3.12.15",

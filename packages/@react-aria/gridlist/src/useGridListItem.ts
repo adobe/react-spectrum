@@ -12,7 +12,6 @@
 
 import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {Collection, DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
-import {CollectionNode} from '@react-aria/collections';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
@@ -105,8 +104,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       let parent = state.collection.getItem(node.parentKey);
       if (parent) {
         // siblings must exist because our original node exists
-        // console.log([...state.collection.getChildren(parent.key)])
-        let siblings = getDirectChildren(parent as CollectionNode<T>, state.collection as Collection<CollectionNode<T>>);
+        let siblings = getDirectChildren(parent, state.collection);
         setSize = [...siblings].filter(row => row.type === 'item').length;
       }
     } else {
@@ -327,12 +325,12 @@ function last(walker: TreeWalker) {
   return next;
 }
 
-function getDirectChildren<T>(parent: CollectionNode<T>, collection: Collection<CollectionNode<T>>) {
+function getDirectChildren<T>(parent: RSNode<T>, collection: Collection<RSNode<T>>) {
   // We can't assume that we can use firstChildKey because if a person builds a tree using hooks, they would not have access to that property (using type Node vs CollectionNode)
   // Instead, get all children and start at the first node (rather than just using firstChildKey) and only look at its siblings
   let children = collection.getChildren?.(parent.key);
   let node = children && Array.from(children).length > 0 ?  Array.from(children)[0] : null;
-  let siblings: CollectionNode<T>[] = [];
+  let siblings: RSNode<T>[] = [];
   while (node) {
     siblings.push(node);
     node = node.nextKey != null ? collection.getItem(node.nextKey) : null;
