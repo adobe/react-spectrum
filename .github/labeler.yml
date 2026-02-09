@@ -8,7 +8,7 @@ S2:
 
 RAC:
 - changed-files:
-  - any-glob-to-any-file: ['**/react-aria-components/**']
+  - any-glob-to-any-file: ['**/react-aria-components/**', '**/@react-aria/**']
 
 V3:
 - changed-files:
