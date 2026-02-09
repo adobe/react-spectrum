@@ -99,6 +99,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
         node = node.nextKey ? this.getItem(node.nextKey) : null;
       } else {
         // This will include both item and content nodes
+        // We handle the content nodes in useCollectionRenderer and ListLayout
         let key = this.getKeyAfter(node.key);
         node = key ? this.getItem(key) : null;
       }
@@ -189,7 +190,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
           // Stop once either the node is null or the node is the parent's sibling
           while (node && node.key !== parent.nextKey) {
             yield keyMap.get(node.key) as Node<T>;
-            // This will include content nodes which we skip in ListLayout buildSection method
+            // This will include content nodes which we skip in ListLayout
             let key = self.getKeyAfter(node.key);
             node = key ? keyMap.get(key) : undefined;
           }
