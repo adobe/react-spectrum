@@ -1,7 +1,7 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 /* eslint-disable rsp-rules/no-non-shadow-contains */
 
-import {isShadowRoot} from '../domHelpers';
+import {getOwnerWindow, isShadowRoot} from '../domHelpers';
 import {shadowDOM} from '@react-stately/flags';
 import type {SyntheticEvent} from 'react';
 
@@ -76,4 +76,25 @@ export function getEventTarget<T extends Event | SyntheticEvent>(event: T): Even
     }
   }
   return target as EventTargetType<T>;
+}
+
+/**
+ * ShadowDOM safe fast version of node.contains(document.activeElement).
+ * @param node
+ * @returns
+ */
+export function isFocusWithin(node: Element | null | undefined): boolean {
+  if (!node) {
+    return false;
+  }
+  // Get the active element within the node's parent shadow root (or the document). Can return null.
+  let root = node.getRootNode();
+  let ownerWindow = getOwnerWindow(node);
+  if (!(root instanceof ownerWindow.Document || root instanceof ownerWindow.ShadowRoot)) {
+    return false;
+  }
+  let activeElement = root.activeElement;
+
+  // Check if the active element is within this node. These nodes are within the same shadow root.
+  return activeElement != null && node.contains(activeElement);
 }

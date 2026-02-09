@@ -13,8 +13,8 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
+import {getActiveElement, getEventTarget, isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
 import {getDragModality, getTypes} from './utils';
-import {getEventTarget, isVirtualClick, isVirtualPointerEvent, nodeContains} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
 import {RefObject, useEffect, useState} from 'react';
 
@@ -573,7 +573,7 @@ class DragSession {
       // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
       // This corrects state such as whether focus ring should appear.
       // useDroppableCollection handles this itself, so this is only for standalone drop zones.
-      document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
+      getActiveElement()?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 
     this.setCurrentDropTarget(null);
@@ -587,7 +587,7 @@ class DragSession {
     }
 
     // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
-    document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
+    getActiveElement()?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
 
     announce(this.stringFormatter.format('dropCanceled'));
   }

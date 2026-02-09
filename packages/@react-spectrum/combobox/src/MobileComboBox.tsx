@@ -24,11 +24,11 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {focusSafely, setInteractionModality, useHover} from '@react-aria/interactions';
+import {getActiveElement, mergeProps, useFormReset, useId, useObjectRef} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useFormReset, useId, useObjectRef} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ForwardedRef, HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
@@ -436,7 +436,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   };
 
   let onScroll = useCallback(() => {
-    if (!inputRef.current || document.activeElement !== inputRef.current || !isTouchDown.current) {
+    if (!inputRef.current || getActiveElement() !== inputRef.current || !isTouchDown.current) {
       return;
     }
 

@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, openLink} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, openLink} from '@react-aria/utils';
 import {ignoreFocusEvent} from './utils';
 import {PointerType} from '@react-types/shared';
 import {useEffect, useState} from 'react';
@@ -311,10 +311,11 @@ function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: Handl
 
   // For keyboard events that occur on a non-input element that will move focus into input element (aka ArrowLeft going from Datepicker button to the main input group)
   // we need to rely on the user passing isTextInput into here. This way we can skip toggling focus visiblity for said input element
+  let activeElement = getActiveElement(document);
   isTextInput = isTextInput ||
-    (document.activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(document.activeElement.type)) ||
-    document.activeElement instanceof IHTMLTextAreaElement ||
-    (document.activeElement instanceof IHTMLElement && document.activeElement.isContentEditable);
+    (activeElement instanceof IHTMLInputElement && !nonTextInputTypes.has(activeElement.type)) ||
+    activeElement instanceof IHTMLTextAreaElement ||
+    (activeElement instanceof IHTMLElement && activeElement.isContentEditable);
   return !(isTextInput && modality === 'keyboard' && e instanceof IKeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 

@@ -12,7 +12,7 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {getScrollParent, isIOS, isMac, mergeProps, nodeContains, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {getActiveElement, getScrollParent, isIOS, isMac, mergeProps, nodeContains, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {CSSProperties, useMemo, useRef} from 'react';
@@ -311,7 +311,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     let element = ref.current;
     return () => {
       // If the focused segment is removed, focus the previous one, or the next one if there was no previous one.
-      if (document.activeElement === element) {
+      if (getActiveElement() === element) {
         let prev = focusManager.focusPrevious();
         if (!prev) {
           focusManager.focusNext();
