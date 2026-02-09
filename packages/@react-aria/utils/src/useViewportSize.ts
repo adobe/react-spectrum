@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {isIOS} from './platform';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
@@ -65,7 +66,9 @@ export function useViewportSize(): ViewportSize {
 
     updateSize(getViewportSize());
 
-    window.addEventListener('blur', onBlur, true);
+    if (isIOS()) {
+      window.addEventListener('blur', onBlur, true);
+    }
 
     if (!visualViewport) {
       window.addEventListener('resize', onResize);
@@ -75,7 +78,9 @@ export function useViewportSize(): ViewportSize {
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('blur', onBlur, true);
+      if (isIOS()) {
+        window.removeEventListener('blur', onBlur, true);
+      }
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
