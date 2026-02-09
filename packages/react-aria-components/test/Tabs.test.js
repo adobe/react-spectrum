@@ -487,7 +487,7 @@ describe('Tabs', () => {
     expect(tabs[2].tagName).toBe('A');
     expect(tabs[2]).toHaveAttribute('href', '/Emp');
 
-    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     await user.click(tabs[1]);
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
 
