@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
-import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {Button, FieldError, Form, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -249,5 +249,41 @@ describe('NumberField', () => {
     expect(announce).toHaveBeenLastCalledWith('200', 'assertive');
     await user.keyboard('{Enter}');
     expect(input).toHaveValue('200');
+  });
+
+  it('should not reset validation errors on blur when value has not changed', async () => {
+    let {getByRole} = render(
+      <Form validationErrors={{testNumber: 'This field has an error.'}}>
+        <NumberField name="testNumber" defaultValue={5}>
+          <Label>Test Number</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </Form>
+    );
+
+    let input = getByRole('textbox');
+    let numberfield = input.closest('.react-aria-NumberField');
+
+    // Validation error should be displayed
+    expect(numberfield).toHaveAttribute('data-invalid');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
+
+    // Focus the field without changing the value
+    act(() => { input.focus(); });
+    expect(numberfield).toHaveAttribute('data-invalid');
+
+    // Blur the field without changing the value
+    act(() => { input.blur(); });
+
+    // Validation error should still be displayed because the value didn't change
+    expect(numberfield).toHaveAttribute('data-invalid');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby').split(' ')[0])).toHaveTextContent('This field has an error.');
   });
 });
