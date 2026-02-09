@@ -1293,6 +1293,90 @@ describe('Autocomplete', () => {
     expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz
   });
 
+  it('should lose track of filtered-out items when filtering is handled externally via controlled items', async function () {
+    // When filtering is handled externally (i.e. items prop changes rather than using Autocomplete's filter),
+    // the fullCollection only knows about the items currently in the collection. This means
+    // defaultSelectedKeys="all" will only materialize against the current items, and toggling
+    // an item while filtered will lose the filtered-out items from the selection.
+    // For this use case, consumers should use controlled selectedKeys instead.
+    let onSelectionChange = jest.fn();
+    function ExternallyFilteredList() {
+      const [filteredItems, setFilteredItems] = useState(items);
+      const [inputValue, onInputChange] = useState('');
+
+      let [prevInputValue, setPrevInputValue] = useState(inputValue);
+      if (prevInputValue !== inputValue) {
+        setFilteredItems(
+          items.filter((item) => item.name.toLowerCase().includes(inputValue.toLowerCase()))
+        );
+        setPrevInputValue(inputValue);
+      }
+
+      return (
+        <Autocomplete inputValue={inputValue} onInputChange={onInputChange}>
+          <SearchField aria-label="Search">
+            <Input aria-label="Search" placeholder="Search..." />
+            <Button>X</Button>
+          </SearchField>
+          <ListBox
+            selectionMode="multiple"
+            defaultSelectedKeys="all"
+            onSelectionChange={onSelectionChange}>
+            <Collection items={filteredItems} dependencies={[inputValue]}>
+              {(item: AutocompleteItem) => (
+                <ListBoxItem id={item.id}>{item.name}</ListBoxItem>
+              )}
+            </Collection>
+          </ListBox>
+        </Autocomplete>
+      );
+    }
+
+    let {getByRole} = render(<ExternallyFilteredList />);
+
+    let input = getByRole('searchbox');
+    let listbox = getByRole('listbox');
+
+    // All 3 items visible and selected
+    let options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    for (let opt of options) {
+      expect(opt).toHaveAttribute('aria-selected', 'true');
+    }
+
+    // Type "Ba" to externally filter — items prop changes to [Bar, Baz]
+    await user.tab();
+    await user.keyboard('Ba');
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(2);
+    // Both visible items should still show as selected (state is still 'all')
+    expect(options[0]).toHaveAttribute('aria-selected', 'true'); // Bar
+    expect(options[1]).toHaveAttribute('aria-selected', 'true'); // Baz
+
+    // Deselect Baz (ArrowDown from auto-focused Bar to Baz, then Enter)
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Enter}');
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    // Since fullCollection only contains [Bar, Baz] (the externally filtered items),
+    // materializing 'all' only produces those two. Toggling Baz off leaves only Bar.
+    // Foo is lost because it wasn't in any collection the SelectionManager knew about.
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['2']));
+
+    // Clear filter — all items come back
+    await user.clear(input);
+    act(() => jest.runAllTimers());
+
+    options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(3);
+    // Only Bar is selected — Foo was lost when 'all' was materialized against the filtered collection
+    expect(options[0]).toHaveAttribute('aria-selected', 'false'); // Foo (lost)
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');  // Bar
+    expect(options[2]).toHaveAttribute('aria-selected', 'false'); // Baz (deselected)
+  });
+
   it('should handle select all with disabled keys in filtered collection', async function () {
     let onSelectionChange = jest.fn();
     let {getByRole} = render(
