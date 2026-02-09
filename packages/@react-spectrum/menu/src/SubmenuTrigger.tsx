@@ -11,7 +11,7 @@
  */
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
-import {getActiveElement, mergeProps, nodeContains} from '@react-aria/utils';
+import {isFocusWithin, mergeProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
 import {Popover} from '@react-spectrum/overlays';
@@ -49,7 +49,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let isMobile = useIsMobileDevice();
   let onBackButtonPress = () => {
     submenuTriggerState.close();
-    if (parentMenuRef.current && !nodeContains(parentMenuRef.current, getActiveElement())) {
+    if (parentMenuRef.current && !isFocusWithin(parentMenuRef.current)) {
       parentMenuRef.current.focus();
     }
   };

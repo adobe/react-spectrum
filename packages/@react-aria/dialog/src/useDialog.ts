@@ -12,7 +12,7 @@
 
 import {AriaDialogProps} from '@react-types/dialog';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, getActiveElement, nodeContains, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, getActiveElement, isFocusWithin, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
 import {useOverlayFocusContain} from '@react-aria/overlays';
@@ -40,7 +40,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
-    if (ref.current && !nodeContains(ref.current, getActiveElement())) {
+    if (ref.current && !isFocusWithin(ref.current)) {
       focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog

@@ -251,6 +251,7 @@ export default [{
         "rsp-rules/sort-imports": [ERROR],
         "rsp-rules/no-non-shadow-contains": [ERROR],
         "rsp-rules/shadow-safe-active-element": [ERROR],
+        "rsp-rules/faster-node-contains": [ERROR],
         "rulesdir/imports": [ERROR],
         "rulesdir/useLayoutEffectRule": [ERROR],
         "rulesdir/pure-render": [ERROR],
@@ -432,6 +433,7 @@ export default [{
         "rsp-rules/no-getByRole-toThrow": ERROR,
         "rsp-rules/no-non-shadow-contains": OFF,
         "rsp-rules/shadow-safe-active-element": OFF,
+        "rsp-rules/faster-node-contains": OFF,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
         "jsdoc/require-jsdoc": OFF
@@ -510,6 +512,7 @@ export default [{
     ],
 
     rules: {
+        "rsp-rules/faster-node-contains": OFF,
         "rsp-rules/no-non-shadow-contains": OFF,
         "rsp-rules/shadow-safe-active-element": OFF,
     },

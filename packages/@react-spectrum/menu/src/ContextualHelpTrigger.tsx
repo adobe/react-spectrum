@@ -13,9 +13,9 @@
 import {classNames, SlotProvider, unwrapDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DOMRefValue, ItemProps, Key} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
-import {getActiveElement, nodeContains} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
+import {isFocusWithin, nodeContains} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
 import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -99,7 +99,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
     setTimeout(() => {
       submenuTriggerState.close();
-      if (parentMenuRef.current && !nodeContains(parentMenuRef.current, getActiveElement())) {
+      if (parentMenuRef.current && !isFocusWithin(parentMenuRef.current)) {
         parentMenuRef.current.focus();
       }
     }, 220); // Matches transition duration

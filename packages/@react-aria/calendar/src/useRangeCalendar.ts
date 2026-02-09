@@ -13,7 +13,7 @@
 import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {FocusableElement, RefObject} from '@react-types/shared';
-import {getActiveElement, nodeContains, useEvent} from '@react-aria/utils';
+import {isFocusWithin, nodeContains, useEvent} from '@react-aria/utils';
 import {RangeCalendarState} from '@react-stately/calendar';
 import {useRef} from 'react';
 
@@ -52,7 +52,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     let target = e.target as Element;
     if (
       ref.current &&
-      nodeContains(ref.current, getActiveElement()) &&
+      isFocusWithin(ref.current) &&
       (!nodeContains(ref.current, target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();

@@ -11,6 +11,7 @@
  */
 
 import actEventsTest from './rules/act-events-test.js';
+import fasterNodeContains from './rules/faster-node-contains.js';
 import noGetByRoleToThrow from './rules/no-getByRole-toThrow.js';
 import noNonShadowContains from './rules/no-non-shadow-contains.js';
 import noReactKey from './rules/no-react-key.js';
@@ -23,7 +24,8 @@ const rules = {
   'no-react-key': noReactKey,
   'sort-imports': sortImports,
   'no-non-shadow-contains': noNonShadowContains,
-  'shadow-safe-active-element': shadowSafeActiveElement
+  'shadow-safe-active-element': shadowSafeActiveElement,
+  'faster-node-contains': fasterNodeContains
 };
 
 const meta = {
