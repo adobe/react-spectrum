@@ -13,7 +13,7 @@
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, getActiveElement, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, getActiveElement, getEventTarget, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {
   type ClipboardEvent,
   type ClipboardEventHandler,
@@ -197,7 +197,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   let onPaste: ClipboardEventHandler<HTMLInputElement> = (e: ClipboardEvent<HTMLInputElement>) => {
     props.onPaste?.(e);
-    let inputElement = e.target as HTMLInputElement;
+    let inputElement = getEventTarget(e) as HTMLInputElement;
     // we can only handle the case where the paste takes over the entire input, otherwise things get very complicated
     // trying to calculate the new string based on what the paste is replacing and where in the source string it is
     if (inputElement &&

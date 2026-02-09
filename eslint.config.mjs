@@ -250,6 +250,7 @@ export default [{
         "rsp-rules/no-react-key": [ERROR],
         "rsp-rules/sort-imports": [ERROR],
         "rsp-rules/no-non-shadow-contains": [ERROR],
+        "rsp-rules/safe-event-target": [ERROR],
         "rsp-rules/shadow-safe-active-element": [ERROR],
         "rsp-rules/faster-node-contains": [ERROR],
         "rulesdir/imports": [ERROR],
@@ -432,6 +433,7 @@ export default [{
         "rsp-rules/act-events-test": ERROR,
         "rsp-rules/no-getByRole-toThrow": ERROR,
         "rsp-rules/no-non-shadow-contains": OFF,
+        "rsp-rules/safe-event-target": OFF,
         "rsp-rules/shadow-safe-active-element": OFF,
         "rsp-rules/faster-node-contains": OFF,
         "rulesdir/imports": OFF,
@@ -474,6 +476,7 @@ export default [{
     rules: {
         "jsdoc/require-jsdoc": OFF,
         "jsdoc/require-description": OFF,
+        "rsp-rules/safe-event-target": OFF,
     },
 }, {
     files: [

@@ -14,7 +14,7 @@ import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
-import {getActiveElement, mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
@@ -214,7 +214,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let onChange = (e: ChangeEvent<HTMLInputElement>) => {
     let currentWidth = state.getColumnWidth(item.key);
-    let nextValue = parseFloat(e.target.value);
+    let nextValue = parseFloat(getEventTarget(e).value);
 
     if (nextValue > currentWidth) {
       nextValue = currentWidth + 10;
