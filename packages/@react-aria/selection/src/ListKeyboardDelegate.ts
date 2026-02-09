@@ -118,21 +118,17 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let nextKey = key;
     while (nextKey !== null) {
       let visibleKey = this.findNextVisible(nextKey);
-      // if visibleKey is null, that means there are no visibleKeys 
-      // (idk how that would happen tho, at least one parentKey has to exist but not bad to check ig)
+      // If visibleKey is null, that means there are no visibleKeys (don't feel like this is a real use case though, I would assume that there is always one visible node)
       if (visibleKey == null) {
         return null;
       }
 
       let nonDisabledKey = this.findNextNonDisabled(visibleKey, getNext);
-      console.log(visibleKey, nonDisabledKey);
-
-      // if the keys are equal, then we know that it is both visible and non-disabled
+      // If the keys are equal, then we know that the node is both visible and non-disabled
       if (visibleKey === nonDisabledKey) {
         return visibleKey;
       }
 
-      // otherwise, keep searching by advancing to the next key
       nextKey = getNext(visibleKey);
     }
 
