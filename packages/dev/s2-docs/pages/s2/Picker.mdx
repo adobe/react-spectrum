@@ -250,9 +250,8 @@ Use the `renderValue` prop to provide a custom element to display selected items
 "use client";
 import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import {useState} from 'react';
 
-function Example(props) {
+function Example() {
   const users = Array.from({length: 5}, (_, i) => ({
     id: `user${i + 1}`,
     name: `User ${i + 1}`,
@@ -263,13 +262,12 @@ function Example(props) {
   return (
     <div>
       <Picker
-        {...props}
-        label="Pick an animal"
+        label="Pick users"
         items={users}
         selectionMode={"multiple"}
         ///- begin highlight -///
         renderValue={(selectedItems) => (
-          <div style={{display: 'flex', gap: 4, height: '80%'}}>
+          <div className={style({ display: 'flex', gap: 4, height: '80%' })}>
             {selectedItems.map(item => (
               <img key={item.id} src={item.avatar} />
             ))}
