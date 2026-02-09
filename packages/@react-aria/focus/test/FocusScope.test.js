@@ -1538,6 +1538,32 @@ describe('FocusScope', function () {
     expect(document.activeElement).toBe(getByTestId('button1'));
   });
 
+  it('handles forms with a single radio button without crashing', async function () {
+    // Regression test for https://github.com/adobe/react-spectrum/issues/9569
+    // form.elements.namedItem() returns Element (not RadioNodeList) for single elements
+    function Test() {
+      return (
+        <FocusScope contain>
+          <button data-testid="button1">First button</button>
+          <form>
+            <input type="radio" id="only" name="option" value="only" />
+            <label htmlFor="only">Only Option</label>
+          </form>
+          <button data-testid="button2">Second button</button>
+        </FocusScope>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let radio = getByRole('radio');
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button1'));
+    await user.tab();
+    expect(document.activeElement).toBe(radio);
+    await user.tab();
+    expect(document.activeElement).toBe(getByTestId('button2'));
+  });
+
   describe('nested focus scopes', function () {
     it('should make child FocusScopes the active scope regardless of DOM structure', function () {
       function ChildComponent(props) {
