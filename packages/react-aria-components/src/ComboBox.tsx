@@ -14,6 +14,7 @@ import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
+  dom,
   Provider,
   RACValidation,
   removeDataAttributes,
@@ -133,8 +134,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
-    defaultFilter: props.defaultFilter || contains,
     ...props,
+    defaultFilter: props.defaultFilter || contains,
     // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
     items: props.items,
     children: undefined,
@@ -231,7 +232,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [FieldErrorContext, validation]
       ]}>
-      <div
+      <dom.div
         {...DOMProps}
         {...renderProps}
         ref={ref}
@@ -240,8 +241,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+      </dom.div>
     </Provider>
   );
 }

@@ -14,60 +14,22 @@ import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {InterfaceType} from '../../src/types';
 export const section = 'Interactions';
+export const description = 'Handles move interactions for pointer and keyboard, useful for sliders and drag operations.';
 
 # useMove
 
 <PageDescription>{docs.exports.useMove.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useMove} links={docs.links} />
-
-## Features
-
-`useMove` handles move interactions across mouse, touch, and keyboard. A move interaction starts when a
-user moves after pressing down with a mouse or their finger on the target, and ends when they lift their pointer. Move
-events are fired as the pointer moves around, and specify the distance that the pointer traveled since the last
-event. In addition, after a user focuses the target element, move events are fired when the user presses the arrow keys.
-
-* Handles mouse and touch events
-* Handles arrow key presses
-* Uses pointer events where available, with fallbacks to mouse and touch events
-* Ignores emulated mouse events in mobile browsers
-* Handles disabling text selection on mobile while the press interaction is active
-* Normalizes many cross browser inconsistencies
-
-## Usage
-
-`useMove` returns props that you should spread onto the target element:
-
-<InterfaceType {...docs.exports.MoveResult} />
-
-`useMove` supports the following event handlers:
-
-<InterfaceType {...typesDocs.exports.MoveEvents} />
-
-Each of these handlers is fired with a `MoveEvent`, which exposes information about the target and the
-type of event that triggered the interaction.
-
-<InterfaceType {...typesDocs.exports.MoveMoveEvent} />
-
-## Example
-
-This example shows a ball that can be moved by dragging with a mouse or touch, or by tabbing to it and using
-the arrow keys on your keyboard. The movement is clamped so that the ball cannot be dragged outside a box.
-In addition, all of the move events are logged below so that you can inspect what is going on.
-
 ```tsx render
 "use client";
 import React from 'react';
-import {useMove} from '@react-aria/interactions';
+import {useMove} from 'react-aria';
 
 function Example() {
   const CONTAINER_SIZE = 200;
   const BALL_SIZE = 30;
 
-  let [events, setEvents] = React.useState([]);
+  let [events, setEvents] = React.useState<string[]>([]);
   let [color, setColor] = React.useState('black');
   let [position, setPosition] = React.useState({
     x: 0,
@@ -75,7 +37,6 @@ function Example() {
   });
 
   let clamp = pos => Math.min(Math.max(pos, 0), CONTAINER_SIZE - BALL_SIZE);
-  {/*- begin highlight -*/}
   let {moveProps} = useMove({
     onMoveStart(e) {
       setColor('red');
@@ -113,7 +74,6 @@ function Example() {
       setEvents(events => [`move end with pointerType = ${e.pointerType}`, ...events]);
     }
   });
-  {/*- end highlight -*/}
 
   return (
     <>
@@ -150,3 +110,27 @@ function Example() {
   );
 }
 ```
+
+## Features
+
+Move events are emitted after the user presses down and then drags the pointer around. They specify the distance that the pointer traveled since the last event. In addition, after a user focuses the target element, move events are fired when the user presses the arrow keys.
+
+* Handles mouse and touch events
+* Handles arrow key presses
+* Disables text selection while the user drags
+
+## API
+
+<FunctionAPI function={docs.exports.useMove} links={docs.links} />
+
+### MoveEvents
+
+<InterfaceType {...typesDocs.exports.MoveEvents} />
+
+### MoveResult
+
+<InterfaceType {...docs.exports.MoveResult} />
+
+### MoveEvent
+
+<InterfaceType {...typesDocs.exports.MoveMoveEvent} />

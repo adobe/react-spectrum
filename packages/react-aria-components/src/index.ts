@@ -83,7 +83,7 @@ export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer} from './Virtualizer';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, isRTL, useLocale, useFilter, Pressable, Focusable, VisuallyHidden} from 'react-aria';
-export {FormValidationContext, parseColor, getColorChannels, ToastQueue as UNSTABLE_ToastQueue} from 'react-stately';
+export {FormValidationContext, parseColor, getColorChannels, ToastQueue as UNSTABLE_ToastQueue, useListData, useTreeData, useAsyncList} from 'react-stately';
 export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';
 
@@ -111,6 +111,7 @@ export type {FileTriggerProps} from './FileTrigger';
 export type {FormProps} from './Form';
 export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps, GridListLoadMoreItemProps, GridListSectionProps} from './GridList';
 export type {GroupProps, GroupRenderProps} from './Group';
+export type {HeaderProps} from './Header';
 export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
 export type {SectionProps, CollectionRenderer} from './Collection';
@@ -152,8 +153,8 @@ export type {VirtualizerProps} from './Virtualizer';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
-export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFieldState, ColorFormat, ColorPickerState, ColorSliderState, ColorSpace, ColorWheelState, ComboBoxState, DateFieldState, DatePickerState, DateRangePickerState, DisclosureState, DisclosureGroupState, Key, ListState, NumberFieldState, OverlayTriggerState, QueuedToast, RadioGroupState, RangeCalendarState, RootMenuTriggerState, SearchFieldState, Selection, SelectState, SliderState, SortDescriptor, SortDirection, SelectionMode, TableState, TabListState, TimeFieldState, ToastOptions, ToastState, ToggleGroupState, ToggleState, TooltipTriggerState, TreeState} from 'react-stately';
+export type {CalendarState, CheckboxGroupState, Color, ColorAreaState, ColorFieldState, ColorFormat, ColorPickerState, ColorSliderState, ColorSpace, ColorWheelState, ComboBoxState, DateFieldState, DatePickerState, DateRangePickerState, DisclosureState, DisclosureGroupState, Key, ListState, NumberFieldState, OverlayTriggerState, QueuedToast, RadioGroupState, RangeCalendarState, RootMenuTriggerState, SearchFieldState, Selection, SelectState, SliderState, SortDescriptor, SortDirection, SelectionMode, TableState, TabListState, TimeFieldState, ToastOptions, ToastState, ToggleGroupState, ToggleState, TooltipTriggerState, TreeState, ListData, TreeData, AsyncListData} from 'react-stately';
 export type {AutocompleteState} from '@react-stately/autocomplete';
 export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
-export type {ValidationResult, RouterConfig} from '@react-types/shared';
+export type {RangeValue, ValidationResult, RouterConfig} from '@react-types/shared';
 export type {SelectableCollectionContextValue} from './RSPContexts';

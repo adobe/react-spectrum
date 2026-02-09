@@ -5,6 +5,7 @@ import '../../../tailwind/tailwind.css';
 import {ComponentList} from '../../../src/ComponentCard';
 
 export const hideNav = true;
+export const isSubpage = true;
 export const section = 'Examples';
 export const keywords = ['react-aria', 'example', 'gridlist', 'kanban', 'drag and drop', 'tailwind'];
 export const description = 'A kanban board with accessible drag and drop, styled with Tailwind CSS.';
@@ -15,8 +16,7 @@ export const description = 'A kanban board with accessible drag and drop, styled
 
 ```tsx render type="tailwind" expanded
 "use client";
-import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop} from 'react-aria-components';
-import {ListData, useListData} from 'react-stately';
+import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop, ListData, useListData} from 'react-aria-components';
 import React, {ReactNode} from 'react';
 
 ///- begin collapse -///
@@ -139,7 +139,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     // Provide drag data in a custom format as well as plain text.
-    getItems(keys, items) {
+    getItems(keys, items: typeof tickets) {
       return items.map((item) => ({
         'issue-id': item.id,
         'text/plain': item.title
@@ -245,6 +245,6 @@ function Card({id, item, className}: CardProps) {
 <ComponentList
   pages={props.pages}
   components={[
-    'react-aria/GridList.html',
-    'react-aria/dnd.html'
+    'react-aria/GridList',
+    'react-aria/dnd'
   ]} />

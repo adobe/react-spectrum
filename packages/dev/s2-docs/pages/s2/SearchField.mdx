@@ -5,6 +5,7 @@ import {SearchField} from '@react-spectrum/s2';
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['input'];
+export const description = 'Allows a user to enter and clear a search query.';
 
 # SearchField
 
@@ -57,7 +58,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the text value to the server. Set the `isRequired`, `minLength`, `maxLength`, `pattern`, or `type` props to validate the value, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render docs={docs.exports.SearchField} links={docs.links} props={['isRequired', 'necessityIndicator', 'type', 'pattern', 'minLength', 'maxLength']} initialProps={{isRequired: true}}
 "use client";

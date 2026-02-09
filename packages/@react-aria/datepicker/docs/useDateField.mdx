@@ -49,7 +49,7 @@ A date field can be built using `<input type="date">`, but this is very limited 
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
-Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useDateField`.
+Read our [blog post](../blog/date-and-time-pickers-for-all) for more details about the internationalization, accessibility, and user experience features implemented by `useDateField`.
 
 ## Anatomy
 
@@ -75,7 +75,7 @@ input via the `aria-describedby` attribute.
   <InterfaceType properties={docs.links[docs.exports.useDateSegment.return.id].properties} />
 </TypeContext.Provider>
 
-Note that most of this anatomy is shared with [useTimeField](useTimeField.html), so you can reuse many components between them if you have both.
+Note that most of this anatomy is shared with [useTimeField](../TimeField/useTimeField.html), so you can reuse many components between them if you have both.
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDateFieldState} /> hook from `@react-stately/datepicker`.
 The state object should be passed as an option to `useDateField` and `useDateSegment`.
@@ -320,7 +320,7 @@ import {now} from '@internationalized/date';
 
 ### International calendars
 
-`useDateField` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+`useDateField` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](../I18nProvider) component.
 
 Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
 

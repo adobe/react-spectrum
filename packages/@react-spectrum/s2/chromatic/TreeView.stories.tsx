@@ -37,7 +37,6 @@ function TreeExample(props: TreeViewProps<any>): ReactElement {
         disabledKeys={['projects-1']}
         aria-label="test static tree"
         expandedKeys={['projects']}>
-
         <TreeViewItem id="Photos" textValue="Photos">
           <TreeViewItemContent>
             <Text>Photos</Text>
@@ -152,40 +151,12 @@ export const TreeSelection: StoryObj<typeof TreeExample> = {
   }
 };
 
-export const TreeIsDetached: StoryObj<typeof TreeExample> = {
+export const TreeDisableSelection: StoryObj<typeof TreeExample> = {
   ...TreeStatic,
   args: {
-    isDetached: true,
     selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
-export const TreeIsEmphasized: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isEmphasized: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
-export const TreeIsDetachedIsEmphasized: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isDetached: true,
-    isEmphasized: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
-  }
-};
-
-export const TreeIsDetachedMobile: StoryObj<typeof TreeExample> = {
-  ...TreeStatic,
-  args: {
-    isDetached: true,
-    selectionMode: 'multiple',
-    defaultSelectedKeys: ['projects-2', 'projects-3']
+    defaultSelectedKeys: ['projects-2', 'projects-3'],
+    disabledBehavior: 'selection'
   }
 };
 

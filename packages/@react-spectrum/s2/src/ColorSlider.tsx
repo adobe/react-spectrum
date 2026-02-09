@@ -27,7 +27,7 @@ import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, Pick<SpectrumLabelableProps, 'contextualHelp'>, StyleProps {
   label?: string
 }
 

@@ -4,18 +4,18 @@ export default Layout;
 import docs from 'docs:@react-spectrum/s2';
 
 export const tags = ['toolbar'];
+export const description = 'Used when a user needs to perform actions on one or more items at the same time.';
 
 # ActionBar
 
 <PageDescription>{docs.exports.ActionBar.description}</PageDescription>
 
-```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2"
+```tsx render docs={docs.exports.ActionBar} links={docs.links} props={['isEmphasized']} type="s2" wide
 "use client";
 import {ActionBar, ActionButton, TableView, TableHeader, TableBody, Column, Row, Cell, Text} from '@react-spectrum/s2';
 import Edit from '@react-spectrum/s2/icons/Edit';
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Delete from '@react-spectrum/s2/icons/Delete';
-import {useState} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 let rows = [
@@ -71,7 +71,7 @@ function Example(props) {
 
 ## API
 
-```tsx links={{ActionBar: '#actionbar', ActionButton: 'ActionButton.html'}}
+```tsx links={{ActionBar: '#actionbar', ActionButton: 'ActionButton'}}
 <ActionBar>
   <ActionButton />
 </ActionBar>

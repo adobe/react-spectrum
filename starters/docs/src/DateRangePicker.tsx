@@ -28,14 +28,16 @@ export function DateRangePicker<T extends DateValue>(
     <AriaDateRangePicker {...props}>
       <Label>{label}</Label>
       <Group className="react-aria-Group inset">
-        <DateInput slot="start">
-          {(segment) => <DateSegment segment={segment} />}
-        </DateInput>
-        <span aria-hidden="true">–</span>
-        <DateInput slot="end">
-          {(segment) => <DateSegment segment={segment} />}
-        </DateInput>
-        <FieldButton><ChevronDown size={16} /></FieldButton>
+        <div className="date-fields">
+          <DateInput slot="start">
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <span aria-hidden="true">–</span>
+          <DateInput slot="end">
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+        </div>
+        <FieldButton><ChevronDown /></FieldButton>
       </Group>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

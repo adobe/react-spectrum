@@ -12,6 +12,7 @@
 
 import {getScrollParents} from './getScrollParents';
 import {isChrome} from './platform';
+import {nodeContains} from './shadowdom/DOMFunctions';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
@@ -117,7 +118,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
  */
 export function scrollIntoViewport(targetElement: Element | null, opts: ScrollIntoViewportOpts = {}): void {
   let {containingElement} = opts;
-  if (targetElement && document.contains(targetElement)) {
+  if (targetElement && nodeContains(document, targetElement)) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
     // If scrolling is not currently prevented then we aren't in a overlay nor is a overlay open, just use element.scrollIntoView to bring the element into view

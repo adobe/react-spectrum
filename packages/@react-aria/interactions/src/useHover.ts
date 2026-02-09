@@ -108,7 +108,7 @@ export function useHover(props: HoverProps): HoverResult {
   let {hoverProps, triggerHoverEnd} = useMemo(() => {
     let triggerHoverStart = (event, pointerType) => {
       state.pointerType = pointerType;
-      if (isDisabled || pointerType === 'touch' || state.isHovered || !event.currentTarget.contains(event.target)) {
+      if (isDisabled || pointerType === 'touch' || state.isHovered || !nodeContains(event.currentTarget, event.target)) {
         return;
       }
 
@@ -180,7 +180,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onPointerLeave = (e) => {
-        if (!isDisabled && e.currentTarget.contains(e.target as Element)) {
+        if (!isDisabled && nodeContains(e.currentTarget, e.target as Element)) {
           triggerHoverEnd(e, e.pointerType);
         }
       };
@@ -198,7 +198,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
 
       hoverProps.onMouseLeave = (e) => {
-        if (!isDisabled && e.currentTarget.contains(e.target as Element)) {
+        if (!isDisabled && nodeContains(e.currentTarget, e.target as Element)) {
           triggerHoverEnd(e, 'mouse');
         }
       };

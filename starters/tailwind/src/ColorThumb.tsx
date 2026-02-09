@@ -4,16 +4,16 @@ import {ColorThumb as AriaColorThumb, ColorThumbProps} from 'react-aria-componen
 import { tv } from 'tailwind-variants';
 
 const thumbStyles = tv({
-  base: 'w-6 h-6 top-[50%] left-[50%] rounded-full border-2 border-white',
+  base: 'w-4.5 h-4.5 top-[50%] left-[50%] rounded-full border-2 border-white box-border',
   variants: {
     isFocusVisible: {
       true: 'w-8 h-8'
     },
     isDragging: {
-      true: 'bg-gray-700 dark:bg-gray-300 forced-colors:bg-[ButtonBorder]'
+      true: 'bg-neutral-700 dark:bg-neutral-300 forced-colors:bg-[ButtonBorder]'
     },
     isDisabled: {
-      true: 'border-gray-300 dark:border-zinc-700 forced-colors:border-[GrayText] bg-gray-300 dark:bg-zinc-800 forced-colors:bg-[GrayText]'
+      true: 'border-neutral-300 dark:border-neutral-700 forced-colors:border-[GrayText] bg-neutral-300 dark:bg-neutral-800 forced-colors:bg-[GrayText]'
     }
   }
 });

@@ -32,7 +32,7 @@ interface LayoutOptions {
   collator?: Intl.Collator,
   // TODO: is this valid or is scale a spectrum specific thing that should be left out of the layouts?
   // Added here so we can keep the default item padding options within the layouts instead of having to
-  // do extra work in CardView to accomodate different sizing for scales
+  // do extra work in CardView to accommodate different sizing for scales
   scale?: Scale
 }
 
@@ -51,7 +51,7 @@ export interface CardViewLayoutConstructor<T> {
 }
 
 interface CardViewProps<T> extends CollectionBase<T>, MultipleSelection, Omit<AsyncLoadable, 'isLoading'> {
-  // TODO: Does LayoutContructor and Layout give enough info for a user to know what to put in their own custom layout?
+  // TODO: Does LayoutConstructor and Layout give enough info for a user to know what to put in their own custom layout?
   // Replaced with CardViewLayout so that they know they need to have keyboardDelegate stuff as well as collection, disabledKeys, etc
   layout: CardViewLayoutConstructor<T> | CardViewLayout<T>,
   // TODO: readd size when we get updated designs from spectrum

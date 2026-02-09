@@ -12,11 +12,13 @@ export default Layout;
 import {FunctionAPI} from '../../src/FunctionAPI';
 import docs from 'docs:@react-aria/i18n';
 
-export const section = 'Internationalization';
-export const description = 'Implementing collections in React Aria';
+export const section = 'Utilities';
+export const description = 'Wraps Intl.Collator and compares and sorts strings according to the current locale.';
 
 
 # useCollator
+
+<PageDescription>{docs.exports.useCollator.description}</PageDescription>
 
 ## Introduction
 
@@ -26,10 +28,6 @@ updating when the locale changes, and caching of collators for performance. See 
 [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator) docs for
 information.
 
-## API
-
-<FunctionAPI function={docs.exports.useCollator} links={docs.links} />
-
 ## Example
 
 This example includes two textfields and compares the values of the two fields using a collator according to the current locale.
@@ -37,7 +35,7 @@ This example includes two textfields and compares the values of the two fields u
 ```tsx render
 'use client';
 import React from 'react';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from 'react-aria';
 
 function Example() {
   let [first, setFirst] = React.useState('');
@@ -72,3 +70,7 @@ function Example() {
   );
 }
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useCollator} links={docs.links} />

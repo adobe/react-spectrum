@@ -15,10 +15,12 @@ import {
   getActiveElement,
   getEventTarget,
   getOwnerDocument,
+  getOwnerWindow,
   isAndroid,
   isChrome,
   isFocusable,
   isTabbable,
+  nodeContains,
   ShadowTreeWalker,
   useLayoutEffect
 } from '@react-aria/utils';
@@ -294,23 +296,37 @@ function shouldContainFocus(scopeRef: ScopeRef) {
   return true;
 }
 
-function isTabbableRadio(element: HTMLInputElement) {
+function getRadiosInGroup(element: HTMLInputElement): HTMLInputElement[] {
+  if (!element.form) {
+    // Radio buttons outside a form - query the document
+    return Array.from(
+      getOwnerDocument(element).querySelectorAll<HTMLInputElement>(
+        `input[type="radio"][name="${CSS.escape(element.name)}"]`
+      )
+    ).filter(radio => !radio.form);
+  }
+
+  // namedItem returns RadioNodeList (iterable) for 2+ elements, but a single Element for exactly 1.
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormControlsCollection/namedItem
+  const radioList = element.form.elements.namedItem(element.name);
+  let ownerWindow = getOwnerWindow(element);
+  if (radioList instanceof ownerWindow.RadioNodeList) {
+    return Array.from(radioList).filter(
+      (el): el is HTMLInputElement => el instanceof ownerWindow.HTMLInputElement
+    );
+  }
+  if (radioList instanceof ownerWindow.HTMLInputElement) {
+    return [radioList];
+  }
+  return [];
+}
+
+function isTabbableRadio(element: HTMLInputElement): boolean {
   if (element.checked) {
     return true;
   }
-  let radios: HTMLInputElement[] = [];
-  if (!element.form) {
-    radios = ([...getOwnerDocument(element).querySelectorAll(`input[type="radio"][name="${CSS.escape(element.name)}"]`)] as HTMLInputElement[]).filter(radio => !radio.form);
-  } else {
-    let radioList = element.form?.elements?.namedItem(element.name) as RadioNodeList;
-    radios = [...(radioList ?? [])] as HTMLInputElement[];
-  }
-  if (!radios) {
-    return false;
-  }
-  let anyChecked = radios.some(radio => radio.checked);
-
-  return !anyChecked;
+  const radios = getRadiosInGroup(element);
+  return radios.length > 0 && !radios.some(radio => radio.checked);
 }
 
 function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: boolean) {
@@ -440,7 +456,7 @@ function isElementInScope(element?: Element | null, scope?: Element[] | null) {
   if (!scope) {
     return false;
   }
-  return scope.some(node => node.contains(element));
+  return scope.some(node => nodeContains(node, element));
 }
 
 function isElementInChildScope(element: Element, scope: ScopeRef = null) {
@@ -771,7 +787,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
     {
       acceptNode(node) {
         // Skip nodes inside the starting node.
-        if (opts?.from?.contains(node)) {
+        if (nodeContains(opts?.from, node)) {
           return NodeFilter.FILTER_REJECT;
         }
 
@@ -822,7 +838,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || getActiveElement(getOwnerDocument(root));
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
-      if (root.contains(node)) {
+      if (nodeContains(root, node)) {
         walker.currentNode = node!;
       }
       let nextNode = walker.nextNode() as FocusableElement;
@@ -843,7 +859,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {from, tabbable = defaultOptions.tabbable, wrap = defaultOptions.wrap, accept = defaultOptions.accept} = opts;
       let node = from || getActiveElement(getOwnerDocument(root));
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
-      if (root.contains(node)) {
+      if (nodeContains(root, node)) {
         walker.currentNode = node!;
       } else {
         let next = last(walker);

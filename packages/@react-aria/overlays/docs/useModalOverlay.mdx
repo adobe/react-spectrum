@@ -49,14 +49,14 @@ The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Elem
 * **Scroll locking** – Scrolling the page behind the modal is prevented while it is open, including in mobile browsers.
 
 **Note**: `useModalOverlay` only handles the overlay itself. It should be combined
-with [useDialog](useDialog.html) to create fully accessible modal dialogs. Other overlays
+with [useDialog](../Modal/useDialog.html) to create fully accessible modal dialogs. Other overlays
 such as menus may also be placed in a modal overlay.
 
 ## Anatomy
 
 <Anatomy />
 
-A modal overlay consists of an overlay container element, and an underlay. The overlay may contain a [dialog](useDialog.html), or another element such as a [menu](useMenu.html) or [listbox](useListBox.html) when used within a component such as a [select](useSelect.html) or [combobox](useComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
+A modal overlay consists of an overlay container element, and an underlay. The overlay may contain a [dialog](../Modal/useDialog.html), or another element such as a [menu](../Menu/useMenu.html) or [listbox](../ListBox/useListBox.html) when used within a component such as a [select](../Select/useSelect.html) or [combobox](../ComboBox/useComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
 
 `useModalOverlay` returns props that you should spread onto the overlay and underlay elements:
 
@@ -69,7 +69,7 @@ hook in `@react-stately/overlays`. The state object should be passed as an argum
 
 ## Example
 
-This example shows how to build a typical modal dialog, by combining `useModalOverlay` with [useDialog](useDialog.html). The `Dialog` component used in this example can also be reused within a [popover](usePopover.html) or other types of overlays.
+This example shows how to build a typical modal dialog, by combining `useModalOverlay` with [useDialog](../Modal/useDialog.html). The `Dialog` component used in this example can also be reused within a [popover](../Popover/usePopover.html) or other types of overlays.
 
 The `Modal` component uses an &lt;<TypeLink links={docs.links} type={docs.exports.Overlay} />&gt; to render its contents in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. It also acts as a focus scope, containing focus within the modal and restoring it to the trigger when it unmounts. <TypeLink links={docs.links} type={docs.exports.useModalOverlay} /> handles preventing page scrolling while the modal is open, hiding content outside the modal from screen readers, and optionally closing it when the user interacts outside or presses the <Keyboard>Escape</Keyboard> key.
 
@@ -172,7 +172,7 @@ import {Dialog} from 'your-component-library';
 
 ### Dialog
 
-The `Dialog` component is rendered within the `ModalOverlay` component. It is built using the [useDialog](useDialog.html) hook, and can also be used in other overlay containers such as [popovers](usePopover.html).
+The `Dialog` component is rendered within the `ModalOverlay` component. It is built using the [useDialog](../Modal/useDialog.html) hook, and can also be used in other overlay containers such as [popovers](../Popover/usePopover.html).
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -207,7 +207,7 @@ function Dialog({title, children, ...props}: DialogProps) {
 
 ### Button
 
-The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>

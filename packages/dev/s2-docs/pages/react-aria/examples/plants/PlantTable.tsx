@@ -2,7 +2,7 @@ import {Cell, Column, Row, Table, TableHeader, TableBody} from 'tailwind-starter
 import {StarIcon} from 'lucide-react';
 import {ColumnProps, Key, SortDescriptor, ToggleButton, ToggleButtonProps, VisuallyHidden} from 'react-aria-components';
 import {focusRing} from 'tailwind-starter/utils';
-import {Plant} from '@react-spectrum/docs/pages/react-aria/home/plants';
+import {Plant} from './plants';
 import React, {useMemo} from 'react';
 import {tv} from 'tailwind-variants';
 import {CycleLabel, getSunlight, SunLabel, WateringLabel} from './Labels';

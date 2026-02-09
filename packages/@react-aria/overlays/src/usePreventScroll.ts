@@ -106,6 +106,14 @@ function preventScrollMobileSafari() {
       allowTouchMove = true;
     }
 
+    // If this is a range input, allow touch move to allow user to adjust the slider value
+    if (e.composedPath().some((el) =>
+      el instanceof HTMLInputElement &&
+      el.type === 'range'
+    )) {
+      allowTouchMove = true;
+    }
+
     // If this is a focused input element with a selected range, allow user to drag the selection handles.
     if (
       'selectionStart' in target && 

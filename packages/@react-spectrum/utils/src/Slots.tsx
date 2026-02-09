@@ -24,7 +24,7 @@ export function useSlotProps<T>(props: T & {id?: string}, defaultSlot?: string):
   // @ts-ignore TODO why is slot an object and not just string or undefined?
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
 
-  return mergeProps(props, mergeProps(slotProps, {id: props.id}));
+  return mergeProps(props, mergeProps(slotProps, {id: props.id})) as T;
 }
 
 export function cssModuleToSlots(cssModule: {[cssmodule: string]: string}): {[slot: string]: {UNSAFE_className: string}} {

@@ -10,8 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+interface Options {
+  /**
+   * Output module format.
+   * @default 'cjs'
+   */
+  format?: 'cjs' | 'esm'
+}
+
 /** Compiles an object containing ICU message strings to a JavaScript module. */
-export function compileStrings(messages: Record<string, string>): string;
+export function compileStrings(messages: Record<string, string>, options?: Options): string;
 
 /** Compiles a single ICU message string to JavaScript source code. */
 export function compileString(message: string): string;

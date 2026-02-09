@@ -42,11 +42,11 @@ function App() {
 }
 ```
 
-See the [internationalization docs](../react-aria/internationalization.html) for more information about i18n in React Aria and React Spectrum.
+See the [internationalization docs](react-aria:quality#internationalization) for more information about i18n in React Aria and React Spectrum.
 
 ### Optimizing bundle size
 
-By default, React Spectrum includes translations for all 30+ [supported languages](../react-aria/internationalization.html#supported-locales). When using server side rendering, this can be optimized so that only the strings for the current user's language are sent over the network rather than the strings for all supported languages. This takes two steps:
+By default, React Spectrum includes translations for all 30+ [supported languages](react-aria:quality#supported-locales). When using server side rendering, this can be optimized so that only the strings for the current user's language are sent over the network rather than the strings for all supported languages. This takes two steps:
 
 1. Configure React Aria's build plugin for your framework to exclude all translation strings from your JavaScript bundle at build time.
 2. Render React Spectrum's `LocalizedStringProvider` component at the root of your app. This includes the strings for the user's language in the initial HTML so that the client can access them. It also passes the locale to the client, so an `I18nProvider` is not needed.
@@ -270,7 +270,7 @@ getLocalizationScript(locale, dictionary)
 
 ## React < 18
 
-In React 18, SSR works out of the box with no additional work. If you're using React 16 or 17, you will need to wrap your application in an [SSRProvider](../react-aria/SSRProvider.html) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context, which ensures that the HTML generated on the server matches the DOM structure hydrated on the client.
+In React 18, SSR works out of the box with no additional work. If you're using React 16 or 17, you will need to wrap your application in an [SSRProvider](react-aria:SSRProvider) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context, which ensures that the HTML generated on the server matches the DOM structure hydrated on the client.
 
 ```tsx
 import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';

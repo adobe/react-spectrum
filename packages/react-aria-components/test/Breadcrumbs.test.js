@@ -49,12 +49,23 @@ describe('Breadcrumbs', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar'}, {'data-bar': 'foo'});
+    let {getByRole, getAllByRole} = renderBreadcrumbs({'data-foo': 'bar', 'aria-label': 'test group'}, {'data-bar': 'foo', 'aria-label': 'test item'});
     let breadcrumbs = getByRole('list');
     expect(breadcrumbs).toHaveAttribute('data-foo', 'bar');
+    expect(breadcrumbs).toHaveAttribute('aria-label', 'test group');
 
     for (let item of getAllByRole('listitem')) {
       expect(item).toHaveAttribute('data-bar', 'foo');
+      expect(item).toHaveAttribute('aria-label', 'test item');
+    }
+  });
+
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderBreadcrumbs({render: props => <ol {...props} data-custom="bar" />}, {render: props => <li {...props} data-custom="true" />});
+    let list = getByRole('list');
+    expect(list).toHaveAttribute('data-custom', 'bar');
+    for (let item of getAllByRole('listitem')) {
+      expect(item).toHaveAttribute('data-custom', 'true');
     }
   });
 

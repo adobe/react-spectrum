@@ -40,10 +40,10 @@
   .clear-button {
     all: unset;
     grid-area: button;
-    width: 1rem;
-    height: 1rem;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
     border-radius: 9999px;
-    margin-left: -24px;
+    margin-left: calc(-1 * var(--spacing-6));
     text-align: center;
     background: var(--gray-700);
     color: var(--gray-50);

@@ -12,7 +12,7 @@
 
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
@@ -70,6 +70,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
     shouldCloseOnInteractOutside
   } = props;
 
+  let lastVisibleOverlay = useRef<RefObject<Element | null>>(undefined);
+
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
     if (isOpen && !visibleOverlays.includes(ref)) {
@@ -91,8 +93,10 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   let onInteractOutsideStart = (e: PointerEvent) => {
+    const topMostOverlay = visibleOverlays[visibleOverlays.length - 1];
+    lastVisibleOverlay.current = topMostOverlay;
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
-      if (visibleOverlays[visibleOverlays.length - 1] === ref) {
+      if (topMostOverlay === ref) {
         e.stopPropagation();
         e.preventDefault();
       }
@@ -105,8 +109,11 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
         e.stopPropagation();
         e.preventDefault();
       }
-      onHide();
+      if (lastVisibleOverlay.current === ref) {
+        onHide();
+      }
     }
+    lastVisibleOverlay.current = undefined;
   };
 
   // Handle the escape key

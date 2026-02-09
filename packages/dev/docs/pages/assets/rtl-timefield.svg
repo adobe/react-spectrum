@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;"  viewBox="0 0 280 120">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); max-width: 437px; display: block; margin-left: auto; margin-right: auto; border-radius: var(--anatomy-radius);"  viewBox="0 0 280 120">
   <text id="Hover_Text_area_" data-name="Hover (Text area)" transform="translate(25 17)" fill="var(--anatomy-gray-900)" font-size="12" font-family="var(--anatomy-font)"><tspan x="0" y="0">Incorrect (he-IL)</tspan></text>
   <rect id="Rule" width="280" height="4" rx="2" transform="translate(0 27)" fill="var(--anatomy-gray-800)"/>
   <g id="Text_field" data-name="Text field" transform="translate(2 33)">

@@ -1,6 +1,6 @@
 "use client";
 import {useDragAndDrop} from 'react-aria-components';
-import {PokemonTree, Pokemon} from './PokemonTree';
+import {PokemonTree, type Pokemon} from './PokemonTree';
 
 export function DraggableTree() {
   let {dragAndDropHooks} = useDragAndDrop<Pokemon>({

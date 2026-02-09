@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaDisclosureProps, useDisclosure, useFocusRing} from 'react-aria';
+import {AriaDisclosureProps, LabelAriaProps, useDisclosure, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {
   ClassNameOrFunction,
   ContextValue,
   DEFAULT_SLOT,
+  dom,
   Provider,
   RenderProps,
   SlotProps,
@@ -68,7 +69,7 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
   let domProps = filterDOMProps(props, {global: true});
 
   return (
-    <div
+    <dom.div
       {...domProps}
       {...renderProps}
       ref={ref}
@@ -76,7 +77,7 @@ export const DisclosureGroup = forwardRef(function DisclosureGroup(props: Disclo
       <DisclosureGroupStateContext.Provider value={state}>
         {renderProps.children}
       </DisclosureGroupStateContext.Provider>
-    </div>
+    </dom.div>
   );
 });
 
@@ -186,14 +187,14 @@ export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
         [InternalDisclosureContext, {panelProps, panelRef}],
         [DisclosureStateContext, state]
       ]}>
-      <div
+      <dom.div
         {...mergeProps(domProps, renderProps, focusWithinProps)}
         ref={ref}
         data-expanded={state.isExpanded || undefined}
         data-disabled={isDisabled || undefined}
         data-focus-visible-within={isFocusVisibleWithin || undefined}>
         {renderProps.children}
-      </div>
+      </dom.div>
     </Provider>
   );
 });
@@ -206,7 +207,7 @@ export interface DisclosurePanelRenderProps {
   isFocusVisibleWithin: boolean
 }
 
-export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, GlobalDOMAttributes<HTMLDivElement> {
+export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderProps>, DOMProps, LabelAriaProps, GlobalDOMAttributes<HTMLDivElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.
    * @default 'react-aria-DisclosurePanel'
@@ -240,9 +241,9 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
       isFocusVisibleWithin
     }
   });
-  let DOMProps = filterDOMProps(props, {global: true});
+  let DOMProps = filterDOMProps(props, {global: true, labelable: true});
   return (
-    <div
+    <dom.div
       {...mergeProps(DOMProps, renderProps, panelProps, focusWithinProps)}
       ref={mergeRefs(ref, panelRef)}
       role={role}
@@ -253,6 +254,6 @@ export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(func
         ]}>
         {props.children}
       </Provider>
-    </div>
+    </dom.div>
   );
 });

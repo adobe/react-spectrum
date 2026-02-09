@@ -1,7 +1,7 @@
 import {Button} from 'tailwind-starter/Button';
 import {Mail, MoreHorizontal, PencilIcon, ShareIcon, StarIcon, TrashIcon, Twitter} from 'lucide-react';
 import {Menu, MenuItem, MenuTrigger, SubmenuTrigger} from 'tailwind-starter/Menu';
-import { Plant } from '@react-spectrum/docs/pages/react-aria/home/plants';
+import {Plant} from './plants';
 
 interface PlantActionMenuProps {
   item: Plant,
@@ -14,7 +14,7 @@ export function PlantActionMenu(props: PlantActionMenuProps) {
   let {item, onFavoriteChange, onEdit, onDelete} = props;
   return (
     <MenuTrigger>
-      <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center bg-transparent dark:bg-transparent border-transparent dark:border-transparent !p-1">
+      <Button aria-label="Actions" variant="secondary" className="row-span-2 place-self-center bg-transparent dark:bg-transparent border-transparent dark:border-transparent">
         <MoreHorizontal aria-hidden className="w-5 h-5" />
       </Button>
       <Menu>

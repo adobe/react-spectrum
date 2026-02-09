@@ -1,6 +1,6 @@
 "use client";
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
-import {Plant} from '@react-spectrum/docs/pages/react-aria/home/plants';
+import {Plant} from './plants';
 import {PlantActionMenu} from './PlantActionMenu';
 
 interface PlantListProps {

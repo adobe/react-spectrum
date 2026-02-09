@@ -40,6 +40,7 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps,
   'shouldUpdatePosition' |
   'style' |
   'className' |
+  'render' |
   keyof GlobalDOMAttributes
 > {
   /**
@@ -64,7 +65,10 @@ let popover = style({
   ...colorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
-    value: 'layer-2'
+    value: {
+      default: 'layer-2',
+      forcedColors: 'Background'
+    }
   },
   backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',
@@ -153,8 +157,8 @@ let arrow = style({
   },
   translateX: {
     placement: {
-      left: -4,
-      right: 4
+      left: '-25%',
+      right: '25%'
     }
   },
   strokeWidth: 1,
@@ -225,7 +229,7 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (
-            <OverlayArrow>
+            <OverlayArrow className="">
               <svg viewBox="0 0 18 10" className={arrow(renderProps)}>
                 <path transform="translate(0 -1)" d="M1 1L7.93799 8.52588C8.07224 8.67448 8.23607 8.79362 8.41895 8.87524C8.60182 8.95687 8.79973 8.9993 9 9C9.19984 8.99882 9.39724 8.95606 9.57959 8.87427C9.76193 8.79248 9.9253 8.67336 10.0591 8.5249L17 1" />
               </svg>
@@ -252,7 +256,7 @@ export interface PopoverDialogProps extends Pick<PopoverProps,
 'triggerRef' |
 'isOpen' |
 'onOpenChange'
->, Omit<DialogProps, 'children' | 'className' | 'style' | keyof GlobalDOMAttributes>, UnsafeStyles {
+>, Omit<DialogProps, 'children' | 'className' | 'style' | 'render' | keyof GlobalDOMAttributes>, UnsafeStyles {
   /**
    * The children of the popover.
    */
