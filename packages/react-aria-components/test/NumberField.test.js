@@ -207,14 +207,14 @@ describe('NumberField', () => {
     });
     await user.paste('3.000.000,25');
     await user.keyboard('{Enter}');
-    expect(input).toHaveValue('1,024');
+    expect(input).toHaveValue('3,000,000.25');
 
     act(() => {
       input.setSelectionRange(0, input.value.length);
     });
     await user.paste('3 000 000,25');
     await user.keyboard('{Enter}');
-    expect(input).toHaveValue('300,000,025');
+    expect(input).toHaveValue('3,000,000.25');
 
     rerender(<TestNumberField formatOptions={{style: 'currency', currency: 'USD'}} />);
 
@@ -223,7 +223,7 @@ describe('NumberField', () => {
     });
     await user.paste('3 000 000,256789');
     await user.keyboard('{Enter}');
-    expect(input).toHaveValue('$3,000,000,256,789.00');
+    expect(input).toHaveValue('$3,000,000.26');
 
     act(() => {
       input.setSelectionRange(0, input.value.length);
