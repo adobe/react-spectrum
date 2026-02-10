@@ -81,7 +81,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight;
 
   // IOS always positions the scrollbar on the right ¯\_(ツ)_/¯
-  if (viewStyle.direction === 'rtl' && !isIOS()) {
+  if (scrollView !== root && viewStyle.direction === 'rtl' && !isIOS()) {
     scrollPortLeft += scrollBarWidth;
   } else {
     scrollPortRight -= scrollBarWidth;
