@@ -188,7 +188,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   if (isVirtualized) {
-    ariaProps['aria-posinset'] = item?.index;
+    let index = Number(item?.index);
+    ariaProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 

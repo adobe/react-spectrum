@@ -51,6 +51,7 @@ Number fields can be used to represent many different types of numeric values, e
 We use the [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) API built into browsers to handle all of these formatting requirements across all locales. Our number field component supports most of the formatting options that the Intl API supports, which ensures that it is international friendly and supports many common formatting options out of the box. The browser currently only provides formatting support, however, not parsing support, so we built a custom number parser using information from the formatter. We'll discuss how this works in detail later in the post.
 
 ```tsx render
+"use client";
 import {NumberField} from '@react-spectrum/s2';
 
 <NumberField
@@ -70,6 +71,7 @@ Many number fields also support incrementing and decrementing their value using 
 One area of complexity here is dealing with floating point rounding errors. All JavaScript numbers are double precision floating point, which means when you add or subtract two numbers, you can get rounding errors. For example, `0.1 + 0.2 === 0.30000000000000004`. This isn't really what users expect, however, so to fix this, we determine how many decimal places there are, multiply to convert the two numbers to integers, perform the addition or subtraction, and then divide again to get a decimal. A similar fix is necessary to perform step snapping on blur.
 
 ```tsx render
+"use client";
 import {NumberField} from '@react-spectrum/s2';
 
 <NumberField

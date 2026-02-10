@@ -111,6 +111,7 @@ export type {FileTriggerProps} from './FileTrigger';
 export type {FormProps} from './Form';
 export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps, GridListLoadMoreItemProps, GridListSectionProps} from './GridList';
 export type {GroupProps, GroupRenderProps} from './Group';
+export type {HeaderProps} from './Header';
 export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
 export type {SectionProps, CollectionRenderer} from './Collection';

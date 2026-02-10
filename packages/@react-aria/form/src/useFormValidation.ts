@@ -145,7 +145,7 @@ function getNativeValidity(input: ValidatableElement): ValidationResult {
 function getFirstInvalidInput(form: HTMLFormElement): ValidatableElement | null {
   for (let i = 0; i < form.elements.length; i++) {
     let element = form.elements[i] as ValidatableElement;
-    if (!element.validity.valid) {
+    if (element.validity?.valid === false) {
       return element;
     }
   }

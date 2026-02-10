@@ -325,7 +325,7 @@ class LandmarkManager implements LandmarkManagerApi {
 
   private focusMain() {
     let main = this.getLandmarkByRole('main');
-    if (main && main.ref.current && nodeContains(document, main.ref.current)) {
+    if (main && main.ref.current && main.ref.current.isConnected) {
       this.focusLandmark(main.ref.current, 'forward');
       return true;
     }
@@ -352,7 +352,7 @@ class LandmarkManager implements LandmarkManagerApi {
     }
 
     // Otherwise, focus the landmark itself
-    if (nextLandmark.ref.current && nodeContains(document, nextLandmark.ref.current)) {
+    if (nextLandmark.ref.current && nextLandmark.ref.current.isConnected) {
       this.focusLandmark(nextLandmark.ref.current, backward ? 'backward' : 'forward');
       return true;
     }
