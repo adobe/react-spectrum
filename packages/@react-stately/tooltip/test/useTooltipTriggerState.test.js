@@ -235,6 +235,81 @@ describe('useTooltipTriggerState', function () {
       );
     }
 
+    it('clears previous warmup timeout when open is called multiple times rapidly', () => {
+      let delay = 1000;
+
+      function ManualTriggerComponent(props) {
+        let state = useTooltipTriggerState(props);
+        let ref = React.useRef();
+
+        let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+        return (
+          <span>
+            <button
+              ref={ref}
+              {...triggerProps}
+              data-testid="trigger-button">
+              {props.children}
+            </button>
+            <button
+              data-testid="manual-open"
+              onClick={() => state.open(false)}>
+              Manual Open
+            </button>
+            <button
+              data-testid="manual-close"
+              onClick={() => state.close(true)}>
+              Manual Close
+            </button>
+            {state.isOpen &&
+              <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+          </span>
+        );
+      }
+
+      let {queryByRole, getByTestId} = render(
+        <ManualTriggerComponent onOpenChange={onOpenChange} delay={delay} tooltip="Helpful information">
+          Trigger
+        </ManualTriggerComponent>
+      );
+
+      // Ensure we start with a clean global state by advancing time to clear any previous warmup
+      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN + 100));
+
+      fireEvent.mouseDown(document.body);
+      fireEvent.mouseUp(document.body);
+
+      let manualOpenButton = getByTestId('manual-open');
+
+      // First call to open() - starts a warmup timer
+      fireEvent.click(manualOpenButton);
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // Run 60% through the delay
+      act(() => jest.advanceTimersByTime(delay * 0.6));
+      expect(queryByRole('tooltip')).toBeNull();
+
+      // Second call to open() - should clear previous timeout and start a new one
+      fireEvent.click(manualOpenButton);
+
+      // If the old timeout wasn't cleared, the tooltip would open after just 400ms more
+      // But since it was cleared and restarted, we need the full 1000ms from the second call
+      act(() => jest.advanceTimersByTime(delay * 0.4));
+      expect(queryByRole('tooltip')).toBeNull();
+      expect(onOpenChange).not.toHaveBeenCalled();
+
+      // Advancing the remaining 600ms from the second trigger should open it
+      act(() => jest.advanceTimersByTime(delay * 0.6));
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(queryByRole('tooltip')).toBeVisible();
+
+      // Clean up: close the tooltip and run cooldown to reset global state for next test
+      let closeButton = getByTestId('manual-close');
+      fireEvent.click(closeButton);
+      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN + 100));
+    });
+
     it('does not open immediately when open() is called twice during warmup', () => {
       let delay = 1000;
 
