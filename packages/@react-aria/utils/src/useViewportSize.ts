@@ -102,7 +102,8 @@ export function useViewportSize(): ViewportSize {
       if (willOpenKeyboard(getEventTarget(e) as Element)) {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
-          if (!getActiveElement() || !willOpenKeyboard(getActiveElement())) {
+          let activeElement = getActiveElement(document);
+          if (!activeElement || !willOpenKeyboard(activeElement)) {
             setSize(size => {
               let newSize: ViewportSize;
               let newBounds = getContainerBounds?.();
