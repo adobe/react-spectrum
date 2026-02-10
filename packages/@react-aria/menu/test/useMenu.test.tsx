@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+
 import {AriaMenuProps, useMenu, useMenuItem} from '../';
 import {Item} from '@react-stately/collections';
+import {Key} from '@react-types/shared';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {TreeState, useTreeState} from '@react-stately/tree';
 import userEvent from '@testing-library/user-event';
-import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: AriaMenuProps<T> & {onSelect: () => void}) {
   // Create menu state based on the incoming props
@@ -51,6 +53,41 @@ function MenuItem({item, state, onAction}) {
   );
 }
 
+interface VirtualizedMenuItemProps<T> {
+  item: {key: Key, rendered: React.ReactNode, index?: number},
+  state: TreeState<T>,
+  onAction?: (key: Key) => void
+}
+
+function VirtualizedMenuItem<T>({item, state, onAction}: VirtualizedMenuItemProps<T>) {
+  let ref = React.useRef(null);
+  let {menuItemProps} = useMenuItem(
+    {key: item.key, onAction, isVirtualized: true},
+    state,
+    ref
+  );
+
+  return (
+    <li {...menuItemProps} ref={ref}>
+      {item.rendered}
+    </li>
+  );
+}
+
+function VirtualizedMenu<T extends object>(props: AriaMenuProps<T>) {
+  let state = useTreeState(props);
+  let ref = React.useRef(null);
+  let {menuProps} = useMenu(props, state, ref);
+
+  return (
+    <ul {...menuProps} ref={ref}>
+      {[...state.collection].map((item) => (
+        <VirtualizedMenuItem key={item.key} item={item} state={state} />
+      ))}
+    </ul>
+  );
+}
+
 describe('useMenuTrigger', function () {
   let user;
   beforeAll(() => {
@@ -73,5 +110,39 @@ describe('useMenuTrigger', function () {
     let items = getAllByRole('menuitem');
     await user.click(items[0]);
     expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('useMenuItem with isVirtualized', function () {
+  it('sets correct aria-posinset (1-based) for virtualized menu items', () => {
+    let {getAllByRole} = render(
+      <VirtualizedMenu aria-label="test menu">
+        <Item key="1">One</Item>
+        <Item key="2">Two</Item>
+        <Item key="3">Three</Item>
+      </VirtualizedMenu>
+    );
+
+    let items = getAllByRole('menuitem');
+    // aria-posinset should be 1-based (1, 2, 3), not 0-based (0, 1, 2)
+    expect(items[0]).toHaveAttribute('aria-posinset', '1');
+    expect(items[1]).toHaveAttribute('aria-posinset', '2');
+    expect(items[2]).toHaveAttribute('aria-posinset', '3');
+  });
+
+  it('sets correct aria-setsize for virtualized menu items', () => {
+    let {getAllByRole} = render(
+      <VirtualizedMenu aria-label="test menu">
+        <Item key="1">One</Item>
+        <Item key="2">Two</Item>
+        <Item key="3">Three</Item>
+      </VirtualizedMenu>
+    );
+
+    let items = getAllByRole('menuitem');
+    // aria-setsize should match the total number of items
+    expect(items[0]).toHaveAttribute('aria-setsize', '3');
+    expect(items[1]).toHaveAttribute('aria-setsize', '3');
+    expect(items[2]).toHaveAttribute('aria-setsize', '3');
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/slider",
-  "version": "3.8.3",
+  "version": "3.8.4",
   "description": "Slider",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,13 +26,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.14",
-    "@react-aria/interactions": "^3.26.0",
-    "@react-aria/label": "^3.7.23",
-    "@react-aria/utils": "^3.32.0",
-    "@react-stately/slider": "^3.7.3",
-    "@react-types/shared": "^3.32.1",
-    "@react-types/slider": "^3.8.2",
+    "@react-aria/i18n": "^3.12.15",
+    "@react-aria/interactions": "^3.27.0",
+    "@react-aria/label": "^3.7.24",
+    "@react-aria/utils": "^3.33.0",
+    "@react-stately/slider": "^3.7.4",
+    "@react-types/shared": "^3.33.0",
+    "@react-types/slider": "^3.8.3",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
