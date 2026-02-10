@@ -53,7 +53,7 @@ function ManualTooltipTrigger(props) {
     props.onOpenChange(isOpen);
     setOpen(isOpen);
   };
-  
+
   return (
     <TooltipTrigger
       label={props.label}
@@ -77,6 +77,8 @@ describe('useTooltipTriggerState', function () {
 
   afterEach(() => {
     onOpenChange.mockClear();
+    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
     // there's global state, so we need to make sure to run out the cooldown for every test
     act(() => {jest.runAllTimers();});
   });
@@ -215,26 +217,6 @@ describe('useTooltipTriggerState', function () {
   });
 
   describe('warmup delay', () => {
-    function TooltipTriggerWithDoubleOpen(props) {
-      let state = useTooltipTriggerState(props);
-      let ref = React.useRef();
-
-      let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
-
-      let onMouseEnter = (e) => {
-        triggerProps.onMouseEnter?.(e);
-        state.open(false);
-      };
-
-      return (
-        <span>
-          <button ref={ref} {...triggerProps} onMouseEnter={onMouseEnter}>{props.children}</button>
-          {state.isOpen &&
-            <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
-        </span>
-      );
-    }
-
     it('clears previous warmup timeout when open is called multiple times rapidly', () => {
       let delay = 1000;
 
@@ -311,6 +293,26 @@ describe('useTooltipTriggerState', function () {
     });
 
     it('does not open immediately when open() is called twice during warmup', () => {
+      function TooltipTriggerWithDoubleOpen(props) {
+        let state = useTooltipTriggerState(props);
+        let ref = React.useRef();
+
+        let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+        let onMouseEnter = (e) => {
+          triggerProps.onMouseEnter?.(e);
+          state.open(false);
+        };
+
+        return (
+          <span>
+            <button ref={ref} {...triggerProps} onMouseEnter={onMouseEnter}>{props.children}</button>
+            {state.isOpen &&
+              <span role="tooltip" {...tooltipProps}>{props.tooltip}</span>}
+          </span>
+        );
+      }
+
       let delay = 1000;
 
       let {queryByRole, getByRole} = render(
