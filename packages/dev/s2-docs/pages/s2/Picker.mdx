@@ -252,14 +252,14 @@ Use the `renderValue` prop to provide a custom element to display selected items
 import {Avatar, Picker, PickerItem, Text} from '@react-spectrum/s2';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
-function Example() {
-  const users = Array.from({length: 5}, (_, i) => ({
-    id: `user${i + 1}`,
-    name: `User ${i + 1}`,
-    email: `user${i + 1}@example.com`,
-    avatar: 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png',
-  }));
+let users = [
+  {id: 'abraham-baker', avatar: 'https://www.untitledui.com/images/avatars/abraham-baker', name: 'Abraham Baker', email: 'abraham@example.com'},
+  {id: 'adriana-sullivan', avatar: 'https://www.untitledui.com/images/avatars/adriana-sullivan', name: 'Adriana Sullivan', email: 'adriana@example.com'},
+  {id: 'jonathan-kelly', avatar: 'https://www.untitledui.com/images/avatars/jonathan-kelly', name: 'Jonathan Kelly', email: 'jonathan@example.com'},
+  {id: 'zara-bush', avatar: 'https://www.untitledui.com/images/avatars/zara-bush', name: 'Zara Bush', email: 'zara@example.com'}
+];
 
+function Example() {
   return (
     <div>
       <Picker
@@ -270,7 +270,7 @@ function Example() {
         renderValue={(selectedItems) => (
           <div className={style({ display: 'flex', gap: 4, height: '80%' })}>
             {selectedItems.map(item => (
-              <img key={item.id} src={item.avatar} />
+              <Avatar slot={null} key={item.id} src={item.avatar} />
             ))}
           </div>
         )}
