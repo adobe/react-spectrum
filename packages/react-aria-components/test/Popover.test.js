@@ -12,11 +12,11 @@
 
 import {act, createShadowRoot, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, Menu, MenuItem, MenuTrigger, OverlayArrow, Popover, Pressable} from '../';
+import {enableShadowDOM} from '@react-stately/flags';
 import React, {useRef} from 'react';
 import {screen} from 'shadow-dom-testing-library';
 import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
-import { enableShadowDOM } from '@react-stately/flags';
 
 let TestPopover = (props) => (
   <DialogTrigger>
