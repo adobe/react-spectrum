@@ -12,4 +12,5 @@ RAC:
 
 V3:
   - changed-files:
-    - all-globs-to-all-files: ['**/@react-spectrum/**', '!**/@react-spectrum/s2/**']
+    - any-glob-to-any-file: '**/@react-spectrum/**'
+    - all-globs-to-all-files: '!**/@react-spectrum/s2/**'
