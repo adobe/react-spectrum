@@ -318,6 +318,10 @@ describe('useTooltipTriggerState', function () {
           Trigger
         </TooltipTriggerWithDoubleOpen>
       );
+
+      // Ensure we start with a clean global state
+      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN + 100));
+
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
 
