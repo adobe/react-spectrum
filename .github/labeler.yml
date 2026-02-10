@@ -11,6 +11,5 @@ RAC:
   - any-glob-to-any-file: ['**/react-aria-components/**', '**/@react-aria/**']
 
 V3:
-- changed-files:
-  - any-glob-to-any-file: ['**/@react-spectrum/**']
-
+  - changed-files:
+    - all-globs-to-all-files: ['**/@react-spectrum/**', '!**/@react-spectrum/s2/**']
