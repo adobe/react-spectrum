@@ -255,14 +255,6 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
             <ListBoxSection id={section.id} className={sectionStyle}>
               <Header className={headerStyle}>
                 {section.name}
-                <DialogTrigger>
-                  <ActionButton size="XS" isQuiet aria-label={`About ${section.name}`}><InfoCircle /></ActionButton>
-                  <Popover>
-                    <div className={style({padding: 8, maxWidth: 240})}>
-                      <span className={style({font: 'body'})}>{section.description}</span>
-                    </div>
-                  </Popover>
-                </DialogTrigger>
               </Header>
               {section.items.map(item => (
                 <ListBoxItem
