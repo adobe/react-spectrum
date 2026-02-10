@@ -270,14 +270,14 @@ function Example() {
         renderValue={(selectedItems) => (
           <div className={style({ display: 'flex', gap: 4, height: '80%' })}>
             {selectedItems.map(item => (
-              <Avatar slot={null} key={item.id} src={item.avatar} />
+              <Avatar slot={null} key={item.id} src={item.avatar} alt={item.name} />
             ))}
           </div>
         )}
         ///- end highlight -///
       >
         {(item) =>
-          <PickerItem>
+          <PickerItem textValue={item.name}>
             <Avatar slot="avatar" src={item.avatar} />
             <Text slot="label">{item.name}</Text>
             <Text slot="description">{item.email}</Text>
