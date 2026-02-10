@@ -68,9 +68,9 @@ type EventTargetType<T> = T extends SyntheticEvent<infer E, any> ? E : EventTarg
 export function getEventTarget<T extends Event | SyntheticEvent>(event: T): EventTargetType<T> {
   // For React synthetic events, use the native event
   let nativeEvent: Event = 'nativeEvent' in event ? (event as SyntheticEvent).nativeEvent : event as Event;
-  let target = nativeEvent.target!;
+  let target = nativeEvent.target;
 
-  if (shadowDOM() && (target as HTMLElement).shadowRoot) {
+  if (shadowDOM() && target && (target as HTMLElement).shadowRoot) {
     if (nativeEvent.composedPath) {
       return nativeEvent.composedPath()[0] as EventTargetType<T>;
     }
