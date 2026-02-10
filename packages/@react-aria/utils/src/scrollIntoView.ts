@@ -44,6 +44,8 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let itemStyle = window.getComputedStyle(element);
   let viewStyle = window.getComputedStyle(scrollView);
   let root = document.scrollingElement || document.documentElement;
+  let scrollbarWidth = view.width - scrollView.clientWidth;
+  let scrollbarHeight = view.height - scrollView.clientHeight;
 
   let viewTop = scrollView === root ? 0 : view.top;
   let viewBottom = scrollView === root ? scrollView.clientHeight : view.bottom;
@@ -71,9 +73,9 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let scrollAreaRight = target.right + scrollMarginRight;
 
   let scrollPortTop = viewTop + borderTopWidth + scrollPaddingTop;
-  let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom;
+  let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom - scrollbarHeight;
   let scrollPortLeft = viewLeft + borderLeftWidth + scrollPaddingLeft;
-  let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight;
+  let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight - scrollbarWidth;
 
   let shouldScrollBlock = scrollAreaTop < scrollPortTop || scrollAreaBottom > scrollPortBottom;
   let shouldScrollInline = scrollAreaLeft < scrollPortLeft || scrollAreaRight > scrollPortRight;
