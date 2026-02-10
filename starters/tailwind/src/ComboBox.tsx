@@ -35,7 +35,7 @@ export function ComboBox<T extends object, M extends 'single' | 'multiple' = 'si
           <ChevronDown aria-hidden className="w-4 h-4" />
         </FieldButton>
       </FieldGroup>
-      {props.selectionMode === 'multiple' && <ComboBoxValue placeholder="No items selected" className="text-xs text-neutral-600" />}
+      {props.selectionMode === 'multiple' && <ComboBoxValue placeholder="No items selected" className="text-xs text-neutral-600 dark:text-neutral-300" />}
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className="w-(--trigger-width)">

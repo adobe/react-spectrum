@@ -20,6 +20,7 @@
   .react-aria-ComboBoxValue {
     margin-top: var(--spacing-1);
     font: var(--font-size-sm) system-ui;
+    color: var(--text-color);
   }
 }
 
