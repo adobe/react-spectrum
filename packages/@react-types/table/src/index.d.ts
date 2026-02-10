@@ -82,7 +82,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
 
 export interface TableHeaderProps<T> {
   /** A list of table columns. */
-  columns?: T[],
+  columns?: readonly T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
 }

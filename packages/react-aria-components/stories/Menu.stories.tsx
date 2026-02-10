@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Heading, Input, Keyboard, Label, Menu, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField} from 'react-aria-components';
+import {Button, Header, Heading, Input, Keyboard, Label, ListLayout, Menu, MenuItemProps, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, SubmenuTriggerProps, Text, TextField, Virtualizer} from 'react-aria-components';
 import {Meta, StoryFn, StoryObj} from '@storybook/react';
 import {MyMenuItem} from './utils';
 import React, {JSX} from 'react';
@@ -444,7 +444,7 @@ function MenuItemWithCustomElement(props: MenuItemProps) {
   // Otherwise we'd need another way to set the expected element type.
   return (
     <MyMenuItem
-      {...props} 
+      {...props}
       render={domProps => 'href' in domProps ? <RouterLink {...domProps} /> : <div {...domProps} />} />
   );
 }
@@ -453,3 +453,32 @@ function RouterLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   // eslint-disable-next-line jsx-a11y/anchor-has-content
   return <a {...mergeProps(props, {onClick: e => {e.preventDefault(); console.log('click');}})} />;
 }
+
+let items = Array.from({length: 600}, (_, index) => {
+  // Return the object structure for each element
+  return {
+    id: index + 1,
+    name: `Object ${index + 1}`,
+    value: Math.random()
+  };
+});
+export const VirtualizedExample: MenuStory = () => {
+  return (
+    <MenuTrigger>
+      <Button aria-label="Actions">
+        Menu ☰
+      </Button>
+      <Popover>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{estimatedRowHeight: 36}}>
+          <Menu className={styles.menu} items={items}>
+            {(item) => {
+              return <MyMenuItem>{item.name}</MyMenuItem>;
+            }}
+          </Menu>
+        </Virtualizer>
+      </Popover>
+    </MenuTrigger>
+  );
+};
