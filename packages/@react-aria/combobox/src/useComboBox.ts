@@ -16,7 +16,7 @@ import {AriaComboBoxProps, SelectionMode} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useId, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getOwnerDocument, isAppleDevice, mergeProps, nodeContains, useEvent, useFormReset, useId, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {dispatchVirtualFocus} from '@react-aria/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef, useState} from 'react';
@@ -268,7 +268,7 @@ export function useComboBox<T, M extends SelectionMode = 'single'>(props: AriaCo
       return;
     }
 
-    let rect = (e.target as Element).getBoundingClientRect();
+    let rect = (getEventTarget(e) as Element).getBoundingClientRect();
     let touch = e.changedTouches[0];
 
     let centerX = Math.ceil(rect.left + .5 * rect.width);

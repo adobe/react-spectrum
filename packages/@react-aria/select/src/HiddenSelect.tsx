@@ -11,11 +11,11 @@
  */
 
 import {FocusableElement, Key, RefObject} from '@react-types/shared';
+import {getEventTarget, useFormReset} from '@react-aria/utils';
 import React, {InputHTMLAttributes, JSX, ReactNode, useCallback, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectionMode} from '@react-types/select';
 import {SelectState} from '@react-stately/select';
-import {useFormReset} from '@react-aria/utils';
 import {useFormValidation} from '@react-aria/form';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -92,9 +92,10 @@ export function useHiddenSelect<T, M extends SelectionMode = 'single'>(props: Ar
 
   let setValue = state.setValue;
   let onChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.multiple) {
+    let eventTarget = getEventTarget(e);
+    if (eventTarget.multiple) {
       setValue(Array.from(
-        e.target.selectedOptions,
+        eventTarget.selectedOptions,
         (option) => option.value
       ) as any);
     } else {

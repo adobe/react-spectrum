@@ -19,7 +19,7 @@ import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
 import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, isWebKit, useEvent} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, isWebKit, useEvent} from '@react-aria/utils';
 import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope, useModalOverlay} from 'react-aria';
@@ -446,7 +446,7 @@ function SpectrumToastList({placement, align, reduceMotion}) {
   let toastListRef = useRef(null);
   useEvent(toastListRef, 'click', (e) => {
     // Have to check if this is a button because stopPropagation in react events doesn't affect native events.
-    if (!isExpanded && !(e.target as Element)?.closest('button')) {
+    if (!isExpanded && !(getEventTarget(e) as Element)?.closest('button')) {
       toggleExpanded();
     }
   });
