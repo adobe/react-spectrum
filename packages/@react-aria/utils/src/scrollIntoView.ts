@@ -70,10 +70,10 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let scrollAreaLeft = target.left - scrollMarginLeft;
   let scrollAreaRight = target.right + scrollMarginRight;
 
-  let borderWidth = borderLeftWidth + borderRightWidth;
-  let borderHeight = borderTopWidth + borderBottomWidth;
-  let scrollBarWidth = scrollView === root ? 0 : scrollView.offsetWidth - scrollView.clientWidth - borderWidth;
-  let scrollBarHeight = scrollView === root ? 0 : scrollView.offsetHeight - scrollView.clientHeight - borderHeight;
+  let borderWidth = scrollView === root ? 0 : borderLeftWidth + borderRightWidth;
+  let borderHeight = scrollView === root ? 0 : borderTopWidth + borderBottomWidth;
+  let scrollBarWidth = scrollView.offsetWidth - scrollView.clientWidth - borderWidth;
+  let scrollBarHeight = scrollView.offsetHeight - scrollView.clientHeight - borderHeight;
 
   let scrollPortTop = viewTop + borderTopWidth + scrollPaddingTop;
   let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom - scrollBarHeight;
@@ -81,7 +81,7 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight;
 
   // IOS always positions the scrollbar on the right ¯\_(ツ)_/¯
-  if (scrollView !== root && viewStyle.direction === 'rtl' && !isIOS()) {
+  if (viewStyle.direction === 'rtl' && !isIOS()) {
     scrollPortLeft += scrollBarWidth;
   } else {
     scrollPortRight -= scrollBarWidth;
