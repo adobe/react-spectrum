@@ -1,13 +1,15 @@
 'use client';
 
-import {Content, Heading, IllustratedMessage, Link, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {ActionButton, Content, Heading, IllustratedMessage, Link, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, TextField} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
+import Edit from '@react-spectrum/s2/icons/Edit';
+// eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 
 const listBoxStyle = style({
   width: 'full',
@@ -167,10 +169,26 @@ type FontStyleKey = keyof typeof fontStyles;
 const defaultPreviewInputStyle = style({
   ...focusRing(),
   backgroundColor: 'transparent',
-  borderStyle: 'hidden',
+  borderWidth: 2,
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'transparent',
+    isFocused: 'gray-900'
+  },
   borderRadius: 'lg',
   textAlign: 'center',
-  width: 'full'
+  width: 'full',
+  transition: 'default'
+});
+
+const editButtonStyle = style({
+  position: 'absolute',
+  insetStart: 'full',
+  marginStart: 8,
+  visibility: {
+    default: 'visible',
+    isHidden: 'hidden'
+  }
 });
 
 interface TypographySearchViewProps {
@@ -181,6 +199,8 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
   const [selectedFont, setSelectedFont] = useState<string>('heading');
   const [selectedElement, setSelectedElement] = useState<Key>('h1');
   const [previewText, setPreviewText] = useState<string>('Sample Text');
+  const [isPreviewFocused, setIsPreviewFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const selectedElementTag = String(selectedElement || 'span');
   const codeSnippet = `<${selectedElementTag} className={style({font: '${selectedFont}'})}>${previewText}</${selectedElementTag}>`;
@@ -310,11 +330,46 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
               justifyContent: 'center',
               minHeight: 80
             })}>
-            <FieldInputContext.Provider value={null}>
-              <TextField aria-label="Editable preview text" value={previewText} onChange={setPreviewText} className={style({width: 'full'})}>
-                <Input className={previewInputStyle} />
-              </TextField>
-            </FieldInputContext.Provider>
+            <div className={style({position: 'relative', display: 'inline-flex', alignItems: 'center', maxWidth: 'full'})}>
+              <FieldInputContext.Provider value={null}>
+                <TextField
+                  aria-label="Editable preview text"
+                  value={previewText}
+                  onChange={setPreviewText}
+                  onFocus={() => setIsPreviewFocused(true)}
+                  onBlur={() => {
+                    setIsPreviewFocused(false);
+                    if (previewText.trim() === '') {
+                      setPreviewText('Sample Text');
+                    }
+                  }}
+                  className={style({maxWidth: 'full'})}
+                  >
+                  <Input
+                    ref={inputRef}
+                    className={previewInputStyle}
+                    style={{
+                      /* @ts-ignore - https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/field-sizing */
+                      fieldSizing: 'content'
+                    }}
+                  />
+                </TextField>
+              </FieldInputContext.Provider>
+              <ActionButton
+                aria-label="Edit sample text"
+                isQuiet
+                size="S"
+                styles={editButtonStyle({isHidden: isPreviewFocused})}
+                onPress={() => {
+                  const input = inputRef.current;
+                  if (input) {
+                    input.focus();
+                    input.select();
+                  }
+                }}>
+                <Edit />
+              </ActionButton>
+            </div>
           </div>
           
           <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
