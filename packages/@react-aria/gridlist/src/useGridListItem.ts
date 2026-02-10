@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getActiveElement, getEventTarget, getScrollParent, isFocusWithin, mergeProps, nodeContains, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getRowId, listMap} from './utils';
@@ -79,7 +79,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     if (
       ref.current !== null &&
       ((keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !nodeContains(ref.current, document.activeElement))
+      !isFocusWithin(ref.current))
     ) {
       focusSafely(ref.current);
     }
@@ -131,14 +131,15 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   });
 
   let onKeyDownCapture = (e: ReactKeyboardEvent) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
+    let activeElement = getActiveElement();
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || !ref.current || !activeElement) {
       return;
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = activeElement;
 
-    if ('expandedKeys' in state && document.activeElement === ref.current) {
+    if ('expandedKeys' in state && activeElement === ref.current) {
       if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
         state.toggleKey(node.key);
         e.stopPropagation();
@@ -228,7 +229,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && nodeContains(ref.current, e.target as Element)) {
+        if (!e.altKey && nodeContains(ref.current, getEventTarget(e) as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement?.dispatchEvent(
@@ -241,7 +242,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let onFocus = (e) => {
     keyWhenFocused.current = node.key;
-    if (e.target !== ref.current) {
+    if (getEventTarget(e) !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the row itself. We also want to
       // set the focused key when a child element receives focus.
@@ -256,7 +257,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onKeyDown = (e) => {
-    if (!nodeContains(e.currentTarget, e.target as Element) || !ref.current || !document.activeElement) {
+    let activeElement = getActiveElement();
+    if (!nodeContains(e.currentTarget, getEventTarget(e) as Element) || !ref.current || !activeElement) {
       return;
     }
 
@@ -266,7 +268,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
           let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          walker.currentNode = document.activeElement;
+          walker.currentNode = activeElement;
           let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
 
           if (next) {

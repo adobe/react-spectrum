@@ -64,8 +64,6 @@ export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | 
 const SelectionManagerContext = createContext<SelectionManager | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean,
   children: ReactNode
 }
 
@@ -105,7 +103,7 @@ export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
           'aria-labelledby': menuProps['aria-labelledby']
         }]
       ]}>
-      <PressResponder {...menuTriggerProps} ref={ref} isPressed={!props.isTriggerUpWhenOpen && state.isOpen}>
+      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
         {props.children}
       </PressResponder>
     </Provider>
@@ -433,12 +431,13 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent(ItemNode, function Men
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(forwardedRef);
   let selectionManager = useContext(SelectionManagerContext)!;
-
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
     ...props,
     id,
     key: item.key,
-    selectionManager
+    selectionManager,
+    isVirtualized: isVirtualized
   }, state, ref);
 
   let {hoverProps, isHovered} = useHover({

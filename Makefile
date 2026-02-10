@@ -180,7 +180,9 @@ build-s2-docs:
 	mkdir -p dist/s2-docs/react-aria/$(PUBLIC_URL)
 	mkdir -p dist/s2-docs/s2/$(PUBLIC_URL)
 	mv packages/dev/s2-docs/dist/react-aria/* dist/s2-docs/react-aria/$(PUBLIC_URL)
+	if [ -d packages/dev/s2-docs/dist/react-aria/.well-known ]; then mv packages/dev/s2-docs/dist/react-aria/.well-known dist/s2-docs/react-aria/$(PUBLIC_URL); fi
 	mv packages/dev/s2-docs/dist/s2/* dist/s2-docs/s2/$(PUBLIC_URL)
+	if [ -d packages/dev/s2-docs/dist/s2/.well-known ]; then mv packages/dev/s2-docs/dist/s2/.well-known dist/s2-docs/s2/$(PUBLIC_URL); fi
 
 	# Build old docs pages, which get inter-mixed with the new pages
 	# TODO: We probably don't need to build this on every PR

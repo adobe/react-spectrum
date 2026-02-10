@@ -53,6 +53,23 @@ describe('<HiddenSelect />', () => {
     );
   });
 
+  it('should have form value after initial render', async () => {
+    let formRef = React.createRef<HTMLFormElement>();
+    render(
+      <form ref={formRef}>
+        <HiddenSelectExample
+          value="value"
+          hiddenProps={{
+            name: 'select'
+          }}
+          items={[]} />
+      </form>
+    );
+
+    let formData = new FormData(formRef.current!);
+    expect(formData.get('select')).toEqual('value');
+  });
+
   it('should trigger on onSelectionChange when select onchange is triggered (autofill)', async () => {
     const onSelectionChange = jest.fn();
     render(

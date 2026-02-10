@@ -743,6 +743,46 @@ export const AsyncListBoxVirtualized: StoryFn<typeof AsyncListBoxRender> = (args
   );
 };
 
+export const ListBoxScrollMargin: ListBoxStory = (args) => {
+  let items: {id: number, name: string, description: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`, description: `Description ${i}`});
+  }
+  return (
+    <ListBox 
+      className={styles.menu} 
+      {...args}
+      aria-label="test listbox" 
+      style={{height: 200, width: 100, overflow: 'scroll'}} 
+      items={items}>
+      {item => (
+        <MyListBoxItem style={{scrollMargin: 10, width: 150, display: 'flex', padding: '2px 20px', justifyContent: 'space-between'}}>
+          <span>{item.name}</span>
+          <span>{item.description}</span>
+        </MyListBoxItem>
+      )}
+    </ListBox>
+  );
+};
+
+export const ListBoxSmoothScroll: ListBoxStory = (args) => {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 100; i++) {
+    items.push({id: i, name: `Item ${i}`});
+  }
+  return (
+    <ListBox 
+      className={styles.menu} 
+      {...args} 
+      aria-label="test listbox" 
+      style={{height: 200, width: 200, overflow: 'scroll', display: 'grid', gridTemplateColumns: 'repeat(4, 80px)', scrollBehavior: 'smooth'}} 
+      items={items} 
+      layout="grid">
+      {item => <MyListBoxItem style={{minHeight: 32}}>{item.name}</MyListBoxItem>}
+    </ListBox>
+  );
+};
+
 AsyncListBoxVirtualized.story = {
   args: {
     delay: 50

@@ -78,9 +78,7 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
    */
   formValue?: 'text' | 'key',
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean,
-  /** Whether the trigger is up when the overlay is open. */
-  isTriggerUpWhenOpen?: boolean
+  allowsEmptyCollection?: boolean
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
@@ -210,7 +208,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
       values={[
         [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: !props.isTriggerUpWhenOpen && state.isOpen}],
+        [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
         [OverlayTriggerStateContext, state],
         [PopoverContext, {
@@ -243,8 +241,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
-      {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+        data-required={props.isRequired || undefined}>
+        {renderProps.children}
+        {name && formValue === 'key' && <input type="hidden" name={name} form={props.form} value={state.selectedKey ?? ''} />}
+      </dom.div>
     </Provider>
   );
 }
