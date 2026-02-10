@@ -42,16 +42,16 @@ const typographySections = [
     items: ['heading-2xs', 'heading-xs', 'heading-sm', 'heading', 'heading-lg', 'heading-xl', 'heading-2xl', 'heading-3xl']
   },
   {
-    id: 'title',
-    name: 'Title',
-    description: 'Use for titles within UI components such as cards or panels',
-    items: ['title-xs', 'title-sm', 'title', 'title-lg', 'title-xl', 'title-2xl', 'title-3xl']
-  },
-  {
     id: 'body',
     name: 'Body',
     description: 'Use for the content of pages that are primarily text',
     items: ['body-2xs', 'body-xs', 'body-sm', 'body', 'body-lg', 'body-xl', 'body-2xl', 'body-3xl']
+  },
+  {
+    id: 'title',
+    name: 'Title',
+    description: 'Use for titles within UI components such as cards or panels',
+    items: ['title-xs', 'title-sm', 'title', 'title-lg', 'title-xl', 'title-2xl', 'title-3xl']
   },
   {
     id: 'ui',
@@ -60,16 +60,16 @@ const typographySections = [
     items: ['ui-xs', 'ui-sm', 'ui', 'ui-lg', 'ui-xl', 'ui-2xl', 'ui-3xl']
   },
   {
-    id: 'detail',
-    name: 'Detail',
-    description: 'Use for less important metadata',
-    items: ['detail-sm', 'detail', 'detail-lg', 'detail-xl']
-  },
-  {
     id: 'code',
     name: 'Code',
     description: 'Use for source code',
     items: ['code-sm', 'code', 'code-lg', 'code-xl']
+  },
+  {
+    id: 'detail',
+    name: 'Detail',
+    description: 'Use for less important metadata',
+    items: ['detail-sm', 'detail', 'detail-lg', 'detail-xl']
   }
 ];
 
