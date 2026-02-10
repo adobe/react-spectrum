@@ -18,7 +18,7 @@ import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'rea
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | keyof GlobalDOMAttributes> {
+interface ModalProps extends Omit<ModalOverlayProps, 'className' | 'style' | 'render' | keyof GlobalDOMAttributes> {
   /**
    * The size of the Modal.
    *

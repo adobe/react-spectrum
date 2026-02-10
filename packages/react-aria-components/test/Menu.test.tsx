@@ -122,6 +122,34 @@ describe('Menu', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderMenu(
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />}
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-custom', 'true');
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('href');
+      expect(menuitem).toHaveAttribute('data-custom', 'true');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <MenuContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -506,25 +534,6 @@ describe('Menu', () => {
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');
-  });
-
-  it('should not apply isPressed state on trigger when expanded and isTriggerUpWhenOpen is true', async () => {
-    let {getByRole} = render(
-      <MenuTrigger isTriggerUpWhenOpen>
-        <Button aria-label="Menu">☰</Button>
-        <Popover>
-          <Menu>
-            <MenuItem id="open">Open</MenuItem>
-          </Menu>
-        </Popover>
-      </MenuTrigger>
-    );
-
-    let button = getByRole('button');
-    expect(button).not.toHaveAttribute('data-pressed');
-
-    await user.click(button);
-    expect(button).not.toHaveAttribute('data-pressed');
   });
 
   it('should support onScroll', () => {

@@ -98,6 +98,46 @@ describe('Tabs', () => {
     }
   });
 
+  it('should support custom render function', () => {
+    let {getAllByRole, getByRole} = renderTabs(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-custom', 'true');
+    expect(tablist).toHaveAttribute('data-custom', 'true');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('data-custom', 'true');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-custom', 'true');
+  });
+
+  it('should support custom render function as a link', () => {
+    let {getAllByRole, getByRole} = renderTabs(
+      {render: props => <div {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />},
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      {href: '#foo', render: props => <a {...props} data-custom="true" />},
+      {render: props => <div {...props} data-custom="true" />}
+    );
+    let tablist = getByRole('tablist');
+    let tabs = tablist.closest('.react-aria-Tabs');
+    expect(tabs).toHaveAttribute('data-custom', 'true');
+    expect(tablist).toHaveAttribute('data-custom', 'true');
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('href');
+      expect(tab).toHaveAttribute('data-custom', 'true');
+    }
+
+    let tabpanel = getByRole('tabpanel');
+    expect(tabpanel).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
@@ -609,6 +649,42 @@ describe('Tabs', () => {
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('should support tabpanels with aria-labels', () => {
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels aria-label="test" data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabPanels = getByTestId('tabpanels');
+    expect(tabPanels).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support tabpanels with custom styles', () => {
+    let {getByTestId} = render(
+      <Tabs>
+        <TabList aria-label="test">
+          <Tab id="a">A</Tab>
+          <Tab id="b">B</Tab>
+        </TabList>
+        <TabPanels style={{width: '100px'}} data-testid="tabpanels">
+          <TabPanel id="a">A</TabPanel>
+          <TabPanel id="b">B</TabPanel>
+        </TabPanels>
+      </Tabs>
+    );
+
+    let tabPanels = getByTestId('tabpanels');
+    expect(tabPanels).toHaveStyle({width: '100px'});
+  });
+
   it('supports tooltips', async function () {
     let {getByRole, getAllByRole} = render(
       <Tabs>
@@ -653,4 +729,42 @@ describe('Tabs', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
+
+  if (React.version.startsWith('19')) {
+    it('supports Activity', async () => {
+      function ActivityTabs() {
+        let [mode, setMode] = React.useState('hidden');
+
+        return (
+          <>
+            <Button onPress={() => setMode(mode === 'hidden' ? 'visible' : 'hidden')}>
+              Set {mode === 'hidden' ? 'visible' : 'hidden'}
+            </Button>
+            <React.Activity mode={mode}>
+              <Tabs>
+                <TabList aria-label="Test">
+                  <Tab id="a">A</Tab>
+                  <Tab id="b">B</Tab>
+                  <TooltipTrigger>
+                    <Tab id="c">C</Tab>
+                    <Tooltip>Test</Tooltip>
+                  </TooltipTrigger>
+                </TabList>
+                <TabPanel id="a">A</TabPanel>
+                <TabPanel id="b">B</TabPanel>
+                <TabPanel id="c">C</TabPanel>
+              </Tabs>
+            </React.Activity>
+          </>
+        );
+      }
+
+      let {getByRole, getAllByRole, queryAllByRole} = render(<ActivityTabs />);
+
+      let button = getByRole('button');
+      expect(queryAllByRole('tab')).toHaveLength(0);
+      await user.click(button);
+      expect(getAllByRole('tab')).toHaveLength(3);
+    });
+  }
 });

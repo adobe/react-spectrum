@@ -11,6 +11,8 @@
  */
 
 import {createShadowTreeWalker, getOwnerDocument, getOwnerWindow, nodeContains} from '@react-aria/utils';
+import {shadowDOM} from '@react-stately/flags';
+
 const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
 
 interface AriaHideOutsideOptions {
@@ -64,6 +66,22 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
   };
 
+  let shadowRootsToWatch = new Set<ShadowRoot>();
+  if (shadowDOM()) {
+    // find all shadow roots that are ancestors of the targets
+    // traverse upwards until the root is reached
+    for (let target of targets) {
+      let node = target;
+      while (node && node !== root) {
+        let root = node.getRootNode();
+        if ('shadowRoot' in root) {
+          shadowRootsToWatch.add(root.shadowRoot as ShadowRoot);
+        }
+        node = root.parentNode as Element;
+      }
+    }
+  }
+
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
     for (let element of root.querySelectorAll('[data-live-announcer], [data-react-aria-top-layer]')) {
@@ -71,27 +89,6 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
     }
 
     let acceptNode = (node: Element) => {
-      // Special handling for shadow hosts: If a shadow host contains a visible target,
-      // ensure it's not hidden (even if previously marked inert by parent overlays).
-      // Must check this BEFORE hiddenNodes check to handle nested overlay scenarios.
-      if ('shadowRoot' in node && (node as any).shadowRoot) {
-        let shadowRoot = (node as any).shadowRoot;
-        for (let target of visibleNodes) {
-          if (!shadowRoot.contains(target)) {
-            continue;
-          }
-          visibleNodes.add(node);
-          if (getHidden(node)) {
-            setHidden(node, false);
-            let count = refCountMap.get(node);
-            if (count && count > 0) {
-              refCountMap.set(node, count - 1);
-            }
-          }
-          return NodeFilter.FILTER_REJECT;
-        }
-      }
-      
       // Skip this node and its children if it is one of the target nodes, or a live announcer.
       // Also skip children of already hidden nodes, as aria-hidden is recursive. An exception is
       // made for elements with role="row" since VoiceOver on iOS has issues hiding elements with role="row".
@@ -114,11 +111,9 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
       return NodeFilter.FILTER_ACCEPT;
     };
 
-    let rootElement = root?.nodeType === Node.ELEMENT_NODE ? (root as Element) : null;
-    let doc = getOwnerDocument(rootElement);
     let walker = createShadowTreeWalker(
-      doc,
-      root || doc,
+      getOwnerDocument(root),
+      root,
       NodeFilter.SHOW_ELEMENT,
       {acceptNode}
     );
@@ -188,10 +183,65 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
           }
         }
       }
+
+      if (shadowDOM()) {
+        // if any of the observed shadow roots were removed, stop observing them
+        for (let shadowRoot of shadowRootsToWatch) {
+          if (!shadowRoot.isConnected) {
+            observer.disconnect();
+            break;
+          }
+        }
+      }
     }
   });
 
   observer.observe(root, {childList: true, subtree: true});
+  let shadowObservers = new Set<MutationObserver>();
+  if (shadowDOM()) {
+    for (let shadowRoot of shadowRootsToWatch) {
+      // Disconnect single target instead of all https://github.com/whatwg/dom/issues/126
+      let shadowObserver = new MutationObserver(changes => {
+        for (let change of changes) {
+          if (change.type !== 'childList') {
+            continue;
+          }
+
+          // If the parent element of the added nodes is not within one of the targets,
+          // and not already inside a hidden node, hide all of the new children.
+          if (
+            change.target.isConnected &&
+            ![...visibleNodes, ...hiddenNodes].some((node) =>
+              nodeContains(node, change.target)
+            )
+          ) {
+            for (let node of change.addedNodes) {
+              if (
+                (node instanceof HTMLElement || node instanceof SVGElement) &&
+                (node.dataset.liveAnnouncer === 'true' || node.dataset.reactAriaTopLayer === 'true')
+              ) {
+                visibleNodes.add(node);
+              } else if (node instanceof Element) {
+                walk(node);
+              }
+            }
+          }
+
+          if (shadowDOM()) {
+            // if any of the observed shadow roots were removed, stop observing them
+            for (let shadowRoot of shadowRootsToWatch) {
+              if (!shadowRoot.isConnected) {
+                observer.disconnect();
+                break;
+              }
+            }
+          }
+        }
+      });
+      shadowObserver.observe(shadowRoot, {childList: true, subtree: true});
+      shadowObservers.add(shadowObserver);
+    }
+  }
 
   let observerWrapper: ObserverWrapper = {
     visibleNodes,
@@ -208,6 +258,11 @@ export function ariaHideOutside(targets: Element[], options?: AriaHideOutsideOpt
 
   return (): void => {
     observer.disconnect();
+    if (shadowDOM()) {
+      for (let shadowObserver of shadowObservers) {
+        shadowObserver.disconnect();
+      }
+    }
 
     for (let node of hiddenNodes) {
       let count = refCountMap.get(node);

@@ -98,7 +98,7 @@ export interface PickerStyleProps {
 
 type SelectionMode = 'single' | 'multiple';
 export interface PickerProps<T extends object, M extends SelectionMode = 'single'> extends
-  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'allowsEmptyCollection' | 'isTriggerUpWhenOpen' | keyof GlobalDOMAttributes>,
+  Omit<AriaSelectProps<T, M>, 'children' | 'style' | 'className' | 'render' | 'allowsEmptyCollection' | keyof GlobalDOMAttributes>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -351,7 +351,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   return (
     <AriaSelect
       {...pickerProps}
-      isTriggerUpWhenOpen
       aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
@@ -523,6 +522,9 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
       <Button
         ref={buttonRef}
         style={renderProps => pressScale(buttonRef)(renderProps)}
+        // Prevent press scale from sticking while Picker is open.
+        // @ts-ignore
+        isPressed={false}
         className={renderProps => inputButton({
           ...renderProps,
           size: size,
@@ -602,7 +604,7 @@ const PickerButton = createHideableComponent(function PickerButton<T extends obj
   );
 });
 
-export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
+export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className' | 'render' | 'onClick' | keyof GlobalDOMAttributes>, StyleProps {
   children: ReactNode
 }
 
@@ -673,7 +675,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | keyof GlobalDOMAttributes>, StyleProps {}
+export interface PickerSectionProps<T extends object> extends Omit<SectionProps<T>, 'style' | 'className' | 'render' | keyof GlobalDOMAttributes>, StyleProps {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (

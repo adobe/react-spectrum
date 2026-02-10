@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, DOMProps, useContextProps} from './utils';
+import {ContextValue, dom, DOMProps, DOMRenderProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
 import {GlobalDOMAttributes} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
-export interface FormProps extends SharedFormProps, DOMProps, GlobalDOMAttributes<HTMLFormElement> {
+export interface FormProps extends SharedFormProps, DOMProps, DOMRenderProps<'form', undefined>, GlobalDOMAttributes<HTMLFormElement> {
   /**
    * The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element.
    * @default 'react-aria-Form'
@@ -41,12 +41,12 @@ export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef
   [props, ref] = useContextProps(props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
-    <form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
+    <dom.form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
       <FormContext.Provider value={{...props, validationBehavior}}>
         <FormValidationContext.Provider value={validationErrors ?? {}}>
           {children}
         </FormValidationContext.Provider>
       </FormContext.Provider>
-    </form>
+    </dom.form>
   );
 });

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {getActiveElement, getEventTarget} from './shadowdom/DOMFunctions';
+import {isIOS} from './platform';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 import {willOpenKeyboard} from './keyboard';
@@ -40,17 +42,17 @@ export function useViewportSize(): ViewportSize {
   let portalModule = getPortalContext();
   let getContainerBounds = portalModule?.useUNSAFE_PortalContext?.()?.getContainerBounds;
   let containerBounds = getContainerBounds?.() || null;
-  
+
   let [size, setSize] = useState(() => {
     if (isSSR) {
       return {width: 0, height: 0};
     }
-    
+
     // If container bounds are provided, use those; otherwise use window viewport
     if (containerBounds) {
       return {width: containerBounds.width, height: containerBounds.height};
     }
-    
+
     return getViewportSize();
   });
 
@@ -75,13 +77,13 @@ export function useViewportSize(): ViewportSize {
         // Re-measure container bounds if available, otherwise use window viewport
         let newBounds = getContainerBounds?.();
         let newSize: ViewportSize;
-        
+
         if (newBounds) {
           newSize = {width: newBounds.width, height: newBounds.height};
         } else {
           newSize = getViewportSize();
         }
-        
+
         if (newSize.width === size.width && newSize.height === size.height) {
           return size;
         }
@@ -97,20 +99,20 @@ export function useViewportSize(): ViewportSize {
         return;
       }
 
-      if (willOpenKeyboard(e.target as Element)) {
+      if (willOpenKeyboard(getEventTarget(e) as Element)) {
         // Wait one frame to see if a new element gets focused.
         frame = requestAnimationFrame(() => {
-          if (!document.activeElement || !willOpenKeyboard(document.activeElement)) {
+          if (!getActiveElement() || !willOpenKeyboard(getActiveElement())) {
             setSize(size => {
               let newSize: ViewportSize;
               let newBounds = getContainerBounds?.();
-              
+
               if (newBounds) {
                 newSize = {width: newBounds.width, height: newBounds.height};
               } else {
-                newSize = {width: window.innerWidth, height: window.innerHeight};
+                newSize = {width: document.documentElement.clientWidth, height: document.documentElement.clientHeight};
               }
-              
+
               if (newSize.width === size.width && newSize.height === size.height) {
                 return size;
               }
@@ -123,7 +125,9 @@ export function useViewportSize(): ViewportSize {
 
     updateSize(getViewportSize());
 
-    window.addEventListener('blur', onBlur, true);
+    if (isIOS()) {
+      window.addEventListener('blur', onBlur, true);
+    }
 
     if (!visualViewport) {
       window.addEventListener('resize', onResize);
@@ -133,7 +137,9 @@ export function useViewportSize(): ViewportSize {
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('blur', onBlur, true);
+      if (isIOS()) {
+        window.removeEventListener('blur', onBlur, true);
+      }
       if (!visualViewport) {
         window.removeEventListener('resize', onResize);
       } else {
@@ -148,7 +154,7 @@ export function useViewportSize(): ViewportSize {
 function getViewportSize(): ViewportSize {
   return {
     // Multiply by the visualViewport scale to get the "natural" size, unaffected by pinch zooming.
-    width: visualViewport ? visualViewport.width * visualViewport.scale : window.innerWidth,
-    height: visualViewport ? visualViewport.height * visualViewport.scale : window.innerHeight
+    width: visualViewport ? visualViewport.width * visualViewport.scale : document.documentElement.clientWidth,
+    height: visualViewport ? visualViewport.height * visualViewport.scale : document.documentElement.clientHeight
   };
 }
