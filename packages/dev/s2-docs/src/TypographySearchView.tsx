@@ -1,10 +1,9 @@
 'use client';
 
-import {ActionButton, Content, DialogTrigger, Heading, IllustratedMessage, Link, Popover, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
+import {Content, Heading, IllustratedMessage, Link, Text, ToggleButton, ToggleButtonGroup} from '@react-spectrum/s2';
 import {CopyButton} from './CopyButton';
 import {FieldInputContext, Header, Input, InputRenderProps, Key, ListBox, ListBoxItem, ListBoxSection, TextField} from 'react-aria-components';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
-import InfoCircle from '@react-spectrum/s2/icons/InfoCircle';
 import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
@@ -328,7 +327,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
                 borderRadius: 'default',
                 paddingX: 12,
                 paddingY: 8,
-                font: 'code-sm'
+                font: 'code'
               })}>
               <code className={style({flexGrow: 1, overflow: 'auto', whiteSpace: 'nowrap'})}>
                 &lt;
@@ -353,7 +352,7 @@ export function TypographySearchView({searchValue = ''}: TypographySearchViewPro
                 <span className={syntaxStyles.tag}>{selectedElementTag}</span>
                 &gt;
               </code>
-              <CopyButton text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
+              <CopyButton size="M" text={codeSnippet} tooltip="Copy code snippet" ariaLabel="Copy code snippet" />
             </div>
           </div>
         </div>
