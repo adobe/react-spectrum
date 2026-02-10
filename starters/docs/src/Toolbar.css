@@ -21,19 +21,9 @@
   }
 
   .react-aria-Separator {
-    align-self: stretch;
-    background-color: var(--border-color);
-
-    &:not([aria-orientation=vertical]) {
-      border: none;
-      height: 0.5px;
-      width: 100%;
-      margin: 10px 0;
-    }
-
     &[aria-orientation=vertical] {
-      width: 0.5px;
-      margin: 0px 10px;
+      height: auto;
+      margin: 0px var(--spacing-1);
     }
   }
 }

@@ -5,8 +5,14 @@ import docs from 'docs:react-aria-components';
 import vanillaDocs from 'docs:vanilla-starter/RadioGroup';
 import '../../tailwind/tailwind.css';
 import Anatomy from '@react-aria/radio/docs/anatomy.svg';
+import {InlineAlert, Heading, Content} from '@react-spectrum/s2'
 
 export const tags = ['input'];
+export const relatedPages = [
+  {title: 'useRadioGroup', url: 'RadioGroup/useRadioGroup.html'},
+  {title: 'Testing RadioGroup', url: './RadioGroup/testing'}
+];
+export const description = 'Allows a user to select a single item from a list of mutually exclusive options.';
 
 # RadioGroup
 
@@ -46,7 +52,7 @@ import {RadioGroup, Radio} from 'vanilla-starter/RadioGroup';
 import {useState} from 'react';
 
 function Example() {
-  let [selected, setSelected] = useState(null);
+  let [selected, setSelected] = useState<string | null>(null);
 
   return (
     <>
@@ -68,7 +74,7 @@ function Example() {
 
 ## Forms
 
-Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the Forms guide to learn more.
+Use the `name` prop to submit the selected radio to the server. Set the `isRequired` prop to validate that the user selects an option, or implement custom client or server-side validation. See the [Forms](forms) guide to learn more.
 
 ```tsx render
 "use client";
@@ -95,7 +101,7 @@ import {Form} from 'vanilla-starter/Form';;
 
 <Anatomy />
 
-```tsx links={{RadioGroup: '#radiogroup', Radio: '#radio', SelectionIndicator: 'selection.html#animated-selectionindicator'}}
+```tsx links={{RadioGroup: '#radiogroup', Radio: '#radio', SelectionIndicator: 'selection#animated-selectionindicator'}}
 <RadioGroup>
   <Label />
   <Radio>

@@ -48,7 +48,7 @@ can be used to build dialogs. However, it is not yet widely supported across bro
 building fully accessible custom dialogs from scratch is very difficult and error prone.
 `useDialog` helps achieve accessible dialogs that can be styled as needed.
 
-* **Flexible** – Dialogs can be used within a [modal](useModalOverlay.html) or [popover](usePopover.html) to create many types of overlay elements.
+* **Flexible** – Dialogs can be used within a [modal](../Modal/useModalOverlay.html) or [popover](../Popover/usePopover.html) to create many types of overlay elements.
 * **Accessible** – Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA. The dialog is labeled by its title element, and content outside the dialog is hidden from assistive technologies while it is open.
 * **Focus management** – Focus is moved into the dialog on mount, and restored to the trigger element on unmount. While open, focus is contained within the dialog, preventing the user from tabbing outside.
 
@@ -72,7 +72,7 @@ prop must be passed instead to identify the element to assistive technology.
 
 ## Example
 
-This example shows how to build a typical modal dialog, by combining `useDialog` with [useModalOverlay](useModalOverlay.html). The code for the `Modal` component is available below. The `Dialog` component may also be used within a [popover](usePopover.html). See the docs for more details on overlay containers.
+This example shows how to build a typical modal dialog, by combining `useDialog` with [useModalOverlay](../Modal/useModalOverlay.html). The code for the `Modal` component is available below. The `Dialog` component may also be used within a [popover](../Popover/usePopover.html). See the docs for more details on overlay containers.
 
 ```tsx example
 import type {AriaDialogProps} from '@react-aria/dialog';
@@ -123,7 +123,7 @@ function Dialog({title, children, ...props}: DialogProps) {
 
 ### Modal
 
-The `Modal` and `ModalTrigger` components render the dialog within a typical modal container with a partially transparent underlay. See [useModalOverlay](useModalOverlay.html) for more details.
+The `Modal` and `ModalTrigger` components render the dialog within a typical modal container with a partially transparent underlay. See [useModalOverlay](../Modal/useModalOverlay.html) for more details.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -195,7 +195,7 @@ function ModalTrigger({label, children, ...props}) {
 
 ### Button
 
-The `Button` component is used in the above example to open and close the dialog. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to open and close the dialog. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>

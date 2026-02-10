@@ -17,7 +17,7 @@ type Story = StoryFn<typeof Form>;
 
 export const Example: Story = (args) => (
   <Form {...args}>
-    <TextField name="email" type="email" isRequired label="Email" />
+    <TextField name="email" type="email" isRequired label="Email" placeholder="Enter your email" />
     <Button type="submit">Submit</Button>
   </Form>
 );

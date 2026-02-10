@@ -10,6 +10,7 @@
   outline: none;
   position: relative;
   border-radius: var(--radius-sm);
+  -webkit-tap-highlight-color: transparent;
 
   &[data-hovered] {
     text-decoration-thickness: 1.5px;

@@ -1,8 +1,8 @@
-import React from 'react';
+import {ReactNode} from 'react';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 
 
-const Strong = ({children}) => <strong className={style({fontWeight: 'bold'})}>{children}</strong>;
+const Strong = ({children}: {children: ReactNode}) => <strong className={style({fontWeight: 'bold'})}>{children}</strong>;
 
 export function S2Typography() {
   return (

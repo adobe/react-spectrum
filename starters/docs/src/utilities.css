@@ -164,8 +164,8 @@
       scale: 0.9;
     }
 
-    [data-selected] &,
-    [data-indeterminate] & {
+    [data-selected] > &,
+    [data-indeterminate] > & {
       --indicator-color: var(--highlight-background);
       --indicator-background: var(--indicator-color);
       --indicator-highlight: rgb(255 255 255 / 0.3);
@@ -192,7 +192,8 @@
       }
     }
 
-    [data-invalid] & {
+    &[data-invalid],
+    [data-invalid] > & {
       --indicator-color: var(--invalid-color);
 
       @media (forced-colors: active) {
@@ -206,7 +207,8 @@
       outline-offset: 2px;
     }
 
-    [data-disabled] & {
+    &[data-disabled],
+    [data-disabled] > & {
       background: var(--field-background);
       box-shadow: inset 0 0 0 1px var(--border-color-disabled)
     }

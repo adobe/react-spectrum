@@ -118,7 +118,7 @@ export function Cell(props: CellProps) {
 export function TableLoadMoreItem(props: TableLoadMoreItemProps) {
   return (
     <AriaTableLoadMoreItem {...props}>
-      <div>
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <ProgressCircle isIndeterminate aria-label="Loading more..." />
       </div>
     </AriaTableLoadMoreItem>

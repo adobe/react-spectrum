@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Microphone_L from 'illustration:./S2_lin_microphone_160.svg';
 import Microphone_M from 'illustration:./S2_lin_microphone_96.svg';
 import Microphone_S from 'illustration:./S2_lin_microphone_48.svg';

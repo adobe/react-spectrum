@@ -49,7 +49,7 @@ A date range picker can be built using two separate `<input type="date">` elemen
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, date ranges can be selected by dragging over dates in the calendar using a touch screen, and all interactions are accessible using touch-based screen readers.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
-Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `useDateRangePicker`.
+Read our [blog post](../blog/date-and-time-pickers-for-all) for more details about the internationalization, accessibility, and user experience features implemented by `useDateRangePicker`.
 
 ## Anatomy
 
@@ -57,7 +57,7 @@ Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more detail
   role="img"
   aria-label="Anatomy diagram of an expanded date range picker component, which consists of a labelled group containing a start date field, an end date field, and a button that toggles a popover dialog containing a range calendar." />
 
-A date range picker consists of a label, and group containing two [date fields](useDateField.html) and a button. Clicking the button opens a popup containing a [range calendar](useRangeCalendar.html). The date fields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date range.
+A date range picker consists of a label, and group containing two [date fields](../DateField/useDateField.html) and a button. Clicking the button opens a popup containing a [range calendar](../RangeCalendar/useRangeCalendar.html). The date fields include segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date range.
 
 `useDateRangePicker` also supports optional description and error message elements, which can be used
 to provide more context about the field, and any validation messages. These are linked with the
@@ -126,7 +126,7 @@ function DateRangePicker(props) {
 
 ### Button
 
-The `Button` component is used in the above example to trigger the calendar popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+The `Button` component is used in the above example to trigger the calendar popover. It is built using the [useButton](../Button/useButton.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -145,7 +145,7 @@ function Button(props) {
 
 ### DateField
 
-The `DateField` component implements the keyboard editable inputs used in a `DateRangePicker`. It can also be used standalone, or within a single date picker. See [useDateField](useDateField.html) for more examples and documentation.
+The `DateField` component implements the keyboard editable inputs used in a `DateRangePicker`. It can also be used standalone, or within a single date picker. See [useDateField](../DateField/useDateField.html) for more examples and documentation.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -248,9 +248,9 @@ function DateSegment({segment, state}) {
 ### Popover
 
 The `Popover` component is used to contain the popup calendar for the `DateRangePicker`.
-It can be shared between many other components, including [Select](useSelect.html),
-[Menu](useMenu.html), and others.
-See [usePopover](usePopover.html) for more examples of popovers.
+It can be shared between many other components, including [Select](../Select/useSelect.html),
+[Menu](../Menu/useMenu.html), and others.
+See [usePopover](../Popover/usePopover.html) for more examples of popovers.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -296,7 +296,7 @@ function Popover({children, state, ...props}: PopoverProps) {
 
 ### Dialog
 
-The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](useDialog.html) hook, and can be shared with many other components.
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](../Modal/useDialog.html) hook, and can be shared with many other components.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -331,7 +331,7 @@ function Dialog({title, children, ...props}: DialogProps) {
 
 ### RangeCalendar
 
-The `RangeCalendar` component implements the month grid shown within the `DateRangePicker` popover. It can also be used standalone, or within other components. See [useRangeCalendar](useRangeCalendar.html) for more examples and documentation.
+The `RangeCalendar` component implements the month grid shown within the `DateRangePicker` popover. It can also be used standalone, or within other components. See [useRangeCalendar](../RangeCalendar/useRangeCalendar.html) for more examples and documentation.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
@@ -631,7 +631,7 @@ import {now} from '@internationalized/date';
 
 ### International calendars
 
-`useDateRangePicker` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+`useDateRangePicker` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](../I18nProvider) component.
 
 Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
 

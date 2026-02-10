@@ -6,7 +6,7 @@ export interface Pokemon {
   id: number,
   name: string,
   type: string,
-  level: number,
+  level?: number,
   children?: Pokemon[]
 }
 
@@ -52,7 +52,7 @@ export function PokemonTree(props: PokemonTreeProps) {
       dragAndDropHooks={dragAndDropHooks}>
       {function renderItem(item: Pokemon) {
         return (
-          <TreeItem title={<><strong>{item.name}</strong> – <em>{item.type}</em></>}>
+          <TreeItem title={`${item.name} – ${item.type}`} textValue={item.name}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>

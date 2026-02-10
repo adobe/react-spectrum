@@ -57,7 +57,7 @@ keywords: [collections, dropdown]
 ```
 
 ## Content
-ComboBox follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
+ComboBox follows the [Collection Components](collections.html) API, accepting both static and dynamic collections.
 Similar to [Picker](Picker.html), ComboBox accepts `<Item>` elements as children, each with a `key` prop. Basic usage of ComboBox, seen in the example above, shows multiple options populated with a string.
 Static collections, as in this example, can be used when the full list of options is known ahead of time.
 
@@ -259,7 +259,7 @@ When the `necessityIndicator` prop is set to `"label"`, a localized string will 
 
 ## Selection
 Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
-Additionally, see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+Additionally, see the `react-stately` [Selection docs](selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
 import type {Key} from '@adobe/react-spectrum';
@@ -560,7 +560,7 @@ See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [access
 ComboBox supports loading data asynchronously, and will display a progress circle reflecting the current load state,
 set by the `loadingState` prop. It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
 
-This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data. See the docs for more information.
+This example uses the [useAsyncList](react-aria:useAsyncList.html) hook to handle loading the data. See the docs for more information.
 
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
@@ -996,7 +996,7 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-spectrum/test-utils` offers common combobox interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common combobox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-spectrum-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the combobox tester and a sample of how you could use it in your test suite.
 
 ```ts

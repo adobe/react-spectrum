@@ -132,7 +132,7 @@ export const CalendarMultiMonth: CalendarStory = {
 };
 
 
-interface CalendarFirstDayOfWeekExampleProps extends CalendarProps<DateValue> {
+interface CalendarFirstDayOfWeekExampleProps extends Omit<CalendarProps<DateValue>, 'render'> {
   locale: string
 }
 

@@ -214,6 +214,16 @@ describe('useControlledState tests', function () {
 
     act(() => setValue((prevValue) => {
       expect(prevValue).toBe('updated');
+      return 'newValue';
+    }));
+    [value, setValue] = result.current;
+    expect(value).toBe('updated');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+
+    onChangeSpy.mockClear();
+
+    act(() => setValue((prevValue) => {
+      expect(prevValue).toBe('updated');
       return 'updated';
     }));
     [value, setValue] = result.current;

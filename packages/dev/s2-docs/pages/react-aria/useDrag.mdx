@@ -11,25 +11,22 @@ import {Layout} from '../../src/Layout';
 export default Layout;
 import {GroupedPropTable} from '../../src/PropTable';
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
-export const section = 'Drag and Drop';
+
+export const section = 'Interactions';
+export const description = 'Handles drag interactions for an element, providing accessibility and cross-browser support.';
 
 # useDrag
 
 <PageDescription>{docs.exports.useDrag.description}</PageDescription>
 
-## API
-
-<FunctionAPI function={docs.exports.useDrag} links={docs.links} />
-
 ## Introduction
-
-Drag and drop is a common UI interaction that allows users to transfer data between two locations by directly moving a visual representation on screen. It is a flexible, efficient, and intuitive way for users to perform a variety of tasks, and is widely supported across both desktop and mobile operating systems.
 
 React Aria supports traditional mouse and touch based drag and drop, but also implements keyboard and screen reader friendly interactions. Users can press <Keyboard>Enter</Keyboard> on a draggable element to enter drag and drop mode. Then, they can press <Keyboard>Tab</Keyboard> to navigate between drop targets, and <Keyboard>Enter</Keyboard> to drop or <Keyboard>Escape</Keyboard> to cancel. Touch screen reader users can also drag by double tapping to activate drag and drop mode, swiping between drop targets, and double tapping again to drop.
 
-See the [drag and drop introduction](dnd.html) to learn more.
+See the [drag and drop guide](dnd) to learn more.
 
 ## Example
 
@@ -37,9 +34,10 @@ This example shows how to make a simple draggable element that provides data as 
 
 ```tsx render files={["packages/dev/s2-docs/pages/react-aria/DropTarget.tsx", "packages/dev/s2-docs/pages/react-aria/useDragExample.css"]}
 "use client";
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 import './useDragExample.css';
+import 'vanilla-starter/theme.css';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -70,8 +68,8 @@ This example drags two items, each of which contains representations as plain te
 
 ```tsx render
 "use client";
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -116,9 +114,9 @@ This example renders a custom drag preview which shows the text of the first dra
 ```tsx render
 "use client";
 import React from 'react';
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
-import {DragPreview} from '@react-aria/dnd';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
+import {DragPreview} from 'react-aria';
 
 function Draggable() {
   let preview = React.useRef(null);
@@ -155,14 +153,16 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.D
 * `copy` – indicates that the dragged data will be copied to the target destination.
 * `link` – indicates that there will be a relationship established between the source and target locations.
 * `cancel` – indicates that the drag and drop operation will be canceled, resulting in no changes made to the source or target.
+
 Many operating systems display these in the form of a cursor change, e.g. a plus sign to indicate a copy operation. The user may also be able to use a modifier key to choose which drop operation to perform, such as <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> to switch from move to copy.
 The `onDragEnd` event allows the drag source to respond when a drag that it initiated ends, either because it was dropped or because it was canceled by the user. The `dropOperation` property of the event object indicates the operation that was performed. For example, when data is moved, the UI could be updated to reflect this change by removing the original dragged element.
 This example removes the draggable element from the UI when a move operation is completed. Try holding the <Keyboard>Option</Keyboard> or <Keyboard>Alt</Keyboard> keys to change the operation to copy, and see how the behavior changes.
+
 ```tsx render
 "use client"
 import React from 'react';
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let [moved, setMoved] = React.useState(false);
@@ -204,8 +204,8 @@ The drag source can also control which drop operations are allowed for the data.
 
 ```tsx render
 "use client";
-import {useDrag} from '@react-aria/dnd';
-import {DropTarget} from './DropTarget.tsx';
+import {useDrag} from 'react-aria';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -245,9 +245,9 @@ When the `hasDragButton` option is enabled, the keyboard interactions are moved 
 ```tsx render
 "use client";
 import React from 'react';
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from 'react-aria';
 import {useButton} from '@react-aria/button';
-import {DropTarget} from './DropTarget.tsx';
+import {DropTarget} from './DropTarget';
 
 function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
@@ -285,7 +285,7 @@ If you need to temporarily disable dragging, you can pass the `isDisabled` optio
 
 ```tsx render
 "use client";
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from 'react-aria';
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
     getItems() {
@@ -305,3 +305,15 @@ function Draggable() {
 }
 <Draggable />
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useDrag} links={docs.links} />
+
+### DragOptions
+
+<InterfaceType {...docs.exports.DragOptions} />
+
+### DragResult
+
+<InterfaceType {...docs.exports.DragResult} />

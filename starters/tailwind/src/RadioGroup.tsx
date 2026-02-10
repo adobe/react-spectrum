@@ -27,24 +27,24 @@ export function RadioGroup(props: RadioGroupProps) {
 
 const styles = tv({
   extend: focusRing,
-  base: 'w-5 h-5 box-border rounded-full border-2 bg-white dark:bg-zinc-900 transition-all',
+  base: 'w-4.5 h-4.5 box-border rounded-full border bg-white dark:bg-neutral-900 transition-all',
   variants: {
     isSelected: {
-      false: 'border-gray-400 dark:border-zinc-400 group-pressed:border-gray-500 dark:group-pressed:border-zinc-300',
-      true: 'border-[7px] border-gray-700 dark:border-slate-300 forced-colors:border-[Highlight]! group-pressed:border-gray-800 dark:group-pressed:border-slate-200'
+      false: 'border-neutral-400 dark:border-neutral-400 group-pressed:border-neutral-500 dark:group-pressed:border-neutral-300',
+      true: 'border-[calc(var(--spacing)*1.5)] border-neutral-700 dark:border-neutral-300 forced-colors:border-[Highlight]! group-pressed:border-neutral-800 dark:group-pressed:border-neutral-200'
     },
     isInvalid: {
       true: 'border-red-700 dark:border-red-600 group-pressed:border-red-800 dark:group-pressed:border-red-700 forced-colors:border-[Mark]!'
     },
     isDisabled: {
-      true: 'border-gray-200 dark:border-zinc-700 forced-colors:border-[GrayText]!'
+      true: 'border-neutral-200 dark:border-neutral-700 forced-colors:border-[GrayText]!'
     }
   }
 });
 
 export function Radio(props: RadioProps) {
   return (
-    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition')}>
+    <RACRadio {...props} className={composeTailwindRenderProps(props.className, 'flex relative gap-2 items-center group text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]')}>
       {composeRenderProps(props.children, (children, renderProps) => <>
         <div className={styles(renderProps)} />
         {children}

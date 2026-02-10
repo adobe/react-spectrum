@@ -127,14 +127,14 @@ export const Fonts: Story = {
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
         </Provider>
-        Arabic (myriad-arabic)
+        Arabic (adobe-clean-arabic)
         <Provider locale="ar-AR" styles={style({display: 'contents'})}>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].button}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].copy}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].cut}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].paste}</Text></ActionButton>
         </Provider>
-        Hebrew (myriad-hebrew)
+        Hebrew (adobe-clean-hebrew)
         <Provider locale="he-IL" styles={style({display: 'contents'})}>
           <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].button}</Text></ActionButton>
           <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].copy}</Text></ActionButton>

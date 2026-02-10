@@ -135,6 +135,6 @@ export const DisabledBehaviorAll: TreeViewStoryProps = () => (
   <TestTree disabledBehavior="all" selectionMode="multiple" />
 );
 
-export const HiglightSelectionWithDisabledBehaviorAll: TreeViewStoryProps = () => (
+export const HighlightSelectionWithDisabledBehaviorAll: TreeViewStoryProps = () => (
   <TestTree selectionStyle="highlight" selectionMode="multiple" disabledBehavior="all" />
 );

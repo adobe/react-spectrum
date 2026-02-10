@@ -22,7 +22,7 @@ export const AutocompleteContext = createContext<SlottedContextValue<Partial<Aut
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 
 /**
- * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
+ * An autocomplete allows users to search or filter a list of suggestions.
  */
 export function Autocomplete<T extends object>(props: AutocompleteProps<T>): JSX.Element {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);

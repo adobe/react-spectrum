@@ -94,6 +94,14 @@ describe('Popover', () => {
     expect(dialog).toHaveTextContent('Popover at bottom');
   });
 
+  it('should support custom render function', async () => {
+    let {getByRole} =  render(<TestPopover render={props => <div {...props} data-custom="true" />} />);
+    let button = getByRole('button');
+    await user.click(button);
+    let dialog = getByRole('dialog').parentElement;
+    expect(dialog).toHaveAttribute('data-custom', 'true');
+  });
+
   it('should support being used standalone', async () => {
     let triggerRef = React.createRef();
     let onOpenChange = jest.fn();

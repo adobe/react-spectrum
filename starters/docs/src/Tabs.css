@@ -4,6 +4,7 @@
   display: flex;
   gap: var(--spacing-2);
   color: var(--text-color);
+  max-width: 100%;
 
   &[data-orientation=horizontal] {
     flex-direction: column;
@@ -27,10 +28,14 @@
 
   &[data-orientation=horizontal] {
     border-bottom: 0.5px solid var(--border-color);
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: clip;
+    scrollbar-width: none;
 
     .react-aria-SelectionIndicator {
       left: 0;
-      bottom: -1.5px;
+      bottom: 0px;
       width: 100%;
       height: 3px;
       transition-property: translate, width;
@@ -43,7 +48,7 @@
 
     .react-aria-SelectionIndicator {
       top: 0;
-      right: -1.5px;
+      right: 0px;
       height: 100%;
       width: 3px;
       transition-property: translate, height;

@@ -10,12 +10,15 @@ governing permissions and limitations under the License. */}
 import {Layout} from '../../src/Layout';
 export default Layout;
 import {FunctionAPI} from '../../src/FunctionAPI';
+import {InterfaceType} from '../../src/types';
 import docs from 'docs:@react-aria/i18n';
 
-export const section = 'Internationalization';
-export const description = 'Implementing collections in React Aria';
+export const section = 'Utilities';
+export const description = 'Wraps Intl.DateTimeFormat and formats dates for the current locale.';
 
 # useDateFormatter
+
+<PageDescription>{docs.exports.useDateFormatter.description}</PageDescription>
 
 ## Introduction
 
@@ -25,18 +28,14 @@ updating when the locale changes, and caching of date formatters for performance
 [Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) docs for
 information on formatting options.
 
-## API
-
-<FunctionAPI function={docs.exports.useDateFormatter} links={docs.links} />
-
 ## Example
 
 This example displays the current date for two locales: USA, and Russia. Two instances of the `CurrentDate` component are rendered,
-using the [I18nProvider](I18nProvider.html) to specify the locale to display.
+using the [I18nProvider](I18nProvider) to specify the locale to display.
 
 ```tsx render
 'use client';
-import {I18nProvider, useDateFormatter} from '@react-aria/i18n';
+import {I18nProvider, useDateFormatter} from 'react-aria';
 
 function CurrentDate() {
   let formatter = useDateFormatter();
@@ -55,3 +54,16 @@ function CurrentDate() {
   </I18nProvider>
 </>
 ```
+
+## API
+
+<FunctionAPI function={docs.exports.useDateFormatter} links={docs.links} />
+
+### DateFormatterOptions
+
+<InterfaceType {...docs.exports.DateFormatterOptions} />
+
+### DateFormatter
+
+<InterfaceType {...docs.exports.DateFormatter} />
+

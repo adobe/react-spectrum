@@ -1,15 +1,18 @@
 'use client';
 
 import {Autocomplete, GridLayout, ListBox, ListBoxItem, Size, useFilter, Virtualizer} from 'react-aria-components';
-import {Content, Heading, IllustratedMessage, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text} from '@react-spectrum/s2';
+// eslint-disable-next-line monorepo/no-internal-import
+import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
+import {Content, Heading, IllustratedMessage, Link, pressScale, ProgressCircle, Radio, RadioGroup, SearchField, SegmentedControl, SegmentedControlItem, Text, ToastQueue} from '@react-spectrum/s2';
 import {focusRing, style} from '@react-spectrum/s2/style' with {type: 'macro'};
 // @ts-ignore
 import Gradient from '@react-spectrum/s2/icons/Gradient';
-import {illustrationAliases} from './illustrationAliases.js';
+import {illustrationAliases} from './illustrationAliases.js'; 
+import {InfoMessage} from './colorSearchData';
 // eslint-disable-next-line monorepo/no-internal-import
 import NoSearchResults from '@react-spectrum/s2/illustrations/linear/NoSearchResults';
 import Polygon4 from '@react-spectrum/s2/icons/Polygon4';
-import React, {Suspense, use, useCallback, useRef, useState} from 'react';
+import React, {Suspense, use, useCallback, useEffect, useRef, useState} from 'react';
 
 type IllustrationItemType = {
   id: string,
@@ -22,7 +25,7 @@ const itemStyle = style({
   backgroundColor: {
     default: 'gray-50',
     isHovered: 'gray-100',
-    isFocused: 'gray-100',
+    isFocusVisible: 'gray-100',
     isSelected: 'neutral'
   },
   font: 'ui-sm',
@@ -41,14 +44,19 @@ export function IllustrationCards() {
 
   let {contains} = useFilter({sensitivity: 'base'});
   let filter = useCallback((textValue: string, inputValue: string) => {
+    const trimmedInput = inputValue.trim();
+    // If input is empty after trimming, show all items
+    if (!trimmedInput) {
+      return true;
+    }
     // Check if input matches an alias that maps to this illustration name
     for (const alias of Object.keys(illustrationAliases)) {
-      if (contains(alias, inputValue) && illustrationAliases[alias].includes(textValue)) {
+      if (contains(alias, trimmedInput) && illustrationAliases[alias].includes(textValue)) {
         return true;
       }
     }
     // Also compare for substrings in the illustration's actual name
-    return textValue != null && contains(textValue, inputValue);
+    return textValue != null && contains(textValue, trimmedInput);
   }, [contains]);
 
   return (
@@ -77,6 +85,7 @@ export function IllustrationCards() {
             <Radio value="generic2">Generic 2</Radio>
           </RadioGroup>
         )}
+        <InfoMessage>Press an item to copy its import statement. See <Link href="illustrations">Illustrations</Link> for more information.</InfoMessage>
         <Suspense fallback={<Loading />}>
           <IllustrationList variant={variant} gradientStyle={gradientStyle} />
         </Suspense>
@@ -93,19 +102,40 @@ function Loading() {
   );
 }
 
-let handleCopyImport = (id: string, variant: string, gradientStyle: string) => {
-  let importText = variant === 'gradient' ? 
-    `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
-    `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
-  navigator.clipboard.writeText(importText).then(() => {
-    // noop
-  }).catch(() => {
-    // noop
-  });
-};
+
+function useCopyImport(variant: string, gradientStyle: string) {
+  let [copiedId, setCopiedId] = useState<string | null>(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
+
+  let handleCopyImport = useCallback((id: string) => {
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+    let importText = variant === 'gradient' ?
+      `import ${id} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${id}';` :
+      `import ${id} from '@react-spectrum/s2/illustrations/linear/${id}';`;
+    navigator.clipboard.writeText(importText).then(() => {
+      setCopiedId(id);
+      timeout.current = setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => {
+      ToastQueue.negative('Failed to copy import statement.');
+    });
+  }, [variant, gradientStyle]);
+
+  return {copiedId, handleCopyImport};
+}
 
 function IllustrationList({variant, gradientStyle}) {
   let items = use(loadIllustrations(variant, gradientStyle));
+  let {copiedId, handleCopyImport} = useCopyImport(variant, gradientStyle);
   return (
     <Virtualizer
       layout={GridLayout}
@@ -119,7 +149,8 @@ function IllustrationList({variant, gradientStyle}) {
         aria-label="Illustrations"
         items={items}
         layout="grid"
-        onAction={(item) => handleCopyImport(item.toString(), variant, gradientStyle)}
+        onAction={(item) => handleCopyImport(item.toString())}
+        dependencies={[copiedId]}
         className={style({height: 560, width: '100%', maxHeight: '100%', overflow: 'auto', scrollPaddingY: 4})}
         renderEmptyState={() => (
           <IllustratedMessage styles={style({marginX: 'auto', marginY: 32})}>
@@ -132,25 +163,25 @@ function IllustrationList({variant, gradientStyle}) {
             </Content>
           </IllustratedMessage>
           )}>
-        {(item: IllustrationItemType) => <IllustrationItem item={item} />}
+        {(item: IllustrationItemType) => <IllustrationItem item={item} isCopied={copiedId === item.id} />}
       </ListBox>
     </Virtualizer>
   );
 }
 
-function IllustrationItem({item}: {item: IllustrationItemType}) {
+function IllustrationItem({item, isCopied = false}: {item: IllustrationItemType, isCopied?: boolean}) {
   let Illustration = item.Component;
   let ref = useRef(null);
   return (
     <ListBoxItem id={item.id} value={item} textValue={item.id} className={itemStyle} ref={ref} style={pressScale(ref)}>
-      <Illustration />
+      {isCopied ? <Checkmark /> : <Illustration />}
       <div
         className={style({
           display: 'flex',
           alignItems: 'center',
           padding: 4
         })}>
-        {item.id}
+        {isCopied ? 'Copied!' : item.id}
       </div>
     </ListBoxItem>
   );

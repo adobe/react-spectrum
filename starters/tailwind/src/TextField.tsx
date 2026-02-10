@@ -11,7 +11,7 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const inputStyles = tv({
   extend: focusRing,
-  base: 'border-2 rounded-lg',
+  base: 'border-1 rounded-lg min-h-9 font-sans text-sm py-0 px-3 box-border transition',
   variants: {
     isFocused: fieldBorderStyles.variants.isFocusWithin,
     isInvalid: fieldBorderStyles.variants.isInvalid,
@@ -22,6 +22,7 @@ const inputStyles = tv({
 export interface TextFieldProps extends AriaTextFieldProps {
   label?: string;
   description?: string;
+  placeholder?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 

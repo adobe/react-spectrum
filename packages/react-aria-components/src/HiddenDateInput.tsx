@@ -11,8 +11,9 @@
  */
 
 
-import {CalendarDate, CalendarDateTime, parseDate, parseDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, parseDate, parseDateTime, toCalendarDate, toCalendarDateTime, toLocalTimeZone} from '@internationalized/date';
 import {DateFieldState, DatePickerState, DateSegmentType} from 'react-stately';
+import {getEventTarget} from '@react-aria/utils';
 import React, {ReactNode} from 'react';
 import {useVisuallyHidden} from 'react-aria';
 
@@ -65,8 +66,15 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
   } else if (state.granularity === 'hour') {
     inputStep = 3600;
   }
-
-  let dateValue = state.value == null ? '' : state.value.toString();
+  
+  let dateValue = '';
+  if (state.value) {
+    if (state.granularity === 'day') {
+      dateValue = toCalendarDate(state.value).toString();
+    } else {
+      dateValue = toCalendarDateTime('timeZone' in state.value ? toLocalTimeZone(state.value) : state.value).toString();
+    }
+  }
 
   let inputType = state.granularity === 'day' ? 'date' : 'datetime-local';
 
@@ -98,7 +106,7 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
       step: inputStep,
       value: dateValue,
       onChange: (e) => {
-        let targetString = e.target.value.toString();
+        let targetString = getEventTarget(e).value.toString();
         if (targetString) {
           try {
             let targetValue: CalendarDateTime | CalendarDate = parseDateTime(targetString);

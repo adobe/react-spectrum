@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+'use client';
 import Briefcase_L from 'illustration:./S2_lin_briefcase_160.svg';
 import Briefcase_M from 'illustration:./S2_lin_briefcase_96.svg';
 import Briefcase_S from 'illustration:./S2_lin_briefcase_48.svg';

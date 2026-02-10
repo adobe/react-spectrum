@@ -12,32 +12,23 @@
 
 import clsx from 'clsx';
 import docStyles from '@react-spectrum/docs/src/docs.css';
-import {Flex, Link} from '@adobe/react-spectrum';
 import {getAnchorProps} from './utils';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {PageContext, renderHTMLfromMarkdown, Time} from '@react-spectrum/docs';
 import React from 'react';
-import RSS from '@spectrum-icons/workflow/RSS';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function PostListing({type}) {
   let {pages} = React.useContext(PageContext);
+  // releases pages are now under v3/releases so adjust accordingly so they show up
+  let prefix = type === 'releases' ? 'v3/releases' : type;
   let blogPages = pages
-    .filter(page => page.name.startsWith(type) && !page.name.endsWith('index.html'))
+    .filter(page => page.name.startsWith(prefix) && !page.name.endsWith('index.html'))
     .sort((a, b) => a.date < b.date ? 1 : -1);
 
   return (
     <>
       {blogPages.map(page => <BlogPost key={page.name} {...page} />)}
-      <div style={{display: 'flex', justifyContent: 'end'}}>
-        <Link
-          href={`../${type}/${type}-feed.rss`}
-          target="_blank">
-          <Flex gap="size-100" alignItems="center">
-            <span>RSS Link</span><RSS size="S" />
-          </Flex>
-        </Link>
-      </div>
     </>
   );
 }

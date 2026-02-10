@@ -90,7 +90,8 @@ function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchPro
             default: 'sm',
             full: 'full'
           }
-        }
+        },
+        disableTapHighlight: true
       })({...renderProps, rounding})}>
       {({isSelected}) => (<>
         {swatch}

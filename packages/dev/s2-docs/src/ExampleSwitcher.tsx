@@ -5,6 +5,7 @@ import {createContext, useState} from 'react';
 import {Key} from 'react-aria-components';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import {useLayoutEffect} from '@react-aria/utils';
+import {useLocalStorage} from './useLocalStorage';
 
 const exampleStyle = style({
   backgroundColor: 'layer-1',
@@ -59,66 +60,35 @@ const themePicker = style({
 
 export const ExampleSwitcherContext = createContext<Key | null>(null);
 
-const DEFAULT_EXAMPLES = ['Vanilla CSS', 'Tailwind'] as Key[];
+const DEFAULT_EXAMPLES = ['Vanilla CSS', 'Tailwind'];
 
 export function ExampleSwitcher({type = 'style', examples = DEFAULT_EXAMPLES, children}) {
-  let [selected, setSelected] = useState<Key>(examples[0]);
-  let [theme, setTheme] = useState('indigo');
+  let [selected, setSelected] = useLocalStorage(type, examples[0]);
+  let [theme, setTheme] = useLocalStorage('theme', 'indigo');
+  let [value, setValue] = useState(examples[0]);
 
-  useLayoutEffect(() => {
-    if (!type) {
-      return;
-    }
+  if (!examples.includes(selected)) {
+    selected = examples[0];
+  }
 
-    let search = new URLSearchParams(location.search);
-    let exampleType = search.get(type) ?? localStorage.getItem(type);
-    if (exampleType && examples.includes(exampleType)) {
-      setSelected(exampleType);
-    }
-
-    let theme = localStorage.getItem('theme');
-    if (theme) {
-      setTheme(theme);
-    }
-
-    let controller = new AbortController();
-    window.addEventListener('storage', e => {
-      if (e.key === type && e.newValue && examples.includes(e.newValue)) {
-        setSelected(e.newValue);
-      }
-
-      if (e.key === 'theme' && e.newValue) {
-        setTheme(e.newValue);
-      }
-    }, {signal: controller.signal});
-    return () => controller.abort();
-  }, [type, examples]);
+  if (!type) {
+    selected = value;
+  }
 
   useLayoutEffect(() => {
     document.documentElement.style.setProperty('--tint', `var(--${theme})`);
   }, [theme]);
 
-  let onSelectionChange = key => {
-    setSelected(key);
-    
+  let onSelectionChange = (key: Key) => {
     if (type) {
-      localStorage.setItem(type, key);
-      window.dispatchEvent(new StorageEvent('storage', {
-        key: type,
-        oldValue: String(selected),
-        newValue: String(key)
-      }));
+      setSelected(String(key));
+    } else {
+      setValue(String(key));
     }
   };
 
-  let onThemeChange = key => {
-    setTheme(key);
-    localStorage.setItem('theme', key);
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: 'theme',
-      oldValue: String(theme),
-      newValue: String(key)
-    }));
+  let onThemeChange = (key: Key | null) => {
+    setTheme(String(key));
   };
 
   return (

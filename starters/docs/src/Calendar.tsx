@@ -6,8 +6,7 @@ import {
   CalendarProps as AriaCalendarProps,
   DateValue,
   CalendarCellProps,
-  CalendarGridProps,
-  composeRenderProps
+  CalendarGridProps
 } from 'react-aria-components';
 import {Heading, Text} from './Content';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
