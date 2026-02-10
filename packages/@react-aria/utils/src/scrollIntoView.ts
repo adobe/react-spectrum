@@ -11,7 +11,7 @@
  */
 
 import {getScrollParents} from './getScrollParents';
-import {isChrome} from './platform';
+import {isChrome, isIOS} from './platform';
 
 interface ScrollIntoViewOpts {
   /** The position to align items along the block axis in. */
@@ -44,8 +44,6 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let itemStyle = window.getComputedStyle(element);
   let viewStyle = window.getComputedStyle(scrollView);
   let root = document.scrollingElement || document.documentElement;
-  let scrollbarWidth = view.width - scrollView.clientWidth;
-  let scrollbarHeight = view.height - scrollView.clientHeight;
 
   let viewTop = scrollView === root ? 0 : view.top;
   let viewBottom = scrollView === root ? scrollView.clientHeight : view.bottom;
@@ -72,10 +70,22 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement, op
   let scrollAreaLeft = target.left - scrollMarginLeft;
   let scrollAreaRight = target.right + scrollMarginRight;
 
+  let scrollBarOffsetX = scrollView === root ? 0 : borderLeftWidth + borderRightWidth;
+  let scrollBarOffsetY = scrollView === root ? 0 : borderTopWidth + borderBottomWidth;
+  let scrollBarWidth = scrollView.offsetWidth - scrollView.clientWidth - scrollBarOffsetX;
+  let scrollBarHeight = scrollView.offsetHeight - scrollView.clientHeight - scrollBarOffsetY;
+
   let scrollPortTop = viewTop + borderTopWidth + scrollPaddingTop;
-  let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom - scrollbarHeight;
+  let scrollPortBottom = viewBottom - borderBottomWidth - scrollPaddingBottom - scrollBarHeight;
   let scrollPortLeft = viewLeft + borderLeftWidth + scrollPaddingLeft;
-  let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight - scrollbarWidth;
+  let scrollPortRight = viewRight - borderRightWidth - scrollPaddingRight;
+
+  // IOS always positions the scrollbar on the right ¯\_(ツ)_/¯
+  if (viewStyle.direction === 'rtl' && !isIOS()) {
+    scrollPortLeft += scrollBarWidth;
+  } else {
+    scrollPortRight -= scrollBarWidth;
+  }
 
   let shouldScrollBlock = scrollAreaTop < scrollPortTop || scrollAreaBottom > scrollPortBottom;
   let shouldScrollInline = scrollAreaLeft < scrollPortLeft || scrollAreaRight > scrollPortRight;
