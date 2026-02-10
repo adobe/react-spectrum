@@ -256,9 +256,6 @@ describe('useTooltipTriggerState', function () {
         </ManualTriggerComponent>
       );
 
-      // Ensure we start with a clean global state by advancing time to clear any previous warmup
-      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN + 100));
-
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
 
@@ -285,11 +282,6 @@ describe('useTooltipTriggerState', function () {
       act(() => jest.advanceTimersByTime(delay * 0.6));
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(queryByRole('tooltip')).toBeVisible();
-
-      // Clean up: close the tooltip and run cooldown to reset global state for next test
-      let closeButton = getByTestId('manual-close');
-      fireEvent.click(closeButton);
-      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN + 100));
     });
 
     it('does not open immediately when open() is called twice during warmup', () => {
@@ -320,9 +312,6 @@ describe('useTooltipTriggerState', function () {
           Trigger
         </TooltipTriggerWithDoubleOpen>
       );
-
-      // Ensure we start with a clean global state
-      act(() => jest.advanceTimersByTime(TOOLTIP_COOLDOWN + 100));
 
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
