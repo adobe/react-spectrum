@@ -13,7 +13,8 @@
 import {
   Meter as AriaMeter,
   MeterProps as AriaMeterProps,
-  ContextValue
+  ContextValue,
+  Provider
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
@@ -22,7 +23,7 @@ import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
-import {Text} from './Content';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -126,7 +127,7 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
         labelPosition
       }, styles)}>
       {({percentage, valueText}) => (
-        <>
+        <Provider values={[[TextContext, {}]]}>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
           {label && <Text styles={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</Text>}
           <SkeletonWrapper>
@@ -134,7 +135,7 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
               <div className={fillStyles({isStaticColor, variant})} style={{width: percentage + '%'}} />
             </div>
           </SkeletonWrapper>
-        </>
+        </Provider>
       )}
     </AriaMeter>
   );

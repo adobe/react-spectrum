@@ -209,16 +209,16 @@ describe('TableView', () => {
                             autoFocus
                             defaultValue={item[column.id!]}
                             name={column.id! as string}>
-                            <PickerItem textValue="Eva" id="Eva">Eva</PickerItem>
-                            <PickerItem textValue="Steven" id="Steven">Steven</PickerItem>
-                            <PickerItem textValue="Michael" id="Michael">Michael</PickerItem>
-                            <PickerItem textValue="Sara" id="Sara">Sara</PickerItem>
-                            <PickerItem textValue="Karina" id="Karina">Karina</PickerItem>
-                            <PickerItem textValue="Otto" id="Otto">Otto</PickerItem>
-                            <PickerItem textValue="Matt" id="Matt">Matt</PickerItem>
-                            <PickerItem textValue="Emily" id="Emily">Emily</PickerItem>
-                            <PickerItem textValue="Amelia" id="Amelia">Amelia</PickerItem>
-                            <PickerItem textValue="Isla" id="Isla">Isla</PickerItem>
+                            <PickerItem id="Eva">Eva</PickerItem>
+                            <PickerItem id="Steven">Steven</PickerItem>
+                            <PickerItem id="Michael">Michael</PickerItem>
+                            <PickerItem id="Sara">Sara</PickerItem>
+                            <PickerItem id="Karina">Karina</PickerItem>
+                            <PickerItem id="Otto">Otto</PickerItem>
+                            <PickerItem id="Matt">Matt</PickerItem>
+                            <PickerItem id="Emily">Emily</PickerItem>
+                            <PickerItem id="Amelia">Amelia</PickerItem>
+                            <PickerItem id="Isla">Isla</PickerItem>
                           </Picker>
                         )}>
                         <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>
@@ -581,16 +581,16 @@ describe('TableView', () => {
                                 autoFocus
                                 defaultValue={item[column.id!]}
                                 name={column.id! as string}>
-                                <PickerItem textValue="Eva" id="Eva">Eva</PickerItem>
-                                <PickerItem textValue="Steven" id="Steven">Steven</PickerItem>
-                                <PickerItem textValue="Michael" id="Michael">Michael</PickerItem>
-                                <PickerItem textValue="Sara" id="Sara">Sara</PickerItem>
-                                <PickerItem textValue="Karina" id="Karina">Karina</PickerItem>
-                                <PickerItem textValue="Otto" id="Otto">Otto</PickerItem>
-                                <PickerItem textValue="Matt" id="Matt">Matt</PickerItem>
-                                <PickerItem textValue="Emily" id="Emily">Emily</PickerItem>
-                                <PickerItem textValue="Amelia" id="Amelia">Amelia</PickerItem>
-                                <PickerItem textValue="Isla" id="Isla">Isla</PickerItem>
+                                <PickerItem id="Eva">Eva</PickerItem>
+                                <PickerItem id="Steven">Steven</PickerItem>
+                                <PickerItem id="Michael">Michael</PickerItem>
+                                <PickerItem id="Sara">Sara</PickerItem>
+                                <PickerItem id="Karina">Karina</PickerItem>
+                                <PickerItem id="Otto">Otto</PickerItem>
+                                <PickerItem id="Matt">Matt</PickerItem>
+                                <PickerItem id="Emily">Emily</PickerItem>
+                                <PickerItem id="Amelia">Amelia</PickerItem>
+                                <PickerItem id="Isla">Isla</PickerItem>
                               </Picker>
                             )}>
                             <div>{item[column.id]}<ActionButton slot="edit" aria-label="Edit farmer"><Edit /></ActionButton></div>

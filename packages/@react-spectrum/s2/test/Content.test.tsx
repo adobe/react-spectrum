@@ -18,7 +18,8 @@ import userEvent from '@testing-library/user-event';
 
 const getStyleWarning = (componentName: string) => `${componentName} is being used outside of a component that provides automatic styling. ` +
   'Consider using a standard HTML element instead (e.g., <h1>, <div>, <p>, etc.), ' +
-  'and use the \'styles\' prop from the style macro to provide custom styles: https://react-spectrum.adobe.com/styling';
+  'and use the style macro call to the \'className\' prop to provide custom styles: https://react-spectrum.adobe.com/styling \n\n' +
+  'Example: <h1 className={style({font: "heading-xl"})}>Heading</h1>';
 
 describe('Content components', () => {
   let warn: jest.SpyInstance;
@@ -53,6 +54,19 @@ describe('Content components', () => {
     ${'Footer'}              | ${Footer}
   `('should warn when $Name is used standalone', ({Name, Component}) => {
     render(<Component>Test {Name}</Component>);
+    expect(warn).toHaveBeenCalledWith(getStyleWarning(Name));
+  });
+
+  it.each`
+    Name                    | Component
+    ${'Heading'}             | ${Heading}
+    ${'Header'}              | ${Header}
+    ${'Content'}             | ${Content}
+    ${'Text'}                | ${Text}
+    ${'Keyboard'}            | ${Keyboard}
+    ${'Footer'}              | ${Footer}
+  `('should still warn when $Name is used standalone with UNSAFE_className', ({Name, Component}) => {
+    render(<Component UNSAFE_className="blah">Test {Name}</Component>);
     expect(warn).toHaveBeenCalledWith(getStyleWarning(Name));
   });
 

@@ -27,7 +27,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastList as ToastList, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
-import {Text} from './Content';
+import {Text, TextContext} from './Content';
 import toastCss from './Toast.module.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMediaQuery} from '@react-spectrum/utils';
@@ -544,7 +544,9 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
               <Icon />
             </CenterBaseline>
           }
-          <Text slot="title">{toast.content.children}</Text>
+          <TextContext.Provider value={{}}>
+            <Text slot="title">{toast.content.children}</Text>
+          </TextContext.Provider>
         </ToastContent>
         {!isExpanded && visibleToasts.length > 1 &&
           <ActionButton

@@ -12,12 +12,12 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
-import {ContextValue, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {controlFont, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {style} from '../style' with {type: 'macro'};
-import {Text} from './Content';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -134,7 +134,9 @@ export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: 
           <circle r="50%" cx="50%" cy="50%" />
         </svg>
       </CenterBaseline>
-      <Text>{children}</Text>
+      <Provider values={[[TextContext, {}]]}>
+        <Text>{children}</Text>
+      </Provider>
     </div>
   );
 });

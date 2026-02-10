@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
+import {Context, createContext, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
+import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria, useSlottedContext} from 'react-aria-components';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {inertValue} from '@react-aria/utils';
 import {StyleString} from '../style/types';
@@ -37,26 +37,28 @@ interface HeadingProps extends Omit<ContentProps, 'children'> {
   level?: number
 }
 
-function useWarnIfNoStyles(componentName: string, props: {styles?: string, UNSAFE_className?: string, isHidden?: boolean}) {
+function useWarnIfStandalone<T>(componentName: string, context: Context<ContextValue<T, any>>) {
+  let ctx = useSlottedContext(context);
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production' && !hasWarned.current && !props.isHidden && !props.styles && !props.UNSAFE_className) {
+    if (process.env.NODE_ENV !== 'production' && !hasWarned.current && ctx == null) {
       console.warn(
         `${componentName} is being used outside of a component that provides automatic styling. ` +
         'Consider using a standard HTML element instead (e.g., <h1>, <div>, <p>, etc.), ' +
-        'and use the \'styles\' prop from the style macro to provide custom styles: https://react-spectrum.adobe.com/styling'
+        'and use the style macro call to the \'className\' prop to provide custom styles: https://react-spectrum.adobe.com/styling \n\n' +
+        'Example: <h1 className={style({font: "heading-xl"})}>Heading</h1>'
       );
       hasWarned.current = true;
     }
-  }, [componentName, props.styles, props.UNSAFE_className, props.isHidden]);
+  }, [componentName, ctx]);
 }
 
 export const HeadingContext = createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
 
 export const Heading = forwardRef(// Wrapper around RAC Heading to unmount when hidden.
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+  useWarnIfStandalone('Heading', HeadingContext);
   [props, ref] = useSpectrumContextProps(props, ref, HeadingContext);
-  useWarnIfNoStyles('Heading', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -76,8 +78,8 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
 export const HeaderContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>>(null);
 
 export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRef) {
+  useWarnIfStandalone('Header', HeaderContext);
   [props, ref] = useSpectrumContextProps(props, ref, HeaderContext);
-  useWarnIfNoStyles('Header', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -97,8 +99,8 @@ export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRe
 export const ContentContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
+  useWarnIfStandalone('Content', ContentContext);
   [props, ref] = useSpectrumContextProps(props, ref, ContentContext);
-  useWarnIfNoStyles('Content', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -117,8 +119,8 @@ export const Content = forwardRef(function Content(props: ContentProps, ref: DOM
 export const TextContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>(null);
 
 export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
+  useWarnIfStandalone('Text', TextContext);
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
-  useWarnIfNoStyles('Text', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, children, ...otherProps} = props;
   let racContext = useContext(RACTextContext);
@@ -149,11 +151,11 @@ export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   return text;
 });
 
-export const KeyboardContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
+export const KeyboardContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>(null);
 
 export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
+  useWarnIfStandalone('Keyboard', KeyboardContext);
   [props, ref] = useSpectrumContextProps(props, ref, KeyboardContext);
-  useWarnIfNoStyles('Keyboard', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {
@@ -169,11 +171,11 @@ export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: D
   );
 });
 
-export const FooterContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
+export const FooterContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>(null);
 
 export const Footer = forwardRef(function Footer(props: ContentProps, ref: DOMRef) {
+  useWarnIfStandalone('Footer', FooterContext);
   [props, ref] = useSpectrumContextProps(props, ref, FooterContext);
-  useWarnIfNoStyles('Footer', props);
   let domRef = useDOMRef(ref);
   let {UNSAFE_className = '', UNSAFE_style, styles = '', isHidden, slot, ...otherProps} = props;
   if (isHidden) {

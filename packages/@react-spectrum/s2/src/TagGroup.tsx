@@ -241,11 +241,13 @@ function TagGroupInner<T>({
   let helpText: ReactNode = null;
   if (!isInvalid && description) {
     helpText =  (
-      <Text
-        slot="description"
-        styles={helpTextStyles({size})}>
-        {description}
-      </Text>
+      <TextContext.Provider value={{}}>
+        <Text
+          slot="description"
+          styles={helpTextStyles({size})}>
+          {description}
+        </Text>
+      </TextContext.Provider>
     );
   } else if (isInvalid) {
     helpText = (
@@ -254,9 +256,11 @@ function TagGroupInner<T>({
         <CenterBaseline>
           <AlertIcon />
         </CenterBaseline>
-        <Text slot="errorMessage">
-          {errorMessage}
-        </Text>
+        <TextContext.Provider value={{}}>
+          <Text slot="errorMessage">
+            {errorMessage}
+          </Text>
+        </TextContext.Provider>
       </div>
     );
   }
