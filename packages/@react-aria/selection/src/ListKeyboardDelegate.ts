@@ -123,9 +123,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
         return null;
       }
 
-      let nonDisabledKey = this.findNextNonDisabled(visibleKey, getNext);
-      // If the keys are equal, then we know that the node is both visible and non-disabled
-      if (visibleKey === nonDisabledKey) {
+      let node = this.collection.getItem(visibleKey);
+      if (node?.type === 'item' && !this.isDisabled(node)) {
         return visibleKey;
       }
 
