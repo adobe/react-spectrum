@@ -15,7 +15,7 @@ import {Inset, fontRelative as internalFontRelative, space as internalSpace, Spa
 import type {MacroContext} from '@parcel/macros';
 import {StyleString} from './types';
 
-export {baseColor, color, lightDark, colorMix, size, style, linearGradient, edgeToText} from './spectrum-theme';
+export {baseColor, color, lightDark, colorMix, size, style} from './spectrum-theme';
 export {raw, keyframes} from './style-macro';
 export type {StyleString} from './types';
 
@@ -24,6 +24,23 @@ export function space(px: number): `[${string}]` {
   return `[${internalSpace(px)}]`;
 }
 
+/**
+ * Converts a pixel value to a font-relative `em` length. Useful for sizing elements
+ * relative to the current font size.
+ *
+ * @param base - The pixel value to convert.
+ * @param baseFontSize - The base font size in pixels to divide by. Defaults to `14`.
+ * @returns A CSS `em` value wrapped as an arbitrary style value.
+ *
+ * @example
+ * ```tsx
+ * import {fontRelative} from '@react-spectrum/s2/style' with {type: 'macro'};
+ *
+ * const className = style({
+ *   gap: fontRelative(2)  // 2/14 = ~0.143em
+ * });
+ * ```
+ */
 export function fontRelative(base: number, baseFontSize?: number): `[${string}]` {
   return `[${internalFontRelative(base, baseFontSize)}]`;
 }

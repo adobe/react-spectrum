@@ -14,6 +14,14 @@ import {CSSProperties} from 'react';
 import {fontRelative} from '../style';
 import {StyleString} from '../style/types';
 
+/**
+ * Calculates vertical padding to center a single line of text within a container.
+ * Uses the CSS `self()` function and `1lh` unit to compute the padding based on
+ * the container's minimum height and border widths.
+ *
+ * @param minHeight - A CSS expression for the minimum height to center within. Defaults to `'self(minHeight)'`.
+ * @returns A CSS `calc()` expression wrapped as an arbitrary style value.
+ */
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
 }
@@ -113,6 +121,11 @@ export const fieldInput = () => ({
   containIntrinsicWidth: 'calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))'
 } as const);
 
+/**
+ * Returns style properties that configure the CSS `color-scheme` for a component.
+ * Defaults to the page's color scheme and supports `'light'`, `'dark'`, and `'light dark'` values
+ * via the `colorScheme` render prop condition.
+ */
 export const colorScheme = () => ({
   colorScheme: {
     // Default to page color scheme if none is defined.
@@ -335,6 +348,16 @@ export interface StyleProps extends UnsafeStyles {
   styles?: StylesProp
 }
 
+/**
+ * Returns the list of CSS property names that are allowed as style overrides via the `styles` prop.
+ * By default includes layout properties (margin, position, grid, etc.) and width properties.
+ * Optionally includes height properties.
+ *
+ * @param options - Configuration for which property groups to include.
+ * @param options.width - Whether to include width properties (`width`, `minWidth`, `maxWidth`). Defaults to `true`.
+ * @param options.height - Whether to include height properties (`height`, `minHeight`, `maxHeight`, `size`). Defaults to `false`.
+ * @returns An array of allowed CSS property names.
+ */
 export function getAllowedOverrides({width = true, height = false} = {}): string[] {
   return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);
 }
